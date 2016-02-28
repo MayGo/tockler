@@ -104,8 +104,9 @@ gulp.task('build:osx', function () {
         console.log('Build complete, output paths: ', appPath);
 
         builder.build({
-            appPath: 'output/built/timetracker-electron-darwin-x64/timetracker-electron.app',
+            appPath: 'output/built/backer-timetracker-darwin-x64/backer-timetracker.app',
             platform: 'osx',
+            out: paths.build,
             config: JSON.parse(fs.readFileSync('./build-config.json')),
             basePath: './'
         }, function (err) {
@@ -133,8 +134,9 @@ gulp.task('build:win', function () {
         console.log('Build complete, output paths: ', appPath);
 
         builder.build({
-            appPath: 'output/built/timetracker-electron-win32-x64',
+            appPath: 'output/built/backer-timetracker-win32-x64',
             platform: 'win',
+            out: paths.build,
             config: JSON.parse(fs.readFileSync('./build-config.json')),
             basePath: './'
         }, function (err) {
