@@ -20,7 +20,7 @@ Application that tracks your time by monitoring your active windows (only titles
 - View work log summary
 
 
-![alt text](https://github.com/MayGo/timetracker-electron/raw/master/screenshots/timeline.PNG "Timetracker screenshot")
+![alt text](https://github.com/MayGo/backer-timetracker/raw/master/screenshots/timeline.PNG "Backer Timetracker screenshot")
 
 Development
 ---
