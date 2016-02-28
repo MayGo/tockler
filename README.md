@@ -1,7 +1,7 @@
 Backer Timetracker
 ---
 
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=von0qn&url=https://github.com/MayGo&title=backer-timetracker&language=en_GB&tags=github&category=software)
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=MayGo&url=https://github.com/MayGo&title=backer-timetracker&language=en_GB&tags=github&category=software)
 
 Application that tracks your time by monitoring your active windows (only titles) and idle time.
 
