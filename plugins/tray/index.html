@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="trayApp">
+<title>Time Tracker</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="description" content=""/>
+<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no"/>
+
+<link rel="stylesheet" type="text/css" href="css/home.css">
+<script src="../../shared/plugins/live-reload.js"></script>
+<!-- Build:css assets/css/app.css -->
+<link rel="stylesheet" href="../../bower_components/angular-material/angular-material.css"/>
+<link rel="stylesheet" href="../../bower_components/md-color-picker/dist/mdColorPicker.css"/>
+<link rel="stylesheet"
+      href="../../bower_components/angular-material-datetimepicker/css/material-datetimepicker.min.css"/>
+
+
+<link rel="stylesheet" href="./assets/Material/material-icons.css" />
+<link rel="stylesheet" href="./assets/style.css" />
+
+
+<body layout="row">
+<div class="main-div" layout="column" flex ui-view ng-cloak></div>
+
+<!-- build:js scripts/vender.js -->
+<script src="../../bower_components/angular/angular.js"></script>
+<script src="../../bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+<script src="../../bower_components/angular-animate/angular-animate.js"></script>
+<script src="../../bower_components/angular-aria/angular-aria.js"></script>
+<script src="../../bower_components/angular-material/angular-material.js"></script>
+<script src="../../bower_components/angular-translate/angular-translate.min.js"></script>
+<script src="../../bower_components/js-data/dist/js-data.min.js"></script>
+<script src="../../bower_components/js-data-localstorage/dist/js-data-localstorage.min.js"></script>
+<script src="../../bower_components/js-data-angular/dist/js-data-angular.min.js"></script>
+<script src="../../bower_components/jQuery/dist/jquery.js"></script>
+<script src="../../bower_components/tinycolor/tinycolor.js"></script>
+<script src="../../bower_components/angular-dynamic-locale/tmhDynamicLocale.min.js"></script>
+<script src="../../bower_components/angular-filter/dist/angular-filter.min.js"></script>
+<script src="../../bower_components/lodash/lodash.js"></script>
+<script>window.tinycolor = require('../../bower_components/tinycolor/tinycolor.js');</script>
+<script src="../../bower_components/moment/moment.js"></script>
+<script src="../../bower_components/angular-moment/angular-moment.min.js"></script>
+
+
+<script src="../../bower_components/md-color-picker/dist/mdColorPicker.min.js"></script>
+<script src="../../bower_components/angular-material-datetimepicker/js/angular-material-datetimepicker.min.js"></script>
+<script type="text/javascript"
+        src="../../bower_components/angular-material-data-table/dist/md-data-table.min.js"></script>
+<!-- endbuild -->
+
+<!-- build:app scripts:app.js -->
+<script src="./app/app.module.js"></script>
+<script src="./app/app.config.js"></script>
+<script src="./app/app.controller.js"></script>
+<script src="./app/app.dynamic-config.js"></script>
+<script src="./app/app.runtime-config.js"></script>
+<script src="./app/app.router.js"></script>
+<script src="./app/trackItem/trackItem.list.controller.js"></script>
+<script src="./app/trackItem/trackItem.edit.modal.controller.js"></script>
+<script src="./app/trackItem/trackItem.module.js"></script>
+<script src="./app/trackItem/trackItem.routes.js"></script>
+<script src="./app/trackItem/trackItem.service.js"></script>
+
+
+<script src="../../app/background.service.js"></script>
+
+<script>window.d3 = require('../../bower_components/d3/d3.min.js');</script>
+
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+<script>window.jQuery = require('../../bower_components/jQuery/dist/jquery.js');</script>
+
+<script src="../../bower_components/d3-tip/index.js"></script>
+<script src="../../bower_components/nvd3/build/nv.d3.js"></script>
+<script src="../../bower_components/angular-nvd3/dist/angular-nvd3.min.js"></script>
+<!-- endbuild -->
+</body>
+</html>
+
+

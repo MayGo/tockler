@@ -1,0 +1,28 @@
+<div layout="column" flex>
+    <md-toolbar id="navbar" layout="row" layout-align="end center" ng-init="appCtrl.showSearch = false">
+
+        <a href="#/" class="navbar-brand" layout="row" layout-align="start center">
+            <img src="../../shared/img/icon/timetracker_icon.ico" width="24" height="24">
+            <span translate="app.name"></span>
+        </a>
+
+        <div ng-if="!appCtrl.showSearch" layout="row">
+            <md-button ui-sref-active="md-primary md-hue-2" ui-sref="app.timeline.view">
+                {{'menu.domain.timeline' | translate }}
+            </md-button>
+            <md-button ui-sref-active="md-primary md-hue-2" ui-sref="app.trackItem.list">
+                {{'menu.domain.items' | translate }}
+            </md-button>
+            <md-button ui-sref-active="md-primary md-hue-2" ui-sref="app.summary.view">
+                {{'menu.domain.summary' | translate }}
+            </md-button>
+        </div>
+        <span flex></span>
+        <md-button class="md-icon-button" aria-label="Settings" ui-sref="app.settings.view">
+            <md-icon md-font-set="material-icons">settings</md-icon>
+        </md-button>
+
+    </md-toolbar>
+
+    <ui-view></ui-view>
+</div>

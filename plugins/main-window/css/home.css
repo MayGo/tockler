@@ -1,0 +1,156 @@
+* {
+  -webkit-tap-highlight-color: transparent;
+  outline: 0;
+}
+
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dt, dd, ul, ol, li, pre, form, fieldset, legend, button, input, textarea, th, td {
+  margin: 0;
+  padding: 0;
+  vertical-align: baseline;
+}
+
+img {
+  border: 0 none;
+  vertical-align: top;
+}
+
+i, em {
+  font-style: normal;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+input, select, button, h1, h2, h3, h4, h5, h6 {
+  font-size: 100%;
+  font-family: inherit;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+a, a:visited {
+  text-decoration: none;
+  color: #333;
+}
+
+body {
+  font-size: 12px;
+  color: #333;
+  line-height: 1.33;
+  -webkit-user-select: none;
+  user-select: none;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif;
+  overflow: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+timeline {
+  display: block;
+  padding: 10px;
+  overflow: hidden;
+}
+
+timeline svg {
+  overflow: hidden;
+}
+
+.d3-tip {
+  line-height: 1;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+
+.chart {
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #b8b8b8;
+  shape-rendering: crispEdges;
+}
+
+.axis {
+  font-size: 10px;
+  fill: #7e7e7e;
+}
+
+.brush .extent {
+  stroke: #518cc1;
+  fill: #049CD9;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+  stroke-width: 3;
+}
+
+.brush .resize path {
+  fill: #b8b8b8;
+  fill-opacity: .125;
+}
+
+.zoom-overlay {
+  stroke-width: 0px;
+  fill-opacity: 0;
+}
+
+.navbar-brand {
+  color: white;
+  font-weight: 400;
+  font-size: 26px;
+  border: 0px;
+  border-right: 1px;
+  border-color: white;
+  border-style: solid;
+  padding-right: 10px;
+}
+
+.navbar-brand img {
+  margin-right: 10px;
+  margin-left: 10px;
+  background: #fff;
+  padding: 2px;
+  border-radius: 2px;
+}
+
+#trackItemMiniEdit {
+  background: #f2f2f2;
+  border-radius: 5px;
+  height: 35px;
+  top: 75px;
+  position: absolute;
+}
+
+#trackItemMiniEdit md-input-container {
+  margin: 0;
+}

@@ -1,0 +1,51 @@
+<div layout="column">
+    <md-progress-circular ng-show="summaryCtrl.loading" md-mode="indeterminate"
+                          style="margin: 90px auto; position: absolute; top: 0; left: 0; bottom: 0; right: 0;"
+    ></md-progress-circular>
+    <div layout="row">
+        <md-button class="md-icon-button" aria-label="Refresh" ng-click="summaryCtrl.list()">
+            <md-icon md-font-set="material-icons">refresh</md-icon>
+        </md-button>
+        <md-datepicker ng-model="summaryCtrl.searchMinDate" md-placeholder="From"
+                       md-max-date="summaryCtrl.searchMaxDate" ng-change="summaryCtrl.list()"></md-datepicker>
+        <md-datepicker ng-model="summaryCtrl.searchMaxDate" md-placeholder="To"
+                       md-min-date="summaryCtrl.searchMinDate" ng-change="summaryCtrl.list()"></md-datepicker>
+    </div>
+
+
+    <div layout-padding>
+
+        <md-table-container>
+            <table md-table>
+                <thead md-head md-order="query.order" md-on-reorder="onReorder">
+                <tr md-row>
+                    <th md-column>App</th>
+                    <th md-column>Title</th>
+                    <th md-column>Begin</th>
+                    <th md-column>End</th>
+                    <th md-column>Time</th>
+                </tr>
+                </thead>
+                <tbody md-body>
+                <tr md-row md-select-id="{{trackItem.id}}" md-auto-select
+                    ng-repeat="trackItem in summaryCtrl.trackItems">
+                    <td md-cell>{{trackItem.app}}</td>
+                    <td md-cell>{{trackItem.title}}</td>
+                    <td md-cell style="width: 130px">{{trackItem.beginDate | date: 'yyyy.MM.dd HH:mm'}}</td>
+                    <td md-cell style="width: 130px">{{trackItem.endDate | date: 'yyyy.MM.dd HH:mm'}}</td>
+                    <td md-cell style="width: 130px">{{trackItem.timeDiffInMs | msToDuration}}</td>
+
+                </tr>
+                </tbody>
+                <tfoot md-foot>
+                <tr md-row>
+                    <td md-cell></td>
+                    <td md-cell><strong>Total: </strong>{{summaryCtrl.trackItems | map:'timeDiffInMs' | sum | msToDuration}}</td>
+                    <td md-cell colspan="6"></td>
+                </tr>
+                </tfoot>
+            </table>
+        </md-table-container>
+    </div>
+</div>
+

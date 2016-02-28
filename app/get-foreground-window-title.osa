@@ -1,0 +1,13 @@
+global frontApp, frontAppName, windowTitle
+ set windowTitle to ""
+
+ tell application "System Events"
+
+ set frontApp to first application process whose frontmost is true
+ set frontAppName to name of frontApp
+
+ tell process frontAppName
+ set windowTitle to title of 1st window
+ end tell
+ end tell
+ return {frontAppName, windowTitle, frontApp}

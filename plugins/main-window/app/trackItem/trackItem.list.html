@@ -1,0 +1,39 @@
+<md-button class="md-icon-button" aria-label="Refresh" ng-click="trackItemCtrl.list()">
+    <md-icon md-font-set="material-icons">refresh</md-icon>
+</md-button>
+
+<md-button class="md-icon-button" ng-click="trackItemCtrl.dayBack()">
+    <md-icon md-font-set="material-icons">arrow_back</md-icon>
+</md-button>
+
+<md-datepicker ng-model="trackItemCtrl.searchDate" md-placeholder="Search for day"
+               md-max-date="trackItemCtrl.maxDate" ng-change="trackItemCtrl.list()"></md-datepicker>
+
+<md-button class="md-icon-button" ng-click="trackItemCtrl.dayForward()">
+    <md-icon md-font-set="material-icons">arrow_forward</md-icon>
+</md-button>
+
+<div layout-padding>
+    <md-table-container>
+        <table md-table>
+            <thead md-head md-order="query.order" md-on-reorder="onReorder">
+            <tr md-row>
+                <th md-column>App</th>
+                <th md-column>Title</th>
+                <th md-column>Begin</th>
+                <th md-column>End</th>
+            </tr>
+            </thead>
+            <tbody md-body>
+            <tr md-row md-select="app" md-select-id="{{trackItem.id}}" md-auto-select
+                ng-repeat="trackItem in trackItemCtrl.trackItems">
+                <td md-cell>{{trackItem.app}}</td>
+                <td md-cell>{{trackItem.title}}</td>
+                <td md-cell style="width: 130px">{{trackItem.beginDate | date: 'medium'}}</td>
+                <td md-cell style="width: 130px">{{trackItem.endDate | date: 'medium'}}</td>
+
+            </tr>
+            </tbody>
+        </table>
+    </md-table-container>
+</div>

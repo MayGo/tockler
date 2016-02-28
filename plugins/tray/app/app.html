@@ -1,0 +1,21 @@
+<div layout="column" flex>
+    <md-toolbar id="navbar" class="md-hue-1" layout="row" layout-align="end center"
+                ng-init="appCtrl.showSearch = false">
+
+        <div class="md-toolbar-tools">
+            <a href="#/" class="navbar-brand" layout="row" layout-align="start center">
+                <span translate="app.name"></span>
+            </a>
+            <span flex></span>
+            <md-button class="md-icon-button" aria-label="Main Window" ng-click="appCtrl.toggleMainWindow()">
+                <md-icon md-font-set="material-icons">view_compact</md-icon>
+            </md-button>
+            <md-button class="md-icon-button" aria-label="Exit" ng-click="appCtrl.exitApp()">
+                <md-icon md-font-set="material-icons">exit_to_app</md-icon>
+            </md-button>
+        </div>
+
+    </md-toolbar>
+
+    <ui-view></ui-view>
+</div>

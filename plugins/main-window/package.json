@@ -1,0 +1,9 @@
+{
+  "name": "main-window",
+  "version": "0.1.0",
+  "description": "Main window.",
+  "main": "app/main.js",
+  "scripts": {},
+  "author": "Edward Chu <crazyzyt@gmail.com>",
+  "license": "MIT"
+}

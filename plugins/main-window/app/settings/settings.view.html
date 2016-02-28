@@ -1,0 +1,25 @@
+<div layout-padding>
+    <form name="settingsForm" novalidate ng-submit="settingsForm.$valid && settingsCtrl.saveSettings()">
+        <div layout="column">
+
+            <section>
+                <h2>Workday</h2>
+                <div layout="row">
+                    <md-input-container>
+                        <label>Start</label>
+                        <input type="text" ng-model="settingsCtrl.settings.workDayStartTime" ui-time-mask="short"/>
+                    </md-input-container>
+                    <md-input-container>
+                        <label>End</label>
+                        <input type="text" ng-model="settingsCtrl.settings.workDayEndTime" ui-time-mask="short"/>
+                    </md-input-container>
+                </div>
+            </section>
+
+        </div>
+        <md-button type="submit">
+            Save
+        </md-button>
+    </form>
+</div>
+

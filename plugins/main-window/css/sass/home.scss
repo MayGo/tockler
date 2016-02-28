@@ -1,0 +1,38 @@
+@import "global";
+@import "charts";
+
+.navbar {
+
+}
+
+.navbar-brand {
+  color: white;
+  font-weight: 400;
+  font-size: 26px;
+  border: 0px;
+  border-right: 1px;
+  border-color: white;
+  border-style: solid;
+  padding-right: 10px;
+}
+
+.navbar-brand img {
+  margin-right: 10px;
+  margin-left: 10px;
+  background: #fff;
+  padding:2px;
+  border-radius: 2px;
+}
+
+#trackItemMiniEdit {
+  background: #f2f2f2;
+  border-radius: 5px;
+  height: 35px;
+  top: 75px;
+  position: absolute;
+}
+
+#trackItemMiniEdit md-input-container {
+  margin: 0;
+}
+

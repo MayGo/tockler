@@ -1,0 +1,17 @@
+@import "reset";
+
+body {
+    font-size: 12px;
+    color:#333;
+    line-height: 1.33;
+    -webkit-user-select: none;
+    user-select: none;
+    font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif;
+    overflow: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+
