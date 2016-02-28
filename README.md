@@ -8,6 +8,7 @@ Application that tracks your time by monitoring your active windows (only titles
 # Supported
 - Windows (Tested win 10)
 - OS X (Tested El Capitan)
+-- Security & Privacy -> Accessibility -> enable backer-timetracker.app (Should ask for this)
 
 # Features
 - Zoomable/Pannable timechart (d3)
