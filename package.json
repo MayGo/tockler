@@ -7,7 +7,7 @@
     "test": "echo \"Please use gulp instead.\" && exit 1"
   },
   "author": "Maigo Erit <maigo.erit@gmail.com>",
-  "license": "GPLv2",
+  "license": "GPL-2.0",
   "repository": {
     "type": "git",
     "url": "git@github.com:MayGo/backer-timetracker.git"
