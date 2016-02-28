@@ -20,10 +20,6 @@ var SettingsService = null;
 var BackgroundService = {};
 
 var userDir = electron.app.getPath('userData');
-switch (process.env.NODE_ENV) {
-    case 'development':
-        userDir = '';
-}
 var output = fs.createWriteStream(path.join(userDir, 'stdout.log'));
 var errorOutput = fs.createWriteStream(path.join(userDir, 'stderr.log'));
 
