@@ -10,7 +10,6 @@ angular.module('trayApp', [
     'trayApp.config',
     'trayApp.runtime-config',
     'pascalprecht.translate',
-    'js-data',
     'mdColorPicker',
     'ngMaterialDatePicker',
     'md.data.table',
