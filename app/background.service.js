@@ -1,6 +1,6 @@
 'use strict';
 
-var electron = require('electron');
+var app = require('electron').app;
 
 var _ = require('lodash');
 var fs = require('fs');
@@ -19,12 +19,10 @@ var SettingsService = null;
 
 var BackgroundService = {};
 
-var userDir = electron.app.getPath('userData');
-var output = fs.createWriteStream(path.join(userDir, 'stdout.log'));
-var errorOutput = fs.createWriteStream(path.join(userDir, 'stderr.log'));
+var userDir;
 
 // custom simple logger
-var logger = new console.Console(output, errorOutput);
+var logger;
 
 //init db
 var JSData = require('js-data');
@@ -352,6 +350,13 @@ BackgroundService.saveUserIdleTime = function () {
 };
 
 BackgroundService.init = function () {
+
+    userDir = app.getPath('userData');
+    var output = fs.createWriteStream(path.join(userDir, 'stdout.log'));
+    var errorOutput = fs.createWriteStream(path.join(userDir, 'stderr.log'));
+
+// custom simple logger
+    logger = new console.Console(output, errorOutput);
     initDb(false);
     console.log('Running background service.');
     setInterval(function () {
