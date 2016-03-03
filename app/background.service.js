@@ -132,7 +132,7 @@ var createOrUpdate = function (appTrackItem) {
     var deferred = $q.when();
     if (shouldSplitInTwoOnMidnight(appTrackItem.beginDate, appTrackItem.endDate)) {
         console.log('midnight');
-        var almostMidnight = moment(appTrackItem.beginDate).startOf('day').add(1, 'days').subtract(1, 'seconds');
+        var almostMidnight = moment(appTrackItem.beginDate).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
         var afterMidnight = dateToAfterMidnight(appTrackItem.beginDate);
 
         logger.log('Midnight- almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
@@ -258,7 +258,7 @@ var saveIdleTrackItem = function (seconds) {
     var afterMidnight = (lastStatusTrackItemSaved) ? dateToAfterMidnight(lastStatusTrackItemSaved.beginDate) : null;
     if (isSplitting) {
         console.log('midnight in idle');
-        var almostMidnight = moment(lastStatusTrackItemSaved.beginDate).startOf('day').add(1, 'days').subtract(1, 'seconds');
+        var almostMidnight = moment(lastStatusTrackItemSaved.beginDate).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
 
         logger.log('Midnight idle- almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
         lastStatusTrackItemSaved.endDate = almostMidnight;
