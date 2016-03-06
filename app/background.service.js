@@ -134,6 +134,7 @@ var createOrUpdate = function (appTrackItem) {
         console.log('midnight');
         var almostMidnight = moment(appTrackItem.beginDate).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
         var afterMidnight = dateToAfterMidnight(appTrackItem.beginDate);
+        var originalEndDate = appTrackItem.endDate;
 
         logger.log('Midnight- almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
         appTrackItem.endDate = almostMidnight;
@@ -141,6 +142,7 @@ var createOrUpdate = function (appTrackItem) {
             lastAppTrackItemSaved = null;
             logger.log('Midnight- Saved one: ' + item1);
             item1.beginDate = afterMidnight;
+            item1.endDate = originalEndDate;
             createOrUpdate(item1).then(function (item2) {
                 logger.log('Midnight- Saved second: ' + item2);
                 deferred.resolve(item2);
@@ -186,7 +188,7 @@ var createOrUpdate = function (appTrackItem) {
     }
 
 
-    return deferred.promise;
+    return deferred;
 }
 
 var addRawTrackItemToList = function (item) {
@@ -301,6 +303,8 @@ var saveIdleTrackItem = function (seconds) {
 
 BackgroundService.onSleep = function () {
     isSleeping = true;
+    lastStatusTrackItemSaved = null;
+    lastAppTrackItemSaved = null;
 };
 
 BackgroundService.onResume = function () {
