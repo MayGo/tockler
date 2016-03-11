@@ -42,7 +42,7 @@ angular.module('angularDemoApp')
                     ['beginDate', 'DESC']
                 ], where: {
                     beginDate: {
-                        '>': ctrl.searchDate,
+                        '>=': ctrl.searchDate,
                         '<': getTomorrow(ctrl.searchDate)
                     }
                 }

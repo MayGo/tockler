@@ -34,7 +34,7 @@ angular.module('angularDemoApp')
                         '==': 'LogTrackItem'
                     },
                     beginDate: {
-                        '>': ctrl.searchMinDate,
+                        '>=': ctrl.searchMinDate,
                         '<': ctrl.searchMaxDate
                     }
                 }

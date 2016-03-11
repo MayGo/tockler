@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "async": "^1.5.2",
+    "bunyan": "^1.7.1",
     "jquery": "^2.1.4",
     "js-data": "^2.9.0",
     "js-data-nedb": "^1.0.0",

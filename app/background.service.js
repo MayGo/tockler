@@ -2,6 +2,9 @@
 
 var app = require('electron').app;
 
+var bunyan = require('bunyan');
+var log;
+
 var _ = require('lodash');
 var fs = require('fs');
 var $q = require('q');
@@ -22,8 +25,6 @@ var BackgroundService = {};
 
 var userDir;
 
-// custom simple logger
-var logger;
 
 //init db
 var JSData = require('js-data');
@@ -31,13 +32,13 @@ var JSData = require('js-data');
 var DSNedbAdapter = require('js-data-nedb');
 var storeDS
 var initDb = function (isTesting) {
-    console.log('Creating db');
+    log.info('Creating db');
 
     storeDS = new JSData.DS({
         cacheResponse: false,
         bypassCache: true,
         notify: true,
-        keepChangeHistory: true,
+        keepChangeHistory: false,
         resetHistoryOnInject: true,
         watchChanges: true,
         debug: false
@@ -49,8 +50,8 @@ var initDb = function (isTesting) {
     storeDS.registerAdapter('nedb', adapter, {default: true});
 
 
-    console.log('User Dir:' + userDir);
-    console.log('Environment:' + process.env.NODE_ENV);
+    log.info('User Dir:' + userDir);
+    log.info('Environment:' + process.env.NODE_ENV);
 
     var trackItemPath = path.join(userDir, (isTesting ? 'trackItemTest' : 'trackItem'));
     var appSettingsPath = path.join(userDir, (isTesting ? 'appSettingsTest' : 'appSettings'));
@@ -86,7 +87,7 @@ var addInactivePeriod = function (beginDate, endDate) {
     appTrackItem.color = '#ff0000';
     appTrackItem.beginDate = beginDate;
     appTrackItem.endDate = endDate;
-    console.log("Adding inactive trackitem", appTrackItem);
+    log.info("Adding inactive trackitem", appTrackItem);
     createOrUpdate(appTrackItem);
 }
 
@@ -119,7 +120,7 @@ var getAppColor = function (appName) {
         } else {
             var color = randomcolor();
             AppSettingsService.create({name: appName, color: color}).then(function (item) {
-                //console.log("Created color item to DB:", item);
+                log.debug("Created color item to DB:", item);
             });
             deferred.resolve(color);
         }
@@ -131,20 +132,21 @@ var createOrUpdate = function (appTrackItem) {
 
     var deferred = $q.when();
     if (shouldSplitInTwoOnMidnight(appTrackItem.beginDate, appTrackItem.endDate)) {
-        console.log('midnight');
+        log.info('its midnight');
         var almostMidnight = moment(appTrackItem.beginDate).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
         var afterMidnight = dateToAfterMidnight(appTrackItem.beginDate);
         var originalEndDate = appTrackItem.endDate;
 
-        logger.log('Midnight- almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
+        log.debug('Midnight- almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
         appTrackItem.endDate = almostMidnight;
         createOrUpdate(appTrackItem).then(function (item1) {
             lastAppTrackItemSaved = null;
-            logger.log('Midnight- Saved one: ' + item1);
+            log.debug('Midnight- Saved one: ' + item1);
             item1.beginDate = afterMidnight;
             item1.endDate = originalEndDate;
+            log.debug('Midnight- Saving second: ' + item1);
             createOrUpdate(item1).then(function (item2) {
-                logger.log('Midnight- Saved second: ' + item2);
+                log.debug('Midnight- Saved second: ' + item2);
                 deferred.resolve(item2);
             });
         });
@@ -157,32 +159,32 @@ var createOrUpdate = function (appTrackItem) {
 
                 if (lastAppTrackItemSaved) {
                     lastAppTrackItemSaved.endDate = appTrackItem.beginDate;
-                    //console.log("Saving old trackItem:", lastAppTrackItemSaved);
+                    log.debug("Saving old trackItem:", lastAppTrackItemSaved);
                     promise = TrackItemService.update(lastAppTrackItemSaved.id, lastAppTrackItemSaved)
                 }
 
                 promise.then(function () {
                     appTrackItem.endDate = new Date();
                     TrackItemService.create(appTrackItem).then(function (item) {
-                        console.log("Created track item to DB:", item);
+                        log.debug("Created track item to DB:", item);
                         lastAppTrackItemSaved = item;
                         deferred.resolve(item);
                     }, function (e) {
-                        console.log("Error creating", e)
+                        log.error("Error creating", e)
                     });
                 });
 
             } else if (isSameItems(appTrackItem, lastAppTrackItemSaved)) {
                 lastAppTrackItemSaved.endDate = new Date();
                 TrackItemService.update(lastAppTrackItemSaved.id, lastAppTrackItemSaved).then(function (item) {
-                    //console.log("Saved track item(endDate change) to DB:", item);
+                    log.debug("Saved track item(endDate change) to DB:", item);
                     lastAppTrackItemSaved = item;
                     deferred.resolve(item);
                 }, function () {
                     log.error('Error saving');
                 });
             } else {
-                console.error("Nothing to do with item", appTrackItem);
+                log.error("Nothing to do with item", appTrackItem);
             }
         })
     }
@@ -199,11 +201,11 @@ var addRawTrackItemToList = function (item) {
 
 var saveActiveWindow = function (newAppTrackItem) {
     if (isSleeping) {
-        console.log('Computer is spleeing, not running saveActiveWindow');
+        log.info('Computer is spleeing, not running saveActiveWindow');
         return;
     }
     if (lastStatusTrackItemSaved !== null && lastStatusTrackItemSaved.app === 'IDLE') {
-        console.log('Not saving');
+        log.info('Not saving');
         //addRawTrackItemToList(emptyItem);
         lastAppTrackItemSaved = null;
         return
@@ -227,7 +229,7 @@ var saveActiveWindow = function (newAppTrackItem) {
 
         createOrUpdate(rawItems[0]);
         //has two same items in list
-        //console.log("Compare items: " + rawItems[0].title + " - " + rawItems[1].title)
+        //log.info("Compare items: " + rawItems[0].title + " - " + rawItems[1].title)
         /*if (isSameItems(rawItems[0], rawItems[1])) {
          rawItems[0].beginDate = rawItems[1].beginDate;
          createOrUpdate(rawItems[0])
@@ -251,7 +253,7 @@ var IDLE_IN_SECONDS_TO_LOG = 60 * 1;
 var saveIdleTrackItem = function (seconds) {
 
     if (isSleeping) {
-        console.log('Computer is spleeing, not running saveIdleTrackItem');
+        log.info('Computer is spleeing, not running saveIdleTrackItem');
         return;
     }
 
@@ -259,10 +261,10 @@ var saveIdleTrackItem = function (seconds) {
     var isSplitting = (lastStatusTrackItemSaved) ? shouldSplitInTwoOnMidnight(lastStatusTrackItemSaved.beginDate, new Date()) : false;
     var afterMidnight = (lastStatusTrackItemSaved) ? dateToAfterMidnight(lastStatusTrackItemSaved.beginDate) : null;
     if (isSplitting) {
-        console.log('midnight in idle');
+        log.info('midnight in status');
         var almostMidnight = moment(lastStatusTrackItemSaved.beginDate).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
 
-        logger.log('Midnight idle- almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
+        log.debug('Midnight status - almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
         lastStatusTrackItemSaved.endDate = almostMidnight;
         TrackItemService.update(lastStatusTrackItemSaved.id, lastStatusTrackItemSaved);
         lastStatusTrackItemSaved = null;
@@ -270,7 +272,7 @@ var saveIdleTrackItem = function (seconds) {
 
     if (lastStatusTrackItemSaved && lastStatusTrackItemSaved.app === appName) {
         lastStatusTrackItemSaved.endDate = new Date();
-        console.log("Saving old idle trackItem:", lastStatusTrackItemSaved);
+        log.debug("Saving old status trackItem:", lastStatusTrackItemSaved);
         TrackItemService.update(lastStatusTrackItemSaved.id, lastStatusTrackItemSaved)
     } else {
         var appTrackItem = {app: appName, title: ""};
@@ -278,7 +280,8 @@ var saveIdleTrackItem = function (seconds) {
         //Begin date is always BACKGROUND_JOB_INTERVAL before current date
         beginDate.setMilliseconds(beginDate.getMilliseconds() - BACKGROUND_JOB_INTERVAL);
         if (isSplitting) {
-            beginDate = afterMidnight
+            beginDate = afterMidnight;
+            log.debug('Midnight status - is splitting: ' + almostMidnight);
         }
         appTrackItem.taskName = 'StatusTrackItem';
         appTrackItem.beginDate = beginDate;
@@ -286,14 +289,14 @@ var saveIdleTrackItem = function (seconds) {
             appTrackItem.color = color;
 
             appTrackItem.endDate = new Date();
-            console.log("Adding idle trackitem", appTrackItem);
+            log.info("Adding status trackitem", appTrackItem);
 
             TrackItemService.create(appTrackItem).then(function (item) {
-                console.log("Created idle track item to DB:", item);
+                log.info("Created status track item to DB:", item);
                 lastStatusTrackItemSaved = item;
                 deferred.resolve(item);
             }, function (e) {
-                console.log("Error creating", e)
+                log.info("Error creating", e)
             });
         });
     }
@@ -314,7 +317,7 @@ BackgroundService.onResume = function () {
     if (lastAppTrackItemSaved) {
         addInactivePeriod(lastAppTrackItemSaved.beginDate, new Date());
     } else {
-        console.log('No lastAppTrackItemSaved for addInactivePeriod.')
+        log.info('No lastAppTrackItemSaved for addInactivePeriod.')
     }
     isSleeping = false;
 };
@@ -332,13 +335,13 @@ BackgroundService.saveForegroundWindowTitle = function () {
         script = "sh " + path.join(__dirname, "get-foreground-window-title.sh");
     }
 
-    logger.log('Script saveForegroundWindowTitle file: ' + script);
+    log.debug('Script saveForegroundWindowTitle file: ' + script);
 
     exec(script, function (error, stdout, stderr) {
-        logger.log('saveForegroundWindowTitle: ' + stdout);
+        log.debug('saveForegroundWindowTitle: ' + stdout);
 
         if (stderr) {
-            logger.log('saveUserIdleTime error: ' + stderr);
+            log.debug('saveUserIdleTime error: ' + stderr);
         }
 
         var active = {};
@@ -352,7 +355,7 @@ BackgroundService.saveForegroundWindowTitle = function () {
             active.title = active_a[1].replace(/\n$/, "").replace(/^\s/, "");
         }
 
-        //console.log(active);
+        //log.info(active);
         var now = new Date();
         var beginDate = new Date();
         //Begin date is always BACKGROUND_JOB_INTERVAL before current date
@@ -360,7 +363,7 @@ BackgroundService.saveForegroundWindowTitle = function () {
         active.beginDate = beginDate;
         active.endDate = now;
 
-        //console.log("Active item:", active);
+        log.debug("Active item:", active);
 
         saveActiveWindow(active);
     });
@@ -378,17 +381,16 @@ BackgroundService.saveUserIdleTime = function () {
         script = "sh " + path.join(__dirname, "get-user-idle-time.linux.sh");
     }
 
-    logger.log('Script saveUserIdleTime file: ' + script)
+    log.debug('Script saveUserIdleTime file: ' + script)
 
     return exec(script, function (error, stdout, stderr) {
-        logger.log('saveUserIdleTime: ' + stdout);
+        log.debug('saveUserIdleTime: ' + stdout);
         if (stderr) {
-            logger.log('saveUserIdleTime error: ' + stderr);
+            log.debug('saveUserIdleTime error: ' + stderr);
         }
 
         var seconds = stdout;
 
-        //console.log('Idle:' + seconds);
         saveIdleTrackItem(seconds);
     });
 };
@@ -396,18 +398,31 @@ BackgroundService.saveUserIdleTime = function () {
 BackgroundService.init = function () {
 
     userDir = app.getPath('userData');
-    var output = fs.createWriteStream(path.join(userDir, 'stdout.log'));
-    var errorOutput = fs.createWriteStream(path.join(userDir, 'stderr.log'));
+    var outputPath = path.join(userDir, 'stdout.json');
 
-// custom simple logger
-    logger = new console.Console(output, errorOutput);
+    // Create logger
+    log = bunyan.createLogger({
+        name: 'background-service',
+        streams: [
+            {
+                level: 'info',
+                stream: process.stdout            // log INFO and above to stdout
+            },
+            {
+                level: 'debug',
+                type: 'rotating-file',
+                period: '1d',   // daily rotation
+                count: 3,        // keep 3 back copies
+                path: outputPath
+            }
+        ]
+    });
     initDb(false);
-    console.log('Running background service.');
+    log.info('Running background service.');
     setInterval(function () {
         //don't save window title if is idling
         self.saveUserIdleTime();
         self.saveForegroundWindowTitle();
-
 
     }, BACKGROUND_JOB_INTERVAL);
 };
@@ -417,7 +432,6 @@ var createTestItem = function (data) {
     var deferred = $q.defer();
 
     var active = {};
-
 
     active.app = 'app1';
     active.title = 'title1';
@@ -431,10 +445,10 @@ var createTestItem = function (data) {
 
     _.merge(active, data);
 
-    console.log('Test: Adding item', active);
+    log.info('Test: Adding item', active);
 
     setTimeout(function () {
-        console.log("Test: resolving", active)
+        log.info("Test: resolving", active)
         saveActiveWindow(active);
         deferred.resolve(active);
     }, BACKGROUND_JOB_INTERVAL);
@@ -454,7 +468,7 @@ BackgroundService.testSaving = function () {
     }).then(function () {
         trackItemServiceInst.findAll().then(function (items) {
             if (items.length != 1) {
-                console.error("!!!!!!!!!!!!!!!!!!!!!!!!Should have 1 trackItem!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                log.error("!!!!!!!!!!!!!!!!!!!!!!!!Should have 1 trackItem!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             }
         });
     }).then(function () {
@@ -464,7 +478,7 @@ BackgroundService.testSaving = function () {
     }).then(function () {
         trackItemServiceInst.findAll().then(function (items) {
             if (items.length != 2) {
-                console.error("!!!!!!!!!!!!!!!!!!!!!!!!Should have 2 trackItems!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                log.error("!!!!!!!!!!!!!!!!!!!!!!!!Should have 2 trackItems!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             }
         });
     }).then(function () {
@@ -472,12 +486,12 @@ BackgroundService.testSaving = function () {
     }).then(function () {
         return createTestItem({app: 'app2', title: 'title3'});
     }).then(function () {
-        trackItemServiceInst.findAll().then(function (items) {
-            if (items.length != 3) {
-                console.error("!!!!!!!!!!!!!!!!!!!!!!!!Should have 3 trackItems!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            }
-        });
-    })
+            trackItemServiceInst.findAll().then(function (items) {
+                if (items.length != 3) {
+                    log.error("!!!!!!!!!!!!!!!!!!!!!!!!Should have 3 trackItems!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                }
+            });
+        })
         .then(function () {
             trackItemServiceInst.findAll({
                 orderBy: [
@@ -497,12 +511,12 @@ BackgroundService.testSaving = function () {
                 });
 
                 if (hasCaps) {
-                    console.error("!!!!!!!!!!!!!!!!!!!!!!!!Should not have date caps!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", hasCaps, items);
+                    log.error("!!!!!!!!!!!!!!!!!!!!!!!!Should not have date caps!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", hasCaps, items);
                 }
             });
         }).then(function () {
-            console.log("!!!!!!!!!!!!!!!!!!!!!!!!TEST END!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        });
+        log.info("!!!!!!!!!!!!!!!!!!!!!!!!TEST END!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    });
 };
 
 

@@ -73,7 +73,7 @@ angular.module('angularDemoApp')
                     ['beginDate', 'ASC']
                 ], where: {
                     beginDate: {
-                        '>': ctrl.searchDate,
+                        '>=': ctrl.searchDate,
                         '<': getTomorrow(ctrl.searchDate)
                     }
                 }
@@ -97,8 +97,9 @@ angular.module('angularDemoApp')
                     })
                     .valueOf();
 
-                //
-                setWorkStatsForDay(items);
+                setWorkStatsForDay(items.filter(function (item) {
+                    return item.taskName === 'AppTrackItem';
+                }));
                 $rootScope.$apply();
             });
         };
