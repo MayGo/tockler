@@ -3,6 +3,9 @@ Backer Timetracker
 
 [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=MayGo&url=https://github.com/MayGo/backer-timetracker&title=Backer-Timetracker&language=en_GB&tags=github&category=software)
 
+
+<a href='https://pledgie.com/campaigns/31267'><img alt='Click here to lend your support to: Backer Timetracker and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/31267.png?skin_name=chrome' border='0' ></a>
+
 Application that tracks your time by monitoring your active windows (only titles) and idle time.
 
 - Windows [Download ver 1.0.2](https://github.com/MayGo/backer-timetracker/releases/download/1.0.2/Backer.Timetracker.Setup.exe) (Tested win 10)
