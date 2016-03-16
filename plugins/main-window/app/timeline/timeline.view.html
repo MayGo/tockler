@@ -1,7 +1,7 @@
 <div layout="column">
     <md-progress-circular ng-show="timelineCtrl.loading" md-mode="indeterminate"
                           style="margin: 90px auto; position: absolute; top: 0; left: 0; bottom: 0; right: 0;"
-    ></md-progress-circular>
+            ></md-progress-circular>
     <div layout="row">
         <md-button class="md-icon-button" aria-label="Refresh" ng-click="timelineCtrl.list()">
             <md-icon md-font-set="material-icons">refresh</md-icon>
@@ -17,14 +17,14 @@
         <div flex></div>
         <md-button class="md-icon-button" aria-label="Add log item"
                    ng-click="timelineCtrl.showAddLogDialog()"
-        >
+                >
             <md-tooltip md-direction="top">Add log item</md-tooltip>
             <md-icon md-font-set="material-icons">note_add</md-icon>
         </md-button>
     </div>
     <div id="trackItemMiniEdit" ng-show="timelineCtrl.selectedTrackItem"
          ng-style="{left:timelineCtrl.selectedTrackItem.left}"
-    >
+            >
         <form>
             <div layout="row">
 
@@ -49,8 +49,8 @@
               zoom-scale="timelineCtrl.zoomScale"
               zoom-x="timelineCtrl.zoomX"
 
-    ></timeline>
-
+            ></timeline>
+    <md-divider></md-divider>
     <div layout-padding>
         <div ng-if="timelineCtrl.dayStats.lateForWork">
             <div ng-if="timelineCtrl.dayStats.lateForWork > 0">
@@ -63,6 +63,12 @@
             </div>
         </div>
     </div>
-    <nvd3 options="timelineCtrl.pieOptions" data="timelineCtrl.pieData"></nvd3>
+    <md-divider></md-divider>
+    <div layout="row">
+        <nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieDataApp"></nvd3>
+        <nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieDataLog"></nvd3>
+        <nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieDataStatus"></nvd3>
+    </div>
+    <md-divider></md-divider>
 </div>
 

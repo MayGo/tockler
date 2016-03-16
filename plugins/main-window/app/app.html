@@ -1,12 +1,12 @@
 <div layout="column" flex>
-    <md-toolbar id="navbar" layout="row" layout-align="end center" ng-init="appCtrl.showSearch = false">
+    <md-toolbar id="navbar" layout="row" layout-align="end center">
 
         <a href="#/" class="navbar-brand" layout="row" layout-align="start center">
             <img src="../../shared/img/icon/timetracker_icon.ico" width="24" height="24">
             <span translate="app.name"></span>
         </a>
 
-        <div ng-if="!appCtrl.showSearch" layout="row">
+        <div layout="row">
             <md-button ui-sref-active="md-primary md-hue-2" ui-sref="app.timeline.view">
                 {{'menu.domain.timeline' | translate }}
             </md-button>
@@ -24,5 +24,23 @@
 
     </md-toolbar>
 
-    <ui-view></ui-view>
+    <ui-view flex></ui-view>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <div layout="column">
+                <div>
+                    <label>Application version </label>
+                    <span> {{appCtrl.versions.app}}</span>
+                </div>
+                <div>
+                    <label>Electron version </label>
+                    <span> {{appCtrl.versions.electron}}</span>
+                </div>
+                <div>
+                    <label>Chromium version </label>
+                    <span> {{appCtrl.versions.chrome}}</span>
+                </div>
+            </div>
+        </div>
+    </md-toolbar>
 </div>

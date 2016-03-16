@@ -9,9 +9,9 @@ angular.module('angularDemoApp')
 
         // constants
         var margin = {
-            top: 20,
+            top: 0,
             right: 30,
-            bottom: 20,
+            bottom: 15,
             left: 10
         };
 
@@ -23,7 +23,7 @@ angular.module('angularDemoApp')
         var xAxis;
         var yAxis;
 
-        var h = 200;
+        var h = 150;
         var w = $window.innerWidth;
 
         var height = h - margin.top - margin.bottom - 5;
@@ -284,6 +284,7 @@ angular.module('angularDemoApp')
             // Create object from TrackItem object, to prevent updating trackitem
             ctrl.selectedTrackItem = {
                 id: data.id,
+                taskName: data.taskName,
                 beginDate: data.beginDate,
                 endDate: data.endDate,
                 title: data.title,

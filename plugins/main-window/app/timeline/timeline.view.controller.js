@@ -13,8 +13,11 @@ angular.module('angularDemoApp')
         ctrl.pieOptions = {
             chart: {
                 type: 'pieChart',
-                height: 500,
+                height: 250,
                 x: function (d) {
+                    if (d.app === 'Default') {
+                        return d.title
+                    }
                     return (d.app) ? d.app : 'undefined';
                 },
                 y: function (d) {
@@ -27,14 +30,7 @@ angular.module('angularDemoApp')
                 duration: 500,
                 labelThreshold: 0.01,
                 labelSunbeamLayout: true,
-                legend: {
-                    margin: {
-                        top: 5,
-                        right: 35,
-                        bottom: 5,
-                        left: 0
-                    }
-                }
+                showLegend: false
             }
         };
 
@@ -88,9 +84,27 @@ angular.module('angularDemoApp')
                     });
                 };
 
-                ctrl.pieData = _.chain(items).filter(function (item) {
-                        return item.taskName === 'AppTrackItem';
+                ctrl.pieDataApp = _.chain(items).filter(function (item) {
+                    return item.taskName === 'AppTrackItem';
+                })
+                    .groupBy('app')
+                    .map(function (b) {
+                        return b.reduce(sumApp, {app: b[0].app, timeDiffInMs: 0})
                     })
+                    .valueOf();
+
+                ctrl.pieDataLog = _.chain(items).filter(function (item) {
+                    return item.taskName === 'LogTrackItem';
+                })
+                    .groupBy('title')
+                    .map(function (b) {
+                        return b.reduce(sumApp, {app: b[0].app, title: b[0].title,  timeDiffInMs: 0})
+                    })
+                    .valueOf();
+
+                ctrl.pieDataStatus = _.chain(items).filter(function (item) {
+                    return item.taskName === 'StatusTrackItem';
+                })
                     .groupBy('app')
                     .map(function (b) {
                         return b.reduce(sumApp, {app: b[0].app, timeDiffInMs: 0})
