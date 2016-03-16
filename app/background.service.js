@@ -306,7 +306,7 @@ var saveIdleTrackItem = function (seconds) {
 
 BackgroundService.onSleep = function () {
     isSleeping = true;
-    lastStatusTrackItemSaved = null;
+    //lastStatusTrackItemSaved = null;
     lastAppTrackItemSaved = null;
 };
 
@@ -314,8 +314,8 @@ BackgroundService.onResume = function () {
     addRawTrackItemToList(emptyItem);
     addRawTrackItemToList(emptyItem);
     addRawTrackItemToList(emptyItem);
-    if (lastAppTrackItemSaved) {
-        addInactivePeriod(lastAppTrackItemSaved.beginDate, new Date());
+    if (lastStatusTrackItemSaved) {
+        addInactivePeriod(lastStatusTrackItemSaved.endDate, new Date());
     } else {
         log.info('No lastAppTrackItemSaved for addInactivePeriod.')
     }
