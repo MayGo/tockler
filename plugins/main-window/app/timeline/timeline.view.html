@@ -65,9 +65,19 @@
     </div>
     <md-divider></md-divider>
     <div layout="row">
-        <nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieDataApp"></nvd3>
-        <nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieDataLog"></nvd3>
-        <nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieDataStatus"></nvd3>
+        <md-card>
+            <md-card-title><md-card-title-text>Applications</md-card-title-text></md-card-title>
+            <md-card-content><nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieDataApp"></nvd3></md-card-content>
+        </md-card>
+        <md-card>
+            <md-card-title><md-card-title-text>Logs</md-card-title-text></md-card-title>
+            <md-card-content> <nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieDataLog"></nvd3></md-card-content>
+        </md-card>
+        <md-card>
+            <md-card-title><md-card-title-text>Status</md-card-title-text></md-card-title>
+            <md-card-content> <nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieDataStatus"></nvd3></md-card-content>
+        </md-card>
+
     </div>
     <md-divider></md-divider>
 </div>

@@ -2,7 +2,7 @@
 var ipc = require("electron").ipcRenderer
 
 angular.module('angularDemoApp')
-    .controller('TimelineViewController', function ($rootScope, $mdDialog, $scope, $filter, TrackItemService, settingsData, $sessionStorage) {
+    .controller('TimelineViewController', function ($window, $rootScope, $mdDialog, $scope, $filter, TrackItemService, settingsData, $sessionStorage) {
         var ctrl = this;
 
         ctrl.trackItems = [];
@@ -10,10 +10,14 @@ angular.module('angularDemoApp')
         ctrl.pieData = [];
         ctrl.dayStats = {};
 
+        var w = $window.innerWidth;
+        var pieWidth = w / 3 - 16 * 3;
+
         ctrl.pieOptions = {
             chart: {
                 type: 'pieChart',
-                height: 250,
+                height: pieWidth,
+                width: pieWidth,
                 x: function (d) {
                     if (d.app === 'Default') {
                         return d.title
@@ -23,14 +27,21 @@ angular.module('angularDemoApp')
                 y: function (d) {
                     return d.timeDiffInMs;
                 },
+                color: function (d) {
+                    console.log(d.color)
+                    return d.color;
+                },
                 valueFormat: function (d) {
                     return $filter('msToDuration')(d);
                 },
-                showLabels: true,
+                showLabels: false,
                 duration: 500,
                 labelThreshold: 0.01,
                 labelSunbeamLayout: true,
-                showLegend: false
+                showLegend: false,
+                donut: true,
+                donutRatio: 0.30
+
             }
         };
 
@@ -89,7 +100,7 @@ angular.module('angularDemoApp')
                 })
                     .groupBy('app')
                     .map(function (b) {
-                        return b.reduce(sumApp, {app: b[0].app, timeDiffInMs: 0})
+                        return b.reduce(sumApp, {app: b[0].app, timeDiffInMs: 0, color: b[0].color})
                     })
                     .valueOf();
 
@@ -98,7 +109,7 @@ angular.module('angularDemoApp')
                 })
                     .groupBy('title')
                     .map(function (b) {
-                        return b.reduce(sumApp, {app: b[0].app, title: b[0].title,  timeDiffInMs: 0})
+                        return b.reduce(sumApp, {app: b[0].app, title: b[0].title, timeDiffInMs: 0, color: b[0].color})
                     })
                     .valueOf();
 
@@ -107,7 +118,7 @@ angular.module('angularDemoApp')
                 })
                     .groupBy('app')
                     .map(function (b) {
-                        return b.reduce(sumApp, {app: b[0].app, timeDiffInMs: 0})
+                        return b.reduce(sumApp, {app: b[0].app, timeDiffInMs: 0, color: b[0].color})
                     })
                     .valueOf();
 
