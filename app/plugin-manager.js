@@ -57,8 +57,9 @@ PluginManager.prototype.load = function (name, opt) {
         oWindow.webContents.send(sendEventName, 'ping');
     });
 
-    oWindow.on('closed', function () {
-        this.windows[name] = null
+    oWindow.on('close', function () {
+        console.log("Closing window");
+        this.windows[name] = null;
     }.bind(this))
 
     // open devtools
@@ -96,7 +97,8 @@ PluginManager.prototype.hide = function (name) {
  * @param {String} name  Name of the plugin
  */
 PluginManager.prototype.toggle = function (name) {
-    if (this.windows[name] && this.windows[name].isVisible())
+    console.log(this.windows[name]);
+    if (this.windows[name]  && this.windows[name].isVisible())
         this.hide(name)
     else
         this.show(name)
@@ -134,6 +136,7 @@ PluginManager.prototype._initEvents = function () {
     ipc.on('set-on-top', function (ev, name, flag) {
         self.setOnTop(name, flag)
     })
+
 }
 
 /**
