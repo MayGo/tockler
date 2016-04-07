@@ -59,6 +59,7 @@ PluginManager.prototype.load = function (name, opt) {
 
     oWindow.on('close', function () {
         console.log("Closing window");
+        console.log(this.windows[name]);
         this.windows[name] = null;
     }.bind(this))
 

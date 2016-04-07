@@ -24,23 +24,11 @@
 
     </md-toolbar>
 
-    <ui-view flex></ui-view>
-    <md-toolbar>
-        <div class="md-toolbar-tools">
-            <div layout="column" style="font-size:10px">
-                <div>
-                    <label>Application version </label>
-                    <span> {{appCtrl.versions.app}}</span>
-                </div>
-                <div>
-                    <label>Electron version </label>
-                    <span> {{appCtrl.versions.electron}}</span>
-                </div>
-                <div>
-                    <label>Chromium version </label>
-                    <span> {{appCtrl.versions.chrome}}</span>
-                </div>
-            </div>
+    <md-content ui-view></md-content>
+    <div style="font-size:8px;border-top: #d8d8d8 1px solid; background: #f9f9f9">
+        <div style="float:right;padding:5px">
+            <label>Application version </label>
+            <span> {{appCtrl.versions.app}}</span>
         </div>
-    </md-toolbar>
+    </div>
 </div>
