@@ -28,7 +28,6 @@ angular.module('angularDemoApp')
                     return d.timeDiffInMs;
                 },
                 color: function (d) {
-                    console.log(d.color)
                     return d.color;
                 },
                 valueFormat: function (d) {

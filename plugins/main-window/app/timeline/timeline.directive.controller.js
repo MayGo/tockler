@@ -92,18 +92,20 @@ angular.module('angularDemoApp')
 
             console.log("Init zoom.");
             var changeZoom = function (scale, x) {
-                //console.log("Changing zoom, scale: " + scale + ", x: " + x);
-                layersGroup.attr("transform", "translate(" + x + ", 0)scale(" + scale + ", 1)");
+                console.log("Changing zoom, scale: " + scale + ", x: " + x);
+                layersGroup.attr("transform", "translate(" + x + ", 0) scale(" + scale + ", 1)");
                 vis.select(".x.axis").call(xAxis);
 
-                selectionTool.extent(selectionTool.extent())
+                selectionTool.extent(selectionTool.extent());
                 d3.select(".brush").call(selectionTool);
-            }
+            };
 
-            var zoom = d3.behavior.zoom().scaleExtent([1, 100]).x(xScale).on("zoom", function () {
-                changeZoom(d3.event.scale, d3.event.translate[0])
-                ctrl.onZoomChanged(d3.event.scale, d3.event.translate[0])
-            });
+            var zoom = d3.behavior.zoom().scaleExtent([1, 100])
+                .x(xScale)
+                .on("zoom", function () {
+                    changeZoom(d3.event.scale, d3.event.translate[0])
+                    ctrl.onZoomChanged(d3.event.scale, d3.event.translate[0])
+                });
 
 
             vis.append("g")
@@ -245,7 +247,9 @@ angular.module('angularDemoApp')
                 .on('mouseout', tip.hide);
 
             if (ctrl.zoomX && ctrl.zoomScale) {
-                zoom.scale(ctrl.zoomScale).translate([ctrl.zoomX, 0]);
+                zoom.scale(ctrl.zoomScale)
+                    .translate([ctrl.zoomX, 1]);
+
                 changeZoom(ctrl.zoomScale, ctrl.zoomX);
             }
         }
@@ -261,10 +265,17 @@ angular.module('angularDemoApp')
             xScale = d3.time.scale().domain([timeDomainStart, timeDomainEnd]).range([0, width]).clamp(true);
             yScale = d3.scale.ordinal().domain(trackNames).rangeRoundBands([0, height - margin.top - margin.bottom], .1);
 
-            xAxis = d3.svg.axis().scale(xScale).orient("bottom").tickFormat(d3.time.format(tickFormat)).ticks(25).tickSize(8).tickPadding(8);
+            xAxis = d3.svg.axis().scale(xScale).orient("bottom")
+                .tickFormat(d3.time.format(tickFormat))
+                .ticks(d3.time.minute, 30)
+                .tickSize(8)
+                .tickPadding(8);
             yAxis = d3.svg.axis().scale(yScale).orient("left").tickSize(5).tickSize(-2).tickPadding(-90);
 
-            vis.append("g").attr("class", "x axis").attr("transform", "translate(0, " + (height - margin.top - margin.bottom) + ")").transition().call(xAxis);
+            vis.append("g").attr("class", "x axis")
+                .attr("transform", "translate(0, " + (height - margin.top - margin.bottom) + ")")
+                .transition()
+                .call(xAxis);
             vis.append("g").attr("class", "y axis").transition().call(yAxis);
         }
 
