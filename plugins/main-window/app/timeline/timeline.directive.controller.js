@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('angularDemoApp')
-    .controller('TimelineDirectiveController', function ($scope, $window) {
+    .controller('TimelineDirectiveController', function ($scope, $window, $timeout) {
         var ctrl = this;
         //public functions
         ctrl.init = init;
@@ -92,19 +92,31 @@ angular.module('angularDemoApp')
 
             console.log("Init zoom.");
             var changeZoom = function (scale, x) {
-                console.log("Changing zoom, scale: " + scale + ", x: " + x);
-                layersGroup.attr("transform", "translate(" + x + ", 0) scale(" + scale + ", 1)");
+
+                var size = w * scale;
+                x = Math.min(x, 0);
+                x = Math.max(x, width - size);
+
+                if (scale === 1) {
+                    x = 0;
+                }
+
+                //console.log("Changing zoom, scale: " + scale + ", x: " + x);
+
+                layersGroup.attr("transform", "translate(" + x + ", 1) scale(" + scale + ", 1)");
+                zoom.scale(scale).translate([x, 1]);
                 vis.select(".x.axis").call(xAxis);
 
                 selectionTool.extent(selectionTool.extent());
                 d3.select(".brush").call(selectionTool);
+
+                ctrl.onZoomChanged(scale, x);
             };
 
             var zoom = d3.behavior.zoom().scaleExtent([1, 100])
                 .x(xScale)
                 .on("zoom", function () {
                     changeZoom(d3.event.scale, d3.event.translate[0])
-                    ctrl.onZoomChanged(d3.event.scale, d3.event.translate[0])
                 });
 
 
@@ -247,10 +259,10 @@ angular.module('angularDemoApp')
                 .on('mouseout', tip.hide);
 
             if (ctrl.zoomX && ctrl.zoomScale) {
-                zoom.scale(ctrl.zoomScale)
-                    .translate([ctrl.zoomX, 1]);
-
-                changeZoom(ctrl.zoomScale, ctrl.zoomX);
+                // using timeout to prevent xAxis update bug (ticks not scaled evenly)
+                $timeout(function () {
+                    changeZoom(ctrl.zoomScale, ctrl.zoomX);
+                }, 100);
             }
         }
 
@@ -267,7 +279,7 @@ angular.module('angularDemoApp')
 
             xAxis = d3.svg.axis().scale(xScale).orient("bottom")
                 .tickFormat(d3.time.format(tickFormat))
-                .ticks(d3.time.minute, 30)
+                .ticks(d3.time.minute, 60)
                 .tickSize(8)
                 .tickPadding(8);
             yAxis = d3.svg.axis().scale(yScale).orient("left").tickSize(5).tickSize(-2).tickPadding(-90);
