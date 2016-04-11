@@ -97,6 +97,7 @@ angular.module('angularDemoApp')
                 x = Math.min(x, 0);
                 x = Math.max(x, width - size);
 
+                // Prevent panning error when zoomed out
                 if (scale === 1) {
                     x = 0;
                 }
