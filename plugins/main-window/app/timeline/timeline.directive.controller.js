@@ -6,6 +6,7 @@ angular.module('angularDemoApp')
         //public functions
         ctrl.init = init;
         ctrl.onTrackItemsChanged = onTrackItemsChanged;
+        ctrl.addItemsToTimeline = addItemsToTimeline;
 
         // constants
         var margin = {
@@ -16,6 +17,7 @@ angular.module('angularDemoApp')
         };
 
         var vis;
+        var layersGroup
         var tip;
         var selectionTool;
         var xScale;
@@ -43,6 +45,44 @@ angular.module('angularDemoApp')
          return ctrl.trackItems;
          }, update);*/
 
+        function addItemsToTimeline(trackItems) {
+            console.log('addItemsToTimeline', trackItems.length);
+
+            // Update time domain
+            var timeDomainStart = ctrl.startDate;
+            console.log("Update time domain: ", timeDomainStart)
+            var timeDomainEnd = d3.time.day.offset(timeDomainStart, 1);
+            xScale.domain([timeDomainStart, timeDomainEnd]);
+
+            // Update data
+            layersGroup.selectAll("g.layer").data(trackItems, function (d) {
+                    return d.id;
+                })
+                .enter()
+                .append("rect")
+                .attr('class', 'trackItem')
+                .style("fill", function (d) {
+                    return d.color;
+                }).attr("y", 0).attr("x", function (d) {
+                return xScale(d.beginDate);
+            }).attr("transform", function (d) {
+                return "translate(" + 0 + "," + yScale(d.taskName) + ")";
+            }).attr("height", function (d) {
+                return yScale.rangeBand();
+            }).attr("width", function (d) {
+                    if ((xScale(d.endDate) - xScale(d.beginDate)) < 0) {
+                        console.error("Negative value, error with dates.");
+                        console.log(d);
+                        return 0;
+                    }
+                    return (xScale(d.endDate) - xScale(d.beginDate));
+                })
+                .on('click', onClickTrackItem)
+                .on('mouseover', tip.show)
+                .on('mouseout', tip.hide);
+
+        }
+
         function init(el) {
 
             vis = d3.select(el)
@@ -51,6 +91,7 @@ angular.module('angularDemoApp')
                 .attr("height", height + margin.top + margin.bottom)
 
             tip = initTooltips(vis);
+            initEveryThing();
 
         }
 
@@ -82,11 +123,18 @@ angular.module('angularDemoApp')
 
         function onTrackItemsChanged(newVal, oldVal) {
             console.log('TrackItems changed');
-            vis.selectAll('*').remove();
+            vis.selectAll('.trackItem').remove();
             // if 'val' is undefined, exit
             if (!newVal) {
                 return;
             }
+            if (newVal.length > 0) {
+                ctrl.addItemsToTimeline(newVal)
+            }
+        }
+
+        function initEveryThing() {
+            console.log('initEveryThing');
 
             initAxis();
 
@@ -232,37 +280,13 @@ angular.module('angularDemoApp')
                 .attr("width", width)
                 .attr("height", height);
 
-            var layersGroup = vis.append('g').attr("clip-path", "url(#clip)").append('g').attr('class', 'trackItems');
+            layersGroup = vis.append('g').attr("clip-path", "url(#clip)").append('g').attr('class', 'trackItems');
 
-
-            var layers = layersGroup.selectAll("g.layer")
-                .data(newVal, function (d) {
-                    return d.id;
-                })
-                .enter().append("rect").attr('class', 'trackItem').style("fill", function (d) {
-                    return d.color;
-                }).attr("y", 0).attr("x", function (d) {
-                    return xScale(d.beginDate);
-                }).attr("transform", function (d) {
-                    return "translate(" + 0 + "," + yScale(d.taskName) + ")";
-                }).attr("height", function (d) {
-                    return yScale.rangeBand();
-                }).attr("width", function (d) {
-                    if ((xScale(d.endDate) - xScale(d.beginDate)) < 0) {
-                        console.error("Negative value, error with dates.");
-                        console.log(d);
-                        return 0;
-                    }
-                    return (xScale(d.endDate) - xScale(d.beginDate));
-                })
-                .on('click', onClickTrackItem)
-                .on('mouseover', tip.show)
-                .on('mouseout', tip.hide);
 
             if (ctrl.zoomX && ctrl.zoomScale) {
                 // using timeout to prevent xAxis update bug (ticks not scaled evenly)
                 $timeout(function () {
-                    changeZoom(ctrl.zoomScale, ctrl.zoomX);
+                    // changeZoom(ctrl.zoomScale, ctrl.zoomX);
                 }, 100);
             }
         }
@@ -270,9 +294,9 @@ angular.module('angularDemoApp')
         function initAxis() {
             console.log("Init axis.");
             var tickFormat = "%H:%M";
-            var startDate = ctrl.startDate;
-            var timeDomainStart = startDate;
-            var timeDomainEnd = d3.time.day.offset(startDate, 1);
+
+            var timeDomainStart = moment().startOf('day');
+            var timeDomainEnd = d3.time.day.offset(timeDomainStart, 1);
 
             var trackNames = ["LogTrackItem", "StatusTrackItem", "AppTrackItem"];
             xScale = d3.time.scale().domain([timeDomainStart, timeDomainEnd]).range([0, width]).clamp(true);

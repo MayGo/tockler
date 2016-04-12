@@ -11,8 +11,12 @@ function Timeline($window, $rootScope, $document) {
             }
         );
 
-        /*$scope.$on('windowResize', resize);
+        /*scope.$on('windowResize', resize);
          */
+        scope.$on('addItemToTimeline', function (event, trackItem) {
+            console.log('Adding Item to timeline:', trackItem);
+            ctrl.addItemsToTimeline([trackItem]);
+        });
 
     }
 

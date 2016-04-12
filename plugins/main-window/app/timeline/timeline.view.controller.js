@@ -162,7 +162,7 @@ angular.module('angularDemoApp')
         });
 
         ctrl.showAddLogDialog = function (trackItem) {
-            console.log(trackItem)
+            console.log(trackItem);
             $mdDialog.show({
                 templateUrl: 'app/trackItem/trackItem.edit.modal.html',
                 controller: 'TrackItemEditModalController as trackItemModalCtrl',
@@ -186,7 +186,7 @@ angular.module('angularDemoApp')
                 TrackItemService.update(trackItem.id, trackItem).then(function (item) {
                     console.log("Updated trackitem to DB:", item);
                     ctrl.selectedTrackItem = null;
-                    ctrl.list();
+                    $scope.$broadcast('addItemToTimeline', item);
                 });
             } else {
                 if (!trackItem.app) {
@@ -195,7 +195,7 @@ angular.module('angularDemoApp')
                 TrackItemService.create(trackItem).then(function (item) {
                     console.log("Created trackitem to DB:", item);
                     ctrl.selectedTrackItem = null;
-                    ctrl.list();
+                    $scope.$broadcast('addItemToTimeline', item);
                 });
             }
 
