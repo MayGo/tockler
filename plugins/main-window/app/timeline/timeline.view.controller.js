@@ -200,6 +200,22 @@ angular.module('angularDemoApp')
             }
 
         };
+
+        ctrl.deleteTrackItem = function (trackItem) {
+            console.log("Deleting trackitem.", trackItem);
+
+            if (trackItem.id) {
+                TrackItemService.destroy(trackItem.id).then(function (item) {
+                    console.log("Deleting trackitem from DB:", item);
+                    ctrl.selectedTrackItem = null;
+                    ctrl.list();
+                });
+            } else {
+                console.log("No id, not deleting from DB");
+            }
+
+        };
+
         ctrl.closeMiniEdit = function () {
             console.log("Closing mini edit.");
             ctrl.selectedTrackItem = null;

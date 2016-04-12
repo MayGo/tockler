@@ -312,33 +312,35 @@ angular.module('angularDemoApp')
                 endDate: data.endDate,
                 title: data.title,
                 color: data.color,
-                left: x + 'px'
+                left: x + 'px',
+                top: d3.transform(traslate).translate[1] + 'px'
             };
+
             $scope.$apply();
 
+            if (data.taskName === 'LogTrackItem') {
+                // position brush same as trackitem
+                selectionToolSvg.selectAll("rect").attr('height', p.attr('height')).attr("transform", traslate);
+                //   d3.select("g.brush").call((brush.empty())
+                // to make unselecting work correctly
+                selectionTool.x(xScale);
 
-            // position brush same as trackitem
-            selectionToolSvg.selectAll("rect").attr('height', p.attr('height')).attr("transform", traslate);
-            //   d3.select("g.brush").call((brush.empty())
-            // to make unselecting work correctly
-            selectionTool.x(xScale);
+                // Make brush same size as trackitem
+                selectionTool.extent([data.beginDate, data.endDate]);
+                selectionToolSvg.call(selectionTool);
 
-            // Make brush same size as trackitem
-            selectionTool.extent([data.beginDate, data.endDate]);
-            selectionToolSvg.call(selectionTool);
-
-            // remove crosshair outside of item
-            selectionToolSvg.select(".background").attr('width', 0);
+                // remove crosshair outside of item
+                selectionToolSvg.select(".background").attr('width', 0);
 
 
-            // add handles
-            var ext = selectionTool.extent();
-            d3.select(".left-handle").attr("x", xScale(ext[0]) - 5);
-            d3.select(".right-handle").attr("x", xScale(ext[1]) - 7);
+                // add handles
+                var ext = selectionTool.extent();
+                d3.select(".left-handle").attr("x", xScale(ext[0]) - 5);
+                d3.select(".right-handle").attr("x", xScale(ext[1]) - 7);
 
-            // prevent event bubbling up, to unselect when clicking outside
-            event.stopPropagation();
-
+                // prevent event bubbling up, to unselect when clicking outside
+                event.stopPropagation();
+            }
         };
 
     });

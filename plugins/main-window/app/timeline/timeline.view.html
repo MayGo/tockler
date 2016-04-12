@@ -23,7 +23,7 @@
         </md-button>
     </div>
     <div id="trackItemMiniEdit" ng-show="timelineCtrl.selectedTrackItem"
-         ng-style="{left:timelineCtrl.selectedTrackItem.left}"
+         ng-style="{left:timelineCtrl.selectedTrackItem.left, top:timelineCtrl.selectedTrackItem.top}"
             >
         <form>
             <div layout="row">
@@ -37,6 +37,10 @@
                 <md-button type="submit" class="md-icon-button" aria-label="Refresh"
                            ng-click="timelineCtrl.saveTrackItem(timelineCtrl.selectedTrackItem)">
                     <md-icon md-font-set="material-icons">save</md-icon>
+                </md-button>
+                <md-button type="submit" class="md-icon-button" aria-label="Delete"
+                           ng-click="timelineCtrl.deleteTrackItem(timelineCtrl.selectedTrackItem)">
+                    <md-icon md-font-set="material-icons">delete</md-icon>
                 </md-button>
 
             </div>
