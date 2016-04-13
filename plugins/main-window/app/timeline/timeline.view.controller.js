@@ -88,43 +88,6 @@ angular.module('angularDemoApp')
                 ctrl.loading = false;
 
 
-                function sumApp(p, c) {
-                    return _.extend(p, {
-                        timeDiffInMs: p.timeDiffInMs + moment(c.endDate).diff(c.beginDate)
-                    });
-                };
-
-                ctrl.pieDataApp = _.chain(items).filter(function (item) {
-                    return item.taskName === 'AppTrackItem';
-                })
-                    .groupBy('app')
-                    .map(function (b) {
-                        return b.reduce(sumApp, {app: b[0].app, timeDiffInMs: 0, color: b[0].color})
-                    })
-                    .valueOf();
-
-                ctrl.pieDataLog = _.chain(items).filter(function (item) {
-                    return item.taskName === 'LogTrackItem';
-                })
-                    .groupBy('title')
-                    .map(function (b) {
-                        return b.reduce(sumApp, {app: b[0].app, title: b[0].title, timeDiffInMs: 0, color: b[0].color})
-                    })
-                    .valueOf();
-
-                ctrl.pieDataStatus = _.chain(items).filter(function (item) {
-                    return item.taskName === 'StatusTrackItem';
-                })
-                    .groupBy('app')
-                    .map(function (b) {
-                        return b.reduce(sumApp, {app: b[0].app, timeDiffInMs: 0, color: b[0].color})
-                    })
-                    .valueOf();
-
-                setWorkStatsForDay(items.filter(function (item) {
-                    return item.taskName === 'AppTrackItem';
-                }));
-                $rootScope.$apply();
             });
         };
 
@@ -150,6 +113,49 @@ angular.module('angularDemoApp')
 
             }
         }, true);
+
+        $scope.$watchCollection('timelineCtrl.trackItems', function (items, oldValue) {
+
+            console.log('Track Items changed. Updating pie charts');
+            function sumApp(p, c) {
+                return _.extend(p, {
+                    timeDiffInMs: p.timeDiffInMs + moment(c.endDate).diff(c.beginDate)
+                });
+            };
+
+            ctrl.pieDataApp = _.chain(items).filter(function (item) {
+                    return item.taskName === 'AppTrackItem';
+                })
+                .groupBy('app')
+                .map(function (b) {
+                    return b.reduce(sumApp, {app: b[0].app, timeDiffInMs: 0, color: b[0].color})
+                })
+                .valueOf();
+
+            ctrl.pieDataLog = _.chain(items).filter(function (item) {
+                    return item.taskName === 'LogTrackItem';
+                })
+                .groupBy('title')
+                .map(function (b) {
+                    return b.reduce(sumApp, {app: b[0].app, title: b[0].title, timeDiffInMs: 0, color: b[0].color})
+                })
+                .valueOf();
+
+            ctrl.pieDataStatus = _.chain(items).filter(function (item) {
+                    return item.taskName === 'StatusTrackItem';
+                })
+                .groupBy('app')
+                .map(function (b) {
+                    return b.reduce(sumApp, {app: b[0].app, timeDiffInMs: 0, color: b[0].color})
+                })
+                .valueOf();
+
+            setWorkStatsForDay(items.filter(function (item) {
+                return item.taskName === 'AppTrackItem';
+            }));
+           // $rootScope.$apply();
+
+        });
 
         ctrl.onZoomChanged = function (scale, x) {
             $sessionStorage.zoomScale = scale;
@@ -186,7 +192,17 @@ angular.module('angularDemoApp')
                 TrackItemService.update(trackItem.id, trackItem).then(function (item) {
                     console.log("Updated trackitem to DB:", item);
                     ctrl.selectedTrackItem = null;
+
                     $scope.$broadcast('addItemToTimeline', item);
+
+                    var upsert = function (arr, id, newval) {
+                        var index = _.indexOf(arr, _.find(arr, {id: id}));
+                        arr.splice(index, 1, newval);
+                    };
+
+                    upsert(ctrl.trackItems, item._id, item);
+
+                    $scope.$apply();
                 });
             } else {
                 if (!trackItem.app) {
@@ -195,7 +211,12 @@ angular.module('angularDemoApp')
                 TrackItemService.create(trackItem).then(function (item) {
                     console.log("Created trackitem to DB:", item);
                     ctrl.selectedTrackItem = null;
+
                     $scope.$broadcast('addItemToTimeline', item);
+
+                    ctrl.trackItems.push(item);
+
+                    $scope.$apply();
                 });
             }
 
@@ -206,9 +227,13 @@ angular.module('angularDemoApp')
 
             if (trackItem.id) {
                 TrackItemService.destroy(trackItem.id).then(function (item) {
-                    console.log("Deleting trackitem from DB:", item);
+                    console.log("Deleting trackitem from DB:", trackItem);
                     ctrl.selectedTrackItem = null;
-                    ctrl.list();
+
+                    var index = _.indexOf(ctrl.trackItems, _.find(ctrl.trackItems, {id: trackItem.id}));
+                    ctrl.trackItems.splice(index, 1)
+                    $scope.$broadcast('removeItemsFromTimeline', ctrl.trackItems);
+                    $scope.$apply();
                 });
             } else {
                 console.log("No id, not deleting from DB");

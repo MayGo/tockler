@@ -7,6 +7,8 @@ angular.module('angularDemoApp')
         ctrl.init = init;
         ctrl.onTrackItemsChanged = onTrackItemsChanged;
         ctrl.addItemsToTimeline = addItemsToTimeline;
+        ctrl.removeItemsFromTimeline = removeItemsFromTimeline;
+        ctrl.changeDay = changeDay;
 
         // constants
         var margin = {
@@ -45,14 +47,32 @@ angular.module('angularDemoApp')
          return ctrl.trackItems;
          }, update);*/
 
-        function addItemsToTimeline(trackItems) {
-            console.log('addItemsToTimeline', trackItems.length);
+        function changeDay(day) {
+
+            // if 'day' is undefined, exit
+            if (!day) {
+                return;
+            }
+            console.log('Changing day: '+ day);
+            //Remove everything
+            vis.selectAll('.trackItem').remove();
 
             // Update time domain
-            var timeDomainStart = ctrl.startDate;
+            var timeDomainStart = day;
             console.log("Update time domain: ", timeDomainStart)
             var timeDomainEnd = d3.time.day.offset(timeDomainStart, 1);
             xScale.domain([timeDomainStart, timeDomainEnd]);
+        }
+
+        function removeItemsFromTimeline(trackItems){
+            console.log('removeItemsFromTimeline', trackItems.length);
+            layersGroup.selectAll(".trackItem").data(trackItems, function (d) {
+                    return d.id;
+                }).exit().remove();
+        }
+
+        function addItemsToTimeline(trackItems) {
+            console.log('addItemsToTimeline', trackItems.length);
 
             // Update data
             layersGroup.selectAll("g.layer").data(trackItems, function (d) {
@@ -123,7 +143,7 @@ angular.module('angularDemoApp')
 
         function onTrackItemsChanged(newVal, oldVal) {
             console.log('TrackItems changed');
-            vis.selectAll('.trackItem').remove();
+
             // if 'val' is undefined, exit
             if (!newVal) {
                 return;

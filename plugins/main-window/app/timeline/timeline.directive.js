@@ -11,11 +11,20 @@ function Timeline($window, $rootScope, $document) {
             }
         );
 
+        scope.$watch('timelineDirectiveCtrl.startDate', function (newVal, oldVal) {
+                ctrl.changeDay(newVal);
+            }
+        );
+
         /*scope.$on('windowResize', resize);
          */
         scope.$on('addItemToTimeline', function (event, trackItem) {
             console.log('Adding Item to timeline:', trackItem);
             ctrl.addItemsToTimeline([trackItem]);
+        });
+        scope.$on('removeItemsFromTimeline', function (event, trackItems) {
+            console.log('Removing Items from timeline(refreshing):', trackItems.length);
+            ctrl.removeItemsFromTimeline(trackItems);
         });
 
     }
