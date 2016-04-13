@@ -86,7 +86,7 @@ angular.module('angularDemoApp')
             }).then(function (items) {
                 ctrl.trackItems = items;
                 ctrl.loading = false;
-
+                $scope.$apply();
 
             });
         };
