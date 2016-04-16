@@ -44,32 +44,32 @@ angular.module('angularDemoApp')
             }
         };
 
-        //ctrl.maxDate = new Date();
-
         function getTomorrow(d) {
             return new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1)
         }
 
-        var today = new Date();
-        var tomorrow = getTomorrow(today);
-        ctrl.searchDate = today;
-
-        today.setHours(0, 0, 0, 0);
-        console.log(today, tomorrow);
-
         ctrl.dayBack = function () {
             ctrl.searchDate = moment(ctrl.searchDate).subtract(1, 'days').toDate();
-            ctrl.list();
+            ctrl.list(ctrl.searchDate);
 
         };
         ctrl.dayForward = function () {
             ctrl.searchDate = moment(ctrl.searchDate).add(1, 'days').toDate();
-            ctrl.list();
+            ctrl.list(ctrl.searchDate);
+        };
+
+        ctrl.refresh = function () {
+            var searchFrom = _.chain(ctrl.trackItems).filter(function (item) {
+                return item.taskName !== 'LogTrackItem';
+            }).last().valueOf().beginDate;
+            console.log('Refreshing from:', searchFrom);
+            ctrl.list(searchFrom);
         };
 
         ctrl.loading = false;
-        ctrl.list = function () {
-            console.log("Refresh data");
+
+        ctrl.list = function (startDate) {
+            console.log("Load data from:", startDate);
             ctrl.zoomScale = $sessionStorage.zoomScale || 0;
             ctrl.zoomX = $sessionStorage.zoomX || 0;
             ctrl.loading = true;
@@ -79,8 +79,8 @@ angular.module('angularDemoApp')
                     ['beginDate', 'ASC']
                 ], where: {
                     beginDate: {
-                        '>=': ctrl.searchDate,
-                        '<': getTomorrow(ctrl.searchDate)
+                        '>=': startDate,
+                        '<': getTomorrow(startDate)
                     }
                 }
             }).then(function (items) {
@@ -124,8 +124,8 @@ angular.module('angularDemoApp')
             };
 
             ctrl.pieDataApp = _.chain(items).filter(function (item) {
-                    return item.taskName === 'AppTrackItem';
-                })
+                return item.taskName === 'AppTrackItem';
+            })
                 .groupBy('app')
                 .map(function (b) {
                     return b.reduce(sumApp, {app: b[0].app, timeDiffInMs: 0, color: b[0].color})
@@ -133,8 +133,8 @@ angular.module('angularDemoApp')
                 .valueOf();
 
             ctrl.pieDataLog = _.chain(items).filter(function (item) {
-                    return item.taskName === 'LogTrackItem';
-                })
+                return item.taskName === 'LogTrackItem';
+            })
                 .groupBy('title')
                 .map(function (b) {
                     return b.reduce(sumApp, {app: b[0].app, title: b[0].title, timeDiffInMs: 0, color: b[0].color})
@@ -142,8 +142,8 @@ angular.module('angularDemoApp')
                 .valueOf();
 
             ctrl.pieDataStatus = _.chain(items).filter(function (item) {
-                    return item.taskName === 'StatusTrackItem';
-                })
+                return item.taskName === 'StatusTrackItem';
+            })
                 .groupBy('app')
                 .map(function (b) {
                     return b.reduce(sumApp, {app: b[0].app, timeDiffInMs: 0, color: b[0].color})
@@ -153,7 +153,7 @@ angular.module('angularDemoApp')
             setWorkStatsForDay(items.filter(function (item) {
                 return item.taskName === 'AppTrackItem';
             }));
-           // $rootScope.$apply();
+            // $rootScope.$apply();
 
         });
 
@@ -246,6 +246,10 @@ angular.module('angularDemoApp')
             ctrl.selectedTrackItem = null;
         };
 
-        ctrl.list();
+        // Initialy load todays data
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        ctrl.searchDate = today;
+        ctrl.list(today);
 
     });

@@ -9,6 +9,7 @@ angular.module('angularDemoApp')
         ctrl.addItemsToTimeline = addItemsToTimeline;
         ctrl.removeItemsFromTimeline = removeItemsFromTimeline;
         ctrl.changeDay = changeDay;
+        ctrl.updateDomain = updateDomain;
 
         // constants
         var margin = {
@@ -53,51 +54,59 @@ angular.module('angularDemoApp')
             if (!day) {
                 return;
             }
-            console.log('Changing day: '+ day);
+            console.log('Changing day: ' + day);
             //Remove everything
             vis.selectAll('.trackItem').remove();
+            updateDomain(day)
 
+        }
+
+        function updateDomain(day){
             // Update time domain
             var timeDomainStart = day;
-            console.log("Update time domain: ", timeDomainStart)
+            //console.log("Update time domain: ", timeDomainStart)
             var timeDomainEnd = d3.time.day.offset(timeDomainStart, 1);
             xScale.domain([timeDomainStart, timeDomainEnd]);
         }
 
-        function removeItemsFromTimeline(trackItems){
+        function removeItemsFromTimeline(trackItems) {
             console.log('removeItemsFromTimeline', trackItems.length);
             layersGroup.selectAll(".trackItem").data(trackItems, function (d) {
-                    return d.id;
-                }).exit().remove();
+                return d.id;
+            }).exit().remove();
         }
 
         function addItemsToTimeline(trackItems) {
             console.log('addItemsToTimeline', trackItems.length);
-
             // Update data
-            layersGroup.selectAll("g.layer").data(trackItems, function (d) {
-                    return d.id;
-                })
-                .enter()
+            var insertedItems = layersGroup.selectAll(".trackItem").data(trackItems, function (d) {
+                return d.id;
+            });
+            insertedItems.enter()
                 .append("rect")
-                .attr('class', 'trackItem')
-                .style("fill", function (d) {
-                    return d.color;
-                }).attr("y", 0).attr("x", function (d) {
+                .attr('class', 'trackItem');
+
+            insertedItems.style("fill", function (d) {
+                return d.color;
+            }).attr("y", 0);
+
+            insertedItems.attr("x", function (d) {
                 return xScale(d.beginDate);
             }).attr("transform", function (d) {
                 return "translate(" + 0 + "," + yScale(d.taskName) + ")";
             }).attr("height", function (d) {
                 return yScale.rangeBand();
             }).attr("width", function (d) {
-                    if ((xScale(d.endDate) - xScale(d.beginDate)) < 0) {
-                        console.error("Negative value, error with dates.");
-                        console.log(d);
-                        return 0;
-                    }
-                    return (xScale(d.endDate) - xScale(d.beginDate));
-                })
-                .on('click', onClickTrackItem)
+                if ((xScale(d.endDate) - xScale(d.beginDate)) < 0) {
+                    console.error("Negative value, error with dates.");
+                    console.log(d);
+                    return 0;
+                }
+                return (xScale(d.endDate) - xScale(d.beginDate));
+            });
+
+
+            insertedItems.on('click', onClickTrackItem)
                 .on('mouseover', tip.show)
                 .on('mouseout', tip.hide);
 
@@ -180,6 +189,9 @@ angular.module('angularDemoApp')
                 d3.select(".brush").call(selectionTool);
 
                 ctrl.onZoomChanged(scale, x);
+
+                //refresh domain scale, so when zooming and later refreshing data, update item would not be error offset
+                ctrl.updateDomain(ctrl.startDate);
             };
 
             var zoom = d3.behavior.zoom().scaleExtent([1, 100])
@@ -306,7 +318,7 @@ angular.module('angularDemoApp')
             if (ctrl.zoomX && ctrl.zoomScale) {
                 // using timeout to prevent xAxis update bug (ticks not scaled evenly)
                 $timeout(function () {
-                    // changeZoom(ctrl.zoomScale, ctrl.zoomX);
+                     changeZoom(ctrl.zoomScale, ctrl.zoomX);
                 }, 100);
             }
         }
