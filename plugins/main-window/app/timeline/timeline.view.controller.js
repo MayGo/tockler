@@ -164,7 +164,7 @@ angular.module('angularDemoApp')
 
         ipc.on('main-window-focus', function (event, arg) {
             console.log("Main-Window gained focus, reloading");
-            ctrl.list();
+            ctrl.refresh();
         });
 
         ctrl.showAddLogDialog = function (trackItem) {

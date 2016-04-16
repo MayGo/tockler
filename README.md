@@ -64,6 +64,6 @@ After built, the dist files should be saved to `output` folder by default.
 
 # License
 GNU General Public License v2.0
-Copyright (c) 2016 Maigo Erit
+Copyright (c) 2016 MayGo @ [trimatech.ee](http://trimatech.ee)
 
 
