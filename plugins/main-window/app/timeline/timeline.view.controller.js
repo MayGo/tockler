@@ -80,7 +80,7 @@ angular.module('angularDemoApp')
                 orderBy: [
                     ['beginDate', 'ASC']
                 ], where: {
-                    beginDate: {
+                    endDate: {
                         '>=': startDate,
                         '<': getTomorrow(startDate)
                     }
@@ -93,13 +93,13 @@ angular.module('angularDemoApp')
                     } else {
                         arr.splice(index, 1, newval);
                     }
-
                 };
+                var updatedItems = _.clone(ctrl.trackItems);
 
                 _.each(items, function (item) {
-                    upsert(ctrl.trackItems, item._id, item);
+                    upsert(updatedItems, item._id, item);
                 });
-                console.log(ctrl.trackItems);
+                ctrl.trackItems = updatedItems;
                 ctrl.loading = false;
                 $scope.$apply();
 
@@ -210,12 +210,12 @@ angular.module('angularDemoApp')
 
                     $scope.$broadcast('addItemToTimeline', item);
 
-                    var upsert = function (arr, id, newval) {
+                    var update = function (arr, id, newval) {
                         var index = _.indexOf(arr, _.find(arr, {id: id}));
                         arr.splice(index, 1, newval);
                     };
 
-                    upsert(ctrl.trackItems, item._id, item);
+                    update(ctrl.trackItems, item._id, item);
 
                     $scope.$apply();
                 });
