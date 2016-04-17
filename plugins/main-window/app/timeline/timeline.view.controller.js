@@ -6,6 +6,7 @@ angular.module('angularDemoApp')
         var ctrl = this;
 
         ctrl.trackItems = [];
+        var loadedItems = [];
         ctrl.selectedTrackItem = null;
         ctrl.pieData = [];
         ctrl.dayStats = {};
@@ -49,13 +50,13 @@ angular.module('angularDemoApp')
         }
 
         ctrl.dayBack = function () {
-            ctrl.trackItems = [];
+            loadedItems = [];
             ctrl.searchDate = moment(ctrl.searchDate).subtract(1, 'days').toDate();
             ctrl.list(ctrl.searchDate);
 
         };
         ctrl.dayForward = function () {
-            ctrl.trackItems = [];
+            loadedItems = [];
             ctrl.searchDate = moment(ctrl.searchDate).add(1, 'days').toDate();
             ctrl.list(ctrl.searchDate);
         };
@@ -94,12 +95,15 @@ angular.module('angularDemoApp')
                         arr.splice(index, 1, newval);
                     }
                 };
-                var updatedItems = _.clone(ctrl.trackItems);
+                if (loadedItems.length === 0) {
+                    loadedItems = items;
+                } else {
+                    _.each(items, function (item) {
+                        upsert(loadedItems, item._id, item);
+                    });
+                }
 
-                _.each(items, function (item) {
-                    upsert(updatedItems, item._id, item);
-                });
-                ctrl.trackItems = updatedItems;
+                ctrl.trackItems = loadedItems;
                 ctrl.loading = false;
                 $scope.$apply();
 
