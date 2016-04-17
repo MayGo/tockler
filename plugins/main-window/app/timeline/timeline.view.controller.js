@@ -49,11 +49,13 @@ angular.module('angularDemoApp')
         }
 
         ctrl.dayBack = function () {
+            ctrl.trackItems = [];
             ctrl.searchDate = moment(ctrl.searchDate).subtract(1, 'days').toDate();
             ctrl.list(ctrl.searchDate);
 
         };
         ctrl.dayForward = function () {
+            ctrl.trackItems = [];
             ctrl.searchDate = moment(ctrl.searchDate).add(1, 'days').toDate();
             ctrl.list(ctrl.searchDate);
         };
@@ -84,7 +86,20 @@ angular.module('angularDemoApp')
                     }
                 }
             }).then(function (items) {
-                ctrl.trackItems = items;
+                var upsert = function (arr, id, newval) {
+                    var index = _.indexOf(arr, _.find(arr, {id: id}));
+                    if (index === -1) {
+                        arr.push(newval);
+                    } else {
+                        arr.splice(index, 1, newval);
+                    }
+
+                };
+
+                _.each(items, function (item) {
+                    upsert(ctrl.trackItems, item._id, item);
+                });
+                console.log(ctrl.trackItems);
                 ctrl.loading = false;
                 $scope.$apply();
 
@@ -231,7 +246,7 @@ angular.module('angularDemoApp')
                     ctrl.selectedTrackItem = null;
 
                     var index = _.indexOf(ctrl.trackItems, _.find(ctrl.trackItems, {id: trackItem.id}));
-                    ctrl.trackItems.splice(index, 1)
+                    ctrl.trackItems.splice(index, 1);
                     $scope.$broadcast('removeItemsFromTimeline', ctrl.trackItems);
                     $scope.$apply();
                 });
