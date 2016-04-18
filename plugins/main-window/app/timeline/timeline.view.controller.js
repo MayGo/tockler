@@ -63,7 +63,7 @@ angular.module('angularDemoApp')
 
         ctrl.refresh = function () {
             var searchFrom = _.chain(ctrl.trackItems).filter(function (item) {
-                return item.taskName !== 'LogTrackItem';
+                return item.taskName === 'AppTrackItem';
             }).last().valueOf().beginDate;
             console.log('Refreshing from:', searchFrom);
             ctrl.list(searchFrom);
