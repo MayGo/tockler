@@ -1,6 +1,6 @@
 {
   "name": "backer-timetracker",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Track your time by monitoring your active windows and idle time",
   "main": "app/app.js",
   "scripts": {
