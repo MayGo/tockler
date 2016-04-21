@@ -87,10 +87,18 @@ angular.module('angularDemoApp')
                     }
                 }
             }).then(function (items) {
+                console.log('Trackitems loaded, parsing.');
+                var nothingToUpdate = false;
                 var upsert = function (arr, id, newval) {
+                    if(nothingToUpdate === true){
+                        arr.push(newval);
+                        console.log('Nothing to update, inserting instead');
+                        return;
+                    }
                     var index = _.indexOf(arr, _.find(arr, {id: id}));
                     if (index === -1) {
                         arr.push(newval);
+                        nothingToUpdate = true;
                     } else {
                         arr.splice(index, 1, newval);
                     }
@@ -105,8 +113,9 @@ angular.module('angularDemoApp')
 
                 ctrl.trackItems = loadedItems;
                 ctrl.loading = false;
+                console.log('Trackitems loaded, parsing ended.');
                 $scope.$apply();
-
+                console.log('Trackitems loaded, $apply.');
             });
         };
 

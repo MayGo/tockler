@@ -6,7 +6,7 @@ function Timeline($window, $rootScope, $document) {
     var link = function (scope, element, attrs, ctrl) {
 
         ctrl.init(element[0]);
-        scope.$watch('timelineDirectiveCtrl.trackItems', function (newVal, oldVal) {
+        scope.$watchCollection('timelineDirectiveCtrl.trackItems', function (newVal, oldVal) {
                 ctrl.onTrackItemsChanged(newVal, oldVal);
             }
         );
