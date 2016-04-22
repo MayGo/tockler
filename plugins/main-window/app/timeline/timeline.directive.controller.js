@@ -151,12 +151,15 @@ angular.module('angularDemoApp')
         }
 
         function onTrackItemsChanged(newVal, oldVal) {
-            console.log('TrackItems changed');
+
 
             // if 'val' is undefined, exit
             if (!newVal) {
                 return;
             }
+
+            console.log('TrackItems changed');
+
             if (newVal.length > 0) {
                 ctrl.addItemsToTimeline(newVal)
             }

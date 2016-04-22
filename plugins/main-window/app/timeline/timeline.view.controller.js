@@ -1,5 +1,5 @@
 'use strict';
-var ipc = require("electron").ipcRenderer
+//var ipc = require("electron").ipcRenderer
 
 angular.module('angularDemoApp')
     .controller('TimelineViewController', function ($window, $rootScope, $mdDialog, $scope, $filter, TrackItemService, settingsData, $sessionStorage) {
@@ -13,6 +13,18 @@ angular.module('angularDemoApp')
 
         var w = $window.innerWidth;
         var pieWidth = w / 3 - 16 * 3;
+
+        var refreshWindow = function (event, arg) {
+            console.log("Main-Window gained focus, reloading");
+            ctrl.refresh();
+        };
+
+        ipc.on('main-window-focus', refreshWindow);
+        
+        $scope.$on('$destroy', function iVeBeenDismissed() {
+            ipc.removeListener('main-window-focus', refreshWindow);
+
+        });
 
         ctrl.pieOptions = {
             chart: {
@@ -93,7 +105,7 @@ angular.module('angularDemoApp')
                 console.log('Trackitems loaded, parsing.');
                 var nothingToUpdate = false;
                 var upsert = function (arr, id, newval) {
-                    if(nothingToUpdate === true){
+                    if (nothingToUpdate === true) {
                         arr.push(newval);
                         console.log('Nothing to update, inserting instead');
                         return;
@@ -117,8 +129,8 @@ angular.module('angularDemoApp')
                 ctrl.trackItems = loadedItems;
                 ctrl.loading = false;
                 console.log('Trackitems loaded, parsing ended.');
-                $scope.$apply();
-                console.log('Trackitems loaded, $apply.');
+                $scope.$digest();
+                console.log('Trackitems loaded, $digest.');
             });
         };
 
@@ -155,8 +167,8 @@ angular.module('angularDemoApp')
             };
 
             ctrl.pieDataApp = _.chain(items).filter(function (item) {
-                return item.taskName === 'AppTrackItem';
-            })
+                    return item.taskName === 'AppTrackItem';
+                })
                 .groupBy('app')
                 .map(function (b) {
                     return b.reduce(sumApp, {app: b[0].app, timeDiffInMs: 0, color: b[0].color})
@@ -164,8 +176,8 @@ angular.module('angularDemoApp')
                 .valueOf();
 
             ctrl.pieDataLog = _.chain(items).filter(function (item) {
-                return item.taskName === 'LogTrackItem';
-            })
+                    return item.taskName === 'LogTrackItem';
+                })
                 .groupBy('title')
                 .map(function (b) {
                     return b.reduce(sumApp, {app: b[0].app, title: b[0].title, timeDiffInMs: 0, color: b[0].color})
@@ -173,8 +185,8 @@ angular.module('angularDemoApp')
                 .valueOf();
 
             ctrl.pieDataStatus = _.chain(items).filter(function (item) {
-                return item.taskName === 'StatusTrackItem';
-            })
+                    return item.taskName === 'StatusTrackItem';
+                })
                 .groupBy('app')
                 .map(function (b) {
                     return b.reduce(sumApp, {app: b[0].app, timeDiffInMs: 0, color: b[0].color})
@@ -185,6 +197,7 @@ angular.module('angularDemoApp')
                 return item.taskName === 'AppTrackItem';
             }));
             // $rootScope.$apply();
+            console.log('Updating pie charts ended.');
 
         });
 
@@ -192,11 +205,6 @@ angular.module('angularDemoApp')
             $sessionStorage.zoomScale = scale;
             $sessionStorage.zoomX = x;
         };
-
-        ipc.on('main-window-focus', function (event, arg) {
-            console.log("Main-Window gained focus, reloading");
-            ctrl.refresh();
-        });
 
         ctrl.showAddLogDialog = function (trackItem) {
             console.log(trackItem);
