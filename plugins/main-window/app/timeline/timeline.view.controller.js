@@ -1,5 +1,5 @@
 'use strict';
-//var ipc = require("electron").ipcRenderer
+var ipc = require("electron").ipcRenderer
 
 angular.module('angularDemoApp')
     .controller('TimelineViewController', function ($window, $rootScope, $mdDialog, $scope, $filter, TrackItemService, settingsData, $sessionStorage) {
