@@ -10,7 +10,7 @@
             <md-icon md-font-set="material-icons">arrow_back</md-icon>
         </md-button>
         <md-datepicker ng-model="timelineCtrl.searchDate" md-placeholder="Search for day"
-                       md-max-date="timelineCtrl.maxDate" ng-change="timelineCtrl.list()"></md-datepicker>
+                       md-max-date="timelineCtrl.maxDate" ng-change="timelineCtrl.changeDay(timelineCtrl.searchDate)"></md-datepicker>
         <md-button class="md-icon-button" ng-click="timelineCtrl.dayForward()">
             <md-icon md-font-set="material-icons">arrow_forward</md-icon>
         </md-button>

@@ -53,12 +53,15 @@ angular.module('angularDemoApp')
             loadedItems = [];
             ctrl.searchDate = moment(ctrl.searchDate).subtract(1, 'days').toDate();
             ctrl.list(ctrl.searchDate);
-
         };
         ctrl.dayForward = function () {
             loadedItems = [];
             ctrl.searchDate = moment(ctrl.searchDate).add(1, 'days').toDate();
             ctrl.list(ctrl.searchDate);
+        };
+        ctrl.changeDay = function (day) {
+            loadedItems = [];
+            ctrl.list(day);
         };
 
         ctrl.refresh = function () {
