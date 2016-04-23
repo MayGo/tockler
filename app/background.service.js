@@ -82,13 +82,13 @@ var isSleeping = false;
 
 var addInactivePeriod = function (beginDate, endDate) {
 
-    var appTrackItem = {app: 'OFF', title: "Inactive"};
-    appTrackItem.taskName = 'StatusTrackItem';
-    appTrackItem.color = '#ff0000';
-    appTrackItem.beginDate = beginDate;
-    appTrackItem.endDate = endDate;
-    log.info("Adding inactive trackitem", appTrackItem);
-    createOrUpdate(appTrackItem);
+    var item = {app: 'OFF', title: "Inactive"};
+    item.taskName = 'StatusTrackItem';
+    item.color = '#ff0000';
+    item.beginDate = beginDate;
+    item.endDate = endDate;
+    log.info("Adding inactive trackitem", item);
+    createOrUpdateStatus(item);
 }
 
 
@@ -128,7 +128,7 @@ var getAppColor = function (appName) {
     return deferred.promise;
 };
 
-var createOrUpdate = function (appTrackItem) {
+var createOrUpdateAppItem = function (appTrackItem) {
 
     var deferred = $q.when();
     if (shouldSplitInTwoOnMidnight(appTrackItem.beginDate, appTrackItem.endDate)) {
@@ -139,13 +139,13 @@ var createOrUpdate = function (appTrackItem) {
 
         log.debug('Midnight- almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
         appTrackItem.endDate = almostMidnight;
-        createOrUpdate(appTrackItem).then(function (item1) {
+        createOrUpdateAppItem(appTrackItem).then(function (item1) {
             lastAppTrackItemSaved = null;
             log.debug('Midnight- Saved one: ' + item1);
             item1.beginDate = afterMidnight;
             item1.endDate = originalEndDate;
             log.debug('Midnight- Saving second: ' + item1);
-            createOrUpdate(item1).then(function (item2) {
+            createOrUpdateAppItem(item1).then(function (item2) {
                 log.debug('Midnight- Saved second: ' + item2);
                 deferred.resolve(item2);
             });
@@ -188,8 +188,6 @@ var createOrUpdate = function (appTrackItem) {
             }
         })
     }
-
-
     return deferred;
 }
 
@@ -227,7 +225,7 @@ var saveActiveWindow = function (newAppTrackItem) {
         addRawTrackItemToList(newAppTrackItem);
 
 
-        createOrUpdate(rawItems[0]);
+        createOrUpdateAppItem(rawItems[0]);
         //has two same items in list
         //log.info("Compare items: " + rawItems[0].title + " - " + rawItems[1].title)
         /*if (isSameItems(rawItems[0], rawItems[1])) {
