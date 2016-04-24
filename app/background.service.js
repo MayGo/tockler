@@ -88,7 +88,7 @@ var addInactivePeriod = function (beginDate, endDate) {
     item.beginDate = beginDate;
     item.endDate = endDate;
     log.info("Adding inactive trackitem", item);
-    createOrUpdateStatus(item);
+    createOrUpdateStatusItem(item);
 }
 
 
@@ -130,7 +130,7 @@ var getAppColor = function (appName) {
 
 var createOrUpdateAppItem = function (appTrackItem) {
 
-    var deferred = $q.when();
+    var deferred = $q.defer();
     if (shouldSplitInTwoOnMidnight(appTrackItem.beginDate, appTrackItem.endDate)) {
         log.info('its midnight');
         var almostMidnight = moment(appTrackItem.beginDate).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
@@ -151,44 +151,104 @@ var createOrUpdateAppItem = function (appTrackItem) {
             });
         });
     } else {
-        deferred.then(function () {
 
-            if (!isSameItems(appTrackItem, lastAppTrackItemSaved)) {
+        if (!isSameItems(appTrackItem, lastAppTrackItemSaved)) {
 
-                var promise = $q.when();
+            var promise = $q.when();
 
-                if (lastAppTrackItemSaved) {
-                    lastAppTrackItemSaved.endDate = appTrackItem.beginDate;
-                    log.debug("Saving old trackItem:", lastAppTrackItemSaved);
-                    promise = TrackItemService.update(lastAppTrackItemSaved.id, lastAppTrackItemSaved)
-                }
 
-                promise.then(function () {
-                    appTrackItem.endDate = new Date();
-                    TrackItemService.create(appTrackItem).then(function (item) {
-                        log.debug("Created track item to DB:", item);
-                        lastAppTrackItemSaved = item;
-                        deferred.resolve(item);
-                    }, function (e) {
-                        log.error("Error creating", e)
-                    });
-                });
+            if (lastAppTrackItemSaved) {
+                lastAppTrackItemSaved.endDate = appTrackItem.beginDate;
+                log.debug("Saving old trackItem:", lastAppTrackItemSaved);
+                promise = TrackItemService.update(lastAppTrackItemSaved.id, lastAppTrackItemSaved)
+            }
 
-            } else if (isSameItems(appTrackItem, lastAppTrackItemSaved)) {
-                lastAppTrackItemSaved.endDate = new Date();
-                TrackItemService.update(lastAppTrackItemSaved.id, lastAppTrackItemSaved).then(function (item) {
-                    log.debug("Saved track item(endDate change) to DB:", item);
+            promise.then(function () {
+                appTrackItem.endDate = new Date();
+                TrackItemService.create(appTrackItem).then(function (item) {
+                    log.debug("Created track item to DB:", item);
                     lastAppTrackItemSaved = item;
                     deferred.resolve(item);
-                }, function () {
-                    log.error('Error saving');
+                }, function (e) {
+                    log.error("Error creating", e)
                 });
-            } else {
-                log.error("Nothing to do with item", appTrackItem);
-            }
-        })
+            });
+
+        } else if (isSameItems(appTrackItem, lastAppTrackItemSaved)) {
+            lastAppTrackItemSaved.endDate = new Date();
+            TrackItemService.update(lastAppTrackItemSaved.id, lastAppTrackItemSaved).then(function (item) {
+                log.debug("Saved track item(endDate change) to DB:", item);
+                lastAppTrackItemSaved = item;
+                deferred.resolve(item);
+            }, function () {
+                log.error('Error saving');
+            });
+        } else {
+            log.error("Nothing to do with item", appTrackItem);
+        }
     }
-    return deferred;
+
+    return deferred.promise;
+}
+
+var createOrUpdateStatusItem = function (rawItem) {
+
+    var deferred = $q.defer();
+    if (shouldSplitInTwoOnMidnight(rawItem.beginDate, rawItem.endDate)) {
+        log.info('its midnight');
+        var almostMidnight = moment(rawItem.beginDate).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
+        var afterMidnight = dateToAfterMidnight(rawItem.beginDate);
+        var originalEndDate = rawItem.endDate;
+
+        log.debug('Midnight- almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
+        rawItem.endDate = almostMidnight;
+        createOrUpdateStatusItem(rawItem).then(function (item1) {
+            lastStatusTrackItemSaved = null;
+            log.debug('Midnight- Saved one: ' + item1);
+            item1.beginDate = afterMidnight;
+            item1.endDate = originalEndDate;
+            log.debug('Midnight- Saving second: ' + item1);
+            createOrUpdateStatusItem(item1).then(function (item2) {
+                log.debug('Midnight- Saved second: ' + item2);
+                deferred.resolve(item2);
+            });
+        });
+    } else {
+        if (!isSameItems(rawItem, lastStatusTrackItemSaved)) {
+
+            var promise = $q.when();
+
+            if (lastStatusTrackItemSaved) {
+                lastStatusTrackItemSaved.endDate = rawItem.beginDate;
+                log.debug("Saving old trackItem:", lastStatusTrackItemSaved);
+                promise = TrackItemService.update(lastStatusTrackItemSaved.id, lastStatusTrackItemSaved)
+            }
+
+            promise.then(function () {
+                rawItem.endDate = new Date();
+                TrackItemService.create(rawItem).then(function (item) {
+                    log.debug("Created track item to DB:", item);
+                    lastStatusTrackItemSaved = item;
+                    deferred.resolve(item);
+                }, function (e) {
+                    log.error("Error creating", e)
+                });
+            });
+
+        } else if (isSameItems(rawItem, lastStatusTrackItemSaved)) {
+            lastStatusTrackItemSaved.endDate = new Date();
+            TrackItemService.update(lastStatusTrackItemSaved.id, lastStatusTrackItemSaved).then(function (item) {
+                log.debug("Saved track item(endDate change) to DB:", item);
+                lastStatusTrackItemSaved = item;
+                deferred.resolve(item);
+            }, function () {
+                log.error('Error saving');
+            });
+        } else {
+            log.error("Nothing to do with item", rawItem);
+        }
+    }
+    return deferred.promise;
 }
 
 var addRawTrackItemToList = function (item) {
@@ -203,7 +263,7 @@ var saveActiveWindow = function (newAppTrackItem) {
         return;
     }
     if (lastStatusTrackItemSaved !== null && lastStatusTrackItemSaved.app === 'IDLE') {
-        log.info('Not saving');
+        log.info('Not saving', lastStatusTrackItemSaved);
         //addRawTrackItemToList(emptyItem);
         lastAppTrackItemSaved = null;
         return
@@ -251,53 +311,40 @@ var IDLE_IN_SECONDS_TO_LOG = 60 * 1;
 var saveIdleTrackItem = function (seconds) {
 
     if (isSleeping) {
-        log.info('Computer is spleeing, not running saveIdleTrackItem');
+        log.info('Computer is sleeping, not running saveIdleTrackItem');
         return;
     }
 
+
     var appName = (seconds > IDLE_IN_SECONDS_TO_LOG) ? 'IDLE' : 'ONLINE';
-    var isSplitting = (lastStatusTrackItemSaved) ? shouldSplitInTwoOnMidnight(lastStatusTrackItemSaved.beginDate, new Date()) : false;
-    var afterMidnight = (lastStatusTrackItemSaved) ? dateToAfterMidnight(lastStatusTrackItemSaved.beginDate) : null;
-    if (isSplitting) {
-        log.info('midnight in status');
-        var almostMidnight = moment(lastStatusTrackItemSaved.beginDate).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
 
-        log.debug('Midnight status - almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
-        lastStatusTrackItemSaved.endDate = almostMidnight;
-        TrackItemService.update(lastStatusTrackItemSaved.id, lastStatusTrackItemSaved);
-        lastStatusTrackItemSaved = null;
+    // Cannot go from OFFLINE to IDLE
+    if (lastStatusTrackItemSaved !== null &&
+        lastStatusTrackItemSaved.app === 'OFFLINE' &&
+        appName === 'IDLE'
+    ) {
+        log.info('Not saving. Cannot go from OFFLINE to IDLE');
+        return
     }
 
-    if (lastStatusTrackItemSaved && lastStatusTrackItemSaved.app === appName) {
-        lastStatusTrackItemSaved.endDate = new Date();
-        log.debug("Saving old status trackItem:", lastStatusTrackItemSaved);
-        TrackItemService.update(lastStatusTrackItemSaved.id, lastStatusTrackItemSaved)
-    } else {
-        var appTrackItem = {app: appName, title: ""};
-        var beginDate = new Date();
-        //Begin date is always BACKGROUND_JOB_INTERVAL before current date
-        beginDate.setMilliseconds(beginDate.getMilliseconds() - BACKGROUND_JOB_INTERVAL);
-        if (isSplitting) {
-            beginDate = afterMidnight;
-            log.debug('Midnight status - is splitting: ' + almostMidnight);
-        }
-        appTrackItem.taskName = 'StatusTrackItem';
-        appTrackItem.beginDate = beginDate;
-        getAppColor(appTrackItem.app).then(function (color) {
-            appTrackItem.color = color;
+    var beginDate = new Date();
+    //Begin date is always BACKGROUND_JOB_INTERVAL before current date
+    beginDate.setMilliseconds(beginDate.getMilliseconds() - BACKGROUND_JOB_INTERVAL);
 
-            appTrackItem.endDate = new Date();
-            log.info("Adding status trackitem", appTrackItem);
+    var rawItem = {
+        taskName: 'StatusTrackItem',
+        app: appName,
+        title: "",
+        beginDate: beginDate,
+        endDate: new Date()
+    };
 
-            TrackItemService.create(appTrackItem).then(function (item) {
-                log.info("Created status track item to DB:", item);
-                lastStatusTrackItemSaved = item;
-                deferred.resolve(item);
-            }, function (e) {
-                log.info("Error creating", e)
-            });
-        });
-    }
+
+    getAppColor(rawItem.app).then(function (color) {
+        rawItem.color = color;
+        createOrUpdateStatusItem(rawItem);
+
+    })
 
 };
 
@@ -484,12 +531,12 @@ BackgroundService.testSaving = function () {
     }).then(function () {
         return createTestItem({app: 'app2', title: 'title3'});
     }).then(function () {
-            trackItemServiceInst.findAll().then(function (items) {
-                if (items.length != 3) {
-                    log.error("!!!!!!!!!!!!!!!!!!!!!!!!Should have 3 trackItems!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                }
-            });
-        })
+        trackItemServiceInst.findAll().then(function (items) {
+            if (items.length != 3) {
+                log.error("!!!!!!!!!!!!!!!!!!!!!!!!Should have 3 trackItems!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            }
+        });
+    })
         .then(function () {
             trackItemServiceInst.findAll({
                 orderBy: [
@@ -513,8 +560,8 @@ BackgroundService.testSaving = function () {
                 }
             });
         }).then(function () {
-        log.info("!!!!!!!!!!!!!!!!!!!!!!!!TEST END!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    });
+            log.info("!!!!!!!!!!!!!!!!!!!!!!!!TEST END!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        });
 };
 
 
