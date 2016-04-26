@@ -238,7 +238,7 @@ var createOrUpdateStatusItem = function (rawItem) {
             }
 
             promise.then(function () {
-                rawItem.endDate = new Date();
+                //rawItem.endDate = new Date();
                 TrackItemService.create(rawItem).then(function (item) {
                     log.debug("Created track item to DB:", item);
                     lastStatusTrackItemSaved = item;
@@ -249,7 +249,7 @@ var createOrUpdateStatusItem = function (rawItem) {
             });
 
         } else if (isSameItems(rawItem, lastStatusTrackItemSaved)) {
-            lastStatusTrackItemSaved.endDate = new Date();
+            //lastStatusTrackItemSaved.endDate = new Date();
             TrackItemService.update(lastStatusTrackItemSaved.id, lastStatusTrackItemSaved).then(function (item) {
                 log.debug("Saved track item(endDate change) to DB:", item);
                 lastStatusTrackItemSaved = item;
