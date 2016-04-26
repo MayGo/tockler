@@ -249,7 +249,7 @@ var createOrUpdateStatusItem = function (rawItem) {
             });
 
         } else if (isSameItems(rawItem, lastStatusTrackItemSaved)) {
-            //lastStatusTrackItemSaved.endDate = new Date();
+            lastStatusTrackItemSaved.endDate = new Date();
             TrackItemService.update(lastStatusTrackItemSaved.id, lastStatusTrackItemSaved).then(function (item) {
                 log.debug("Saved track item(endDate change) to DB:", item);
                 lastStatusTrackItemSaved = item;
