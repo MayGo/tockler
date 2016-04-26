@@ -128,6 +128,19 @@ var getAppColor = function (appName) {
     return deferred.promise;
 };
 
+var getRawTrackItem = function (savedItem) {
+    var item = {
+        app: savedItem.app,
+        title: savedItem.title,
+        taskName: savedItem.taskName,
+        color: savedItem.color,
+        beginDate: savedItem.beginDate,
+        endDate: savedItem.endDate
+    };
+    return item;
+
+}
+
 var createOrUpdateAppItem = function (appTrackItem) {
 
     var deferred = $q.defer();
@@ -145,7 +158,7 @@ var createOrUpdateAppItem = function (appTrackItem) {
             item1.beginDate = afterMidnight;
             item1.endDate = originalEndDate;
             log.debug('Midnight- Saving second: ' + item1);
-            createOrUpdateAppItem(item1).then(function (item2) {
+            createOrUpdateAppItem(getRawTrackItem(item1)).then(function (item2) {
                 log.debug('Midnight- Saved second: ' + item2);
                 deferred.resolve(item2);
             });
@@ -208,7 +221,7 @@ var createOrUpdateStatusItem = function (rawItem) {
             item1.beginDate = afterMidnight;
             item1.endDate = originalEndDate;
             log.debug('Midnight- Saving second: ' + item1);
-            createOrUpdateStatusItem(item1).then(function (item2) {
+            createOrUpdateStatusItem(getRawTrackItem(item1)).then(function (item2) {
                 log.debug('Midnight- Saved second: ' + item2);
                 deferred.resolve(item2);
             });
