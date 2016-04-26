@@ -6,7 +6,7 @@ angular.module('trayApp.trackItem')
       .state('app.trackItem', {
         url: '/trackItem',
         abstract: true,
-        template: '<div ui-view="page" class="fade-in-up"></div>'
+        template: '<div ui-view="page"></div>'
       })
       .state('app.trackItem.list', {
         url: '/list?search',
