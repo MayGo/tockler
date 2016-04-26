@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "angular": "~1.4.9",
-    "angular-material": "1.0.5",
+    "angular-material": "1.1.0-rc4",
     "angular-ui-router": "~0.2.15",
     "angular-translate": "~2.8.1",
     "d3": "~3.5.16",
