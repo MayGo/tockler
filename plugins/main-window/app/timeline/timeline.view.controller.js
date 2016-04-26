@@ -20,7 +20,7 @@ angular.module('angularDemoApp')
         };
 
         ipc.on('main-window-focus', refreshWindow);
-        
+
         $scope.$on('$destroy', function iVeBeenDismissed() {
             ipc.removeListener('main-window-focus', refreshWindow);
 
@@ -77,9 +77,11 @@ angular.module('angularDemoApp')
         };
 
         ctrl.refresh = function () {
-            var searchFrom = _.chain(ctrl.trackItems).filter(function (item) {
+            var lastItem = _.chain(ctrl.trackItems).filter(function (item) {
                 return item.taskName === 'AppTrackItem';
-            }).last().valueOf().beginDate;
+            }).last().valueOf();
+
+            var searchFrom = (lastItem) ? lastItem.beginDate : moment().startOf('day').toDate();
             console.log('Refreshing from:', searchFrom);
             ctrl.list(searchFrom);
         };
@@ -167,8 +169,8 @@ angular.module('angularDemoApp')
             };
 
             ctrl.pieDataApp = _.chain(items).filter(function (item) {
-                    return item.taskName === 'AppTrackItem';
-                })
+                return item.taskName === 'AppTrackItem';
+            })
                 .groupBy('app')
                 .map(function (b) {
                     return b.reduce(sumApp, {app: b[0].app, timeDiffInMs: 0, color: b[0].color})
@@ -176,8 +178,8 @@ angular.module('angularDemoApp')
                 .valueOf();
 
             ctrl.pieDataLog = _.chain(items).filter(function (item) {
-                    return item.taskName === 'LogTrackItem';
-                })
+                return item.taskName === 'LogTrackItem';
+            })
                 .groupBy('title')
                 .map(function (b) {
                     return b.reduce(sumApp, {app: b[0].app, title: b[0].title, timeDiffInMs: 0, color: b[0].color})
@@ -185,8 +187,8 @@ angular.module('angularDemoApp')
                 .valueOf();
 
             ctrl.pieDataStatus = _.chain(items).filter(function (item) {
-                    return item.taskName === 'StatusTrackItem';
-                })
+                return item.taskName === 'StatusTrackItem';
+            })
                 .groupBy('app')
                 .map(function (b) {
                     return b.reduce(sumApp, {app: b[0].app, timeDiffInMs: 0, color: b[0].color})
@@ -286,9 +288,7 @@ angular.module('angularDemoApp')
         };
 
         // Initialy load todays data
-        var today = new Date();
-        today.setHours(0, 0, 0, 0);
-        ctrl.searchDate = today;
-        ctrl.list(today);
+        ctrl.searchDate = moment().startOf('day').toDate();
+        ctrl.list(ctrl.searchDate);
 
     });
