@@ -1,5 +1,5 @@
 'use strict';
-var ipc = require("electron").ipcRenderer
+var ipc = require("electron").ipcRenderer;
 
 angular.module('angularDemoApp')
     .controller('TimelineViewController', function ($window, $rootScope, $mdDialog, $scope, $filter,
@@ -31,10 +31,54 @@ angular.module('angularDemoApp')
             ctrl.refresh();
         };
 
+        var parseReceivedTimelineData = function (event, startDate, taskName, items) {
+            console.log('TIMELINE_LOAD_DAY_RESPONSE received', taskName);
+
+            var nothingToUpdate = false;
+            var upsert = function (arr, id, newval) {
+                if (nothingToUpdate === true) {
+                    arr.push(newval);
+                    //console.log('Nothing to update, inserting instead');
+                    return;
+                }
+                var index = _.indexOf(arr, _.find(arr, {id: id}));
+                if (index === -1) {
+                    arr.push(newval);
+                    nothingToUpdate = true;
+                } else {
+                    arr.splice(index, 1, newval);
+                }
+            };
+
+            if (loadedItems[taskName].length === 0) {
+                loadedItems[taskName] = items;
+            } else {
+                _.each(items, function (item) {
+                    upsert(loadedItems[taskName], item._id, item);
+                });
+            }
+
+            ctrl.loading = false;
+            console.log('Trackitems loaded, parsing ended.', taskName);
+            $scope.$broadcast('addItemsToTimeline', loadedItems[taskName]);
+
+            updatePieCharts(loadedItems[taskName], taskName);
+
+            if (taskName === 'AppTrackItem') {
+                setWorkStatsForDay(loadedItems[taskName]);
+                ctrl.visibleItems = loadedItems[taskName];
+            }
+
+            $scope.$digest();
+            console.log('Trackitems loaded, $digest.');
+        };
+
         ipc.on('main-window-focus', refreshWindow);
+        ipc.on('TIMELINE_LOAD_DAY_RESPONSE', parseReceivedTimelineData);
 
         $scope.$on('$destroy', function iVeBeenDismissed() {
             ipc.removeListener('main-window-focus', refreshWindow);
+            ipc.removeListener('TIMELINE_LOAD_DAY_RESPONSE', parseReceivedTimelineData);
         });
 
         ctrl.pieOptions = {
@@ -64,7 +108,6 @@ angular.module('angularDemoApp')
                 showLegend: false,
                 donut: true,
                 donutRatio: 0.30
-
             }
         };
 
@@ -73,11 +116,13 @@ angular.module('angularDemoApp')
             ctrl.searchDate = moment(ctrl.searchDate).subtract(1, 'days').toDate();
             ctrl.list(ctrl.searchDate);
         };
+
         ctrl.dayForward = function () {
             resetLoadedItems();
             ctrl.searchDate = moment(ctrl.searchDate).add(1, 'days').toDate();
             ctrl.list(ctrl.searchDate);
         };
+
         ctrl.changeDay = function (day) {
             resetLoadedItems();
             ctrl.list(day);
@@ -90,6 +135,7 @@ angular.module('angularDemoApp')
             console.log('Refreshing from:', searchFrom);
             ctrl.list(searchFrom);
         };
+
         ctrl.reload = function () {
             resetLoadedItems();
             var searchFrom = ctrl.searchDate;
@@ -106,52 +152,9 @@ angular.module('angularDemoApp')
             ctrl.loading = true;
 
             _.keys(loadedItems).forEach(function (taskName) {
-                TrackItemService.findAllFromDay(startDate, taskName).then(function (items) {
-                        console.log('Trackitems loaded, parsing.');
-
-                        var nothingToUpdate = false;
-                        var upsert = function (arr, id, newval) {
-                            if (nothingToUpdate === true) {
-                                arr.push(newval);
-                                console.log('Nothing to update, inserting instead');
-                                return;
-                            }
-                            var index = _.indexOf(arr, _.find(arr, {id: id}));
-                            if (index === -1) {
-                                arr.push(newval);
-                                nothingToUpdate = true;
-                            } else {
-                                arr.splice(index, 1, newval);
-                            }
-                        };
-
-                        if (loadedItems[taskName].length === 0) {
-                            loadedItems[taskName] = items;
-                        } else {
-                            _.each(items, function (item) {
-                                upsert(loadedItems[taskName], item._id, item);
-                            });
-                        }
-
-                        ctrl.loading = false;
-                        console.log('Trackitems loaded, parsing ended.');
-                        $scope.$broadcast('addItemsToTimeline', loadedItems[taskName]);
-
-
-                        updatePieCharts(loadedItems[taskName], taskName);
-
-                        if (taskName === 'AppTrackItem') {
-                            setWorkStatsForDay(loadedItems[taskName]);
-                            ctrl.visibleItems = loadedItems[taskName];
-                        }
-
-                        $scope.$digest();
-                        console.log('Trackitems loaded, $digest.');
-                    }
-                );
+                console.log('TIMELINE_LOAD_DAY_REQUEST sent', startDate, taskName);
+                ipc.send('TIMELINE_LOAD_DAY_REQUEST', startDate, taskName);
             })
-
-
         };
 
         function setWorkStatsForDay(items) {
@@ -171,7 +174,8 @@ angular.module('angularDemoApp')
             return _.extend(p, {
                 timeDiffInMs: p.timeDiffInMs + moment(c.endDate).diff(c.beginDate)
             });
-        };
+        }
+
         var updatePieCharts = function (items, taskName) {
 
             console.log('Track Items changed. Updating pie charts');
@@ -183,8 +187,7 @@ angular.module('angularDemoApp')
                     return b.reduce(sumApp, {app: b[0].app, title: b[0].title, timeDiffInMs: 0, color: b[0].color})
                 })
                 .valueOf();
-
-            // $rootScope.$apply();
+            
             console.log('Updating pie charts ended.');
 
         };
@@ -273,7 +276,7 @@ angular.module('angularDemoApp')
                 updatePieCharts(loadedItems[trackItem.taskName], trackItem.taskName);
                 $scope.$apply();
             });
-        }
+        };
 
         ctrl.deleteTrackItem = function (trackItem) {
             console.log("Deleting trackitem.", trackItem);
