@@ -1,5 +1,6 @@
 'use strict';
 
+var ipcRenderer = require("electron").ipcRenderer;
 
 angular.module('trayApp')
     .controller('LogItemListController', function (TrackItemService, $rootScope, $scope, SettingsService, $mdToast, $q) {
@@ -8,6 +9,7 @@ angular.module('trayApp')
         ctrl.newItem = {color: '#426DFC'};
 
         SettingsService.getRunningLogItem().then(function (item) {
+            console.log("Running log item.", item);
             ctrl.runningLogItem = item;
         });
 
@@ -35,6 +37,8 @@ angular.module('trayApp')
                 $scope.$apply();
             });
         };
+
+        ipc.on('focus-tray', ctrl.list);
 
 
         ctrl.startNewLogItem = function (oldItem) {

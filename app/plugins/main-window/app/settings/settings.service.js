@@ -29,9 +29,10 @@ angular.module('globalServices')
                 }
                 return deferred.promise;
             }).catch(function () {
-                return service.create({
+                service.create({
                     id: 'RUNNING_LOG_ITEM'
-                })
+                });
+
             });
         };
         service.saveRunningLogItemReferemce = function (logItemId) {

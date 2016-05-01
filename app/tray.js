@@ -12,13 +12,16 @@ var mb = menubar({
     preloadWindow: true,
     width: 400,
     height: 500,
-    showDock: true
+    showDock: true,
+    'show-dock-icon': true
 });
 
 mb.on('after-create-window', function () {
-    //mb.window.openDevTools();
+    mb.window.openDevTools();
 });
-mb.on('ready', function () {
+mb.on('after-show', function () {
+    console.log('Show tray');
+    mb.window.webContents.send('focus-tray', 'ping');
 })
 
 module.exports = mb
