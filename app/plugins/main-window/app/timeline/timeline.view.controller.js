@@ -24,8 +24,7 @@ angular.module('angularDemoApp')
         ctrl.dayStats = {};
 
         var w = $window.innerWidth;
-        var pieWidth = w / 3
-        16 * 3;
+        var pieWidth = w / 3 - 100 * 3;
 
         var refreshWindow = function (event, arg) {
             console.log("Main-Window gained focus, reloading");
