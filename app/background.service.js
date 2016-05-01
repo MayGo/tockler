@@ -88,6 +88,7 @@ var addInactivePeriod = function (beginDate, endDate) {
     item.beginDate = beginDate;
     item.endDate = endDate;
     log.info("Adding inactive trackitem", item);
+    lastStatusTrackItemSaved = null;
     createOrUpdateStatusItem(item);
 }
 
@@ -150,16 +151,16 @@ var createOrUpdateAppItem = function (appTrackItem) {
         var afterMidnight = dateToAfterMidnight(appTrackItem.beginDate);
         var originalEndDate = appTrackItem.endDate;
 
-        log.debug('Midnight- almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
+        log.debug('Midnight - almostMidnight: ' + almostMidnight + ', afterMidnight:' + afterMidnight);
         appTrackItem.endDate = almostMidnight;
         createOrUpdateAppItem(appTrackItem).then(function (item1) {
             lastAppTrackItemSaved = null;
-            log.debug('Midnight- Saved one: ' + item1);
+            log.debug('Midnight - Saved one (before midnight): ' + item1);
             item1.beginDate = afterMidnight;
             item1.endDate = originalEndDate;
-            log.debug('Midnight- Saving second: ' + item1);
+            log.debug('Midnight - Saving second (after midnight): ' + item1);
             createOrUpdateAppItem(getRawTrackItem(item1)).then(function (item2) {
-                log.debug('Midnight- Saved second: ' + item2);
+                log.debug('Midnight- Saved second (after midnight): ' + item2);
                 deferred.resolve(item2);
             });
         });
@@ -276,7 +277,7 @@ var saveActiveWindow = function (newAppTrackItem) {
         return;
     }
     if (lastStatusTrackItemSaved !== null && lastStatusTrackItemSaved.app === 'IDLE') {
-        log.info('Not saving', lastStatusTrackItemSaved);
+        log.debug('Not saving, app is idling', newAppTrackItem);
         //addRawTrackItemToList(emptyItem);
         lastAppTrackItemSaved = null;
         return
@@ -396,7 +397,7 @@ BackgroundService.saveForegroundWindowTitle = function () {
     log.debug('Script saveForegroundWindowTitle file: ' + script);
 
     exec(script, function (error, stdout, stderr) {
-        log.debug('saveForegroundWindowTitle: ' + stdout);
+        log.debug('Foreground window: ' + stdout);
 
         if (stderr) {
             log.debug('saveUserIdleTime error: ' + stderr);
@@ -421,7 +422,7 @@ BackgroundService.saveForegroundWindowTitle = function () {
         active.beginDate = beginDate;
         active.endDate = now;
 
-        log.debug("Active item:", active);
+        log.debug("Foreground window (parsed):", active);
 
         saveActiveWindow(active);
     });
@@ -442,7 +443,7 @@ BackgroundService.saveUserIdleTime = function () {
     log.debug('Script saveUserIdleTime file: ' + script)
 
     return exec(script, function (error, stdout, stderr) {
-        log.debug('saveUserIdleTime: ' + stdout);
+        log.debug('Idle time: ' + stdout);
         if (stderr) {
             log.debug('saveUserIdleTime error: ' + stderr);
         }
