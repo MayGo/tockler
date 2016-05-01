@@ -1,7 +1,7 @@
 <div layout="column">
     <md-progress-circular ng-show="timelineCtrl.loading" md-mode="indeterminate"
                           style="margin: 90px auto; position: absolute; top: 0; left: 0; bottom: 0; right: 0;"
-            ></md-progress-circular>
+    ></md-progress-circular>
     <div layout="row">
         <md-button class="md-icon-button" aria-label="Refresh" ng-click="timelineCtrl.refresh()">
             <md-icon md-font-set="material-icons">refresh</md-icon>
@@ -10,22 +10,23 @@
             <md-icon md-font-set="material-icons">arrow_back</md-icon>
         </md-button>
         <md-datepicker ng-model="timelineCtrl.searchDate" md-placeholder="Search for day"
-                       md-max-date="timelineCtrl.maxDate" ng-change="timelineCtrl.changeDay(timelineCtrl.searchDate)"></md-datepicker>
+                       md-max-date="timelineCtrl.maxDate"
+                       ng-change="timelineCtrl.changeDay(timelineCtrl.searchDate)"></md-datepicker>
         <md-button class="md-icon-button" ng-click="timelineCtrl.dayForward()">
             <md-icon md-font-set="material-icons">arrow_forward</md-icon>
         </md-button>
         <div flex></div>
         <md-button class="md-icon-button" aria-label="Add log item"
                    ng-click="timelineCtrl.showAddLogDialog()"
-                >
+        >
             <md-tooltip md-direction="top">Add log item</md-tooltip>
             <md-icon md-font-set="material-icons">note_add</md-icon>
         </md-button>
     </div>
     <div id="trackItemMiniEdit" ng-show="timelineCtrl.selectedTrackItem"
          ng-style="{left:timelineCtrl.selectedTrackItem.left, top:timelineCtrl.selectedTrackItem.top}"
-            >
-        <form  name="timelineCtrl.selectedTrackItemForm">
+    >
+        <form name="timelineCtrl.selectedTrackItemForm">
             <div layout="row">
 
                 <md-input-container flex="80" md-no-float>
@@ -34,11 +35,13 @@
                 <md-input-container flex="20">
                     <input ng-model="timelineCtrl.selectedTrackItem.color" type="color" required>
                 </md-input-container>
-                <md-button type="submit" class="md-icon-button" aria-label="Refresh" ng-disabled="timelineCtrl.selectedTrackItemForm.$invalid"
+                <md-button type="submit" class="md-icon-button" aria-label="Refresh"
+                           ng-disabled="timelineCtrl.selectedTrackItemForm.$invalid"
                            ng-click="timelineCtrl.saveTrackItem(timelineCtrl.selectedTrackItem)">
                     <md-icon md-font-set="material-icons">save</md-icon>
                 </md-button>
-                <md-button type="submit" class="md-icon-button" aria-label="Delete"  ng-if="timelineCtrl.selectedTrackItem.id"
+                <md-button type="submit" class="md-icon-button" aria-label="Delete"
+                           ng-if="timelineCtrl.selectedTrackItem.id"
                            ng-click="timelineCtrl.deleteTrackItem(timelineCtrl.selectedTrackItem)">
                     <md-icon md-font-set="material-icons">delete</md-icon>
                 </md-button>
@@ -53,7 +56,7 @@
               zoom-scale="timelineCtrl.zoomScale"
               zoom-x="timelineCtrl.zoomX"
 
-            ></timeline>
+    ></timeline>
     <md-divider></md-divider>
     <div layout-padding>
         <div ng-if="timelineCtrl.dayStats.lateForWork">
@@ -68,18 +71,30 @@
         </div>
     </div>
     <md-divider></md-divider>
-    <div layout="row">
+    <div layout="row" style="min-height:200px">
         <md-card flex="33">
-            <md-card-title><md-card-title-text>Applications</md-card-title-text></md-card-title>
-            <md-card-content><nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieData['AppTrackItem']"></nvd3></md-card-content>
+            <md-card-title>
+                <md-card-title-text>Applications</md-card-title-text>
+            </md-card-title>
+            <md-card-content layout="row" layout-align="center center">
+                <nvd3 options="timelineCtrl.pieOptions" data="timelineCtrl.pieData['AppTrackItem']"></nvd3>
+            </md-card-content>
         </md-card>
         <md-card flex>
-            <md-card-title><md-card-title-text>Logs</md-card-title-text></md-card-title>
-            <md-card-content> <nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieData['LogTrackItem']"></nvd3></md-card-content>
+            <md-card-title>
+                <md-card-title-text>Logs</md-card-title-text>
+            </md-card-title>
+            <md-card-content layout="row" layout-align="center center">
+                <nvd3 options="timelineCtrl.pieOptions" data="timelineCtrl.pieData['LogTrackItem']"></nvd3>
+            </md-card-content>
         </md-card>
         <md-card flex="33">
-            <md-card-title><md-card-title-text>Status</md-card-title-text></md-card-title>
-            <md-card-content> <nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieData['StatusTrackItem']"></nvd3></md-card-content>
+            <md-card-title>
+                <md-card-title-text>Status</md-card-title-text>
+            </md-card-title>
+            <md-card-content layout="row" layout-align="center center">
+                <nvd3 options="timelineCtrl.pieOptions" data="timelineCtrl.pieData['StatusTrackItem']"></nvd3>
+            </md-card-content>
         </md-card>
 
     </div>
