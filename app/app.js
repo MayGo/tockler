@@ -1,14 +1,20 @@
+if (require('electron-squirrel-startup')) {
+    return;
+}
+
 var app = require('electron').app
 var notifier = require('node-notifier')
 
-var mb = require('./tray')
+
 var pluginMgr = require('./plugin-manager')
 var backgroundService = require('./background.service')
 var ipcMain = require('electron').ipcMain;
+
 var config = require('./config')
-//require('./lib/crash-handler')
+require("electron").crashReporter.start(config.crashOpts)
 
 var AutoLaunch = require('auto-launch');
+var mb = require('./tray')
 
 var appLauncher = new AutoLaunch({
     name: 'Backer Timetracker'

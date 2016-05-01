@@ -17,7 +17,9 @@ var mb = menubar({
 });
 
 mb.on('after-create-window', function () {
-    mb.window.openDevTools();
+    if (config.isDev) {
+        mb.window.openDevTools();
+    }
 });
 mb.on('after-show', function () {
     console.log('Show tray');
