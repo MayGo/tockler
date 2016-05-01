@@ -16,7 +16,7 @@ angular.module('angularDemoApp.timeline')
                         controller: 'TimelineViewController as timelineCtrl',
                         resolve: {
                             settingsData: function ($stateParams, SettingsService) {
-                                return SettingsService.fetchSettings();
+                                return SettingsService.fetchWorkSettings();
                             }
                         }
                     }

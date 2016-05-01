@@ -1,0 +1,61 @@
+<md-content flex="column">
+    <md-list flex="column">
+        <md-list-item ng-if="logItemCtrl.runningLogItem" class="tray-item" ng-click="null">
+            <div class="md-list-item-text">
+                <h3>{{logItemCtrl.runningLogItem.title}}</h3>
+                <p>{{logItemCtrl.runningLogItem.beginDate | date: 'yyyy.MM.dd HH:mm:ss'}}
+                <span>
+                    <timer start-time="logItemCtrl.runningLogItem.beginDate.getTime()" interval="1000" language="en">
+                        {{dayUnit}}
+                    </timer>
+                </span>
+                </p>
+            </div>
+            <md-button class="md-secondary md-icon-button" ng-click="logItemCtrl.stopRunningLogItem()"
+                       aria-label="stop task">
+                <md-tooltip md-direction="left">
+                    Stop task
+                </md-tooltip>
+                <md-icon md-font-set="material-icons">stop</md-icon>
+            </md-button>
+        </md-list-item>
+        <form name="logItemCtrl.addNewItemForm">
+            <md-list-item ng-if="!logItemCtrl.runningLogItem" class="tray-item" ng-click="null">
+
+                <div class="md-list-item-text" layout="row">
+                    <md-input-container flex="80" md-no-float>
+                        <input ng-model="logItemCtrl.newItem.title" required placeholder="Add new task">
+                    </md-input-container>
+                    <md-input-container flex="20">
+                        <input ng-model="logItemCtrl.newItem.color" type="color" required>
+                    </md-input-container>
+                </div>
+
+                <md-button type="submit" class="md-secondary md-icon-button" aria-label="Start task"
+                           ng-disabled="logItemCtrl.addNewItemForm.$invalid"
+                           ng-click="logItemCtrl.startNewLogItem(logItemCtrl.newItem)">
+                    <md-tooltip md-direction="left">
+                        Start task
+                    </md-tooltip>
+                    <md-icon md-font-set="material-icons">play_circle_filled</md-icon>
+                </md-button>
+
+            </md-list-item>
+        </form>
+        <md-subheader class="md-no-sticky">Last tasks</md-subheader>
+        <md-list-item class="tray-item" ng-repeat="item in logItemCtrl.trackItems" ng-click="null">
+            <div class="md-list-item-text">
+                <h3>{{item.title}}</h3>
+
+                <p>{{item.beginDate | date: 'yyyy.MM.dd HH:mm:ss'}} - {{item.endDate | date: 'yyyy.MM.dd HH:mm:ss'}}</p>
+            </div>
+            <md-button class="md-secondary md-icon-button" ng-click="logItemCtrl.startNewLogItem(item)"
+                       aria-label="start task">
+                <md-tooltip md-direction="left">
+                    Start task
+                </md-tooltip>
+                <md-icon md-font-set="material-icons">play_circle_filled</md-icon>
+            </md-button>
+        </md-list-item>
+    </md-list>
+</md-content>

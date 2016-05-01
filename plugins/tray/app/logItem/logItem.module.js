@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('trayApp.trackItem', [
+angular.module('trayApp.logItem', [
   'trayApp.config',
   'pascalprecht.translate'
 ]);

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('angularDemoApp')
+angular.module('globalServices')
     .controller('SettingsViewController', function ($rootScope, $mdDialog, settingsData, SettingsService) {
         var ctrl = this;
 

@@ -25,7 +25,7 @@
     <div id="trackItemMiniEdit" ng-show="timelineCtrl.selectedTrackItem"
          ng-style="{left:timelineCtrl.selectedTrackItem.left, top:timelineCtrl.selectedTrackItem.top}"
             >
-        <form>
+        <form  name="timelineCtrl.selectedTrackItemForm">
             <div layout="row">
 
                 <md-input-container flex="80" md-no-float>
@@ -34,11 +34,11 @@
                 <md-input-container flex="20">
                     <input ng-model="timelineCtrl.selectedTrackItem.color" type="color" required>
                 </md-input-container>
-                <md-button type="submit" class="md-icon-button" aria-label="Refresh"
+                <md-button type="submit" class="md-icon-button" aria-label="Refresh" ng-disabled="timelineCtrl.selectedTrackItemForm.$invalid"
                            ng-click="timelineCtrl.saveTrackItem(timelineCtrl.selectedTrackItem)">
                     <md-icon md-font-set="material-icons">save</md-icon>
                 </md-button>
-                <md-button type="submit" class="md-icon-button" aria-label="Delete"
+                <md-button type="submit" class="md-icon-button" aria-label="Delete"  ng-if="timelineCtrl.selectedTrackItem.id"
                            ng-click="timelineCtrl.deleteTrackItem(timelineCtrl.selectedTrackItem)">
                     <md-icon md-font-set="material-icons">delete</md-icon>
                 </md-button>

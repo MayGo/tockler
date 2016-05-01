@@ -15,8 +15,8 @@
       href="../../bower_components/angular-material-datetimepicker/css/material-datetimepicker.min.css"/>
 
 
-<link rel="stylesheet" href="./assets/Material/material-icons.css" />
-<link rel="stylesheet" href="./assets/style.css" />
+<link rel="stylesheet" href="./assets/Material/material-icons.css"/>
+<link rel="stylesheet" href="./assets/style.css"/>
 
 
 <body layout="row">
@@ -42,6 +42,10 @@
 <script src="../../bower_components/angular-material-datetimepicker/js/angular-material-datetimepicker.min.js"></script>
 <script type="text/javascript"
         src="../../bower_components/angular-material-data-table/dist/md-data-table.min.js"></script>
+
+<script>window.humanizeDuration = require('../../bower_components/humanize-duration/humanize-duration.js');</script>
+<script type="text/javascript" src="../../bower_components/angular-timer/dist/angular-timer.min.js"></script>
+
 <!-- endbuild -->
 
 <!-- build:app scripts:app.js -->
@@ -51,17 +55,13 @@
 <script src="./app/app.dynamic-config.js"></script>
 <script src="./app/app.runtime-config.js"></script>
 <script src="./app/app.router.js"></script>
-<script src="./app/trackItem/trackItem.list.controller.js"></script>
-<script src="./app/trackItem/trackItem.edit.modal.controller.js"></script>
-<script src="./app/trackItem/trackItem.module.js"></script>
-<script src="./app/trackItem/trackItem.routes.js"></script>
-<script src="./app/trackItem/trackItem.service.js"></script>
+<script src="./app/logItem/logItem.list.controller.js"></script>
+<script src="./app/logItem/logItem.module.js"></script>
+<script src="./app/logItem/logItem.routes.js"></script>
+<script src="../main-window/app/trackItem/trackItem.service.js"></script>
+<script src="../main-window/app/settings/settings.service.js"></script>
 
 <script src="../../app/background.service.js"></script>
-
-<script src="../../bower_components/d3-tip/index.js"></script>
-<script src="../../bower_components/nvd3/build/nv.d3.js"></script>
-<script src="../../bower_components/angular-nvd3/dist/angular-nvd3.min.js"></script>
 <!-- endbuild -->
 </body>
 </html>

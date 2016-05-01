@@ -27,7 +27,8 @@ angular.module('angularDemoApp', [
     'ngStorage',
     'angular.filter',
     'nvd3',
-    'angular-click-outside'
+    'angular-click-outside',
+    'globalServices'
 ]);
 
 angular.module('angularDemoApp.config', ['blocks.logger',

@@ -13,10 +13,11 @@ angular.module('trayApp', [
     'mdColorPicker',
     'ngMaterialDatePicker',
     'md.data.table',
-    'trayApp.trackItem',
+    'trayApp.logItem',
+    'globalServices',
     'angularMoment',
     'angular.filter',
-    'nvd3'
+    'timer'
 ]);
 
 angular.module('trayApp.config', ['pascalprecht.translate']);

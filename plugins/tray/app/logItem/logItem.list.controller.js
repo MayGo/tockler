@@ -2,11 +2,14 @@
 
 
 angular.module('trayApp')
-    .controller('TrackItemListController', function (TrackItemService, $rootScope, $scope) {
+    .controller('LogItemListController', function (TrackItemService, $rootScope, $scope, SettingsService, $mdToast, $q) {
         var ctrl = this;
         ctrl.trackItems = [];
+        ctrl.newItem = {color: '#426DFC'};
 
-        var today = moment().startOf('day');
+        SettingsService.getRunningLogItem().then(function (item) {
+            ctrl.runningLogItem = item;
+        });
 
         ctrl.loading = false;
         ctrl.list = function () {
@@ -29,7 +32,7 @@ angular.module('trayApp')
                     item.timeDiffInMs = moment(item.endDate).diff(item.beginDate);
                     item.duration = moment.duration(item.endDate - item.beginDate);
                 });
-                $rootScope.$apply();
+                $scope.$apply();
             });
         };
 
@@ -45,22 +48,39 @@ angular.module('trayApp')
             newItem.beginDate = moment().toDate();
             newItem.endDate = moment().add(60, 'seconds').toDate();
 
-            TrackItemService.create(newItem).then(function (item) {
-                console.log("Created newItem to DB:", item);
+            var qWhen = $q.when()
 
-                //$scope.$broadcast('addItemToTimeline', item);
-                ctrl.runningLogItem = item;
-                $scope.$apply();
-            });
+            if (ctrl.runningLogItem && ctrl.runningLogItem.id) {
+                qWhen = ctrl.stopRunningLogItem();
+            }
+
+            qWhen.then(function () {
+                TrackItemService.create(newItem).then(function (item) {
+                    console.log("Created newItem to DB:", item);
+
+                    ctrl.runningLogItem = item;
+                    SettingsService.saveRunningLogItemReferemce(item.id);
+
+                    var toast = $mdToast.simple()
+                        .textContent('Task is running!');
+                    $mdToast.show(toast);
+
+                    $scope.$apply();
+                });
+            })
         };
 
         ctrl.stopRunningLogItem = function () {
-            console.log("startNewLogItem");
+            console.log("stopRunningLogItem");
 
-            TrackItemService.update(ctrl.runningLogItem.id, {endDate: new Date()}).then(function (item) {
+            return TrackItemService.update(ctrl.runningLogItem.id, {endDate: new Date()}).then(function (item) {
                 console.log("Updated trackitem to DB:", item);
 
                 ctrl.runningLogItem = null;
+                SettingsService.saveRunningLogItemReferemce(null);
+                var toast = $mdToast.simple()
+                    .textContent('Running task is stopped!');
+                $mdToast.show(toast);
                 $scope.$apply();
             });
         };

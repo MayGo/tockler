@@ -13,5 +13,5 @@ angular.module('trayApp')
                 controllerAs: 'appCtrl'
             });
 
-        $urlRouterProvider.otherwise('/app/trackItem/list');
+        $urlRouterProvider.otherwise('/app/logItem/list');
     });

@@ -16,7 +16,7 @@ angular.module('angularDemoApp.settings')
                         controller: 'SettingsViewController as settingsCtrl',
                         resolve: {
                             settingsData: function ($stateParams, SettingsService) {
-                                return SettingsService.fetchSettings();
+                                return SettingsService.fetchWorkSettings();
                             }
                         }
                     }

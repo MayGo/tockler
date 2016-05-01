@@ -75,24 +75,35 @@ md-dialog md-dialog-content.without-padding {
     -o-transition: none !important;
     transition: none !important;
 }
-.tray-item{
+
+.tray-item {
     min-height: 30px;
 }
 
 .tray-item .md-list-item-text h3 {
     font-size: 12px;
     font-weight: 400;
-    letter-spacing: .010em;
     margin: 0;
-    line-height: 1.15;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    line-height: 1.35;
+
 }
 
 .tray-item .md-list-item-text p {
     font-size: 10px;
     line-height: 1.05;
     margin: 0;
-    color: rgba(0,0,0,0.54);
+    color: rgba(0, 0, 0, 0.54);
 }
+
+.tray-item .md-list-item-text p span {
+    font-size: 12px;
+    margin-left: 10px;
+    color: rgba(0, 0, 0, 0.84);
+}
+
+.tray-item md-input-container {
+    margin: 0;
+    padding-top:5px;
+}
+
+
