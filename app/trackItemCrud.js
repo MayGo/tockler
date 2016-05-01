@@ -15,17 +15,12 @@ module.exports.findAllDayItems = function (to, from, taskName) {
                 },
                 taskName: taskName
             },
+            raw: true,
             order: [
                 ['beginDate', 'ASC']
             ]
         }
     );
-};
-findAllFromDay = function (day, taskName) {
-    var to = moment(day).add(1, 'days')
-    console.log('findAllFromDay ' + taskName + ' from:' + day + ', to:' + to);
-
-    return service.findAllDayItems(day, to.toDate(), taskName);
 };
 
 module.exports.findAllFromDay = function (day, taskName) {
@@ -50,7 +45,6 @@ module.exports.findFirstLogItems = function () {
         }
     );
 };
-
 
 module.exports.createItem = function (itemData) {
     'use strict';
