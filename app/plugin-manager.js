@@ -39,7 +39,7 @@ PluginManager.prototype.init = function () {
  * @param {Object} opt   Options of the plugin
  */
 PluginManager.prototype.load = function (name, opt) {
-    opt.icon = path.join(config.root, 'shared/img/icon/timetracker_icon.ico')
+    opt.icon = path.join(config.root, 'app/shared/img/icon/timetracker_icon.ico')
     var oWindow = new BrowserWindow(opt);
 
     if (opt.maximize) {

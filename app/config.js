@@ -38,10 +38,10 @@ config.windows = {
  * `https://github.com/atom/electron/blob/master/docs/api/crash-reporter.md`
  * for crash reporter configuration.
  */
-config.crashOpts = {
+config.crashOpts ={
     productName: 'YourName',
     companyName: 'YourCompany',
-    submitUrl: 'https://your-domain.com/url-to-submit',
+    submitURL: 'https://your-domain.com/url-to-submit',
     autoSubmit: false
 }
 
