@@ -75,10 +75,12 @@ var rawItems = [emptyItem, emptyItem, emptyItem];
 var BACKGROUND_JOB_INTERVAL = 3000;
 
 var lastAppTrackItemSaved = null;
-var lastStatusTrackItemSaved = null;
 
 // on sleep computer can come out of it just for breif moment, at least mac
 var isSleeping = false;
+
+// hold last saved trackitems by taskName ('StatusTrackItem', 'AppTrackItem', 'LogTrackItem')
+var lastTrackItems = {StatusTrackItem: null, AppTrackItem: null, LogTrackItem: null}
 
 var addInactivePeriod = function (beginDate, endDate) {
 
@@ -88,8 +90,8 @@ var addInactivePeriod = function (beginDate, endDate) {
     item.beginDate = beginDate;
     item.endDate = endDate;
     log.info("Adding inactive trackitem", item);
-    lastStatusTrackItemSaved = null;
-    createOrUpdateStatusItem(item);
+    lastTrackItems.StatusTrackItem = null;
+    createOrUpdate(item);
 }
 
 
@@ -142,72 +144,16 @@ var getRawTrackItem = function (savedItem) {
 
 }
 
-var createOrUpdateAppItem = function (appTrackItem) {
+
+var createOrUpdate = function (rawItem) {
 
     var deferred = $q.defer();
-    if (shouldSplitInTwoOnMidnight(appTrackItem.beginDate, appTrackItem.endDate)) {
-        log.info('its midnight');
-        var almostMidnight = moment(appTrackItem.beginDate).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
-        var afterMidnight = dateToAfterMidnight(appTrackItem.beginDate);
-        var originalEndDate = appTrackItem.endDate;
+    var type = rawItem.taskName;
 
-        log.debug('Midnight - almostMidnight: ' + almostMidnight + ', afterMidnight:' + afterMidnight);
-        appTrackItem.endDate = almostMidnight;
-        createOrUpdateAppItem(appTrackItem).then(function (item1) {
-            lastAppTrackItemSaved = null;
-            log.debug('Midnight - Saved one (before midnight): ' + item1);
-            item1.beginDate = afterMidnight;
-            item1.endDate = originalEndDate;
-            log.debug('Midnight - Saving second (after midnight): ' + item1);
-            createOrUpdateAppItem(getRawTrackItem(item1)).then(function (item2) {
-                log.debug('Midnight- Saved second (after midnight): ' + item2);
-                deferred.resolve(item2);
-            });
-        });
-    } else {
-
-        if (!isSameItems(appTrackItem, lastAppTrackItemSaved)) {
-
-            var promise = $q.when();
-
-
-            if (lastAppTrackItemSaved) {
-                lastAppTrackItemSaved.endDate = appTrackItem.beginDate;
-                log.debug("Saving old trackItem:", lastAppTrackItemSaved);
-                promise = TrackItemService.update(lastAppTrackItemSaved.id, lastAppTrackItemSaved)
-            }
-
-            promise.then(function () {
-                appTrackItem.endDate = new Date();
-                TrackItemService.create(appTrackItem).then(function (item) {
-                    log.debug("Created track item to DB:", item);
-                    lastAppTrackItemSaved = item;
-                    deferred.resolve(item);
-                }, function (e) {
-                    log.error("Error creating", e)
-                });
-            });
-
-        } else if (isSameItems(appTrackItem, lastAppTrackItemSaved)) {
-            lastAppTrackItemSaved.endDate = new Date();
-            TrackItemService.update(lastAppTrackItemSaved.id, lastAppTrackItemSaved).then(function (item) {
-                log.debug("Saved track item(endDate change) to DB:", item);
-                lastAppTrackItemSaved = item;
-                deferred.resolve(item);
-            }, function () {
-                log.error('Error saving');
-            });
-        } else {
-            log.error("Nothing to do with item", appTrackItem);
-        }
+    if (!type) {
+        log.error('TaskName not defined:', rawItem);
     }
 
-    return deferred.promise;
-}
-
-var createOrUpdateStatusItem = function (rawItem) {
-
-    var deferred = $q.defer();
     if (shouldSplitInTwoOnMidnight(rawItem.beginDate, rawItem.endDate)) {
         log.info('its midnight');
         var almostMidnight = moment(rawItem.beginDate).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
@@ -216,44 +162,45 @@ var createOrUpdateStatusItem = function (rawItem) {
 
         log.debug('Midnight- almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
         rawItem.endDate = almostMidnight;
-        createOrUpdateStatusItem(rawItem).then(function (item1) {
-            lastStatusTrackItemSaved = null;
+        createOrUpdate(rawItem).then(function (item1) {
+            lastTrackItems[type] = null;
             log.debug('Midnight- Saved one: ' + item1);
             item1.beginDate = afterMidnight;
             item1.endDate = originalEndDate;
             log.debug('Midnight- Saving second: ' + item1);
-            createOrUpdateStatusItem(getRawTrackItem(item1)).then(function (item2) {
+            createOrUpdate(getRawTrackItem(item1)).then(function (item2) {
                 log.debug('Midnight- Saved second: ' + item2);
                 deferred.resolve(item2);
             });
         });
     } else {
-        if (!isSameItems(rawItem, lastStatusTrackItemSaved)) {
+
+        if (!isSameItems(rawItem, lastTrackItems[type])) {
 
             var promise = $q.when();
 
-            if (lastStatusTrackItemSaved) {
-                lastStatusTrackItemSaved.endDate = rawItem.beginDate;
-                log.debug("Saving old trackItem:", lastStatusTrackItemSaved);
-                promise = TrackItemService.update(lastStatusTrackItemSaved.id, lastStatusTrackItemSaved)
+            if (lastTrackItems[type]) {
+                lastTrackItems[type].endDate = rawItem.beginDate;
+                log.debug("Saving old trackItem:", lastTrackItems[type]);
+                promise = TrackItemService.update(lastTrackItems[type].id, lastTrackItems[type])
             }
 
             promise.then(function () {
                 //rawItem.endDate = new Date();
                 TrackItemService.create(rawItem).then(function (item) {
                     log.debug("Created track item to DB:", item);
-                    lastStatusTrackItemSaved = item;
+                    lastTrackItems[type] = item;
                     deferred.resolve(item);
                 }, function (e) {
                     log.error("Error creating", e)
                 });
             });
 
-        } else if (isSameItems(rawItem, lastStatusTrackItemSaved)) {
-            lastStatusTrackItemSaved.endDate = new Date();
-            TrackItemService.update(lastStatusTrackItemSaved.id, lastStatusTrackItemSaved).then(function (item) {
+        } else if (isSameItems(rawItem, lastTrackItems[type])) {
+            lastTrackItems[type].endDate = new Date();
+            TrackItemService.update(lastTrackItems[type].id, lastTrackItems[type]).then(function (item) {
                 log.debug("Saved track item(endDate change) to DB:", item);
-                lastStatusTrackItemSaved = item;
+                lastTrackItems[type] = item;
                 deferred.resolve(item);
             }, function () {
                 log.error('Error saving');
@@ -276,10 +223,10 @@ var saveActiveWindow = function (newAppTrackItem) {
         log.info('Computer is spleeing, not running saveActiveWindow');
         return;
     }
-    if (lastStatusTrackItemSaved !== null && lastStatusTrackItemSaved.app === 'IDLE') {
+    if (lastTrackItems.StatusTrackItem !== null && lastTrackItems.StatusTrackItem.app === 'IDLE') {
         log.debug('Not saving, app is idling', newAppTrackItem);
         //addRawTrackItemToList(emptyItem);
-        lastAppTrackItemSaved = null;
+        lastTrackItems.AppTrackItem = null;
         return
     }
 
@@ -299,7 +246,7 @@ var saveActiveWindow = function (newAppTrackItem) {
         addRawTrackItemToList(newAppTrackItem);
 
 
-        createOrUpdateAppItem(rawItems[0]);
+        createOrUpdate(rawItems[0]);
         //has two same items in list
         //log.info("Compare items: " + rawItems[0].title + " - " + rawItems[1].title)
         /*if (isSameItems(rawItems[0], rawItems[1])) {
@@ -333,8 +280,8 @@ var saveIdleTrackItem = function (seconds) {
     var appName = (seconds > IDLE_IN_SECONDS_TO_LOG) ? 'IDLE' : 'ONLINE';
 
     // Cannot go from OFFLINE to IDLE
-    if (lastStatusTrackItemSaved !== null &&
-        lastStatusTrackItemSaved.app === 'OFFLINE' &&
+    if (lastTrackItems.StatusTrackItem !== null &&
+        lastTrackItems.StatusTrackItem.app === 'OFFLINE' &&
         appName === 'IDLE'
     ) {
         log.info('Not saving. Cannot go from OFFLINE to IDLE');
@@ -356,7 +303,7 @@ var saveIdleTrackItem = function (seconds) {
 
     getAppColor(rawItem.app).then(function (color) {
         rawItem.color = color;
-        createOrUpdateStatusItem(rawItem);
+        createOrUpdate(rawItem);
 
     })
 
@@ -366,17 +313,17 @@ var saveIdleTrackItem = function (seconds) {
 BackgroundService.onSleep = function () {
     isSleeping = true;
     //lastStatusTrackItemSaved = null;
-    lastAppTrackItemSaved = null;
+    lastTrackItems.AppTrackItem = null;
 };
 
 BackgroundService.onResume = function () {
     addRawTrackItemToList(emptyItem);
     addRawTrackItemToList(emptyItem);
     addRawTrackItemToList(emptyItem);
-    if (lastStatusTrackItemSaved) {
-        addInactivePeriod(lastStatusTrackItemSaved.endDate, new Date());
+    if (lastTrackItems.StatusTrackItem != null) {
+        addInactivePeriod(lastTrackItems.StatusTrackItem.endDate, new Date());
     } else {
-        log.info('No lastAppTrackItemSaved for addInactivePeriod.')
+        log.info('No lastTrackItems.StatusTrackItem for addInactivePeriod.')
     }
     isSleeping = false;
 };
@@ -425,6 +372,28 @@ BackgroundService.saveForegroundWindowTitle = function () {
         log.debug("Foreground window (parsed):", active);
 
         saveActiveWindow(active);
+    });
+};
+BackgroundService.saveRunningLogItem = function () {
+
+    SettingsService.find('RUNNING_LOG_ITEM', {cacheResponse: false}).then(function (item) {
+        var deferred = $q.defer();
+        log.debug("got RUNNING_LOG_ITEM: ", item);
+        if (item.refId) {
+            TrackItemService.find(item.refId).then(function (logItem) {
+                log.debug("resolved log item RUNNING_LOG_ITEM: ", logItem);
+                var now = new Date();
+                logItem.endDate = now;
+                // set first LogTrackItem becouse
+                // when restarting application there would be multiple same items
+                lastTrackItems.LogTrackItem = logItem;
+                createOrUpdate(getRawTrackItem(logItem));
+            })
+        } else {
+            log.debug("No RUNNING_LOG_ITEM ref id");
+            deferred.resolve()
+        }
+        return deferred.promise;
     });
 };
 
@@ -479,9 +448,9 @@ BackgroundService.init = function () {
     initDb(false);
     log.info('Running background service.');
     setInterval(function () {
-        //don't save window title if is idling
         self.saveUserIdleTime();
         self.saveForegroundWindowTitle();
+        self.saveRunningLogItem();
 
     }, BACKGROUND_JOB_INTERVAL);
 };
@@ -514,7 +483,9 @@ var createTestItem = function (data) {
 
 
     return deferred.promise
-}
+};
+
+
 BackgroundService.testSaving = function () {
     initDb(true);
 
