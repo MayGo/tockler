@@ -10,6 +10,7 @@ angular.module('angularDemoApp')
         ctrl.removeItemsFromTimeline = removeItemsFromTimeline;
         ctrl.changeDay = changeDay;
         ctrl.updateDomain = updateDomain;
+        ctrl.clearBrush = clearBrush;
 
         // constants
         var margin = {
@@ -58,10 +59,21 @@ angular.module('angularDemoApp')
             //Remove everything
             vis.selectAll('.trackItem').remove();
             updateDomain(day)
-
         }
 
-        function updateDomain(day){
+        function clearBrush() {
+            console.log("Clear brush");
+            console.log(ctrl.selectedTrackItem);
+            // Hide selection brushes
+            selectionTool.clear();
+            d3.select(".brush").call(selectionTool);
+            d3.select(".brush").selectAll("rect")
+                .attr('height', logTrackItemHeight).attr("transform", null)
+            ctrl.selectedTrackItem = null;
+
+        };
+
+        function updateDomain(day) {
             // Update time domain
             var timeDomainStart = day;
             //console.log("Update time domain: ", timeDomainStart)
@@ -186,15 +198,19 @@ angular.module('angularDemoApp')
 
                 layersGroup.attr("transform", "translate(" + x + ", 1) scale(" + scale + ", 1)");
                 zoom.scale(scale).translate([x, 1]);
+
                 vis.select(".x.axis").call(xAxis);
 
-                selectionTool.extent(selectionTool.extent());
+                selectionTool.x(xScale);
+                //selectionToolSvg.selectAll("rect").attr("transform", "translate(" + x + ", 1) scale(" + scale + ", 1)");
+
+               // selectionTool.extent(selectionTool.extent());
                 d3.select(".brush").call(selectionTool);
 
                 ctrl.onZoomChanged(scale, x);
 
                 //refresh domain scale, so when zooming and later refreshing data, update item would not be error offset
-                ctrl.updateDomain(ctrl.startDate);
+                //ctrl.updateDomain(ctrl.startDate);
             };
 
             var zoom = d3.behavior.zoom().scaleExtent([1, 100])
@@ -223,7 +239,7 @@ angular.module('angularDemoApp')
             console.log("Init selection tool.");
             var selectionToolBrushEnd = function () {
 
-                console.log("selectionToolBrushEnd");
+                console.log("selectionToolBrushEnd:", selectionTool.extent());
                 // change data based on selection brush
                 var beginDate = d3.time.minute.round(selectionTool.extent()[0].getTime());
                 var endDate = d3.time.minute.round(selectionTool.extent()[1].getTime());
@@ -251,14 +267,7 @@ angular.module('angularDemoApp')
             };
 
             selectionTool = d3.svg.brush().x(xScale)
-                .on("brushend", selectionToolBrushEnd)
-                .on("brush", function () {
-                    console.log("brushing");
-                    var ext = selectionTool.extent()
-                    d3.select(".left-handle").attr("x", xScale(ext[0]) - 5);
-                    d3.select(".right-handle").attr("x", xScale(ext[1]) - 7);
-                });
-
+                .on("brushend", selectionToolBrushEnd);
 
             vis.append('g')
                 .attr('class', 'brush').call(selectionTool)
@@ -278,19 +287,6 @@ angular.module('angularDemoApp')
                 .attr("d", arc);
 
 
-            var clearBrush = function () {
-                if (ctrl.selectedTrackItem != null) {
-                    console.log("Clear brush");
-                    console.log(ctrl.selectedTrackItem);
-                    // Hide selection brushes
-                    selectionTool.clear();
-                    d3.select(".brush").call(selectionTool);
-                    d3.select(".brush").selectAll("rect")
-                        .attr('height', logTrackItemHeight).attr("transform", null)
-                    ctrl.selectedTrackItem = null;
-                    $scope.$apply();
-                }
-            };
             var createLogItemBrush = function () {
                 if (ctrl.selectedTrackItem == null) {
                     console.log("createLogItemBrush");
@@ -321,7 +317,7 @@ angular.module('angularDemoApp')
             if (ctrl.zoomX && ctrl.zoomScale) {
                 // using timeout to prevent xAxis update bug (ticks not scaled evenly)
                 $timeout(function () {
-                     changeZoom(ctrl.zoomScale, ctrl.zoomX);
+                    changeZoom(ctrl.zoomScale, ctrl.zoomX);
                 }, 100);
             }
         }
@@ -354,13 +350,12 @@ angular.module('angularDemoApp')
         function onClickTrackItem(d, i) {
 
             console.log("onClickTrackItem");
-
-
+            clearBrush();
             var p = d3.select(this);
             var data = p.data()[0];
 
             var selectionToolSvg = d3.select(".brush");
-            var traslate = p.attr('transform');
+            var translate = p.attr('transform');
             var x = new Number(p.attr('x'));
             var y = new Number(p.attr('y'));
 
@@ -373,34 +368,34 @@ angular.module('angularDemoApp')
                 title: data.title,
                 color: data.color,
                 left: x + 'px',
-                top: d3.transform(traslate).translate[1] + 'px'
+                top: d3.transform(translate).translate[1] + 'px'
             };
 
             $scope.$apply();
 
+
             if (data.taskName === 'LogTrackItem') {
-                // position brush same as trackitem
-                selectionToolSvg.selectAll("rect").attr('height', p.attr('height')).attr("transform", traslate);
-                //   d3.select("g.brush").call((brush.empty())
-                // to make unselecting work correctly
-                selectionTool.x(xScale);
-
-                // Make brush same size as trackitem
-                selectionTool.extent([data.beginDate, data.endDate]);
-                selectionToolSvg.call(selectionTool);
-
-                // remove crosshair outside of item
-                selectionToolSvg.select(".background").attr('width', 0);
-
-
-                // add handles
-                var ext = selectionTool.extent();
-                d3.select(".left-handle").attr("x", xScale(ext[0]) - 5);
-                d3.select(".right-handle").attr("x", xScale(ext[1]) - 7);
-
-                // prevent event bubbling up, to unselect when clicking outside
-                event.stopPropagation();
+                selectionToolSvg.selectAll("path").style('display', 'inherit');
+            } else {
+                selectionToolSvg.selectAll("path").style('display', 'none');
             }
+
+            // position brush same as trackitem
+            selectionToolSvg.selectAll("rect").attr('height', p.attr('height')).attr("transform", translate);
+            //   d3.select("g.brush").call((brush.empty())
+            // to make unselecting work correctly
+            selectionTool.x(xScale);
+
+            // Make brush same size as trackitem
+            selectionTool.extent([data.beginDate, data.endDate]);
+            selectionToolSvg.call(selectionTool);
+
+            // remove crosshair outside of item
+            selectionToolSvg.select(".background").attr('width', 0);
+
+            // prevent event bubbling up, to unselect when clicking outside
+            event.stopPropagation();
+
         };
 
     });

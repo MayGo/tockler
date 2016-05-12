@@ -71,15 +71,15 @@
     <div layout="row">
         <md-card flex="33">
             <md-card-title><md-card-title-text>Applications</md-card-title-text></md-card-title>
-            <md-card-content><nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieDataApp"></nvd3></md-card-content>
+            <md-card-content><nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieData['AppTrackItem']"></nvd3></md-card-content>
         </md-card>
         <md-card flex>
             <md-card-title><md-card-title-text>Logs</md-card-title-text></md-card-title>
-            <md-card-content> <nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieDataLog"></nvd3></md-card-content>
+            <md-card-content> <nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieData['LogTrackItem']"></nvd3></md-card-content>
         </md-card>
         <md-card flex="33">
             <md-card-title><md-card-title-text>Status</md-card-title-text></md-card-title>
-            <md-card-content> <nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieDataStatus"></nvd3></md-card-content>
+            <md-card-content> <nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieData['StatusTrackItem']"></nvd3></md-card-content>
         </md-card>
 
     </div>

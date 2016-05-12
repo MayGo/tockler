@@ -6,13 +6,16 @@ function Timeline($window, $rootScope, $document) {
     var link = function (scope, element, attrs, ctrl) {
 
         ctrl.init(element[0]);
-        scope.$watchCollection('timelineDirectiveCtrl.trackItems', function (newVal, oldVal) {
-                ctrl.onTrackItemsChanged(newVal, oldVal);
-            }
-        );
 
         scope.$watch('timelineDirectiveCtrl.startDate', function (newVal, oldVal) {
                 ctrl.changeDay(newVal);
+            }
+        );
+
+        scope.$watch('timelineDirectiveCtrl.selectedTrackItem', function (newVal, oldVal) {
+                if (newVal === null) {
+                    ctrl.clearBrush();
+                }
             }
         );
 
@@ -22,6 +25,13 @@ function Timeline($window, $rootScope, $document) {
             console.log('Adding Item to timeline:', trackItem);
             ctrl.addItemsToTimeline([trackItem]);
         });
+
+        scope.$on('addItemsToTimeline', function (event, trackItems) {
+            console.log('Adding Items to timeline:', trackItems);
+            //ctrl.removeItemsFromTimeline(trackItems);
+            ctrl.addItemsToTimeline(trackItems);
+        });
+
         scope.$on('removeItemsFromTimeline', function (event, trackItems) {
             console.log('Removing Items from timeline(refreshing):', trackItems.length);
             ctrl.removeItemsFromTimeline(trackItems);

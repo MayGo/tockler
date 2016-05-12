@@ -5,14 +5,25 @@ angular.module('angularDemoApp')
     .controller('TimelineViewController', function ($window, $rootScope, $mdDialog, $scope, $filter, TrackItemService, settingsData, $sessionStorage) {
         var ctrl = this;
 
-        ctrl.trackItems = [];
-        var loadedItems = [];
+        var loadedItems;
+
+        var resetLoadedItems = function () {
+            ctrl.selectedTrackItem = null;
+            loadedItems = {
+                AppTrackItem: [],
+                StatusTrackItem: [],
+                LogTrackItem: []
+            };
+        };
+        resetLoadedItems();
+
         ctrl.selectedTrackItem = null;
-        ctrl.pieData = [];
+        ctrl.pieData = {};
         ctrl.dayStats = {};
 
         var w = $window.innerWidth;
-        var pieWidth = w / 3 - 16 * 3;
+        var pieWidth = w / 3
+        16 * 3;
 
         var refreshWindow = function (event, arg) {
             console.log("Main-Window gained focus, reloading");
@@ -23,7 +34,6 @@ angular.module('angularDemoApp')
 
         $scope.$on('$destroy', function iVeBeenDismissed() {
             ipc.removeListener('main-window-focus', refreshWindow);
-
         });
 
         ctrl.pieOptions = {
@@ -57,29 +67,23 @@ angular.module('angularDemoApp')
             }
         };
 
-        function getTomorrow(d) {
-            return new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1)
-        }
-
         ctrl.dayBack = function () {
-            loadedItems = [];
+            resetLoadedItems();
             ctrl.searchDate = moment(ctrl.searchDate).subtract(1, 'days').toDate();
             ctrl.list(ctrl.searchDate);
         };
         ctrl.dayForward = function () {
-            loadedItems = [];
+            resetLoadedItems();
             ctrl.searchDate = moment(ctrl.searchDate).add(1, 'days').toDate();
             ctrl.list(ctrl.searchDate);
         };
         ctrl.changeDay = function (day) {
-            loadedItems = [];
+            resetLoadedItems();
             ctrl.list(day);
         };
 
         ctrl.refresh = function () {
-            var lastItem = _.chain(ctrl.trackItems).filter(function (item) {
-                return item.taskName === 'AppTrackItem';
-            }).last().valueOf();
+            var lastItem = _(loadedItems['AppTrackItem']).last().valueOf();
 
             var searchFrom = (lastItem) ? lastItem.beginDate : moment().startOf('day').toDate();
             console.log('Refreshing from:', searchFrom);
@@ -93,47 +97,52 @@ angular.module('angularDemoApp')
             ctrl.zoomScale = $sessionStorage.zoomScale || 0;
             ctrl.zoomX = $sessionStorage.zoomX || 0;
             ctrl.loading = true;
-            TrackItemService.findAll({
 
-                orderBy: [
-                    ['beginDate', 'ASC']
-                ], where: {
-                    endDate: {
-                        '>=': startDate,
-                        '<': getTomorrow(startDate)
-                    }
-                }
-            }).then(function (items) {
-                console.log('Trackitems loaded, parsing.');
-                var nothingToUpdate = false;
-                var upsert = function (arr, id, newval) {
-                    if (nothingToUpdate === true) {
-                        arr.push(newval);
-                        console.log('Nothing to update, inserting instead');
-                        return;
-                    }
-                    var index = _.indexOf(arr, _.find(arr, {id: id}));
-                    if (index === -1) {
-                        arr.push(newval);
-                        nothingToUpdate = true;
-                    } else {
-                        arr.splice(index, 1, newval);
-                    }
-                };
-                if (loadedItems.length === 0) {
-                    loadedItems = items;
-                } else {
-                    _.each(items, function (item) {
-                        upsert(loadedItems, item._id, item);
-                    });
-                }
+            _.keys(loadedItems).forEach(function (taskName) {
+                TrackItemService.findAllFromDay(startDate, taskName).then(function (items) {
+                        console.log('Trackitems loaded, parsing.');
 
-                ctrl.trackItems = loadedItems;
-                ctrl.loading = false;
-                console.log('Trackitems loaded, parsing ended.');
-                $scope.$digest();
-                console.log('Trackitems loaded, $digest.');
-            });
+                        var nothingToUpdate = false;
+                        var upsert = function (arr, id, newval) {
+                            if (nothingToUpdate === true) {
+                                arr.push(newval);
+                                console.log('Nothing to update, inserting instead');
+                                return;
+                            }
+                            var index = _.indexOf(arr, _.find(arr, {id: id}));
+                            if (index === -1) {
+                                arr.push(newval);
+                                nothingToUpdate = true;
+                            } else {
+                                arr.splice(index, 1, newval);
+                            }
+                        };
+
+                        if (loadedItems[taskName].length === 0) {
+                            loadedItems[taskName] = items;
+                        } else {
+                            _.each(items, function (item) {
+                                upsert(loadedItems[taskName], item._id, item);
+                            });
+                        }
+
+                        ctrl.loading = false;
+                        console.log('Trackitems loaded, parsing ended.');
+                        $scope.$broadcast('addItemsToTimeline', loadedItems[taskName]);
+
+                        updatePieCharts(loadedItems[taskName], taskName);
+
+                        if (taskName === 'AppTrackItem') {
+                            setWorkStatsForDay(loadedItems[taskName])
+                        }
+
+                        $scope.$digest();
+                        console.log('Trackitems loaded, $digest.');
+                    }
+                );
+            })
+
+
         };
 
         function setWorkStatsForDay(items) {
@@ -147,61 +156,29 @@ angular.module('angularDemoApp')
                 startDate.minute(parts[1]);
                 ctrl.dayStats.lateForWork = moment(firstItem.beginDate).diff(startDate)
             }
-
         }
 
-        $scope.$watch('timelineCtrl.selectedTrackItem', function (newValue, oldValue) {
-            if (newValue) {
-                console.log('Track Item selected', newValue);
-                // var el = angular.element( document.querySelector( '#trackItemMiniEdit'));
-                // console.log(el)
-
-            }
-        }, true);
-
-        $scope.$watchCollection('timelineCtrl.trackItems', function (items, oldValue) {
+        function sumApp(p, c) {
+            return _.extend(p, {
+                timeDiffInMs: p.timeDiffInMs + moment(c.endDate).diff(c.beginDate)
+            });
+        };
+        var updatePieCharts = function (items, taskName) {
 
             console.log('Track Items changed. Updating pie charts');
-            function sumApp(p, c) {
-                return _.extend(p, {
-                    timeDiffInMs: p.timeDiffInMs + moment(c.endDate).diff(c.beginDate)
-                });
-            };
 
-            ctrl.pieDataApp = _.chain(items).filter(function (item) {
-                return item.taskName === 'AppTrackItem';
-            })
-                .groupBy('app')
-                .map(function (b) {
-                    return b.reduce(sumApp, {app: b[0].app, timeDiffInMs: 0, color: b[0].color})
-                })
-                .valueOf();
-
-            ctrl.pieDataLog = _.chain(items).filter(function (item) {
-                return item.taskName === 'LogTrackItem';
-            })
-                .groupBy('title')
+            var groupBy = (taskName === 'LogTrackItem') ? 'title' : 'app'
+            ctrl.pieData[taskName] = _(items)
+                .groupBy(groupBy)
                 .map(function (b) {
                     return b.reduce(sumApp, {app: b[0].app, title: b[0].title, timeDiffInMs: 0, color: b[0].color})
                 })
                 .valueOf();
 
-            ctrl.pieDataStatus = _.chain(items).filter(function (item) {
-                return item.taskName === 'StatusTrackItem';
-            })
-                .groupBy('app')
-                .map(function (b) {
-                    return b.reduce(sumApp, {app: b[0].app, timeDiffInMs: 0, color: b[0].color})
-                })
-                .valueOf();
-
-            setWorkStatsForDay(items.filter(function (item) {
-                return item.taskName === 'AppTrackItem';
-            }));
             // $rootScope.$apply();
             console.log('Updating pie charts ended.');
 
-        });
+        };
 
         ctrl.onZoomChanged = function (scale, x) {
             $sessionStorage.zoomScale = scale;
@@ -241,8 +218,8 @@ angular.module('angularDemoApp')
                         arr.splice(index, 1, newval);
                     };
 
-                    update(ctrl.trackItems, item._id, item);
-
+                    update(loadedItems[trackItem.taskName], item._id, item);
+                    updatePieCharts(loadedItems[trackItem.taskName], trackItem.taskName);
                     $scope.$apply();
                 });
             } else {
@@ -255,9 +232,9 @@ angular.module('angularDemoApp')
 
                     $scope.$broadcast('addItemToTimeline', item);
 
-                    ctrl.trackItems.push(item);
-
-                    $scope.$apply();
+                    loadedItems[trackItem.taskName].push(item);
+                    updatePieCharts(loadedItems[trackItem.taskName], trackItem.taskName);
+                    $scope.$digest();
                 });
             }
 
@@ -271,9 +248,10 @@ angular.module('angularDemoApp')
                     console.log("Deleting trackitem from DB:", trackItem);
                     ctrl.selectedTrackItem = null;
 
-                    var index = _.indexOf(ctrl.trackItems, _.find(ctrl.trackItems, {id: trackItem.id}));
-                    ctrl.trackItems.splice(index, 1);
-                    $scope.$broadcast('removeItemsFromTimeline', ctrl.trackItems);
+                    var index = _.indexOf(ctrl.trackItems, _.find(loadedItems[trackItem.taskName], {id: trackItem.id}));
+                    loadedItems[trackItem.taskName].splice(index, 1);
+                    updatePieCharts(loadedItems[trackItem.taskName], trackItem.taskName);
+                    $scope.$broadcast('removeItemsFromTimeline', loadedItems[trackItem.taskName]);
                     $scope.$apply();
                 });
             } else {
