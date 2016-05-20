@@ -2,7 +2,7 @@
 
 angular.module('globalServices', [])
     .service('TrackItemService', function () {
-        var service = require('remote').getGlobal('BackgroundService').getTrackItemService();
+        var service = require('electron').remote.getGlobal('BackgroundService').getTrackItemService();
 
         service.findAllFromDay = function (day, taskName) {
             var to = moment(day).add(1, 'days')

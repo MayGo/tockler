@@ -2,7 +2,7 @@
 
 angular.module('globalServices')
     .service('SettingsService', function (TrackItemService, $q) {
-        var service = require('remote').getGlobal('BackgroundService').getSettingsService();
+        var service = require('electron').remote.getGlobal('BackgroundService').getSettingsService();
 
         service.fetchWorkSettings = function () {
             return service.find('WORK_SETTINGS', {cacheResponse: false}).then(function (item) {

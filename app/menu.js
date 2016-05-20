@@ -1,4 +1,4 @@
-var Menu = require('menu')
+const {Menu, MenuItem} = require('electron');
 
 function getTemplate (windowObjects, mainAppName) {
   var template = [

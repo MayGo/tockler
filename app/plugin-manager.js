@@ -1,6 +1,8 @@
-var BrowserWindow = require('browser-window')
+
 var path = require('path')
-var ipc =  require("electron").ipcMain
+var ipc =  require("electron").ipcMain;
+//var BrowserWindow = require("electron").browserWindow;
+const {BrowserWindow} = require('electron');
 var _ = require('lodash')
 
 var menu = require('./menu')
@@ -45,7 +47,7 @@ PluginManager.prototype.load = function (name, opt) {
         oWindow.maximize();
     }
 
-    this.windows[name] = oWindow
+    this.windows[name] = oWindow;
 
     oWindow.loadURL('file://' + path.join(config.pluginsPath, name, 'index.html'));
 
@@ -65,7 +67,7 @@ PluginManager.prototype.load = function (name, opt) {
 
     // open devtools
     if (config.isDev && opt.showDevtools !== false)
-        oWindow.openDevTools()
+        oWindow.openDevTools();
 
     return oWindow
 }

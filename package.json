@@ -13,14 +13,14 @@
     "url": "git@github.com:MayGo/backer-timetracker.git"
   },
   "devDependencies": {
-    "electron-connect": "chuyik/electron-connect",
-    "electron-packager": "^5.2.1",
-    "electron-prebuilt": "^0.36.9",
-    "electron-rebuild": "^1.1.3",
-    "electron-builder": "^2.8.2",
+    "electron-connect": "0.4.2",
+    "electron-packager": "^7.0.2",
+    "electron-prebuilt": "^1.1.0",
+    "electron-rebuild": "^1.1.4",
+    "electron-builder": "^3.25.0",
     "gulp": "^3.9.1",
     "gulp-sass": "^2.0.3",
-    "node-gyp": "^3.3.0"
+    "node-gyp": "^3.3.1"
   },
   "dependencies": {
     "async": "^1.5.2",

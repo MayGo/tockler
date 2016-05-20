@@ -214,7 +214,7 @@ var createOrUpdate = function (rawItem) {
         }
     }
     return deferred.promise;
-}
+};
 
 var addRawTrackItemToList = function (item) {
     // Keep only 3 items in array

@@ -20,10 +20,6 @@ angular.module('angularDemoApp.runtime-config', ['angularDemoApp.config'])
     })
    .config(function (tmhDynamicLocaleProvider) {
        tmhDynamicLocaleProvider.localeLocationPattern('../../bower_components/angular-i18n/angular-locale_{{locale}}.js')
-    })
-
-    .factory('store', function () {
-        return require('remote').getGlobal('storeDS');
     });
 
 

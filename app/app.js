@@ -1,11 +1,11 @@
-var app = require('app')
+var app = require('electron').app
 var notifier = require('node-notifier')
 
 var mb = require('./tray')
 var pluginMgr = require('./plugin-manager')
 var backgroundService = require('./background.service')
 var ipcMain = require('electron').ipcMain;
-require('./lib/crash-handler')
+//require('./lib/crash-handler')
 
 
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
@@ -19,14 +19,15 @@ app.on('ready', function () {
 
     global.BackgroundService = backgroundService;
 
-    require('power-monitor').on('suspend', function () {
+    require('electron').powerMonitor.on('suspend', function () {
         console.log('The system is going to sleep');
         backgroundService.onSleep();
     });
-    require('power-monitor').on('resume', function () {
+    require('electron').powerMonitor.on('resume', function () {
         console.log('The system is going to resume');
         backgroundService.onResume();
     });
+
     // Docs:
     // https://github.com/mikaelbr/node-notifier
     /*notifier.notify({

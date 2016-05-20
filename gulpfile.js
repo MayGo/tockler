@@ -1,14 +1,19 @@
 var gulp = require('gulp')
 var electronPrebuilt = require('electron-prebuilt')
 var packager = require('electron-packager')
-var builder = require('electron-builder').init();
+var builder = require('electron-builder');
 var proc = require('child_process')
 var path = require('path')
 var config = require('./app/config')
 var _ = require('lodash')
 var fs = require('fs')
 var sass = require('gulp-sass')
-var electronConnect = require('electron-connect').server
+var electronConnect = require('electron-connect').server.create({
+    electron: electronPrebuilt,
+    spawnOpt: {
+        env: {NODE_ENV: 'development'}
+    }
+});
 
 var pkg = require('./package.json')
 var electronPkg = require('./node_modules/electron-prebuilt/package.json')
@@ -42,13 +47,9 @@ var publishOpts = {
  * Run the app in debugging mode (Reload with CMD+R/F5)
  */
 gulp.task('serve', function () {
-    electron = electronConnect.create({
-        electron: electronPrebuilt,
-        spawnOpt: {
-            env: {NODE_ENV: 'development'}
-        }
-    })
-    electron.start()
+
+    // Start browser process
+    electronConnect.start();
 })
 
 /**
@@ -169,9 +170,6 @@ gulp.task('sass', function () {
  */
 gulp.task('watch', function () {
 
-    if (!electron)
-        return console.error('You should not run this task directly, try use `gulp dev` instead.')
-
     // SASS files
     gulp.watch(path.join(paths.plugins, '**/css/sass/*.scss'), function (obj) {
         if (obj.type === 'changed' && obj.path) {
@@ -189,7 +187,7 @@ gulp.task('watch', function () {
     })
 
     // app.js
-    gulp.watch('app/*', electron.restart)
+    gulp.watch('app/*', electronConnect.restart)
 
     // html & js & css files
     gulp.watch(
@@ -200,7 +198,8 @@ gulp.task('watch', function () {
         ],
 
         function () {
-            electron.reload()
+            console.log("reloading..")
+            electronConnect.reload()
         })
 });
 

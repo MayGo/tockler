@@ -1,4 +1,4 @@
 var config = require('../config')
 
 // Report crashes to our server.
-require('crash-reporter').start(config.crashOpts)
+require("electron").crashReporter.start(config.crashOpts)
