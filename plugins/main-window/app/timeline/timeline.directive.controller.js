@@ -362,6 +362,7 @@ angular.module('angularDemoApp')
             // Create object from TrackItem object, to prevent updating trackitem
             ctrl.selectedTrackItem = {
                 id: data.id,
+                app: data.app,
                 taskName: data.taskName,
                 beginDate: data.beginDate,
                 endDate: data.endDate,

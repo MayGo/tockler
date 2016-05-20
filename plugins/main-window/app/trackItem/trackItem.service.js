@@ -24,5 +24,10 @@ angular.module('globalServices', [])
             });
         };
 
+        service.updateColorForApp = function (appName, color) {
+            console.log("Updating app color:", appName, color);
+            return service.updateAll({color: color}, {app: appName})
+        }
+
         return service;
     });

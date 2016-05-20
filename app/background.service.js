@@ -69,6 +69,10 @@ BackgroundService.getSettingsService = function () {
     return SettingsService;
 };
 
+BackgroundService.getAppSettingsService = function () {
+    return AppSettingsService;
+};
+
 
 var rawItems = [emptyItem, emptyItem, emptyItem];
 
@@ -86,7 +90,6 @@ var addInactivePeriod = function (beginDate, endDate) {
 
     var item = {app: 'OFF', title: "Inactive"};
     item.taskName = 'StatusTrackItem';
-    item.color = '#ff0000';
     item.beginDate = beginDate;
     item.endDate = endDate;
     log.info("Adding inactive trackitem", item);
@@ -201,6 +204,7 @@ var createOrUpdate = function (rawItem) {
             TrackItemService.update(lastTrackItems[type].id, lastTrackItems[type]).then(function (item) {
                 log.debug("Saved track item(endDate change) to DB:", item);
                 lastTrackItems[type] = item;
+                delete lastTrackItems[type].color;
                 deferred.resolve(item);
             }, function () {
                 log.error('Error saving');
@@ -234,7 +238,6 @@ var saveActiveWindow = function (newAppTrackItem) {
         // Lock screen have no title, maybe something
         newAppTrackItem.app = 'NATIVE';
         newAppTrackItem.taskName = 'AppTrackItem';
-        newAppTrackItem.color = '#ff6700';
         newAppTrackItem.title = 'NO_TITLE';
     } else {
         newAppTrackItem.taskName = 'AppTrackItem';
@@ -278,6 +281,7 @@ var saveIdleTrackItem = function (seconds) {
 
 
     var appName = (seconds > IDLE_IN_SECONDS_TO_LOG) ? 'IDLE' : 'ONLINE';
+    var appTitle = (seconds > IDLE_IN_SECONDS_TO_LOG) ? 'idle' : 'online';
 
     // Cannot go from OFFLINE to IDLE
     if (lastTrackItems.StatusTrackItem !== null &&
@@ -295,7 +299,7 @@ var saveIdleTrackItem = function (seconds) {
     var rawItem = {
         taskName: 'StatusTrackItem',
         app: appName,
-        title: "",
+        title: appTitle,
         beginDate: beginDate,
         endDate: new Date()
     };
@@ -387,6 +391,7 @@ BackgroundService.saveRunningLogItem = function () {
                 // set first LogTrackItem becouse
                 // when restarting application there would be multiple same items
                 lastTrackItems.LogTrackItem = logItem;
+                delete lastTrackItems.LogTrackItem.color
                 createOrUpdate(getRawTrackItem(logItem));
             })
         } else {

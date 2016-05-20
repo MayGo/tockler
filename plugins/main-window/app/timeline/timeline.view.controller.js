@@ -2,7 +2,8 @@
 var ipc = require("electron").ipcRenderer
 
 angular.module('angularDemoApp')
-    .controller('TimelineViewController', function ($window, $rootScope, $mdDialog, $scope, $filter, TrackItemService, settingsData, $sessionStorage) {
+    .controller('TimelineViewController', function ($window, $rootScope, $mdDialog, $scope, $filter,
+                                                    TrackItemService, settingsData, $sessionStorage, AppSettingsService) {
         var ctrl = this;
 
         var loadedItems;
@@ -87,6 +88,12 @@ angular.module('angularDemoApp')
 
             var searchFrom = (lastItem) ? lastItem.beginDate : moment().startOf('day').toDate();
             console.log('Refreshing from:', searchFrom);
+            ctrl.list(searchFrom);
+        };
+        ctrl.reload = function () {
+            resetLoadedItems();
+            var searchFrom = ctrl.searchDate;
+            console.log('Reloading from:', searchFrom);
             ctrl.list(searchFrom);
         };
 
@@ -207,21 +214,30 @@ angular.module('angularDemoApp')
                 trackItem.taskName = "LogTrackItem";
             }
             if (trackItem.id) {
-                TrackItemService.update(trackItem.id, trackItem).then(function (item) {
-                    console.log("Updated trackitem to DB:", item);
-                    ctrl.selectedTrackItem = null;
+                $mdDialog.show({
+                    templateUrl: 'app/trackItem/trackItem.color.modal.html',
+                    controller: 'TrackItemColorModalController as trackItemColorCtrl',
+                    parent: angular.element(document.body)
+                })
+                    .then(function (answer) {
+                        if (answer === 'ALL_ITEMS') {
+                            ctrl.loading = true;
+                            AppSettingsService.changeColorForApp(trackItem.app, trackItem.color);
+                            TrackItemService.updateColorForApp(trackItem.app, trackItem.color).then(function(){
+                                console.log("updated all item with color");
+                                ctrl.reload();
+                            })
+                        } else if (answer === 'NEW_ITEMS') {
+                            AppSettingsService.changeColorForApp(trackItem.app, trackItem.color);
+                            updateItem(trackItem);
+                        } else {
+                            updateItem(trackItem);
+                        }
 
-                    $scope.$broadcast('addItemToTimeline', item);
+                    }, function () {
+                        $scope.status = 'You cancelled the dialog.';
+                    });
 
-                    var update = function (arr, id, newval) {
-                        var index = _.indexOf(arr, _.find(arr, {id: id}));
-                        arr.splice(index, 1, newval);
-                    };
-
-                    update(loadedItems[trackItem.taskName], item._id, item);
-                    updatePieCharts(loadedItems[trackItem.taskName], trackItem.taskName);
-                    $scope.$apply();
-                });
             } else {
                 if (!trackItem.app) {
                     trackItem.app = "Default";
@@ -239,6 +255,23 @@ angular.module('angularDemoApp')
             }
 
         };
+        var updateItem = function (trackItem) {
+            TrackItemService.update(trackItem.id, trackItem).then(function (item) {
+                console.log("Updated trackitem to DB:", item);
+                ctrl.selectedTrackItem = null;
+
+                $scope.$broadcast('addItemToTimeline', item);
+
+                var update = function (arr, id, newval) {
+                    var index = _.indexOf(arr, _.find(arr, {id: id}));
+                    arr.splice(index, 1, newval);
+                };
+
+                update(loadedItems[trackItem.taskName], item._id, item);
+                updatePieCharts(loadedItems[trackItem.taskName], trackItem.taskName);
+                $scope.$apply();
+            });
+        }
 
         ctrl.deleteTrackItem = function (trackItem) {
             console.log("Deleting trackitem.", trackItem);
