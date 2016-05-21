@@ -59,3 +59,19 @@ app.on('activate-with-no-open-windows', function () {
     mb.window.show();
 });
 
+/* Single Instance Check */
+var iShouldQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
+    if (pluginMgr.windows['main-window']) {
+        if (pluginMgr.windows['main-window'].isMinimized()) {
+            pluginMgr.windows['main-window'].restore();
+        }
+        pluginMgr.windows['main-window'].show();
+        pluginMgr.windows['main-window'].focus();
+    }
+    return true;
+});
+if (iShouldQuit) {
+    app.quit();
+    return;
+}
+
