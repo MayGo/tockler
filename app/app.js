@@ -7,6 +7,21 @@ var backgroundService = require('./background.service')
 var ipcMain = require('electron').ipcMain;
 //require('./lib/crash-handler')
 
+var AutoLaunch = require('auto-launch');
+
+var appLauncher = new AutoLaunch({
+    name: 'Backer Timetracker'
+});
+
+appLauncher.isEnabled().then(function (enabled) {
+    if (enabled) {
+        return;
+    }
+    return appLauncher.enable()
+}).then(function (err) {
+
+});
+
 
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
 /**
