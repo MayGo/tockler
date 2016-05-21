@@ -391,7 +391,6 @@ BackgroundService.saveRunningLogItem = function () {
                 // set first LogTrackItem becouse
                 // when restarting application there would be multiple same items
                 lastTrackItems.LogTrackItem = logItem;
-                delete lastTrackItems.LogTrackItem.color
                 createOrUpdate(getRawTrackItem(logItem));
             })
         } else {
