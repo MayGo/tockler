@@ -151,68 +151,72 @@ var getRawTrackItem = function (savedItem) {
 var createOrUpdate = function (rawItem) {
 
     var deferred = $q.defer();
-    var type = rawItem.taskName;
 
-    if (!type) {
-        log.error('TaskName not defined:', rawItem);
-    }
+    getAppColor(rawItem.app).then(function (color) {
+        rawItem.color = color;
 
-    if (shouldSplitInTwoOnMidnight(rawItem.beginDate, rawItem.endDate)) {
-        log.info('its midnight');
-        var almostMidnight = moment(rawItem.beginDate).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
-        var afterMidnight = dateToAfterMidnight(rawItem.beginDate);
-        var originalEndDate = rawItem.endDate;
+        var type = rawItem.taskName;
 
-        log.debug('Midnight- almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
-        rawItem.endDate = almostMidnight;
-        createOrUpdate(rawItem).then(function (item1) {
-            lastTrackItems[type] = null;
-            log.debug('Midnight- Saved one: ' + item1);
-            item1.beginDate = afterMidnight;
-            item1.endDate = originalEndDate;
-            log.debug('Midnight- Saving second: ' + item1);
-            createOrUpdate(getRawTrackItem(item1)).then(function (item2) {
-                log.debug('Midnight- Saved second: ' + item2);
-                deferred.resolve(item2);
-            });
-        });
-    } else {
+        if (!type) {
+            log.error('TaskName not defined:', rawItem);
+        }
 
-        if (!isSameItems(rawItem, lastTrackItems[type])) {
+        if (shouldSplitInTwoOnMidnight(rawItem.beginDate, rawItem.endDate)) {
+            log.info('its midnight');
+            var almostMidnight = moment(rawItem.beginDate).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
+            var afterMidnight = dateToAfterMidnight(rawItem.beginDate);
+            var originalEndDate = rawItem.endDate;
 
-            var promise = $q.when();
-
-            if (lastTrackItems[type]) {
-                lastTrackItems[type].endDate = rawItem.beginDate;
-                log.debug("Saving old trackItem:", lastTrackItems[type]);
-                promise = TrackItemService.update(lastTrackItems[type].id, lastTrackItems[type])
-            }
-
-            promise.then(function () {
-                //rawItem.endDate = new Date();
-                TrackItemService.create(rawItem).then(function (item) {
-                    log.debug("Created track item to DB:", item);
-                    lastTrackItems[type] = item;
-                    deferred.resolve(item);
-                }, function (e) {
-                    log.error("Error creating", e)
+            log.debug('Midnight- almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
+            rawItem.endDate = almostMidnight;
+            createOrUpdate(rawItem).then(function (item1) {
+                lastTrackItems[type] = null;
+                log.debug('Midnight- Saved one: ' + item1);
+                item1.beginDate = afterMidnight;
+                item1.endDate = originalEndDate;
+                log.debug('Midnight- Saving second: ' + item1);
+                createOrUpdate(getRawTrackItem(item1)).then(function (item2) {
+                    log.debug('Midnight- Saved second: ' + item2);
+                    deferred.resolve(item2);
                 });
             });
-
-        } else if (isSameItems(rawItem, lastTrackItems[type])) {
-            lastTrackItems[type].endDate = new Date();
-            TrackItemService.update(lastTrackItems[type].id, lastTrackItems[type]).then(function (item) {
-                log.debug("Saved track item(endDate change) to DB:", item);
-                lastTrackItems[type] = item;
-                delete lastTrackItems[type].color;
-                deferred.resolve(item);
-            }, function () {
-                log.error('Error saving');
-            });
         } else {
-            log.error("Nothing to do with item", rawItem);
+
+            if (!isSameItems(rawItem, lastTrackItems[type])) {
+
+                var promise = $q.when();
+
+                if (lastTrackItems[type]) {
+                    lastTrackItems[type].endDate = rawItem.beginDate;
+                    log.debug("Saving old trackItem:", lastTrackItems[type]);
+                    promise = TrackItemService.update(lastTrackItems[type].id, lastTrackItems[type])
+                }
+
+                promise.then(function () {
+                    //rawItem.endDate = new Date();
+                    TrackItemService.create(rawItem).then(function (item) {
+                        log.debug("Created track item to DB:", item);
+                        lastTrackItems[type] = item;
+                        deferred.resolve(item);
+                    }, function (e) {
+                        log.error("Error creating", e)
+                    });
+                });
+
+            } else if (isSameItems(rawItem, lastTrackItems[type])) {
+                lastTrackItems[type].endDate = new Date();
+                TrackItemService.update(lastTrackItems[type].id, lastTrackItems[type]).then(function (item) {
+                    log.debug("Saved track item(endDate change) to DB:", item);
+                    lastTrackItems[type] = item;
+                    deferred.resolve(item);
+                }, function () {
+                    log.error('Error saving');
+                });
+            } else {
+                log.error("Nothing to do with item", rawItem);
+            }
         }
-    }
+    })
     return deferred.promise;
 };
 
@@ -243,26 +247,7 @@ var saveActiveWindow = function (newAppTrackItem) {
         newAppTrackItem.taskName = 'AppTrackItem';
     }
 
-
-    getAppColor(newAppTrackItem.app).then(function (color) {
-        newAppTrackItem.color = color;
-        addRawTrackItemToList(newAppTrackItem);
-
-
-        createOrUpdate(rawItems[0]);
-        //has two same items in list
-        //log.info("Compare items: " + rawItems[0].title + " - " + rawItems[1].title)
-        /*if (isSameItems(rawItems[0], rawItems[1])) {
-         rawItems[0].beginDate = rawItems[1].beginDate;
-         createOrUpdate(rawItems[0])
-         } else if (isSameItems(rawItems[0], rawItems[2])) {
-         // There is one different item in between, eg:tab switching
-         //bug: enddate before begindate
-         // rawItems[0].beginDate = rawItems[2].beginDate;
-         // createOrUpdate(rawItems[0])
-         }*/
-
-    })
+    createOrUpdate(newAppTrackItem);
 };
 
 var IDLE_IN_SECONDS_TO_LOG = 60 * 1;
