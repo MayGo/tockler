@@ -1,6 +1,5 @@
 var gulp = require('gulp')
 var electronPrebuilt = require('electron-prebuilt')
-var packager = require('electron-packager')
 var builder = require('electron-builder');
 var proc = require('child_process')
 var path = require('path')
@@ -92,62 +91,29 @@ gulp.task('prebuild', function () {
 
 gulp.task('build:osx', function () {
 
-    _.assign(publishOpts, {
-        platform: ['darwin'],
-        arch: 'x64',
-        out: paths.build,
-        icon: path.join(config.root, 'shared/img/icon/timetracker_icon.icns'),
-        asar: false
-    });
-
-    packager(publishOpts, function done(err, appPath) {
-        if (err) return console.error(err)
-        console.log('Build complete, output paths: ', appPath);
-
-        builder.build({
-            appPath: 'output/built/backer-timetracker-darwin-x64/backer-timetracker.app',
-            platform: 'osx',
-            out: paths.build,
-            config: JSON.parse(fs.readFileSync('./build-config.json')),
-            basePath: './'
-        }, function (err) {
-            if (err) {
-                console.error(err);
-                return;
-            }
-            console.log('Builder complete.');
-        });
+    builder.build({
+        platform: [builder.Platform.OSX]
+    }).then(function () {
+        // handle result
+        console.log('Builder complete.');
     })
+        .catch(function (error) {
+            // handle error
+            console.error(error);
+        });
 });
 
 gulp.task('build:win', function () {
-
-    _.assign(publishOpts, {
-        platform: ['win32'],
-        arch: 'all',
-        out: paths.build,
-        icon: path.join(config.root, 'shared/img/icon/timetracker_icon.ico'),
-        asar: false
-    });
-
-    packager(publishOpts, function done(err, appPath) {
-        if (err) return console.error(err)
-        console.log('Build complete, output paths: ', appPath);
-
-        builder.build({
-            appPath: 'output/built/backer-timetracker-win32-x64',
-            platform: 'win',
-            out: paths.build,
-            config: JSON.parse(fs.readFileSync('./build-config.json')),
-            basePath: './'
-        }, function (err) {
-            if (err) {
-                console.error(err);
-                return;
-            }
-            console.log('Builder complete.');
-        });
+    builder.build({
+        platform: [builder.Platform.WINDOWS]
+    }).then(function () {
+        // handle result
+        console.log('Builder complete.');
     })
+        .catch(function (error) {
+            // handle error
+            console.error(error);
+        });
 });
 
 /**

@@ -8,7 +8,7 @@ var config = {
     root: root,
 
     // plugins directory
-    pluginsPath: path.join(root, 'plugins'),
+    pluginsPath: path.join(root, 'app/plugins'),
 
     // a flag to whether the app is running in development mode
     isDev: process.env.NODE_ENV === 'development',

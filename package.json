@@ -1,20 +1,14 @@
 {
   "name": "backer-timetracker",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Track your time by monitoring your active windows and idle time",
   "main": "app/app.js",
   "scripts": {
     "test": "echo \"Please use gulp instead.\" && exit 1"
   },
   "author": "Maigo Erit <maigo.erit@gmail.com>",
-  "license": "GPL-2.0",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:MayGo/backer-timetracker.git"
-  },
   "devDependencies": {
     "electron-connect": "0.4.2",
-    "electron-packager": "^7.0.2",
     "electron-prebuilt": "^1.1.0",
     "electron-rebuild": "^1.1.4",
     "electron-builder": "^3.25.0",
@@ -22,20 +16,41 @@
     "gulp-sass": "^2.0.3",
     "node-gyp": "^3.3.1"
   },
-  "dependencies": {
-    "async": "^1.5.2",
-    "auto-launch": "^2.0.1",
-    "bunyan": "^1.7.1",
-    "js-data": "^2.9.0",
-    "js-data-nedb": "^1.0.0",
-    "lodash": "^4.5.0",
-    "menubar": "^4.1.0",
-    "moment": "^2.11.1",
-    "multiline": "^1.0.2",
-    "node-notifier": "^4.4.0",
-    "os-locale": "^1.4.0",
-    "q": "^1.4.1",
-    "randomcolor": "^0.4.3",
-    "request": "^2.58.0"
+  "build": {
+    "app-bundle-id": "backer-timetracker",
+    "app-category-type": "public.app-category.productivity",
+    "iconUrl": "shared/img/icon/timetracker_icon.ico",
+    "asar": false,
+    "osx": {
+      "title": "Backer Timetracker",
+      "icon": "shared/img/icon/timetracker_icon.icns",
+      "icon-size": 40,
+      "contents": [
+        {
+          "x": 438,
+          "y": 144,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 192,
+          "y": 144,
+          "type": "file"
+        }
+      ]
+    },
+    "win": {
+      "title": "Backer Timetracker",
+      "icon": "shared/img/icon/timetracker_icon.ico"
+    },
+    "linux": {
+      "arch": 64,
+      "target": "deb",
+      "version": "0.1.2",
+      "title": "Backer Timetracker",
+      "comment": "This is a comment",
+      "executable": "electron-builder-example",
+      "maintainer": "Dummy Maintainer <dummy@maintainer.org>"
+    }
   }
 }

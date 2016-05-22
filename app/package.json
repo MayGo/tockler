@@ -1,0 +1,29 @@
+{
+  "name": "backer-timetracker",
+  "version": "1.0.9",
+  "description": "Track your time by monitoring your active windows and idle time",
+  "main": "app.js",
+  "author": "Maigo Erit <maigo.erit@gmail.com>",
+  "license": "GPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:MayGo/backer-timetracker.git"
+  },
+
+  "dependencies": {
+    "async": "^1.5.2",
+    "auto-launch": "^2.0.1",
+    "bunyan": "^1.7.1",
+    "js-data": "^2.9.0",
+    "js-data-nedb": "^1.0.0",
+    "lodash": "^4.5.0",
+    "menubar": "^4.1.0",
+    "moment": "^2.11.1",
+    "multiline": "^1.0.2",
+    "node-notifier": "^4.4.0",
+    "os-locale": "^1.4.0",
+    "q": "^1.4.1",
+    "randomcolor": "^0.4.3",
+    "request": "^2.58.0"
+  }
+}
