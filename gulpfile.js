@@ -26,22 +26,6 @@ var paths = {
     build: path.join(__dirname, 'output/built')
 }
 
-//
-// Publish configs
-//
-// Check `https://github.com/maxogden/electron-packager`
-// for more details
-var publishOpts = {
-    dir: __dirname,
-    name: pkg.name,             // App name
-    'app-bundle-id': pkg.name,             // App id
-    'app-version': pkg.version,          // App version
-    version: electronPkg.version,  // Electron version
-    overwrite: true,
-    prune: true,
-    ignore: '/output|/sass|gulpfile.js'
-}
-
 /**
  * Run the app in debugging mode (Reload with CMD+R/F5)
  */
@@ -70,21 +54,6 @@ gulp.task('run', function () {
 })
 
 /**
- * Package OSX app for predistribution
- */
-gulp.task('prebuild', function () {
-    _.assign(publishOpts, {
-        platform: 'darwin',
-        arch: 'x64',
-        out: paths.prebuild
-    })
-    packager(publishOpts, function done(err, appPath) {
-        if (err) return console.error(err)
-        console.log('Build complete, output paths: ', appPath)
-    })
-})
-
-/**
  * Package windows and OSX app for distribution
  */
 
@@ -105,7 +74,8 @@ gulp.task('build:osx', function () {
 
 gulp.task('build:win', function () {
     builder.build({
-        platform: [builder.Platform.WINDOWS]
+        platform: [builder.Platform.WINDOWS],
+        dist: true
     }).then(function () {
         // handle result
         console.log('Builder complete.');

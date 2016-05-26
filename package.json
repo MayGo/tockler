@@ -9,9 +9,9 @@
   "author": "Maigo Erit <maigo.erit@gmail.com>",
   "devDependencies": {
     "electron-connect": "0.4.2",
-    "electron-prebuilt": "^1.1.0",
+    "electron-prebuilt": "^1.0.2",
     "electron-rebuild": "^1.1.4",
-    "electron-builder": "^3.25.0",
+    "electron-builder": "^3.26.3",
     "gulp": "^3.9.1",
     "gulp-sass": "^2.0.3",
     "node-gyp": "^3.3.1"
@@ -22,7 +22,6 @@
     "iconUrl": "shared/img/icon/timetracker_icon.ico",
     "asar": false,
     "osx": {
-      "title": "Backer Timetracker",
       "icon": "shared/img/icon/timetracker_icon.icns",
       "icon-size": 40,
       "contents": [
@@ -40,17 +39,11 @@
       ]
     },
     "win": {
-      "title": "Backer Timetracker",
-      "icon": "shared/img/icon/timetracker_icon.ico"
+      "iconUrl": "https://raw.githubusercontent.com/MayGo/backer-timetracker/master/build/icon.ico",
+      "icon": "https://raw.githubusercontent.com/MayGo/backer-timetracker/master/build/icon.ico"
     },
     "linux": {
-      "arch": 64,
-      "target": "deb",
-      "version": "0.1.2",
-      "title": "Backer Timetracker",
-      "comment": "This is a comment",
-      "executable": "electron-builder-example",
-      "maintainer": "Dummy Maintainer <dummy@maintainer.org>"
+      "target": "deb"
     }
   }
 }
