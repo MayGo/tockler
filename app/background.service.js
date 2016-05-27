@@ -2,6 +2,7 @@
 
 var app = require('electron').app;
 
+var compareVersion = require('compare-version');
 var bunyan = require('bunyan');
 var log;
 
@@ -317,6 +318,8 @@ BackgroundService.onResume = function () {
     isSleeping = false;
 };
 
+var isOsxScriptRunned = false;
+
 BackgroundService.saveForegroundWindowTitle = function () {
 
     //'darwin', 'freebsd', 'linux', 'sunos' or 'win32'
@@ -344,6 +347,22 @@ BackgroundService.saveForegroundWindowTitle = function () {
 
         if (typeof active_a[0] !== "undefined") {
             active.app = active_a[0];
+            // isElCapitanScriptRunned = true;//some applications doe not have app, check only when started
+        }
+        if (active.app) {
+            isOsxScriptRunned = true;//some applications doe not have app, check only when started
+        }
+
+        if (process.platform === 'darwin' && isOsxScriptRunned === false) {
+            /*console.log('Running assistive-access-el-capitan.osa');
+            var access_script = "osascript " + path.join(__dirname, "assistive-access-el-capitan.osa");
+            if (compareVersion(require('os').release(), '10.11.0') === -1) {
+                access_script = "osascript " + path.join(__dirname, "assistive-access-osx.osa");
+            }
+            isOsxScriptRunned = true;
+            exec(access_script, function (error, stdout, stderr) {
+                console.log('Assistive access: ', stdout, error, stderr);
+            });*/
         }
 
         if (typeof active_a[1] !== "undefined") {
@@ -394,6 +413,8 @@ BackgroundService.saveUserIdleTime = function () {
         script = "sh " + path.join(__dirname, "get-user-idle-time.mac.sh");
     } else if (process.platform === 'win32') {
         script = 'powershell.exe "& ""' + path.join(__dirname, "get-user-idle-time.ps1") + '"""';
+
+
     } else if (process.platform === 'linux') {
         script = "sh " + path.join(__dirname, "get-user-idle-time.linux.sh");
     }

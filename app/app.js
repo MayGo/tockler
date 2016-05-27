@@ -5,6 +5,7 @@ var mb = require('./tray')
 var pluginMgr = require('./plugin-manager')
 var backgroundService = require('./background.service')
 var ipcMain = require('electron').ipcMain;
+var config = require('./config')
 //require('./lib/crash-handler')
 
 var AutoLaunch = require('auto-launch');
@@ -17,6 +18,7 @@ appLauncher.isEnabled().then(function (enabled) {
     if (enabled) {
         return;
     }
+    console.log('Enabling app launcher');
     return appLauncher.enable()
 }).then(function (err) {
 
@@ -76,16 +78,19 @@ app.on('activate-with-no-open-windows', function () {
 
 /* Single Instance Check */
 var iShouldQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
-    if (pluginMgr.windows['main-window']) {
+    if (pluginMgr.windows && pluginMgr.windows['main-window']) {
         if (pluginMgr.windows['main-window'].isMinimized()) {
             pluginMgr.windows['main-window'].restore();
         }
         pluginMgr.windows['main-window'].show();
         pluginMgr.windows['main-window'].focus();
+        console.log('Focusing main window');
     }
     return true;
 });
-if (iShouldQuit) {
+if (iShouldQuit && !config.isDev) {
+    console.log('Quiting instance.');
+    pluginMgr.removeAll();
     app.quit();
     return;
 }

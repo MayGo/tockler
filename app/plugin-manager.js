@@ -1,6 +1,5 @@
-
 var path = require('path')
-var ipc =  require("electron").ipcMain;
+var ipc = require("electron").ipcMain;
 //var BrowserWindow = require("electron").browserWindow;
 const {BrowserWindow} = require('electron');
 var _ = require('lodash')
@@ -60,10 +59,13 @@ PluginManager.prototype.load = function (name, opt) {
     });
 
     oWindow.on('close', function () {
-        console.log("Closing window");
-        console.log(this.windows[name]);
-        this.windows[name] = null;
-    }.bind(this))
+        if (this.windows) {
+            console.log("Closing window");
+            console.log(this.windows[name]);
+            this.windows[name] = null;
+        }
+
+    }.bind(this));
 
     // open devtools
     if (config.isDev && opt.showDevtools !== false)
@@ -101,7 +103,7 @@ PluginManager.prototype.hide = function (name) {
  */
 PluginManager.prototype.toggle = function (name) {
     console.log(this.windows[name]);
-    if (this.windows[name]  && this.windows[name].isVisible())
+    if (this.windows[name] && this.windows[name].isVisible())
         this.hide(name)
     else
         this.show(name)
@@ -139,13 +141,19 @@ PluginManager.prototype._initEvents = function () {
     ipc.on('set-on-top', function (ev, name, flag) {
         self.setOnTop(name, flag)
     })
-
-}
+};
 
 /**
  * Remove all windows objects
  */
 PluginManager.prototype.removeAll = function () {
+    _.forIn(this.windows, function (win, k) {
+        if (win) {
+            console.log('Closing window...', win, k);
+            win.close();
+        }
+
+    });
     this.windows = null
 }
 
