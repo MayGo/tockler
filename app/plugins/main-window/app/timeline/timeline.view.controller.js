@@ -84,7 +84,7 @@ angular.module('angularDemoApp')
         };
 
         ctrl.refresh = function () {
-            var lastItem = _(loadedItems['AppTrackItem']).last().valueOf();
+            var lastItem = (loadedItems['AppTrackItem'].length > 0) ? _(loadedItems['AppTrackItem']).last().valueOf() : null;
 
             var searchFrom = (lastItem) ? lastItem.beginDate : moment().startOf('day').toDate();
             console.log('Refreshing from:', searchFrom);
@@ -223,7 +223,7 @@ angular.module('angularDemoApp')
                         if (answer === 'ALL_ITEMS') {
                             ctrl.loading = true;
                             AppSettingsService.changeColorForApp(trackItem.app, trackItem.color);
-                            TrackItemService.updateColorForApp(trackItem.app, trackItem.color).then(function(){
+                            TrackItemService.updateColorForApp(trackItem.app, trackItem.color).then(function () {
                                 console.log("updated all item with color");
                                 ctrl.reload();
                             })
