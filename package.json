@@ -1,5 +1,5 @@
 {
-  "name": "backer-timetracker",
+  "name": "BackerTimetracker",
   "version": "1.0.12",
   "description": "Track your time by monitoring your active windows and idle time",
   "main": "app/app.js",
@@ -17,7 +17,7 @@
     "node-gyp": "^3.3.1"
   },
   "build": {
-    "app-bundle-id": "backer-timetracker",
+    "app-bundle-id": "ee.trimatech.BackerTimetracker",
     "app-category-type": "public.app-category.productivity",
     "iconUrl": "shared/img/icon/timetracker_icon.ico",
     "asar": false,

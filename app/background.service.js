@@ -354,7 +354,7 @@ BackgroundService.saveForegroundWindowTitle = function () {
         }
 
         if (process.platform === 'darwin' && isOsxScriptRunned === false) {
-            /*console.log('Running assistive-access-el-capitan.osa');
+            console.log('Running assistive-access-el-capitan.osa');
             var access_script = "osascript " + path.join(__dirname, "assistive-access-el-capitan.osa");
             if (compareVersion(require('os').release(), '10.11.0') === -1) {
                 access_script = "osascript " + path.join(__dirname, "assistive-access-osx.osa");
@@ -362,7 +362,7 @@ BackgroundService.saveForegroundWindowTitle = function () {
             isOsxScriptRunned = true;
             exec(access_script, function (error, stdout, stderr) {
                 console.log('Assistive access: ', stdout, error, stderr);
-            });*/
+            });
         }
 
         if (typeof active_a[1] !== "undefined") {
