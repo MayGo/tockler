@@ -8,8 +8,8 @@ Backer Timetracker
 
 Application that tracks your time by monitoring your active windows (only titles) and idle time.
 
-- Windows [Download ver 1.0.9](https://github.com/MayGo/backer-timetracker/releases/download/1.0.9/backer-timetracker.Setup.1.0.9.exe) (Tested win 10)
-- OS X [Download ver 1.0.9](https://github.com/MayGo/backer-timetracker/releases/download/1.0.9/backer-timetracker-1.0.9.dmg) (Tested El Capitan). Needs permission: Security & Privacy -> Accessibility -> enable backer-timetracker.app (Should ask for this)
+- Windows [Download ver 1.0.13](https://github.com/MayGo/backer-timetracker/releases/download/1.0.13/backer-timetracker.Setup.1.0.13.exe) (Tested win 10)
+- OS X [Download ver 1.0.13](https://github.com/MayGo/backer-timetracker/releases/download/1.0.13/backer-timetracker-1.0.13.dmg) (Tested El Capitan). Needs permission: Security & Privacy -> Accessibility -> enable backer-timetracker.app (Asks for admin password to set )
 
 # Features
 - Zoomable/Pannable timechart (d3)
@@ -17,6 +17,7 @@ Application that tracks your time by monitoring your active windows (only titles
 - View state(online, offline, idle) histroy in timechart
 - Add work log items with modal window
 - Add work log item when selecting timeframe in LogTrackItem lane
+- Add work log item from tray window
 - Edit work log items. Clicking opens title/color editor. Time can be changed by moving selection handles.
 - View work log items in timechart
 - View work log summary
