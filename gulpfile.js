@@ -21,7 +21,7 @@ var electron = null  // Electron object
 
 // Path configuration
 var paths = {
-    plugins: path.join(__dirname, 'plugins'),
+    plugins: path.join(__dirname, 'app/plugins'),
     prebuild: path.join(__dirname, 'output/prebuilt'),
     build: path.join(__dirname, 'output/built')
 }
