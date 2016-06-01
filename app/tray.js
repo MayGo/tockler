@@ -12,8 +12,8 @@ var mb = menubar({
     preloadWindow: true,
     width: 400,
     height: 500,
-    showDock: true,
-    'show-dock-icon': true
+    showDock: false,
+    'show-dock-icon': false
 });
 
 mb.on('after-create-window', function () {

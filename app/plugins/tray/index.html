@@ -8,7 +8,7 @@
 
 <link rel="stylesheet" type="text/css" href="css/home.css">
 <script>
-    if (require('remote').getGlobal('shared').isDev) {
+    if (require('electron').remote.getGlobal('shared').isDev) {
         require('electron-connect').client.create()
     }
 </script>
