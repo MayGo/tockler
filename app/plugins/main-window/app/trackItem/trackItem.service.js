@@ -7,21 +7,8 @@ angular.module('globalServices', [])
         service.findAllFromDay = function (day, taskName) {
             var to = moment(day).add(1, 'days')
             console.log('findAllFromDay ' + taskName + ' from:' + day + ', to:' + to);
-            return service.findAll({
-                orderBy: [
-                    ['beginDate', 'ASC']
-                ], where: {
-                    endDate: {
-                        '>=': day,
-                        '<': to.toDate()
-                    },
-                    taskName: {
-                        '==': taskName
-                    }
-                }
-            }).catch(function (err) {
-                console.log(err);
-            });
+
+            return service.findAllDayItems(day, to.toDate(), taskName);
         };
 
         service.updateColorForApp = function (appName, color) {
@@ -30,4 +17,5 @@ angular.module('globalServices', [])
         }
 
         return service;
-    });
+    })
+;

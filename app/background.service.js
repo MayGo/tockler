@@ -21,6 +21,8 @@ var TrackItemService = null;
 var AppSettingsService = null;
 var SettingsService = null;
 
+const TrackItemCrud = require('./TrackItemCrud');
+const TrackItem = require('./db').TrackItem;
 
 var BackgroundService = {};
 
@@ -58,7 +60,7 @@ var initDb = function (isTesting) {
     var appSettingsPath = path.join(userDir, (isTesting ? 'appSettingsTest' : 'appSettings'));
     var settingsPath = path.join(userDir, (isTesting ? 'settingsTest' : 'settings'));
 
-    TrackItemService = storeDS.defineResource({name: 'trackItem', filepath: trackItemPath});
+    TrackItemService = TrackItemCrud;
     AppSettingsService = storeDS.defineResource({name: 'appSettings', filepath: appSettingsPath});
     SettingsService = storeDS.defineResource({name: 'settings', filepath: settingsPath});
 
@@ -190,23 +192,21 @@ var createOrUpdate = function (rawItem) {
                 if (lastTrackItems[type]) {
                     lastTrackItems[type].endDate = rawItem.beginDate;
                     log.debug("Saving old trackItem:", lastTrackItems[type]);
-                    promise = TrackItemService.update(lastTrackItems[type].id, lastTrackItems[type])
+                    promise = TrackItemCrud.createOrUpdate(lastTrackItems[type])
                 }
 
                 promise.then(function () {
                     //rawItem.endDate = new Date();
-                    TrackItemService.create(rawItem).then(function (item) {
+                    TrackItemCrud.createOrUpdate(rawItem).then(function (item) {
                         log.debug("Created track item to DB:", item);
                         lastTrackItems[type] = item;
                         deferred.resolve(item);
-                    }, function (e) {
-                        log.error("Error creating", e)
                     });
                 });
 
             } else if (isSameItems(rawItem, lastTrackItems[type])) {
                 lastTrackItems[type].endDate = new Date();
-                TrackItemService.update(lastTrackItems[type].id, lastTrackItems[type]).then(function (item) {
+                TrackItemCrud.createOrUpdate(lastTrackItems[type]).then(function (item) {
                     log.debug("Saved track item(endDate change) to DB:", item);
                     lastTrackItems[type] = item;
                     deferred.resolve(item);
