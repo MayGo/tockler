@@ -1,57 +1,127 @@
 const TrackItem = require('./db').TrackItem;
 var $q = require('q');
+var moment = require('moment');
 /**
  * Module
  */
-module.exports.findOrCreate = function (label, callback) {
-    'use strict';
-    if (!label) {
-        return callback("Null tag not saved.");
-    }
-
-    var q = {
-        label: label
-    };
-
-    TrackItem.findOne(q, function (err, ftag) {
-        if (err) return callback(err);
-        if (!ftag) {
-            TrackItem.save(q, function (err, saved) {
-                if (err) return callback(err);
-                callback(null, saved);
-            });
-        } else {
-            callback(err, ftag);
-        }
-    });
-};
 
 module.exports.findAllDayItems = function (to, from, taskName) {
     'use strict';
-    var deferred = $q.defer();
-    TrackItem.find({
-            endDate: {
-                $gte: to,
-                $lte: from
+    return TrackItem.findAll({
+            where: {
+                endDate: {
+                    $gte: to,
+                    $lte: from
+                },
+                taskName: taskName
             },
-            taskName: taskName
-
+            order: [
+                ['beginDate', 'ASC']
+            ]
         }
-    ).sort({beginDate: 1}).exec(function (err, items) {
-            deferred.resolve(items);
-        });
-    return deferred.promise;
+    );
+};
+findAllFromDay = function (day, taskName) {
+    var to = moment(day).add(1, 'days')
+    console.log('findAllFromDay ' + taskName + ' from:' + day + ', to:' + to);
+
+    return service.findAllDayItems(day, to.toDate(), taskName);
 };
 
-module.exports.createOrUpdate = function (itemData) {
+module.exports.findAllFromDay = function (day, taskName) {
+    'use strict';
+
+    var to = moment(day).add(1, 'days')
+    console.log('findAllFromDay ' + taskName + ' from:' + day + ', to:' + to);
+
+    return module.exports.findAllDayItems(day, to.toDate(), taskName);
+};
+
+module.exports.findFirstLogItems = function () {
+    'use strict';
+    return TrackItem.findAll({
+            where: {
+                taskName: 'LogTrackItem'
+            },
+            limit: 10,
+            order: [
+                ['beginDate', 'DESC']
+            ]
+        }
+    );
+};
+
+
+module.exports.createItem = function (itemData) {
     'use strict';
 
     var deferred = $q.defer();
-    TrackItem.save([itemData], function (err, item) {
-        //console.log(err)
-        console.log("Saved track item to DB:", item);
+
+    TrackItem.create(itemData).then(function (item) {
+        console.log("Created track item to DB:", item.id);
         deferred.resolve(item);
+    }).catch(function (error) {
+        console.log(error)
     });
 
+
+    return deferred.promise;
+};
+
+module.exports.updateItem = function (itemData) {
+    'use strict';
+
+    var deferred = $q.defer();
+    TrackItem.update({
+        beginDate: itemData.beginDate,
+        endDate: itemData.endDate
+    }, {
+        fields: ['beginDate', 'endDate'],
+        where: {id: itemData.id}
+    }).then(function () {
+        //console.log("Saved track item to DB:", itemData.id);
+        deferred.resolve(itemData);
+    }).catch(function (error) {
+        console.log(error)
+    });
+
+
+    return deferred.promise;
+};
+
+module.exports.updateColorForApp = function (appName, color) {
+    'use strict';
+
+    console.log("Updating app color:", appName, color);
+
+    return TrackItem.update({color: color}, {
+        fields: ['color'],
+        where: {
+            app: appName
+        }
+    })
+};
+
+module.exports.findById = function (id) {
+    'use strict';
+
+    return TrackItem.findById(id);
+};
+
+module.exports.updateEndDateWithNow = function (id) {
+    'use strict';
+    var deferred = $q.defer();
+
+    TrackItem.update({
+        endDate: new Date()
+    }, {
+        fields: ['endDate'],
+        where: {id: id}
+    }).then(function () {
+        console.log("Saved track item to DB with now:", id);
+        deferred.resolve(id);
+    }).catch(function (error) {
+        console.log(error)
+    });
     return deferred.promise;
 };

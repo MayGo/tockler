@@ -34,22 +34,7 @@ angular.module('angularDemoApp')
         var currentPage = 1;
         ctrl.list = function () {
             console.log("Refresh data");
-
-            TrackItemService.findAll({
-                offset: PAGE_SIZE * (currentPage - 1),
-                limit: PAGE_SIZE,
-                orderBy: [
-                    ['beginDate', 'DESC']
-                ], where: {
-                    beginDate: {
-                        '>=': ctrl.searchDate,
-                        '<': getTomorrow(ctrl.searchDate)
-                    }
-                }
-            }, {
-                keepChangeHistory: false,
-                cacheResponse: false
-            }).then(function (items) {
+            TrackItemService.findAllDayItems(ctrl.searchDate, getTomorrow(ctrl.searchDate), 'AppTrackItem').then(function (items) {
                 ctrl.trackItems = items;
                 $rootScope.$apply();
             });

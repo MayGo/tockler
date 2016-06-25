@@ -13,8 +13,8 @@ angular.module('globalServices')
 
         function saveSettings() {
 
-            SettingsService.update(settingsData.id, ctrl.settings).then(function (item) {
-                console.log("Updated!", item.settings);
+            SettingsService.updateByName('WORK_SETTINGS', angular.toJson(ctrl.settings)).then(function (item) {
+                console.log("Updated!", item.data);
             })
         }
     });

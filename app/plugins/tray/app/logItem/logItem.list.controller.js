@@ -18,16 +18,7 @@ angular.module('trayApp')
             console.log("Refresh data");
 
             ctrl.loading = true;
-            TrackItemService.findAll({
-                limit: 10,
-                orderBy: [
-                    ['beginDate', 'DESC']
-                ], where: {
-                    taskName: {
-                        '==': 'LogTrackItem'
-                    }
-                }
-            }).then(function (items) {
+            TrackItemService.findFirstLogItems().then(function (items) {
                 ctrl.trackItems = items;
                 ctrl.loading = false;
                 items.forEach(function (item) {
@@ -59,7 +50,7 @@ angular.module('trayApp')
             }
 
             qWhen.then(function () {
-                TrackItemService.create(newItem).then(function (item) {
+                TrackItemService.createItem(newItem).then(function (item) {
                     console.log("Created newItem to DB:", item);
 
                     ctrl.runningLogItem = item;
@@ -77,7 +68,7 @@ angular.module('trayApp')
         ctrl.stopRunningLogItem = function () {
             console.log("stopRunningLogItem");
 
-            return TrackItemService.update(ctrl.runningLogItem.id, {endDate: new Date()}).then(function (item) {
+            return TrackItemService.updateEndDateWithNow(ctrl.runningLogItem.id).then(function (item) {
                 console.log("Updated trackitem to DB:", item);
 
                 ctrl.runningLogItem = null;

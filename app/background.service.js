@@ -7,9 +7,8 @@ var bunyan = require('bunyan');
 var log;
 
 var _ = require('lodash');
-var fs = require('fs');
 var $q = require('q');
-var randomcolor = require('randomcolor');
+
 var moment = require('moment');
 
 var path = require('path');
@@ -22,49 +21,14 @@ var AppSettingsService = null;
 var SettingsService = null;
 
 const TrackItemCrud = require('./TrackItemCrud');
+const AppItemCrud = require('./AppItemCrud');
+const SettingsCrud = require('./SettingsCrud');
 const TrackItem = require('./db').TrackItem;
 
 var BackgroundService = {};
 
 var userDir;
 
-
-//init db
-var JSData = require('js-data');
-//var DSLevelUpAdapter = require('js-data-levelup');
-var DSNedbAdapter = require('js-data-nedb');
-var storeDS
-var initDb = function (isTesting) {
-    log.info('Creating db');
-
-    storeDS = new JSData.DS({
-        cacheResponse: false,
-        bypassCache: true,
-        notify: true,
-        keepChangeHistory: false,
-        resetHistoryOnInject: true,
-        watchChanges: true,
-        debug: false
-    });
-
-    /*  var adapter = new DSLevelUpAdapter('./db');
-     storeDS.registerAdapter('levelup', adapter, { default: true });*/
-    var adapter = new DSNedbAdapter();
-    storeDS.registerAdapter('nedb', adapter, {default: true});
-
-
-    log.info('User Dir:' + userDir);
-    log.info('Environment:' + process.env.NODE_ENV);
-
-    var trackItemPath = path.join(userDir, (isTesting ? 'trackItemTest' : 'trackItem'));
-    var appSettingsPath = path.join(userDir, (isTesting ? 'appSettingsTest' : 'appSettings'));
-    var settingsPath = path.join(userDir, (isTesting ? 'settingsTest' : 'settings'));
-
-    TrackItemService = TrackItemCrud;
-    AppSettingsService = storeDS.defineResource({name: 'appSettings', filepath: appSettingsPath});
-    SettingsService = storeDS.defineResource({name: 'settings', filepath: settingsPath});
-
-};
 BackgroundService.getTrackItemService = function () {
     return TrackItemService;
 };
@@ -81,7 +45,6 @@ var rawItems = [emptyItem, emptyItem, emptyItem];
 
 var BACKGROUND_JOB_INTERVAL = 3000;
 
-var lastAppTrackItemSaved = null;
 
 // on sleep computer can come out of it just for breif moment, at least mac
 var isSleeping = false;
@@ -117,26 +80,6 @@ var dateToAfterMidnight = function (d) {
     return moment(d).startOf('day').add(1, 'days').toDate();
 }
 
-var getAppColor = function (appName) {
-    var deferred = $q.defer();
-    var params = {
-        name: appName
-    };
-
-    AppSettingsService.findAll(params).then(function (items) {
-        if (items.length > 0) {
-            deferred.resolve(items[0].color);
-        } else {
-            var color = randomcolor();
-            AppSettingsService.create({name: appName, color: color}).then(function (item) {
-                log.debug("Created color item to DB:", item);
-            });
-            deferred.resolve(color);
-        }
-    });
-    return deferred.promise;
-};
-
 var getRawTrackItem = function (savedItem) {
     var item = {
         app: savedItem.app,
@@ -150,12 +93,11 @@ var getRawTrackItem = function (savedItem) {
 
 }
 
-
 var createOrUpdate = function (rawItem) {
 
     var deferred = $q.defer();
 
-    getAppColor(rawItem.app).then(function (color) {
+    AppItemCrud.getAppColor(rawItem.app).then(function (color) {
         rawItem.color = color;
 
         var type = rawItem.taskName;
@@ -192,12 +134,12 @@ var createOrUpdate = function (rawItem) {
                 if (lastTrackItems[type]) {
                     lastTrackItems[type].endDate = rawItem.beginDate;
                     log.debug("Saving old trackItem:", lastTrackItems[type]);
-                    promise = TrackItemCrud.createOrUpdate(lastTrackItems[type])
+                    promise = TrackItemCrud.updateItem(lastTrackItems[type])
                 }
 
                 promise.then(function () {
                     //rawItem.endDate = new Date();
-                    TrackItemCrud.createOrUpdate(rawItem).then(function (item) {
+                    TrackItemCrud.createItem(rawItem).then(function (item) {
                         log.debug("Created track item to DB:", item);
                         lastTrackItems[type] = item;
                         deferred.resolve(item);
@@ -206,12 +148,10 @@ var createOrUpdate = function (rawItem) {
 
             } else if (isSameItems(rawItem, lastTrackItems[type])) {
                 lastTrackItems[type].endDate = new Date();
-                TrackItemCrud.createOrUpdate(lastTrackItems[type]).then(function (item) {
+                TrackItemCrud.updateItem(lastTrackItems[type]).then(function (item) {
                     log.debug("Saved track item(endDate change) to DB:", item);
                     lastTrackItems[type] = item;
                     deferred.resolve(item);
-                }, function () {
-                    log.error('Error saving');
                 });
             } else {
                 log.error("Nothing to do with item", rawItem);
@@ -291,7 +231,7 @@ var saveIdleTrackItem = function (seconds) {
     };
 
 
-    getAppColor(rawItem.app).then(function (color) {
+    AppItemCrud.getAppColor(rawItem.app).then(function (color) {
         rawItem.color = color;
         createOrUpdate(rawItem);
 
@@ -384,11 +324,11 @@ BackgroundService.saveForegroundWindowTitle = function () {
 };
 BackgroundService.saveRunningLogItem = function () {
 
-    SettingsService.find('RUNNING_LOG_ITEM', {cacheResponse: false}).then(function (item) {
+    SettingsCrud.findByName('RUNNING_LOG_ITEM').then(function (item) {
         var deferred = $q.defer();
         log.debug("got RUNNING_LOG_ITEM: ", item);
-        if (item.refId) {
-            TrackItemService.find(item.refId).then(function (logItem) {
+        if (item.data) {
+            TrackItemCrud.findById(item.data).then(function (logItem) {
                 log.debug("resolved log item RUNNING_LOG_ITEM: ", logItem);
                 var now = new Date();
                 logItem.endDate = now;
@@ -455,7 +395,16 @@ BackgroundService.init = function () {
             }
         ]
     });
-    initDb(false);
+
+
+    log.info('User Dir:' + userDir);
+    log.info('Environment:' + process.env.NODE_ENV);
+
+    TrackItemService = TrackItemCrud;
+    AppSettingsService = AppItemCrud;
+    SettingsService = SettingsCrud;
+
+
     log.info('Running background service.');
     setInterval(function () {
         self.saveUserIdleTime();
@@ -463,100 +412,6 @@ BackgroundService.init = function () {
         self.saveRunningLogItem();
 
     }, BACKGROUND_JOB_INTERVAL);
-};
-
-
-var createTestItem = function (data) {
-    var deferred = $q.defer();
-
-    var active = {};
-
-    active.app = 'app1';
-    active.title = 'title1';
-
-    var now = new Date();
-    var beginDate = new Date();
-    //Begin date is always BACKGROUND_JOB_INTERVAL before current date
-    beginDate.setMilliseconds(beginDate.getMilliseconds() - BACKGROUND_JOB_INTERVAL);
-    active.beginDate = beginDate;
-    active.endDate = now;
-
-    _.merge(active, data);
-
-    log.info('Test: Adding item', active);
-
-    setTimeout(function () {
-        log.info("Test: resolving", active)
-        saveActiveWindow(active);
-        deferred.resolve(active);
-    }, BACKGROUND_JOB_INTERVAL);
-
-
-    return deferred.promise
-};
-
-
-BackgroundService.testSaving = function () {
-    initDb(true);
-
-    TrackItemService.destroyAll().then(function () {
-        return AppSettingsService.destroyAll();
-    }).then(function () {
-        return createTestItem();
-    }).then(function () {
-        return createTestItem();
-    }).then(function () {
-        trackItemServiceInst.findAll().then(function (items) {
-            if (items.length != 1) {
-                log.error("!!!!!!!!!!!!!!!!!!!!!!!!Should have 1 trackItem!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            }
-        });
-    }).then(function () {
-        return createTestItem({app: 'app2'});
-    }).then(function () {
-        return createTestItem({app: 'app2'});
-    }).then(function () {
-        trackItemServiceInst.findAll().then(function (items) {
-            if (items.length != 2) {
-                log.error("!!!!!!!!!!!!!!!!!!!!!!!!Should have 2 trackItems!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            }
-        });
-    }).then(function () {
-        return createTestItem({app: 'app2', title: 'title3'});
-    }).then(function () {
-        return createTestItem({app: 'app2', title: 'title3'});
-    }).then(function () {
-        trackItemServiceInst.findAll().then(function (items) {
-            if (items.length != 3) {
-                log.error("!!!!!!!!!!!!!!!!!!!!!!!!Should have 3 trackItems!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            }
-        });
-    })
-        .then(function () {
-            trackItemServiceInst.findAll({
-                orderBy: [
-                    ['beginDate', 'ASC']
-                ]
-            }).then(function (items) {
-                var prevItem;
-                var hasCaps = false;
-                _.each(items, function (item) {
-                    if (!prevItem) {
-                        prevItem = item;
-                    } else {
-                        var diffBetweenItems = prevItem.endDate.getTime() - item.beginDate.getTime();
-                        hasCaps = (diffBetweenItems !== 0);
-                        prevItem = item;
-                    }
-                });
-
-                if (hasCaps) {
-                    log.error("!!!!!!!!!!!!!!!!!!!!!!!!Should not have date caps!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", hasCaps, items);
-                }
-            });
-        }).then(function () {
-            log.info("!!!!!!!!!!!!!!!!!!!!!!!!TEST END!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        });
 };
 
 
