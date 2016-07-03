@@ -1,15 +1,10 @@
 Backer Timetracker
 ---
 
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=MayGo&url=https://github.com/MayGo/backer-timetracker&title=Backer-Timetracker&language=en_GB&tags=github&category=software)
-
-
-<a href='https://pledgie.com/campaigns/31267'><img alt='Click here to lend your support to: Backer Timetracker and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/31267.png?skin_name=chrome' border='0' ></a>
-
 Application that tracks your time by monitoring your active windows (only titles) and idle time.
 
-- Windows [Download ver 1.0.13](https://github.com/MayGo/backer-timetracker/releases/download/1.0.13/backer-timetracker.Setup.1.0.13.exe) (Tested win 10)
-- OS X [Download ver 1.0.13](https://github.com/MayGo/backer-timetracker/releases/download/1.0.13/backer-timetracker-1.0.13.dmg) (Tested El Capitan). Needs permission: Security & Privacy -> Accessibility -> enable backer-timetracker.app (Asks for admin password to set )
+- Windows [Download ver 2.0.0](https://github.com/MayGo/backer-timetracker/releases/download/2.0.0/backer-timetracker.Setup.2.0.0.exe) (Tested win 10)
+- OS X [Download ver 2.0.0](https://github.com/MayGo/backer-timetracker/releases/download/2.0.0/backer-timetracker-2.0.0.dmg) (Tested El Capitan). Needs permission: Security & Privacy -> Accessibility -> enable backer-timetracker.app (Asks for admin password to set )
 
 # Features
 - Zoomable/Pannable timechart (d3)
@@ -24,6 +19,22 @@ Application that tracks your time by monitoring your active windows (only titles
 
 
 ![alt text](https://github.com/MayGo/backer-timetracker/raw/master/screenshots/timeline.PNG "Backer Timetracker screenshot")
+
+
+# Donations 
+
+This project needs you! If you would like to support this project's further development, feel free to donate. 
+Your donation is highly appreciated. Thank you!
+
+Feel free to make feature requests and 'Star' this project.
+
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=MayGo&url=https://github.com/MayGo/backer-timetracker&title=Backer-Timetracker&language=en_GB&tags=github&category=software)
+
+<a href='https://pledgie.com/campaigns/31267'><img alt='Click here to lend your support to: Backer Timetracker and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/31267.png?skin_name=chrome' border='0' ></a>
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WWFJ9G2JQE5VW)
+
+
 
 Development
 ---
