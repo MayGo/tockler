@@ -1,24 +1,16 @@
 var Sequelize = require('sequelize');
+
+var app = require('electron').app;
+var path = require('path');
+var userDir = app.getPath('userData');
+var outputPath = path.join(userDir, 'tracker.db');
+
+console.log('DB output path: ' + outputPath);
 var sequelize = new Sequelize('bdgt', 'username', 'password', {
     dialect: 'sqlite',
-    storage: 'example2.db',
+    storage: outputPath
 });
 
-/*
- sequelize.sync().then(function() {
- return User.create({
- username: 'janedoe',
- birthday: new Date(1980, 6, 20)
- });
- }).then(function(jane) {
- console.log(jane.get({
- plain: true
- }));
- });
-
- */
-var Config = require("./config");
-var fs = require('fs');
 
 /**
  * Schemas
