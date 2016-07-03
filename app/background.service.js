@@ -327,8 +327,8 @@ BackgroundService.saveRunningLogItem = function () {
     SettingsCrud.findByName('RUNNING_LOG_ITEM').then(function (item) {
         var deferred = $q.defer();
         log.debug("got RUNNING_LOG_ITEM: ", item);
-        if (item.data) {
-            TrackItemCrud.findById(item.data).then(function (logItem) {
+        if (item.jsonData.id) {
+            TrackItemCrud.findById(item.jsonData.id).then(function (logItem) {
                 log.debug("resolved log item RUNNING_LOG_ITEM: ", logItem);
                 var now = new Date();
                 logItem.endDate = now;

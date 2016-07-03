@@ -40,7 +40,7 @@ var AppItem = sequelize.define('AppItem', {
 
 var Settings = sequelize.define('Settings', {
     name: Sequelize.STRING,
-    data: Sequelize.TEXT
+    jsonData: {type: Sequelize.TEXT, defaultValue: '{}'}
 });
 
 //sequelize.sync({force: true});
