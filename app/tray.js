@@ -9,7 +9,7 @@ var config = require('./config')
 var mb = menubar({
     dir: path.join(config.pluginsPath, 'tray'),
     icon: path.join(config.root, 'app/shared/img/icon/timetracker_icon.png'),
-    preloadWindow: true,
+    preloadWindow: false,
     width: 400,
     height: 500,
     showDock: false,

@@ -38,11 +38,15 @@ config.windows = {
  * `https://github.com/atom/electron/blob/master/docs/api/crash-reporter.md`
  * for crash reporter configuration.
  */
-config.crashOpts ={
+config.crashOpts = {
     productName: 'YourName',
     companyName: 'YourCompany',
     submitURL: 'https://your-domain.com/url-to-submit',
     autoSubmit: false
+}
+
+config.db = {
+    path: process.cwd() + "/data"
 }
 
 // Share configs between multiple windows
