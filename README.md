@@ -17,6 +17,11 @@ Application that tracks your time by monitoring your active windows (only titles
 - View work log items in timechart
 - View work log summary
 
+# Features to be implemented
+- Monitor window titles and remind user to start new log item.
+- Remind to take a break
+- Group log items (e.g 'Working with timetracker' or 'JIRA-1234')
+
 
 ![alt text](https://github.com/MayGo/backer-timetracker/raw/master/screenshots/timeline.PNG "Backer Timetracker screenshot")
 
