@@ -25,23 +25,10 @@ angular.module('angularDemoApp')
         ctrl.list = function () {
             console.log("Refresh data");
             ctrl.loading = true;
-            TrackItemService.findAll({
-
-                orderBy: [
-                    ['beginDate', 'DESC']
-                ], where: {
-                    taskName: {
-                        '==': 'LogTrackItem'
-                    },
-                    beginDate: {
-                        '>=': ctrl.searchMinDate,
-                        '<': ctrl.searchMaxDate
-                    }
-                }
-            }).then(function (items) {
+            TrackItemService.findAllDayItems(ctrl.searchMinDate, ctrl.searchMaxDate, 'LogTrackItem').then(function (items) {
                 ctrl.trackItems = items;
                 ctrl.loading = false;
-                items.forEach(function(item) {
+                items.forEach(function (item) {
                     item.timeDiffInMs = moment(item.endDate).diff(item.beginDate)
                     item.duration = moment.duration(item.endDate - item.beginDate);
                 });

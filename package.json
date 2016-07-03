@@ -9,7 +9,7 @@
   "author": "Maigo Erit <maigo.erit@gmail.com>",
   "devDependencies": {
     "electron-connect": "0.4.2",
-    "electron-prebuilt": "^1.0.2",
+    "electron-prebuilt": "^1.2.5",
     "electron-rebuild": "^1.1.4",
     "electron-builder": "^3.26.3",
     "gulp": "^3.9.1",

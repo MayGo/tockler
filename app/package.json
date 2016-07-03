@@ -15,8 +15,6 @@
     "bunyan": "^1.7.1",
     "compare-version": "^0.1.2",
     "electron-squirrel-startup": "^1.0.0",
-    "js-data": "^2.9.0",
-    "js-data-nedb": "^1.0.0",
     "lodash": "^4.5.0",
     "menubar": "^4.1.0",
     "moment": "^2.11.1",
@@ -25,6 +23,8 @@
     "os-locale": "^1.4.0",
     "q": "^1.4.1",
     "randomcolor": "^0.4.3",
-    "request": "^2.58.0"
+    "request": "^2.58.0",
+    "sequelize": "^3.23.3",
+    "sqlite3": "^3.1.4"
   }
 }

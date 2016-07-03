@@ -123,7 +123,7 @@ gulp.task('watch', function () {
     })
 
     // app.js
-    gulp.watch('app/*', electronConnect.restart)
+    gulp.watch('app/*', electronConnect.reload)
 
     // html & js & css files
     gulp.watch(
