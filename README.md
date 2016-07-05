@@ -3,8 +3,8 @@ Backer Timetracker
 
 Application that tracks your time by monitoring your active windows (only titles) and idle time.
 
-- Windows [Download ver 2.0.0](https://github.com/MayGo/backer-timetracker/releases/download/2.0.0/backer-timetracker.Setup.2.0.0.exe) (Tested win 10)
-- OS X [Download ver 2.0.0](https://github.com/MayGo/backer-timetracker/releases/download/2.0.0/backer-timetracker-2.0.0.dmg) (Tested El Capitan). Needs permission: Security & Privacy -> Accessibility -> enable backer-timetracker.app (Asks for admin password to set )
+- Windows [Download ver 2.0.0](https://github.com/MayGo/backer-timetracker/releases/download/2.0.0/BackerTimetracker.Setup.2.0.0.exe) (Tested win 10)
+- OS X [Download ver 2.0.0](https://github.com/MayGo/backer-timetracker/releases/download/2.0.0/BackerTimetracker-2.0.0.dmg) (Tested El Capitan). Needs permission: Security & Privacy -> Accessibility -> enable backer-timetracker.app (Asks for admin password to set )
 
 # Features
 - Zoomable/Pannable timechart (d3)
