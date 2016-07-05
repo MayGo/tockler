@@ -49,15 +49,24 @@ Project is boilerplated from [https://github.com/chuyik/electron-boilerplate](ht
 > Prerequisites: [Node](https://nodejs.org/), [Git](https://git-scm.com/).
 
 ```bash
-git clone https://github.com/Maygo/timetracker-electron.git  # Download this project
+git clone https://github.com/Maygo/backer-timetracker.git  # Download this project
 
-### Ignore this if you're not behind GFW
-export ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron/
-
-cd timetracker-electron  # Switch directory
-npm install              # Install dependencies
+cd backer-timetracker  # Switch directory
+npm install              # Install dev dependencies
+Two package.json structure as is recommended in electron-builder: https://github.com/electron-userland/electron-builder#two-packagejson-structure
+cd app
+npm install            # Install dependencies
+bower install
 gulp                     # Start application
 ```
+### Compiling sqlite3
+cd ./node_modules/sqlite3
+npm install nan@~2.3.3
+npm run prepublish
+node-gyp configure --module_name=node_sqlite3 --module_path=../lib/binding/node-v48-darwin-x64
+node-gyp rebuild --target=1.2.5 --arch=x64 --target_platform=darwin --dist-url=https://atom.io/download/atom-shell --module_name=node_sqlite3 --module_path=../lib/binding/node-v48-darwin-x64
+
+rename folder binding/node-v48-darwin-x64 to electron-v1.2-darwin-x64
 
 ### Gulp Commands
 ```bash
@@ -72,12 +81,7 @@ gulp build     # Package windows and OSX app for distribution
 gulp sass      # Compile SASS files
 ```
 
-### Packaging & Distribution
-Remember to install asar via npm before you package the application for the first time.
 
-You could run `npm i asar -g`, and then run `gulp build`.
-
-After built, the dist files should be saved to `output` folder by default.
 
 # License
 GNU General Public License v2.0
