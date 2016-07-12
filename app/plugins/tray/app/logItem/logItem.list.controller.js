@@ -8,15 +8,9 @@ angular.module('trayApp')
         ctrl.trackItems = [];
         ctrl.newItem = {color: '#426DFC'};
 
-        SettingsService.getRunningLogItem().then(function (item) {
-            console.log("Running log item.", item);
-            ctrl.runningLogItem = item;
-        });
-
         ctrl.loading = false;
-        ctrl.list = function () {
-            console.log("Refresh data");
 
+        ctrl.list = function () {
             ctrl.loading = true;
             TrackItemService.findFirstLogItems().then(function (items) {
                 ctrl.trackItems = items;
@@ -29,7 +23,16 @@ angular.module('trayApp')
             });
         };
 
-        ipc.on('focus-tray', ctrl.list);
+        ctrl.refresh = function(){
+            console.log("Refresh data");
+            SettingsService.getRunningLogItem().then(function (item) {
+                console.log("Running log item.", item);
+                ctrl.runningLogItem = item;
+            });
+            ctrl.list();
+        };
+
+        ipc.on('focus-tray', ctrl.refresh);
 
 
         ctrl.startNewLogItem = function (oldItem) {
@@ -80,5 +83,5 @@ angular.module('trayApp')
             });
         };
 
-        ctrl.list();
+        ctrl.refresh();
     });
