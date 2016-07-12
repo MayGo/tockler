@@ -24,7 +24,7 @@ class TaskAnalyser {
         }
         var re = new RegExp(findRe, "g");
         var result = re.exec(str);
-
+        
         if (result != null) {
             let first = result[0];
             return first;
@@ -42,7 +42,7 @@ class TaskAnalyser {
         SettingsCrud.fetchAnalyserSettings().then((analyserItems)=> {
             for (let patObj of analyserItems) {
                 if (!patObj.findRe || !patObj.active) {
-                    return;
+                    continue;
                 }
 
                 let foundStr = TaskAnalyser.findFirst(item.title, patObj.findRe);
