@@ -59,6 +59,12 @@ app.on('ready', function () {
      })*/
 });
 
+
+require('electron-context-menu')({
+   
+});
+
+
 /**
  * Emitted when all windows are closed
  */

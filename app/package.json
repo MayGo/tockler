@@ -14,6 +14,7 @@
     "auto-launch": "^2.0.1",
     "bunyan": "^1.7.1",
     "compare-version": "^0.1.2",
+    "electron-context-menu": "^0.3.1",
     "electron-squirrel-startup": "^1.0.0",
     "lodash": "^4.5.0",
     "menubar": "^4.1.0",
