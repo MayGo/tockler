@@ -37,7 +37,7 @@ module.exports.fetchWorkSettings = function () {
     'use strict';
     var deferred = $q.defer();
     module.exports.findByName('WORK_SETTINGS').then(function (item) {
-        console.log('Fetched work item:', item);
+        //console.log('Fetched work item:', item);
         deferred.resolve(item.jsonDataParsed)
     });
     return deferred.promise;
@@ -47,7 +47,7 @@ module.exports.fetchAnalyserSettings = function () {
     'use strict';
     var deferred = $q.defer();
     module.exports.findByName('ANALYSER_SETTINGS').then(function (item) {
-        console.log('Fetched analyser item:', item);
+        //console.log('Fetched analyser item:', item);
         deferred.resolve(item.jsonDataParsed)
     });
     return deferred.promise;
