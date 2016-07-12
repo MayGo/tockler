@@ -4,6 +4,7 @@ var app = require('electron').app;
 
 var compareVersion = require('compare-version');
 var bunyan = require('bunyan');
+
 var log;
 
 var _ = require('lodash');
@@ -91,7 +92,10 @@ var getRawTrackItem = function (savedItem) {
     };
     return item;
 
-}
+};
+
+
+const TaskAnalyser = require('./taskAnalyser');
 
 var createOrUpdate = function (rawItem) {
 
@@ -142,6 +146,7 @@ var createOrUpdate = function (rawItem) {
                     TrackItemCrud.createItem(rawItem).then(function (item) {
                         log.debug("Created track item to DB:", item);
                         lastTrackItems[type] = item;
+                        TaskAnalyser.analyse(item);
                         deferred.resolve(item);
                     });
                 });
@@ -327,8 +332,8 @@ BackgroundService.saveRunningLogItem = function () {
     SettingsCrud.findByName('RUNNING_LOG_ITEM').then(function (item) {
         var deferred = $q.defer();
         log.debug("got RUNNING_LOG_ITEM: ", item);
-        if (item.jsonData.id) {
-            TrackItemCrud.findById(item.jsonData.id).then(function (logItem) {
+        if (item.jsonDataParsed.id) {
+            TrackItemCrud.findById(item.jsonDataParsed.id).then(function (logItem) {
                 log.debug("resolved log item RUNNING_LOG_ITEM: ", logItem);
                 var now = new Date();
                 logItem.endDate = now;

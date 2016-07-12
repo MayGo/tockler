@@ -58,10 +58,10 @@ module.exports.createItem = function (itemData) {
     var deferred = $q.defer();
 
     TrackItem.create(itemData).then(function (item) {
-        console.log("Created track item to DB:", item.id);
+        //console.log("Created track item to DB:", item.id);
         deferred.resolve(item);
     }).catch(function (error) {
-        console.log(error)
+        console.error(error)
     });
 
 
@@ -82,7 +82,7 @@ module.exports.updateItem = function (itemData) {
         //console.log("Saved track item to DB:", itemData.id);
         deferred.resolve(itemData);
     }).catch(function (error) {
-        console.log(error)
+        console.error(error)
     });
 
 
@@ -121,7 +121,7 @@ module.exports.updateEndDateWithNow = function (id) {
         console.log("Saved track item to DB with now:", id);
         deferred.resolve(id);
     }).catch(function (error) {
-        console.log(error)
+        console.error(error)
     });
     return deferred.promise;
 };

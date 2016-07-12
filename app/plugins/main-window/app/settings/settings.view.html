@@ -1,22 +1,58 @@
 <div layout-padding>
     <form name="settingsForm" novalidate ng-submit="settingsForm.$valid && settingsCtrl.saveSettings()">
-        <div layout="column">
 
-            <section>
+        <md-card>
+            <md-card-content>
                 <h2>Workday</h2>
-                <div layout="row">
+
+                <p layout="row">
                     <md-input-container>
                         <label>Start</label>
-                        <input type="text" ng-model="settingsCtrl.settings.workDayStartTime" ui-time-mask="short"/>
+                        <input type="text" ng-model="settingsCtrl.workSettings.workDayStartTime" ui-time-mask="short"/>
                     </md-input-container>
                     <md-input-container>
                         <label>End</label>
-                        <input type="text" ng-model="settingsCtrl.settings.workDayEndTime" ui-time-mask="short"/>
+                        <input type="text" ng-model="settingsCtrl.workSettings.workDayEndTime" ui-time-mask="short"/>
                     </md-input-container>
-                </div>
-            </section>
+                </p>
+            </md-card-content>
+        </md-card>
+        <md-card>
+            <md-card-content>
+                <h2>Analyser settings</h2>
 
-        </div>
+                <p layout="row">
+
+                <div ng-repeat="item in settingsCtrl.analyserSettings track by $index">
+                    <md-input-container>
+                        <label>RegEx to find task</label>
+                        <input type="text" ng-model="item.findRe"/>
+                    </md-input-container>
+                    <md-input-container>
+                        <label>RegEx for name</label>
+                        <input type="text" ng-model="item.takeName"/>
+                    </md-input-container>
+                    <md-input-container>
+                        <label>RegEx for title</label>
+                        <input type="text" ng-model="item.takeTitle"/>
+                    </md-input-container>
+                    <md-button ng-click="settingsCtrl.testAnalyserItem(item, $index)">
+                        Test
+                    </md-button>
+                    <div ng-repeat="aItem in settingsCtrl.analyserTestItems[$index]">
+                        <div ng-bind="aItem.title"></div>
+                    </div>
+                </div>
+
+                <md-button ng-click="settingsCtrl.addNewAnalyserItem()">
+                    Add new
+                </md-button>
+
+
+                </p>
+
+            </md-card-content>
+        </md-card>
         <md-button type="submit">
             Save
         </md-button>

@@ -84,5 +84,30 @@
 
     </div>
     <md-divider></md-divider>
+
+    <div layout-padding>
+        <md-table-container>
+            <table md-table>
+                <thead md-head md-order="query.order" md-on-reorder="onReorder">
+                <tr md-row>
+                    <th md-column>App</th>
+                    <th md-column>Title</th>
+                    <th md-column>Begin</th>
+                    <th md-column>End</th>
+                </tr>
+                </thead>
+                <tbody md-body>
+                <tr md-row md-select="app"
+                    ng-repeat="trackItem in timelineCtrl.visibleItems">
+                    <td md-cell>{{trackItem.app}}</td>
+                    <td md-cell>{{trackItem.title}}</td>
+                    <td md-cell style="width: 130px">{{trackItem.beginDate | date: 'medium'}}</td>
+                    <td md-cell style="width: 130px">{{trackItem.endDate | date: 'medium'}}</td>
+
+                </tr>
+                </tbody>
+            </table>
+        </md-table-container>
+    </div>
 </div>
 

@@ -7,6 +7,7 @@ angular.module('angularDemoApp')
         var ctrl = this;
 
         var loadedItems;
+        ctrl.visibleItems = [];
 
         var resetLoadedItems = function () {
             ctrl.selectedTrackItem = null;
@@ -137,10 +138,12 @@ angular.module('angularDemoApp')
                         console.log('Trackitems loaded, parsing ended.');
                         $scope.$broadcast('addItemsToTimeline', loadedItems[taskName]);
 
+
                         updatePieCharts(loadedItems[taskName], taskName);
 
                         if (taskName === 'AppTrackItem') {
-                            setWorkStatsForDay(loadedItems[taskName])
+                            setWorkStatsForDay(loadedItems[taskName]);
+                            ctrl.visibleItems = loadedItems[taskName];
                         }
 
                         $scope.$digest();

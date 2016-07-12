@@ -8,7 +8,8 @@ var outputPath = path.join(userDir, 'tracker.db');
 console.log('DB output path: ' + outputPath);
 var sequelize = new Sequelize('bdgt', 'username', 'password', {
     dialect: 'sqlite',
-    storage: outputPath
+    storage: outputPath,
+    logging: false
 });
 
 

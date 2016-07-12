@@ -15,8 +15,11 @@ angular.module('angularDemoApp.settings')
                         templateUrl: 'app/settings/settings.view.html',
                         controller: 'SettingsViewController as settingsCtrl',
                         resolve: {
-                            settingsData: function ($stateParams, SettingsService) {
+                            workSettingsData: function ($stateParams, SettingsService) {
                                 return SettingsService.fetchWorkSettings();
+                            },
+                            analyserSettingsData: function ($stateParams, SettingsService) {
+                                return SettingsService.fetchAnalyserSettings();
                             }
                         }
                     }
