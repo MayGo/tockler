@@ -29,13 +29,19 @@
                         <input type="text" ng-model="item.findRe"/>
                     </md-input-container>
                     <md-input-container>
-                        <label>RegEx for name</label>
-                        <input type="text" ng-model="item.takeName"/>
+                        <label>RegEx for group</label>
+                        <input type="text" ng-model="item.takeGroup"/>
                     </md-input-container>
                     <md-input-container>
                         <label>RegEx for title</label>
                         <input type="text" ng-model="item.takeTitle"/>
                     </md-input-container>
+                    <md-input-container>
+                        <md-switch ng-model="item.active">{{item.active ? "Active" : "Disabled"}}</md-switch>
+                    </md-input-container>
+                    <md-button class="md-icon-button" aria-label="Delete" ng-click="settingsCtrl.removeAnalyserItem($index)">
+                        <md-icon md-font-set="material-icons">delete</md-icon>
+                    </md-button>
                     <md-button ng-click="settingsCtrl.testAnalyserItem(item, $index)">
                         Test
                     </md-button>

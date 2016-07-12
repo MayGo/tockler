@@ -18,6 +18,19 @@ class TaskAnalyser {
         TaskAnalyser._newItem = tempNewItem;
     }
 
+    static findFirst(str, findRe) {
+        if (!findRe) {
+            return;
+        }
+        var re = new RegExp(findRe, "g");
+        var result = re.exec(str);
+
+        if (result != null) {
+            let first = result[0];
+            return first;
+        }
+    }
+
     static analyse(item) {
 
         if (item.taskName !== 'AppTrackItem') {
@@ -32,63 +45,61 @@ class TaskAnalyser {
                     return;
                 }
 
-                var str = item.title;
-                var re = new RegExp(patObj.findRe, "g");
-                var myArray = re.exec(str);
+                let foundStr = TaskAnalyser.findFirst(item.title, patObj.findRe);
 
-                if (myArray != null) {
+                if (!foundStr) {
+                    continue;
+                }
 
-                    let first = myArray[0];
-                    let title = item.title;
-                    let app = 'WORK';
+                let title = TaskAnalyser.findFirst(item.title, patObj.takeTitle) ||  item.title;
+                let app = TaskAnalyser.findFirst(item.title, patObj.takeGroup) || foundStr;
 
-                    SettingsCrud.getRunningLogItem().then((runningItem)=> {
-                        if (runningItem && runningItem.title === title && runningItem.app == app) {
-                            console.log("Same item, not notifying to create new item.");
+                SettingsCrud.getRunningLogItem().then((runningItem)=> {
+                    if (runningItem && runningItem.title === title && runningItem.app == app) {
+                        console.log("Same item, not notifying to create new item.");
+                        return;
+                    }
+                    TaskAnalyser.newItem = {
+                        app: app,
+                        title: title,
+                        taskName: 'LogTrackItem',
+                        beginDate: new Date(),
+                        endDate: new Date()
+                    };
+
+                    notifier.notify({
+                        title: 'Create new task?',
+                        message: `Click to create: "${app}"`,
+                        icon: iconUrl,
+                        sound: true, // Only Notification Center or Windows Toasters
+                        wait: false // Wait with callback, until user action is taken against notification
+                    }, function (err, response) {
+                        // Response is response from notification
+                    });
+
+                    notifier.on('click', function (notifierObject, options) {
+                        if (TaskAnalyser.newItem == null) {
+                            console.log("Already clicked. Prevent from creating double item.");
                             return;
                         }
-                        TaskAnalyser.newItem = {
-                            app: app,
-                            title: title,
-                            taskName: 'LogTrackItem',
-                            beginDate: new Date(),
-                            endDate: new Date()
-                        };
-
-                        notifier.notify({
-                            title: 'Create new task?',
-                            message: `Click to create: "${first}"`,
-                            icon: iconUrl,
-                            sound: true, // Only Notification Center or Windows Toasters
-                            wait: false // Wait with callback, until user action is taken against notification
-                        }, function (err, response) {
-                            // Response is response from notification
-                        });
-
-                        notifier.on('click', function (notifierObject, options) {
-                            if (TaskAnalyser.newItem == null) {
-                                console.log("Already clicked. Prevent from creating double item.");
-                                return;
-                            }
-                            console.log("Clicked. Creating new task", TaskAnalyser.newItem);
-                            AppItemCrud.getAppColor(TaskAnalyser.newItem.app).then((color) => {
-                                TaskAnalyser.newItem.color = color;
-                                TrackItemCrud.createItem(TaskAnalyser.newItem).then((trackItem)=> {
-                                    console.log("Created new task, saving reference: ", trackItem.id);
-                                    TaskAnalyser.newItem = null;
-                                    notifier.notify({
-                                        title: 'New task created!',
-                                        message: `Task "${trackItem.title}" running.`,
-                                        icon: iconUrl,
-                                        sound: true, // Only Notification Center or Windows Toasters
-                                        wait: false // Wait with callback, until user action is taken against notification
-                                    });
-                                    SettingsCrud.saveRunningLogItemReferemce(trackItem.id);
+                        console.log("Clicked. Creating new task", TaskAnalyser.newItem);
+                        AppItemCrud.getAppColor(TaskAnalyser.newItem.app).then((color) => {
+                            TaskAnalyser.newItem.color = color;
+                            TrackItemCrud.createItem(TaskAnalyser.newItem).then((trackItem)=> {
+                                console.log("Created new task, saving reference: ", trackItem.id);
+                                TaskAnalyser.newItem = null;
+                                notifier.notify({
+                                    title: 'New task created!',
+                                    message: `Task "${trackItem.title}" running.`,
+                                    icon: iconUrl,
+                                    sound: true, // Only Notification Center or Windows Toasters
+                                    wait: false // Wait with callback, until user action is taken against notification
                                 });
+                                SettingsCrud.saveRunningLogItemReferemce(trackItem.id);
                             });
                         });
                     });
-                }
+                });
             }
 
         });

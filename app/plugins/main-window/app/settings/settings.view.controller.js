@@ -36,6 +36,7 @@ angular.module('globalServices')
         //public methods
         ctrl.saveSettings = saveSettings;
         ctrl.testAnalyserItem = testAnalyserItem;
+        ctrl.removeAnalyserItem = removeAnalyserItem;
         ctrl.addNewAnalyserItem = addNewAnalyserItem;
 
         function saveSettings() {
@@ -49,9 +50,12 @@ angular.module('globalServices')
         }
 
         function addNewAnalyserItem() {
-            ctrl.analyserSettings.push({});
+            ctrl.analyserSettings.push({findRe: '', takeTitle: '', takeGroup: '', active: true});
         }
 
+        function removeAnalyserItem(index) {
+            ctrl.analyserSettings.splice(index, 1);
+        }
 
         function testAnalyserItem(analyseSetting, index) {
             ctrl.analyserTestItems[index] = [];
