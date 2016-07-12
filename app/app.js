@@ -61,7 +61,7 @@ app.on('ready', function () {
 
 
 require('electron-context-menu')({
-   
+
 });
 
 

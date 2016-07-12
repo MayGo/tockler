@@ -41,7 +41,7 @@ class TaskAnalyser {
 
         SettingsCrud.fetchAnalyserSettings().then((analyserItems)=> {
             for (let patObj of analyserItems) {
-                if (!patObj.findRe) {
+                if (!patObj.findRe || !patObj.active) {
                     return;
                 }
 
@@ -51,7 +51,7 @@ class TaskAnalyser {
                     continue;
                 }
 
-                let title = TaskAnalyser.findFirst(item.title, patObj.takeTitle) ||  item.title;
+                let title = TaskAnalyser.findFirst(item.title, patObj.takeTitle) || item.title;
                 let app = TaskAnalyser.findFirst(item.title, patObj.takeGroup) || foundStr;
 
                 SettingsCrud.getRunningLogItem().then((runningItem)=> {
