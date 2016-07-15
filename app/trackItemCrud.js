@@ -5,6 +5,47 @@ var moment = require('moment');
  * Module
  */
 
+module.exports.findAllItems = function (to, from, taskName, searchStr, paging) {
+    'use strict';
+
+    var order = paging.order || 'beginDate';
+    var orderSort = paging.orderSort || 'ASC';
+    if (order.startsWith('-')) {
+        order = order.substring(1);
+        orderSort = 'DESC';
+    }
+    var limit = paging.limit || 10;
+    var offset = paging.offset || 0;
+    if (paging.page) {
+        offset = paging.page * limit;
+    }
+
+    var where = {
+        endDate: {
+            $gte: to,
+            $lte: from
+        },
+        taskName: taskName
+    };
+
+    if (searchStr) {
+        where.title = {
+            $like: '%' + searchStr + '%'
+        }
+    }
+    return TrackItem.findAndCountAll({
+            where: where,
+            raw: false,
+            limit: limit,
+            offset: offset,
+            order: [
+                [order, orderSort]
+            ]
+        }
+    );
+};
+
+
 module.exports.findAllDayItems = function (to, from, taskName) {
     'use strict';
     return TrackItem.findAll({

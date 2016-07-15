@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('angularDemoApp').filter('msToDuration', function () {
+angular.module('filters', []).filter('msToDuration', function () {
     return function (input) {
 
         var duration = moment.duration(input)

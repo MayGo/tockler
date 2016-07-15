@@ -120,12 +120,12 @@ var createOrUpdate = function (rawItem) {
             rawItem.endDate = almostMidnight;
             createOrUpdate(rawItem).then(function (item1) {
                 lastTrackItems[type] = null;
-                log.debug('Midnight- Saved one: ' + item1);
+                log.debug('Midnight- Saved one: ', item1);
                 item1.beginDate = afterMidnight;
                 item1.endDate = originalEndDate;
-                log.debug('Midnight- Saving second: ' + item1);
+                log.debug('Midnight- Saving second: ', item1);
                 createOrUpdate(getRawTrackItem(item1)).then(function (item2) {
-                    log.debug('Midnight- Saved second: ' + item2);
+                    log.debug('Midnight- Saved second: ', item2);
                     deferred.resolve(item2);
                 });
             });
@@ -335,10 +335,17 @@ BackgroundService.saveRunningLogItem = function () {
                 log.debug("resolved log item RUNNING_LOG_ITEM: ", logItem);
                 var now = new Date();
                 logItem.endDate = now;
-                // set first LogTrackItem becouse
+                // set first LogTrackItem because
                 // when restarting application there would be multiple same items
                 lastTrackItems.LogTrackItem = logItem;
-                createOrUpdate(getRawTrackItem(logItem));
+
+                createOrUpdate(getRawTrackItem(logItem)).then(function (savedItem) {
+                    // at midnight track item is split and new items ID should be RUNNING_LOG_ITEM
+                    if (savedItem.id !== logItem.id) {
+                        log.info('RUNNING_LOG_ITEM changed at midnight.');
+                        SettingsCrud.saveRunningLogItemReferemce(savedItem.id);
+                    }
+                });
             })
         } else {
             log.debug("No RUNNING_LOG_ITEM ref id");
