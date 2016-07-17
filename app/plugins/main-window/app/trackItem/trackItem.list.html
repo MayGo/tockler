@@ -24,22 +24,38 @@
 </div>
 <div>
     <md-table-container flex layout="column">
-        <table md-table md-progress="trackItemCtrl.promise" style="table-layout:fixed;">
+        <table md-table md-progress="trackItemCtrl.promise"
+               md-row-select multiple ng-model="trackItemCtrl.selectedItems"
+               style="table-layout:fixed;">
             <thead md-head md-order="trackItemCtrl.query.order" md-on-reorder="trackItemCtrl.list">
             <tr md-row>
-                <th md-column md-order-by="app" style="width: 130px">App</th>
-                <th md-column md-order-by="title">Title</th>
-                <th md-column md-order-by="beginDate" style="width: 140px">Begin</th>
-                <th md-column md-order-by="endDate" style="width: 140px">End</th>
+                <th ng-if="!trackItemCtrl.selectedItems.length" md-column md-order-by="app" >App
+                </th>
+                <th ng-if="!trackItemCtrl.selectedItems.length" md-column md-order-by="title">Title</th>
+                <th ng-if="!trackItemCtrl.selectedItems.length" md-column md-order-by="beginDate" >
+                    Begin
+                </th>
+                <th ng-if="!trackItemCtrl.selectedItems.length" md-column md-order-by="endDate" >
+                    End
+                </th>
+                <th colspan="4" style="text-align: right;" ng-if="trackItemCtrl.selectedItems.length">
+                    <span>{{trackItemCtrl.selectedItems.length}} {{trackItemCtrl.selectedItems.length > 1 ? 'items' : 'item'}} selected</span>
+                    <span flex></span>
+                    <md-button class="md-icon-button" ng-click="trackItemCtrl.removeItems(trackItemCtrl.selectedItems)">
+                        <md-icon>delete</md-icon>
+                    </md-button>
+                </th>
             </tr>
             </thead>
             <tbody md-body>
             <tr md-row
+                md-select="trackItem.id"
+                md-auto-select
                 ng-repeat="trackItem in trackItemCtrl.trackItems.rows">
-                <td md-cell>{{trackItem.app}}</td>
+                <td md-cell style="width: 130px">{{trackItem.app}}</td>
                 <td md-cell style="overflow:visible; word-wrap: break-word;">{{trackItem.title}}</td>
-                <td md-cell>{{trackItem.beginDate | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
-                <td md-cell>{{trackItem.endDate | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td md-cell style="width: 140px">{{trackItem.beginDate | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td md-cell style="width: 140px">{{trackItem.endDate | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
 
             </tr>
             </tbody>

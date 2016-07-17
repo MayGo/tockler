@@ -8,6 +8,7 @@ angular.module('angularDemoApp')
         ctrl.searchMinDate = moment().startOf('day').toDate();
         ctrl.searchMaxDate = moment().startOf('day').add(1, 'days').toDate();
         ctrl.searchTask = 'AppTrackItem';
+        ctrl.selectedItems = [];
 
         ctrl.query = {
             order: 'beginDate',
@@ -25,6 +26,16 @@ angular.module('angularDemoApp')
             ctrl.promise = TrackItemService.findAllItems(ctrl.searchMinDate, ctrl.searchMaxDate, ctrl.searchTask, ctrl.searchStr, ctrl.query);
             ctrl.promise.then(success)
         };
+
+        ctrl.removeItems = function (ids) {
+            console.log("Removing items");
+            ctrl.selectedItems = [];
+            TrackItemService.deleteByIds(ids).then(function(){
+                ctrl.list();
+            });
+
+        };
+
 
         ctrl.list();
 

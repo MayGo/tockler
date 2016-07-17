@@ -177,6 +177,24 @@ module.exports.deleteById = function (id) {
     });
     return deferred.promise;
 };
+module.exports.deleteByIds = function (ids) {
+    'use strict';
+    var deferred = $q.defer();
+
+    TrackItem.destroy({
+        where: {
+            id: {
+                $in: ids
+            }
+        }
+    }).then(function () {
+        console.log("Deleted track items with IDs:", ids);
+        deferred.resolve(ids);
+    }).catch(function (error) {
+        console.error(error)
+    });
+    return deferred.promise;
+};
 
 const {ipcMain} = require('electron');
 
