@@ -24,13 +24,20 @@
         </md-list-item>
         <form name="logItemCtrl.addNewItemForm">
             <md-list-item ng-if="!logItemCtrl.runningLogItem" class="tray-item" ng-click="null">
-                <div class="md-list-item-text" layout="row">
-                    <md-input-container flex="80" md-no-float>
-                        <input ng-model="logItemCtrl.newItem.title" required placeholder="Add new task">
-                    </md-input-container>
-                    <md-input-container flex="20">
-                        <input ng-model="logItemCtrl.newItem.color" type="color" required>
-                    </md-input-container>
+                <div class="md-list-item-text">
+                    <p>Add new task </p>
+
+                    <div layout="row">
+                        <md-input-container flex="30" md-no-float>
+                            <input ng-model="logItemCtrl.newItem.app" required placeholder="Group">
+                        </md-input-container>
+                        <md-input-container flex md-no-float>
+                            <input ng-model="logItemCtrl.newItem.title" required placeholder="Title">
+                        </md-input-container>
+                        <md-input-container flex="10">
+                            <input ng-model="logItemCtrl.newItem.color" type="color" required>
+                        </md-input-container>
+                    </div>
                 </div>
 
                 <md-button type="submit" class="md-secondary md-icon-button" aria-label="Start task"
@@ -52,9 +59,7 @@
                 <h3>{{item.title}}</h3>
 
                 <p>{{item.beginDate | date: 'yyyy.MM.dd HH:mm:ss'}} - {{item.endDate | date: 'yyyy.MM.dd HH:mm:ss'}}
-                    <span>
-                       {{item.endDate.getTime()-item.beginDate.getTime() | msToDuration}}
-                    </span>
+                    <b> {{item.endDate.getTime()-item.beginDate.getTime() | msToDuration}}</b>
                 </p>
             </div>
             <md-button class="md-secondary md-icon-button" ng-click="logItemCtrl.startNewLogItem(item)"
