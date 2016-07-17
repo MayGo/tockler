@@ -114,10 +114,13 @@ module.exports.updateItem = function (itemData) {
 
     var deferred = $q.defer();
     TrackItem.update({
+        app: itemData.app,
+        title: itemData.title,
+        color: itemData.color,
         beginDate: itemData.beginDate,
         endDate: itemData.endDate
     }, {
-        fields: ['beginDate', 'endDate'],
+        fields: ['beginDate', 'endDate', 'app', 'title', 'color'],
         where: {id: itemData.id}
     }).then(function () {
         //console.log("Saved track item to DB:", itemData.id);
@@ -125,7 +128,6 @@ module.exports.updateItem = function (itemData) {
     }).catch(function (error) {
         console.error(error)
     });
-
 
     return deferred.promise;
 };
@@ -160,6 +162,21 @@ module.exports.updateEndDateWithNow = function (id) {
         where: {id: id}
     }).then(function () {
         console.log("Saved track item to DB with now:", id);
+        deferred.resolve(id);
+    }).catch(function (error) {
+        console.error(error)
+    });
+    return deferred.promise;
+};
+
+module.exports.deleteById = function (id) {
+    'use strict';
+    var deferred = $q.defer();
+
+    TrackItem.destroy({
+        where: {id: id}
+    }).then(function () {
+        console.log("Deleted track item with ID:", id);
         deferred.resolve(id);
     }).catch(function (error) {
         console.error(error)
