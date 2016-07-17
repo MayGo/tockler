@@ -281,11 +281,13 @@ BackgroundService.saveForegroundWindowTitle = function () {
 
     //log.debug('Script saveForegroundWindowTitle file: ' + script);
 
-    var proc = exec(script);
-    proc.stdout.setEncoding('utf8');
-    proc.stdout.on('data', function (stdout) {
-
+    exec(script, function (error, stdout, stderr) {
         log.debug('Foreground window: ' + stdout);
+
+        if (stderr) {
+            log.error('saveForegroundWindowTitle error: ' + stderr);
+        }
+
         var active = {};
         var active_a = stdout.split(",");
 
