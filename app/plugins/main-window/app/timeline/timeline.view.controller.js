@@ -259,7 +259,7 @@ angular.module('angularDemoApp')
 
         };
         var updateItem = function (trackItem) {
-            TrackItemService.update(trackItem.id, trackItem).then(function (item) {
+            TrackItemService.updateItem(trackItem).then(function (item) {
                 console.log("Updated trackitem to DB:", item);
                 ctrl.selectedTrackItem = null;
 
@@ -280,7 +280,7 @@ angular.module('angularDemoApp')
             console.log("Deleting trackitem.", trackItem);
 
             if (trackItem.id) {
-                TrackItemService.destroy(trackItem.id).then(function (item) {
+                TrackItemService.deleteById(trackItem.id).then(function (item) {
                     console.log("Deleting trackitem from DB:", trackItem);
                     ctrl.selectedTrackItem = null;
 
