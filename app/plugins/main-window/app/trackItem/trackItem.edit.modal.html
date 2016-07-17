@@ -12,14 +12,19 @@
         <md-dialog-content >
             <div class="md-dialog-content" >
                 <div layout="row">
-                    <md-input-container flex="50">
-                        <label>Title</label>
-                        <input ng-model="trackItemModalCtrl.trackItem.title" required>
-                    </md-input-container>
-                    <md-input-container flex="50">
+                    <md-input-container flex="10">
                         <label>Color</label>
                         <input ng-model="trackItemModalCtrl.trackItem.color" type="color" required>
                     </md-input-container>
+                    <md-input-container flex="20">
+                        <label>Group</label>
+                        <input ng-model="trackItemModalCtrl.trackItem.app" required>
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Title</label>
+                        <input ng-model="trackItemModalCtrl.trackItem.title" required>
+                    </md-input-container>
+
                 </div>
                 <div layout="row" layout-align="center center">
                     <md-datepicker ng-if="trackItemModalCtrl.selectedDate" flex="50" ng-model="trackItemModalCtrl.selectedDate" md-placeholder="Date"
