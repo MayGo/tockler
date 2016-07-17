@@ -17,7 +17,7 @@ module.exports.findAllItems = function (to, from, taskName, searchStr, paging) {
     var limit = paging.limit || 10;
     var offset = paging.offset || 0;
     if (paging.page) {
-        offset = paging.page * limit;
+        offset = (paging.page - 1) * limit;
     }
 
     var where = {
