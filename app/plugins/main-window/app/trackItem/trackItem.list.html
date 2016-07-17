@@ -1,5 +1,5 @@
 <div layout="row">
-    <div style="margin-top: 15px">
+
     <md-button class="md-icon-button" aria-label="Refresh" ng-click="trackItemCtrl.list()">
         <md-icon md-font-set="material-icons">refresh</md-icon>
     </md-button>
@@ -10,7 +10,7 @@
     <md-datepicker ng-model="trackItemCtrl.searchMaxDate"
                    md-min-date="trackItemCtrl.searchMinDate"
                    ng-change="trackItemCtrl.list()"></md-datepicker>
-    </div>
+
     <md-input-container class="md-block" flex>
         <label>Search</label>
         <input ng-model="trackItemCtrl.searchStr" ng-change="trackItemCtrl.list()">
