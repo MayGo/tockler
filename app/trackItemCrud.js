@@ -5,6 +5,47 @@ var moment = require('moment');
  * Module
  */
 
+module.exports.findAllItems = function (to, from, taskName, searchStr, paging) {
+    'use strict';
+
+    var order = paging.order || 'beginDate';
+    var orderSort = paging.orderSort || 'ASC';
+    if (order.startsWith('-')) {
+        order = order.substring(1);
+        orderSort = 'DESC';
+    }
+    var limit = paging.limit || 10;
+    var offset = paging.offset || 0;
+    if (paging.page) {
+        offset = paging.page * limit;
+    }
+
+    var where = {
+        endDate: {
+            $gte: to,
+            $lte: from
+        },
+        taskName: taskName
+    };
+
+    if (searchStr) {
+        where.title = {
+            $like: '%' + searchStr + '%'
+        }
+    }
+    return TrackItem.findAndCountAll({
+            where: where,
+            raw: false,
+            limit: limit,
+            offset: offset,
+            order: [
+                [order, orderSort]
+            ]
+        }
+    );
+};
+
+
 module.exports.findAllDayItems = function (to, from, taskName) {
     'use strict';
     return TrackItem.findAll({
@@ -67,10 +108,13 @@ module.exports.updateItem = function (itemData) {
 
     var deferred = $q.defer();
     TrackItem.update({
+        app: itemData.app,
+        title: itemData.title,
+        color: itemData.color,
         beginDate: itemData.beginDate,
         endDate: itemData.endDate
     }, {
-        fields: ['beginDate', 'endDate'],
+        fields: ['beginDate', 'endDate', 'app', 'title', 'color'],
         where: {id: itemData.id}
     }).then(function () {
         //console.log("Saved track item to DB:", itemData.id);
@@ -78,7 +122,6 @@ module.exports.updateItem = function (itemData) {
     }).catch(function (error) {
         console.error(error)
     });
-
 
     return deferred.promise;
 };
@@ -113,6 +156,21 @@ module.exports.updateEndDateWithNow = function (id) {
         where: {id: id}
     }).then(function () {
         console.log("Saved track item to DB with now:", id);
+        deferred.resolve(id);
+    }).catch(function (error) {
+        console.error(error)
+    });
+    return deferred.promise;
+};
+
+module.exports.deleteById = function (id) {
+    'use strict';
+    var deferred = $q.defer();
+
+    TrackItem.destroy({
+        where: {id: id}
+    }).then(function () {
+        console.log("Deleted track item with ID:", id);
         deferred.resolve(id);
     }).catch(function (error) {
         console.error(error)

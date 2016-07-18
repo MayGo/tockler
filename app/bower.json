@@ -27,7 +27,7 @@
     "md-color-picker": "*",
     "angular-material-datetimepicker": "~1.2.6",
     "moment": "~2.11.1",
-    "angular-material-data-table": "~0.9.9",
+    "angular-material-data-table": "~0.10.9",
     "angular-dynamic-locale": "~0.1.29",
     "angular-i18n": "~1.4.9",
     "angular-moment": "~0.10.3",

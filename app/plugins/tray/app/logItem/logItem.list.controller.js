@@ -23,7 +23,7 @@ angular.module('trayApp')
             });
         };
 
-        ctrl.refresh = function(){
+        ctrl.refresh = function () {
             console.log("Refresh data");
             SettingsService.getRunningLogItem().then(function (item) {
                 console.log("Running log item.", item);
@@ -39,7 +39,7 @@ angular.module('trayApp')
             console.log("startNewLogItem");
 
             var newItem = {};
-            newItem.app = "Default";
+            newItem.app = oldItem.app || "WORK";
             newItem.taskName = "LogTrackItem";
             newItem.color = oldItem.color;
             newItem.title = oldItem.title;

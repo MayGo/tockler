@@ -28,8 +28,10 @@
     >
         <form name="timelineCtrl.selectedTrackItemForm">
             <div layout="row">
-
-                <md-input-container flex="80" md-no-float>
+                <md-input-container flex="20" md-no-float>
+                    <input ng-model="timelineCtrl.selectedTrackItem.app" required placeholder="Group">
+                </md-input-container>
+                <md-input-container flex md-no-float>
                     <input ng-model="timelineCtrl.selectedTrackItem.title" required placeholder="Title">
                 </md-input-container>
                 <md-input-container flex="20">
@@ -38,16 +40,23 @@
                 <md-button type="submit" class="md-icon-button" aria-label="Refresh"
                            ng-disabled="timelineCtrl.selectedTrackItemForm.$invalid"
                            ng-click="timelineCtrl.saveTrackItem(timelineCtrl.selectedTrackItem)">
+                    <md-tooltip md-direction="bottom">Save</md-tooltip>
                     <md-icon md-font-set="material-icons">save</md-icon>
                 </md-button>
                 <md-button type="submit" class="md-icon-button" aria-label="Delete"
                            ng-if="timelineCtrl.selectedTrackItem.id"
                            ng-click="timelineCtrl.deleteTrackItem(timelineCtrl.selectedTrackItem)">
+                    <md-tooltip md-direction="bottom">Delete</md-tooltip>
                     <md-icon md-font-set="material-icons">delete</md-icon>
                 </md-button>
-
+                <md-button class="md-icon-button" aria-label="Close"
+                           ng-click="timelineCtrl.selectedTrackItem = null">
+                    <md-tooltip md-direction="bottom">Close</md-tooltip>
+                    <md-icon md-font-set="material-icons">close</md-icon>
+                </md-button>
             </div>
         </form>
+
     </div>
     <timeline track-items="timelineCtrl.trackItems"
               selected-track-item="timelineCtrl.selectedTrackItem"

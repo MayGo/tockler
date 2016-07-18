@@ -1,17 +1,16 @@
-@import "plugins/main-window/css/sass/reset";
+@import "app/plugins/main-window/css/sass/reset";
 
-body {
-    font-size: 12px;
-    color:#333;
-    line-height: 1.33;
-    -webkit-user-select: none;
-    user-select: none;
-    font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif;
-    overflow: hidden;
+html {
+  font-size: 62.5%;
+  line-height: 1.4;
 }
 
-* {
-  box-sizing: border-box;
+body {
+  font-size: 12px;
+  color: #333;
+  -webkit-user-select: none;
+  user-select: none;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif;
 }
 
 

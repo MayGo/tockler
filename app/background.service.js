@@ -118,14 +118,15 @@ var createOrUpdate = function (rawItem) {
 
             log.debug('Midnight- almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
             rawItem.endDate = almostMidnight;
+            rawItem.endDateOverride = almostMidnight;
             createOrUpdate(rawItem).then(function (item1) {
                 lastTrackItems[type] = null;
-                log.debug('Midnight- Saved one: ' + item1);
+                log.debug('Midnight- Saved one: ', item1);
                 item1.beginDate = afterMidnight;
                 item1.endDate = originalEndDate;
-                log.debug('Midnight- Saving second: ' + item1);
+                log.debug('Midnight- Saving second: ', item1);
                 createOrUpdate(getRawTrackItem(item1)).then(function (item2) {
-                    log.debug('Midnight- Saved second: ' + item2);
+                    log.debug('Midnight- Saved second: ', item2);
                     deferred.resolve(item2);
                 });
             });
@@ -152,7 +153,7 @@ var createOrUpdate = function (rawItem) {
                 });
 
             } else if (isSameItems(rawItem, lastTrackItems[type])) {
-                lastTrackItems[type].endDate = new Date();
+                lastTrackItems[type].endDate = rawItem.endDateOverride || new Date();
                 TrackItemCrud.updateItem(lastTrackItems[type]).then(function (item) {
                     log.debug("Saved track item(endDate change) to DB:", item);
                     lastTrackItems[type] = item;
@@ -174,7 +175,7 @@ var addRawTrackItemToList = function (item) {
 
 var saveActiveWindow = function (newAppTrackItem) {
     if (isSleeping) {
-        log.info('Computer is spleeing, not running saveActiveWindow');
+        log.info('Computer is sleeping, not running saveActiveWindow');
         return;
     }
     if (lastTrackItems.StatusTrackItem !== null && lastTrackItems.StatusTrackItem.app === 'IDLE') {
@@ -278,7 +279,7 @@ BackgroundService.saveForegroundWindowTitle = function () {
         script = "sh " + path.join(__dirname, "get-foreground-window-title.sh");
     }
 
-    log.debug('Script saveForegroundWindowTitle file: ' + script);
+    //log.debug('Script saveForegroundWindowTitle file: ' + script);
 
     var proc = exec(script);
     proc.stdout.setEncoding('utf8');
@@ -335,10 +336,17 @@ BackgroundService.saveRunningLogItem = function () {
                 log.debug("resolved log item RUNNING_LOG_ITEM: ", logItem);
                 var now = new Date();
                 logItem.endDate = now;
-                // set first LogTrackItem becouse
+                // set first LogTrackItem because
                 // when restarting application there would be multiple same items
                 lastTrackItems.LogTrackItem = logItem;
-                createOrUpdate(getRawTrackItem(logItem));
+
+                createOrUpdate(getRawTrackItem(logItem)).then(function (savedItem) {
+                    // at midnight track item is split and new items ID should be RUNNING_LOG_ITEM
+                    if (savedItem.id !== logItem.id) {
+                        log.info('RUNNING_LOG_ITEM changed at midnight.');
+                        SettingsCrud.saveRunningLogItemReferemce(savedItem.id);
+                    }
+                });
             })
         } else {
             log.debug("No RUNNING_LOG_ITEM ref id");
@@ -362,7 +370,7 @@ BackgroundService.saveUserIdleTime = function () {
         script = "sh " + path.join(__dirname, "get-user-idle-time.linux.sh");
     }
 
-    log.debug('Script saveUserIdleTime file: ' + script)
+    //log.debug('Script saveUserIdleTime file: ' + script)
 
     return exec(script, function (error, stdout, stderr) {
         log.debug('Idle time: ' + stdout);

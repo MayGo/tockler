@@ -13,7 +13,9 @@ function Timeline($window, $rootScope, $document) {
         );
 
         scope.$watch('timelineDirectiveCtrl.selectedTrackItem', function (newVal, oldVal) {
+                console.log('SelectedTrackItem changed', newVal, oldVal);
                 if (newVal === null) {
+                    console.log('Clearing brush....');
                     ctrl.clearBrush();
                 }
             }

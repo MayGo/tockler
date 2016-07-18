@@ -68,8 +68,8 @@ angular.module('angularDemoApp')
             selectionTool.clear();
             d3.select(".brush").call(selectionTool);
             d3.select(".brush").selectAll("rect")
-                .attr('height', logTrackItemHeight).attr("transform", null)
-            ctrl.selectedTrackItem = null;
+                .attr('height', logTrackItemHeight).attr("transform", null);
+
 
         };
 
@@ -229,7 +229,8 @@ angular.module('angularDemoApp')
                 .attr("height", height).on('click', function () {
                     console.log("Visulation click");
                     if (ctrl.selectedTrackItem != null) {
-                        clearBrush();
+                        ctrl.selectedTrackItem = null;
+                        $scope.$apply();
                     } else {
                         createLogItemBrush();
                     }
@@ -350,7 +351,7 @@ angular.module('angularDemoApp')
         function onClickTrackItem(d, i) {
 
             console.log("onClickTrackItem");
-            clearBrush();
+            //clearBrush();
             var p = d3.select(this);
             var data = p.data()[0];
 

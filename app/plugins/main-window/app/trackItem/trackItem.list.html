@@ -1,39 +1,53 @@
-<md-button class="md-icon-button" aria-label="Refresh" ng-click="trackItemCtrl.list()">
-    <md-icon md-font-set="material-icons">refresh</md-icon>
-</md-button>
+<div layout="row">
+    <md-button class="md-icon-button" aria-label="Refresh" ng-click="trackItemCtrl.list()">
+        <md-icon md-font-set="material-icons">refresh</md-icon>
+    </md-button>
 
-<md-button class="md-icon-button" ng-click="trackItemCtrl.dayBack()">
-    <md-icon md-font-set="material-icons">arrow_back</md-icon>
-</md-button>
+    <md-datepicker class="md-block" ng-model="trackItemCtrl.searchMinDate" md-placeholder="From day"
+                   md-max-date="trackItemCtrl.searchMaxDate"
+                   ng-change="trackItemCtrl.list()"></md-datepicker>
+    <md-datepicker ng-model="trackItemCtrl.searchMaxDate" md-placeholder="To day"
+                   md-min-date="trackItemCtrl.searchMinDate"
+                   ng-change="trackItemCtrl.list()"></md-datepicker>
 
-<md-datepicker ng-model="trackItemCtrl.searchDate" md-placeholder="Search for day"
-               md-max-date="trackItemCtrl.maxDate" ng-change="trackItemCtrl.list()"></md-datepicker>
-
-<md-button class="md-icon-button" ng-click="trackItemCtrl.dayForward()">
-    <md-icon md-font-set="material-icons">arrow_forward</md-icon>
-</md-button>
-
-<div layout-padding>
-    <md-table-container>
-        <table md-table>
-            <thead md-head md-order="query.order" md-on-reorder="onReorder">
+    <md-input-container class="md-block" flex>
+        <label>Search</label>
+        <input ng-model="trackItemCtrl.searchStr" ng-change="trackItemCtrl.list()">
+    </md-input-container>
+    <md-input-container class="md-block">
+        <md-select ng-model="trackItemCtrl.searchTask" ng-change="trackItemCtrl.list()">
+            <md-option value="AppTrackItem">Apps</md-option>
+            <md-option value="StatusTrackItem">Statuses</md-option>
+            <md-option value="LogTrackItem">Logs</md-option>
+        </md-select>
+    </md-input-container>
+</div>
+<div>
+    <md-table-container flex layout="column">
+        <table md-table md-progress="trackItemCtrl.promise" style="table-layout:fixed;">
+            <thead md-head md-order="trackItemCtrl.query.order" md-on-reorder="trackItemCtrl.list">
             <tr md-row>
-                <th md-column>App</th>
-                <th md-column>Title</th>
-                <th md-column>Begin</th>
-                <th md-column>End</th>
+                <th md-column md-order-by="app" style="width: 130px">App</th>
+                <th md-column md-order-by="title">Title</th>
+                <th md-column md-order-by="beginDate" style="width: 140px">Begin</th>
+                <th md-column md-order-by="endDate" style="width: 140px">End</th>
             </tr>
             </thead>
             <tbody md-body>
-            <tr md-row md-select="app" md-select-id="{{trackItem.id}}" md-auto-select
-                ng-repeat="trackItem in trackItemCtrl.trackItems">
+            <tr md-row
+                ng-repeat="trackItem in trackItemCtrl.trackItems.rows">
                 <td md-cell>{{trackItem.app}}</td>
-                <td md-cell>{{trackItem.title}}</td>
-                <td md-cell style="width: 130px">{{trackItem.beginDate | date: 'medium'}}</td>
-                <td md-cell style="width: 130px">{{trackItem.endDate | date: 'medium'}}</td>
+                <td md-cell style="overflow:visible; word-wrap: break-word;">{{trackItem.title}}</td>
+                <td md-cell>{{trackItem.beginDate | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td md-cell>{{trackItem.endDate | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
 
             </tr>
             </tbody>
         </table>
     </md-table-container>
+
+    <md-table-pagination md-limit="trackItemCtrl.query.limit" md-limit-options="[10, 15, 30, 50, 100]"
+                         md-page="trackItemCtrl.query.page" md-total="{{trackItemCtrl.trackItems.count}}"
+                         md-on-paginate="trackItemCtrl.list" md-page-select></md-table-pagination>
+
 </div>
