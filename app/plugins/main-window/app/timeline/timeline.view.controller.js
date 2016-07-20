@@ -50,23 +50,22 @@ angular.module('angularDemoApp')
                 }
             };
 
-            if (loadedItems[taskName].length === 0) {
-                loadedItems[taskName] = items;
+            if (ctrl.loadedItems[taskName].length === 0) {
+                ctrl.loadedItems[taskName] = items;
             } else {
                 _.each(items, function (item) {
-                    upsert(loadedItems[taskName], item._id, item);
+                    upsert(ctrl.loadedItems[taskName], item._id, item);
                 });
             }
 
             ctrl.loading = false;
             console.log('Trackitems loaded, parsing ended.', taskName);
-            $scope.$broadcast('addItemsToTimeline', loadedItems[taskName]);
+            $scope.$broadcast('addItemsToTimeline', ctrl.loadedItems[taskName]);
 
-            updatePieCharts(loadedItems[taskName], taskName);
+            updatePieCharts(ctrl.loadedItems[taskName], taskName);
 
             if (taskName === 'AppTrackItem') {
-                setWorkStatsForDay(loadedItems[taskName]);
-                ctrl.visibleItems = loadedItems[taskName];
+                setWorkStatsForDay(ctrl.loadedItems[taskName]);
             }
 
             $scope.$digest();
@@ -129,7 +128,7 @@ angular.module('angularDemoApp')
         };
 
         ctrl.refresh = function () {
-            var lastItem = (loadedItems['AppTrackItem'].length > 0) ? _(loadedItems['AppTrackItem']).last().valueOf() : null;
+            var lastItem = (ctrl.loadedItems['AppTrackItem'].length > 0) ? _(ctrl.loadedItems['AppTrackItem']).last().valueOf() : null;
 
             var searchFrom = (lastItem) ? lastItem.beginDate : moment().startOf('day').toDate();
             console.log('Refreshing from:', searchFrom);
@@ -151,7 +150,7 @@ angular.module('angularDemoApp')
             ctrl.zoomX = $sessionStorage.zoomX || 0;
             ctrl.loading = true;
 
-            _.keys(loadedItems).forEach(function (taskName) {
+            _.keys(ctrl.loadedItems).forEach(function (taskName) {
                 console.log('TIMELINE_LOAD_DAY_REQUEST sent', startDate, taskName);
                 ipc.send('TIMELINE_LOAD_DAY_REQUEST', startDate, taskName);
             })
@@ -176,6 +175,10 @@ angular.module('angularDemoApp')
             });
         }
 
+        ctrl.dateDiff = function(c) {
+            return moment(c.endDate).diff(c.beginDate)
+        }
+
         var updatePieCharts = function (items, taskName) {
 
             console.log('Track Items changed. Updating pie charts');
@@ -187,7 +190,7 @@ angular.module('angularDemoApp')
                     return b.reduce(sumApp, {app: b[0].app, title: b[0].title, timeDiffInMs: 0, color: b[0].color})
                 })
                 .valueOf();
-            
+
             console.log('Updating pie charts ended.');
 
         };
@@ -253,8 +256,8 @@ angular.module('angularDemoApp')
 
                     $scope.$broadcast('addItemToTimeline', item);
 
-                    loadedItems[trackItem.taskName].push(item);
-                    updatePieCharts(loadedItems[trackItem.taskName], trackItem.taskName);
+                    ctrl.loadedItems[trackItem.taskName].push(item);
+                    updatePieCharts(ctrl.loadedItems[trackItem.taskName], trackItem.taskName);
                     $scope.$digest();
                 });
             }
@@ -272,8 +275,8 @@ angular.module('angularDemoApp')
                     arr.splice(index, 1, newval);
                 };
 
-                update(loadedItems[trackItem.taskName], item._id, item);
-                updatePieCharts(loadedItems[trackItem.taskName], trackItem.taskName);
+                update(ctrl.loadedItems[trackItem.taskName], item._id, item);
+                updatePieCharts(ctrl.loadedItems[trackItem.taskName], trackItem.taskName);
                 $scope.$apply();
             });
         };
@@ -286,10 +289,10 @@ angular.module('angularDemoApp')
                     console.log("Deleting trackitem from DB:", trackItem);
                     ctrl.selectedTrackItem = null;
 
-                    var index = _.indexOf(ctrl.trackItems, _.find(loadedItems[trackItem.taskName], {id: trackItem.id}));
-                    loadedItems[trackItem.taskName].splice(index, 1);
-                    updatePieCharts(loadedItems[trackItem.taskName], trackItem.taskName);
-                    $scope.$broadcast('removeItemsFromTimeline', loadedItems[trackItem.taskName]);
+                    var index = _.indexOf(ctrl.trackItems, _.find(ctrl.loadedItems[trackItem.taskName], {id: trackItem.id}));
+                    ctrl.loadedItems[trackItem.taskName].splice(index, 1);
+                    updatePieCharts(ctrl.loadedItems[trackItem.taskName], trackItem.taskName);
+                    $scope.$broadcast('removeItemsFromTimeline', ctrl.loadedItems[trackItem.taskName]);
                     $scope.$apply();
                 });
             } else {
