@@ -176,7 +176,7 @@ angular.module('angularDemoApp')
 
         ctrl.dateDiff = function(c) {
             return moment(c.endDate).diff(c.beginDate)
-        }
+        };
 
         var updatePieCharts = function (items, taskName) {
 

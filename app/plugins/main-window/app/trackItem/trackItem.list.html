@@ -38,7 +38,10 @@
                 <th ng-if="!trackItemCtrl.selectedItems.length" md-column md-order-by="endDate" >
                     End
                 </th>
-                <th colspan="4" style="text-align: right;" ng-if="trackItemCtrl.selectedItems.length">
+                <th md-column>
+                    Duration
+                </th>
+                <th colspan="5" style="text-align: right;" ng-if="trackItemCtrl.selectedItems.length">
                     <span>{{trackItemCtrl.selectedItems.length}} {{trackItemCtrl.selectedItems.length > 1 ? 'items' : 'item'}} selected</span>
                     <span flex></span>
                     <md-button class="md-icon-button" ng-click="trackItemCtrl.removeItems(trackItemCtrl.selectedItems)">
@@ -56,9 +59,19 @@
                 <td md-cell style="overflow:visible; word-wrap: break-word;">{{trackItem.title}}</td>
                 <td md-cell style="width: 140px">{{trackItem.beginDate | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                 <td md-cell style="width: 140px">{{trackItem.endDate | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
-
+                <td md-cell style="width: 140px">{{trackItem.endDate | diffToMs: trackItem.beginDate |
+                    msToDuration}}
+                </td>
             </tr>
             </tbody>
+            <tfoot md-foot>
+            <tr md-row>
+                <td md-cell colspan="4"></td>
+                <td md-cell colspan="2">Total duration on page: {{trackItemCtrl.trackItems.rows
+                    | map:trackItemCtrl.dateDiff | sum | msToDuration}}
+                </td>
+            </tr>
+            </tfoot>
         </table>
     </md-table-container>
 
