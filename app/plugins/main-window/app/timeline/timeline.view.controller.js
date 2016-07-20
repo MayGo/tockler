@@ -6,12 +6,11 @@ angular.module('angularDemoApp')
                                                     TrackItemService, settingsData, $sessionStorage, AppSettingsService) {
         var ctrl = this;
 
-        var loadedItems;
-        ctrl.visibleItems = [];
+        ctrl.loadedItems=[];
 
         var resetLoadedItems = function () {
             ctrl.selectedTrackItem = null;
-            loadedItems = {
+            ctrl.loadedItems = {
                 AppTrackItem: [],
                 StatusTrackItem: [],
                 LogTrackItem: []
