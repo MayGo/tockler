@@ -147,7 +147,16 @@ var createOrUpdate = function (rawItem) {
                     TrackItemCrud.createItem(rawItem).then(function (item) {
                         log.debug("Created track item to DB:", item);
                         lastTrackItems[type] = item;
-                        TaskAnalyser.analyse(item);
+                        TaskAnalyser.analyseAndNotify(item);
+                        TaskAnaluser.analyseAndSplit(((logItem)=> {
+                            if (onlineItem) {
+                                log.info("Splitting LogTrackItem", logItem);
+                                createOrUpdate(getRawTrackItem(logItem)).then(function (savedItem) {
+                                    log.info('RUNNING_LOG_ITEM changed when Splitting.');
+                                    SettingsCrud.saveRunningLogItemReferemce(savedItem.id);
+                                });
+                            }
+                        }))
                         deferred.resolve(item);
                     });
                 });
@@ -326,7 +335,7 @@ BackgroundService.saveForegroundWindowTitle = function () {
         saveActiveWindow(active);
     });
 };
-BackgroundService.saveRunningLogItem = function () {
+BackgroundService.saveRunningLogItem = function (endDate) {
 
     SettingsCrud.findByName('RUNNING_LOG_ITEM').then(function (item) {
         var deferred = $q.defer();
@@ -334,8 +343,7 @@ BackgroundService.saveRunningLogItem = function () {
         if (item.jsonDataParsed.id) {
             TrackItemCrud.findById(item.jsonDataParsed.id).then(function (logItem) {
                 log.debug("resolved log item RUNNING_LOG_ITEM: ", logItem);
-                var now = new Date();
-                logItem.endDate = now;
+                logItem.endDate = endDate;
                 // set first LogTrackItem because
                 // when restarting application there would be multiple same items
                 lastTrackItems.LogTrackItem = logItem;
@@ -420,7 +428,7 @@ BackgroundService.init = function () {
     setInterval(function () {
         self.saveUserIdleTime();
         self.saveForegroundWindowTitle();
-        self.saveRunningLogItem();
+        self.saveRunningLogItem(new Date());
 
     }, BACKGROUND_JOB_INTERVAL);
 };

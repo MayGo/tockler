@@ -73,7 +73,22 @@ module.exports.findAllFromDay = function (day, taskName) {
     return module.exports.findAllDayItems(day, to.toDate(), taskName);
 };
 
-module.exports.findFirstLogItems = function () {
+module.exports.findFirstLogItems = function (limit) {
+    'use strict';
+    return TrackItem.findAll({
+            where: {
+                app: 'ONLINE',
+                taskName: 'LogTrackItem'
+            },
+            limit: limit,
+            order: [
+                ['endDate', 'DESC']
+            ]
+        }
+    );
+};
+
+module.exports.findLastOnlineItems = function () {
     'use strict';
     return TrackItem.findAll({
             where: {

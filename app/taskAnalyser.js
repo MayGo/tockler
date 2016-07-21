@@ -57,7 +57,7 @@ class TaskAnalyser {
         }
     }
 
-    static analyse(item) {
+    static analyseAndNotify(item) {
 
         if (item.taskName !== 'AppTrackItem') {
             return;
@@ -100,14 +100,35 @@ class TaskAnalyser {
                     }, function (err, response) {
                         // Response is response from notification
                     });
-
-
                 });
             }
+        });
+    }
 
+    static analyseAndSplit(item) {
+
+        if (item.taskName !== 'StatusTrackItem') {
+            return;
+        }
+
+        var deferred = $q.defer();
+        console.log('online item created');
+        TrackItemCrud.findLastOnlineItems().then((onlineItems)=> {
+            console.log(onlineItems.length)
+            if (onlineItems && onlineItems.length > 0) {
+                var onlineItem = _.last(onlineItems);
+                var minutesAfterToSplit = 1;
+                var minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
+                console.log('minutesFromNow', minutesFromNow);
+                if (minutesFromNow >= minutesAfterToSplit) {
+                    console.log('minutesFromNow after');
+                    deferred.resolve(onlineItem);
+                }
+            }
+            deferred.resolve();
         });
 
-
+        return deferred.promise;
     }
 }
 module.exports = TaskAnalyser;
