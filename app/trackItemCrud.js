@@ -5,7 +5,7 @@ var moment = require('moment');
  * Module
  */
 
-module.exports.findAllItems = function (to, from, taskName, searchStr, paging) {
+module.exports.findAllItems = function (from, to, taskName, searchStr, paging) {
     'use strict';
 
     var order = paging.order || 'beginDate';
@@ -22,8 +22,8 @@ module.exports.findAllItems = function (to, from, taskName, searchStr, paging) {
 
     var where = {
         endDate: {
-            $gte: to,
-            $lte: from
+            $gte: from,
+            $lt: to
         },
         taskName: taskName
     };

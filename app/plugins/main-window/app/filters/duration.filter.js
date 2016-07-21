@@ -10,4 +10,12 @@ angular.module('filters', []).filter('msToDuration', function () {
         formattedDuration = formattedDuration.replace('00h ', '');
         return formattedDuration;
     };
+}).filter('parseDate', function () {
+    return function (input) {
+        return new Date(input);
+    };
+}).filter('diffToMs', function () {
+    return function (endDate, beginDate) {
+        return moment(endDate).diff(beginDate)
+    };
 });

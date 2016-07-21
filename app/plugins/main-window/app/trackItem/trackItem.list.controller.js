@@ -36,6 +36,10 @@ angular.module('angularDemoApp')
 
         };
 
+        ctrl.dateDiff = function(c) {
+            return moment(c.endDate).diff(c.beginDate)
+        };
+
 
         ctrl.list();
 
