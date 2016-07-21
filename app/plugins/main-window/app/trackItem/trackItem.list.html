@@ -1,12 +1,13 @@
 <div layout="row">
+
     <md-button class="md-icon-button" aria-label="Refresh" ng-click="trackItemCtrl.list()">
         <md-icon md-font-set="material-icons">refresh</md-icon>
     </md-button>
 
-    <md-datepicker class="md-block" ng-model="trackItemCtrl.searchMinDate" md-placeholder="From day"
+    <md-datepicker ng-model="trackItemCtrl.searchMinDate"
                    md-max-date="trackItemCtrl.searchMaxDate"
                    ng-change="trackItemCtrl.list()"></md-datepicker>
-    <md-datepicker ng-model="trackItemCtrl.searchMaxDate" md-placeholder="To day"
+    <md-datepicker ng-model="trackItemCtrl.searchMaxDate"
                    md-min-date="trackItemCtrl.searchMinDate"
                    ng-change="trackItemCtrl.list()"></md-datepicker>
 
