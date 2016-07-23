@@ -2,43 +2,44 @@
 
 
 angular.module('angularDemoApp')
-    .controller('TrackItemListController', function (TrackItemService, $rootScope) {
+    .controller('TrackItemListController', function (TrackItemService, $scope) {
         var ctrl = this;
 
-        ctrl.maxDate = new Date();
+        ctrl.searchMinDate = moment().startOf('day').toDate();
+        ctrl.searchMaxDate = moment().startOf('day').add(1, 'days').toDate();
+        ctrl.searchTask = 'AppTrackItem';
+        ctrl.selectedItems = [];
 
+        ctrl.query = {
+            order: 'beginDate',
+            limit: 15,
+            page: 1
+        };
 
-        function getTomorrow(d) {
-            return new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1)
+        function success(items) {
+            ctrl.trackItems = items;
+            //$scope.$apply();
         }
 
-        var today = new Date();
-        var tomorrow = getTomorrow(today);
-        ctrl.searchDate = today;
-
-        today.setHours(0, 0, 0, 0);
-        console.log(today, tomorrow);
-
-        ctrl.dayBack = function () {
-            ctrl.searchDate = moment(ctrl.searchDate).subtract(1, 'days').toDate();
-            ctrl.list();
-
-        };
-        ctrl.dayForward = function () {
-            ctrl.searchDate = moment(ctrl.searchDate).add(1, 'days').toDate();
-            ctrl.list();
-        };
-
-
-        var PAGE_SIZE = 50;
-        var currentPage = 1;
         ctrl.list = function () {
             console.log("Refresh data");
-            TrackItemService.findAllDayItems(ctrl.searchDate, getTomorrow(ctrl.searchDate), 'AppTrackItem').then(function (items) {
-                ctrl.trackItems = items;
-                $rootScope.$apply();
-            });
+            ctrl.promise = TrackItemService.findAllItems(ctrl.searchMinDate, ctrl.searchMaxDate, ctrl.searchTask, ctrl.searchStr, ctrl.query);
+            ctrl.promise.then(success)
         };
+
+        ctrl.removeItems = function (ids) {
+            console.log("Removing items");
+            ctrl.selectedItems = [];
+            TrackItemService.deleteByIds(ids).then(function(){
+                ctrl.list();
+            });
+
+        };
+
+        ctrl.dateDiff = function(c) {
+            return moment(c.endDate).diff(c.beginDate)
+        };
+
 
         ctrl.list();
 

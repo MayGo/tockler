@@ -10,7 +10,8 @@
             <md-icon md-font-set="material-icons">arrow_back</md-icon>
         </md-button>
         <md-datepicker ng-model="timelineCtrl.searchDate" md-placeholder="Search for day"
-                       md-max-date="timelineCtrl.maxDate" ng-change="timelineCtrl.changeDay(timelineCtrl.searchDate)"></md-datepicker>
+                       md-max-date="timelineCtrl.maxDate"
+                       ng-change="timelineCtrl.changeDay(timelineCtrl.searchDate)"></md-datepicker>
         <md-button class="md-icon-button" ng-click="timelineCtrl.dayForward()">
             <md-icon md-font-set="material-icons">arrow_forward</md-icon>
         </md-button>
@@ -25,26 +26,37 @@
     <div id="trackItemMiniEdit" ng-show="timelineCtrl.selectedTrackItem"
          ng-style="{left:timelineCtrl.selectedTrackItem.left, top:timelineCtrl.selectedTrackItem.top}"
             >
-        <form  name="timelineCtrl.selectedTrackItemForm">
+        <form name="timelineCtrl.selectedTrackItemForm">
             <div layout="row">
-
-                <md-input-container flex="80" md-no-float>
+                <md-input-container flex="20" md-no-float>
+                    <input ng-model="timelineCtrl.selectedTrackItem.app" required placeholder="Group">
+                </md-input-container>
+                <md-input-container flex md-no-float>
                     <input ng-model="timelineCtrl.selectedTrackItem.title" required placeholder="Title">
                 </md-input-container>
                 <md-input-container flex="20">
                     <input ng-model="timelineCtrl.selectedTrackItem.color" type="color" required>
                 </md-input-container>
-                <md-button type="submit" class="md-icon-button" aria-label="Refresh" ng-disabled="timelineCtrl.selectedTrackItemForm.$invalid"
+                <md-button type="submit" class="md-icon-button" aria-label="Refresh"
+                           ng-disabled="timelineCtrl.selectedTrackItemForm.$invalid"
                            ng-click="timelineCtrl.saveTrackItem(timelineCtrl.selectedTrackItem)">
+                    <md-tooltip md-direction="bottom">Save</md-tooltip>
                     <md-icon md-font-set="material-icons">save</md-icon>
                 </md-button>
-                <md-button type="submit" class="md-icon-button" aria-label="Delete"  ng-if="timelineCtrl.selectedTrackItem.id"
+                <md-button type="submit" class="md-icon-button" aria-label="Delete"
+                           ng-if="timelineCtrl.selectedTrackItem.id"
                            ng-click="timelineCtrl.deleteTrackItem(timelineCtrl.selectedTrackItem)">
+                    <md-tooltip md-direction="bottom">Delete</md-tooltip>
                     <md-icon md-font-set="material-icons">delete</md-icon>
                 </md-button>
-
+                <md-button class="md-icon-button" aria-label="Close"
+                           ng-click="timelineCtrl.selectedTrackItem = null">
+                    <md-tooltip md-direction="bottom">Close</md-tooltip>
+                    <md-icon md-font-set="material-icons">close</md-icon>
+                </md-button>
             </div>
         </form>
+
     </div>
     <timeline track-items="timelineCtrl.trackItems"
               selected-track-item="timelineCtrl.selectedTrackItem"
@@ -68,46 +80,92 @@
         </div>
     </div>
     <md-divider></md-divider>
-    <div layout="row">
+    <div layout="row" style="min-height:200px">
         <md-card flex="33">
-            <md-card-title><md-card-title-text>Applications</md-card-title-text></md-card-title>
-            <md-card-content><nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieData['AppTrackItem']"></nvd3></md-card-content>
+            <md-card-title>
+                <md-card-title-text>Applications</md-card-title-text>
+            </md-card-title>
+            <md-card-content layout="row" layout-align="center center">
+                <nvd3 options="timelineCtrl.pieOptions" data="timelineCtrl.pieData['AppTrackItem']"></nvd3>
+            </md-card-content>
         </md-card>
         <md-card flex>
-            <md-card-title><md-card-title-text>Logs</md-card-title-text></md-card-title>
-            <md-card-content> <nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieData['LogTrackItem']"></nvd3></md-card-content>
+            <md-card-title>
+                <md-card-title-text>Logs</md-card-title-text>
+            </md-card-title>
+            <md-card-content layout="row" layout-align="center center">
+                <nvd3 options="timelineCtrl.pieOptions" data="timelineCtrl.pieData['LogTrackItem']"></nvd3>
+            </md-card-content>
         </md-card>
         <md-card flex="33">
-            <md-card-title><md-card-title-text>Status</md-card-title-text></md-card-title>
-            <md-card-content> <nvd3 flex options="timelineCtrl.pieOptions" data="timelineCtrl.pieData['StatusTrackItem']"></nvd3></md-card-content>
+            <md-card-title>
+                <md-card-title-text>Status</md-card-title-text>
+            </md-card-title>
+            <md-card-content layout="row" layout-align="center center">
+                <nvd3 options="timelineCtrl.pieOptions" data="timelineCtrl.pieData['StatusTrackItem']"></nvd3>
+            </md-card-content>
         </md-card>
 
     </div>
     <md-divider></md-divider>
 
-    <div layout-padding>
-        <md-table-container>
-            <table md-table>
-                <thead md-head md-order="query.order" md-on-reorder="onReorder">
+    <div layout="row" layout-padding>
+        <md-input-container class="md-block" flex>
+            <label>Search</label>
+            <input ng-model="timelineCtrl.table.search" ng-model-options="{ debounce: 1000 }">
+        </md-input-container>
+        <md-input-container flex="20">
+            <md-select ng-model="timelineCtrl.table.searchTask">
+                <md-option value="AppTrackItem">Apps</md-option>
+                <md-option value="StatusTrackItem">Statuses</md-option>
+                <md-option value="LogTrackItem">Logs</md-option>
+            </md-select>
+        </md-input-container>
+    </div>
+    <div>
+        <md-table-container flex layout="column">
+            <table md-table style="table-layout:fixed;">
+                <thead md-head md-order="timelineCtrl.table.order">
                 <tr md-row>
-                    <th md-column>App</th>
-                    <th md-column>Title</th>
-                    <th md-column>Begin</th>
-                    <th md-column>End</th>
+                    <th md-column md-order-by="app">App</th>
+                    <th md-column md-order-by="title">Title</th>
+                    <th md-column md-order-by="beginDate">
+                        Begin
+                    </th>
+                    <th md-column md-order-by="endDate">
+                        End
+                    </th>
+                    <th md-column>
+                        Duration
+                    </th>
                 </tr>
                 </thead>
                 <tbody md-body>
-                <tr md-row md-select="app"
-                    ng-repeat="trackItem in timelineCtrl.visibleItems">
-                    <td md-cell>{{trackItem.app}}</td>
-                    <td md-cell>{{trackItem.title}}</td>
-                    <td md-cell style="width: 130px">{{trackItem.beginDate | date: 'medium'}}</td>
-                    <td md-cell style="width: 130px">{{trackItem.endDate | date: 'medium'}}</td>
+                <tr md-row
+                    ng-repeat="trackItem in timelineCtrl.loadedItems[timelineCtrl.table.searchTask] | filter: timelineCtrl.table.search | orderBy: timelineCtrl.table.order">
+                    <td md-cell style="width: 130px">{{trackItem.app}}</td>
+                    <td md-cell style="overflow:visible; word-wrap: break-word;">{{trackItem.title}}</td>
+                    <td md-cell style="width: 140px">{{trackItem.beginDate | parseDate | date: 'yyyy-MM-dd HH:mm:ss'}}
+                    </td>
+                    <td md-cell style="width: 140px">{{trackItem.endDate | parseDate | date: 'yyyy-MM-dd HH:mm:ss'}}
+                    </td>
+                    <td md-cell style="width: 140px">{{trackItem.endDate | diffToMs: trackItem.beginDate |
+                        msToDuration}}
+                    </td>
 
                 </tr>
                 </tbody>
+                <tfoot md-foot>
+                <tr md-row>
+                    <td md-cell colspan="3"></td>
+                    <td md-cell colspan="2">Total duration: {{timelineCtrl.loadedItems[timelineCtrl.table.searchTask]
+                        | map:timelineCtrl.dateDiff | sum | msToDuration}}
+                    </td>
+                </tr>
+                </tfoot>
             </table>
         </md-table-container>
+
     </div>
 </div>
 

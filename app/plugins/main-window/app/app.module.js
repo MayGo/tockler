@@ -28,7 +28,8 @@ angular.module('angularDemoApp', [
     'angular.filter',
     'nvd3',
     'angular-click-outside',
-    'globalServices'
+    'globalServices',
+    'filters'
 ]);
 
 angular.module('angularDemoApp.config', ['blocks.logger',

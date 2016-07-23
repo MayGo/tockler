@@ -1,39 +1,83 @@
-<md-button class="md-icon-button" aria-label="Refresh" ng-click="trackItemCtrl.list()">
-    <md-icon md-font-set="material-icons">refresh</md-icon>
-</md-button>
+<div layout="row">
 
-<md-button class="md-icon-button" ng-click="trackItemCtrl.dayBack()">
-    <md-icon md-font-set="material-icons">arrow_back</md-icon>
-</md-button>
+    <md-button class="md-icon-button" aria-label="Refresh" ng-click="trackItemCtrl.list()">
+        <md-icon md-font-set="material-icons">refresh</md-icon>
+    </md-button>
 
-<md-datepicker ng-model="trackItemCtrl.searchDate" md-placeholder="Search for day"
-               md-max-date="trackItemCtrl.maxDate" ng-change="trackItemCtrl.list()"></md-datepicker>
+    <md-datepicker ng-model="trackItemCtrl.searchMinDate"
+                   md-max-date="trackItemCtrl.searchMaxDate"
+                   ng-change="trackItemCtrl.list()"></md-datepicker>
+    <md-datepicker ng-model="trackItemCtrl.searchMaxDate"
+                   md-min-date="trackItemCtrl.searchMinDate"
+                   ng-change="trackItemCtrl.list()"></md-datepicker>
 
-<md-button class="md-icon-button" ng-click="trackItemCtrl.dayForward()">
-    <md-icon md-font-set="material-icons">arrow_forward</md-icon>
-</md-button>
-
-<div layout-padding>
-    <md-table-container>
-        <table md-table>
-            <thead md-head md-order="query.order" md-on-reorder="onReorder">
+    <md-input-container class="md-block" flex>
+        <label>Search</label>
+        <input ng-model="trackItemCtrl.searchStr" ng-change="trackItemCtrl.list()">
+    </md-input-container>
+    <md-input-container class="md-block">
+        <md-select ng-model="trackItemCtrl.searchTask" ng-change="trackItemCtrl.list()">
+            <md-option value="AppTrackItem">Apps</md-option>
+            <md-option value="StatusTrackItem">Statuses</md-option>
+            <md-option value="LogTrackItem">Logs</md-option>
+        </md-select>
+    </md-input-container>
+</div>
+<div>
+    <md-table-container flex layout="column">
+        <table md-table md-progress="trackItemCtrl.promise"
+               md-row-select multiple ng-model="trackItemCtrl.selectedItems"
+               style="table-layout:fixed;">
+            <thead md-head md-order="trackItemCtrl.query.order" md-on-reorder="trackItemCtrl.list">
             <tr md-row>
-                <th md-column>App</th>
-                <th md-column>Title</th>
-                <th md-column>Begin</th>
-                <th md-column>End</th>
+                <th ng-if="!trackItemCtrl.selectedItems.length" md-column md-order-by="app" >App
+                </th>
+                <th ng-if="!trackItemCtrl.selectedItems.length" md-column md-order-by="title">Title</th>
+                <th ng-if="!trackItemCtrl.selectedItems.length" md-column md-order-by="beginDate" >
+                    Begin
+                </th>
+                <th ng-if="!trackItemCtrl.selectedItems.length" md-column md-order-by="endDate" >
+                    End
+                </th>
+                <th md-column>
+                    Duration
+                </th>
+                <th colspan="4" style="text-align: right;" ng-if="trackItemCtrl.selectedItems.length">
+                    <span>{{trackItemCtrl.selectedItems.length}} {{trackItemCtrl.selectedItems.length > 1 ? 'items' : 'item'}} selected</span>
+                    <span flex></span>
+                    <md-button class="md-icon-button" ng-click="trackItemCtrl.removeItems(trackItemCtrl.selectedItems)">
+                        <md-icon>delete</md-icon>
+                    </md-button>
+                </th>
             </tr>
             </thead>
             <tbody md-body>
-            <tr md-row md-select="app" md-select-id="{{trackItem.id}}" md-auto-select
-                ng-repeat="trackItem in trackItemCtrl.trackItems">
-                <td md-cell>{{trackItem.app}}</td>
-                <td md-cell>{{trackItem.title}}</td>
-                <td md-cell style="width: 130px">{{trackItem.beginDate | date: 'medium'}}</td>
-                <td md-cell style="width: 130px">{{trackItem.endDate | date: 'medium'}}</td>
-
+            <tr md-row
+                md-select="trackItem.id"
+                md-auto-select
+                ng-repeat="trackItem in trackItemCtrl.trackItems.rows">
+                <td md-cell style="width: 130px">{{trackItem.app}}</td>
+                <td md-cell style="overflow:visible; word-wrap: break-word;">{{trackItem.title}}</td>
+                <td md-cell style="width: 140px">{{trackItem.beginDate | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td md-cell style="width: 140px">{{trackItem.endDate | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td md-cell style="width: 140px">{{trackItem.endDate | diffToMs: trackItem.beginDate |
+                    msToDuration}}
+                </td>
             </tr>
             </tbody>
+            <tfoot md-foot>
+            <tr md-row>
+                <td md-cell colspan="4"></td>
+                <td md-cell colspan="2">Total duration on page: {{trackItemCtrl.trackItems.rows
+                    | map:trackItemCtrl.dateDiff | sum | msToDuration}}
+                </td>
+            </tr>
+            </tfoot>
         </table>
     </md-table-container>
+
+    <md-table-pagination md-limit="trackItemCtrl.query.limit" md-limit-options="[10, 15, 30, 50, 100]"
+                         md-page="trackItemCtrl.query.page" md-total="{{trackItemCtrl.trackItems.count}}"
+                         md-on-paginate="trackItemCtrl.list" md-page-select></md-table-pagination>
+
 </div>

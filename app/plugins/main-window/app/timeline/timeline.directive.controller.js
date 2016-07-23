@@ -68,8 +68,8 @@ angular.module('angularDemoApp')
             selectionTool.clear();
             d3.select(".brush").call(selectionTool);
             d3.select(".brush").selectAll("rect")
-                .attr('height', logTrackItemHeight).attr("transform", null)
-            ctrl.selectedTrackItem = null;
+                .attr('height', logTrackItemHeight).attr("transform", null);
+
 
         };
 
@@ -103,18 +103,18 @@ angular.module('angularDemoApp')
             }).attr("y", 0);
 
             insertedItems.attr("x", function (d) {
-                return xScale(d.beginDate);
+                return xScale(new Date(d.beginDate));
             }).attr("transform", function (d) {
                 return "translate(" + 0 + "," + yScale(d.taskName) + ")";
             }).attr("height", function (d) {
                 return yScale.rangeBand();
             }).attr("width", function (d) {
-                if ((xScale(d.endDate) - xScale(d.beginDate)) < 0) {
+                if ((xScale(new Date(d.endDate)) - xScale(new Date(d.beginDate))) < 0) {
                     console.error("Negative value, error with dates.");
                     console.log(d);
                     return 0;
                 }
-                return (xScale(d.endDate) - xScale(d.beginDate));
+                return (xScale(new Date(d.endDate)) - xScale(new Date(d.beginDate)));
             });
 
 
@@ -147,13 +147,13 @@ angular.module('angularDemoApp')
             var format = d3.time.format("%H:%M:%S");
             // set up initial svg object
             var d3tip = d3.tip().attr('class', 'd3-tip').html(function (d) {
-                var duration = moment.duration(d.endDate - d.beginDate)
+                var duration = moment.duration(new Date(d.endDate) - new Date(d.beginDate))
                 var formattedDuration = moment.utc(duration.asMilliseconds()).format("HH[h] mm[m] ss[s]");
                 // strip leading zeroes
                 formattedDuration = formattedDuration.replace('00h 00m', '');
                 formattedDuration = formattedDuration.replace('00h ', '');
                 return "<strong>" + d.app + ":</strong> <span>" + d.title + "</span><div>" +
-                    format(d.beginDate) + " - " + format(d.endDate) + "</div>" +
+                    format(new Date(d.beginDate)) + " - " + format(new Date(d.endDate)) + "</div>" +
                     "<div><b>" + formattedDuration + "</b></div>";
             });
 
@@ -229,7 +229,8 @@ angular.module('angularDemoApp')
                 .attr("height", height).on('click', function () {
                     console.log("Visulation click");
                     if (ctrl.selectedTrackItem != null) {
-                        clearBrush();
+                        ctrl.selectedTrackItem = null;
+                        $scope.$apply();
                     } else {
                         createLogItemBrush();
                     }
@@ -350,7 +351,7 @@ angular.module('angularDemoApp')
         function onClickTrackItem(d, i) {
 
             console.log("onClickTrackItem");
-            clearBrush();
+            //clearBrush();
             var p = d3.select(this);
             var data = p.data()[0];
 
@@ -364,8 +365,8 @@ angular.module('angularDemoApp')
                 id: data.id,
                 app: data.app,
                 taskName: data.taskName,
-                beginDate: data.beginDate,
-                endDate: data.endDate,
+                beginDate: new Date(data.beginDate),
+                endDate: new Date(data.endDate),
                 title: data.title,
                 color: data.color,
                 left: x + 'px',
@@ -388,7 +389,7 @@ angular.module('angularDemoApp')
             selectionTool.x(xScale);
 
             // Make brush same size as trackitem
-            selectionTool.extent([data.beginDate, data.endDate]);
+            selectionTool.extent([new Date(data.beginDate), new Date(data.endDate)]);
             selectionToolSvg.call(selectionTool);
 
             // remove crosshair outside of item

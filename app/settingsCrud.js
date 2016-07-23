@@ -30,7 +30,7 @@ module.exports.updateByName = function (name, jsonData) {
                 name: name
             }
         }
-    );
+    )
 };
 
 module.exports.fetchWorkSettings = function () {

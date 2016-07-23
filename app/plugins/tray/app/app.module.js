@@ -17,7 +17,8 @@ angular.module('trayApp', [
     'globalServices',
     'angularMoment',
     'angular.filter',
-    'timer'
+    'timer',
+    'filters'
 ]);
 
 angular.module('trayApp.config', ['pascalprecht.translate']);

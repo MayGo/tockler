@@ -1,5 +1,5 @@
-@import "plugins/main-window/css/sass/global";
-@import "plugins/main-window/css/sass/charts";
+@import "app/plugins/main-window/css/sass/global";
+@import "app/plugins/main-window/css/sass/charts";
 
 .navbar {
 
@@ -34,5 +34,12 @@
 
 #trackItemMiniEdit md-input-container {
   margin: 0;
+}
+
+md-input-container{
+  margin: 2px 0;
+}
+md-input-container .md-errors-spacer{
+  min-height: 0;
 }
 

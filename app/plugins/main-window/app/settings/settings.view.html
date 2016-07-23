@@ -15,6 +15,12 @@
                         <input type="text" ng-model="settingsCtrl.workSettings.workDayEndTime" ui-time-mask="short"/>
                     </md-input-container>
                 </p>
+                <p layout="row">
+                    <md-input-container>
+                        <label>Split task after idling for minutes</label>
+                        <input type="number" ng-model="settingsCtrl.workSettings.splitTaskAfterIdlingForMinutes" />
+                    </md-input-container>
+                </p>
             </md-card-content>
         </md-card>
         <md-card>

@@ -6,6 +6,35 @@ const TrackItemCrud = require('./TrackItemCrud');
 const SettingsCrud = require('./SettingsCrud');
 const AppItemCrud = require('./AppItemCrud');
 const path = require('path');
+const $q = require('q');
+const _ = require('lodash');
+const moment = require('moment');
+const iconUrl = path.join(__dirname, 'shared/img/icon/timetracker_icon.ico');
+
+notifier.on('click', function (notifierObject, options) {
+    if (TaskAnalyser.newItem == null) {
+        console.log("Already clicked. Prevent from creating double item.");
+        return;
+    }
+    console.log("Clicked. Creating new task", TaskAnalyser.newItem);
+    AppItemCrud.getAppColor(TaskAnalyser.newItem.app).then((color) => {
+        TaskAnalyser.newItem.color = color;
+        TrackItemCrud.createItem(TaskAnalyser.newItem).then((trackItem)=> {
+            console.log("Created new task, saving reference: ", trackItem.id);
+            TaskAnalyser.newItem = null;
+
+            notifier.notify({
+                title: 'New task created!',
+                message: `Task "${trackItem.title}" running.`,
+                icon: iconUrl,
+                sound: true, // Only Notification Center or Windows Toasters
+                wait: false // Wait with callback, until user action is taken against notification
+            });
+
+            SettingsCrud.saveRunningLogItemReferemce(trackItem.id);
+        });
+    });
+});
 
 class TaskAnalyser {
 
@@ -24,20 +53,18 @@ class TaskAnalyser {
         }
         var re = new RegExp(findRe, "g");
         var result = re.exec(str);
-        
+
         if (result != null) {
             let first = result[0];
             return first;
         }
     }
 
-    static analyse(item) {
+    static analyseAndNotify(item) {
 
         if (item.taskName !== 'AppTrackItem') {
             return;
         }
-
-        var iconUrl = path.join(__dirname, 'shared/img/icon/timetracker_icon.ico');
 
         SettingsCrud.fetchAnalyserSettings().then((analyserItems)=> {
             for (let patObj of analyserItems) {
@@ -72,39 +99,47 @@ class TaskAnalyser {
                         message: `Click to create: "${app}"`,
                         icon: iconUrl,
                         sound: true, // Only Notification Center or Windows Toasters
-                        wait: false // Wait with callback, until user action is taken against notification
+                        wait: true // Wait with callback, until user action is taken against notification
                     }, function (err, response) {
                         // Response is response from notification
                     });
-
-                    notifier.on('click', function (notifierObject, options) {
-                        if (TaskAnalyser.newItem == null) {
-                            console.log("Already clicked. Prevent from creating double item.");
-                            return;
-                        }
-                        console.log("Clicked. Creating new task", TaskAnalyser.newItem);
-                        AppItemCrud.getAppColor(TaskAnalyser.newItem.app).then((color) => {
-                            TaskAnalyser.newItem.color = color;
-                            TrackItemCrud.createItem(TaskAnalyser.newItem).then((trackItem)=> {
-                                console.log("Created new task, saving reference: ", trackItem.id);
-                                TaskAnalyser.newItem = null;
-                                notifier.notify({
-                                    title: 'New task created!',
-                                    message: `Task "${trackItem.title}" running.`,
-                                    icon: iconUrl,
-                                    sound: true, // Only Notification Center or Windows Toasters
-                                    wait: false // Wait with callback, until user action is taken against notification
-                                });
-                                SettingsCrud.saveRunningLogItemReferemce(trackItem.id);
-                            });
-                        });
-                    });
                 });
+            }
+        });
+    }
+
+    static analyseAndSplit(item) {
+        var deferred = $q.defer();
+        if (item.taskName != 'StatusTrackItem') {
+            deferred.resolve();
+            return deferred.promise;
+        }
+
+        TrackItemCrud.findLastOnlineItem().then((onlineItems)=> {
+            if (onlineItems && onlineItems.length > 0) {
+                SettingsCrud.fetchWorkSettings().then((settings)=>{
+                    var onlineItem = _.first(onlineItems);
+                    var minutesAfterToSplit = settings.splitTaskAfterIdlingForMinutes || 3;
+                    var minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
+                    console.log(minutesFromNow);
+                    if (minutesFromNow >= minutesAfterToSplit) {
+                        let endDate = moment(onlineItem.endDate).add(minutesAfterToSplit, 'minutes').toDate();
+                        deferred.resolve(endDate);
+                    }else{
+                        deferred.resolve();
+                    }
+                }).catch((error)=>{
+                    console.error("Fetching work settings failed.", error);
+                    deferred.resolve();
+                });
+
+            }else{
+                deferred.resolve();
             }
 
         });
 
-
+        return deferred.promise;
     }
 }
 module.exports = TaskAnalyser;
