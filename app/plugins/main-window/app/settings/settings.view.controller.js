@@ -14,6 +14,7 @@ angular.module('globalServices')
 
         ctrl.workSettings.workDayStartTime = workSettingsData.workDayStartTime || '08:30';
         ctrl.workSettings.workDayEndTime = workSettingsData.workDayEndTime || '17:00';
+        ctrl.workSettings.splitTaskAfterIdlingForMinutes = workSettingsData.splitTaskAfterIdlingForMinutes || 3;
 
         ctrl.analyserTestItems = [];
 
@@ -40,12 +41,13 @@ angular.module('globalServices')
         ctrl.addNewAnalyserItem = addNewAnalyserItem;
 
         function saveSettings() {
+            console.log("Saving:", ctrl.workSettings, ctrl.analyserSettings);
             SettingsService.updateByName('WORK_SETTINGS', ctrl.workSettings).then(function (item) {
-                console.log("Updated!", item.jsonData);
+                console.log("Updated WORK_SETTINGS!", item);
             });
 
             SettingsService.updateByName('ANALYSER_SETTINGS', ctrl.analyserSettings).then(function (item) {
-                console.log("Updated analyserSettings!", item.jsonData);
+                console.log("Updated ANALYSER_SETTINGS!", item);
             })
         }
 

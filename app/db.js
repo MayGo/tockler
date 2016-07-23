@@ -23,7 +23,16 @@ var TrackItem = sequelize.define('TrackItem', {
     title: Sequelize.STRING,
     color: Sequelize.STRING,
     beginDate: Sequelize.DATE,
-    endDate: Sequelize.DATE
+    endDate: {
+        type: Sequelize.DATE,
+        validate: {
+            isAfter: function (value) {
+                if (this.beginDate > value) {
+                    throw new Error('BeginDate must be before endDate! ' + this.beginDate + ' - ' + value);
+                }
+            }
+        }
+    }
 }, {timestamps: false});
 
 var AppItem = sequelize.define('AppItem', {
@@ -37,7 +46,11 @@ var Settings = sequelize.define('Settings', {
 });
 
 //sequelize.sync({force: true});
-sequelize.sync();
+sequelize.sync().then(function () {
+    console.log("Database synced.");
+}).catch(function (error) {
+    console.error("Database not synced.", error);
+});
 
 module.exports.TrackItem = TrackItem;
 module.exports.AppItem = AppItem;

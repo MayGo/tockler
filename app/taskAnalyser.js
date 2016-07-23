@@ -6,6 +6,9 @@ const TrackItemCrud = require('./TrackItemCrud');
 const SettingsCrud = require('./SettingsCrud');
 const AppItemCrud = require('./AppItemCrud');
 const path = require('path');
+const $q = require('q');
+const _ = require('lodash');
+const moment = require('moment');
 const iconUrl = path.join(__dirname, 'shared/img/icon/timetracker_icon.ico');
 
 notifier.on('click', function (notifierObject, options) {
@@ -106,26 +109,34 @@ class TaskAnalyser {
     }
 
     static analyseAndSplit(item) {
-
-        if (item.taskName !== 'StatusTrackItem') {
-            return;
+        var deferred = $q.defer();
+        if (item.taskName != 'StatusTrackItem') {
+            deferred.resolve();
+            return deferred.promise;
         }
 
-        var deferred = $q.defer();
-        console.log('online item created');
-        TrackItemCrud.findLastOnlineItems().then((onlineItems)=> {
-            console.log(onlineItems.length)
+        TrackItemCrud.findLastOnlineItem().then((onlineItems)=> {
             if (onlineItems && onlineItems.length > 0) {
-                var onlineItem = _.last(onlineItems);
-                var minutesAfterToSplit = 1;
-                var minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
-                console.log('minutesFromNow', minutesFromNow);
-                if (minutesFromNow >= minutesAfterToSplit) {
-                    console.log('minutesFromNow after');
-                    deferred.resolve(onlineItem);
-                }
+                SettingsCrud.fetchWorkSettings().then((settings)=>{
+                    var onlineItem = _.first(onlineItems);
+                    var minutesAfterToSplit = settings.splitTaskAfterIdlingForMinutes || 3;
+                    var minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
+                    console.log(minutesFromNow);
+                    if (minutesFromNow >= minutesAfterToSplit) {
+                        let endDate = moment(onlineItem.endDate).add(minutesAfterToSplit, 'minutes').toDate();
+                        deferred.resolve(endDate);
+                    }else{
+                        deferred.resolve();
+                    }
+                }).catch((error)=>{
+                    console.error("Fetching work settings failed.", error);
+                    deferred.resolve();
+                });
+
+            }else{
+                deferred.resolve();
             }
-            deferred.resolve();
+
         });
 
         return deferred.promise;

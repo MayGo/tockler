@@ -94,7 +94,7 @@ var getRawTrackItem = function (savedItem) {
 
 };
 
-
+let shouldSplitLogItemFromDate = null;
 const TaskAnalyser = require('./taskAnalyser');
 
 var createOrUpdate = function (rawItem) {
@@ -111,7 +111,7 @@ var createOrUpdate = function (rawItem) {
         }
 
         if (shouldSplitInTwoOnMidnight(rawItem.beginDate, rawItem.endDate)) {
-            log.info('its midnight');
+            log.info('its midnight for item:', rawItem);
             var almostMidnight = moment(rawItem.beginDate).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
             var afterMidnight = dateToAfterMidnight(rawItem.beginDate);
             var originalEndDate = rawItem.endDate;
@@ -128,7 +128,11 @@ var createOrUpdate = function (rawItem) {
                 createOrUpdate(getRawTrackItem(item1)).then(function (item2) {
                     log.debug('Midnight- Saved second: ', item2);
                     deferred.resolve(item2);
+                }).catch(function (error) {
+                    console.error("Second Item not updated.", error)
                 });
+            }).catch(function (error) {
+                console.error("First Item not updated.", error)
             });
         } else {
 
@@ -148,17 +152,19 @@ var createOrUpdate = function (rawItem) {
                         log.debug("Created track item to DB:", item);
                         lastTrackItems[type] = item;
                         TaskAnalyser.analyseAndNotify(item);
-                        TaskAnaluser.analyseAndSplit(((logItem)=> {
-                            if (onlineItem) {
-                                log.info("Splitting LogTrackItem", logItem);
-                                createOrUpdate(getRawTrackItem(logItem)).then(function (savedItem) {
-                                    log.info('RUNNING_LOG_ITEM changed when Splitting.');
-                                    SettingsCrud.saveRunningLogItemReferemce(savedItem.id);
-                                });
+                        TaskAnalyser.analyseAndSplit(item).then((fromDate)=> {
+                            if (fromDate) {
+                                log.info("Splitting LogTrackItem from date:", fromDate);
+                                shouldSplitLogItemFromDate = fromDate;
                             }
-                        }))
+                        });
+
                         deferred.resolve(item);
+                    }).catch(function (error) {
+                        console.error("New Item not created.", error)
                     });
+                }).catch(function (error) {
+                    console.error("Old Item not updated.", error)
                 });
 
             } else if (isSameItems(rawItem, lastTrackItems[type])) {
@@ -167,6 +173,8 @@ var createOrUpdate = function (rawItem) {
                     log.debug("Saved track item(endDate change) to DB:", item);
                     lastTrackItems[type] = item;
                     deferred.resolve(item);
+                }).catch(function (error) {
+                    console.error("Item not updated.", error)
                 });
             } else {
                 log.error("Nothing to do with item", rawItem);
@@ -339,23 +347,57 @@ BackgroundService.saveForegroundWindowTitle = function () {
 };
 BackgroundService.saveRunningLogItem = function (endDate) {
 
+    let splitEndDate = null;
+
+    // Getting and reseting variable
+    if (shouldSplitLogItemFromDate != null) {
+        splitEndDate = shouldSplitLogItemFromDate;
+        shouldSplitLogItemFromDate = null;
+    }
     SettingsCrud.findByName('RUNNING_LOG_ITEM').then(function (item) {
         var deferred = $q.defer();
-        log.debug("got RUNNING_LOG_ITEM: ", item);
+        log.debug("Found RUNNING_LOG_ITEM config: ", item);
         if (item.jsonDataParsed.id) {
             TrackItemCrud.findById(item.jsonDataParsed.id).then(function (logItem) {
-                log.debug("resolved log item RUNNING_LOG_ITEM: ", logItem);
-                logItem.endDate = endDate;
+                if (!logItem) {
+                    log.error("RUNNING_LOG_ITEM not found by id", item.jsonDataParsed.id)
+                    return;
+                }
+                log.debug("Found RUNNING_LOG_ITEM real LogItem: ", logItem);
+                let rawItem = getRawTrackItem(logItem);
+                rawItem.endDate = new Date();
+                if (splitEndDate != null) {
+                    log.info("Splitting LogItem, old item has endDate: ", splitEndDate);
+                    rawItem.endDateOverride = splitEndDate;
+                }
                 // set first LogTrackItem because
                 // when restarting application there would be multiple same items
                 lastTrackItems.LogTrackItem = logItem;
 
-                createOrUpdate(getRawTrackItem(logItem)).then(function (savedItem) {
-                    // at midnight track item is split and new items ID should be RUNNING_LOG_ITEM
-                    if (savedItem.id !== logItem.id) {
-                        log.info('RUNNING_LOG_ITEM changed at midnight.');
-                        SettingsCrud.saveRunningLogItemReferemce(savedItem.id);
+                createOrUpdate(rawItem).then(function (savedItem) {
+
+                    if (splitEndDate) {
+                        log.info("Splitting LogItem, new item has endDate: ", splitEndDate);
+                        lastTrackItems.LogTrackItem = null;
+                        let newRawItem = getRawTrackItem(logItem);
+
+                        let newBeginDate = new Date();
+                        //Begin date is always BACKGROUND_JOB_INTERVAL before current date
+                        newBeginDate.setMilliseconds(newBeginDate.getMilliseconds() - BACKGROUND_JOB_INTERVAL);
+                        newRawItem.beginDate = newBeginDate;
+                        newRawItem.endDate = new Date();
+                        createOrUpdate(newRawItem).then(function (newSavedItem) {
+                            log.info('RUNNING_LOG_ITEM has split', newSavedItem.id);
+                            SettingsCrud.saveRunningLogItemReferemce(newSavedItem.id);
+                        });
+                    } else {
+                        // at midnight track item is split and new items ID should be RUNNING_LOG_ITEM
+                        if (savedItem.id !== logItem.id) {
+                            log.info('RUNNING_LOG_ITEM changed at midnight.');
+                            SettingsCrud.saveRunningLogItemReferemce(savedItem.id);
+                        }
                     }
+
                 });
             })
         } else {

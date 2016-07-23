@@ -8,6 +8,9 @@ angular.module('filters', []).filter('msToDuration', function () {
         // strip leading zeroes
         formattedDuration = formattedDuration.replace('00h 00m', '');
         formattedDuration = formattedDuration.replace('00h ', '');
+        if (input < 0) {
+            formattedDuration = ' - ' + formattedDuration
+        }
         return formattedDuration;
     };
 }).filter('parseDate', function () {
