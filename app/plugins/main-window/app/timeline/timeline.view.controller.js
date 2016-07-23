@@ -6,7 +6,7 @@ angular.module('angularDemoApp')
                                                     TrackItemService, settingsData, $sessionStorage, AppSettingsService) {
         var ctrl = this;
 
-        ctrl.loadedItems=[];
+        ctrl.loadedItems = [];
 
         var resetLoadedItems = function () {
             ctrl.selectedTrackItem = null;
@@ -174,7 +174,7 @@ angular.module('angularDemoApp')
             });
         }
 
-        ctrl.dateDiff = function(c) {
+        ctrl.dateDiff = function (c) {
             return moment(c.endDate).diff(c.beginDate)
         };
 
@@ -303,6 +303,12 @@ angular.module('angularDemoApp')
         ctrl.closeMiniEdit = function () {
             console.log("Closing mini edit.");
             ctrl.selectedTrackItem = null;
+        };
+
+        ctrl.table = {
+            searchTask: 'LogTrackItem',
+            search: '',
+            order: '-beginDate'
         };
 
         // Initialy load todays data
