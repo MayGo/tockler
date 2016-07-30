@@ -124,6 +124,7 @@ var createOrUpdate = function (rawItem) {
                 log.debug('Midnight- Saved one: ', item1);
                 item1.beginDate = afterMidnight;
                 item1.endDate = originalEndDate;
+                item1.endDateOverride = originalEndDate;
                 log.debug('Midnight- Saving second: ', item1);
                 createOrUpdate(getRawTrackItem(item1)).then(function (item2) {
                     log.debug('Midnight- Saved second: ', item2);
@@ -345,7 +346,19 @@ BackgroundService.saveForegroundWindowTitle = function () {
         saveActiveWindow(active);
     });
 };
-BackgroundService.saveRunningLogItem = function (endDate) {
+BackgroundService.saveRunningLogItem = function () {
+    // saveRunningLogItem can be run before app comes back ONLINE and running log item have to be split.
+    //
+    if (lastTrackItems.StatusTrackItem !== null &&
+        lastTrackItems.StatusTrackItem.app !== 'ONLINE') {
+        log.info('Not saving running log item. Not online');
+        return
+    }
+
+    if (isSleeping) {
+        log.info('Computer is sleeping, not running saveRunningLogItem');
+        return;
+    }
 
     let splitEndDate = null;
 
@@ -369,6 +382,10 @@ BackgroundService.saveRunningLogItem = function (endDate) {
                 if (splitEndDate != null) {
                     log.info("Splitting LogItem, old item has endDate: ", splitEndDate);
                     rawItem.endDateOverride = splitEndDate;
+                    rawItem.endDate = splitEndDate;
+                    if(rawItem.beginDate > splitEndDate){
+                        log.error("BeginDate is after endDate. Not saving RUNNING_LOG_ITEM");
+                    }
                 }
                 // set first LogTrackItem because
                 // when restarting application there would be multiple same items
@@ -472,7 +489,7 @@ BackgroundService.init = function () {
     setInterval(function () {
         self.saveUserIdleTime();
         self.saveForegroundWindowTitle();
-        self.saveRunningLogItem(new Date());
+        self.saveRunningLogItem();
 
     }, BACKGROUND_JOB_INTERVAL);
 };
