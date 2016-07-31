@@ -16,7 +16,7 @@
         <input ng-model="trackItemCtrl.searchStr" ng-change="trackItemCtrl.list()">
     </md-input-container>
     <md-input-container class="md-block">
-        <md-select ng-model="trackItemCtrl.searchTask" ng-change="trackItemCtrl.list()">
+        <md-select ng-model="trackItemCtrl.searchTask" aria-label="Search item type" ng-change="trackItemCtrl.list()">
             <md-option value="AppTrackItem">Apps</md-option>
             <md-option value="StatusTrackItem">Statuses</md-option>
             <md-option value="LogTrackItem">Logs</md-option>
@@ -58,8 +58,10 @@
                 ng-repeat="trackItem in trackItemCtrl.trackItems.rows">
                 <td md-cell style="width: 130px">{{trackItem.app}}</td>
                 <td md-cell style="overflow:visible; word-wrap: break-word;">{{trackItem.title}}</td>
-                <td md-cell style="width: 140px">{{trackItem.beginDate | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
-                <td md-cell style="width: 140px">{{trackItem.endDate | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td md-cell style="width: 140px">{{trackItem.beginDate | parseDate | date: 'yyyy-MM-dd HH:mm:ss'}}
+                </td>
+                <td md-cell style="width: 140px">{{trackItem.endDate | parseDate | date: 'yyyy-MM-dd HH:mm:ss'}}
+                </td>
                 <td md-cell style="width: 140px">{{trackItem.endDate | diffToMs: trackItem.beginDate |
                     msToDuration}}
                 </td>

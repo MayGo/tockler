@@ -35,7 +35,7 @@
                     <input ng-model="timelineCtrl.selectedTrackItem.title" required placeholder="Title">
                 </md-input-container>
                 <md-input-container flex="20">
-                    <input ng-model="timelineCtrl.selectedTrackItem.color" type="color" required>
+                    <input ng-model="timelineCtrl.selectedTrackItem.color" type="color" aria-label="Color" required>
                 </md-input-container>
                 <md-button type="submit" class="md-icon-button" aria-label="Refresh"
                            ng-disabled="timelineCtrl.selectedTrackItemForm.$invalid"
@@ -115,7 +115,7 @@
             <input ng-model="timelineCtrl.table.search" ng-model-options="{ debounce: 1000 }">
         </md-input-container>
         <md-input-container flex="20">
-            <md-select ng-model="timelineCtrl.table.searchTask">
+            <md-select ng-model="timelineCtrl.table.searchTask" aria-label="Search item type">
                 <md-option value="AppTrackItem">Apps</md-option>
                 <md-option value="StatusTrackItem">Statuses</md-option>
                 <md-option value="LogTrackItem">Logs</md-option>
