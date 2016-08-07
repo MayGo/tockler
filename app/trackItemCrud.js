@@ -92,7 +92,7 @@ module.exports.findLastOnlineItem = function () {
 
     //ONLINE item can be just inserted, we want old one.
     // 2 seconds should be enough
-    let beginDate = moment().subtract(2, 'seconds').toDate();
+    let beginDate = moment().subtract(5, 'seconds').toDate();
 
     return TrackItem.findAll({
             where: {
