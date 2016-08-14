@@ -34,7 +34,7 @@ angular.module('angularDemoApp')
         console.log(height, width);
 
 
-        var timeDomainStart = moment().startOf('day');
+        var timeDomainStart = moment().startOf('day').toDate();
         var timeDomainEnd = d3.time.day.offset(timeDomainStart, 1);
 
         //scales
@@ -211,7 +211,7 @@ angular.module('angularDemoApp')
 
                 })
                 .attr("height", 7);
-            
+            drawBrush();
             displaySelectedInMain();
         }
 
@@ -267,6 +267,16 @@ angular.module('angularDemoApp')
                 });
 
             rects.exit().remove();
+
+        }
+
+        function drawBrush() {
+
+            var start = moment().subtract(1, 'hours').toDate();
+            var end = moment().add(10, 'minutes').toDate();
+            console.log("Setting brush to:", start, end);
+            brush.extent([start, end]);
+
         }
 
     });
