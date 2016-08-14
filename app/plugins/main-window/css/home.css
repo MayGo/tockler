@@ -107,6 +107,10 @@ timeline svg {
   fill-opacity: 0;
 }
 
+timeline .mini {
+  opacity: 0.6;
+}
+
 .navbar-brand {
   color: white;
   font-weight: 400;

@@ -8,7 +8,8 @@ function Timeline($window, $rootScope, $document) {
         ctrl.init(element[0]);
 
         scope.$watch('timelineDirectiveCtrl.startDate', function (newVal, oldVal) {
-                ctrl.changeDay(newVal);
+                console.log("StartDate change", newVal, oldVal);
+                 ctrl.changeDay(newVal);
             }
         );
 
@@ -16,7 +17,7 @@ function Timeline($window, $rootScope, $document) {
                 console.log('SelectedTrackItem changed', newVal, oldVal);
                 if (newVal === null) {
                     console.log('Clearing brush....');
-                    ctrl.clearBrush();
+                    //ctrl.clearBrush();
                 }
             }
         );
@@ -36,7 +37,7 @@ function Timeline($window, $rootScope, $document) {
 
         scope.$on('removeItemsFromTimeline', function (event, trackItems) {
             console.log('Removing Items from timeline(refreshing):', trackItems.length);
-            ctrl.removeItemsFromTimeline(trackItems);
+           // ctrl.removeItemsFromTimeline(trackItems);
         });
 
     }

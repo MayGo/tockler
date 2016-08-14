@@ -125,9 +125,9 @@ gulp.task('watch', function () {
     // html & js & css files
     gulp.watch(
         [
-            path.join(paths.plugins, 'app/plugins/**/*.html'),
-            path.join(paths.plugins, 'app/plugins/**/*.js'),
-            path.join(paths.plugins, 'app/plugins/**/css/*.css')
+            path.join(paths.plugins, '**/*.html'),
+            path.join(paths.plugins, '**/*.js'),
+            path.join(paths.plugins, '**/css/*.css')
         ],
 
         function () {
