@@ -118,16 +118,7 @@ angular.module('angularDemoApp')
                 .transition()
                 .call(xAxisMain);
 
-            // track items clip
-            // y axis labels is on top of items
-            main.append("g")
-                .attr("id", "mainItemsId")
-                .attr("clip-path", "url(#clip)");
-
-            main.append("g").attr("class", "y axis")
-                .transition()
-                .call(yAxisMain);
-
+            // BRUSH
             // item selection/creation brush
             console.log("Init selection tool.");
 
@@ -137,9 +128,11 @@ angular.module('angularDemoApp')
                 .on("brush", selectionToolBrushing);
 
             main.append('g')
-                .attr('class', 'brush').call(selectionTool)
-                .selectAll("rect")
+                .attr('class', 'brush').call(selectionTool);
+            d3.select(".brush").selectAll(".extent")
                 .attr('height', logTrackItemHeight);
+            d3.select(".brush").selectAll(".background")
+                .attr('height', mainHeight);
 
             // Add handles
             var arc = d3.svg.arc()
@@ -158,6 +151,18 @@ angular.module('angularDemoApp')
             //add Time texts on handles
             d3.select(".brush").selectAll(".resize").append("text")
                 .text("").style("text-anchor", "middle");
+
+
+            // track items clip
+            // y axis labels is on top of items
+            main.append("g")
+                .attr("id", "mainItemsId")
+                .attr("clip-path", "url(#clip)");
+
+            main.append("g").attr("class", "y axis")
+                .transition()
+                .call(yAxisMain);
+
 
             // MINI AXIS
             // miniBrush is on top of items layer and  axis labels is on top of items
@@ -251,7 +256,7 @@ angular.module('angularDemoApp')
 
             //mini item rects
             var rects = mini.select("#miniItemsId").selectAll(".miniItems")
-                .data(trackItems);
+                .data(allItems);
 
             rects.enter()
                 .append("rect")
@@ -366,7 +371,7 @@ angular.module('angularDemoApp')
                 color: data.color,
                 originalColor: data.color,
                 left: x + 'px',
-                top: d3.transform(translate).translate[1] + 'px'
+                top: y + 'px'
             };
 
             $scope.$apply();
@@ -433,8 +438,7 @@ angular.module('angularDemoApp')
             // Hide selection brushes
             selectionTool.clear();
             d3.select(".brush").call(selectionTool);
-            d3.select(".brush").selectAll("rect")
-                .attr('height', logTrackItemHeight);
+           // d3.select(".brush").selectAll("rect").attr('height', logTrackItemHeight);
         }
 
         var selectionToolBrushStart = function () {
@@ -473,7 +477,7 @@ angular.module('angularDemoApp')
                     ctrl.selectedTrackItem = null;
                     $scope.$apply();
                 }
-                return;
+                //return;
             }
 
             if (ctrl.selectedTrackItem == null) {
@@ -486,6 +490,7 @@ angular.module('angularDemoApp')
 
             $scope.$apply();
             // prevent event bubbling up, to unselect when clicking outside
-            event.stopPropagation();
+            //event.stopPropagation();
+            //event.stopPropagation();
         };
     });

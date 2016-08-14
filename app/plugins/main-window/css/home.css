@@ -151,7 +151,8 @@ timeline .mini {
   background: #f2f2f2;
   border-radius: 5px;
   height: 35px;
-  top: 75px;
+  top: 0px;
+  margin-top: 35px;
   position: absolute;
 }
 
