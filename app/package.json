@@ -10,22 +10,21 @@
     "url": "git@github.com:MayGo/backer-timetracker.git"
   },
   "dependencies": {
-    "async": "^1.5.2",
-    "auto-launch": "^2.0.1",
-    "bunyan": "^1.7.1",
+    "auto-launch": "^3.0.0",
+    "bunyan": "^1.8.1",
     "compare-version": "^0.1.2",
-    "electron-context-menu": "^0.3.1",
+    "electron-context-menu": "^0.4.0",
     "electron-squirrel-startup": "^1.0.0",
-    "lodash": "^4.5.0",
-    "menubar": "^4.1.0",
-    "moment": "^2.11.1",
+    "es6-promise": "^3.2.1",
+    "lodash": "^4.15.0",
+    "menubar": "^5.1.0",
+    "moment": "^2.14.1",
     "multiline": "^1.0.2",
-    "node-notifier": "^4.4.0",
+    "node-notifier": "^4.6.0",
     "os-locale": "^1.4.0",
     "q": "^1.4.1",
-    "randomcolor": "^0.4.3",
-    "request": "^2.58.0",
-    "sequelize": "^3.23.3",
+    "randomcolor": "^0.4.4",
+    "sequelize": "^3.24.0",
     "sqlite3": "^3.1.4"
   }
 }
