@@ -58,8 +58,13 @@ timeline svg {
     fill: #049CD9;
     fill-opacity: .125;
     shape-rendering: crispEdges;
-    stroke-width: 3;
+    stroke-width: 1;
 }
+
+.brush .resize text{
+    fill: #049CD9;
+}
+
 .brush .resize path {
     fill: #b8b8b8;
     fill-opacity: .125;
@@ -70,7 +75,7 @@ timeline svg {
     fill: #049CD9;
     fill-opacity: .125;
     shape-rendering: crispEdges;
-    stroke-width: 3;
+    stroke-width: 1;
 }
 .miniBrush .resize path {
     fill: #b8b8b8;

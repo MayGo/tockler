@@ -118,12 +118,23 @@ angular.module('angularDemoApp')
                 .transition()
                 .call(xAxisMain);
 
+            // track items clip
+            // y axis labels is on top of items
+            main.append("g")
+                .attr("id", "mainItemsId")
+                .attr("clip-path", "url(#clip)");
+
+            main.append("g").attr("class", "y axis")
+                .transition()
+                .call(yAxisMain);
+
             // item selection/creation brush
             console.log("Init selection tool.");
 
             selectionTool = d3.svg.brush().x(xScaleMain)
                 .on("brushstart", selectionToolBrushStart)
-                .on("brushend", selectionToolBrushEnd);
+                .on("brushend", selectionToolBrushEnd)
+                .on("brush", selectionToolBrushing);
 
             main.append('g')
                 .attr('class', 'brush').call(selectionTool)
@@ -137,20 +148,16 @@ angular.module('angularDemoApp')
                 .endAngle(function (d, i) {
                     return i ? -Math.PI : Math.PI;
                 });
-
             d3.select(".brush").selectAll(".resize").append("path")
                 .attr("transform", "translate(0," + logTrackItemHeight / 2 + ")")
                 .attr("d", arc);
 
-            // track items clip
-            // y axis labels is on top of items
-            main.append("g")
-                .attr("id", "mainItemsId")
-                .attr("clip-path", "url(#clip)");
+            // hide rect for Status/AppTrackItem
+            d3.select(".brush").selectAll(".resize rect").style('display', 'none');
 
-            main.append("g").attr("class", "y axis")
-                .transition()
-                .call(yAxisMain);
+            //add Time texts on handles
+            d3.select(".brush").selectAll(".resize").append("text")
+                .text("").style("text-anchor", "middle");
 
             // MINI AXIS
             // miniBrush is on top of items layer and  axis labels is on top of items
@@ -342,7 +349,7 @@ angular.module('angularDemoApp')
             //clearBrush();
             var p = d3.select(this);
             var data = p.data()[0];
-            console.log(p)
+
             var selectionToolSvg = d3.select(".brush");
             var translate = p.attr('transform');
             var x = new Number(p.attr('x'));
@@ -364,7 +371,6 @@ angular.module('angularDemoApp')
 
             $scope.$apply();
 
-
             if (data.taskName === 'LogTrackItem') {
                 selectionToolSvg.selectAll("path").style('display', 'inherit');
             } else {
@@ -372,24 +378,33 @@ angular.module('angularDemoApp')
             }
 
             // position brush same as trackitem
-            selectionToolSvg.selectAll("rect")
+            selectionToolSvg.selectAll(".extent")
                 .attr('height', p.attr('height'))
                 .attr('y', p.attr('y'));
-            //   d3.select("g.brush").call((brush.empty())
-            // to make unselecting work correctly
-            //  selectionTool.x(xScaleMain);
 
             // Make brush same size as trackitem
             selectionTool.extent([new Date(data.beginDate), new Date(data.endDate)]);
             selectionToolSvg.call(selectionTool);
 
-            // remove crosshair outside of item
-
-
             // prevent event bubbling up, to unselect when clicking outside
             event.stopPropagation();
 
-        };
+            updateBrushTimeTexts();
+        }
+
+        function  updateBrushTimeTexts(){
+
+            var beginDate = new Date(selectionTool.extent()[0].getTime());
+            var endDate = new Date(selectionTool.extent()[1].getTime());
+
+            console.log("Updating brush texts: ", beginDate, endDate);
+
+            var format = d3.time.format("%H:%M:%S");
+            d3.select(".brush .resize.w").select("text")
+                .text(format(beginDate));
+            d3.select(".brush .resize.e").select("text")
+                .text(format(endDate));
+        }
 
         function initTooltips(addToSvg) {
             console.log("Init tooltip");
@@ -420,19 +435,38 @@ angular.module('angularDemoApp')
             d3.select(".brush").call(selectionTool);
             d3.select(".brush").selectAll("rect")
                 .attr('height', logTrackItemHeight);
-        };
-        var selectionToolBrushStart = function () {
+        }
 
-            d3.select(".brush").selectAll("path").style('display', 'inherit')
+        var selectionToolBrushStart = function () {
+            d3.select(".brush").selectAll("path").style('display', 'inherit');
             d3.select(".brush").selectAll("rect").attr("y", "0");
+            var p = d3.select(this);
+
+            var x = new Number(p.attr('x'));
+            if (ctrl.selectedTrackItem !== null && ctrl.selectedTrackItem.taskName !== 'LogTrackItem') {
+                ctrl.selectedTrackItem = null;
+                $scope.$apply();
+            }
+
         };
+
+        var selectionToolBrushing = function () {
+
+            // Snap to minute
+            var beginDate = d3.time.minute.round(selectionTool.extent()[0].getTime());
+            var endDate = d3.time.minute.round(selectionTool.extent()[1].getTime());
+            d3.select(".brush").call(selectionTool.extent([beginDate, endDate]));
+
+            updateBrushTimeTexts();
+        };
+
         var selectionToolBrushEnd = function () {
 
             console.log("selectionToolBrushEnd:", selectionTool.extent());
             // change data based on selection brush
-            var beginDate = d3.time.minute.round(selectionTool.extent()[0].getTime());
-            var endDate = d3.time.minute.round(selectionTool.extent()[1].getTime());
-            console.log(d3.select(".brush rect.extent").attr("x"))
+            var beginDate = selectionTool.extent()[0].getTime();
+            var endDate = selectionTool.extent()[1].getTime();
+
             if (endDate - beginDate == 0) {
                 console.log("Just a click");
                 if (ctrl.selectedTrackItem !== null) {
