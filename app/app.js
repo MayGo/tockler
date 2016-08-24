@@ -70,8 +70,8 @@ require('electron-context-menu')({
  * Emitted when all windows are closed
  */
 app.on('window-all-closed', function () {
-    pluginMgr.removeAll();
-    app.quit();
+    //pluginMgr.removeAll();
+    //app.quit();
 });
 
 ipcMain.on('close-app', function () {
