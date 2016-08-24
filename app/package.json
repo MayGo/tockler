@@ -1,13 +1,13 @@
 {
-  "name": "BackerTimetracker",
+  "name": "Tockler",
   "version": "2.0.1",
-  "description": "Track your time by monitoring your active windows and idle time",
+  "description": "Automatically track applications usage and working time",
   "main": "app.js",
   "author": "Maigo Erit <maigo.erit@gmail.com>",
   "license": "GPL-2.0",
   "repository": {
     "type": "git",
-    "url": "git@github.com:MayGo/backer-timetracker.git"
+    "url": "git@github.com:MayGo/tockler.git"
   },
   "dependencies": {
     "auto-launch": "^3.0.0",

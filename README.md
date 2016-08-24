@@ -3,8 +3,8 @@ Backer Timetracker
 
 Application that tracks your time by monitoring your active windows (only titles) and idle time.
 
-- Windows [Download ver 2.0.0](https://github.com/MayGo/backer-timetracker/releases/download/2.0.0/BackerTimetracker.Setup.2.0.0.exe) (Tested win 10)
-- OS X [Download ver 2.0.0](https://github.com/MayGo/backer-timetracker/releases/download/2.0.0/BackerTimetracker-2.0.0.dmg) (Tested El Capitan). Needs permission: Security & Privacy -> Accessibility -> enable backer-timetracker.app (Asks for admin password to set )
+- Windows [Download ver 2.0.0](https://github.com/MayGo/tockler/releases/download/2.0.0/Tockler.Setup.2.0.0.exe) (Tested win 10)
+- OS X [Download ver 2.0.0](https://github.com/MayGo/tockler/releases/download/2.0.0/Tockler-2.0.0.dmg) (Tested El Capitan). Needs permission: Security & Privacy -> Accessibility -> enable tockler.app (Asks for admin password to set )
 
 # Features
 - Zoomable/Pannable timechart (d3)
@@ -16,14 +16,15 @@ Application that tracks your time by monitoring your active windows (only titles
 - Edit work log items. Clicking opens title/color editor. Time can be changed by moving selection handles.
 - View work log items in timechart
 - View work log summary
+- Monitor window titles and remind user to start new log item.
+- Group log items (e.g 'Working with tockler' or 'JIRA-1234')
 
 # Features to be implemented
-- Monitor window titles and remind user to start new log item.
 - Remind to take a break
-- Group log items (e.g 'Working with timetracker' or 'JIRA-1234')
 
 
-![alt text](https://github.com/MayGo/backer-timetracker/raw/master/screenshots/timeline.PNG "Backer Timetracker screenshot")
+
+![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/timeline.PNG "Tockler screenshot")
 
 
 # Donations 
@@ -33,7 +34,7 @@ Your donation is highly appreciated. Thank you!
 
 Feel free to make feature requests and 'Star' this project.
 
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=MayGo&url=https://github.com/MayGo/backer-timetracker&title=Backer-Timetracker&language=en_GB&tags=github&category=software)
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=MayGo&url=https://github.com/MayGo/tockler&title=Backer-Timetracker&language=en_GB&tags=github&category=software)
 
 <a href='https://pledgie.com/campaigns/31267'><img alt='Click here to lend your support to: Backer Timetracker and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/31267.png?skin_name=chrome' border='0' ></a>
 
@@ -49,9 +50,9 @@ Project is boilerplated from [https://github.com/chuyik/electron-boilerplate](ht
 > Prerequisites: [Node](https://nodejs.org/), [Git](https://git-scm.com/).
 
 ```bash
-git clone https://github.com/Maygo/backer-timetracker.git  # Download this project
+git clone https://github.com/Maygo/tockler.git  # Download this project
 
-cd backer-timetracker  # Switch directory
+cd tockler  # Switch directory
 npm install              # Install dev dependencies
 Two package.json structure as is recommended in electron-builder: https://github.com/electron-userland/electron-builder#two-packagejson-structure
 cd app

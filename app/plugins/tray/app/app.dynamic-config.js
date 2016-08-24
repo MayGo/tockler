@@ -12,7 +12,7 @@ angular.module('trayApp.config')
     .config(function ($translateProvider) {
         $translateProvider.translations('en', {
             app: {
-                name: 'TimeTracker'
+                name: 'Tockler'
             }, "button": {
                 "ok": "Ok"
             },

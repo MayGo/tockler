@@ -18,7 +18,7 @@ var AutoLaunch = require('auto-launch');
 var mb = require('./tray');
 
 var appLauncher = new AutoLaunch({
-    name: 'Backer Timetracker'
+    name: 'Tockler'
 });
 
 appLauncher.isEnabled().then(function (enabled) {

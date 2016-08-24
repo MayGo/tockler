@@ -1,7 +1,7 @@
 {
-  "name": "BackerTimetracker",
+  "name": "Tockler",
   "version": "1.0.0",
-  "homepage": "https://github.com/MayGo/backer-timetracker",
+  "homepage": "https://github.com/MayGo/tockler",
   "authors": [
     "Maigo Erit <maigo.erit@gmail.com>"
   ],
@@ -32,7 +32,7 @@
     "angular-i18n": "~1.4.9",
     "angular-moment": "~0.10.3",
     "angular-filter": "~0.5.8",
-    "angular-nvd3": "~1.0.5",
+    "angular-nvd3": "~1.0.9",
     "lodash": "~4.0.1",
     "angular-click-outside": "^2.2.1",
     "angular-input-masks": "^2.1.1",

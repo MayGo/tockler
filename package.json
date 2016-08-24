@@ -1,7 +1,7 @@
 {
-  "name": "BackerTimetracker",
+  "name": "Tockler",
   "version": "2.0.1",
-  "description": "Track your time by monitoring your active windows and idle time",
+  "description": "Automatically track applications usage and working time",
   "main": "app/app.js",
   "scripts": {
     "test": "echo \"Please use gulp instead.\" && exit 1",
@@ -22,7 +22,7 @@
     "sqlite3": "^3.1.4"
   },
   "build": {
-    "app-bundle-id": "ee.trimatech.BackerTimetracker",
+    "app-bundle-id": "ee.trimatech.Tockler",
     "app-category-type": "public.app-category.productivity",
     "iconUrl": "shared/img/icon/timetracker_icon.ico",
     "asar": false,
@@ -44,8 +44,8 @@
       ]
     },
     "win": {
-      "iconUrl": "https://raw.githubusercontent.com/MayGo/backer-timetracker/master/build/icon.ico",
-      "icon": "https://raw.githubusercontent.com/MayGo/backer-timetracker/master/build/icon.ico"
+      "iconUrl": "https://raw.githubusercontent.com/MayGo/tockler/master/build/icon.ico",
+      "icon": "https://raw.githubusercontent.com/MayGo/tockler/master/build/icon.ico"
     },
     "linux": {
       "target": "deb"

@@ -29,7 +29,7 @@ config.windows = {
         maximize: true,
         show: true,         // Show window, default: true
         showDevtools: true,  // Show devtools, default: true (Only in development mode)
-        title: 'Backer Timetracker',
+        title: 'Tockler',
     }
 }
 

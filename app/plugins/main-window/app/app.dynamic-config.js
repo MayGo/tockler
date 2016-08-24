@@ -12,7 +12,7 @@ angular.module('angularDemoApp.config')
     .config(function ($translateProvider) {
         $translateProvider.translations('en', {
             app: {
-                name: 'Backer Timetracker'
+                name: 'Tockler'
             }, "button": {
                 "ok": "Ok"
             },
