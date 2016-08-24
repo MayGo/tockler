@@ -14,13 +14,11 @@ angular.module('angularDemoApp')
         }
 
         var today = new Date();
+        today.setHours(0, 0, 0, 0);
         var tomorrow = getTomorrow(today);
         ctrl.searchMinDate = today;
         ctrl.searchMaxDate = tomorrow;
-
-        today.setHours(0, 0, 0, 0);
-        console.log(today, tomorrow);
-
+        
         ctrl.loading = false;
         ctrl.list = function () {
             console.log("Refresh data");
@@ -29,7 +27,7 @@ angular.module('angularDemoApp')
                 ctrl.trackItems = items;
                 ctrl.loading = false;
                 items.forEach(function (item) {
-                    item.timeDiffInMs = moment(item.endDate).diff(item.beginDate)
+                    item.timeDiffInMs = moment(item.endDate).diff(item.beginDate);
                     item.duration = moment.duration(item.endDate - item.beginDate);
                 });
                 $rootScope.$apply();

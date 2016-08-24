@@ -53,7 +53,7 @@ angular.module('angularDemoApp')
                 ctrl.loadedItems[taskName] = items;
             } else {
                 _.each(items, function (item) {
-                    upsert(ctrl.loadedItems[taskName], item._id, item);
+                    upsert(ctrl.loadedItems[taskName], item.id, item);
                 });
             }
 
@@ -221,35 +221,38 @@ angular.module('angularDemoApp')
                 trackItem.taskName = "LogTrackItem";
             }
             if (trackItem.id) {
-                $mdDialog.show({
-                    templateUrl: 'app/trackItem/trackItem.color.modal.html',
-                    controller: 'TrackItemColorModalController as trackItemColorCtrl',
-                    parent: angular.element(document.body)
-                })
-                    .then(function (answer) {
-                        if (answer === 'ALL_ITEMS') {
-                            ctrl.loading = true;
-                            AppSettingsService.changeColorForApp(trackItem.app, trackItem.color);
-                            TrackItemService.updateColorForApp(trackItem.app, trackItem.color).then(function () {
-                                console.log("updated all item with color");
-                                ctrl.reload();
-                            })
-                        } else if (answer === 'NEW_ITEMS') {
-                            AppSettingsService.changeColorForApp(trackItem.app, trackItem.color);
-                            updateItem(trackItem);
-                        } else {
-                            updateItem(trackItem);
-                        }
+                if (trackItem.originalColor === trackItem.color) {
+                    updateItem(trackItem);
+                } else {
+                    $mdDialog.show({
+                        templateUrl: 'app/trackItem/trackItem.color.modal.html',
+                        controller: 'TrackItemColorModalController as trackItemColorCtrl',
+                        parent: angular.element(document.body)
+                    })
+                        .then(function (answer) {
+                            if (answer === 'ALL_ITEMS') {
+                                ctrl.loading = true;
+                                AppSettingsService.changeColorForApp(trackItem.app, trackItem.color);
+                                TrackItemService.updateColorForApp(trackItem.app, trackItem.color).then(function () {
+                                    console.log("updated all item with color");
+                                    ctrl.reload();
+                                })
+                            } else if (answer === 'NEW_ITEMS') {
+                                AppSettingsService.changeColorForApp(trackItem.app, trackItem.color);
+                                updateItem(trackItem);
+                            } else {
+                                updateItem(trackItem);
+                            }
 
-                    }, function () {
-                        $scope.status = 'You cancelled the dialog.';
-                    });
-
+                        }, function () {
+                            $scope.status = 'You cancelled the dialog.';
+                        });
+                }
             } else {
                 if (!trackItem.app) {
                     trackItem.app = "Default";
                 }
-                TrackItemService.create(trackItem).then(function (item) {
+                TrackItemService.createItem(trackItem).then(function (item) {
                     console.log("Created trackitem to DB:", item);
                     ctrl.selectedTrackItem = null;
 
@@ -274,7 +277,7 @@ angular.module('angularDemoApp')
                     arr.splice(index, 1, newval);
                 };
 
-                update(ctrl.loadedItems[trackItem.taskName], item._id, item);
+                update(ctrl.loadedItems[trackItem.taskName], item.id, item);
                 updatePieCharts(ctrl.loadedItems[trackItem.taskName], trackItem.taskName);
                 $scope.$apply();
             });
@@ -291,7 +294,7 @@ angular.module('angularDemoApp')
                     var index = _.indexOf(ctrl.trackItems, _.find(ctrl.loadedItems[trackItem.taskName], {id: trackItem.id}));
                     ctrl.loadedItems[trackItem.taskName].splice(index, 1);
                     updatePieCharts(ctrl.loadedItems[trackItem.taskName], trackItem.taskName);
-                    $scope.$broadcast('removeItemsFromTimeline', ctrl.loadedItems[trackItem.taskName]);
+                    $scope.$broadcast('removeItemsFromTimeline', _.flatten(_.values(ctrl.loadedItems)));
                     $scope.$apply();
                 });
             } else {

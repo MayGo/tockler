@@ -46,13 +46,13 @@ module.exports.findAllItems = function (from, to, taskName, searchStr, paging) {
 };
 
 
-module.exports.findAllDayItems = function (to, from, taskName) {
+module.exports.findAllDayItems = function (from, to, taskName) {
     'use strict';
     return TrackItem.findAll({
             where: {
                 endDate: {
-                    $gte: to,
-                    $lte: from
+                    $gte: from,
+                    $lte: to
                 },
                 taskName: taskName
             },
@@ -67,8 +67,8 @@ module.exports.findAllDayItems = function (to, from, taskName) {
 module.exports.findAllFromDay = function (day, taskName) {
     'use strict';
 
-    var to = moment(day).add(1, 'days')
-    console.log('findAllFromDay ' + taskName + ' from:' + day + ', to:' + to);
+    var to = moment(day).add(1, 'days');
+    console.log('findAllFromDay ' + taskName + ' from:' + day + ', to:' + to.toDate());
 
     return module.exports.findAllDayItems(day, to.toDate(), taskName);
 };

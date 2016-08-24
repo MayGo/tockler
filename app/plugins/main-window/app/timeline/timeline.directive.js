@@ -8,7 +8,8 @@ function Timeline($window, $rootScope, $document) {
         ctrl.init(element[0]);
 
         scope.$watch('timelineDirectiveCtrl.startDate', function (newVal, oldVal) {
-                ctrl.changeDay(newVal);
+                console.log("StartDate change", newVal, oldVal);
+                 ctrl.changeDay(newVal);
             }
         );
 

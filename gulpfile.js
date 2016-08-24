@@ -14,17 +14,14 @@ var electronConnect = require('electron-connect').server.create({
     }
 });
 
-var pkg = require('./package.json')
-var electronPkg = require('./node_modules/electron-prebuilt/package.json')
-
-var electron = null  // Electron object
+var electron = null;  // Electron object
 
 // Path configuration
 var paths = {
     plugins: path.join(__dirname, 'app/plugins'),
     prebuild: path.join(__dirname, 'output/prebuilt'),
     build: path.join(__dirname, 'output/built')
-}
+};
 
 /**
  * Run the app in debugging mode (Reload with CMD+R/F5)
@@ -33,7 +30,7 @@ gulp.task('serve', function () {
 
     // Start browser process
     electronConnect.start();
-})
+});
 
 /**
  * Run the app in debugging mode (Reload automatically)
@@ -120,10 +117,10 @@ gulp.task('watch', function () {
 
             compileSass(pluginDir)
         }
-    })
+    });
 
     // app.js
-    gulp.watch('app/*', electronConnect.reload)
+    gulp.watch('app/*', electronConnect.restart)
 
     // html & js & css files
     gulp.watch(
