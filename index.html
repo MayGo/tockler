@@ -1,59 +1,81 @@
-<!DOCTYPE html>
-<html lang="en-us">
+<!doctype html>
+<html>
   <head>
-    <meta charset="UTF-8">
-    <title>Backer-timetracker by MayGo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Tockler by MayGo</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
   </head>
   <body>
-    <section class="page-header">
-      <h1 class="project-name">Backer-timetracker</h1>
-      <h2 class="project-tagline">Application that tracks your time by monitoring your active windows (only titles) and idle time.</h2>
-      <a href="https://github.com/MayGo/backer-timetracker" class="btn">View on GitHub</a>
-      <a href="https://github.com/MayGo/backer-timetracker/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/MayGo/backer-timetracker/tarball/master" class="btn">Download .tar.gz</a>
-    </section>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/MayGo/tockler">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/MayGo/tockler/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/MayGo/tockler/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
 
-    <section class="main-content">
-      <h2>
-<a id="backer-timetracker" class="anchor" href="#backer-timetracker" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Backer Timetracker</h2>
+    <div class="wrapper">
 
-<p>Application that tracks your time by monitoring your active windows (only titles) and idle time.</p>
+      <section>
+        <div id="title">
+          <h1>Tockler</h1>
+          <p>Automatically track applications usage and working time.</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/MayGo">MayGo</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h2>
+<a id="tockler" class="anchor" href="#tockler" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tockler</h2>
+
+<p>Automatically track applications usage and working time.</p>
 
 <ul>
-<li>Windows <a href="https://github.com/MayGo/backer-timetracker/releases/download/2.0.0/backer-timetracker.Setup.2.0.0.exe">Download ver 2.0.0</a> (Tested win 10)</li>
-<li>OS X <a href="https://github.com/MayGo/backer-timetracker/releases/download/2.0.0/backer-timetracker-2.0.0.dmg">Download ver 2.0.0</a> (Tested El Capitan). Needs permission: Security &amp; Privacy -&gt; Accessibility -&gt; enable backer-timetracker.app (Asks for admin password to set )</li>
+<li>Windows <a href="https://github.com/MayGo/tockler/releases/download/v2.1.0/Tockler.Setup.2.1.0.exe">Download ver 2.1.0</a> (Tested win 10)</li>
+<li>OS X <a href="https://github.com/MayGo/tockler/releases/download/v2.1.0/Tockler-2.1.0.dmg">Download ver 2.1.0</a> (Tested El Capitan). Needs permission: Security &amp; Privacy -&gt; Accessibility -&gt; enable tockler.app (Asks for admin password to set )</li>
 </ul>
 
 <h1>
 <a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h1>
 
 <ul>
-<li>Zoomable/Pannable timechart (d3)</li>
-<li>View application history in timechart</li>
-<li>View state(online, offline, idle) histroy in timechart</li>
-<li>Add work log items with modal window</li>
-<li>Add work log item when selecting timeframe in LogTrackItem lane</li>
-<li>Add work log item from tray window</li>
-<li>Edit work log items. Clicking opens title/color editor. Time can be changed by moving selection handles.</li>
-<li>View work log items in timechart</li>
-<li>View work log summary</li>
+<li>Timeline chart</li>
+<li>Pie charts</li>
+<li>View application usage and online time in timeline and table</li>
+<li>Add log items</li>
+<li>Statistics and summaries</li>
+<li>Remind user to start new log item.</li>
+<li>Group log items (e.g 'Working with tockler' or 'JIRA-1234')</li>
 </ul>
 
 <h1>
 <a id="features-to-be-implemented" class="anchor" href="#features-to-be-implemented" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features to be implemented</h1>
 
 <ul>
-<li>Monitor window titles and remind user to start new log item.</li>
 <li>Remind to take a break</li>
-<li>Group log items (e.g 'Working with timetracker' or 'JIRA-1234')</li>
 </ul>
 
-<p><img src="https://github.com/MayGo/backer-timetracker/raw/master/screenshots/timeline.PNG" alt="alt text" title="Backer Timetracker screenshot"></p>
+<p><img src="https://github.com/MayGo/tockler/raw/master/screenshots/timeline_view.png" alt="alt text" title="Tockler screenshot">
+<img src="https://github.com/MayGo/tockler/raw/master/screenshots/timeline_view_table.png" alt="alt text" title="Timeline views table">
+<img src="https://github.com/MayGo/tockler/raw/master/screenshots/select_to_create_log_item.png" alt="alt text" title="Tockler screenshot">
+<img src="https://github.com/MayGo/tockler/raw/master/screenshots/list_view.png" alt="alt text" title="List view">
+<img src="https://github.com/MayGo/tockler/raw/master/screenshots/list_view_selected.png" alt="alt text" title="List view when item selected">
+<img src="https://github.com/MayGo/tockler/raw/master/screenshots/summary_view.png" alt="alt text" title="Summary view">
+<img src="https://github.com/MayGo/tockler/raw/master/screenshots/tray_view.png" alt="alt text" title="Tray view">
+<img src="https://github.com/MayGo/tockler/raw/master/screenshots/tray_view_running_item.png" alt="alt text" title="Tray view when log item running"></p>
 
 <h1>
 <a id="donations" class="anchor" href="#donations" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Donations</h1>
@@ -63,9 +85,9 @@ Your donation is highly appreciated. Thank you!</p>
 
 <p>Feel free to make feature requests and 'Star' this project.</p>
 
-<p><a href="https://flattr.com/submit/auto?user_id=MayGo&amp;url=https://github.com/MayGo/backer-timetracker&amp;title=Backer-Timetracker&amp;language=en_GB&amp;tags=github&amp;category=software"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this git repo"></a></p>
+<p><a href="https://flattr.com/submit/auto?user_id=MayGo&amp;url=https://github.com/MayGo/tockler&amp;title=Tockler&amp;language=en_GB&amp;tags=github&amp;category=software"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this git repo"></a></p>
 
-<p><a href="https://pledgie.com/campaigns/31267"><img alt="Click here to lend your support to: Backer Timetracker and make a donation at pledgie.com !" src="https://pledgie.com/campaigns/31267.png?skin_name=chrome" border="0"></a></p>
+<p><a href="https://pledgie.com/campaigns/31267"><img alt="Click here to lend your support to: Tockler and make a donation at pledgie.com !" src="https://pledgie.com/campaigns/31267.png?skin_name=chrome" border="0"></a></p>
 
 <p><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=WWFJ9G2JQE5VW"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="paypal"></a></p>
 
@@ -74,16 +96,11 @@ Your donation is highly appreciated. Thank you!</p>
 
 <p>GNU General Public License v2.0
 Copyright (c) 2016 MayGo @ <a href="http://trimatech.ee">trimatech.ee</a></p>
+      </section>
 
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/MayGo/backer-timetracker">Backer-timetracker</a> is maintained by <a href="https://github.com/MayGo">MayGo</a>.</span>
-
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
-      </footer>
-
-    </section>
-
-            <script type="text/javascript">
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+              <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
