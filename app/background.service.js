@@ -74,7 +74,7 @@ var isSameItems = function (item1, item2) {
 };
 
 var shouldSplitInTwoOnMidnight = function (beginDate, endDate) {
-    return beginDate.getDate() !== endDate.getDate();
+    return beginDate.getDate() < endDate.getDate();
 }
 
 var dateToAfterMidnight = function (d) {
