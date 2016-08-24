@@ -177,19 +177,10 @@ angular.module('angularDemoApp')
                 .tickSize(3)
                 .tickPadding(4);
 
-            var yAxisMini = d3.svg.axis()
-                .scale(yScaleMini)
-                .orient("left")
-                .tickSize(-2)
-                .tickPadding(-90);
-
             mini.append("g").attr("class", "x axis")
                 .attr("transform", "translate(0, " + miniHeight + ")")
                 .transition()
                 .call(xAxisMini);
-            mini.append("g").attr("class", "y axis")
-                .transition()
-                .call(yAxisMini);
 
             //miniBrush
             miniBrush = d3.svg.brush()
