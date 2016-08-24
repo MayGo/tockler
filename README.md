@@ -1,22 +1,18 @@
-Backer Timetracker
----
+Tockler
+-------
 
-Application that tracks your time by monitoring your active windows (only titles) and idle time.
+Automatically track applications usage and working time.
 
-- Windows [Download ver 2.0.0](https://github.com/MayGo/tockler/releases/download/2.0.0/Tockler.Setup.2.0.0.exe) (Tested win 10)
-- OS X [Download ver 2.0.0](https://github.com/MayGo/tockler/releases/download/2.0.0/Tockler-2.0.0.dmg) (Tested El Capitan). Needs permission: Security & Privacy -> Accessibility -> enable tockler.app (Asks for admin password to set )
+- Windows [Download ver 2.1.0](https://github.com/MayGo/tockler/releases/download/2.0.0/Tockler.Setup.2.1.0.exe) (Tested win 10)
+- OS X [Download ver 2.1.0](https://github.com/MayGo/tockler/releases/download/2.0.0/Tockler-2.1.0.dmg) (Tested El Capitan). Needs permission: Security & Privacy -> Accessibility -> enable tockler.app (Asks for admin password to set )
 
 # Features
-- Zoomable/Pannable timechart (d3)
-- View application history in timechart
-- View state(online, offline, idle) histroy in timechart
-- Add work log items with modal window
-- Add work log item when selecting timeframe in LogTrackItem lane
-- Add work log item from tray window
-- Edit work log items. Clicking opens title/color editor. Time can be changed by moving selection handles.
-- View work log items in timechart
-- View work log summary
-- Monitor window titles and remind user to start new log item.
+- Timeline chart
+- Pie charts
+- View application usage and online time in timeline and table
+- Add log items
+- Statistics and summaries
+- Remind user to start new log item.
 - Group log items (e.g 'Working with tockler' or 'JIRA-1234')
 
 # Features to be implemented
@@ -34,9 +30,9 @@ Your donation is highly appreciated. Thank you!
 
 Feel free to make feature requests and 'Star' this project.
 
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=MayGo&url=https://github.com/MayGo/tockler&title=Backer-Timetracker&language=en_GB&tags=github&category=software)
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=MayGo&url=https://github.com/MayGo/tockler&title=Tockler&language=en_GB&tags=github&category=software)
 
-<a href='https://pledgie.com/campaigns/31267'><img alt='Click here to lend your support to: Backer Timetracker and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/31267.png?skin_name=chrome' border='0' ></a>
+<a href='https://pledgie.com/campaigns/31267'><img alt='Click here to lend your support to: Tockler and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/31267.png?skin_name=chrome' border='0' ></a>
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WWFJ9G2JQE5VW)
 
