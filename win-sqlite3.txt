@@ -10,5 +10,6 @@ rename folder binding/node-v48-win32-x64  to electron-v1.2-win32-x64
 
 
 Other Way
+npm run rebuild-sqlite
 rmdir .\app\node_modules\sqlite3 /s
 xcopy .\node_modules\sqlite3 .\app\node_modules\sqlite3 /s /e /h

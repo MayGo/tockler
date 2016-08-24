@@ -5,7 +5,8 @@
   "main": "app/app.js",
   "scripts": {
     "test": "echo \"Please use gulp instead.\" && exit 1",
-    "rebuild" : "electron-rebuild -f -w sqlite3"
+    "rebuild-sqlite-win" : "electron-rebuild -f -w sqlite3",
+    "rebuild-sqlite-osx" : "electron-rebuild -f -w sqlite3 && rm -rf ./app/node_modules/sqlite3 && cp -R ./node_modules/sqlite3 ./app/node_modules/sqlite3"
   },
   "author": "Maigo Erit <maigo.erit@gmail.com>",
   "devDependencies": {

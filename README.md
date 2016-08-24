@@ -68,6 +68,15 @@ node-gyp rebuild --target=1.2.5 --arch=x64 --target_platform=darwin --dist-url=h
 
 rename folder binding/node-v48-darwin-x64 to electron-v1.2-darwin-x64
 
+#### Other way win
+npm run rebuild-sqlite-win
+rmdir .\app\node_modules\sqlite3 /s
+xcopy .\node_modules\sqlite3 .\app\node_modules\sqlite3 /s /e /h
+
+#### Other way osx
+npm run rebuild-sqlite-osx
+
+
 ### Gulp Commands
 ```bash
 # Most Frequently Used
