@@ -27,7 +27,7 @@ Automatically track applications usage and working time.
 ![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/list_view_selected.png "List view when item selected")
 ![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/summary_view.png "Summary view")
 ![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/tray_view.png "Tray view")
-![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/tray_view_running.png "Tray view when log item running")
+![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/tray_view_running_item.png "Tray view when log item running")
 
 
 # Donations 
