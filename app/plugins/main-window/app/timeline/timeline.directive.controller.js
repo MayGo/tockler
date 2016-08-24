@@ -19,7 +19,7 @@ angular.module('angularDemoApp')
             left: 10
         };
 
-        var h = 250;
+        var h = 140;
         var w = $window.innerWidth;
 
         var height = h - margin.top - margin.bottom - 5;
