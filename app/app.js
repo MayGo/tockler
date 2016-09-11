@@ -8,11 +8,15 @@ var notifier = require('node-notifier');
 
 var pluginMgr = require('./plugin-manager');
 var backgroundService = require('./background.service');
+
+const InitialDatagenerator = require('./initialDataGenerator');
+InitialDatagenerator.generate();
+
 var ipcMain = require('electron').ipcMain;
 
 var config = require('./config');
 
-require("electron").crashReporter.start(config.crashOpts)
+require("electron").crashReporter.start(config.crashOpts);
 
 var AutoLaunch = require('auto-launch');
 var mb = require('./tray');
