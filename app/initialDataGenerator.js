@@ -7,7 +7,6 @@ const path = require('path');
 
 const moment = require('moment');
 
-
 module.exports.generate = function () {
     console.log("Generating data if none");
     SettingsCrud.fetchAnalyserSettings().then((analyserItems)=> {
@@ -16,7 +15,7 @@ module.exports.generate = function () {
             console.log("ANALYSER_SETTINGS empty, generating");
 
             let analyserSettings = [
-                {findRe: '\w+-\d+.*JIRA', takeTitle: '', takeGroup: '\w+-\d+', active: true},
+                {findRe: '\\w+-\\d+.*JIRA', takeTitle: '', takeGroup: '\\w+-\\d+', active: true},
                 {findRe: '9GAG', takeTitle: '', takeGroup: '9GAG', active: true}
             ];
 
