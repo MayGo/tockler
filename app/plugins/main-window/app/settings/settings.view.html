@@ -18,7 +18,7 @@
                 <p layout="row">
                     <md-input-container>
                         <label>Split task after idling for minutes</label>
-                        <input type="number" ng-model="settingsCtrl.workSettings.splitTaskAfterIdlingForMinutes" />
+                        <input type="number" ng-model="settingsCtrl.workSettings.splitTaskAfterIdlingForMinutes"/>
                     </md-input-container>
                 </p>
             </md-card-content>
@@ -45,14 +45,20 @@
                     <md-input-container>
                         <md-switch ng-model="item.active">{{item.active ? "Active" : "Disabled"}}</md-switch>
                     </md-input-container>
-                    <md-button class="md-icon-button" aria-label="Delete" ng-click="settingsCtrl.removeAnalyserItem($index)">
+                    <md-button class="md-icon-button" aria-label="Delete"
+                               ng-click="settingsCtrl.removeAnalyserItem($index)">
                         <md-icon md-font-set="material-icons">delete</md-icon>
                     </md-button>
                     <md-button ng-click="settingsCtrl.testAnalyserItem(item, $index)">
                         Test
                     </md-button>
                     <div ng-repeat="aItem in settingsCtrl.analyserTestItems[$index]">
-                        <div ng-bind="aItem.title"></div>
+                        <div><b ng-bind="aItem.title"></b></div>
+                        <div>
+                            <span ng-bind="aItem.findRe"></span> <i>|</i>
+                            <span ng-bind="aItem.takeGroup"></span> <i>|</i>
+                            <span ng-bind="aItem.takeTitle"></span>
+                        </div>
                     </div>
                 </div>
 

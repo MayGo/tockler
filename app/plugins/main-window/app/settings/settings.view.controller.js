@@ -40,6 +40,19 @@ angular.module('globalServices')
         ctrl.removeAnalyserItem = removeAnalyserItem;
         ctrl.addNewAnalyserItem = addNewAnalyserItem;
 
+        function findFirst(str, findRe) {
+            if (!findRe) {
+                return;
+            }
+            var re = new RegExp(findRe, "g");
+            var result = re.exec(str);
+
+            if (result != null) {
+                let first = result[0];
+                return first;
+            }
+        }
+
         function saveSettings() {
             console.log("Saving:", ctrl.workSettings, ctrl.analyserSettings);
             SettingsService.updateByName('WORK_SETTINGS', ctrl.workSettings).then(function (item) {
@@ -60,24 +73,26 @@ angular.module('globalServices')
         }
 
         function testAnalyserItem(analyseSetting, index) {
-            ctrl.analyserTestItems[index] = [];
             if (!todaysTrackItems) {
                 alert('Track items not loaded, try again!');
                 return;
             }
 
+            var testItems = [];
             _.each(todaysTrackItems, function (item) {
 
                 var str = item.title;
-                var re = new RegExp(analyseSetting.findRe, "g");
-                var myArray = re.exec(str);
 
-                if (myArray != null) {
-                    console.log(myArray);
-                    let first = myArray[0];
-                    ctrl.analyserTestItems[index].push(item);
+                item.findRe = findFirst(str, analyseSetting.findRe);
+                item.takeGroup = findFirst(str, analyseSetting.takeGroup) || item.findRe;
+                item.takeTitle = findFirst(str, analyseSetting.takeTitle) || item.title;
+
+                if (item.findRe) {
+                    testItems.push(item);
                 }
             });
+
+            ctrl.analyserTestItems[index] = _.uniqBy(testItems, 'title');
         }
 
     });
