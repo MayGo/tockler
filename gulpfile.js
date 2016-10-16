@@ -51,14 +51,14 @@ gulp.task('run', function () {
 })
 
 /**
- * Package windows and OSX app for distribution
+ * Package windows and MAC app for distribution
  */
 
 
-gulp.task('build:osx', function () {
+gulp.task('build:mac', function () {
 
     builder.build({
-        platform: [builder.Platform.OSX]
+        platform: [builder.Platform.MAC]
     }).then(function () {
         // handle result
         console.log('Builder complete.');

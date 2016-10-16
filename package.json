@@ -4,6 +4,8 @@
   "description": "Automatically track applications usage and working time",
   "main": "app/app.js",
   "scripts": {
+    "pack": "build --dir",
+    "dist": "build",
     "postinstall": "install-app-deps",
     "test": "echo \"Please use gulp instead.\" && exit 1",
     "rebuild-sqlite-win" : "electron-rebuild -f -w sqlite3 && rmdir .\\app\\node_modules\\sqlite3 /s && xcopy .\\node_modules\\sqlite3 .\\app\\node_modules\\sqlite3 /s /e /h",
@@ -20,12 +22,12 @@
     "node-gyp": "^3.4.0"
   },
   "build": {
-    "nodeGypRebuild": true,
-    "app-bundle-id": "ee.trimatech.Tockler",
-    "app-category-type": "public.app-category.productivity",
+    "npmRebuild": true,
+    "appId": "ee.trimatech.Tockler",
     "iconUrl": "shared/img/icon/timetracker_icon.ico",
     "asar": false,
-    "osx": {
+    "mac": {
+      "category": "public.app-category.productivity",
       "icon": "shared/img/icon/timetracker_icon.icns",
       "icon-size": 40,
       "contents": [
