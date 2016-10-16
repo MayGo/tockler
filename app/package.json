@@ -1,6 +1,6 @@
 {
   "name": "Tockler",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Automatically track applications usage and working time",
   "main": "app.js",
   "author": "Maigo Erit <maigo.erit@gmail.com>",

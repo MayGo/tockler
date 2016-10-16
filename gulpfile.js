@@ -1,5 +1,5 @@
 var gulp = require('gulp')
-var electronPrebuilt = require('electron-prebuilt')
+var electronPrebuilt = require('electron')
 var builder = require('electron-builder');
 var proc = require('child_process')
 var path = require('path')
