@@ -10,21 +10,21 @@
     "url": "git@github.com:MayGo/tockler.git"
   },
   "dependencies": {
-    "auto-launch": "^3.0.0",
+    "auto-launch": "^5.0.1",
     "bunyan": "^1.8.1",
     "compare-version": "^0.1.2",
-    "electron-context-menu": "^0.4.0",
+    "electron-context-menu": "^0.6.0",
     "electron-squirrel-startup": "^1.0.0",
-    "es6-promise": "^3.2.1",
-    "lodash": "^4.15.0",
+    "es6-promise": "^4.0.5",
+    "lodash": "^4.16.4",
     "menubar": "^5.1.0",
-    "moment": "^2.14.1",
+    "moment": "^2.15.1",
     "multiline": "^1.0.2",
-    "node-notifier": "^4.6.0",
+    "node-notifier": "^4.6.1",
     "os-locale": "^1.4.0",
     "q": "^1.4.1",
     "randomcolor": "^0.4.4",
-    "sequelize": "^3.24.0",
-    "sqlite3": "^3.1.4"
+    "sequelize": "^3.24.3",
+    "sqlite3": "^3.1.6"
   }
 }
