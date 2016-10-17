@@ -120,7 +120,7 @@ gulp.task('watch', function () {
     });
 
     // app.js
-    gulp.watch('app/*', electronConnect.restart)
+    gulp.watch('app/*.js', electronConnect.restart)
 
     // html & js & css files
     gulp.watch(
