@@ -4,7 +4,7 @@ Tockler
 Automatically track applications usage and working time.
 
 - Windows [Download ver 2.1.0](https://github.com/MayGo/tockler/releases/download/v2.1.0/Tockler.Setup.2.1.0.exe) (Tested win 10)
-- OS X [Download ver 2.2.0](https://github.com/MayGo/tockler/releases/download/v2.2.0/Tockler-2.2.0.dmg) (Tested El Capitan/Sierra). Needs permission: Security & Privacy -> Accessibility -> enable tockler.app (Asks for admin password to set )
+- OS X [Download ver 2.3.0](https://github.com/MayGo/tockler/releases/download/v2.3.0/Tockler-2.3.0.dmg) (Tested El Capitan/Sierra). Needs permission: Security & Privacy -> Accessibility -> enable tockler.app (Asks for admin password to set )
 
 # Features
 - Timeline chart
