@@ -14,8 +14,8 @@
   "author": "Maigo Erit <maigo.erit@gmail.com>",
   "devDependencies": {
     "electron-connect": "0.6.0",
-    "electron": "1.4.3",
-    "electron-rebuild": "1.2.1",
+    "electron": "1.4.13",
+    "electron-rebuild": "1.5.5",
     "electron-builder": "7.13.0",
     "gulp": "^3.9.1",
     "gulp-sass": "^2.3.2",
