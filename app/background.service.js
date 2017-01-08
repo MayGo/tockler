@@ -2,7 +2,7 @@
 
 var app = require('electron').app;
 
-var compareVersion = require('compare-version');
+var compareVersion = require('compare-versions');
 var bunyan = require('bunyan');
 
 var log;
@@ -318,15 +318,22 @@ BackgroundService.saveForegroundWindowTitle = function () {
         }
 
         if (process.platform === 'darwin' && isOsxScriptRunned === false) {
-            console.log('Running assistive-access-el-capitan.osa');
+
             var access_script = "osascript " + path.join(__dirname, "assistive-access-el-capitan.osa");
-            if (compareVersion(require('os').release(), '10.11.0') === -1) {
+            var curVer = require('os').release();
+            if (compareVersion(curVer, '10.11.0') === -1) {
                 access_script = "osascript " + path.join(__dirname, "assistive-access-osx.osa");
             }
             isOsxScriptRunned = true;
-            exec(access_script, function (error, stdout, stderr) {
-                console.log('Assistive access: ', stdout, error, stderr);
-            });
+            // For sierra writing to TCC.db is not allowed
+            if (compareVersion(curVer, '10.12.0') === -1) {
+                console.log('Running ' + access_script);
+                exec(access_script, function (error, stdout, stderr) {
+                    console.log('Assistive access: ', stdout, error, stderr);
+                });
+            }else{
+                console.log('Not running ' + access_script);
+            }
         }
 
         if (typeof active_a[1] !== "undefined") {
@@ -383,7 +390,7 @@ BackgroundService.saveRunningLogItem = function () {
                     log.info("Splitting LogItem, old item has endDate: ", splitEndDate);
                     rawItem.endDateOverride = splitEndDate;
                     rawItem.endDate = splitEndDate;
-                    if(rawItem.beginDate > splitEndDate){
+                    if (rawItem.beginDate > splitEndDate) {
                         log.error("BeginDate is after endDate. Not saving RUNNING_LOG_ITEM");
                     }
                 }
