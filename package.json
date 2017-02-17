@@ -1,22 +1,23 @@
 {
   "name": "Tockler",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Automatically track applications usage and working time",
   "main": "app/app.js",
   "scripts": {
+    "build": "gulp build:win",
     "pack": "build --dir",
     "dist": "build",
     "postinstall": "install-app-deps",
     "test": "echo \"Please use gulp instead.\" && exit 1",
-    "rebuild-sqlite-win" : "electron-rebuild -f -w sqlite3 && rmdir .\\app\\node_modules\\sqlite3 /s && xcopy .\\node_modules\\sqlite3 .\\app\\node_modules\\sqlite3 /s /e /h",
-    "rebuild-sqlite-osx" : "electron-rebuild -f -w sqlite3 && rm -rf ./app/node_modules/sqlite3 && cp -R ./node_modules/sqlite3 ./app/node_modules/sqlite3"
+    "rebuild-sqlite-win": "electron-rebuild -f -w sqlite3 && rmdir .\\app\\node_modules\\sqlite3 /s && xcopy .\\node_modules\\sqlite3 .\\app\\node_modules\\sqlite3 /s /e /h",
+    "rebuild-sqlite-osx": "electron-rebuild -f -w sqlite3 && rm -rf ./app/node_modules/sqlite3 && cp -R ./node_modules/sqlite3 ./app/node_modules/sqlite3"
   },
   "author": "Maigo Erit <maigo.erit@gmail.com>",
   "devDependencies": {
     "electron-connect": "0.6.0",
-    "electron": "1.4.13",
-    "electron-rebuild": "1.5.5",
-    "electron-builder": "7.13.0",
+    "electron": "1.4.15",
+    "electron-rebuild": "1.5.7",
+    "electron-builder": "13.9.0",
     "gulp": "^3.9.1",
     "gulp-sass": "^2.3.2",
     "node-gyp": "^3.4.0"

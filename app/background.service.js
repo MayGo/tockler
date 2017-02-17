@@ -14,6 +14,8 @@ var moment = require('moment');
 
 var path = require('path');
 var exec = require("child_process").exec;
+var execSync = require("child_process").execSync;
+var spawn = require("child_process").spawn;
 
 var emptyItem = {title: 'EMPTY'};
 
@@ -25,6 +27,8 @@ const TrackItemCrud = require('./TrackItemCrud');
 const AppItemCrud = require('./AppItemCrud');
 const SettingsCrud = require('./SettingsCrud');
 const TrackItem = require('./db').TrackItem;
+
+const UserMessages = require('./userMessages');
 
 var BackgroundService = {};
 
@@ -153,7 +157,7 @@ var createOrUpdate = function (rawItem) {
                         log.debug("Created track item to DB:", item);
                         lastTrackItems[type] = item;
                         TaskAnalyser.analyseAndNotify(item);
-                        TaskAnalyser.analyseAndSplit(item).then((fromDate)=> {
+                        TaskAnalyser.analyseAndSplit(item).then((fromDate) => {
                             if (fromDate) {
                                 log.info("Splitting LogTrackItem from date:", fromDate);
                                 shouldSplitLogItemFromDate = fromDate;
@@ -293,18 +297,17 @@ BackgroundService.saveForegroundWindowTitle = function () {
         script = "osascript " + path.join(__dirname, "get-foreground-window-title.osa");
     } else if (process.platform === 'win32') {
         script = 'powershell.exe "& ""' + path.join(__dirname, "get-foreground-window-title.ps1") + '"""';
+
     } else if (process.platform === 'linux') {
         script = "sh " + path.join(__dirname, "get-foreground-window-title.sh");
     }
 
     //log.debug('Script saveForegroundWindowTitle file: ' + script);
 
-    exec(script, function (error, stdout, stderr) {
+    var child = exec(script, {timeout: 1000});
+    child.stdout.on("data", (data)=> {
+        let stdout = data.toString();
         log.debug('Foreground window: ' + stdout);
-
-        if (stderr) {
-            log.error('saveForegroundWindowTitle error: ' + stderr);
-        }
 
         var active = {};
         var active_a = stdout.split(",");
@@ -331,7 +334,7 @@ BackgroundService.saveForegroundWindowTitle = function () {
                 exec(access_script, function (error, stdout, stderr) {
                     console.log('Assistive access: ', stdout, error, stderr);
                 });
-            }else{
+            } else {
                 console.log('Not running ' + access_script);
             }
         }
@@ -352,7 +355,26 @@ BackgroundService.saveForegroundWindowTitle = function () {
 
         saveActiveWindow(active);
     });
+
+    child.stderr.on("data", (data) => {
+
+        let error = data.toString();
+
+        log.error('saveForegroundWindowTitle error: ' + error);
+
+        if (error.includes('UnauthorizedAccess') || error.includes('AuthorizationManager check failed')) {
+            error = 'Choose [A] Always run in opened command prompt.';
+            execSync('start cmd.exe  /K' + script);
+        }
+        UserMessages.showError('Error getting window title', error);
+        return;
+
+    });
+
+    child.stdin.end();
+
 };
+
 BackgroundService.saveRunningLogItem = function () {
     // saveRunningLogItem can be run before app comes back ONLINE and running log item have to be split.
     //
@@ -440,24 +462,38 @@ BackgroundService.saveUserIdleTime = function () {
         script = "sh " + path.join(__dirname, "get-user-idle-time.mac.sh");
     } else if (process.platform === 'win32') {
         script = 'powershell.exe "& ""' + path.join(__dirname, "get-user-idle-time.ps1") + '"""';
-
-
     } else if (process.platform === 'linux') {
         script = "sh " + path.join(__dirname, "get-user-idle-time.linux.sh");
     }
 
     //log.debug('Script saveUserIdleTime file: ' + script)
 
-    return exec(script, function (error, stdout, stderr) {
+    var child = exec(script, {timeout: 1000});
+    child.stdout.on("data", (stdout)=> {
         log.debug('Idle time: ' + stdout);
-        if (stderr) {
-            log.debug('saveUserIdleTime error: ' + stderr);
-        }
 
         var seconds = stdout;
 
         saveIdleTrackItem(seconds);
     });
+
+    child.stderr.on("data", (data) => {
+
+        let error = data.toString();
+        log.error('saveUserIdleTime error: ' + error);
+
+        if (error.includes('UnauthorizedAccess') || error.includes('AuthorizationManager check failed')) {
+            error = 'Choose [A] Always run in opened command prompt.';
+            execSync('start cmd.exe  /K' + script);
+        }
+
+        UserMessages.showError('Error getting user idle time', error);
+        return;
+
+    });
+
+    child.stdin.end();
+
 };
 
 BackgroundService.init = function () {

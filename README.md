@@ -94,8 +94,16 @@ gulp build     # Package windows and OSX app for distribution
 gulp sass      # Compile SASS files
 ```
 
-
-
+# signing
+https://4sysops.com/archives/sign-your-powershell-scripts-to-increase-security/'
+in powershell as admin
+```
+$cert = Get-ChildItem -Path Cert:\CurrentUser\My -CodeSigningCert
+Set-AuthenticodeSignature -FilePath '.\app\get-foreground-window-title.ps1' -Certificate $cert
+```
+```
+Set-AuthenticodeSignature -FilePath '.\app\get-user-idle-time.ps1' -Certificate $cert
+```
 # License
 GNU General Public License v2.0
 Copyright (c) 2016 MayGo @ [trimatech.ee](http://trimatech.ee)
