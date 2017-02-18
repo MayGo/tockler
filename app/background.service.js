@@ -308,6 +308,8 @@ BackgroundService.saveForegroundWindowTitle = function () {
     child.stdout.on("data", (data)=> {
         let stdout = data.toString();
         log.debug('Foreground window: ' + stdout);
+        
+        isOsxScriptRunned = true;//some applications does not have app, check only when started
 
         var active = {};
         var active_a = stdout.split(",");
@@ -316,28 +318,7 @@ BackgroundService.saveForegroundWindowTitle = function () {
             active.app = active_a[0];
             // isElCapitanScriptRunned = true;//some applications doe not have app, check only when started
         }
-        if (active.app) {
-            isOsxScriptRunned = true;//some applications doe not have app, check only when started
-        }
 
-        if (process.platform === 'darwin' && isOsxScriptRunned === false) {
-
-            var access_script = "osascript " + path.join(__dirname, "assistive-access-el-capitan.osa");
-            var curVer = require('os').release();
-            if (compareVersion(curVer, '10.11.0') === -1) {
-                access_script = "osascript " + path.join(__dirname, "assistive-access-osx.osa");
-            }
-            isOsxScriptRunned = true;
-            // For sierra writing to TCC.db is not allowed
-            if (compareVersion(curVer, '10.12.0') === -1) {
-                console.log('Running ' + access_script);
-                exec(access_script, function (error, stdout, stderr) {
-                    console.log('Assistive access: ', stdout, error, stderr);
-                });
-            } else {
-                console.log('Not running ' + access_script);
-            }
-        }
 
         if (typeof active_a[1] !== "undefined") {
             active.title = active_a[1].replace(/\n$/, "").replace(/^\s/, "");
@@ -361,6 +342,26 @@ BackgroundService.saveForegroundWindowTitle = function () {
         let error = data.toString();
 
         log.error('saveForegroundWindowTitle error: ' + error);
+
+        if (process.platform === 'darwin' && isOsxScriptRunned === false) {
+
+            var access_script = "osascript " + path.join(__dirname, "assistive-access-el-capitan.osa");
+            var curVer = require('os').release();
+            if (compareVersion(curVer, '10.11.0') === -1) {
+                access_script = "osascript " + path.join(__dirname, "assistive-access-osx.osa");
+            }
+            isOsxScriptRunned = true;
+            // For sierra writing to TCC.db is not allowed
+            if (compareVersion(curVer, '10.12.0') === -1) {
+                console.log('Running ' + access_script);
+                exec(access_script, function (error, stdout, stderr) {
+                    console.log('Assistive access: ', stdout, error, stderr);
+                });
+            } else {
+                console.log('Not running ' + access_script);
+            }
+        }
+
 
         if (error.includes('UnauthorizedAccess') || error.includes('AuthorizationManager check failed')) {
             error = 'Choose [A] Always run in opened command prompt.';
