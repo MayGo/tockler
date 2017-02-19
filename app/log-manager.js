@@ -8,7 +8,6 @@
 
     }
 
-
     /*
      Initiates LogManager with received settings
      */
@@ -38,13 +37,13 @@
             logger.info('Saving logs in directory:' + settings.userDir);
 
         }
-    }
+    };
 
     /*
      Returns a new instance of LogManager
      */
-    LogManager.getLogger = function getInstance() {
-        return logger;
+    LogManager.getLogger = function getInstance(name) {
+        return logger.child({logger_name: name});
     };
 
     module.exports = LogManager;

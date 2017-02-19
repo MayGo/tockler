@@ -2,9 +2,8 @@
 
 var app = require('electron').app;
 
-var compareVersion = require('compare-versions');
-var LogManager = require("./log-manager.js")
-var logger = LogManager.getLogger();
+var LogManager = require("./log-manager.js");
+var logger = LogManager.getLogger('BackgroundService');
 
 var _ = require('lodash');
 var $q = require('q');
@@ -26,7 +25,7 @@ const AppItemCrud = require('./AppItemCrud');
 const SettingsCrud = require('./SettingsCrud');
 const TrackItem = require('./db').TrackItem;
 
-const UserMessages = require('./userMessages');
+const UserMessages = require('./user-messages');
 
 var BackgroundService = {};
 
