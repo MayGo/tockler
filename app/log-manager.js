@@ -27,8 +27,8 @@
                     {
                         level: 'debug',
                         type: 'rotating-file',
-                        period: '1d',   // daily rotation
-                        count: 3,        // keep 3 back copies
+                        period: '1h',
+                        count: 50,        // keep 3 back copies
                         path: outputPath
                     }
                 ]
