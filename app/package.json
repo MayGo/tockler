@@ -20,7 +20,7 @@
     "menubar": "^5.1.0",
     "moment": "^2.15.1",
     "multiline": "^1.0.2",
-    "node-notifier": "^4.6.1",
+    "node-notifier": "^5.0.2",
     "os-locale": "^1.4.0",
     "q": "^1.4.1",
     "randomcolor": "^0.4.4",

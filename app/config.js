@@ -27,9 +27,9 @@ config.windows = {
         width: 1200,
         height: 1000,
         maximize: true,
-        show: true,         // Show window, default: true
+        show: false,         // Show window, default: true
         showDevtools: true,  // Show devtools, default: true (Only in development mode)
-        title: 'Tockler',
+        title: 'Tockler'
     }
 }
 

@@ -286,8 +286,6 @@ BackgroundService.onResume = function () {
     isSleeping = false;
 };
 
-var isOsxScriptRunned = false;
-
 BackgroundService.saveForegroundWindowTitle = function () {
 
     //'darwin', 'freebsd', 'linux', 'sunos' or 'win32'
@@ -305,18 +303,16 @@ BackgroundService.saveForegroundWindowTitle = function () {
     //log.debug('Script saveForegroundWindowTitle file: ' + script);
 
     var child = exec(script, {timeout: 1000});
+
     child.stdout.on("data", (data)=> {
         let stdout = data.toString();
         log.debug('Foreground window: ' + stdout);
-        
-        isOsxScriptRunned = true;//some applications does not have app, check only when started
 
         var active = {};
         var active_a = stdout.split(",");
 
         if (typeof active_a[0] !== "undefined") {
             active.app = active_a[0];
-            // isElCapitanScriptRunned = true;//some applications doe not have app, check only when started
         }
 
 
@@ -337,36 +333,30 @@ BackgroundService.saveForegroundWindowTitle = function () {
         saveActiveWindow(active);
     });
 
+    let firstErrorPart = true;
+    child.stderr.setEncoding('utf8');
     child.stderr.on("data", (data) => {
 
         let error = data.toString();
 
-        log.error('saveForegroundWindowTitle error: ' + error);
-
-        if (process.platform === 'darwin' && isOsxScriptRunned === false) {
-
-            var access_script = "osascript " + path.join(__dirname, "assistive-access-el-capitan.osa");
-            var curVer = require('os').release();
-            if (compareVersion(curVer, '10.11.0') === -1) {
-                access_script = "osascript " + path.join(__dirname, "assistive-access-osx.osa");
-            }
-            isOsxScriptRunned = true;
-            // For sierra writing to TCC.db is not allowed
-            if (compareVersion(curVer, '10.12.0') === -1) {
-                console.log('Running ' + access_script);
-                exec(access_script, function (error, stdout, stderr) {
-                    console.log('Assistive access: ', stdout, error, stderr);
-                });
-            } else {
-                console.log('Not running ' + access_script);
-            }
+        if (!firstErrorPart) {
+            log.error('Multipart error, ignoring rest');
+            return;
         }
-
+        firstErrorPart = false;
+        log.error('saveForegroundWindowTitle error: ' + error);
 
         if (error.includes('UnauthorizedAccess') || error.includes('AuthorizationManager check failed')) {
             error = 'Choose [A] Always run in opened command prompt.';
             execSync('start cmd.exe  /K' + script);
         }
+
+        if (error.includes('assistive')
+            || error.includes('get-foreground-window-title')
+            || error.includes('390')) {
+            error = 'Tockler is not allowed assistive access. Security & Privacy -> Accessibility -> enable tockler.app';
+        }
+
         UserMessages.showError('Error getting window title', error);
         return;
 
