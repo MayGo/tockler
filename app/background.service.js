@@ -3,9 +3,8 @@
 var app = require('electron').app;
 
 var compareVersion = require('compare-versions');
-var bunyan = require('bunyan');
-
-var log;
+var LogManager = require("./log-manager.js")
+var logger = LogManager.getLogger();
 
 var _ = require('lodash');
 var $q = require('q');
@@ -15,7 +14,6 @@ var moment = require('moment');
 var path = require('path');
 var exec = require("child_process").exec;
 var execSync = require("child_process").execSync;
-var spawn = require("child_process").spawn;
 
 var emptyItem = {title: 'EMPTY'};
 
@@ -31,8 +29,6 @@ const TrackItem = require('./db').TrackItem;
 const UserMessages = require('./userMessages');
 
 var BackgroundService = {};
-
-var userDir;
 
 BackgroundService.getTrackItemService = function () {
     return TrackItemService;
@@ -63,7 +59,7 @@ var addInactivePeriod = function (beginDate, endDate) {
     item.taskName = 'StatusTrackItem';
     item.beginDate = beginDate;
     item.endDate = endDate;
-    log.info("Adding inactive trackitem", item);
+    logger.info("Adding inactive trackitem", item);
     lastTrackItems.StatusTrackItem = null;
     createOrUpdate(item);
 }
@@ -111,27 +107,27 @@ var createOrUpdate = function (rawItem) {
         var type = rawItem.taskName;
 
         if (!type) {
-            log.error('TaskName not defined:', rawItem);
+            logger.error('TaskName not defined:', rawItem);
         }
 
         if (shouldSplitInTwoOnMidnight(rawItem.beginDate, rawItem.endDate)) {
-            log.info('its midnight for item:', rawItem);
+            logger.info('its midnight for item:', rawItem);
             var almostMidnight = moment(rawItem.beginDate).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
             var afterMidnight = dateToAfterMidnight(rawItem.beginDate);
             var originalEndDate = rawItem.endDate;
 
-            log.debug('Midnight- almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
+            logger.debug('Midnight- almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
             rawItem.endDate = almostMidnight;
             rawItem.endDateOverride = almostMidnight;
             createOrUpdate(rawItem).then(function (item1) {
                 lastTrackItems[type] = null;
-                log.debug('Midnight- Saved one: ', item1);
+                logger.debug('Midnight- Saved one: ', item1);
                 item1.beginDate = afterMidnight;
                 item1.endDate = originalEndDate;
                 item1.endDateOverride = originalEndDate;
-                log.debug('Midnight- Saving second: ', item1);
+                logger.debug('Midnight- Saving second: ', item1);
                 createOrUpdate(getRawTrackItem(item1)).then(function (item2) {
-                    log.debug('Midnight- Saved second: ', item2);
+                    logger.debug('Midnight- Saved second: ', item2);
                     deferred.resolve(item2);
                 }).catch(function (error) {
                     console.error("Second Item not updated.", error)
@@ -147,19 +143,19 @@ var createOrUpdate = function (rawItem) {
 
                 if (lastTrackItems[type]) {
                     lastTrackItems[type].endDate = rawItem.beginDate;
-                    log.debug("Saving old trackItem:", lastTrackItems[type]);
+                    logger.debug("Saving old trackItem:", lastTrackItems[type]);
                     promise = TrackItemCrud.updateItem(lastTrackItems[type])
                 }
 
                 promise.then(function () {
                     //rawItem.endDate = new Date();
                     TrackItemCrud.createItem(rawItem).then(function (item) {
-                        log.debug("Created track item to DB:", item);
+                        logger.debug("Created track item to DB:", item);
                         lastTrackItems[type] = item;
                         TaskAnalyser.analyseAndNotify(item);
                         TaskAnalyser.analyseAndSplit(item).then((fromDate) => {
                             if (fromDate) {
-                                log.info("Splitting LogTrackItem from date:", fromDate);
+                                logger.info("Splitting LogTrackItem from date:", fromDate);
                                 shouldSplitLogItemFromDate = fromDate;
                             }
                         });
@@ -175,14 +171,14 @@ var createOrUpdate = function (rawItem) {
             } else if (isSameItems(rawItem, lastTrackItems[type])) {
                 lastTrackItems[type].endDate = rawItem.endDateOverride || new Date();
                 TrackItemCrud.updateItem(lastTrackItems[type]).then(function (item) {
-                    log.debug("Saved track item(endDate change) to DB:", item);
+                    logger.debug("Saved track item(endDate change) to DB:", item);
                     lastTrackItems[type] = item;
                     deferred.resolve(item);
                 }).catch(function (error) {
                     console.error("Item not updated.", error)
                 });
             } else {
-                log.error("Nothing to do with item", rawItem);
+                logger.error("Nothing to do with item", rawItem);
             }
         }
     })
@@ -197,11 +193,11 @@ var addRawTrackItemToList = function (item) {
 
 var saveActiveWindow = function (newAppTrackItem) {
     if (isSleeping) {
-        log.info('Computer is sleeping, not running saveActiveWindow');
+        logger.info('Computer is sleeping, not running saveActiveWindow');
         return;
     }
     if (lastTrackItems.StatusTrackItem !== null && lastTrackItems.StatusTrackItem.app === 'IDLE') {
-        log.debug('Not saving, app is idling', newAppTrackItem);
+        logger.debug('Not saving, app is idling', newAppTrackItem);
         //addRawTrackItemToList(emptyItem);
         lastTrackItems.AppTrackItem = null;
         return
@@ -229,7 +225,7 @@ var IDLE_IN_SECONDS_TO_LOG = 60 * 1;
 var saveIdleTrackItem = function (seconds) {
 
     if (isSleeping) {
-        log.info('Computer is sleeping, not running saveIdleTrackItem');
+        logger.info('Computer is sleeping, not running saveIdleTrackItem');
         return;
     }
 
@@ -242,7 +238,7 @@ var saveIdleTrackItem = function (seconds) {
         lastTrackItems.StatusTrackItem.app === 'OFFLINE' &&
         appName === 'IDLE'
     ) {
-        log.info('Not saving. Cannot go from OFFLINE to IDLE');
+        logger.info('Not saving. Cannot go from OFFLINE to IDLE');
         return
     }
 
@@ -281,7 +277,7 @@ BackgroundService.onResume = function () {
     if (lastTrackItems.StatusTrackItem != null) {
         addInactivePeriod(lastTrackItems.StatusTrackItem.endDate, new Date());
     } else {
-        log.info('No lastTrackItems.StatusTrackItem for addInactivePeriod.')
+        logger.info('No lastTrackItems.StatusTrackItem for addInactivePeriod.')
     }
     isSleeping = false;
 };
@@ -300,13 +296,13 @@ BackgroundService.saveForegroundWindowTitle = function () {
         script = "sh " + path.join(__dirname, "get-foreground-window-title.sh");
     }
 
-    //log.debug('Script saveForegroundWindowTitle file: ' + script);
+    //logger.debug('Script saveForegroundWindowTitle file: ' + script);
 
     var child = exec(script, {timeout: 1000});
 
     child.stdout.on("data", (data)=> {
         let stdout = data.toString();
-        log.debug('Foreground window: ' + stdout);
+        logger.debug('Foreground window: ' + stdout);
 
         var active = {};
         var active_a = stdout.split(",");
@@ -320,7 +316,7 @@ BackgroundService.saveForegroundWindowTitle = function () {
             active.title = active_a[1].replace(/\n$/, "").replace(/^\s/, "");
         }
 
-        //log.info(active);
+        //logger.info(active);
         var now = new Date();
         var beginDate = new Date();
         //Begin date is always BACKGROUND_JOB_INTERVAL before current date
@@ -328,7 +324,7 @@ BackgroundService.saveForegroundWindowTitle = function () {
         active.beginDate = beginDate;
         active.endDate = now;
 
-        log.debug("Foreground window (parsed):", active);
+        logger.debug("Foreground window (parsed):", active);
 
         saveActiveWindow(active);
     });
@@ -340,11 +336,11 @@ BackgroundService.saveForegroundWindowTitle = function () {
         let error = data.toString();
 
         if (!firstErrorPart) {
-            log.error('Multipart error, ignoring rest');
+            logger.error('Multipart error, ignoring rest');
             return;
         }
         firstErrorPart = false;
-        log.error('saveForegroundWindowTitle error: ' + error);
+        logger.error('saveForegroundWindowTitle error: ' + error);
 
         if (error.includes('UnauthorizedAccess') || error.includes('AuthorizationManager check failed')) {
             error = 'Choose [A] Always run in opened command prompt.';
@@ -371,12 +367,12 @@ BackgroundService.saveRunningLogItem = function () {
     //
     if (lastTrackItems.StatusTrackItem !== null &&
         lastTrackItems.StatusTrackItem.app !== 'ONLINE') {
-        log.info('Not saving running log item. Not online');
+        logger.info('Not saving running log item. Not online');
         return
     }
 
     if (isSleeping) {
-        log.info('Computer is sleeping, not running saveRunningLogItem');
+        logger.info('Computer is sleeping, not running saveRunningLogItem');
         return;
     }
 
@@ -389,22 +385,22 @@ BackgroundService.saveRunningLogItem = function () {
     }
     SettingsCrud.findByName('RUNNING_LOG_ITEM').then(function (item) {
         var deferred = $q.defer();
-        log.debug("Found RUNNING_LOG_ITEM config: ", item);
+        logger.debug("Found RUNNING_LOG_ITEM config: ", item);
         if (item.jsonDataParsed.id) {
             TrackItemCrud.findById(item.jsonDataParsed.id).then(function (logItem) {
                 if (!logItem) {
-                    log.error("RUNNING_LOG_ITEM not found by id", item.jsonDataParsed.id)
+                    logger.error("RUNNING_LOG_ITEM not found by id", item.jsonDataParsed.id)
                     return;
                 }
-                log.debug("Found RUNNING_LOG_ITEM real LogItem: ", logItem);
+                logger.debug("Found RUNNING_LOG_ITEM real LogItem: ", logItem);
                 let rawItem = getRawTrackItem(logItem);
                 rawItem.endDate = new Date();
                 if (splitEndDate != null) {
-                    log.info("Splitting LogItem, old item has endDate: ", splitEndDate);
+                    logger.info("Splitting LogItem, old item has endDate: ", splitEndDate);
                     rawItem.endDateOverride = splitEndDate;
                     rawItem.endDate = splitEndDate;
                     if (rawItem.beginDate > splitEndDate) {
-                        log.error("BeginDate is after endDate. Not saving RUNNING_LOG_ITEM");
+                        logger.error("BeginDate is after endDate. Not saving RUNNING_LOG_ITEM");
                     }
                 }
                 // set first LogTrackItem because
@@ -414,7 +410,7 @@ BackgroundService.saveRunningLogItem = function () {
                 createOrUpdate(rawItem).then(function (savedItem) {
 
                     if (splitEndDate) {
-                        log.info("Splitting LogItem, new item has endDate: ", splitEndDate);
+                        logger.info("Splitting LogItem, new item has endDate: ", splitEndDate);
                         lastTrackItems.LogTrackItem = null;
                         let newRawItem = getRawTrackItem(logItem);
 
@@ -424,13 +420,13 @@ BackgroundService.saveRunningLogItem = function () {
                         newRawItem.beginDate = newBeginDate;
                         newRawItem.endDate = new Date();
                         createOrUpdate(newRawItem).then(function (newSavedItem) {
-                            log.info('RUNNING_LOG_ITEM has split', newSavedItem.id);
+                            logger.info('RUNNING_LOG_ITEM has split', newSavedItem.id);
                             SettingsCrud.saveRunningLogItemReferemce(newSavedItem.id);
                         });
                     } else {
                         // at midnight track item is split and new items ID should be RUNNING_LOG_ITEM
                         if (savedItem.id !== logItem.id) {
-                            log.info('RUNNING_LOG_ITEM changed at midnight.');
+                            logger.info('RUNNING_LOG_ITEM changed at midnight.');
                             SettingsCrud.saveRunningLogItemReferemce(savedItem.id);
                         }
                     }
@@ -438,7 +434,7 @@ BackgroundService.saveRunningLogItem = function () {
                 });
             })
         } else {
-            log.debug("No RUNNING_LOG_ITEM ref id");
+            logger.debug("No RUNNING_LOG_ITEM ref id");
             deferred.resolve()
         }
         return deferred.promise;
@@ -457,11 +453,11 @@ BackgroundService.saveUserIdleTime = function () {
         script = "sh " + path.join(__dirname, "get-user-idle-time.linux.sh");
     }
 
-    //log.debug('Script saveUserIdleTime file: ' + script)
+    //logger.debug('Script saveUserIdleTime file: ' + script)
 
     var child = exec(script, {timeout: 1000});
     child.stdout.on("data", (stdout)=> {
-        log.debug('Idle time: ' + stdout);
+        logger.debug('Idle time: ' + stdout);
 
         var seconds = stdout;
 
@@ -471,7 +467,7 @@ BackgroundService.saveUserIdleTime = function () {
     child.stderr.on("data", (data) => {
 
         let error = data.toString();
-        log.error('saveUserIdleTime error: ' + error);
+        logger.error('saveUserIdleTime error: ' + error);
 
         if (error.includes('UnauthorizedAccess') || error.includes('AuthorizationManager check failed')) {
             error = 'Choose [A] Always run in opened command prompt.';
@@ -489,37 +485,14 @@ BackgroundService.saveUserIdleTime = function () {
 
 BackgroundService.init = function () {
 
-    userDir = app.getPath('userData');
-    var outputPath = path.join(userDir, 'stdout.json');
-
-    // Create logger
-    log = bunyan.createLogger({
-        name: 'background-service',
-        streams: [
-            {
-                level: 'info',
-                stream: process.stdout            // log INFO and above to stdout
-            },
-            {
-                level: 'debug',
-                type: 'rotating-file',
-                period: '1d',   // daily rotation
-                count: 3,        // keep 3 back copies
-                path: outputPath
-            }
-        ]
-    });
-
-
-    log.info('User Dir:' + userDir);
-    log.info('Environment:' + process.env.NODE_ENV);
+    logger.info('Environment:' + process.env.NODE_ENV);
 
     TrackItemService = TrackItemCrud;
     AppSettingsService = AppItemCrud;
     SettingsService = SettingsCrud;
 
 
-    log.info('Running background service.');
+    logger.info('Running background service.');
     setInterval(function () {
         self.saveUserIdleTime();
         self.saveForegroundWindowTitle();

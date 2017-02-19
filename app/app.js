@@ -4,6 +4,8 @@ if (require('electron-squirrel-startup')) {
 
 var app = require('electron').app;
 var notifier = require('node-notifier');
+var LogManager = require("./log-manager.js")
+LogManager.init({userDir: app.getPath('userData')})
 
 
 var pluginMgr = require('./plugin-manager');
@@ -65,9 +67,7 @@ app.on('ready', function () {
 });
 
 
-require('electron-context-menu')({
-
-});
+require('electron-context-menu')({});
 
 
 /**
