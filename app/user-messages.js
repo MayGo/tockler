@@ -2,10 +2,11 @@
 
 const notifier = require('node-notifier');
 const path = require('path');
-const $q = require('q');
-const _ = require('lodash');
 const moment = require('moment');
 const iconUrl = path.join(__dirname, 'shared/img/icon/timetracker_icon.ico');
+
+var LogManager = require("./log-manager.js");
+var logger = LogManager.getLogger('UserMessages');
 
 class UserMessages {
 
@@ -13,6 +14,7 @@ class UserMessages {
         let diffInMinutes = moment().diff(UserMessages.lastTime, 'minutes');
 
         if (UserMessages.lastError === error && diffInMinutes < 1) {
+            logger.debug('Same error message, waiting one minute');
             return;
         }
 
@@ -26,10 +28,12 @@ class UserMessages {
             sound: true, // Only Notification Center or Windows Toasters
             wait: false // Wait with callback, until user action is taken against notification
         }, function (err, response) {
-            // Response is response from notification
+            logger.error('Notifier error:', err, response);
         });
     }
 }
+
 UserMessages.lastError = '';
 UserMessages.lastTime = moment();
+
 module.exports = UserMessages;
