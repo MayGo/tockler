@@ -1,4 +1,3 @@
-global frontApp, frontAppName, windowTitle
  global frontApp, frontAppName, windowTitle
 
  set windowTitle to ""
@@ -12,4 +11,4 @@ global frontApp, frontAppName, windowTitle
      end tell
  end tell
 
- return {frontAppName, windowTitle, frontApp}
+ return {frontAppName, windowTitle}
