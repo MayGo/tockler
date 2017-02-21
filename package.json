@@ -1,6 +1,6 @@
 {
   "name": "Tockler",
-  "version": "2.4.0",
+  "version": "2.4.3",
   "description": "Automatically track applications usage and working time",
   "main": "app/app.js",
   "scripts": {
