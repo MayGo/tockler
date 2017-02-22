@@ -282,14 +282,17 @@ BackgroundService.onResume = function () {
     isSleeping = false;
 };
 
+let oneThreadRunning = false;
 BackgroundService.saveForegroundWindowTitle = function () {
 
     //'darwin', 'freebsd', 'linux', 'sunos' or 'win32'
     let runExec = "";
     let args = [];
+    let oneThread = false;
     if (process.platform === 'darwin') {
         //Run applescript from shell.
         runExec = "osascript";
+        oneThread = true;
         args.push(path.join(__dirname, "get-foreground-window-title.osa"));
     } else if (process.platform === 'win32') {
         runExec = 'powershell.exe';
@@ -332,7 +335,7 @@ BackgroundService.saveForegroundWindowTitle = function () {
 
     var handleError = (error)=> {
 
-        logger.error('saveForegroundWindowTitle error: ' + error);
+        //logger.error('saveForegroundWindowTitle error: ' + error);
 
         if (error.includes('UnauthorizedAccess') || error.includes('AuthorizationManager check failed')) {
             error = 'Choose [A] Always run in opened command prompt.';
@@ -341,27 +344,30 @@ BackgroundService.saveForegroundWindowTitle = function () {
 
         if (error.includes('assistive') || error.includes('osascript')) {
             error = 'Tockler is not allowed assistive access. Security & Privacy -> Accessibility -> enable tockler.app';
+            UserMessages.showError('Error getting window title', error.toString());
         }
 
-        UserMessages.showError('Error getting window title', error);
     };
 
-    var callcack = (err, stdout, stderr) => {
+    if (oneThread == false || oneThread == true && oneThreadRunning == false) {
+        console.log('...')
+        oneThreadRunning = true;
+        let ls = execFile(runExec, args);
+        ls.stdout.on('data', (data) => {
+            console.log(`stdout: ${data}`);
+        });
 
-        if (stderr) {
-            handleError(stderr);
-            return;
-        }
+        ls.stderr.on('data', (data) => {
+            handleError(data);
+            handleSuccess(data);
+        });
 
-        if (err) {
-            handleError(stderr);
-            logger.error("saveForegroundWindowTitle err", err);
-            return;
-        }
-        handleSuccess(stdout);
-    };
+        ls.on('close', (code) => {
+            console.log(`child process exited with code ${code}`);
+        });
+    }
 
-    execFile(runExec, args, {timeout: 2000}, callcack);
+
 };
 
 BackgroundService.saveRunningLogItem = function () {

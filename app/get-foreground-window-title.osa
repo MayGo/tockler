@@ -1,6 +1,8 @@
- global frontApp, frontAppName, windowTitle
+global frontApp, frontAppName, windowTitle
 
- set windowTitle to "NO_TITLE_FOUND"
+repeat
+	set frontAppName to "NO_APP_FOUND"
+	set windowTitle to "NO_TITLE_FOUND"
 	try
 		tell application "System Events"
 			set frontApp to first application process whose frontmost is true
@@ -16,5 +18,9 @@
 	on error errorMsg
 		set windowTitle to errorMsg
 	end try
+	set output to (frontAppName & "," & windowTitle)
+	log output
+	delay 3
+end repeat
 
- return {frontAppName, windowTitle}
+return {frontAppName, windowTitle}

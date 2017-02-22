@@ -29,7 +29,7 @@ class UserMessages {
             wait: false // Wait with callback, until user action is taken against notification
         }, function (err, response) {
             logger.error('Notifier error:', err, response);
-            UserMessages.lastError = '';
+            //UserMessages.lastError = '';
         });
     }
 }
