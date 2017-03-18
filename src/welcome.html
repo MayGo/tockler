@@ -1,0 +1,57 @@
+<template>
+  <section class="au-animate">
+    <div class="container">
+      <h3 t="welcome.Header"></h3>
+      <md-card>
+        <md-input md-label="First Name" md-value.bind="firstName & validate"></md-input>
+        <md-input md-label="Last Name" md-value.bind="lastName & validate"></md-input><br />
+        <button md-button md-waves="color: light;" click.delegate="greet()" md-modal-trigger href="#modal1">Submit</button><br/>
+        <button md-button md-waves="color: light;" click.delegate="sayHello()">Welcome with Electron</button>
+      </md-card>
+      <md-card md-title="Full name">
+        <div>
+          ${fullName | upper}
+        </div>
+      </md-card>
+
+      <md-card if.bind="controller.errors.length">
+        <h5 class="error-text">You have errors!</h5>
+        <ul style="margin-top: 15px;">
+          <li repeat.for="error of controller.errors">
+            <a href="#" click.delegate="error.target.focus()">
+              ${error.message}
+            </a>
+          </li>
+        </ul>
+      </md-card>
+      
+      <md-card>
+        <div class="group">
+          <label for="locale">Select locale</label>
+          <div class="button-row" id="locale">
+            <button md-button md-waves click.delegate="setLocale('en')">en</button>
+            <button md-button md-waves click.delegate="setLocale('no')">no</button>
+          </div>
+        </div>
+      </md-card>
+
+      <md-card md-title="Versions">
+        <p>Node version: ${status.nodeVersion}</p>
+        <p>Electron version: ${status.electronVersion}</p>
+        <p>Chrome version: ${status.chromeVersion}</p>
+        <p>V8 version: ${status.v8Version}</p>
+      </md-card>      
+    </div>
+
+    <div id="modal1" class="modal">
+      <div class="modal-content">
+        <h4>Welcome!</h4>
+        <p>Welcome, ${fullName}</p>
+      </div>
+      <div class="modal-footer">
+        <a md-button="flat: true;" md-waves="color: accent;" class="modal-action modal-close">Close</a>
+      </div>
+    </div>
+    
+  </section>
+</template>

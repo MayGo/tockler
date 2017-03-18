@@ -1,0 +1,20 @@
+<template bindable="router">
+  <md-navbar fixed="true">
+    <a md-sidenav-collapse="ref.bind: sideNav;" class="left"><i class="material-icons">menu</i></a>
+    <a href="#" class="brand-logo center">
+      <span class="left flow-text">${router.title}</span>
+    </a>
+    <ul class="right hide-on-med-and-down">
+      <li md-waves repeat.for="row of router.navigation" class="${row.isActive ? 'active' : ''}">
+        <a href.bind="row.href">${row.title}</a>
+      </li>
+    </ul>
+  </md-navbar>
+  <md-sidenav view-model.ref="sideNav" md-close-on-click="true" md-edge="left">
+    <ul>
+      <li md-waves repeat.for="row of router.navigation" class="${row.isActive ? 'active' : ''}">
+        <a href.bind="row.href">${row.title}</a>
+      </li>
+    </ul>
+  </md-sidenav>
+</template>
