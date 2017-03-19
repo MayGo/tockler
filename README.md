@@ -94,6 +94,14 @@ gulp build     # Package windows and OSX app for distribution
 gulp sass      # Compile SASS files
 ```
 
+# Errors
+
+On first run, Settings (sqlite) not found.
+
+Error: Module version mismatch. Expected 50, got 48.
+fix: npm rebuild --runtime=electron --target=1.4.3 --disturl=https://atom.io/download/atom-shell --build-from-source
+
+
 # signing
 https://4sysops.com/archives/sign-your-powershell-scripts-to-increase-security/'
 in powershell as admin

@@ -4,8 +4,10 @@ import { MaterializeFormValidationRenderer } from 'aurelia-materialize-bridge';
 import { EventAggregator } from 'aurelia-event-aggregator';
 import { I18N } from 'aurelia-i18n';
 import { remote } from 'electron';
+import {TrackItemService} from "./services/track-item-service";
+import * as moment from 'moment';
 
-@inject(I18N, Element, EventAggregator, NewInstance.of(ValidationController))
+@inject(I18N, Element, EventAggregator, NewInstance.of(ValidationController), TrackItemService)
 export class Welcome {
   heading: string = 'Welcome to the Aurelia Navigation App';
   firstName: string = 'John';
@@ -21,7 +23,8 @@ export class Welcome {
 
   controller = null;
 
-  constructor(private i18n: I18N, private element: Element, private ea: EventAggregator, controller: ValidationController) {
+  constructor(private i18n: I18N, private element: Element, private ea: EventAggregator, controller: ValidationController,
+  private trackItemService: TrackItemService) {
     this.controller = controller;
     this.controller.addRenderer(new MaterializeFormValidationRenderer());
 
@@ -41,6 +44,15 @@ export class Welcome {
     this.status.electronVersion = process.versions.electron;
     this.status.nodeVersion = process.versions.node;
     this.status.v8Version = process.versions.v8;
+
+    var startDate = moment();
+    startDate.startOf('day');
+    console.log(trackItemService)
+    trackItemService.findAllFromDay(startDate.toDate(), 'AppTrackItem').then(function (items) {
+      console.log(items);
+
+
+    });
   }
 
   //Getters can't be directly observed, so they must be dirty checked.

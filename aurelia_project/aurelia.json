@@ -140,6 +140,7 @@
           "aurelia-templating",
           "aurelia-templating-binding",
           "jquery",
+          "moment",
           "text",
           {
             "name": "aurelia-templating-resources",
