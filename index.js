@@ -45,13 +45,12 @@ app.commandLine.appendSwitch('disable-renderer-backgrounding');
 
 var windowManager = require('./app/window-manager');
 
-let mainWindow = null;
 /**
  * Emitted when app starts
  */
-app.on('ready', function () {
-    mainWindow = windowManager.setMainWindow();
-    windowManager.setTrayWindow();
+app.on('ready',  () =>{
+    windowManager.setMainWindow();
+    //windowManager.setTrayWindow();
 
     backgroundService.init();
 
@@ -100,19 +99,21 @@ ipcMain.on('close-app', function () {
  * and dock icon is clicked
  */
 
-app.on('activate-with-no-open-windows', function () {
-    this.windowManager.menubar.window.show();
+app.on('activate-with-no-open-windows',  () =>{
+    windowManager.menubar.window.show();
 });
 
 /* Single Instance Check */
 
-var iShouldQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
-    if (this.windowManager.mainWindow) {
-        if (this.windowManager.mainWindow.isMinimized()) {
-            this.windowManager.mainWindow.restore();
+var iShouldQuit = app.makeSingleInstance( (commandLine, workingDirectory) =>{
+    console.log("Make single instance");
+    console.log(windowManager)
+    if (windowManager && windowManager.mainWindow) {
+        if (windowManager.mainWindow.isMinimized()) {
+            windowManager.mainWindow.restore();
         }
-        this.windowManager.mainWindow.show();
-        this.windowManager.mainWindow.focus();
+        windowManager.mainWindow.show();
+        windowManager.mainWindow.focus();
         console.log('Focusing main window');
     }
     return true;

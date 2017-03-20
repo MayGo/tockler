@@ -1,27 +1,54 @@
 <template>
-  <require from="./blur-image"></require>
+    <section class="au-animate">
+        <div class="container">
 
-  <section class="au-animate">
-    <div class="container">
+            <form validation-errors.bind="errors">
+                <div if.bind="!runningLogItem">
+                    <div>
+                        <p>Add new task </p>
 
-      <h3>${heading}</h3>
+                        <div class="row">
+                            <div class="col s4">
+                                <md-input md-label="Group"
+                                          md-value.bind="newItem.app"></md-input>
+                            </div>
+                            <div class="col s6">
+                                <md-input md-label="Title"
+                                          md-value.bind="newItem.title"></md-input>
+                            </div>
+                            <div class="col s1">
+                                <md-input md-label="Color"
+                                          md-type="color"
+                                          md-value.bind="newItem.color"></md-input>
+                            </div>
+                            <div class="col s1">
+                                <button md-button="disabled.bind: errors.length; flat: true;"
+                                        md-waves
+                                        class="accent-text"
+                                        click.delegate="startNewLogItem(newItem)"><i class="left material-icons">play_circle_filled</i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-      <div class="row au-stagger">
-        <div class="col s6 m3 card-container au-animate" repeat.for="user of users">
-          <div  class="card usercard">
 
-            <canvas class="header-bg" width="250" height="70" blur-image.bind="image"></canvas>
-            <div class="avatar">
-              <img src.bind="user.avatar_url" crossorigin ref="image"/>
+                </div>
+            </form>
+            ${loading}
+            <div class="row au-stagger">
+                <div class="col s6 m3 card-container au-animate" repeat.for="item of trackItems">
+                    <md-collection>
+                        <md-collection-item class="accent-text">
+                            <div class="logitem-color" css="background-color: ${item.color}"></div>
+                            <h3>${item.title}</h3>
+
+                            <p>${item.beginDate | df: 'yyyy.MM.dd HH:mm:ss'} - ${item.endDate | df: 'yyyy.MM.dd
+                                HH:mm:ss'}
+                                <b> ${item.endDate.getTime()-item.beginDate.getTime()}</b>
+                            </p></md-collection-item>
+                    </md-collection>
+                </div>
             </div>
-            <div class="content">
-              <p class="name">${user.login}</p>
-              <p><a target="_blank" md-button md-waves href.bind="user.html_url">Contact</a></p>
-            </div>
-
-          </div>
         </div>
-      </div>
-    </div>
-  </section>
+    </section>
 </template>

@@ -57,13 +57,16 @@ WindowManager.setTrayWindow = function () {
     });
 
     this.menubar.on('after-create-window', ()=> {
-        if (config.isDev) {
+       // if (config.isDev) {
+        console.log('Open menubar dev tools')
             this.menubar.window.openDevTools();
-        }
+       // }
     });
     this.menubar.on('after-show', ()=> {
         console.log('Show tray');
         this.menubar.window.webContents.send('focus-tray', 'ping');
+        this.menubar.window.openDevTools();
+
     })
 
 };

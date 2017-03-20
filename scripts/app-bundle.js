@@ -23,7 +23,8 @@ define('app',["require", "exports"], function (require, exports) {
         App.prototype.configureRouter = function (config, router) {
             config.title = 'Aurelia';
             config.map([
-                { route: ['', 'welcome'], name: 'welcome', moduleId: './welcome', nav: true, title: 'Welcome' },
+                { route: ['welcome'], name: 'welcome', moduleId: './welcome', nav: true, title: 'Welcome' },
+                { route: ['', 'menubar'], name: 'menubar', moduleId: './menubar', nav: true, title: 'Menubar' },
                 { route: 'users', name: 'users', moduleId: './users', nav: true, title: 'Github Users' },
                 { route: 'child-router', name: 'child-router', moduleId: './child-router', nav: true, title: 'Child Router' }
             ]);
@@ -502,9 +503,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -540,45 +538,73 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define('menubar',["require", "exports", "aurelia-framework", "aurelia-fetch-client"], function (require, exports, aurelia_framework_1, aurelia_fetch_client_1) {
+define('menubar',["require", "exports", "aurelia-framework", "./services/track-item-service", "moment", "./services/settings-service"], function (require, exports, aurelia_framework_1, track_item_service_1, moment, settings_service_1) {
     "use strict";
-    var Users = (function () {
-        function Users(getHttpClient) {
-            this.getHttpClient = getHttpClient;
-            this.heading = 'Github Users';
-            this.users = [];
+    var Menubar = (function () {
+        function Menubar(trackItemService, settingsService) {
+            this.trackItemService = trackItemService;
+            this.settingsService = settingsService;
+            this.trackItems = [];
+            this.loading = false;
+            this.newItem = { color: '#426DFC' };
         }
-        Users.prototype.activate = function () {
+        Menubar.prototype.activate = function () {
             return __awaiter(this, void 0, void 0, function () {
-                var http, response, _a;
-                return __generator(this, function (_b) {
-                    switch (_b.label) {
-                        case 0:
-                            http = this.http = this.getHttpClient();
-                            http.configure(function (config) {
-                                config
-                                    .useStandardConfiguration()
-                                    .withBaseUrl('https://api.github.com/');
-                            });
-                            return [4 /*yield*/, http.fetch('users')];
-                        case 1:
-                            response = _b.sent();
-                            _a = this;
-                            return [4 /*yield*/, response.json()];
-                        case 2:
-                            _a.users = _b.sent();
-                            return [2 /*return*/];
-                    }
+                return __generator(this, function (_a) {
+                    this.refresh();
+                    return [2 /*return*/];
                 });
             });
         };
-        return Users;
+        Menubar.prototype.loadItems = function () {
+            var _this = this;
+            console.log("Loading items");
+            this.loading = true;
+            this.trackItemService.findFirstLogItems().then(function (items) {
+                console.log("Loaded items", items);
+                items.forEach(function (item) {
+                    item.timeDiffInMs = moment(item.endDate).diff(item.beginDate);
+                    item.duration = moment.duration(item.endDate - item.beginDate);
+                });
+                _this.trackItems = items;
+                _this.loading = false;
+            });
+        };
+        Menubar.prototype.startNewLogItem = function (oldItem) {
+            var _this = this;
+            this.stopRunningLogItem();
+            this.trackItemService.startNewLogItem(oldItem).then(function (item) {
+                console.log("Setting running log item");
+                _this.runningLogItem = item;
+            });
+        };
+        Menubar.prototype.stopRunningLogItem = function () {
+            var _this = this;
+            if (this.runningLogItem && this.runningLogItem.id) {
+                this.trackItemService.stopRunningLogItem(this.runningLogItem.id).then(function () {
+                    _this.runningLogItem = null;
+                });
+            }
+            else {
+                console.debug("No running log item");
+            }
+        };
+        Menubar.prototype.refresh = function () {
+            console.log("Refresh data");
+            this.settingsService.getRunningLogItem().then(function (item) {
+                console.log("Running log item.", item);
+                this.runningLogItem = item;
+            });
+            this.loadItems();
+        };
+        ;
+        return Menubar;
     }());
-    Users = __decorate([
-        __param(0, aurelia_framework_1.lazy(aurelia_fetch_client_1.HttpClient)),
-        __metadata("design:paramtypes", [Function])
-    ], Users);
-    exports.Users = Users;
+    Menubar = __decorate([
+        aurelia_framework_1.autoinject,
+        __metadata("design:paramtypes", [track_item_service_1.TrackItemService, settings_service_1.SettingsService])
+    ], Menubar);
+    exports.Menubar = Menubar;
 });
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -826,25 +852,85 @@ define('services/app-settings-service',["require", "exports"], function (require
     "use strict";
     var AppSettingsService = (function () {
         function AppSettingsService() {
-            var service = require('electron').remote.getGlobal('BackgroundService').getAppSettingsService();
+            this.service = require('electron').remote.getGlobal('BackgroundService').getAppSettingsService();
         }
         return AppSettingsService;
     }());
     exports.AppSettingsService = AppSettingsService;
 });
 
-define('services/track-item-service',["require", "exports"], function (require, exports) {
+define('services/settings-service',["require", "exports"], function (require, exports) {
     "use strict";
+    var SettingsService = (function () {
+        function SettingsService() {
+            this.service = require('electron').remote.getGlobal('BackgroundService').getSettingsService();
+        }
+        SettingsService.prototype.saveRunningLogItemReferemce = function (refId) {
+            return this.service.saveRunningLogItemReferemce(refId);
+        };
+        SettingsService.prototype.getRunningLogItem = function () {
+            return this.service.getRunningLogItem();
+        };
+        return SettingsService;
+    }());
+    exports.SettingsService = SettingsService;
+});
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('services/track-item-service',["require", "exports", "aurelia-framework", "moment", "./settings-service"], function (require, exports, aurelia_framework_1, moment, settings_service_1) {
+    "use strict";
+    var remote = require('electron').remote;
     var TrackItemService = (function () {
-        function TrackItemService() {
-            this.service = require('electron').remote.getGlobal('BackgroundService').getTrackItemService();
+        function TrackItemService(settingsService) {
+            this.settingsService = settingsService;
+            this.service = remote.getGlobal('BackgroundService').getTrackItemService();
             console.log("..................sds");
         }
         TrackItemService.prototype.findAllFromDay = function (from, type) {
             return this.service.findAllFromDay(from, type);
         };
+        TrackItemService.prototype.findFirstLogItems = function () {
+            return this.service.findFirstLogItems();
+        };
+        TrackItemService.prototype.startNewLogItem = function (oldItem) {
+            var _this = this;
+            console.log("startNewLogItem");
+            var newItem = {};
+            newItem.app = oldItem.app || "WORK";
+            newItem.taskName = "LogTrackItem";
+            newItem.color = oldItem.color;
+            newItem.title = oldItem.title;
+            newItem.beginDate = moment().toDate();
+            newItem.endDate = moment().add(60, 'seconds').toDate();
+            return this.service.createItem(newItem).then(function (item) {
+                console.log("Created newItem to DB:", item);
+                _this.settingsService.saveRunningLogItemReferemce(item.id);
+                return item;
+            });
+        };
+        ;
+        TrackItemService.prototype.stopRunningLogItem = function (runningLogItemId) {
+            console.log("stopRunningLogItem");
+            return this.service.updateEndDateWithNow(runningLogItemId).then(function (item) {
+                console.log("Updated trackitem to DB:", item);
+                this.settingsService.saveRunningLogItemReferemce(null);
+            });
+        };
+        ;
         return TrackItemService;
     }());
+    TrackItemService = __decorate([
+        aurelia_framework_1.autoinject,
+        __metadata("design:paramtypes", [settings_service_1.SettingsService])
+    ], TrackItemService);
     exports.TrackItemService = TrackItemService;
 });
 
@@ -11909,7 +11995,7 @@ define('aurelia-i18n/base-i18n',['exports', './i18n', 'aurelia-event-aggregator'
 define('text!app-menubar.html', ['module'], function(module) { module.exports = "<template>\n  <md-colors md-primary-color=\"#52ae6e\" md-accent-color=\"#429e5e\"></md-colors>\n\n  <div>\n    <router-view></router-view>\n  </div>\n</template>\n"; });
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./nav-bar.html\"></require>\n  <md-colors md-primary-color=\"#52ae6e\" md-accent-color=\"#429e5e\"></md-colors>\n\n  <nav-bar router.bind=\"router\"></nav-bar>\n\n  <div>\n    <router-view></router-view>\n  </div>\n</template>\n"; });
 define('text!child-router.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate\">\n    <h3>${heading}</h3>\n    <div class=\"row\">\n      <div class=\"col m2\">\n        <md-well router.bind=\"router\"></md-well>\n      </div>\n      <div class=\"col m10\">\n        <router-view></router-view>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
-define('text!menubar.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./blur-image\"></require>\n\n  <section class=\"au-animate\">\n    <div class=\"container\">\n\n      <h3>${heading}</h3>\n\n      <div class=\"row au-stagger\">\n        <div class=\"col s6 m3 card-container au-animate\" repeat.for=\"user of users\">\n          <div  class=\"card usercard\">\n\n            <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\n            <div class=\"avatar\">\n              <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\n            </div>\n            <div class=\"content\">\n              <p class=\"name\">${user.login}</p>\n              <p><a target=\"_blank\" md-button md-waves href.bind=\"user.html_url\">Contact</a></p>\n            </div>\n\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
+define('text!menubar.html', ['module'], function(module) { module.exports = "<template>\n    <section class=\"au-animate\">\n        <div class=\"container\">\n\n            <form validation-errors.bind=\"errors\">\n                <div if.bind=\"!runningLogItem\">\n                    <div>\n                        <p>Add new task </p>\n\n                        <div class=\"row\">\n                            <div class=\"col s4\">\n                                <md-input md-label=\"Group\"\n                                          md-value.bind=\"newItem.app\"></md-input>\n                            </div>\n                            <div class=\"col s6\">\n                                <md-input md-label=\"Title\"\n                                          md-value.bind=\"newItem.title\"></md-input>\n                            </div>\n                            <div class=\"col s1\">\n                                <md-input md-label=\"Color\"\n                                          md-type=\"color\"\n                                          md-value.bind=\"newItem.color\"></md-input>\n                            </div>\n                            <div class=\"col s1\">\n                                <button md-button=\"disabled.bind: errors.length; flat: true;\"\n                                        md-waves\n                                        class=\"accent-text\"\n                                        click.delegate=\"startNewLogItem(newItem)\"><i class=\"left material-icons\">play_circle_filled</i>\n                                </button>\n                            </div>\n                        </div>\n                    </div>\n\n\n                </div>\n            </form>\n            ${loading}\n            <div class=\"row au-stagger\">\n                <div class=\"col s6 m3 card-container au-animate\" repeat.for=\"item of trackItems\">\n                    <md-collection>\n                        <md-collection-item class=\"accent-text\">\n                            <div class=\"logitem-color\" css=\"background-color: ${item.color}\"></div>\n                            <h3>${item.title}</h3>\n\n                            <p>${item.beginDate | df: 'yyyy.MM.dd HH:mm:ss'} - ${item.endDate | df: 'yyyy.MM.dd\n                                HH:mm:ss'}\n                                <b> ${item.endDate.getTime()-item.beginDate.getTime()}</b>\n                            </p></md-collection-item>\n                    </md-collection>\n                </div>\n            </div>\n        </div>\n    </section>\n</template>\n"; });
 define('text!nav-bar.html', ['module'], function(module) { module.exports = "<template bindable=\"router\">\n  <md-navbar fixed=\"true\">\n    <a md-sidenav-collapse=\"ref.bind: sideNav;\" class=\"left\"><i class=\"material-icons\">menu</i></a>\n    <a href=\"#\" class=\"brand-logo center\">\n      <span class=\"left flow-text\">${router.title}</span>\n    </a>\n    <ul class=\"right hide-on-med-and-down\">\n      <li md-waves repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\n        <a href.bind=\"row.href\">${row.title}</a>\n      </li>\n    </ul>\n  </md-navbar>\n  <md-sidenav view-model.ref=\"sideNav\" md-close-on-click=\"true\" md-edge=\"left\">\n    <ul>\n      <li md-waves repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\n        <a href.bind=\"row.href\">${row.title}</a>\n      </li>\n    </ul>\n  </md-sidenav>\n</template>\n"; });
 define('text!users.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./blur-image\"></require>\n\n  <section class=\"au-animate\">\n    <div class=\"container\">\n\n      <h3>${heading}</h3>\n\n      <div class=\"row au-stagger\">\n        <div class=\"col s6 m3 card-container au-animate\" repeat.for=\"user of users\">\n          <div  class=\"card usercard\">\n\n            <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\n            <div class=\"avatar\">\n              <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\n            </div>\n            <div class=\"content\">\n              <p class=\"name\">${user.login}</p>\n              <p><a target=\"_blank\" md-button md-waves href.bind=\"user.html_url\">Contact</a></p>\n            </div>\n\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
 define('text!welcome.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate\">\n    <div class=\"container\">\n      <h3 t=\"welcome.Header\"></h3>\n      <md-card>\n        <md-input md-label=\"First Name\" md-value.bind=\"firstName & validate\"></md-input>\n        <md-input md-label=\"Last Name\" md-value.bind=\"lastName & validate\"></md-input><br />\n        <button md-button md-waves=\"color: light;\" click.delegate=\"greet()\" md-modal-trigger href=\"#modal1\">Submit</button><br/>\n        <button md-button md-waves=\"color: light;\" click.delegate=\"sayHello()\">Welcome with Electron2</button>\n      </md-card>\n      <md-card md-title=\"Full name\">\n        <div>\n          ${fullName | upper}\n        </div>\n      </md-card>\n\n      <md-card if.bind=\"controller.errors.length\">\n        <h5 class=\"error-text\">You have errors!</h5>\n        <ul style=\"margin-top: 15px;\">\n          <li repeat.for=\"error of controller.errors\">\n            <a href=\"#\" click.delegate=\"error.target.focus()\">\n              ${error.message}\n            </a>\n          </li>\n        </ul>\n      </md-card>\n      \n      <md-card>\n        <div class=\"group\">\n          <label for=\"locale\">Select locale</label>\n          <div class=\"button-row\" id=\"locale\">\n            <button md-button md-waves click.delegate=\"setLocale('en')\">en</button>\n            <button md-button md-waves click.delegate=\"setLocale('no')\">no</button>\n          </div>\n        </div>\n      </md-card>\n\n      <md-card md-title=\"Versions\">\n        <p>Node version: ${status.nodeVersion}</p>\n        <p>Electron version: ${status.electronVersion}</p>\n        <p>Chrome version: ${status.chromeVersion}</p>\n        <p>V8 version: ${status.v8Version}</p>\n      </md-card>      \n    </div>\n\n    <div id=\"modal1\" class=\"modal\">\n      <div class=\"modal-content\">\n        <h4>Welcome!</h4>\n        <p>Welcome, ${fullName}</p>\n      </div>\n      <div class=\"modal-footer\">\n        <a md-button=\"flat: true;\" md-waves=\"color: accent;\" class=\"modal-action modal-close\">Close</a>\n      </div>\n    </div>\n    \n  </section>\n</template>\n"; });
