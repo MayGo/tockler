@@ -1,8 +1,11 @@
+
+const remote = (<any>window).nodeRequire('electron').remote;
+
 export class SettingsService {
     private service:any;
 
     constructor() {
-        this.service = require('electron').remote.getGlobal('BackgroundService').getSettingsService();
+        this.service = remote.getGlobal('BackgroundService').getSettingsService();
     }
 
     saveRunningLogItemReferemce(refId) {

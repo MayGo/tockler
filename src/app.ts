@@ -1,18 +1,17 @@
-import {Aurelia} from 'aurelia-framework';
-import {Router, RouterConfiguration} from 'aurelia-router';
+import {Router, RouterConfiguration} from "aurelia-router";
 
 export class App {
-  router: Router;
+    router:Router;
 
-  configureRouter(config: RouterConfiguration, router: Router) {
-    config.title = 'Aurelia';
-    config.map([
-      { route: ['welcome'], name: 'welcome',      moduleId: './welcome',      nav: true, title: 'Welcome' },
-      { route: ['', 'menubar'], name: 'menubar',      moduleId: './menubar',      nav: true, title: 'Menubar' },
-      { route: 'users',         name: 'users',        moduleId: './users',        nav: true, title: 'Github Users' },
-      { route: 'child-router',  name: 'child-router', moduleId: './child-router', nav: true, title: 'Child Router' }
-    ]);
+    configureRouter(config:RouterConfiguration, router:Router) {
+        config.title = 'Aurelia';
+        config.map([
+            {route: ['', 'menubar'], name: 'menubar', moduleId: './menubar', nav: true, title: 'Menubar'},
+            {route: 'timeline', name: 'timeline', moduleId: './timeline/timeline-view', nav: true, title: 'Timeline'},
+            {route: 'summary', name: 'summary', moduleId: './summary/summary', nav: true, title: 'Summary'},
+            {route: 'settings', name: 'settings', moduleId: './settings/settings', nav: true, title: 'Settings'}
+        ]);
 
-    this.router = router;
-  }
+        this.router = router;
+    }
 }

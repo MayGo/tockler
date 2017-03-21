@@ -2,7 +2,7 @@ import {autoinject} from "aurelia-framework";
 import * as moment from "moment";
 import {SettingsService} from "./settings-service";
 
-const remote = require('electron').remote;
+const remote = (<any>window).nodeRequire('electron').remote;
 
 @autoinject
 export class TrackItemService {
