@@ -1,3 +1,9 @@
+//
+// https://github.com/Dogfalo/materialize/issues/634#issuecomment-113213629
+//  and
+// https://github.com/noodny/materializecss-amd/blob/master/config.js
+//
+//
 require([
         'global',
         'initial',
@@ -14,7 +20,7 @@ require([
         'jquery.easing',
         'jquery.hammer',
         'jquery.timeago',
-        'leanModal',
+        'modal',
         'materialbox',
         'parallax',
         'picker',
@@ -30,8 +36,8 @@ require([
         'tooltip',
         'transitions',
         'velocity'
-      ],
-    function (Materialize) {
-      return Materialize;
+    ],
+    function(Materialize) {
+        return Materialize;
     }
 );
