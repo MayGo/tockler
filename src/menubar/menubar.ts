@@ -1,18 +1,11 @@
 import {autoinject} from "aurelia-framework";
-import {TrackItemService} from "./services/track-item-service";
 import * as moment from "moment";
-import {SettingsService} from "./services/settings-service";
+import {TrackItemService} from "../services/track-item-service";
+import {SettingsService} from "../services/settings-service";
 
-// polyfill fetch client conditionally
-// const fetch = !self.fetch ? System.import('isomorphic-fetch') : Promise.resolve(self.fetch);
-// const fetch = !self.fetch ? require('isomorphic-fetch') : Promise.resolve(self.fetch);
-/*
- interface IUser {
- avatar_url:string;
- login:string;
- html_url:string;
- }
- */
+
+const ipcRenderer = (<any>window).nodeRequire('electron').ipcRenderer;
+
 @autoinject
 export class Menubar {
     trackItems:Array<any> = [];
@@ -23,6 +16,7 @@ export class Menubar {
     runningLogItem:any;
 
     constructor(private trackItemService:TrackItemService, private settingsService:SettingsService) {
+        ipcRenderer.on('focus-tray', this.refresh);
     }
 
 
@@ -47,9 +41,8 @@ export class Menubar {
     startNewLogItem(oldItem:any) {
 
         this.stopRunningLogItem();
-
         this.trackItemService.startNewLogItem(oldItem).then((item)=> {
-            console.log("Setting running log item");
+            console.log("Setting running log item:", item);
             this.runningLogItem = item;
             /* var toast = $mdToast.simple()
              .textContent('Task is running!');
@@ -64,6 +57,7 @@ export class Menubar {
 
             this.trackItemService.stopRunningLogItem(this.runningLogItem.id).then(()=> {
                 this.runningLogItem = null;
+                this.loadItems();
                 /*
                  var toast = $mdToast.simple()
                  .textContent('Running task is stopped!');
@@ -79,10 +73,11 @@ export class Menubar {
     refresh() {
         console.log("Refresh data");
 
-        this.settingsService.getRunningLogItem().then(function (item) {
-            console.log("Running log item.", item);
+        this.settingsService.getRunningLogItem().then((item) => {
+            console.log("Running log item:", item);
             this.runningLogItem = item;
         });
+
         this.loadItems();
     };
 }

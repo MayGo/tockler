@@ -6,7 +6,7 @@ define('app-menubar',["require", "exports"], function (require, exports) {
         App.prototype.configureRouter = function (config, router) {
             config.title = 'Aurelia';
             config.map([
-                { route: [''], moduleId: './menubar' }
+                { route: [''], moduleId: './menubar/menubar' }
             ]);
             this.router = router;
         };
@@ -23,7 +23,7 @@ define('app',["require", "exports"], function (require, exports) {
         App.prototype.configureRouter = function (config, router) {
             config.title = 'Aurelia';
             config.map([
-                { route: ['', 'menubar'], name: 'menubar', moduleId: './menubar', nav: true, title: 'Menubar' },
+                { route: ['', 'menubar'], name: 'menubar', moduleId: './menubar/menubar', nav: true, title: 'Menubar' },
                 { route: 'timeline', name: 'timeline', moduleId: './timeline/timeline-view', nav: true, title: 'Timeline' },
                 { route: 'summary', name: 'summary', moduleId: './summary/summary', nav: true, title: 'Summary' },
                 { route: 'settings', name: 'settings', moduleId: './settings/settings', nav: true, title: 'Settings' }
@@ -503,119 +503,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments)).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t;
-    return { next: verb(0), "throw": verb(1), "return": verb(2) };
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-define('menubar',["require", "exports", "aurelia-framework", "./services/track-item-service", "moment", "./services/settings-service"], function (require, exports, aurelia_framework_1, track_item_service_1, moment, settings_service_1) {
-    "use strict";
-    var Menubar = (function () {
-        function Menubar(trackItemService, settingsService) {
-            this.trackItemService = trackItemService;
-            this.settingsService = settingsService;
-            this.trackItems = [];
-            this.loading = false;
-            this.newItem = { color: '#426DFC' };
-        }
-        Menubar.prototype.activate = function () {
-            return __awaiter(this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    this.refresh();
-                    return [2 /*return*/];
-                });
-            });
-        };
-        Menubar.prototype.loadItems = function () {
-            var _this = this;
-            console.log("Loading items");
-            this.loading = true;
-            this.trackItemService.findFirstLogItems().then(function (items) {
-                console.log("Loaded items", items);
-                items.forEach(function (item) {
-                    item.timeDiffInMs = moment(item.endDate).diff(item.beginDate);
-                    item.duration = moment.duration(item.endDate - item.beginDate);
-                });
-                _this.trackItems = items;
-                _this.loading = false;
-            });
-        };
-        Menubar.prototype.startNewLogItem = function (oldItem) {
-            var _this = this;
-            this.stopRunningLogItem();
-            this.trackItemService.startNewLogItem(oldItem).then(function (item) {
-                console.log("Setting running log item");
-                _this.runningLogItem = item;
-            });
-        };
-        Menubar.prototype.stopRunningLogItem = function () {
-            var _this = this;
-            if (this.runningLogItem && this.runningLogItem.id) {
-                this.trackItemService.stopRunningLogItem(this.runningLogItem.id).then(function () {
-                    _this.runningLogItem = null;
-                });
-            }
-            else {
-                console.debug("No running log item");
-            }
-        };
-        Menubar.prototype.refresh = function () {
-            console.log("Refresh data");
-            this.settingsService.getRunningLogItem().then(function (item) {
-                console.log("Running log item.", item);
-                this.runningLogItem = item;
-            });
-            this.loadItems();
-        };
-        ;
-        return Menubar;
-    }());
-    Menubar = __decorate([
-        aurelia_framework_1.autoinject,
-        __metadata("design:paramtypes", [track_item_service_1.TrackItemService, settings_service_1.SettingsService])
-    ], Menubar);
-    exports.Menubar = Menubar;
-});
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
@@ -841,6 +728,143 @@ define('welcome',["require", "exports", "aurelia-framework", "aurelia-validation
     exports.UpperValueConverter = UpperValueConverter;
 });
 
+define('converters/ms-to-duration-value-converter',["require", "exports", "moment"], function (require, exports, moment) {
+    "use strict";
+    var MsToDurationValueConverter = (function () {
+        function MsToDurationValueConverter() {
+        }
+        MsToDurationValueConverter.prototype.toView = function (input) {
+            var duration = moment.duration(input);
+            var formattedDuration = moment.utc(duration.asMilliseconds()).format("HH[h] mm[m] ss[s]");
+            formattedDuration = formattedDuration.replace('00h 00m', '');
+            formattedDuration = formattedDuration.replace('00h ', '');
+            if (input < 0) {
+                formattedDuration = ' - ' + formattedDuration;
+            }
+            return formattedDuration;
+        };
+        return MsToDurationValueConverter;
+    }());
+    exports.MsToDurationValueConverter = MsToDurationValueConverter;
+});
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments)).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t;
+    return { next: verb(0), "throw": verb(1), "return": verb(2) };
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+define('menubar/menubar',["require", "exports", "aurelia-framework", "moment", "../services/track-item-service", "../services/settings-service"], function (require, exports, aurelia_framework_1, moment, track_item_service_1, settings_service_1) {
+    "use strict";
+    var ipcRenderer = window.nodeRequire('electron').ipcRenderer;
+    var Menubar = (function () {
+        function Menubar(trackItemService, settingsService) {
+            this.trackItemService = trackItemService;
+            this.settingsService = settingsService;
+            this.trackItems = [];
+            this.loading = false;
+            this.newItem = { color: '#426DFC' };
+            ipcRenderer.on('focus-tray', this.refresh);
+        }
+        Menubar.prototype.activate = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    this.refresh();
+                    return [2 /*return*/];
+                });
+            });
+        };
+        Menubar.prototype.loadItems = function () {
+            var _this = this;
+            console.log("Loading items");
+            this.loading = true;
+            this.trackItemService.findFirstLogItems().then(function (items) {
+                console.log("Loaded items", items);
+                items.forEach(function (item) {
+                    item.timeDiffInMs = moment(item.endDate).diff(item.beginDate);
+                    item.duration = moment.duration(item.endDate - item.beginDate);
+                });
+                _this.trackItems = items;
+                _this.loading = false;
+            });
+        };
+        Menubar.prototype.startNewLogItem = function (oldItem) {
+            var _this = this;
+            this.stopRunningLogItem();
+            this.trackItemService.startNewLogItem(oldItem).then(function (item) {
+                console.log("Setting running log item:", item);
+                _this.runningLogItem = item;
+            });
+        };
+        Menubar.prototype.stopRunningLogItem = function () {
+            var _this = this;
+            if (this.runningLogItem && this.runningLogItem.id) {
+                this.trackItemService.stopRunningLogItem(this.runningLogItem.id).then(function () {
+                    _this.runningLogItem = null;
+                    _this.loadItems();
+                });
+            }
+            else {
+                console.debug("No running log item");
+            }
+        };
+        Menubar.prototype.refresh = function () {
+            var _this = this;
+            console.log("Refresh data");
+            this.settingsService.getRunningLogItem().then(function (item) {
+                console.log("Running log item:", item);
+                _this.runningLogItem = item;
+            });
+            this.loadItems();
+        };
+        ;
+        return Menubar;
+    }());
+    Menubar = __decorate([
+        aurelia_framework_1.autoinject,
+        __metadata("design:paramtypes", [track_item_service_1.TrackItemService, settings_service_1.SettingsService])
+    ], Menubar);
+    exports.Menubar = Menubar;
+});
+
 define('resources/index',["require", "exports"], function (require, exports) {
     "use strict";
     function configure(config) {
@@ -894,7 +918,6 @@ define('services/track-item-service',["require", "exports", "aurelia-framework",
         function TrackItemService(settingsService) {
             this.settingsService = settingsService;
             this.service = remote.getGlobal('BackgroundService').getTrackItemService();
-            console.log("..................sds");
         }
         TrackItemService.prototype.findAllFromDay = function (from, type) {
             return this.service.findAllFromDay(from, type);
@@ -912,18 +935,21 @@ define('services/track-item-service',["require", "exports", "aurelia-framework",
             newItem.title = oldItem.title;
             newItem.beginDate = moment().toDate();
             newItem.endDate = moment().add(60, 'seconds').toDate();
-            return this.service.createItem(newItem).then(function (item) {
-                console.log("Created newItem to DB:", item);
-                _this.settingsService.saveRunningLogItemReferemce(item.id);
-                return item;
+            return new Promise(function (resolve, reject) {
+                _this.service.createItem(newItem).then(function (item) {
+                    console.log("Created newItem to DB:", item);
+                    _this.settingsService.saveRunningLogItemReferemce(item.id);
+                    resolve(item);
+                });
             });
         };
         ;
         TrackItemService.prototype.stopRunningLogItem = function (runningLogItemId) {
+            var _this = this;
             console.log("stopRunningLogItem");
             return this.service.updateEndDateWithNow(runningLogItemId).then(function (item) {
                 console.log("Updated trackitem to DB:", item);
-                this.settingsService.saveRunningLogItemReferemce(null);
+                _this.settingsService.saveRunningLogItemReferemce(null);
             });
         };
         ;
@@ -12282,15 +12308,28 @@ define('aurelia-i18n/base-i18n',['exports', './i18n', 'aurelia-event-aggregator'
     return BaseI18N;
   }(), _class.inject = [_i18n.I18N, Element, _aureliaEventAggregator.EventAggregator], _temp);
 });
+define('converters/diff-to-ms-value-converter',["require", "exports", "moment"], function (require, exports, moment) {
+    "use strict";
+    var DiffToMsValueConverter = (function () {
+        function DiffToMsValueConverter() {
+        }
+        DiffToMsValueConverter.prototype.toView = function (endDate, beginDate) {
+            moment(endDate).diff(beginDate);
+        };
+        return DiffToMsValueConverter;
+    }());
+    exports.DiffToMsValueConverter = DiffToMsValueConverter;
+});
+
 define('text!app-menubar.html', ['module'], function(module) { module.exports = "<template>\n  <md-colors md-primary-color=\"#52ae6e\" md-accent-color=\"#429e5e\"></md-colors>\n\n  <div>\n    <router-view></router-view>\n  </div>\n</template>\n"; });
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./nav-bar.html\"></require>\n  <md-colors md-primary-color=\"#52ae6e\" md-accent-color=\"#429e5e\"></md-colors>\n\n  <nav-bar router.bind=\"router\"></nav-bar>\n\n  <div>\n    <router-view></router-view>\n  </div>\n</template>\n"; });
 define('text!child-router.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate\">\n    <h3>${heading}</h3>\n    <div class=\"row\">\n      <div class=\"col m2\">\n        <md-well router.bind=\"router\"></md-well>\n      </div>\n      <div class=\"col m10\">\n        <router-view></router-view>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
-define('text!menubar.html', ['module'], function(module) { module.exports = "<template>\n    <section class=\"au-animate\">\n        <div class=\"container\">\n\n            <form validation-errors.bind=\"errors\">\n                <div if.bind=\"!runningLogItem\">\n                    <div>\n                        <p>Add new task </p>\n\n                        <div class=\"row\">\n                            <div class=\"col s4\">\n                                <md-input md-label=\"Group\"\n                                          md-value.bind=\"newItem.app\"></md-input>\n                            </div>\n                            <div class=\"col s6\">\n                                <md-input md-label=\"Title\"\n                                          md-value.bind=\"newItem.title\"></md-input>\n                            </div>\n                            <div class=\"col s1\">\n                                <md-input md-label=\"Color\"\n                                          md-type=\"color\"\n                                          md-value.bind=\"newItem.color\"></md-input>\n                            </div>\n                            <div class=\"col s1\">\n                                <button md-button=\"disabled.bind: errors.length; flat: true;\"\n                                        md-waves\n                                        class=\"accent-text\"\n                                        click.delegate=\"startNewLogItem(newItem)\"><i class=\"left material-icons\">play_circle_filled</i>\n                                </button>\n                            </div>\n                        </div>\n                    </div>\n\n\n                </div>\n            </form>\n            ${loading}\n            <div class=\"row au-stagger\">\n                <div class=\"col s6 m3 card-container au-animate\" repeat.for=\"item of trackItems\">\n                    <md-collection>\n                        <md-collection-item class=\"accent-text\">\n                            <div class=\"logitem-color\" css=\"background-color: ${item.color}\"></div>\n                            <h3>${item.title}</h3>\n\n                            <p>${item.beginDate | df: 'yyyy.MM.dd HH:mm:ss'} - ${item.endDate | df: 'yyyy.MM.dd\n                                HH:mm:ss'}\n                                <b> ${item.endDate.getTime()-item.beginDate.getTime()}</b>\n                            </p></md-collection-item>\n                    </md-collection>\n                </div>\n            </div>\n        </div>\n    </section>\n</template>\n"; });
 define('text!nav-bar.html', ['module'], function(module) { module.exports = "<template bindable=\"router\">\n  <md-navbar fixed=\"true\">\n    <a md-sidenav-collapse=\"ref.bind: sideNav;\" class=\"left\"><i class=\"material-icons\">menu</i></a>\n    <a href=\"#\" class=\"brand-logo center\">\n      <span class=\"left flow-text\">${router.title}</span>\n    </a>\n    <ul class=\"right hide-on-med-and-down\">\n      <li md-waves repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\n        <a href.bind=\"row.href\">${row.title}</a>\n      </li>\n    </ul>\n  </md-navbar>\n  <md-sidenav view-model.ref=\"sideNav\" md-close-on-click=\"true\" md-edge=\"left\">\n    <ul>\n      <li md-waves repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\n        <a href.bind=\"row.href\">${row.title}</a>\n      </li>\n    </ul>\n  </md-sidenav>\n</template>\n"; });
 define('text!users.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./blur-image\"></require>\n\n  <section class=\"au-animate\">\n    <div class=\"container\">\n\n      <h3>${heading}</h3>\n\n      <div class=\"row au-stagger\">\n        <div class=\"col s6 m3 card-container au-animate\" repeat.for=\"user of users\">\n          <div  class=\"card usercard\">\n\n            <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\n            <div class=\"avatar\">\n              <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\n            </div>\n            <div class=\"content\">\n              <p class=\"name\">${user.login}</p>\n              <p><a target=\"_blank\" md-button md-waves href.bind=\"user.html_url\">Contact</a></p>\n            </div>\n\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
 define('text!welcome.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate\">\n    <div class=\"container\">\n      <h3 t=\"welcome.Header\"></h3>\n      <md-card>\n        <md-input md-label=\"First Name\" md-value.bind=\"firstName & validate\"></md-input>\n        <md-input md-label=\"Last Name\" md-value.bind=\"lastName & validate\"></md-input><br />\n        <button md-button md-waves=\"color: light;\" click.delegate=\"greet()\" md-modal-trigger href=\"#modal1\">Submit</button><br/>\n        <button md-button md-waves=\"color: light;\" click.delegate=\"sayHello()\">Welcome with Electron2</button>\n      </md-card>\n      <md-card md-title=\"Full name\">\n        <div>\n          ${fullName | upper}\n        </div>\n      </md-card>\n\n      <md-card if.bind=\"controller.errors.length\">\n        <h5 class=\"error-text\">You have errors!</h5>\n        <ul style=\"margin-top: 15px;\">\n          <li repeat.for=\"error of controller.errors\">\n            <a href=\"#\" click.delegate=\"error.target.focus()\">\n              ${error.message}\n            </a>\n          </li>\n        </ul>\n      </md-card>\n      \n      <md-card>\n        <div class=\"group\">\n          <label for=\"locale\">Select locale</label>\n          <div class=\"button-row\" id=\"locale\">\n            <button md-button md-waves click.delegate=\"setLocale('en')\">en</button>\n            <button md-button md-waves click.delegate=\"setLocale('no')\">no</button>\n          </div>\n        </div>\n      </md-card>\n\n      <md-card md-title=\"Versions\">\n        <p>Node version: ${status.nodeVersion}</p>\n        <p>Electron version: ${status.electronVersion}</p>\n        <p>Chrome version: ${status.chromeVersion}</p>\n        <p>V8 version: ${status.v8Version}</p>\n      </md-card>      \n    </div>\n\n    <div id=\"modal1\" class=\"modal\">\n      <div class=\"modal-content\">\n        <h4>Welcome!</h4>\n        <p>Welcome, ${fullName}</p>\n      </div>\n      <div class=\"modal-footer\">\n        <a md-button=\"flat: true;\" md-waves=\"color: accent;\" class=\"modal-action modal-close\">Close</a>\n      </div>\n    </div>\n    \n  </section>\n</template>\n"; });
-define('text!settings/settings.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./blur-image\"></require>\n\n  <section class=\"au-animate\">\n    <div class=\"container\">\n\n      <h3>${heading}</h3>\n\n      <div class=\"row au-stagger\">\n        <div class=\"col s6 m3 card-container au-animate\" repeat.for=\"user of users\">\n          <div  class=\"card usercard\">\n\n            <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\n            <div class=\"avatar\">\n              <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\n            </div>\n            <div class=\"content\">\n              <p class=\"name\">${user.login}</p>\n              <p><a target=\"_blank\" md-button md-waves href.bind=\"user.html_url\">Contact</a></p>\n            </div>\n\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
-define('text!summary/summary.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./blur-image\"></require>\n\n  <section class=\"au-animate\">\n    <div class=\"container\">\n\n      <h3>${heading}</h3>\n\n      <div class=\"row au-stagger\">\n        <div class=\"col s6 m3 card-container au-animate\" repeat.for=\"user of users\">\n          <div  class=\"card usercard\">\n\n            <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\n            <div class=\"avatar\">\n              <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\n            </div>\n            <div class=\"content\">\n              <p class=\"name\">${user.login}</p>\n              <p><a target=\"_blank\" md-button md-waves href.bind=\"user.html_url\">Contact</a></p>\n            </div>\n\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
+define('text!menubar/menubar.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"../converters/ms-to-duration-value-converter\"></require>\n    <section class=\"au-animate\">\n        <p class=\"container\">\n\n            <form validation-errors.bind=\"errors\">\n                <md-collection>\n                    <md-collection-item class=\"accent-text\"\n                                        if.bind=\"!runningLogItem\">\n                        <div class=\"row\">\n                            <div class=\"col s4\">\n                                <md-input md-label=\"Group\"\n                                          md-value.bind=\"newItem.app\"></md-input>\n                            </div>\n                            <div class=\"col s6\">\n                                <md-input md-label=\"Title\"\n                                          md-value.bind=\"newItem.title\"></md-input>\n                            </div>\n                            <div class=\"col s1\">\n\n                                <md-input md-type=\"color\"\n                                          md-value.bind=\"newItem.color\"></md-input>\n                            </div>\n                            <div class=\"col s1\">\n                                <button md-button=\"disabled.bind: errors.length; flat: true;\"\n                                        md-waves\n                                        class=\"accent-text\"\n                                        click.delegate=\"startNewLogItem(newItem)\"><i class=\"left material-icons\">play_circle_filled</i>\n                                </button>\n                            </div>\n                        </div>\n\n                    </md-collection-item>\n                    <md-collection-item class=\"accent-text\"\n                                        css=\"border-left: 5px solid ${runningLogItem.color}\"\n                                        if.bind=\"runningLogItem\">\n        <p> ${runningLogItem.title} </p>\n        <span> <b>${ runningLogItem.beginDate | rt }</b></span>\n        <a href=\"#!\" class=\"secondary-content\"\n           click.delegate=\"stopRunningLogItem()\"><i class=\"material-icons\">stop</i></a>\n\n        </md-collection-item>\n        <md-collection-header><h5>Last tasks</h5></md-collection-header>\n        <md-collection-item class=\"accent-text\"\n                            css=\"border-left: 5px solid ${item.color}\"\n                            repeat.for=\"item of trackItems\">\n            <p> ${item.title}</p>\n                        <span>  ${item.beginDate | df} - ${item.endDate | df}\n                            <b> ${item.endDate.getTime()-item.beginDate.getTime() | msToDuration}</b>\n                        </span>\n        </md-collection-item>\n        </md-collection>\n        </form>\n\n    </section>\n</template>\n"; });
+define('text!settings/settings.html', ['module'], function(module) { module.exports = "<template>\n\n  <section class=\"au-animate\">\n    <div class=\"container\">\n\n      <h3>Settings</h3>\n\n      <div class=\"row au-stagger\">\n        <div class=\"col s6 m3 card-container au-animate\" repeat.for=\"user of users\">\n          <div  class=\"card usercard\">\n\n            <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\n            <div class=\"avatar\">\n              <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\n            </div>\n            <div class=\"content\">\n              <p class=\"name\">${user.login}</p>\n              <p><a target=\"_blank\" md-button md-waves href.bind=\"user.html_url\">Contact</a></p>\n            </div>\n\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
+define('text!summary/summary.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate\">\n    <div class=\"container\">\n\n      <h3>Summary</h3>\n\n      <div class=\"row au-stagger\">\n        <div class=\"col s6 m3 card-container au-animate\" >\n\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
 define('text!timeline/timeline-component.html', ['module'], function(module) { module.exports = "<template>\n\n  Timeline component\n</template>\n"; });
 define('text!timeline/timeline-view.html', ['module'], function(module) { module.exports = "<template>\n<require from=\"./timeline-component\"></require>\n  <section class=\"au-animate\">\n    <div class=\"container\">\n\n      <h3>${heading}</h3>\n\n      <div class=\"row au-stagger\">\n        <div class=\"col s12 m3 \" >\n          <timeline-component></timeline-component>\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
 define('text!trackItem/trackItem.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./blur-image\"></require>\n\n  <section class=\"au-animate\">\n    <div class=\"container\">\n\n      <h3>${heading}</h3>\n\n      <div class=\"row au-stagger\">\n        <div class=\"col s6 m3 card-container au-animate\" repeat.for=\"user of users\">\n          <div  class=\"card usercard\">\n\n            <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\n            <div class=\"avatar\">\n              <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\n            </div>\n            <div class=\"content\">\n              <p class=\"name\">${user.login}</p>\n              <p><a target=\"_blank\" md-button md-waves href.bind=\"user.html_url\">Contact</a></p>\n            </div>\n\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });

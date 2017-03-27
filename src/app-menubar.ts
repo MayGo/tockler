@@ -7,7 +7,7 @@ export class App {
   configureRouter(config: RouterConfiguration, router: Router) {
     config.title = 'Aurelia';
     config.map([
-      { route: [''],   moduleId: './menubar'}
+      { route: [''],   moduleId: './menubar/menubar'}
     ]);
 
     this.router = router;
