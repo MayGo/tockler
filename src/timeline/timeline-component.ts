@@ -1,5 +1,6 @@
 import {autoinject} from "aurelia-framework";
 import * as moment from "moment";
+import * as d3 from 'd3';
 
 @autoinject
 export class TimelineComponent {
@@ -21,6 +22,7 @@ export class TimelineComponent {
 
     mainHeight = 70;
     miniHeight = 30;
+
 
     logTrackItemHeight = (this.mainHeight + this.miniHeight - (this.margin.top + this.margin.bottom)) / 3;
 

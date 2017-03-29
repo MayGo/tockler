@@ -16,6 +16,7 @@
     "postinstall": "install-app-deps"
   },
   "dependencies": {
+    "@types/d3": "^3.5.16",
     "aurelia-animator-css": "1.0.0",
     "aurelia-bootstrapper": "1.0.1",
     "aurelia-fetch-client": "1.0.1",
@@ -25,6 +26,7 @@
     "auto-launch": "^5.0.1",
     "bunyan": "^1.8.1",
     "compare-versions": "^3.0.0",
+    "d3": "^3.5.16",
     "electron-context-menu": "^0.6.0",
     "electron-squirrel-startup": "^1.0.0",
     "es6-promise": "^4.0.5",

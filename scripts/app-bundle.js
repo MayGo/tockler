@@ -23,8 +23,8 @@ define('app',["require", "exports"], function (require, exports) {
         App.prototype.configureRouter = function (config, router) {
             config.title = 'Aurelia';
             config.map([
-                { route: ['', 'menubar'], name: 'menubar', moduleId: './menubar/menubar', nav: true, title: 'Menubar' },
-                { route: 'timeline', name: 'timeline', moduleId: './timeline/timeline-view', nav: true, title: 'Timeline' },
+                { route: ['menubar'], name: 'menubar', moduleId: './menubar/menubar', nav: true, title: 'Menubar' },
+                { route: ['', 'timeline'], name: 'timeline', moduleId: './timeline/timeline-view', nav: true, title: 'Timeline' },
                 { route: 'summary', name: 'summary', moduleId: './summary/summary', nav: true, title: 'Summary' },
                 { route: 'settings', name: 'settings', moduleId: './settings/settings', nav: true, title: 'Settings' }
             ]);
@@ -728,6 +728,19 @@ define('welcome',["require", "exports", "aurelia-framework", "aurelia-validation
     exports.UpperValueConverter = UpperValueConverter;
 });
 
+define('converters/diff-to-ms-value-converter',["require", "exports", "moment"], function (require, exports, moment) {
+    "use strict";
+    var DiffToMsValueConverter = (function () {
+        function DiffToMsValueConverter() {
+        }
+        DiffToMsValueConverter.prototype.toView = function (endDate, beginDate) {
+            moment(endDate).diff(beginDate);
+        };
+        return DiffToMsValueConverter;
+    }());
+    exports.DiffToMsValueConverter = DiffToMsValueConverter;
+});
+
 define('converters/ms-to-duration-value-converter',["require", "exports", "moment"], function (require, exports, moment) {
     "use strict";
     var MsToDurationValueConverter = (function () {
@@ -1103,17 +1116,341 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-define('timeline/timeline-component',["require", "exports", "aurelia-framework", "../services/settings-service"], function (require, exports, aurelia_framework_1, settings_service_1) {
+define('timeline/timeline-component',["require", "exports", "aurelia-framework", "moment", "d3"], function (require, exports, aurelia_framework_1, moment, d3) {
     "use strict";
     var TimelineComponent = (function () {
-        function TimelineComponent(settingsService) {
-            this.settingsService = settingsService;
+        function TimelineComponent() {
+            this.margin = {
+                top: 20,
+                right: 30,
+                bottom: 15,
+                left: 10
+            };
+            this.h = 140;
+            this.w = 1000;
+            this.height = this.h - this.margin.top - this.margin.bottom - 5;
+            this.width = this.w - this.margin.right - this.margin.left - 5;
+            this.lanes = ["LogTrackItem", "StatusTrackItem", "AppTrackItem"];
+            this.mainHeight = 70;
+            this.miniHeight = 30;
+            this.logTrackItemHeight = (this.mainHeight + this.miniHeight - (this.margin.top + this.margin.bottom)) / 3;
+            this.timeDomainStart = moment().startOf('day').toDate();
+            this.timeDomainEnd = d3.time.day.offset(this.timeDomainStart, 1);
+            this.xScaleMain = d3.time.scale()
+                .domain([this.timeDomainStart, this.timeDomainEnd])
+                .range([0, this.width])
+                .clamp(true);
+            this.yScaleMain = d3.scale.ordinal()
+                .domain(this.lanes)
+                .rangeRoundBands([0, this.mainHeight], .1);
+            this.xScaleMini = d3.time.scale()
+                .domain([this.timeDomainStart, this.timeDomainEnd])
+                .range([0, this.width])
+                .clamp(true);
+            this.yScaleMini = d3.scale.ordinal()
+                .domain(this.lanes)
+                .rangeRoundBands([0, this.miniHeight], .1);
+            this.allItems = [];
+            console.log(this.miniHeight, this.mainHeight);
+            console.log(this.height, this.width);
         }
+        TimelineComponent.prototype.init = function (el) {
+            this.chart = d3.select(el)
+                .append("svg")
+                .attr("width", this.width + this.margin.left + this.margin.right)
+                .attr("height", this.height + this.margin.top + this.margin.bottom)
+                .attr("class", "chart");
+            this.chart.append("defs").append("clipPath")
+                .attr("id", "clip")
+                .append("rect")
+                .attr("width", this.width)
+                .attr("height", this.mainHeight);
+            this.main = this.chart.append("g")
+                .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")")
+                .attr("width", this.width)
+                .attr("height", this.mainHeight)
+                .attr("class", "main");
+            this.mini = this.chart.append("g")
+                .attr("transform", "translate(" + this.margin.left + "," + (this.mainHeight + this.margin.top) + ")")
+                .attr("width", this.width)
+                .attr("height", this.miniHeight)
+                .attr("class", "mini");
+            var tickFormat = "%H:%M";
+            this.xAxisMain = d3.svg.axis()
+                .scale(this.xScaleMain)
+                .orient("top")
+                .tickFormat(d3.time.format(tickFormat))
+                .ticks(20)
+                .tickSize(this.mainHeight)
+                .tickPadding(4);
+            var yAxisMain = d3.svg.axis()
+                .scale(this.yScaleMain)
+                .orient("left")
+                .tickSize(-2)
+                .tickPadding(-90);
+            this.main.append("g").attr("class", "x axis")
+                .attr("transform", "translate(0, " + (this.mainHeight) + ")")
+                .transition()
+                .call(this.xAxisMain);
+            console.log("Init selection tool.");
+            this.selectionTool = d3.svg.brush().x(this.xScaleMain)
+                .on("brushstart", this.selectionToolBrushStart)
+                .on("brushend", this.selectionToolBrushEnd)
+                .on("brush", this.selectionToolBrushing);
+            this.main.append('g')
+                .attr('class', 'brush').call(this.selectionTool);
+            d3.select(".brush").selectAll(".extent")
+                .attr('height', this.logTrackItemHeight);
+            d3.select(".brush").selectAll(".background")
+                .attr('height', this.mainHeight);
+            var arc = d3.svg.arc()
+                .outerRadius(this.logTrackItemHeight)
+                .startAngle(0)
+                .endAngle(function (d, i) {
+                return i ? -Math.PI : Math.PI;
+            });
+            d3.select(".brush").selectAll(".resize").append("path")
+                .attr("transform", "translate(0," + this.logTrackItemHeight / 2 + ")")
+                .attr("d", arc);
+            d3.select(".brush").selectAll(".resize rect").style('display', 'none');
+            d3.select(".brush").selectAll(".resize").append("text")
+                .text("").style("text-anchor", "middle");
+            this.main.append("g")
+                .attr("id", "mainItemsId")
+                .attr("clip-path", "url(#clip)");
+            this.main.append("g").attr("class", "y axis")
+                .transition()
+                .call(yAxisMain);
+            this.mini.append("g")
+                .attr("id", "miniItemsId");
+            var xAxisMini = d3.svg.axis()
+                .scale(this.xScaleMini)
+                .orient("bottom")
+                .tickFormat(d3.time.format(tickFormat))
+                .ticks(d3.time.minute, 60)
+                .tickSize(3)
+                .tickPadding(4);
+            this.mini.append("g").attr("class", "x axis")
+                .attr("transform", "translate(0, " + this.miniHeight + ")")
+                .transition()
+                .call(xAxisMini);
+            this.miniBrush = d3.svg.brush()
+                .x(this.xScaleMini)
+                .on("brush", this.displaySelectedInMain);
+            this.mini.append("g")
+                .attr("class", "x miniBrush")
+                .call(this.miniBrush)
+                .selectAll("rect")
+                .attr("y", 1)
+                .attr("height", this.miniHeight);
+            this.tip = this.initTooltips(this.chart);
+        };
+        TimelineComponent.prototype.changeDay = function (day) {
+            if (!day) {
+                console.log("Not changeing, no day.");
+                return;
+            }
+            console.log('Changing day: ' + day);
+            this.chart.selectAll('.miniItems').remove();
+            this.chart.selectAll('.mainItems').remove();
+            this.allItems = [];
+            this.updateDomain(day);
+            this.drawMiniBrush(day);
+        };
+        TimelineComponent.prototype.drawMiniBrush = function (day) {
+            var start = moment(day).startOf('day').toDate();
+            var end = moment(day).startOf('day').add(1, 'day').toDate();
+            var isToday = moment(day).isSame(moment(), 'day');
+            if (isToday) {
+                start = moment().subtract(1, 'hours').toDate();
+                end = moment().add(10, 'minutes').toDate();
+            }
+            console.log("Setting miniBrush to:", start, end);
+            miniBrush.extent([start, end]);
+        };
+        TimelineComponent.prototype.updateDomain = function (day) {
+            var timeDomainStart = day;
+            var timeDomainEnd = d3.time.day.offset(timeDomainStart, 1);
+            xScaleMini.domain([timeDomainStart, timeDomainEnd]);
+        };
+        TimelineComponent.prototype.addItemsToTimeline = function (trackItems) {
+            console.log('addItemsToTimeline', trackItems.length);
+            allItems.push.apply(allItems, trackItems);
+            var rects = mini.select("#miniItemsId").selectAll(".miniItems")
+                .data(allItems);
+            rects.enter()
+                .append("rect")
+                .attr("class", "miniItems")
+                .attr("id", function (d) {
+                return "mini_" + d.id;
+            })
+                .attr("height", 7);
+            rects
+                .style("fill", function (d) {
+                return d.color;
+            })
+                .attr("x", function (d) {
+                return xScaleMini(new Date(d.beginDate));
+            })
+                .attr("y", function (d) {
+                return yScaleMini(d.taskName);
+            })
+                .attr("width", function (d) {
+                if ((xScaleMini(new Date(d.endDate)) - xScaleMini(new Date(d.beginDate))) < 0) {
+                    console.error("Negative value, error with dates.");
+                    console.log(d);
+                    return 0;
+                }
+                return (xScaleMini(new Date(d.endDate)) - xScaleMini(new Date(d.beginDate)));
+            });
+            displaySelectedInMain();
+        };
+        TimelineComponent.prototype.removeItemsFromTimeline = function (trackItems) {
+            console.log('removeItemsFromTimeline');
+            allItems = [];
+            addItemsToTimeline(trackItems);
+        };
+        TimelineComponent.prototype.displaySelectedInMain = function () {
+            var minExtent = miniBrush.extent()[0], maxExtent = miniBrush.extent()[1], visItems = allItems.filter(function (d) {
+                return new Date(d.beginDate) <= maxExtent && new Date(d.endDate) >= minExtent;
+            });
+            console.log("Displaying minExtent <> maxExtent", minExtent, maxExtent);
+            mini.select(".miniBrush")
+                .call(miniBrush.extent([minExtent, maxExtent]));
+            console.log("Updating main view scale and axis");
+            xScaleMain.domain([minExtent, maxExtent]);
+            main.select(".x.axis").call(xAxisMain);
+            var rects = main.select("#mainItemsId").selectAll(".mainItems")
+                .data(visItems);
+            rects.enter().append("rect")
+                .attr("class", "mainItems")
+                .attr("id", function (d) {
+                return "main_" + d.id;
+            })
+                .attr("height", function (d) {
+                return 20;
+            });
+            rects.style("fill", function (d) {
+                return d.color;
+            })
+                .attr("x", function (d) {
+                return xScaleMain(new Date(d.beginDate));
+            })
+                .attr("y", function (d) {
+                return yScaleMain(d.taskName);
+            })
+                .attr("width", function (d) {
+                return xScaleMain(new Date(d.endDate)) - xScaleMain(new Date(d.beginDate));
+            });
+            rects.exit().remove();
+            rects.on('click', onClickTrackItem)
+                .on('mouseover', tip.show)
+                .on('mouseout', tip.hide);
+        };
+        TimelineComponent.prototype.onClickTrackItem = function (d, i) {
+            console.log("onClickTrackItem");
+            var p = d3.select(this);
+            var data = p.data()[0];
+            var selectionToolSvg = d3.select(".brush");
+            var translate = p.attr('transform');
+            var x = new Number(p.attr('x'));
+            var y = new Number(p.attr('y'));
+            this.selectedTrackItem = {
+                id: data.id,
+                app: data.app,
+                taskName: data.taskName,
+                beginDate: new Date(data.beginDate),
+                endDate: new Date(data.endDate),
+                title: data.title,
+                color: data.color,
+                originalColor: data.color,
+                left: x + 'px',
+                top: y + 'px'
+            };
+            if (data.taskName === 'LogTrackItem') {
+                selectionToolSvg.selectAll("path").style('display', 'inherit');
+            }
+            else {
+                selectionToolSvg.selectAll("path").style('display', 'none');
+            }
+            selectionToolSvg.selectAll(".extent")
+                .attr('height', p.attr('height'))
+                .attr('y', p.attr('y'));
+            selectionTool.extent([new Date(data.beginDate), new Date(data.endDate)]);
+            selectionToolSvg.call(selectionTool);
+            event.stopPropagation();
+            updateBrushTimeTexts();
+        };
+        TimelineComponent.prototype.updateBrushTimeTexts = function () {
+            var beginDate = new Date(selectionTool.extent()[0].getTime());
+            var endDate = new Date(selectionTool.extent()[1].getTime());
+            console.log("Updating brush texts: ", beginDate, endDate);
+            var format = d3.time.format("%H:%M:%S");
+            d3.select(".brush .resize.w").select("text")
+                .text(format(beginDate));
+            d3.select(".brush .resize.e").select("text")
+                .text(format(endDate));
+        };
+        TimelineComponent.prototype.initTooltips = function (addToSvg) {
+            console.log("Init tooltip");
+            var format = d3.time.format("%H:%M:%S");
+            var d3tip = d3.tip().attr('class', 'd3-tip').html(function (d) {
+                var duration = moment.duration(new Date(d.endDate) - new Date(d.beginDate));
+                var formattedDuration = moment.utc(duration.asMilliseconds()).format("HH[h] mm[m] ss[s]");
+                formattedDuration = formattedDuration.replace('00h 00m', '');
+                formattedDuration = formattedDuration.replace('00h ', '');
+                return "<strong>" + d.app + ":</strong> <span>" + d.title + "</span><div>" +
+                    format(new Date(d.beginDate)) + " - " + format(new Date(d.endDate)) + "</div>" +
+                    "<div><b>" + formattedDuration + "</b></div>";
+            });
+            addToSvg.call(d3tip);
+            return d3tip;
+        };
+        TimelineComponent.prototype.clearBrush = function () {
+            console.log("Clear brush");
+            console.log(this.selectedTrackItem);
+            selectionTool.clear();
+            d3.select(".brush").call(selectionTool);
+        };
+        TimelineComponent.prototype.selectionToolBrushStart = function () {
+            d3.select(".brush").selectAll("path").style('display', 'inherit');
+            d3.select(".brush").selectAll("rect").attr("y", "0");
+            var p = d3.select(this);
+            var x = new Number(p.attr('x'));
+            if (this.selectedTrackItem !== null && this.selectedTrackItem.taskName !== 'LogTrackItem') {
+                this.selectedTrackItem = null;
+            }
+        };
+        ;
+        TimelineComponent.prototype.selectionToolBrushing = function () {
+            var beginDate = d3.time.minute.round(selectionTool.extent()[0].getTime());
+            var endDate = d3.time.minute.round(selectionTool.extent()[1].getTime());
+            d3.select(".brush").call(selectionTool.extent([beginDate, endDate]));
+            updateBrushTimeTexts();
+        };
+        TimelineComponent.prototype.selectionToolBrushEnd = function () {
+            console.log("selectionToolBrushEnd:", selectionTool.extent());
+            var beginDate = selectionTool.extent()[0].getTime();
+            var endDate = selectionTool.extent()[1].getTime();
+            if (endDate - beginDate == 0) {
+                console.log("Just a click");
+                if (this.selectedTrackItem !== null) {
+                    this.selectedTrackItem = null;
+                }
+            }
+            if (this.selectedTrackItem == null) {
+                this.selectedTrackItem = { color: '#32CD32' };
+            }
+            this.selectedTrackItem.left = d3.select(".brush rect.extent").attr("x") + 'px';
+            this.selectedTrackItem.beginDate = beginDate;
+            this.selectedTrackItem.endDate = endDate;
+        };
+        ;
         return TimelineComponent;
     }());
     TimelineComponent = __decorate([
         aurelia_framework_1.autoinject,
-        __metadata("design:paramtypes", [settings_service_1.SettingsService])
+        __metadata("design:paramtypes", [])
     ], TimelineComponent);
     exports.TimelineComponent = TimelineComponent;
 });
@@ -12308,19 +12645,6 @@ define('aurelia-i18n/base-i18n',['exports', './i18n', 'aurelia-event-aggregator'
     return BaseI18N;
   }(), _class.inject = [_i18n.I18N, Element, _aureliaEventAggregator.EventAggregator], _temp);
 });
-define('converters/diff-to-ms-value-converter',["require", "exports", "moment"], function (require, exports, moment) {
-    "use strict";
-    var DiffToMsValueConverter = (function () {
-        function DiffToMsValueConverter() {
-        }
-        DiffToMsValueConverter.prototype.toView = function (endDate, beginDate) {
-            moment(endDate).diff(beginDate);
-        };
-        return DiffToMsValueConverter;
-    }());
-    exports.DiffToMsValueConverter = DiffToMsValueConverter;
-});
-
 define('text!app-menubar.html', ['module'], function(module) { module.exports = "<template>\n  <md-colors md-primary-color=\"#52ae6e\" md-accent-color=\"#429e5e\"></md-colors>\n\n  <div>\n    <router-view></router-view>\n  </div>\n</template>\n"; });
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./nav-bar.html\"></require>\n  <md-colors md-primary-color=\"#52ae6e\" md-accent-color=\"#429e5e\"></md-colors>\n\n  <nav-bar router.bind=\"router\"></nav-bar>\n\n  <div>\n    <router-view></router-view>\n  </div>\n</template>\n"; });
 define('text!child-router.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate\">\n    <h3>${heading}</h3>\n    <div class=\"row\">\n      <div class=\"col m2\">\n        <md-well router.bind=\"router\"></md-well>\n      </div>\n      <div class=\"col m10\">\n        <router-view></router-view>\n      </div>\n    </div>\n  </section>\n</template>\n"; });

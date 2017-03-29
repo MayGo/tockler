@@ -143,6 +143,11 @@
           "moment",
           "text",
           {
+            "name": "d3",
+            "path": "../node_modules/d3/build",
+            "main": "d3.js"
+          },
+          {
             "name": "aurelia-templating-resources",
             "path": "../node_modules/aurelia-templating-resources/dist/amd",
             "main": "aurelia-templating-resources"
