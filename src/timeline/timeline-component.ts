@@ -1,9 +1,10 @@
-import {autoinject} from "aurelia-framework";
+import { autoinject } from "aurelia-framework";
 import * as moment from "moment";
 import * as d3 from 'd3';
 
 @autoinject
 export class TimelineComponent {
+    selectedTrackItem: any;
     // constants
     margin = {
         top: 20,
@@ -26,7 +27,7 @@ export class TimelineComponent {
 
     logTrackItemHeight = (this.mainHeight + this.miniHeight - (this.margin.top + this.margin.bottom)) / 3;
 
-    constructor() {
+    constructor(private element: Element) {
 
         console.log(this.miniHeight, this.mainHeight);
 
@@ -34,26 +35,26 @@ export class TimelineComponent {
     }
 
 
-    timeDomainStart = moment().startOf('day').toDate();
-    timeDomainEnd = d3.time.day.offset(this.timeDomainStart, 1);
+    timeDomainStart: any = moment().startOf('day').toDate();
+    timeDomainEnd: any = d3.time.day.offset(this.timeDomainStart, 1);
 
     //scales
 
-    xScaleMain = d3.time.scale()
+    xScaleMain: any = d3.time.scale()
         .domain([this.timeDomainStart, this.timeDomainEnd])
         .range([0, this.width])
         .clamp(true);
 
-    yScaleMain = d3.scale.ordinal()
+    yScaleMain: any = d3.scale.ordinal()
         .domain(this.lanes)
         .rangeRoundBands([0, this.mainHeight], .1);
 
-    xScaleMini = d3.time.scale()
+    xScaleMini: any = d3.time.scale()
         .domain([this.timeDomainStart, this.timeDomainEnd])
         .range([0, this.width])
         .clamp(true);
 
-    yScaleMini = d3.scale.ordinal()
+    yScaleMini: any = d3.scale.ordinal()
         .domain(this.lanes)
         .rangeRoundBands([0, this.miniHeight], .1);
 
@@ -112,7 +113,7 @@ export class TimelineComponent {
             .tickPadding(-90);
 
         this.main.append("g").attr("class", "x axis")
-            .attr("transform", "translate(0, " + (this.mainHeight ) + ")")
+            .attr("transform", "translate(0, " + (this.mainHeight) + ")")
             .transition()
             .call(this.xAxisMain);
 
@@ -228,7 +229,7 @@ export class TimelineComponent {
         }
 
         console.log("Setting miniBrush to:", start, end);
-        miniBrush.extent([start, end]);
+        this.miniBrush.extent([start, end]);
     }
 
     updateDomain(day) {
@@ -236,16 +237,16 @@ export class TimelineComponent {
         var timeDomainStart = day;
         //console.log("Update time domain: ", timeDomainStart)
         var timeDomainEnd = d3.time.day.offset(timeDomainStart, 1);
-        xScaleMini.domain([timeDomainStart, timeDomainEnd]);
+        this.xScaleMini.domain([timeDomainStart, timeDomainEnd]);
     }
 
     addItemsToTimeline(trackItems) {
         console.log('addItemsToTimeline', trackItems.length);
-        allItems.push(...trackItems);
+        this.allItems.push(...trackItems);
 
         //mini item rects
-        var rects = mini.select("#miniItemsId").selectAll(".miniItems")
-            .data(allItems);
+        var rects = this.mini.select("#miniItemsId").selectAll(".miniItems")
+            .data(this.allItems);
 
         rects.enter()
             .append("rect")
@@ -260,48 +261,48 @@ export class TimelineComponent {
                 return d.color;
             })
             .attr("x", function (d) {
-                return xScaleMini(new Date(d.beginDate));
+                return this.xScaleMini(new Date(d.beginDate));
             })
             .attr("y", function (d) {
-                return yScaleMini(d.taskName);
+                return this.yScaleMini(d.taskName);
             })
             .attr("width", function (d) {
-                if ((xScaleMini(new Date(d.endDate)) - xScaleMini(new Date(d.beginDate))) < 0) {
+                if ((this.xScaleMini(new Date(d.endDate)) - this.xScaleMini(new Date(d.beginDate))) < 0) {
                     console.error("Negative value, error with dates.");
                     console.log(d);
                     return 0;
                 }
-                return (xScaleMini(new Date(d.endDate)) - xScaleMini(new Date(d.beginDate)));
+                return (this.xScaleMini(new Date(d.endDate)) - this.xScaleMini(new Date(d.beginDate)));
             });
 
-        displaySelectedInMain();
+        this.displaySelectedInMain();
     }
 
     removeItemsFromTimeline(trackItems) {
         console.log('removeItemsFromTimeline');
-        allItems = [];
-        addItemsToTimeline(trackItems);
+        this.allItems = [];
+        this.addItemsToTimeline(trackItems);
     }
 
     displaySelectedInMain() {
 
-        var minExtent = miniBrush.extent()[0],
-            maxExtent = miniBrush.extent()[1],
-            visItems = allItems.filter(function (d) {
+        var minExtent = this.miniBrush.extent()[0],
+            maxExtent = this.miniBrush.extent()[1],
+            visItems = this.allItems.filter(function (d) {
                 return new Date(d.beginDate) <= maxExtent && new Date(d.endDate) >= minExtent;
             });
 
         console.log("Displaying minExtent <> maxExtent", minExtent, maxExtent);
 
-        mini.select(".miniBrush")
-            .call(miniBrush.extent([minExtent, maxExtent]));
+        this.mini.select(".miniBrush")
+            .call(this.miniBrush.extent([minExtent, maxExtent]));
 
         console.log("Updating main view scale and axis");
-        xScaleMain.domain([minExtent, maxExtent]);
+        this.xScaleMain.domain([minExtent, maxExtent]);
         //xAxisMain.scale(xScaleMain);
-        main.select(".x.axis").call(xAxisMain);
+        this.main.select(".x.axis").call(this.xAxisMain);
 
-        var rects = main.select("#mainItemsId").selectAll(".mainItems")
+        var rects = this.main.select("#mainItemsId").selectAll(".mainItems")
             .data(visItems);
 
         // insert
@@ -313,27 +314,27 @@ export class TimelineComponent {
             .attr("height", function (d) {
                 return 20;
             })
-        ;
+            ;
 
         //update
         rects.style("fill", function (d) {
             return d.color;
         })
             .attr("x", function (d) {
-                return xScaleMain(new Date(d.beginDate));
+                return this.xScaleMain(new Date(d.beginDate));
             })
             .attr("y", function (d) {
-                return yScaleMain(d.taskName);
+                return this.yScaleMain(d.taskName);
             })
             .attr("width", function (d) {
-                return xScaleMain(new Date(d.endDate)) - xScaleMain(new Date(d.beginDate));
+                return this.xScaleMain(new Date(d.endDate)) - this.xScaleMain(new Date(d.beginDate));
             });
 
         rects.exit().remove();
 
-        rects.on('click', onClickTrackItem)
-            .on('mouseover', tip.show)
-            .on('mouseout', tip.hide);
+        rects.on('click', this.onClickTrackItem)
+            .on('mouseover', this.tip.show)
+            .on('mouseout', this.tip.hide);
 
     }
 
@@ -341,7 +342,7 @@ export class TimelineComponent {
 
         console.log("onClickTrackItem");
         //clearBrush();
-        var p = d3.select(this);
+        var p = d3.select(this.element);
         var data = p.data()[0];
 
         var selectionToolSvg = d3.select(".brush");
@@ -377,19 +378,19 @@ export class TimelineComponent {
             .attr('y', p.attr('y'));
 
         // Make brush same size as trackitem
-        selectionTool.extent([new Date(data.beginDate), new Date(data.endDate)]);
-        selectionToolSvg.call(selectionTool);
+        this.selectionTool.extent([new Date(data.beginDate), new Date(data.endDate)]);
+        selectionToolSvg.call(this.selectionTool);
 
         // prevent event bubbling up, to unselect when clicking outside
         event.stopPropagation();
 
-        updateBrushTimeTexts();
+        this.updateBrushTimeTexts();
     }
 
     updateBrushTimeTexts() {
 
-        var beginDate = new Date(selectionTool.extent()[0].getTime());
-        var endDate = new Date(selectionTool.extent()[1].getTime());
+        var beginDate = new Date(this.selectionTool.extent()[0].getTime());
+        var endDate = new Date(this.selectionTool.extent()[1].getTime());
 
         console.log("Updating brush texts: ", beginDate, endDate);
 
@@ -405,8 +406,8 @@ export class TimelineComponent {
 
         var format = d3.time.format("%H:%M:%S");
         // set up initial svg object
-        var d3tip = d3.tip().attr('class', 'd3-tip').html(function (d) {
-            var duration = moment.duration(new Date(d.endDate) - new Date(d.beginDate))
+        var d3tip = d3.tip().attr('class', 'd3-tip').html((d: any) => {
+            var duration = moment.duration(+new Date(d.endDate) - +new Date(d.beginDate))
             var formattedDuration = moment.utc(duration.asMilliseconds()).format("HH[h] mm[m] ss[s]");
             // strip leading zeroes
             formattedDuration = formattedDuration.replace('00h 00m', '');
@@ -425,15 +426,15 @@ export class TimelineComponent {
         console.log("Clear brush");
         console.log(this.selectedTrackItem);
         // Hide selection brushes
-        selectionTool.clear();
-        d3.select(".brush").call(selectionTool);
+        this.selectionTool.clear();
+        d3.select(".brush").call(this.selectionTool);
         // d3.select(".brush").selectAll("rect").attr('height', logTrackItemHeight);
     }
 
     selectionToolBrushStart() {
         d3.select(".brush").selectAll("path").style('display', 'inherit');
         d3.select(".brush").selectAll("rect").attr("y", "0");
-        var p = d3.select(this);
+        var p = d3.select(this.element);
 
         var x = new Number(p.attr('x'));
         if (this.selectedTrackItem !== null && this.selectedTrackItem.taskName !== 'LogTrackItem') {
@@ -446,19 +447,19 @@ export class TimelineComponent {
     selectionToolBrushing() {
 
         // Snap to minute
-        var beginDate = d3.time.minute.round(selectionTool.extent()[0].getTime());
-        var endDate = d3.time.minute.round(selectionTool.extent()[1].getTime());
-        d3.select(".brush").call(selectionTool.extent([beginDate, endDate]));
+        var beginDate = d3.time.minute.round(this.selectionTool.extent()[0].getTime());
+        var endDate = d3.time.minute.round(this.selectionTool.extent()[1].getTime());
+        d3.select(".brush").call(this.selectionTool.extent([beginDate, endDate]));
 
-        updateBrushTimeTexts();
+        this.updateBrushTimeTexts();
     }
 
     selectionToolBrushEnd() {
 
-        console.log("selectionToolBrushEnd:", selectionTool.extent());
+        console.log("selectionToolBrushEnd:", this.selectionTool.extent());
         // change data based on selection brush
-        var beginDate = selectionTool.extent()[0].getTime();
-        var endDate = selectionTool.extent()[1].getTime();
+        var beginDate = this.selectionTool.extent()[0].getTime();
+        var endDate = this.selectionTool.extent()[1].getTime();
 
         if (endDate - beginDate == 0) {
             console.log("Just a click");
@@ -470,7 +471,7 @@ export class TimelineComponent {
         }
 
         if (this.selectedTrackItem == null) {
-            this.selectedTrackItem = {color: '#32CD32'};
+            this.selectedTrackItem = { color: '#32CD32' };
         }
 
         this.selectedTrackItem.left = d3.select(".brush rect.extent").attr("x") + 'px';

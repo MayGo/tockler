@@ -56,12 +56,8 @@ Project is boilerplated from [https://github.com/chuyik/electron-boilerplate](ht
 git clone https://github.com/Maygo/tockler.git  # Download this project
 
 cd tockler  # Switch directory
-npm install              # Install dev dependencies
-Two package.json structure as is recommended in electron-builder: https://github.com/electron-userland/electron-builder#two-packagejson-structure
-cd app
 npm install            # Install dependencies
-bower install
-gulp                     # Start application
+au run --watch # Start application
 ```
 ### Compiling sqlite3
 cd ./node_modules/sqlite3

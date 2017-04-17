@@ -1119,7 +1119,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 define('timeline/timeline-component',["require", "exports", "aurelia-framework", "moment", "d3"], function (require, exports, aurelia_framework_1, moment, d3) {
     "use strict";
     var TimelineComponent = (function () {
-        function TimelineComponent() {
+        function TimelineComponent(element) {
+            this.element = element;
             this.margin = {
                 top: 20,
                 right: 30,
@@ -1266,18 +1267,18 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
                 end = moment().add(10, 'minutes').toDate();
             }
             console.log("Setting miniBrush to:", start, end);
-            miniBrush.extent([start, end]);
+            this.miniBrush.extent([start, end]);
         };
         TimelineComponent.prototype.updateDomain = function (day) {
             var timeDomainStart = day;
             var timeDomainEnd = d3.time.day.offset(timeDomainStart, 1);
-            xScaleMini.domain([timeDomainStart, timeDomainEnd]);
+            this.xScaleMini.domain([timeDomainStart, timeDomainEnd]);
         };
         TimelineComponent.prototype.addItemsToTimeline = function (trackItems) {
             console.log('addItemsToTimeline', trackItems.length);
-            allItems.push.apply(allItems, trackItems);
-            var rects = mini.select("#miniItemsId").selectAll(".miniItems")
-                .data(allItems);
+            (_a = this.allItems).push.apply(_a, trackItems);
+            var rects = this.mini.select("#miniItemsId").selectAll(".miniItems")
+                .data(this.allItems);
             rects.enter()
                 .append("rect")
                 .attr("class", "miniItems")
@@ -1290,37 +1291,38 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
                 return d.color;
             })
                 .attr("x", function (d) {
-                return xScaleMini(new Date(d.beginDate));
+                return this.xScaleMini(new Date(d.beginDate));
             })
                 .attr("y", function (d) {
-                return yScaleMini(d.taskName);
+                return this.yScaleMini(d.taskName);
             })
                 .attr("width", function (d) {
-                if ((xScaleMini(new Date(d.endDate)) - xScaleMini(new Date(d.beginDate))) < 0) {
+                if ((this.xScaleMini(new Date(d.endDate)) - this.xScaleMini(new Date(d.beginDate))) < 0) {
                     console.error("Negative value, error with dates.");
                     console.log(d);
                     return 0;
                 }
-                return (xScaleMini(new Date(d.endDate)) - xScaleMini(new Date(d.beginDate)));
+                return (this.xScaleMini(new Date(d.endDate)) - this.xScaleMini(new Date(d.beginDate)));
             });
-            displaySelectedInMain();
+            this.displaySelectedInMain();
+            var _a;
         };
         TimelineComponent.prototype.removeItemsFromTimeline = function (trackItems) {
             console.log('removeItemsFromTimeline');
-            allItems = [];
-            addItemsToTimeline(trackItems);
+            this.allItems = [];
+            this.addItemsToTimeline(trackItems);
         };
         TimelineComponent.prototype.displaySelectedInMain = function () {
-            var minExtent = miniBrush.extent()[0], maxExtent = miniBrush.extent()[1], visItems = allItems.filter(function (d) {
+            var minExtent = this.miniBrush.extent()[0], maxExtent = this.miniBrush.extent()[1], visItems = this.allItems.filter(function (d) {
                 return new Date(d.beginDate) <= maxExtent && new Date(d.endDate) >= minExtent;
             });
             console.log("Displaying minExtent <> maxExtent", minExtent, maxExtent);
-            mini.select(".miniBrush")
-                .call(miniBrush.extent([minExtent, maxExtent]));
+            this.mini.select(".miniBrush")
+                .call(this.miniBrush.extent([minExtent, maxExtent]));
             console.log("Updating main view scale and axis");
-            xScaleMain.domain([minExtent, maxExtent]);
-            main.select(".x.axis").call(xAxisMain);
-            var rects = main.select("#mainItemsId").selectAll(".mainItems")
+            this.xScaleMain.domain([minExtent, maxExtent]);
+            this.main.select(".x.axis").call(this.xAxisMain);
+            var rects = this.main.select("#mainItemsId").selectAll(".mainItems")
                 .data(visItems);
             rects.enter().append("rect")
                 .attr("class", "mainItems")
@@ -1334,22 +1336,22 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
                 return d.color;
             })
                 .attr("x", function (d) {
-                return xScaleMain(new Date(d.beginDate));
+                return this.xScaleMain(new Date(d.beginDate));
             })
                 .attr("y", function (d) {
-                return yScaleMain(d.taskName);
+                return this.yScaleMain(d.taskName);
             })
                 .attr("width", function (d) {
-                return xScaleMain(new Date(d.endDate)) - xScaleMain(new Date(d.beginDate));
+                return this.xScaleMain(new Date(d.endDate)) - this.xScaleMain(new Date(d.beginDate));
             });
             rects.exit().remove();
-            rects.on('click', onClickTrackItem)
-                .on('mouseover', tip.show)
-                .on('mouseout', tip.hide);
+            rects.on('click', this.onClickTrackItem)
+                .on('mouseover', this.tip.show)
+                .on('mouseout', this.tip.hide);
         };
         TimelineComponent.prototype.onClickTrackItem = function (d, i) {
             console.log("onClickTrackItem");
-            var p = d3.select(this);
+            var p = d3.select(this.element);
             var data = p.data()[0];
             var selectionToolSvg = d3.select(".brush");
             var translate = p.attr('transform');
@@ -1376,14 +1378,14 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
             selectionToolSvg.selectAll(".extent")
                 .attr('height', p.attr('height'))
                 .attr('y', p.attr('y'));
-            selectionTool.extent([new Date(data.beginDate), new Date(data.endDate)]);
-            selectionToolSvg.call(selectionTool);
+            this.selectionTool.extent([new Date(data.beginDate), new Date(data.endDate)]);
+            selectionToolSvg.call(this.selectionTool);
             event.stopPropagation();
-            updateBrushTimeTexts();
+            this.updateBrushTimeTexts();
         };
         TimelineComponent.prototype.updateBrushTimeTexts = function () {
-            var beginDate = new Date(selectionTool.extent()[0].getTime());
-            var endDate = new Date(selectionTool.extent()[1].getTime());
+            var beginDate = new Date(this.selectionTool.extent()[0].getTime());
+            var endDate = new Date(this.selectionTool.extent()[1].getTime());
             console.log("Updating brush texts: ", beginDate, endDate);
             var format = d3.time.format("%H:%M:%S");
             d3.select(".brush .resize.w").select("text")
@@ -1395,7 +1397,7 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
             console.log("Init tooltip");
             var format = d3.time.format("%H:%M:%S");
             var d3tip = d3.tip().attr('class', 'd3-tip').html(function (d) {
-                var duration = moment.duration(new Date(d.endDate) - new Date(d.beginDate));
+                var duration = moment.duration(+new Date(d.endDate) - +new Date(d.beginDate));
                 var formattedDuration = moment.utc(duration.asMilliseconds()).format("HH[h] mm[m] ss[s]");
                 formattedDuration = formattedDuration.replace('00h 00m', '');
                 formattedDuration = formattedDuration.replace('00h ', '');
@@ -1409,13 +1411,13 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
         TimelineComponent.prototype.clearBrush = function () {
             console.log("Clear brush");
             console.log(this.selectedTrackItem);
-            selectionTool.clear();
-            d3.select(".brush").call(selectionTool);
+            this.selectionTool.clear();
+            d3.select(".brush").call(this.selectionTool);
         };
         TimelineComponent.prototype.selectionToolBrushStart = function () {
             d3.select(".brush").selectAll("path").style('display', 'inherit');
             d3.select(".brush").selectAll("rect").attr("y", "0");
-            var p = d3.select(this);
+            var p = d3.select(this.element);
             var x = new Number(p.attr('x'));
             if (this.selectedTrackItem !== null && this.selectedTrackItem.taskName !== 'LogTrackItem') {
                 this.selectedTrackItem = null;
@@ -1423,15 +1425,15 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
         };
         ;
         TimelineComponent.prototype.selectionToolBrushing = function () {
-            var beginDate = d3.time.minute.round(selectionTool.extent()[0].getTime());
-            var endDate = d3.time.minute.round(selectionTool.extent()[1].getTime());
-            d3.select(".brush").call(selectionTool.extent([beginDate, endDate]));
-            updateBrushTimeTexts();
+            var beginDate = d3.time.minute.round(this.selectionTool.extent()[0].getTime());
+            var endDate = d3.time.minute.round(this.selectionTool.extent()[1].getTime());
+            d3.select(".brush").call(this.selectionTool.extent([beginDate, endDate]));
+            this.updateBrushTimeTexts();
         };
         TimelineComponent.prototype.selectionToolBrushEnd = function () {
-            console.log("selectionToolBrushEnd:", selectionTool.extent());
-            var beginDate = selectionTool.extent()[0].getTime();
-            var endDate = selectionTool.extent()[1].getTime();
+            console.log("selectionToolBrushEnd:", this.selectionTool.extent());
+            var beginDate = this.selectionTool.extent()[0].getTime();
+            var endDate = this.selectionTool.extent()[1].getTime();
             if (endDate - beginDate == 0) {
                 console.log("Just a click");
                 if (this.selectedTrackItem !== null) {
@@ -1450,7 +1452,7 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
     }());
     TimelineComponent = __decorate([
         aurelia_framework_1.autoinject,
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [Element])
     ], TimelineComponent);
     exports.TimelineComponent = TimelineComponent;
 });

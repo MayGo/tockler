@@ -144,8 +144,8 @@
           "text",
           {
             "name": "d3",
-            "path": "../node_modules/d3/build",
-            "main": "d3.js"
+            "path": "../node_modules/d3",
+            "main": "d3.min.js"
           },
           {
             "name": "aurelia-templating-resources",
