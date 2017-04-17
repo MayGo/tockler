@@ -1116,7 +1116,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-define('timeline/timeline-component',["require", "exports", "aurelia-framework", "moment", "d3"], function (require, exports, aurelia_framework_1, moment, d3) {
+define('timeline/timeline-component',["require", "exports", "aurelia-framework", "moment", "d3", "d3-tip"], function (require, exports, aurelia_framework_1, moment, d3, d3Tip) {
     "use strict";
     var TimelineComponent = (function () {
         function TimelineComponent(element) {
@@ -1154,13 +1154,17 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
             this.allItems = [];
             console.log(this.miniHeight, this.mainHeight);
             console.log(this.height, this.width);
+            this.init(element);
         }
         TimelineComponent.prototype.init = function (el) {
+            console.log("Element:", el);
+            console.log("Element cahrt:", d3.select(el));
             this.chart = d3.select(el)
                 .append("svg")
                 .attr("width", this.width + this.margin.left + this.margin.right)
                 .attr("height", this.height + this.margin.top + this.margin.bottom)
                 .attr("class", "chart");
+            console.log("Element cahrt:", this.chart);
             this.chart.append("defs").append("clipPath")
                 .attr("id", "clip")
                 .append("rect")
@@ -1396,7 +1400,7 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
         TimelineComponent.prototype.initTooltips = function (addToSvg) {
             console.log("Init tooltip");
             var format = d3.time.format("%H:%M:%S");
-            var d3tip = d3.tip().attr('class', 'd3-tip').html(function (d) {
+            var d3tip = d3Tip().attr('class', 'd3-tip').html(function (d) {
                 var duration = moment.duration(+new Date(d.endDate) - +new Date(d.beginDate));
                 var formattedDuration = moment.utc(duration.asMilliseconds()).format("HH[h] mm[m] ss[s]");
                 formattedDuration = formattedDuration.replace('00h 00m', '');
@@ -1451,6 +1455,7 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
         return TimelineComponent;
     }());
     TimelineComponent = __decorate([
+        aurelia_framework_1.noView(),
         aurelia_framework_1.autoinject,
         __metadata("design:paramtypes", [Element])
     ], TimelineComponent);

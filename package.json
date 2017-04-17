@@ -16,7 +16,6 @@
     "postinstall": "install-app-deps"
   },
   "dependencies": {
-    "@types/d3": "^3.5.16",
     "aurelia-animator-css": "1.0.0",
     "aurelia-bootstrapper": "1.0.1",
     "aurelia-fetch-client": "1.0.1",
@@ -27,6 +26,7 @@
     "bunyan": "^1.8.1",
     "compare-versions": "^3.0.0",
     "d3": "^3.5.16",
+    "d3-tip": "^0.7.1",
     "electron-context-menu": "^0.6.0",
     "electron-squirrel-startup": "^1.0.0",
     "es6-promise": "^4.0.5",
@@ -55,6 +55,7 @@
     "@types/protractor": "1.5.20",
     "@types/selenium-webdriver": "2.44.26",
     "@types/whatwg-fetch": "0.0.32",
+    "@types/d3": "^3.5.16",
     "aurelia-cli": "^0.21.0",
     "aurelia-testing": "1.0.0-beta.2.0.0",
     "aurelia-tools": "0.2.2",

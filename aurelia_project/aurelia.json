@@ -148,6 +148,11 @@
             "main": "d3.min.js"
           },
           {
+            "name": "d3-tip",
+            "path": "../node_modules/d3-tip",
+            "main": "index"
+          },
+          {
             "name": "aurelia-templating-resources",
             "path": "../node_modules/aurelia-templating-resources/dist/amd",
             "main": "aurelia-templating-resources"

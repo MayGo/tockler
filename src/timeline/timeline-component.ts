@@ -1,7 +1,9 @@
-import { autoinject } from "aurelia-framework";
+import { autoinject, noView } from "aurelia-framework";
 import * as moment from "moment";
 import * as d3 from 'd3';
+import * as d3Tip from "d3-tip"; // d3-tip@0.7.0 (with a d3@^4 dependency)
 
+@noView()
 @autoinject
 export class TimelineComponent {
     selectedTrackItem: any;
@@ -32,6 +34,7 @@ export class TimelineComponent {
         console.log(this.miniHeight, this.mainHeight);
 
         console.log(this.height, this.width);
+        this.init(element)
     }
 
 
@@ -70,12 +73,16 @@ export class TimelineComponent {
     tip;
 
     init(el) {
+        console.log("Element:", el);
+        console.log("Element cahrt:", d3.select(el));
+
         this.chart = d3.select(el)
             .append("svg")
             .attr("width", this.width + this.margin.left + this.margin.right)
             .attr("height", this.height + this.margin.top + this.margin.bottom)
             .attr("class", "chart");
 
+        console.log("Element cahrt:", this.chart);
         this.chart.append("defs").append("clipPath")
             .attr("id", "clip")
             .append("rect")
@@ -406,7 +413,7 @@ export class TimelineComponent {
 
         var format = d3.time.format("%H:%M:%S");
         // set up initial svg object
-        var d3tip = d3.tip().attr('class', 'd3-tip').html((d: any) => {
+        var d3tip = d3Tip().attr('class', 'd3-tip').html((d: any) => {
             var duration = moment.duration(+new Date(d.endDate) - +new Date(d.beginDate))
             var formattedDuration = moment.utc(duration.asMilliseconds()).format("HH[h] mm[m] ss[s]");
             // strip leading zeroes
