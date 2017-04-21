@@ -1,15 +1,11 @@
 <template>
-<require from="./timeline-component"></require>
+  <require from="./timeline-component"></require>
   <section class="au-animate">
-    <div class="container">
 
-      <h3>${heading}</h3>
+    <h3>${heading}</h3>
 
-      <div class="row au-stagger">
-        <div class="col s12 m3 " >
-          <timeline-component></timeline-component>
-        </div>
-      </div>
-    </div>
+    <timeline-component track-items="trackItems" selected-track-item="selectedTrackItem" start-date="searchDate" on-zoom-changed="onZoomChanged"
+      zoom-scale="zoomScale" zoom-x="zoomX"></timeline-component>
+
   </section>
 </template>

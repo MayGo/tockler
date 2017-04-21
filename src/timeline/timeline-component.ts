@@ -1,11 +1,16 @@
-import { autoinject, noView } from "aurelia-framework";
+import { autoinject, noView, LogManager } from "aurelia-framework";
 import * as moment from "moment";
 import * as d3 from 'd3';
 import * as d3Tip from "d3-tip"; // d3-tip@0.7.0 (with a d3@^4 dependency)
+import { EventAggregator } from 'aurelia-event-aggregator';
+
+
+let logger = LogManager.getLogger('TimelineComponent');
 
 @noView()
 @autoinject
 export class TimelineComponent {
+    subscriptions = [];
     selectedTrackItem: any;
     // constants
     margin = {
@@ -16,7 +21,7 @@ export class TimelineComponent {
     };
 
     h = 140;
-    w = 1000;//$window.innerWidth;
+    w = window.innerWidth;
 
     height = this.h - this.margin.top - this.margin.bottom - 5;
     width = this.w - this.margin.right - this.margin.left - 5;
@@ -29,12 +34,31 @@ export class TimelineComponent {
 
     logTrackItemHeight = (this.mainHeight + this.miniHeight - (this.margin.top + this.margin.bottom)) / 3;
 
-    constructor(private element: Element) {
+    constructor(private element: Element, private eventAggregator: EventAggregator) {
 
         console.log(this.miniHeight, this.mainHeight);
 
         console.log(this.height, this.width);
-        this.init(element)
+        this.init(element);
+    }
+
+    attached() {
+        let subscription = this.eventAggregator.subscribe('addItemsToTimeline', trackItems => {
+            logger.debug('addItemsToTimeline', trackItems);
+            this.addItemsToTimeline(trackItems);
+        });
+        this.subscriptions.push(subscription)
+    }
+
+    detached() {
+        this.disposeSubscriptions();
+    }
+
+    disposeSubscriptions() {
+        while (this.subscriptions.length) {
+            logger.debug("Dispose subscriptions");
+            this.subscriptions.pop().dispose();
+        }
     }
 
 
@@ -127,9 +151,9 @@ export class TimelineComponent {
         // BRUSH
         // item selection/creation brush
         console.log("Init selection tool.");
-
+        let self = this;
         this.selectionTool = d3.svg.brush().x(this.xScaleMain)
-            .on("brushstart", this.selectionToolBrushStart)
+            .on("brushstart", function () { self.selectionToolBrushStart(this) })
             .on("brushend", this.selectionToolBrushEnd)
             .on("brush", this.selectionToolBrushing);
 
@@ -191,7 +215,7 @@ export class TimelineComponent {
         //miniBrush
         this.miniBrush = d3.svg.brush()
             .x(this.xScaleMini)
-            .on("brush", this.displaySelectedInMain);
+            .on("brush", () => this.displaySelectedInMain());
 
         this.mini.append("g")
             .attr("class", "x miniBrush")
@@ -258,22 +282,22 @@ export class TimelineComponent {
         rects.enter()
             .append("rect")
             .attr("class", "miniItems")
-            .attr("id", function (d) {
+            .attr("id", (d) => {
                 return "mini_" + d.id;
             })
             .attr("height", 7);
 
         rects
-            .style("fill", function (d) {
+            .style("fill", (d) => {
                 return d.color;
             })
-            .attr("x", function (d) {
+            .attr("x", (d) => {
                 return this.xScaleMini(new Date(d.beginDate));
             })
-            .attr("y", function (d) {
+            .attr("y", (d) => {
                 return this.yScaleMini(d.taskName);
             })
-            .attr("width", function (d) {
+            .attr("width", (d) => {
                 if ((this.xScaleMini(new Date(d.endDate)) - this.xScaleMini(new Date(d.beginDate))) < 0) {
                     console.error("Negative value, error with dates.");
                     console.log(d);
@@ -295,7 +319,7 @@ export class TimelineComponent {
 
         var minExtent = this.miniBrush.extent()[0],
             maxExtent = this.miniBrush.extent()[1],
-            visItems = this.allItems.filter(function (d) {
+            visItems = this.allItems.filter((d) => {
                 return new Date(d.beginDate) <= maxExtent && new Date(d.endDate) >= minExtent;
             });
 
@@ -315,41 +339,41 @@ export class TimelineComponent {
         // insert
         rects.enter().append("rect")
             .attr("class", "mainItems")
-            .attr("id", function (d) {
+            .attr("id", (d) => {
                 return "main_" + d.id;
             })
-            .attr("height", function (d) {
+            .attr("height", (d) => {
                 return 20;
             })
             ;
 
         //update
-        rects.style("fill", function (d) {
+        rects.style("fill", (d) => {
             return d.color;
         })
-            .attr("x", function (d) {
+            .attr("x", (d) => {
                 return this.xScaleMain(new Date(d.beginDate));
             })
-            .attr("y", function (d) {
+            .attr("y", (d) => {
                 return this.yScaleMain(d.taskName);
             })
-            .attr("width", function (d) {
+            .attr("width", (d) => {
                 return this.xScaleMain(new Date(d.endDate)) - this.xScaleMain(new Date(d.beginDate));
             });
 
         rects.exit().remove();
-
-        rects.on('click', this.onClickTrackItem)
-            .on('mouseover', this.tip.show)
-            .on('mouseout', this.tip.hide);
+        let self = this;
+        rects.on('click', function (d, i) { self.onClickTrackItem(d, i, this) })
+            .on('mouseover', function (d, i, e) { self.tip.show(d, i, e) })
+            .on('mouseout', function (d, i, e) { self.tip.hide(d, i, e) });
 
     }
 
-    onClickTrackItem(d, i) {
+    onClickTrackItem(d, i, element) {
 
-        console.log("onClickTrackItem");
+        console.log("onClickTrackItem", d, i);
         //clearBrush();
-        var p = d3.select(this.element);
+        var p = d3.select(element);
         var data = p.data()[0];
 
         var selectionToolSvg = d3.select(".brush");
@@ -438,10 +462,10 @@ export class TimelineComponent {
         // d3.select(".brush").selectAll("rect").attr('height', logTrackItemHeight);
     }
 
-    selectionToolBrushStart() {
+    selectionToolBrushStart(element) {
         d3.select(".brush").selectAll("path").style('display', 'inherit');
         d3.select(".brush").selectAll("rect").attr("y", "0");
-        var p = d3.select(this.element);
+        var p = d3.select(element);
 
         var x = new Number(p.attr('x'));
         if (this.selectedTrackItem !== null && this.selectedTrackItem.taskName !== 'LogTrackItem') {

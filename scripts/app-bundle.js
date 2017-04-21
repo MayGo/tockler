@@ -878,13 +878,6 @@ define('menubar/menubar',["require", "exports", "aurelia-framework", "moment", "
     exports.Menubar = Menubar;
 });
 
-define('resources/index',["require", "exports"], function (require, exports) {
-    "use strict";
-    function configure(config) {
-    }
-    exports.configure = configure;
-});
-
 define('services/app-settings-service',["require", "exports"], function (require, exports) {
     "use strict";
     var remote = window.nodeRequire('electron').remote;
@@ -973,6 +966,13 @@ define('services/track-item-service',["require", "exports", "aurelia-framework",
         __metadata("design:paramtypes", [settings_service_1.SettingsService])
     ], TrackItemService);
     exports.TrackItemService = TrackItemService;
+});
+
+define('resources/index',["require", "exports"], function (require, exports) {
+    "use strict";
+    function configure(config) {
+    }
+    exports.configure = configure;
 });
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -1116,11 +1116,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-define('timeline/timeline-component',["require", "exports", "aurelia-framework", "moment", "d3", "d3-tip"], function (require, exports, aurelia_framework_1, moment, d3, d3Tip) {
+define('timeline/timeline-component',["require", "exports", "aurelia-framework", "moment", "d3", "d3-tip", "aurelia-event-aggregator"], function (require, exports, aurelia_framework_1, moment, d3, d3Tip, aurelia_event_aggregator_1) {
     "use strict";
+    var logger = aurelia_framework_1.LogManager.getLogger('TimelineComponent');
     var TimelineComponent = (function () {
-        function TimelineComponent(element) {
+        function TimelineComponent(element, eventAggregator) {
             this.element = element;
+            this.eventAggregator = eventAggregator;
+            this.subscriptions = [];
             this.margin = {
                 top: 20,
                 right: 30,
@@ -1128,7 +1131,7 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
                 left: 10
             };
             this.h = 140;
-            this.w = 1000;
+            this.w = window.innerWidth;
             this.height = this.h - this.margin.top - this.margin.bottom - 5;
             this.width = this.w - this.margin.right - this.margin.left - 5;
             this.lanes = ["LogTrackItem", "StatusTrackItem", "AppTrackItem"];
@@ -1156,7 +1159,25 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
             console.log(this.height, this.width);
             this.init(element);
         }
+        TimelineComponent.prototype.attached = function () {
+            var _this = this;
+            var subscription = this.eventAggregator.subscribe('addItemsToTimeline', function (trackItems) {
+                logger.debug('addItemsToTimeline', trackItems);
+                _this.addItemsToTimeline(trackItems);
+            });
+            this.subscriptions.push(subscription);
+        };
+        TimelineComponent.prototype.detached = function () {
+            this.disposeSubscriptions();
+        };
+        TimelineComponent.prototype.disposeSubscriptions = function () {
+            while (this.subscriptions.length) {
+                logger.debug("Dispose subscriptions");
+                this.subscriptions.pop().dispose();
+            }
+        };
         TimelineComponent.prototype.init = function (el) {
+            var _this = this;
             console.log("Element:", el);
             console.log("Element cahrt:", d3.select(el));
             this.chart = d3.select(el)
@@ -1198,8 +1219,9 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
                 .transition()
                 .call(this.xAxisMain);
             console.log("Init selection tool.");
+            var self = this;
             this.selectionTool = d3.svg.brush().x(this.xScaleMain)
-                .on("brushstart", this.selectionToolBrushStart)
+                .on("brushstart", function () { self.selectionToolBrushStart(this); })
                 .on("brushend", this.selectionToolBrushEnd)
                 .on("brush", this.selectionToolBrushing);
             this.main.append('g')
@@ -1241,7 +1263,7 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
                 .call(xAxisMini);
             this.miniBrush = d3.svg.brush()
                 .x(this.xScaleMini)
-                .on("brush", this.displaySelectedInMain);
+                .on("brush", function () { return _this.displaySelectedInMain(); });
             this.mini.append("g")
                 .attr("class", "x miniBrush")
                 .call(this.miniBrush)
@@ -1279,6 +1301,7 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
             this.xScaleMini.domain([timeDomainStart, timeDomainEnd]);
         };
         TimelineComponent.prototype.addItemsToTimeline = function (trackItems) {
+            var _this = this;
             console.log('addItemsToTimeline', trackItems.length);
             (_a = this.allItems).push.apply(_a, trackItems);
             var rects = this.mini.select("#miniItemsId").selectAll(".miniItems")
@@ -1295,18 +1318,18 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
                 return d.color;
             })
                 .attr("x", function (d) {
-                return this.xScaleMini(new Date(d.beginDate));
+                return _this.xScaleMini(new Date(d.beginDate));
             })
                 .attr("y", function (d) {
-                return this.yScaleMini(d.taskName);
+                return _this.yScaleMini(d.taskName);
             })
                 .attr("width", function (d) {
-                if ((this.xScaleMini(new Date(d.endDate)) - this.xScaleMini(new Date(d.beginDate))) < 0) {
+                if ((_this.xScaleMini(new Date(d.endDate)) - _this.xScaleMini(new Date(d.beginDate))) < 0) {
                     console.error("Negative value, error with dates.");
                     console.log(d);
                     return 0;
                 }
-                return (this.xScaleMini(new Date(d.endDate)) - this.xScaleMini(new Date(d.beginDate)));
+                return (_this.xScaleMini(new Date(d.endDate)) - _this.xScaleMini(new Date(d.beginDate)));
             });
             this.displaySelectedInMain();
             var _a;
@@ -1317,6 +1340,7 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
             this.addItemsToTimeline(trackItems);
         };
         TimelineComponent.prototype.displaySelectedInMain = function () {
+            var _this = this;
             var minExtent = this.miniBrush.extent()[0], maxExtent = this.miniBrush.extent()[1], visItems = this.allItems.filter(function (d) {
                 return new Date(d.beginDate) <= maxExtent && new Date(d.endDate) >= minExtent;
             });
@@ -1340,22 +1364,23 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
                 return d.color;
             })
                 .attr("x", function (d) {
-                return this.xScaleMain(new Date(d.beginDate));
+                return _this.xScaleMain(new Date(d.beginDate));
             })
                 .attr("y", function (d) {
-                return this.yScaleMain(d.taskName);
+                return _this.yScaleMain(d.taskName);
             })
                 .attr("width", function (d) {
-                return this.xScaleMain(new Date(d.endDate)) - this.xScaleMain(new Date(d.beginDate));
+                return _this.xScaleMain(new Date(d.endDate)) - _this.xScaleMain(new Date(d.beginDate));
             });
             rects.exit().remove();
-            rects.on('click', this.onClickTrackItem)
-                .on('mouseover', this.tip.show)
-                .on('mouseout', this.tip.hide);
+            var self = this;
+            rects.on('click', function (d, i) { self.onClickTrackItem(d, i, this); })
+                .on('mouseover', function (d, i, e) { self.tip.show(d, i, e); })
+                .on('mouseout', function (d, i, e) { self.tip.hide(d, i, e); });
         };
-        TimelineComponent.prototype.onClickTrackItem = function (d, i) {
-            console.log("onClickTrackItem");
-            var p = d3.select(this.element);
+        TimelineComponent.prototype.onClickTrackItem = function (d, i, element) {
+            console.log("onClickTrackItem", d, i);
+            var p = d3.select(element);
             var data = p.data()[0];
             var selectionToolSvg = d3.select(".brush");
             var translate = p.attr('transform');
@@ -1418,10 +1443,10 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
             this.selectionTool.clear();
             d3.select(".brush").call(this.selectionTool);
         };
-        TimelineComponent.prototype.selectionToolBrushStart = function () {
+        TimelineComponent.prototype.selectionToolBrushStart = function (element) {
             d3.select(".brush").selectAll("path").style('display', 'inherit');
             d3.select(".brush").selectAll("rect").attr("y", "0");
-            var p = d3.select(this.element);
+            var p = d3.select(element);
             var x = new Number(p.attr('x'));
             if (this.selectedTrackItem !== null && this.selectedTrackItem.taskName !== 'LogTrackItem') {
                 this.selectedTrackItem = null;
@@ -1457,7 +1482,7 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
     TimelineComponent = __decorate([
         aurelia_framework_1.noView(),
         aurelia_framework_1.autoinject,
-        __metadata("design:paramtypes", [Element])
+        __metadata("design:paramtypes", [Element, aurelia_event_aggregator_1.EventAggregator])
     ], TimelineComponent);
     exports.TimelineComponent = TimelineComponent;
 });
@@ -1471,59 +1496,133 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments)).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t;
-    return { next: verb(0), "throw": verb(1), "return": verb(2) };
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-define('timeline/timeline-view',["require", "exports", "aurelia-framework", "../services/settings-service"], function (require, exports, aurelia_framework_1, settings_service_1) {
+define('timeline/timeline-view',["require", "exports", "aurelia-framework", "../services/settings-service", "moment", "lodash", "aurelia-event-aggregator"], function (require, exports, aurelia_framework_1, settings_service_1, moment, _, aurelia_event_aggregator_1) {
     "use strict";
+    var logger = aurelia_framework_1.LogManager.getLogger('TimelineView');
+    var ipcRenderer = window.nodeRequire('electron').ipcRenderer;
     var TimelineView = (function () {
-        function TimelineView(settingsService) {
+        function TimelineView(settingsService, eventAggregator) {
             this.settingsService = settingsService;
+            this.eventAggregator = eventAggregator;
+            this.loadedItems = {};
+            this.pieData = {};
+            this.dayStats = {};
+            this.resetLoadedItems();
         }
-        TimelineView.prototype.activate = function () {
-            return __awaiter(this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    return [2 /*return*/];
-                });
+        TimelineView.prototype.resetLoadedItems = function () {
+            console.log("Resetting loaded items");
+            this.selectedTrackItem = null;
+            this.loadedItems = {
+                AppTrackItem: [],
+                StatusTrackItem: [],
+                LogTrackItem: []
+            };
+        };
+        ;
+        TimelineView.prototype.refreshWindow = function (event, arg) {
+            console.log("Main-Window gained focus, reloading");
+            this.refresh();
+        };
+        ;
+        TimelineView.prototype.refresh = function () {
+            var lastItem = (this.loadedItems['AppTrackItem'].length > 0) ? _(this.loadedItems['AppTrackItem']).last().valueOf() : null;
+            var searchFrom = (lastItem) ? lastItem.beginDate : moment().startOf('day').toDate();
+            console.log('Refreshing from:', searchFrom);
+            this.list(searchFrom);
+        };
+        ;
+        TimelineView.prototype.list = function (startDate) {
+            console.log("Load data from:", startDate);
+            this.zoomScale = sessionStorage.getItem('zoomScale') || 0;
+            this.zoomX = sessionStorage.getItem('zoomX') || 0;
+            this.loading = true;
+            _.keys(this.loadedItems).forEach(function (taskName) {
+                console.log('TIMELINE_LOAD_DAY_REQUEST sent', startDate, taskName);
+                ipcRenderer.send('TIMELINE_LOAD_DAY_REQUEST', startDate, taskName);
             });
+        };
+        ;
+        TimelineView.prototype.parseReceivedTimelineData = function (event, startDate, taskName, items) {
+            var _this = this;
+            console.log('TIMELINE_LOAD_DAY_RESPONSE received', taskName, items);
+            var nothingToUpdate = false;
+            var upsert = function (arr, id, newval) {
+                if (nothingToUpdate === true) {
+                    arr.push(newval);
+                    return;
+                }
+                var index = _.indexOf(arr, _.find(arr, { id: id }));
+                if (index === -1) {
+                    arr.push(newval);
+                    nothingToUpdate = true;
+                }
+                else {
+                    arr.splice(index, 1, newval);
+                }
+            };
+            if (this.loadedItems[taskName].length === 0) {
+                this.loadedItems[taskName] = items;
+            }
+            else {
+                _.each(items, function (item) {
+                    upsert(_this.loadedItems[taskName], item.id, item);
+                });
+            }
+            this.loading = false;
+            console.log('Trackitems loaded, parsing ended.', taskName);
+            this.eventAggregator.publish('addItemsToTimeline', this.loadedItems[taskName]);
+            if (taskName === 'AppTrackItem') {
+            }
+            console.log('Trackitems loaded, $digest.');
+        };
+        ;
+        TimelineView.prototype.attached = function () {
+            var _this = this;
+            console.log("attached");
+            ipcRenderer.on('main-window-focus', function (event, arg) { return _this.refreshWindow(event, arg); });
+            ipcRenderer.on('TIMELINE_LOAD_DAY_RESPONSE', function (event, startDate, taskName, items) { return _this.parseReceivedTimelineData(event, startDate, taskName, items); });
+            this.refresh();
+        };
+        TimelineView.prototype.detached = function () {
+            console.log("detached");
+            ipcRenderer.removeListener('main-window-focus', this.refreshWindow);
+            ipcRenderer.removeListener('TIMELINE_LOAD_DAY_RESPONSE', this.parseReceivedTimelineData);
         };
         return TimelineView;
     }());
+    __decorate([
+        aurelia_framework_1.bindable({
+            defaultBindingMode: aurelia_framework_1.bindingMode.twoWay
+        }),
+        __metadata("design:type", Object)
+    ], TimelineView.prototype, "loadedItems", void 0);
+    __decorate([
+        aurelia_framework_1.bindable({
+            defaultBindingMode: aurelia_framework_1.bindingMode.twoWay
+        }),
+        __metadata("design:type", Object)
+    ], TimelineView.prototype, "selectedTrackItem", void 0);
+    __decorate([
+        aurelia_framework_1.bindable({
+            defaultBindingMode: aurelia_framework_1.bindingMode.twoWay
+        }),
+        __metadata("design:type", Boolean)
+    ], TimelineView.prototype, "loading", void 0);
+    __decorate([
+        aurelia_framework_1.bindable({
+            defaultBindingMode: aurelia_framework_1.bindingMode.twoWay
+        }),
+        __metadata("design:type", Object)
+    ], TimelineView.prototype, "zoomScale", void 0);
+    __decorate([
+        aurelia_framework_1.bindable({
+            defaultBindingMode: aurelia_framework_1.bindingMode.twoWay
+        }),
+        __metadata("design:type", Object)
+    ], TimelineView.prototype, "zoomX", void 0);
     TimelineView = __decorate([
         aurelia_framework_1.autoinject,
-        __metadata("design:paramtypes", [settings_service_1.SettingsService])
+        __metadata("design:paramtypes", [settings_service_1.SettingsService, aurelia_event_aggregator_1.EventAggregator])
     ], TimelineView);
     exports.TimelineView = TimelineView;
 });
@@ -12659,9 +12758,9 @@ define('text!nav-bar.html', ['module'], function(module) { module.exports = "<te
 define('text!users.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./blur-image\"></require>\n\n  <section class=\"au-animate\">\n    <div class=\"container\">\n\n      <h3>${heading}</h3>\n\n      <div class=\"row au-stagger\">\n        <div class=\"col s6 m3 card-container au-animate\" repeat.for=\"user of users\">\n          <div  class=\"card usercard\">\n\n            <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\n            <div class=\"avatar\">\n              <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\n            </div>\n            <div class=\"content\">\n              <p class=\"name\">${user.login}</p>\n              <p><a target=\"_blank\" md-button md-waves href.bind=\"user.html_url\">Contact</a></p>\n            </div>\n\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
 define('text!welcome.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate\">\n    <div class=\"container\">\n      <h3 t=\"welcome.Header\"></h3>\n      <md-card>\n        <md-input md-label=\"First Name\" md-value.bind=\"firstName & validate\"></md-input>\n        <md-input md-label=\"Last Name\" md-value.bind=\"lastName & validate\"></md-input><br />\n        <button md-button md-waves=\"color: light;\" click.delegate=\"greet()\" md-modal-trigger href=\"#modal1\">Submit</button><br/>\n        <button md-button md-waves=\"color: light;\" click.delegate=\"sayHello()\">Welcome with Electron2</button>\n      </md-card>\n      <md-card md-title=\"Full name\">\n        <div>\n          ${fullName | upper}\n        </div>\n      </md-card>\n\n      <md-card if.bind=\"controller.errors.length\">\n        <h5 class=\"error-text\">You have errors!</h5>\n        <ul style=\"margin-top: 15px;\">\n          <li repeat.for=\"error of controller.errors\">\n            <a href=\"#\" click.delegate=\"error.target.focus()\">\n              ${error.message}\n            </a>\n          </li>\n        </ul>\n      </md-card>\n      \n      <md-card>\n        <div class=\"group\">\n          <label for=\"locale\">Select locale</label>\n          <div class=\"button-row\" id=\"locale\">\n            <button md-button md-waves click.delegate=\"setLocale('en')\">en</button>\n            <button md-button md-waves click.delegate=\"setLocale('no')\">no</button>\n          </div>\n        </div>\n      </md-card>\n\n      <md-card md-title=\"Versions\">\n        <p>Node version: ${status.nodeVersion}</p>\n        <p>Electron version: ${status.electronVersion}</p>\n        <p>Chrome version: ${status.chromeVersion}</p>\n        <p>V8 version: ${status.v8Version}</p>\n      </md-card>      \n    </div>\n\n    <div id=\"modal1\" class=\"modal\">\n      <div class=\"modal-content\">\n        <h4>Welcome!</h4>\n        <p>Welcome, ${fullName}</p>\n      </div>\n      <div class=\"modal-footer\">\n        <a md-button=\"flat: true;\" md-waves=\"color: accent;\" class=\"modal-action modal-close\">Close</a>\n      </div>\n    </div>\n    \n  </section>\n</template>\n"; });
 define('text!menubar/menubar.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"../converters/ms-to-duration-value-converter\"></require>\n    <section class=\"au-animate\">\n        <p class=\"container\">\n\n            <form validation-errors.bind=\"errors\">\n                <md-collection>\n                    <md-collection-item class=\"accent-text\"\n                                        if.bind=\"!runningLogItem\">\n                        <div class=\"row\">\n                            <div class=\"col s4\">\n                                <md-input md-label=\"Group\"\n                                          md-value.bind=\"newItem.app\"></md-input>\n                            </div>\n                            <div class=\"col s6\">\n                                <md-input md-label=\"Title\"\n                                          md-value.bind=\"newItem.title\"></md-input>\n                            </div>\n                            <div class=\"col s1\">\n\n                                <md-input md-type=\"color\"\n                                          md-value.bind=\"newItem.color\"></md-input>\n                            </div>\n                            <div class=\"col s1\">\n                                <button md-button=\"disabled.bind: errors.length; flat: true;\"\n                                        md-waves\n                                        class=\"accent-text\"\n                                        click.delegate=\"startNewLogItem(newItem)\"><i class=\"left material-icons\">play_circle_filled</i>\n                                </button>\n                            </div>\n                        </div>\n\n                    </md-collection-item>\n                    <md-collection-item class=\"accent-text\"\n                                        css=\"border-left: 5px solid ${runningLogItem.color}\"\n                                        if.bind=\"runningLogItem\">\n        <p> ${runningLogItem.title} </p>\n        <span> <b>${ runningLogItem.beginDate | rt }</b></span>\n        <a href=\"#!\" class=\"secondary-content\"\n           click.delegate=\"stopRunningLogItem()\"><i class=\"material-icons\">stop</i></a>\n\n        </md-collection-item>\n        <md-collection-header><h5>Last tasks</h5></md-collection-header>\n        <md-collection-item class=\"accent-text\"\n                            css=\"border-left: 5px solid ${item.color}\"\n                            repeat.for=\"item of trackItems\">\n            <p> ${item.title}</p>\n                        <span>  ${item.beginDate | df} - ${item.endDate | df}\n                            <b> ${item.endDate.getTime()-item.beginDate.getTime() | msToDuration}</b>\n                        </span>\n        </md-collection-item>\n        </md-collection>\n        </form>\n\n    </section>\n</template>\n"; });
-define('text!settings/settings.html', ['module'], function(module) { module.exports = "<template>\n\n  <section class=\"au-animate\">\n    <div class=\"container\">\n\n      <h3>Settings</h3>\n\n      <div class=\"row au-stagger\">\n        <div class=\"col s6 m3 card-container au-animate\" repeat.for=\"user of users\">\n          <div  class=\"card usercard\">\n\n            <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\n            <div class=\"avatar\">\n              <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\n            </div>\n            <div class=\"content\">\n              <p class=\"name\">${user.login}</p>\n              <p><a target=\"_blank\" md-button md-waves href.bind=\"user.html_url\">Contact</a></p>\n            </div>\n\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
 define('text!summary/summary.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate\">\n    <div class=\"container\">\n\n      <h3>Summary</h3>\n\n      <div class=\"row au-stagger\">\n        <div class=\"col s6 m3 card-container au-animate\" >\n\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
+define('text!settings/settings.html', ['module'], function(module) { module.exports = "<template>\n\n  <section class=\"au-animate\">\n    <div class=\"container\">\n\n      <h3>Settings</h3>\n\n      <div class=\"row au-stagger\">\n        <div class=\"col s6 m3 card-container au-animate\" repeat.for=\"user of users\">\n          <div  class=\"card usercard\">\n\n            <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\n            <div class=\"avatar\">\n              <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\n            </div>\n            <div class=\"content\">\n              <p class=\"name\">${user.login}</p>\n              <p><a target=\"_blank\" md-button md-waves href.bind=\"user.html_url\">Contact</a></p>\n            </div>\n\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
 define('text!timeline/timeline-component.html', ['module'], function(module) { module.exports = "<template>\n\n  Timeline component\n</template>\n"; });
-define('text!timeline/timeline-view.html', ['module'], function(module) { module.exports = "<template>\n<require from=\"./timeline-component\"></require>\n  <section class=\"au-animate\">\n    <div class=\"container\">\n\n      <h3>${heading}</h3>\n\n      <div class=\"row au-stagger\">\n        <div class=\"col s12 m3 \" >\n          <timeline-component></timeline-component>\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
+define('text!timeline/timeline-view.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./timeline-component\"></require>\n  <section class=\"au-animate\">\n\n    <h3>${heading}</h3>\n\n    <timeline-component track-items=\"trackItems\" selected-track-item=\"selectedTrackItem\" start-date=\"searchDate\" on-zoom-changed=\"onZoomChanged\"\n      zoom-scale=\"zoomScale\" zoom-x=\"zoomX\"></timeline-component>\n\n  </section>\n</template>"; });
 define('text!trackItem/trackItem.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./blur-image\"></require>\n\n  <section class=\"au-animate\">\n    <div class=\"container\">\n\n      <h3>${heading}</h3>\n\n      <div class=\"row au-stagger\">\n        <div class=\"col s6 m3 card-container au-animate\" repeat.for=\"user of users\">\n          <div  class=\"card usercard\">\n\n            <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\n            <div class=\"avatar\">\n              <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\n            </div>\n            <div class=\"content\">\n              <p class=\"name\">${user.login}</p>\n              <p><a target=\"_blank\" md-button md-waves href.bind=\"user.html_url\">Contact</a></p>\n            </div>\n\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
 //# sourceMappingURL=app-bundle.js.map

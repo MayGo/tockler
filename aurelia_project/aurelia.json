@@ -110,10 +110,10 @@
             ]
           }
         ]
-      },       
+      },
       {
         "name": "vendor-bundle.js",
-        "prepend": [          
+        "prepend": [
           "node_modules/requirejs/require.js"
         ],
         "dependencies": [
@@ -153,6 +153,10 @@
             "main": "index"
           },
           {
+            "name": "lodash",
+            "path": "../node_modules/lodash/lodash.min"
+          },
+          {
             "name": "aurelia-templating-resources",
             "path": "../node_modules/aurelia-templating-resources/dist/amd",
             "main": "aurelia-templating-resources"
@@ -181,7 +185,7 @@
           {
             "name": "electron",
             "path": "../tools/electron-fix"
-          },          
+          },
           {
             "name": "i18next",
             "path": "../node_modules/i18next/dist/umd",

@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Aurelia</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="styles/materialize.min.css">
-    <link rel="stylesheet" href="styles/styles.css">
-    <link rel="stylesheet" href="styles/timeline.css">
 
-  </head>
+<head>
+  <title>Aurelia</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="styles/materialize.min.css">
+  <link rel="stylesheet" href="styles/styles.css">
+  <link rel="stylesheet" href="styles/timeline.css">
 
-  <body aurelia-app="main">
+</head>
 
+<body>
+  <div aurelia-app="main">
     <!-- Splash Screen -->
     <div class="splash center-align">
       <h3 class="splash-text">Aurelia</h3>
@@ -62,13 +63,15 @@
         </div>
       </div>
     </div>
-    
+
     <script>
       window.nodeRequire = require;
       delete window.require;
       delete window.exports;
       delete window.module;
-    </script>    
+    </script>
     <script src="scripts/vendor-bundle.js" data-main="aurelia-bootstrapper"></script>
-  </body>
+  </div>
+</body>
+
 </html>

@@ -1,3 +1,6 @@
+
+
+
 timeline-component {
     display: block;
     padding: 10px;
@@ -9,6 +12,7 @@ timeline-component svg {
 }
 
 .d3-tip {
+    font-size: 12px;
     line-height: 1;
     padding: 12px;
     background: rgba(0, 0, 0, 0.8);
