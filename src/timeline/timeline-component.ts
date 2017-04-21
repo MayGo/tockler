@@ -11,7 +11,7 @@ let logger = LogManager.getLogger('TimelineComponent');
 @autoinject
 export class TimelineComponent {
     subscriptions = [];
-    selectedTrackItem: any;
+    selectedTrackItem: any = null;
     // constants
     margin = {
         top: 20,
@@ -154,8 +154,8 @@ export class TimelineComponent {
         let self = this;
         this.selectionTool = d3.svg.brush().x(this.xScaleMain)
             .on("brushstart", function () { self.selectionToolBrushStart(this) })
-            .on("brushend", this.selectionToolBrushEnd)
-            .on("brush", this.selectionToolBrushing);
+            .on("brushend", function () { self.selectionToolBrushEnd() })
+            .on("brush", function () { self.selectionToolBrushing() });
 
         this.main.append('g')
             .attr('class', 'brush').call(this.selectionTool);

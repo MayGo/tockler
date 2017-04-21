@@ -1124,6 +1124,7 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
             this.element = element;
             this.eventAggregator = eventAggregator;
             this.subscriptions = [];
+            this.selectedTrackItem = null;
             this.margin = {
                 top: 20,
                 right: 30,
@@ -1222,8 +1223,8 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
             var self = this;
             this.selectionTool = d3.svg.brush().x(this.xScaleMain)
                 .on("brushstart", function () { self.selectionToolBrushStart(this); })
-                .on("brushend", this.selectionToolBrushEnd)
-                .on("brush", this.selectionToolBrushing);
+                .on("brushend", function () { self.selectionToolBrushEnd(); })
+                .on("brush", function () { self.selectionToolBrushing(); });
             this.main.append('g')
                 .attr('class', 'brush').call(this.selectionTool);
             d3.select(".brush").selectAll(".extent")
