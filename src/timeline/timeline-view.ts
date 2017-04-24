@@ -3,6 +3,8 @@ import { SettingsService } from "../services/settings-service";
 import * as moment from "moment";
 import * as _ from "lodash";
 import { EventAggregator } from 'aurelia-event-aggregator';
+import { DeepObserver } from "../resources/deep-observer";
+import { TrackItemService } from "../services/track-item-service";
 
 let logger = LogManager.getLogger('TimelineView');
 
@@ -15,10 +17,14 @@ export class TimelineView {
         defaultBindingMode: bindingMode.twoWay
     })
     loadedItems = {};
+
     @bindable({
         defaultBindingMode: bindingMode.twoWay
     })
-    selectedTrackItem;
+    selectedTrackItem: any = null;
+
+    observerDisposer: any;
+
     @bindable({
         defaultBindingMode: bindingMode.twoWay
     })
@@ -32,15 +38,26 @@ export class TimelineView {
     })
     zoomX: any;
 
+    searchDate: Date;
+
     pieData = {};
     dayStats = {};
 
-    constructor(private settingsService: SettingsService, private eventAggregator: EventAggregator) {
+    table = {
+        searchTask: 'LogTrackItem',
+        search: '',
+        order: '-beginDate'
+    };
+
+    constructor(private settingsService: SettingsService, private trackItemService: TrackItemService, private eventAggregator: EventAggregator, private deepObserver: DeepObserver) {
         this.resetLoadedItems();
+        this.observerDisposer = deepObserver.observe(this, 'selectedTrackItem', (n, o, p) => {
+            console.log('DATA CHANGED:', p, ':', o, '===>', n); // Display the changes in the console log
+        });
     }
     resetLoadedItems() {
         console.log("Resetting loaded items");
-        this.selectedTrackItem = null;
+        // this.selectedTrackItem = null;
         this.loadedItems = {
             AppTrackItem: [],
             StatusTrackItem: [],
@@ -114,14 +131,172 @@ export class TimelineView {
         console.log('Trackitems loaded, $digest.');
     };
 
+    selectedTrackItemChanged(a, b) {
+        logger.debug("selectedTrackItemChanged", a, b);
+    }
+
+    setWorkStatsForDay(items) {
+        var firstItem = _.first(items);
+        /*  if (firstItem && settingsData.workDayStartTime) {
+  
+              var parts = settingsData.workDayStartTime.split(':')
+              var startDate = moment(firstItem.beginDate);
+              startDate.startOf('day');
+              startDate.hour(parts[0]);
+              startDate.minute(parts[1]);
+              this.dayStats.lateForWork = moment(firstItem.beginDate).diff(startDate)
+          }*/
+    }
+
+    sumApp(p, c) {
+        return _.extend(p, {
+            timeDiffInMs: p.timeDiffInMs + moment(c.endDate).diff(c.beginDate)
+        });
+    }
+
+    dateDiff(c) {
+        return moment(c.endDate).diff(c.beginDate)
+    }
+
+    updatePieCharts(items, taskName) {
+
+        console.log('Track Items changed. Updating pie charts');
+
+        var groupBy = (taskName === 'LogTrackItem') ? 'title' : 'app'
+        this.pieData[taskName] = _(items)
+            .groupBy(groupBy)
+            .map((b) => {
+                return b.reduce(this.sumApp, { app: b[0].app, title: b[0].title, timeDiffInMs: 0, color: b[0].color })
+            })
+            .valueOf();
+
+        console.log('Updating pie charts ended.');
+
+    };
+
+    onZoomChanged(scale, x) {
+        sessionStorage.setItem('zoomScale', scale);
+        sessionStorage.setItem('zoomX', x);
+    };
+
+    showAddLogDialog(trackItem) {
+        console.log(trackItem);
+        /* $mdDialog.show({
+             templateUrl: 'app/trackItem/trackItem.edit.modal.html',
+             controller: 'TrackItemEditModalController as trackItemModalCtrl',
+             parent: angular.element(document.body),
+             locals: {
+                 trackItem: trackItem
+             },
+             clickOutsideToClose: true
+         }).then(function (trackItem) {
+             console.log('TrackItem added.');
+             this.saveTrackItem(trackItem)
+         });*/
+    };
+
+    saveTrackItem(trackItem) {
+        console.log("Saving trackitem.", trackItem);
+        if (!trackItem.taskName) {
+            trackItem.taskName = "LogTrackItem";
+        }
+        if (trackItem.id) {
+            if (trackItem.originalColor === trackItem.color) {
+                this.updateItem(trackItem);
+            } else {
+                /* $mdDialog.show({
+                     templateUrl: 'app/trackItem/trackItem.color.modal.html',
+                     controller: 'TrackItemColorModalController as trackItemColorCtrl',
+                     parent: angular.element(document.body)
+                 })
+                     .then(function (answer) {
+                         if (answer === 'ALL_ITEMS') {
+                             this.loading = true;
+                             AppSettingsService.changeColorForApp(trackItem.app, trackItem.color);
+                             TrackItemService.updateColorForApp(trackItem.app, trackItem.color).then(function () {
+                                 console.log("updated all item with color");
+                                 this.reload();
+                             })
+                         } else if (answer === 'NEW_ITEMS') {
+                             AppSettingsService.changeColorForApp(trackItem.app, trackItem.color);
+                             updateItem(trackItem);
+                         } else {
+                             updateItem(trackItem);
+                         }
+
+                     }, function () {
+                         $scope.status = 'You cancelled the dialog.';
+                     });*/
+            }
+        } else {
+            if (!trackItem.app) {
+                trackItem.app = "Default";
+            }
+            this.trackItemService.createItem(trackItem).then((item) => {
+                console.log("Created trackitem to DB:", item);
+                this.selectedTrackItem = null;
+
+                this.eventAggregator.publish('addItemsToTimeline', [trackItem]);
+                this.loadedItems[trackItem.taskName].push(item);
+                this.updatePieCharts(this.loadedItems[trackItem.taskName], trackItem.taskName);
+            });
+        }
+
+    };
+    updateItem(trackItem) {
+        this.trackItemService.updateItem(trackItem).then((item) => {
+            console.log("Updated trackitem to DB:", item);
+            this.selectedTrackItem = null;
+
+            this.eventAggregator.publish('addItemToTimeline', item);
+            var update = function (arr, id, newval) {
+                var index = _.indexOf(arr, _.find(arr, { id: id }));
+                arr.splice(index, 1, newval);
+            };
+
+            update(this.loadedItems[trackItem.taskName], item.id, item);
+            this.updatePieCharts(this.loadedItems[trackItem.taskName], trackItem.taskName);
+        });
+    };
+
+    deleteTrackItem(trackItem) {
+        console.log("Deleting trackitem.", trackItem);
+
+        if (trackItem.id) {
+            this.trackItemService.deleteById(trackItem.id).then(function (item) {
+                console.log("Deleting trackitem from DB:", trackItem);
+                this.selectedTrackItem = null;
+
+                var index = _.indexOf(this.trackItems, _.find(this.loadedItems[trackItem.taskName], { id: trackItem.id }));
+                this.loadedItems[trackItem.taskName].splice(index, 1);
+                this.updatePieCharts(this.loadedItems[trackItem.taskName], trackItem.taskName);
+                this.eventAggregator.publish('removeItemsFromTimeline', _.flatten(_.values(this.loadedItems)));
+
+            });
+        } else {
+            console.log("No id, not deleting from DB");
+        }
+
+    };
+
+    closeMiniEdit() {
+        console.log("Closing mini edit.");
+        this.selectedTrackItem = null;
+    };
+
+
     attached() {
         console.log("attached");
         ipcRenderer.on('main-window-focus', (event, arg) => this.refreshWindow(event, arg));
         ipcRenderer.on('TIMELINE_LOAD_DAY_RESPONSE', (event, startDate, taskName, items) => this.parseReceivedTimelineData(event, startDate, taskName, items));
-        this.refresh();
+        //this.refresh();
+        // Initialy load todays data
+        this.searchDate = moment().startOf('day').toDate();
+        this.list(this.searchDate);
     }
     detached() {
         console.log("detached");
+        this.observerDisposer();
         ipcRenderer.removeListener('main-window-focus', this.refreshWindow);
         ipcRenderer.removeListener('TIMELINE_LOAD_DAY_RESPONSE', this.parseReceivedTimelineData);
     }

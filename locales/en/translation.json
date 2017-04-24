@@ -1,5 +1,5 @@
 {
-  "welcome": {
-    "Header": "Welcome to the Aurelia Navigation App"
+  "app": {
+    "name": "Tockler"
   }
 }

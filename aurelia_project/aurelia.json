@@ -147,6 +147,14 @@
             "path": "../node_modules/d3",
             "main": "d3.min.js"
           },
+            {
+            "name": "nvd3",
+            "path": "../node_modules/nvd3/build",
+            "main": "nv.d3.min",
+            "resources": [
+              "nv.d3.min.css"
+            ]
+          },
           {
             "name": "d3-tip",
             "path": "../node_modules/d3-tip",

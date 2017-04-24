@@ -1,6 +1,7 @@
 body {
   margin: 0;
   background-color: #f8fff8;
+  color: #424242;
 }
 
 .splash {
@@ -152,4 +153,44 @@ div.au-stagger {
   100% {
     opacity: 1;
   }
+}
+
+
+#trackItemMiniEdit {
+  background: #f2f2f2;
+  border-radius: 5px;
+  height: 35px;
+  top: 0px;
+  margin-top: 55px;
+  position: absolute;
+}
+
+#trackItemMiniEdit md-input input {
+  
+  height: 1rem;
+  margin: 0;
+}
+#trackItemMiniEdit .input-field{
+  margin-top:7px;
+}
+
+
+
+.navbar-brand {
+  color: white;
+  font-weight: 400;
+  font-size: 26px;
+  border: 0px;
+  border-right: 1px;
+  border-color: white;
+  border-style: solid;
+  padding-right: 10px;
+}
+
+.navbar-brand img {
+  margin-right: 10px;
+  margin-left: 10px;
+  background: #fff;
+  padding:2px;
+  border-radius: 2px;
 }

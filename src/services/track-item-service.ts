@@ -1,18 +1,18 @@
-import {autoinject} from "aurelia-framework";
+import { autoinject } from "aurelia-framework";
 import * as moment from "moment";
-import {SettingsService} from "./settings-service";
+import { SettingsService } from "./settings-service";
 
 const remote = (<any>window).nodeRequire('electron').remote;
 
 @autoinject
 export class TrackItemService {
-    private service:any;
+    private service: any;
 
-    constructor(private settingsService:SettingsService) {
+    constructor(private settingsService: SettingsService) {
         this.service = remote.getGlobal('BackgroundService').getTrackItemService();
     }
 
-    findAllFromDay(from:Date, type:string) {
+    findAllFromDay(from: Date, type: string) {
         return this.service.findAllFromDay(from, type)
 
     }
@@ -21,10 +21,22 @@ export class TrackItemService {
         return this.service.findFirstLogItems();
     }
 
-    startNewLogItem(oldItem:any) {
+    createItem(trackItem) {
+        return this.service.createItem(trackItem);
+    }
+
+    updateItem(trackItem) {
+        return this.service.updateItem(trackItem);
+    }
+    
+    deleteById(trackItemId) {
+        return this.service.deleteById(trackItemId);
+    }
+
+    startNewLogItem(oldItem: any) {
         console.log("startNewLogItem");
 
-        let newItem:any = {};
+        let newItem: any = {};
         newItem.app = oldItem.app || "WORK";
         newItem.taskName = "LogTrackItem";
         newItem.color = oldItem.color;
@@ -46,7 +58,7 @@ export class TrackItemService {
     stopRunningLogItem(runningLogItemId) {
         console.log("stopRunningLogItem");
 
-        return this.service.updateEndDateWithNow(runningLogItemId).then( (item) =>{
+        return this.service.updateEndDateWithNow(runningLogItemId).then((item) => {
             console.log("Updated trackitem to DB:", item);
 
 

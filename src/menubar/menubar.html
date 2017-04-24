@@ -5,52 +5,41 @@
 
             <form validation-errors.bind="errors">
                 <md-collection>
-                    <md-collection-item class="accent-text"
-                                        if.bind="!runningLogItem">
+                    <md-collection-item if.bind="!runningLogItem">
                         <div class="row">
                             <div class="col s4">
-                                <md-input md-label="Group"
-                                          md-value.bind="newItem.app"></md-input>
+                                <md-input md-label="Group" md-value.bind="newItem.app"></md-input>
                             </div>
                             <div class="col s6">
-                                <md-input md-label="Title"
-                                          md-value.bind="newItem.title"></md-input>
+                                <md-input md-label="Title" md-value.bind="newItem.title"></md-input>
                             </div>
                             <div class="col s1">
-
-                                <md-input md-type="color"
-                                          md-value.bind="newItem.color"></md-input>
+                                <md-input md-type="color" md-value.bind="newItem.color"></md-input>
                             </div>
                             <div class="col s1">
-                                <button md-button="disabled.bind: errors.length; flat: true;"
-                                        md-waves
-                                        class="accent-text"
-                                        click.delegate="startNewLogItem(newItem)"><i class="left material-icons">play_circle_filled</i>
-                                </button>
+                                <a class="btn-flat waves-effect btn-floating" click.delegate="startNewLogItem(newItem)">
+                                    <i class="material-icons blue-text">play_circle_filled</i></a>
                             </div>
                         </div>
 
                     </md-collection-item>
-                    <md-collection-item class="accent-text"
-                                        css="border-left: 5px solid ${runningLogItem.color}"
-                                        if.bind="runningLogItem">
-        <p> ${runningLogItem.title} </p>
-        <span> <b>${ runningLogItem.beginDate | rt }</b></span>
-        <a href="#!" class="secondary-content"
-           click.delegate="stopRunningLogItem()"><i class="material-icons">stop</i></a>
+                    <md-collection-item css="border-left: 5px solid ${runningLogItem.color}" if.bind="runningLogItem">
+                        <p> ${runningLogItem.title} </p>
+                        <span> <b>${ runningLogItem.beginDate | rt }</b></span>
+                        <a href="#!" class="secondary-content" click.delegate="stopRunningLogItem()"><i class="material-icons">stop</i></a>
 
-        </md-collection-item>
-        <md-collection-header><h5>Last tasks</h5></md-collection-header>
-        <md-collection-item class="accent-text"
-                            css="border-left: 5px solid ${item.color}"
-                            repeat.for="item of trackItems">
-            <p> ${item.title}</p>
+                    </md-collection-item>
+                    <md-collection-header>
+                        <h5>Last tasks</h5>
+                    </md-collection-header>
+                    <md-collection-item css="border-left: 5px solid ${item.color}" repeat.for="item of trackItems">
+                        <p> ${item.title}</p>
                         <span>  ${item.beginDate | df} - ${item.endDate | df}
                             <b> ${item.endDate.getTime()-item.beginDate.getTime() | msToDuration}</b>
                         </span>
-        </md-collection-item>
-        </md-collection>
-        </form>
+                    </md-collection-item>
+                </md-collection>
+            </form>
 
     </section>
 </template>

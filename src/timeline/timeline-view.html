@@ -2,10 +2,40 @@
   <require from="./timeline-component"></require>
   <section class="au-animate">
 
-    <h3>${heading}</h3>
+    <div id="trackItemMiniEdit" if.bind="selectedTrackItem" css.bind="{left:selectedTrackItem.left, top:selectedTrackItem.top}">
+      <form>
+        <div class="row">
+          <div class="col s2">
+            <md-input md-placeholder="Group" md-value.bind="selectedTrackItem.app"></md-input>
+          </div>
+          <div class="col s6">
+            <md-input md-placeholder="Title" md-value.bind="selectedTrackItem.title"></md-input>
+          </div>
+          <div class="col s1">
+            <md-input md-type="color" md-value.bind="selectedTrackItem.color"></md-input>
+          </div>
+          <div class="col s1">
+            <a class="btn-flat waves-effect btn-floating" click.delegate="saveTrackItem(selectedTrackItem)">
+              <i class="material-icons blue-text">play_circle_filled</i></a>
+          </div>
+          <div class="col s1" if.bind="selectedTrackItem.id">
+            <a class="btn-flat waves-effect btn-floating" click.delegate="deleteTrackItem(selectedTrackItem)">
+              <i class="material-icons red-text">delete</i></a>
+          </div>
+          <div class="col s1">
+            <a class="btn-flat waves-effect btn-floating" click.delegate="closeMiniEdit()">
+              <i class="material-icons black-text">close</i></a>
+          </div>
+        </div>
+      </form>
 
-    <timeline-component track-items="trackItems" selected-track-item="selectedTrackItem" start-date="searchDate" on-zoom-changed="onZoomChanged"
-      zoom-scale="zoomScale" zoom-x="zoomX"></timeline-component>
+    </div>
+    <timeline-component selected-track-item.bind="selectedTrackItem" start-date.bind="searchDate" on-zoom-changed.bind="onZoomChanged"
+      zoom-scale.bind="zoomScale" zoom-x.bind="zoomX"></timeline-component>
+<nvd3></nvd3>
 
+<div id="chart">
+  <svg></svg>
+</div>
   </section>
 </template>

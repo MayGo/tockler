@@ -1,4 +1,4 @@
-import { autoinject, noView, LogManager } from "aurelia-framework";
+import { autoinject, noView, LogManager, bindable, bindingMode } from "aurelia-framework";
 import * as moment from "moment";
 import * as d3 from 'd3';
 import * as d3Tip from "d3-tip"; // d3-tip@0.7.0 (with a d3@^4 dependency)
@@ -11,7 +11,11 @@ let logger = LogManager.getLogger('TimelineComponent');
 @autoinject
 export class TimelineComponent {
     subscriptions = [];
-    selectedTrackItem: any = null;
+
+    @bindable({
+        defaultBindingMode: bindingMode.twoWay
+    })
+    selectedTrackItem: any;
     // constants
     margin = {
         top: 20,
@@ -43,11 +47,18 @@ export class TimelineComponent {
     }
 
     attached() {
-        let subscription = this.eventAggregator.subscribe('addItemsToTimeline', trackItems => {
+        let subscriptionAdd = this.eventAggregator.subscribe('addItemsToTimeline', trackItems => {
             logger.debug('addItemsToTimeline', trackItems);
             this.addItemsToTimeline(trackItems);
         });
-        this.subscriptions.push(subscription)
+
+        let subscriptionRemove = this.eventAggregator.subscribe('removeItemsFromTimeline', trackItems => {
+            logger.debug('removeItemsFromTimeline', trackItems);
+            this.removeItemsFromTimeline(trackItems);
+        });
+
+        this.subscriptions.push(subscriptionAdd);
+        this.subscriptions.push(subscriptionRemove);
     }
 
     detached() {
@@ -156,6 +167,8 @@ export class TimelineComponent {
             .on("brushstart", function () { self.selectionToolBrushStart(this) })
             .on("brushend", function () { self.selectionToolBrushEnd() })
             .on("brush", function () { self.selectionToolBrushing() });
+
+        console.error(this.logTrackItemHeight)
 
         this.main.append('g')
             .attr('class', 'brush').call(this.selectionTool);
@@ -463,7 +476,7 @@ export class TimelineComponent {
     }
 
     selectionToolBrushStart(element) {
-        d3.select(".brush").selectAll("path").style('display', 'inherit');
+        d3.select(".brush").selectAll("path")//.style('display', 'inherit');
         d3.select(".brush").selectAll("rect").attr("y", "0");
         var p = d3.select(element);
 

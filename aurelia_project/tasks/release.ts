@@ -17,7 +17,8 @@ export default gulp.series(
     copyScripts,
     copyStyles,
     copyFonts,
-    copyLocales
+    copyLocales,
+    copyShared
   )
 );
 
@@ -45,4 +46,8 @@ function copyFonts() {
 function copyLocales() {
   return gulp.src('locales/**/*.*')
     .pipe(gulp.dest(path.join(dist, 'locales')));
+}
+function copyShared() {
+  return gulp.src('shared/**/*.*')
+    .pipe(gulp.dest(path.join(dist, 'shared')));
 }
