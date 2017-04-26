@@ -1,7 +1,26 @@
 <template>
   <require from="./timeline-component"></require>
+  <require from="nvd3/nv.d3.min.css"></require>
   <section class="au-animate">
+    <div class="row" style="margin:0">
+      <div class="col s1">
+        <a class="btn-flat waves-effect btn-floating" click.delegate="refresh()">
+          <i class="material-icons blue-text">refresh</i></a>
+      </div>
+      <div class="col s1">
+        <a class="btn-flat waves-effect btn-floating" click.delegate="dayBack()">
+          <i class="material-icons blue-text">arrow_back</i></a>
+      </div>
+      <div class="col s2" ref="dpWrapper">
+        <input md-datepicker="container.bind: dpWrapper; value.two-way: searchDate;" type="date" placeholder="Search for day" />
 
+      </div>
+      <div class="col s1">
+        <a class="btn-flat waves-effect btn-floating" click.delegate="dayForward()">
+          <i class="material-icons blue-text">arrow_forward</i></a>
+      </div>
+
+    </div>
     <div id="trackItemMiniEdit" if.bind="selectedTrackItem" css.bind="{left:selectedTrackItem.left, top:selectedTrackItem.top}">
       <form>
         <div class="row">
@@ -32,10 +51,16 @@
     </div>
     <timeline-component selected-track-item.bind="selectedTrackItem" start-date.bind="searchDate" on-zoom-changed.bind="onZoomChanged"
       zoom-scale.bind="zoomScale" zoom-x.bind="zoomX"></timeline-component>
-<nvd3></nvd3>
-
-<div id="chart">
-  <svg></svg>
-</div>
+    <div class="row" style="min-height:200px">
+      <md-card class="col s4">
+        <nvd3 options.bind="pieOptions" data-list.bind="pieData['AppTrackItem']"></nvd3>
+      </md-card>
+       <md-card class="col s4">
+        <nvd3 options.bind="pieOptions" data-list.bind="pieData['LogTrackItem']"></nvd3>
+      </md-card>
+       <md-card class="col s4">
+        <nvd3 options.bind="pieOptions" data-list.bind="pieData['StatusTrackItem']"></nvd3>
+      </md-card>
+    </div>
   </section>
 </template>

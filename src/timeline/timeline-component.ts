@@ -12,10 +12,11 @@ let logger = LogManager.getLogger('TimelineComponent');
 export class TimelineComponent {
     subscriptions = [];
 
-    @bindable({
-        defaultBindingMode: bindingMode.twoWay
-    })
+    @bindable({ defaultBindingMode: bindingMode.twoWay })
     selectedTrackItem: any;
+
+    @bindable({ defaultBindingMode: bindingMode.oneWay })
+    startDate: any;
     // constants
     margin = {
         top: 20,
@@ -106,6 +107,12 @@ export class TimelineComponent {
     allItems = [];
     xAxisMain;
     tip;
+
+
+    startDateChanged(newValue, oldValue) {
+        logger.debug("startDateChanged", oldValue, newValue);
+        this.changeDay(newValue);
+    }
 
     init(el) {
         console.log("Element:", el);

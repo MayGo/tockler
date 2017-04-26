@@ -1243,6 +1243,10 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
                 this.subscriptions.pop().dispose();
             }
         };
+        TimelineComponent.prototype.startDateChanged = function (newValue, oldValue) {
+            logger.debug("startDateChanged", oldValue, newValue);
+            this.changeDay(newValue);
+        };
         TimelineComponent.prototype.init = function (el) {
             var _this = this;
             console.log("Element:", el);
@@ -1548,11 +1552,13 @@ define('timeline/timeline-component',["require", "exports", "aurelia-framework",
         return TimelineComponent;
     }());
     __decorate([
-        aurelia_framework_1.bindable({
-            defaultBindingMode: aurelia_framework_1.bindingMode.twoWay
-        }),
+        aurelia_framework_1.bindable({ defaultBindingMode: aurelia_framework_1.bindingMode.twoWay }),
         __metadata("design:type", Object)
     ], TimelineComponent.prototype, "selectedTrackItem", void 0);
+    __decorate([
+        aurelia_framework_1.bindable({ defaultBindingMode: aurelia_framework_1.bindingMode.oneWay }),
+        __metadata("design:type", Object)
+    ], TimelineComponent.prototype, "startDate", void 0);
     TimelineComponent = __decorate([
         aurelia_framework_1.noView(),
         aurelia_framework_1.autoinject,
@@ -1580,9 +1586,17 @@ define('timeline/timeline-view',["require", "exports", "aurelia-framework", "../
             this.trackItemService = trackItemService;
             this.eventAggregator = eventAggregator;
             this.deepObserver = deepObserver;
-            this.loadedItems = {};
+            this.loadedItems = {
+                AppTrackItem: [],
+                StatusTrackItem: [],
+                LogTrackItem: []
+            };
             this.selectedTrackItem = null;
-            this.pieData = {};
+            this.pieData = {
+                AppTrackItem: [],
+                StatusTrackItem: [],
+                LogTrackItem: []
+            };
             this.dayStats = {};
             this.table = {
                 searchTask: 'LogTrackItem',
@@ -1615,6 +1629,22 @@ define('timeline/timeline-view',["require", "exports", "aurelia-framework", "../
             this.list(searchFrom);
         };
         ;
+        TimelineView.prototype.dayBack = function () {
+            this.searchDate = moment(this.searchDate).subtract(1, 'days').toDate();
+        };
+        ;
+        TimelineView.prototype.dayForward = function () {
+            this.searchDate = moment(this.searchDate).add(1, 'days').toDate();
+        };
+        ;
+        TimelineView.prototype.changeDay = function (day) {
+            this.resetLoadedItems();
+            this.list(day);
+        };
+        TimelineView.prototype.searchDateChanged = function (newValue, oldValue) {
+            logger.debug("SearchDateChanged", oldValue, newValue);
+            this.changeDay(newValue);
+        };
         TimelineView.prototype.list = function (startDate) {
             console.log("Load data from:", startDate);
             this.zoomScale = sessionStorage.getItem('zoomScale') || 0;
@@ -1655,13 +1685,14 @@ define('timeline/timeline-view',["require", "exports", "aurelia-framework", "../
             this.loading = false;
             console.log('Trackitems loaded, parsing ended.', taskName);
             this.eventAggregator.publish('addItemsToTimeline', this.loadedItems[taskName]);
+            this.updatePieCharts(this.loadedItems[taskName], taskName);
             if (taskName === 'AppTrackItem') {
             }
             console.log('Trackitems loaded, $digest.');
         };
         ;
-        TimelineView.prototype.selectedTrackItemChanged = function (a, b) {
-            logger.debug("selectedTrackItemChanged", a, b);
+        TimelineView.prototype.selectedTrackItemChanged = function (newValue, oldValue) {
+            logger.debug("selectedTrackItemChanged", newValue, oldValue);
         };
         TimelineView.prototype.setWorkStatsForDay = function (items) {
             var firstItem = _.first(items);
@@ -1777,35 +1808,33 @@ define('timeline/timeline-view',["require", "exports", "aurelia-framework", "../
         return TimelineView;
     }());
     __decorate([
-        aurelia_framework_1.bindable({
-            defaultBindingMode: aurelia_framework_1.bindingMode.twoWay
-        }),
+        aurelia_framework_1.bindable({ defaultBindingMode: aurelia_framework_1.bindingMode.twoWay }),
         __metadata("design:type", Object)
     ], TimelineView.prototype, "loadedItems", void 0);
     __decorate([
-        aurelia_framework_1.bindable({
-            defaultBindingMode: aurelia_framework_1.bindingMode.twoWay
-        }),
+        aurelia_framework_1.bindable({ defaultBindingMode: aurelia_framework_1.bindingMode.twoWay }),
         __metadata("design:type", Object)
     ], TimelineView.prototype, "selectedTrackItem", void 0);
     __decorate([
-        aurelia_framework_1.bindable({
-            defaultBindingMode: aurelia_framework_1.bindingMode.twoWay
-        }),
+        aurelia_framework_1.bindable({ defaultBindingMode: aurelia_framework_1.bindingMode.twoWay }),
         __metadata("design:type", Boolean)
     ], TimelineView.prototype, "loading", void 0);
     __decorate([
-        aurelia_framework_1.bindable({
-            defaultBindingMode: aurelia_framework_1.bindingMode.twoWay
-        }),
+        aurelia_framework_1.bindable({ defaultBindingMode: aurelia_framework_1.bindingMode.twoWay }),
         __metadata("design:type", Object)
     ], TimelineView.prototype, "zoomScale", void 0);
     __decorate([
-        aurelia_framework_1.bindable({
-            defaultBindingMode: aurelia_framework_1.bindingMode.twoWay
-        }),
+        aurelia_framework_1.bindable({ defaultBindingMode: aurelia_framework_1.bindingMode.twoWay }),
         __metadata("design:type", Object)
     ], TimelineView.prototype, "zoomX", void 0);
+    __decorate([
+        aurelia_framework_1.bindable({ defaultBindingMode: aurelia_framework_1.bindingMode.twoWay }),
+        __metadata("design:type", Date)
+    ], TimelineView.prototype, "searchDate", void 0);
+    __decorate([
+        aurelia_framework_1.bindable({ defaultBindingMode: aurelia_framework_1.bindingMode.twoWay }),
+        __metadata("design:type", Object)
+    ], TimelineView.prototype, "pieData", void 0);
     TimelineView = __decorate([
         aurelia_framework_1.autoinject,
         __metadata("design:paramtypes", [settings_service_1.SettingsService, track_item_service_1.TrackItemService, aurelia_event_aggregator_1.EventAggregator, deep_observer_1.DeepObserver])
@@ -1888,52 +1917,83 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-define('resources/nvd3/nvd3-custom-element',["require", "exports", "aurelia-framework", "d3", "nvd3"], function (require, exports, aurelia_framework_1, d3, nvd3) {
+define('resources/nvd3/nvd3-custom-element',["require", "exports", "aurelia-framework", "d3", "nvd3", "../../converters/ms-to-duration-value-converter"], function (require, exports, aurelia_framework_1, d3, nvd3, ms_to_duration_value_converter_1) {
     "use strict";
     var logger = aurelia_framework_1.LogManager.getLogger('Nvd3CustomElement');
     var Nvd3CustomElement = (function () {
-        function Nvd3CustomElement(element) {
+        function Nvd3CustomElement(element, bindingEngine) {
+            var _this = this;
             this.element = element;
+            this.bindingEngine = bindingEngine;
+            this.msToDuration = new ms_to_duration_value_converter_1.MsToDurationValueConverter();
+            this.options = {
+                height: 300,
+                width: 300,
+                showLabels: false,
+                duration: 500,
+                labelThreshold: 0.01,
+                labelSunbeamLayout: true,
+                showLegend: false,
+                donut: true,
+                donutRatio: 0.30
+            };
+            this.dataList = [];
+            this.subscriptions = [];
+            this.isInitialized = new Promise(function (resolve, reject) {
+                _this.isInitializedResolve = resolve;
+            });
         }
         Nvd3CustomElement.prototype.attached = function () {
             var _this = this;
+            logger.debug("Attached:", this.dataList);
+            var subscription = this.bindingEngine.collectionObserver(this.dataList).subscribe(this.listChanged);
+            this.subscriptions.push(subscription);
             nvd3.addGraph(function () {
-                var chart = nvd3.models.lineChart()
-                    .useInteractiveGuideline(true);
-                chart.xAxis
-                    .axisLabel('Time (ms)')
-                    .tickFormat(d3.format(',r'));
-                chart.yAxis
-                    .axisLabel('Voltage (v)')
-                    .tickFormat(d3.format('.02f'));
-                d3.select('#chart svg')
-                    .datum(_this.dataGen())
-                    .transition().duration(500)
-                    .call(chart);
-                nvd3.utils.windowResize(chart.update);
-                return chart;
+                _this.chart = nvd3.models.pieChart();
+                _this.chart.options(_this.options);
+                _this.chart.x(function (d) {
+                    if (d.app === 'Default') {
+                        return d.title;
+                    }
+                    return (d.app) ? d.app : 'undefined';
+                });
+                _this.chart.y(function (d) {
+                    return d.timeDiffInMs;
+                });
+                _this.chart.color(function (d) {
+                    return d.color;
+                });
+                _this.chart.valueFormat(function (d) {
+                    return _this.msToDuration.toView(d);
+                });
+                nvd3.utils.windowResize(_this.chart.update);
+                _this.isInitializedResolve();
+                return _this.chart;
             });
         };
-        Nvd3CustomElement.prototype.dataGen = function () {
-            var sin = [], cos = [];
-            for (var i = 0; i < 100; i++) {
-                sin.push({ x: i, y: Math.sin(i / 10) });
-                cos.push({ x: i, y: .5 * Math.cos(i / 10) });
-            }
-            return [
-                {
-                    values: sin,
-                    key: 'Sine Wave',
-                    color: '#ff7f0e'
-                },
-                {
-                    values: cos,
-                    key: 'Cosine Wave',
-                    color: '#2ca02c'
-                }
-            ];
+        Nvd3CustomElement.prototype.dataListChanged = function (oldList, newList) {
+            logger.debug("DataList changed", oldList, newList);
+            this.listChanged(this.dataList);
+        };
+        Nvd3CustomElement.prototype.listChanged = function (data) {
+            var _this = this;
+            logger.debug('Data changed', data);
+            this.isInitialized.then(function () {
+                d3.select(_this.element).select('svg').remove();
+                d3.select(_this.element).insert('svg', '.caption')
+                    .datum(_this.dataList)
+                    .transition().duration(500)
+                    .call(_this.chart);
+            });
         };
         Nvd3CustomElement.prototype.detached = function () {
+            this.disposeSubscriptions();
+        };
+        Nvd3CustomElement.prototype.disposeSubscriptions = function () {
+            while (this.subscriptions.length) {
+                logger.debug("Dispose subscriptions");
+                this.subscriptions.pop().dispose();
+            }
         };
         return Nvd3CustomElement;
     }());
@@ -1942,17 +2002,11 @@ define('resources/nvd3/nvd3-custom-element',["require", "exports", "aurelia-fram
             defaultBindingMode: aurelia_framework_1.bindingMode.twoWay
         }),
         __metadata("design:type", Object)
-    ], Nvd3CustomElement.prototype, "options", void 0);
-    __decorate([
-        aurelia_framework_1.bindable({
-            defaultBindingMode: aurelia_framework_1.bindingMode.twoWay
-        }),
-        __metadata("design:type", Object)
-    ], Nvd3CustomElement.prototype, "data", void 0);
+    ], Nvd3CustomElement.prototype, "dataList", void 0);
     Nvd3CustomElement = __decorate([
         aurelia_framework_1.noView(),
         aurelia_framework_1.autoinject,
-        __metadata("design:paramtypes", [Element])
+        __metadata("design:paramtypes", [Element, aurelia_framework_1.BindingEngine])
     ], Nvd3CustomElement);
     exports.Nvd3CustomElement = Nvd3CustomElement;
 });
@@ -13023,8 +13077,8 @@ define('text!users.html', ['module'], function(module) { module.exports = "<temp
 define('text!welcome.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate\">\n    <div class=\"container\">\n      <h3 t=\"welcome.Header\"></h3>\n      <md-card>\n        <md-input md-label=\"First Name\" md-value.bind=\"firstName & validate\"></md-input>\n        <md-input md-label=\"Last Name\" md-value.bind=\"lastName & validate\"></md-input><br />\n        <button md-button md-waves=\"color: light;\" click.delegate=\"greet()\" md-modal-trigger href=\"#modal1\">Submit</button><br/>\n        <button md-button md-waves=\"color: light;\" click.delegate=\"sayHello()\">Welcome with Electron2</button>\n      </md-card>\n      <md-card md-title=\"Full name\">\n        <div>\n          ${fullName | upper}\n        </div>\n      </md-card>\n\n      <md-card if.bind=\"controller.errors.length\">\n        <h5 class=\"error-text\">You have errors!</h5>\n        <ul style=\"margin-top: 15px;\">\n          <li repeat.for=\"error of controller.errors\">\n            <a href=\"#\" click.delegate=\"error.target.focus()\">\n              ${error.message}\n            </a>\n          </li>\n        </ul>\n      </md-card>\n      \n      <md-card>\n        <div class=\"group\">\n          <label for=\"locale\">Select locale</label>\n          <div class=\"button-row\" id=\"locale\">\n            <button md-button md-waves click.delegate=\"setLocale('en')\">en</button>\n            <button md-button md-waves click.delegate=\"setLocale('no')\">no</button>\n          </div>\n        </div>\n      </md-card>\n\n      <md-card md-title=\"Versions\">\n        <p>Node version: ${status.nodeVersion}</p>\n        <p>Electron version: ${status.electronVersion}</p>\n        <p>Chrome version: ${status.chromeVersion}</p>\n        <p>V8 version: ${status.v8Version}</p>\n      </md-card>      \n    </div>\n\n    <div id=\"modal1\" class=\"modal\">\n      <div class=\"modal-content\">\n        <h4>Welcome!</h4>\n        <p>Welcome, ${fullName}</p>\n      </div>\n      <div class=\"modal-footer\">\n        <a md-button=\"flat: true;\" md-waves=\"color: accent;\" class=\"modal-action modal-close\">Close</a>\n      </div>\n    </div>\n    \n  </section>\n</template>\n"; });
 define('text!menubar/menubar.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"../converters/ms-to-duration-value-converter\"></require>\n    <section class=\"au-animate\">\n        <p class=\"container\">\n\n            <form validation-errors.bind=\"errors\">\n                <md-collection>\n                    <md-collection-item if.bind=\"!runningLogItem\">\n                        <div class=\"row\">\n                            <div class=\"col s4\">\n                                <md-input md-label=\"Group\" md-value.bind=\"newItem.app\"></md-input>\n                            </div>\n                            <div class=\"col s6\">\n                                <md-input md-label=\"Title\" md-value.bind=\"newItem.title\"></md-input>\n                            </div>\n                            <div class=\"col s1\">\n                                <md-input md-type=\"color\" md-value.bind=\"newItem.color\"></md-input>\n                            </div>\n                            <div class=\"col s1\">\n                                <a class=\"btn-flat waves-effect btn-floating\" click.delegate=\"startNewLogItem(newItem)\">\n                                    <i class=\"material-icons blue-text\">play_circle_filled</i></a>\n                            </div>\n                        </div>\n\n                    </md-collection-item>\n                    <md-collection-item css=\"border-left: 5px solid ${runningLogItem.color}\" if.bind=\"runningLogItem\">\n                        <p> ${runningLogItem.title} </p>\n                        <span> <b>${ runningLogItem.beginDate | rt }</b></span>\n                        <a href=\"#!\" class=\"secondary-content\" click.delegate=\"stopRunningLogItem()\"><i class=\"material-icons\">stop</i></a>\n\n                    </md-collection-item>\n                    <md-collection-header>\n                        <h5>Last tasks</h5>\n                    </md-collection-header>\n                    <md-collection-item css=\"border-left: 5px solid ${item.color}\" repeat.for=\"item of trackItems\">\n                        <p> ${item.title}</p>\n                        <span>  ${item.beginDate | df} - ${item.endDate | df}\n                            <b> ${item.endDate.getTime()-item.beginDate.getTime() | msToDuration}</b>\n                        </span>\n                    </md-collection-item>\n                </md-collection>\n            </form>\n\n    </section>\n</template>"; });
 define('text!settings/settings.html', ['module'], function(module) { module.exports = "<template>\n\n  <section class=\"au-animate\">\n    <div class=\"container\">\n\n      <h3>Settings</h3>\n\n      <div class=\"row au-stagger\">\n        <div class=\"col s6 m3 card-container au-animate\" repeat.for=\"user of users\">\n          <div  class=\"card usercard\">\n\n            <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\n            <div class=\"avatar\">\n              <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\n            </div>\n            <div class=\"content\">\n              <p class=\"name\">${user.login}</p>\n              <p><a target=\"_blank\" md-button md-waves href.bind=\"user.html_url\">Contact</a></p>\n            </div>\n\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
-define('text!timeline/timeline-component.html', ['module'], function(module) { module.exports = "<template>\n\n  Timeline component\n</template>\n"; });
-define('text!timeline/timeline-view.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./timeline-component\"></require>\n  <section class=\"au-animate\">\n\n    <div id=\"trackItemMiniEdit\" if.bind=\"selectedTrackItem\" css.bind=\"{left:selectedTrackItem.left, top:selectedTrackItem.top}\">\n      <form>\n        <div class=\"row\">\n          <div class=\"col s2\">\n            <md-input md-placeholder=\"Group\" md-value.bind=\"selectedTrackItem.app\"></md-input>\n          </div>\n          <div class=\"col s6\">\n            <md-input md-placeholder=\"Title\" md-value.bind=\"selectedTrackItem.title\"></md-input>\n          </div>\n          <div class=\"col s1\">\n            <md-input md-type=\"color\" md-value.bind=\"selectedTrackItem.color\"></md-input>\n          </div>\n          <div class=\"col s1\">\n            <a class=\"btn-flat waves-effect btn-floating\" click.delegate=\"saveTrackItem(selectedTrackItem)\">\n              <i class=\"material-icons blue-text\">play_circle_filled</i></a>\n          </div>\n          <div class=\"col s1\" if.bind=\"selectedTrackItem.id\">\n            <a class=\"btn-flat waves-effect btn-floating\" click.delegate=\"deleteTrackItem(selectedTrackItem)\">\n              <i class=\"material-icons red-text\">delete</i></a>\n          </div>\n          <div class=\"col s1\">\n            <a class=\"btn-flat waves-effect btn-floating\" click.delegate=\"closeMiniEdit()\">\n              <i class=\"material-icons black-text\">close</i></a>\n          </div>\n        </div>\n      </form>\n\n    </div>\n    <timeline-component selected-track-item.bind=\"selectedTrackItem\" start-date.bind=\"searchDate\" on-zoom-changed.bind=\"onZoomChanged\"\n      zoom-scale.bind=\"zoomScale\" zoom-x.bind=\"zoomX\"></timeline-component>\n<nvd3></nvd3>\n\n<div id=\"chart\">\n  <svg></svg>\n</div>\n  </section>\n</template>"; });
 define('text!summary/summary.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate\">\n    <div class=\"container\">\n\n      <h3>Summary</h3>\n\n      <div class=\"row au-stagger\">\n        <div class=\"col s6 m3 card-container au-animate\" >\n\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
+define('text!timeline/timeline-component.html', ['module'], function(module) { module.exports = "<template>\n\n  Timeline component\n</template>\n"; });
+define('text!timeline/timeline-view.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./timeline-component\"></require>\n  <require from=\"nvd3/nv.d3.min.css\"></require>\n  <section class=\"au-animate\">\n    <div class=\"row\" style=\"margin:0\">\n      <div class=\"col s1\">\n        <a class=\"btn-flat waves-effect btn-floating\" click.delegate=\"refresh()\">\n          <i class=\"material-icons blue-text\">refresh</i></a>\n      </div>\n      <div class=\"col s1\">\n        <a class=\"btn-flat waves-effect btn-floating\" click.delegate=\"dayBack()\">\n          <i class=\"material-icons blue-text\">arrow_back</i></a>\n      </div>\n      <div class=\"col s2\" ref=\"dpWrapper\">\n        <input md-datepicker=\"container.bind: dpWrapper; value.two-way: searchDate;\" type=\"date\" placeholder=\"Search for day\" />\n\n      </div>\n      <div class=\"col s1\">\n        <a class=\"btn-flat waves-effect btn-floating\" click.delegate=\"dayForward()\">\n          <i class=\"material-icons blue-text\">arrow_forward</i></a>\n      </div>\n\n    </div>\n    <div id=\"trackItemMiniEdit\" if.bind=\"selectedTrackItem\" css.bind=\"{left:selectedTrackItem.left, top:selectedTrackItem.top}\">\n      <form>\n        <div class=\"row\">\n          <div class=\"col s2\">\n            <md-input md-placeholder=\"Group\" md-value.bind=\"selectedTrackItem.app\"></md-input>\n          </div>\n          <div class=\"col s6\">\n            <md-input md-placeholder=\"Title\" md-value.bind=\"selectedTrackItem.title\"></md-input>\n          </div>\n          <div class=\"col s1\">\n            <md-input md-type=\"color\" md-value.bind=\"selectedTrackItem.color\"></md-input>\n          </div>\n          <div class=\"col s1\">\n            <a class=\"btn-flat waves-effect btn-floating\" click.delegate=\"saveTrackItem(selectedTrackItem)\">\n              <i class=\"material-icons blue-text\">play_circle_filled</i></a>\n          </div>\n          <div class=\"col s1\" if.bind=\"selectedTrackItem.id\">\n            <a class=\"btn-flat waves-effect btn-floating\" click.delegate=\"deleteTrackItem(selectedTrackItem)\">\n              <i class=\"material-icons red-text\">delete</i></a>\n          </div>\n          <div class=\"col s1\">\n            <a class=\"btn-flat waves-effect btn-floating\" click.delegate=\"closeMiniEdit()\">\n              <i class=\"material-icons black-text\">close</i></a>\n          </div>\n        </div>\n      </form>\n\n    </div>\n    <timeline-component selected-track-item.bind=\"selectedTrackItem\" start-date.bind=\"searchDate\" on-zoom-changed.bind=\"onZoomChanged\"\n      zoom-scale.bind=\"zoomScale\" zoom-x.bind=\"zoomX\"></timeline-component>\n    <div class=\"row\" style=\"min-height:200px\">\n      <md-card class=\"col s4\">\n        <nvd3 options.bind=\"pieOptions\" data-list.bind=\"pieData['AppTrackItem']\"></nvd3>\n      </md-card>\n       <md-card class=\"col s4\">\n        <nvd3 options.bind=\"pieOptions\" data-list.bind=\"pieData['LogTrackItem']\"></nvd3>\n      </md-card>\n       <md-card class=\"col s4\">\n        <nvd3 options.bind=\"pieOptions\" data-list.bind=\"pieData['StatusTrackItem']\"></nvd3>\n      </md-card>\n    </div>\n  </section>\n</template>"; });
 define('text!trackItem/trackItem.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./blur-image\"></require>\n\n  <section class=\"au-animate\">\n    <div class=\"container\">\n\n      <h3>${heading}</h3>\n\n      <div class=\"row au-stagger\">\n        <div class=\"col s6 m3 card-container au-animate\" repeat.for=\"user of users\">\n          <div  class=\"card usercard\">\n\n            <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\n            <div class=\"avatar\">\n              <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\n            </div>\n            <div class=\"content\">\n              <p class=\"name\">${user.login}</p>\n              <p><a target=\"_blank\" md-button md-waves href.bind=\"user.html_url\">Contact</a></p>\n            </div>\n\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
 //# sourceMappingURL=app-bundle.js.map

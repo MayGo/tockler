@@ -1,11 +1,13 @@
-import { autoinject, noView, LogManager, bindable, bindingMode } from "aurelia-framework";
+import { autoinject, noView, LogManager, bindable, bindingMode, BindingEngine } from "aurelia-framework";
 import * as moment from "moment";
 import * as d3 from 'd3';
 import * as nvd3 from 'nvd3';
 declare var nv: any;
 
-//import 'novus/nvd3/build/nv.d3.css!';
+//import nvd3css from 'nvd3/nv.d3.min.css!';
+
 import { EventAggregator } from 'aurelia-event-aggregator';
+import { MsToDurationValueConverter } from "../../converters/ms-to-duration-value-converter";
 
 
 let logger = LogManager.getLogger('Nvd3CustomElement');
@@ -14,73 +16,101 @@ let logger = LogManager.getLogger('Nvd3CustomElement');
 @autoinject
 export class Nvd3CustomElement {
 
-    @bindable({
-        defaultBindingMode: bindingMode.twoWay
-    })
-    options: any;
+    private msToDuration = new MsToDurationValueConverter()
+
+    options: any = {
+        height: 300,
+        width: 300,
+
+        showLabels: false,
+        duration: 500,
+        labelThreshold: 0.01,
+        labelSunbeamLayout: true,
+        showLegend: false,
+        donut: true,
+        donutRatio: 0.30
+    };
 
     @bindable({
         defaultBindingMode: bindingMode.twoWay
     })
-    data: any;
+    dataList: any = [];
 
+    subscriptions: any = [];
 
-    constructor(private element: Element) {
+    private chart: any;
+    private isInitialized: any;
+    private isInitializedResolve: any;
 
+    constructor(private element: Element, private bindingEngine: BindingEngine) {
+        this.isInitialized = new Promise(
+            (resolve, reject) => {
+                this.isInitializedResolve = resolve;
+            }
+        );
     }
 
     attached() {
+        logger.debug("Attached:", this.dataList)
+        let subscription = this.bindingEngine.collectionObserver(this.dataList).subscribe(this.listChanged);
+        this.subscriptions.push(subscription);
+
         nvd3.addGraph(() => {
-            var chart = nvd3.models.lineChart()
-                .useInteractiveGuideline(true)
-                ;
+            this.chart = nvd3.models.pieChart();
+            // chart.title('stuff')
+            // .titleOffset(-10);
 
-            chart.xAxis
-                .axisLabel('Time (ms)')
-                .tickFormat(d3.format(',r'))
-                ;
+            this.chart.options(this.options);
 
-            chart.yAxis
-                .axisLabel('Voltage (v)')
-                .tickFormat(d3.format('.02f'))
-                ;
+            this.chart.x(function (d) {
+                if (d.app === 'Default') {
+                    return d.title
+                }
+                return (d.app) ? d.app : 'undefined';
+            })
+            this.chart.y(function (d) {
+                return d.timeDiffInMs;
+            })
+            this.chart.color(function (d) {
+                return d.color;
+            })
+            this.chart.valueFormat((d) => {
+                return this.msToDuration.toView(d);
+            })
 
-            d3.select('#chart svg')
-                .datum(this.dataGen())
-                .transition().duration(500)
-                .call(chart)
-                ;
-
-            nvd3.utils.windowResize(chart.update);
-
-            return chart;
+            nvd3.utils.windowResize(this.chart.update);
+            this.isInitializedResolve()
+            return this.chart;
         });
     }
-    dataGen() {
-        var sin = [],
-            cos = [];
 
-        for (var i = 0; i < 100; i++) {
-            sin.push({ x: i, y: Math.sin(i / 10) });
-            cos.push({ x: i, y: .5 * Math.cos(i / 10) });
-        }
+    dataListChanged(oldList, newList) {
+        logger.debug("DataList changed", oldList, newList);
+        this.listChanged(this.dataList)
+    }
 
-        return [
-            {
-                values: sin,
-                key: 'Sine Wave',
-                color: '#ff7f0e'
-            },
-            {
-                values: cos,
-                key: 'Cosine Wave',
-                color: '#2ca02c'
-            }
-        ];
+    listChanged(data) {
+        logger.debug('Data changed', data);
+        this.isInitialized.then(() => {
+            // remove whole svg element with old data
+            d3.select(this.element).select('svg').remove();
+            //d3.selectAll('svg > *').remove();
+            d3.select(this.element).insert('svg', '.caption')
+                .datum(this.dataList)
+                .transition().duration(500)
+                .call(this.chart);
+        })
     }
 
     detached() {
+        this.disposeSubscriptions();
+    }
 
+    disposeSubscriptions() {
+        while (this.subscriptions.length) {
+            logger.debug("Dispose subscriptions");
+            this.subscriptions.pop().dispose();
+        }
     }
 
 }

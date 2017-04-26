@@ -13,34 +13,36 @@ let ipcRenderer: any = (<any>window).nodeRequire('electron').ipcRenderer
 @autoinject
 export class TimelineView {
 
-    @bindable({
-        defaultBindingMode: bindingMode.twoWay
-    })
-    loadedItems = {};
+    @bindable({ defaultBindingMode: bindingMode.twoWay })
+    loadedItems = {
+        AppTrackItem: [],
+        StatusTrackItem: [],
+        LogTrackItem: []
+    };
 
-    @bindable({
-        defaultBindingMode: bindingMode.twoWay
-    })
+    @bindable({ defaultBindingMode: bindingMode.twoWay })
     selectedTrackItem: any = null;
 
     observerDisposer: any;
 
-    @bindable({
-        defaultBindingMode: bindingMode.twoWay
-    })
+    @bindable({ defaultBindingMode: bindingMode.twoWay })
     loading: boolean;
-    @bindable({
-        defaultBindingMode: bindingMode.twoWay
-    })
+
+    @bindable({ defaultBindingMode: bindingMode.twoWay })
     zoomScale: any;
-    @bindable({
-        defaultBindingMode: bindingMode.twoWay
-    })
+
+    @bindable({ defaultBindingMode: bindingMode.twoWay })
     zoomX: any;
 
+    @bindable({ defaultBindingMode: bindingMode.twoWay })
     searchDate: Date;
 
-    pieData = {};
+    @bindable({ defaultBindingMode: bindingMode.twoWay })
+    pieData = {
+        AppTrackItem: [],
+        StatusTrackItem: [],
+        LogTrackItem: []
+    };
     dayStats = {};
 
     table = {
@@ -71,6 +73,7 @@ export class TimelineView {
         this.refresh();
     };
 
+
     refresh() {
         let lastItem: any = (this.loadedItems['AppTrackItem'].length > 0) ? _(this.loadedItems['AppTrackItem']).last().valueOf() : null;
 
@@ -78,6 +81,25 @@ export class TimelineView {
         console.log('Refreshing from:', searchFrom);
         this.list(searchFrom);
     };
+
+    dayBack() {
+        this.searchDate = moment(this.searchDate).subtract(1, 'days').toDate();
+    };
+
+    dayForward() {
+        this.searchDate = moment(this.searchDate).add(1, 'days').toDate();
+    };
+
+    changeDay(day) {
+        this.resetLoadedItems();
+        this.list(day);
+    }
+
+    searchDateChanged(newValue, oldValue) {
+        logger.debug("SearchDateChanged", oldValue, newValue);
+        this.changeDay(newValue);
+    }
+
     list(startDate) {
         console.log("Load data from:", startDate);
         this.zoomScale = sessionStorage.getItem('zoomScale') || 0;
@@ -121,18 +143,17 @@ export class TimelineView {
         console.log('Trackitems loaded, parsing ended.', taskName);
         this.eventAggregator.publish('addItemsToTimeline', this.loadedItems[taskName]);
 
-        //updatePieCharts(this.loadedItems[taskName], taskName);
+        this.updatePieCharts(this.loadedItems[taskName], taskName);
 
         if (taskName === 'AppTrackItem') {
             // setWorkStatsForDay(this.loadedItems[taskName]);
         }
 
-        // $scope.$digest();
         console.log('Trackitems loaded, $digest.');
     };
 
-    selectedTrackItemChanged(a, b) {
-        logger.debug("selectedTrackItemChanged", a, b);
+    selectedTrackItemChanged(newValue, oldValue) {
+        logger.debug("selectedTrackItemChanged", newValue, oldValue);
     }
 
     setWorkStatsForDay(items) {
