@@ -1,34 +1,46 @@
-import {autoinject} from "aurelia-framework";
+import { autoinject, LogManager } from "aurelia-framework";
 import * as moment from "moment";
-import {TrackItemService} from "../services/track-item-service";
-import {SettingsService} from "../services/settings-service";
+import { TrackItemService } from "../services/track-item-service";
+import { SettingsService } from "../services/settings-service";
 
+import { MdToastService } from 'aurelia-materialize-bridge';
+import { ValidationController, ValidationRules, ValidationControllerFactory, validateTrigger } from 'aurelia-validation';
+import { MaterializeFormValidationRenderer } from 'aurelia-materialize-bridge';
 
+let logger = LogManager.getLogger('Menubar');
 const ipcRenderer = (<any>window).nodeRequire('electron').ipcRenderer;
 
 @autoinject
 export class Menubar {
-    trackItems:Array<any> = [];
+    trackItems: Array<any> = [];
 
-    loading:boolean = false;
+    loading: boolean = false;
 
-    newItem:any = {color: '#426DFC'};
-    runningLogItem:any;
+    newItem: any = { color: '#426DFC' };
+    runningLogItem: any;
+    validationController: ValidationController;
 
-    constructor(private trackItemService:TrackItemService, private settingsService:SettingsService) {
+    constructor(private trackItemService: TrackItemService, private settingsService: SettingsService,
+        private mdToastService: MdToastService, private controllerFactory: ValidationControllerFactory,
+    ) {
         ipcRenderer.on('focus-tray', this.refresh);
+
+        this.validationController = controllerFactory.createForCurrentScope();
+        this.validationController.addRenderer(new MaterializeFormValidationRenderer());
+        this.validationController.validateTrigger = validateTrigger.blur;
     }
 
 
-    async activate():Promise<void> {
+    async activate(): Promise<void> {
         this.refresh();
+        this.setValidationRules();
     }
 
     loadItems() {
-        console.log("Loading items");
+        logger.debug("Loading items");
         this.loading = true;
         this.trackItemService.findFirstLogItems().then((items) => {
-            console.log("Loaded items", items);
+            logger.debug("Loaded items", items);
             items.forEach(function (item) {
                 item.timeDiffInMs = moment(item.endDate).diff(item.beginDate);
                 item.duration = moment.duration(item.endDate - item.beginDate);
@@ -38,32 +50,34 @@ export class Menubar {
         });
     }
 
-    startNewLogItem(oldItem:any) {
+    setValidationRules() {
+        logger.debug("Setting validation rules, for:", this.newItem);
+        ValidationRules
+            .ensure('app').required()
+            .ensure('title').required()
+            .on(this.newItem);
+    }
 
-        this.stopRunningLogItem();
-        this.trackItemService.startNewLogItem(oldItem).then((item)=> {
-            console.log("Setting running log item:", item);
-            this.runningLogItem = item;
-            /* var toast = $mdToast.simple()
-             .textContent('Task is running!');
-             $mdToast.show(toast);
+    startNewLogItem(oldItem: any) {
+        this.newItem = oldItem;
+        this.validationController.validate().then(v => {
+            if (v.valid) {
+                this.stopRunningLogItem();
+                this.trackItemService.startNewLogItem(this.newItem).then((item) => {
+                    logger.debug("Setting running log item:", item);
+                    this.runningLogItem = item;
+                })
+            }
+        });
 
-             $scope.$apply();*/
-        })
     }
 
     stopRunningLogItem() {
         if (this.runningLogItem && this.runningLogItem.id) {
 
-            this.trackItemService.stopRunningLogItem(this.runningLogItem.id).then(()=> {
+            this.trackItemService.stopRunningLogItem(this.runningLogItem.id).then(() => {
                 this.runningLogItem = null;
                 this.loadItems();
-                /*
-                 var toast = $mdToast.simple()
-                 .textContent('Running task is stopped!');
-                 $mdToast.show(toast);
-                 $scope.$apply();
-                 */
             })
         } else {
             console.debug("No running log item");

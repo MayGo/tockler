@@ -5,6 +5,7 @@ import * as _ from "lodash";
 import { TrackItemService } from "../services/track-item-service";
 import { DeepObserver } from "../resources/deep-observer";
 import { bindable } from "aurelia-templating";
+import { MdToastService } from 'aurelia-materialize-bridge';
 
 let logger = LogManager.getLogger('Settings');
 
@@ -29,10 +30,8 @@ export class Settings {
     observerDisposer: any;
 
     constructor(private settingsService: SettingsService, private trackItemService: TrackItemService,
-        private deepObserver: DeepObserver) {
-        this.observerDisposer = deepObserver.observe(this, 'workSettings', (n, o, p) => {
-            console.log('DATA CHANGED:', p, ':', o, '===>', n); // Display the changes in the console log
-        });
+        private deepObserver: DeepObserver, private mdToastService: MdToastService) {
+
     }
 
     findTodaysTrackItems() {
@@ -47,7 +46,7 @@ export class Settings {
 
     async activate(): Promise<void> {
         this.findTodaysTrackItems();
-
+      
         this.settingsService.fetchWorkSettings().then((workSettings) => {
             if (!_.isEmpty(workSettings)) {
                 this.workSettings = workSettings;
@@ -59,6 +58,7 @@ export class Settings {
             if (!_.isEmpty(analyserSettings)) {
                 this.analyserSettings = analyserSettings;
             }
+            
             logger.debug("Loaded analyserSettings:", analyserSettings);
         });
     }
@@ -78,12 +78,13 @@ export class Settings {
 
     saveSettings() {
         console.log("Saving:", this.workSettings, this.analyserSettings);
-        this.settingsService.updateByName('WORK_SETTINGS', this.workSettings).then((item) {
+        this.settingsService.updateByName('WORK_SETTINGS', this.workSettings).then((item) => {
             console.log("Updated WORK_SETTINGS!", item);
         });
 
-        this.settingsService.updateByName('ANALYSER_SETTINGS', this.analyserSettings).then((item) {
+        this.settingsService.updateByName('ANALYSER_SETTINGS', this.analyserSettings).then((item) => {
             console.log("Updated ANALYSER_SETTINGS!", item);
+            this.mdToastService.show('Saved!', 4000);
         })
     }
 

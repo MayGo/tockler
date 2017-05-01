@@ -16,13 +16,14 @@
     "postinstall": "install-app-deps"
   },
   "dependencies": {
+ 
     "au-table": "^0.1.12",
     "aurelia-animator-css": "1.0.0",
     "aurelia-bootstrapper": "1.0.1",
     "aurelia-fetch-client": "1.0.1",
     "aurelia-i18n": "1.1.2",
-    "aurelia-materialize-bridge": "0.17.1",
-    "aurelia-validation": "0.13.1",
+    "aurelia-materialize-bridge": "0.27.0",
+    "aurelia-validation": "1.0.0",
     "auto-launch": "^5.0.1",
     "bunyan": "^1.8.1",
     "compare-versions": "^3.0.0",
@@ -61,6 +62,7 @@
     "@types/selenium-webdriver": "2.44.26",
     "@types/whatwg-fetch": "0.0.32",
     "@types/d3": "^3.5.16",
+    "@types/nvd3": "^1.8.36",
     "aurelia-cli": "^0.21.0",
     "aurelia-testing": "1.0.0-beta.2.0.0",
     "aurelia-tools": "0.2.2",

@@ -2,6 +2,7 @@ import { autoinject, noView, LogManager, bindable, bindingMode, BindingEngine } 
 import * as moment from "moment";
 import * as d3 from 'd3';
 import * as nvd3 from 'nvd3';
+
 declare var nv: any;
 
 //import nvd3css from 'nvd3/nv.d3.min.css!';

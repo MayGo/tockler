@@ -1,9 +1,8 @@
 import { autoinject, noView, LogManager, bindable, bindingMode } from "aurelia-framework";
 import * as moment from "moment";
 import * as d3 from 'd3';
-import * as d3Tip from "d3-tip"; // d3-tip@0.7.0 (with a d3@^4 dependency)
+import * as d3Tip from "d3-tip"; 
 import { EventAggregator } from 'aurelia-event-aggregator';
-
 
 let logger = LogManager.getLogger('TimelineComponent');
 
