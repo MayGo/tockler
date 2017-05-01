@@ -31,6 +31,7 @@ export async function configure(aurelia: Aurelia) {
   });
 
   aurelia.use.plugin('aurelia-validation');
+  aurelia.use.plugin('aurelia-table');
   aurelia.use.plugin('aurelia-materialize-bridge', b => b.useAll());
 
   if (environment.debug) {

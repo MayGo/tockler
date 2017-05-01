@@ -1,23 +1,24 @@
 <template>
   <require from="./timeline-component"></require>
+
   <require from="nvd3/nv.d3.min.css"></require>
   <section class="au-animate">
     <div class="row" style="margin:0">
-      <div class="col s1">
+
+      <div class="col s1 right-align">
         <a class="btn-flat waves-effect btn-floating" click.delegate="refresh()">
-          <i class="material-icons blue-text">refresh</i></a>
-      </div>
-      <div class="col s1">
+          <i class="zmdi zmdi-refresh blue-text"></i></a>
         <a class="btn-flat waves-effect btn-floating" click.delegate="dayBack()">
-          <i class="material-icons blue-text">arrow_back</i></a>
+          <i class="zmdi zmdi-arrow-left blue-text"></i></a>
       </div>
       <div class="col s2" ref="dpWrapper">
-        <input md-datepicker="container.bind: dpWrapper; value.two-way: searchDate;" type="date" placeholder="Search for day" />
+        <input md-datepicker="container.bind: dpWrapper; value.two-way: searchDate;" type="date" placeholder="Search for day" style="margin:0; height: 2.2rem;"
+        />
 
       </div>
       <div class="col s1">
         <a class="btn-flat waves-effect btn-floating" click.delegate="dayForward()">
-          <i class="material-icons blue-text">arrow_forward</i></a>
+          <i class="zmdi zmdi-arrow-right blue-text"></i></a>
       </div>
 
     </div>
@@ -35,15 +36,15 @@
           </div>
           <div class="col s1">
             <a class="btn-flat waves-effect btn-floating" click.delegate="saveTrackItem(selectedTrackItem)">
-              <i class="material-icons blue-text">play_circle_filled</i></a>
+              <i class="zmdi zmdi-play-circle blue-text"></i></a>
           </div>
           <div class="col s1" if.bind="selectedTrackItem.id">
             <a class="btn-flat waves-effect btn-floating" click.delegate="deleteTrackItem(selectedTrackItem)">
-              <i class="material-icons red-text">delete</i></a>
+              <i class="zmdi zmdi-delete red-text"></i></a>
           </div>
           <div class="col s1">
             <a class="btn-flat waves-effect btn-floating" click.delegate="closeMiniEdit()">
-              <i class="material-icons black-text">close</i></a>
+              <i class="zmdi zmdi-close black-text"></i></a>
           </div>
         </div>
       </form>
@@ -51,16 +52,63 @@
     </div>
     <timeline-component selected-track-item.bind="selectedTrackItem" start-date.bind="searchDate" on-zoom-changed.bind="onZoomChanged"
       zoom-scale.bind="zoomScale" zoom-x.bind="zoomX"></timeline-component>
+
+    <div class="divider"></div>
+
     <div class="row" style="min-height:200px">
       <md-card class="col s4">
         <nvd3 options.bind="pieOptions" data-list.bind="pieData['AppTrackItem']"></nvd3>
       </md-card>
-       <md-card class="col s4">
+      <md-card class="col s4">
         <nvd3 options.bind="pieOptions" data-list.bind="pieData['LogTrackItem']"></nvd3>
       </md-card>
-       <md-card class="col s4">
+      <md-card class="col s4">
         <nvd3 options.bind="pieOptions" data-list.bind="pieData['StatusTrackItem']"></nvd3>
       </md-card>
+    </div>
+
+    <div class="divider"></div>
+
+    <div>
+      <div class="form-group">
+        <div class="row">
+          <div class="col s10">
+            <md-input md-label="Search" md-value.bind="tableFilters[0].value"></md-input>
+          </div>
+          <div class="col s2">
+            <select md-select="label: Search item type" value.two-way="tableSearchTask">
+              <option value="" disabled selected>select an item</option>
+              <option value="AppTrackItem">Apps</option>
+              <option value="StatusTrackItem">Statuses</option>
+              <option value="LogTrackItem">Logs</option>
+          </select>
+          </div>
+        </div>
+      </div>
+
+      <table class="table table-striped" aurelia-table="data.bind: loadedItems[tableSearchTask]; display-data.bind: $displayData; filters.bind: tableFilters">
+        <thead>
+          <tr>
+            <th aut-sort="key: app;">App</th>
+            <th aut-sort="key: title;">Title</th>
+            <th aut-sort="key: beginDate; default: desc">Begin</th>
+            <th aut-sort="key: endDate;">End</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr repeat.for="trackItem of $displayData">
+            <td>${trackItem.app}</td>
+            <td>${trackItem.title}</td>
+            <td>${trackItem.beginDate | toDate | df: { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute:
+              '2-digit', second: '2-digit', hour12: false }}</td>
+            <td>${trackItem.endDate | toDate | df: { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute:
+              '2-digit', second: '2-digit', hour12: false }}</td>
+            <td>${trackItem.endDate | diffToMs: trackItem.beginDate | msToDuration}</td>
+          </tr>
+        </tbody>
+      </table>
+
     </div>
   </section>
 </template>

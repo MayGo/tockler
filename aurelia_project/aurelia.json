@@ -147,7 +147,7 @@
             "path": "../node_modules/d3",
             "main": "d3.min.js"
           },
-            {
+          {
             "name": "nvd3",
             "path": "../node_modules/nvd3/build",
             "main": "nv.d3.min",
@@ -189,6 +189,14 @@
             "name": "aurelia-i18n",
             "path": "../node_modules/aurelia-i18n/dist/amd",
             "main": "aurelia-i18n"
+          },
+          {
+            "name": "aurelia-table",
+            "path": "../node_modules/au-table/dist/amd",
+            "main": "index",
+            "resources": [
+              "au-table-pagination.html"
+            ]
           },
           {
             "name": "electron",

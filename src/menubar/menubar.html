@@ -1,5 +1,4 @@
 <template>
-    <require from="../converters/ms-to-duration-value-converter"></require>
     <section class="au-animate">
         <p class="container">
 
@@ -18,7 +17,7 @@
                             </div>
                             <div class="col s1">
                                 <a class="btn-flat waves-effect btn-floating" click.delegate="startNewLogItem(newItem)">
-                                    <i class="material-icons blue-text">play_circle_filled</i></a>
+                                    <i class="zmdi zmdi-play-circle blue-text"></i></a>
                             </div>
                         </div>
 
@@ -26,7 +25,8 @@
                     <md-collection-item css="border-left: 5px solid ${runningLogItem.color}" if.bind="runningLogItem">
                         <p> ${runningLogItem.title} </p>
                         <span> <b>${ runningLogItem.beginDate | rt }</b></span>
-                        <a href="#!" class="secondary-content" click.delegate="stopRunningLogItem()"><i class="material-icons">stop</i></a>
+                        <a href="#!" class="secondary-content" click.delegate="stopRunningLogItem()">
+                            <i class="zmdi zmdi-stop">stop</i></a>
 
                     </md-collection-item>
                     <md-collection-header>

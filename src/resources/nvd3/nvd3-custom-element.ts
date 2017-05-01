@@ -7,7 +7,7 @@ declare var nv: any;
 //import nvd3css from 'nvd3/nv.d3.min.css!';
 
 import { EventAggregator } from 'aurelia-event-aggregator';
-import { MsToDurationValueConverter } from "../../converters/ms-to-duration-value-converter";
+import { MsToDurationValueConverter } from "../../resources/converters/ms-to-duration-value-converter";
 
 
 let logger = LogManager.getLogger('Nvd3CustomElement');

@@ -16,6 +16,7 @@
     "postinstall": "install-app-deps"
   },
   "dependencies": {
+    "au-table": "^0.1.12",
     "aurelia-animator-css": "1.0.0",
     "aurelia-bootstrapper": "1.0.1",
     "aurelia-fetch-client": "1.0.1",
@@ -30,9 +31,11 @@
     "electron-context-menu": "^0.6.0",
     "electron-squirrel-startup": "^1.0.0",
     "es6-promise": "^4.0.5",
+    "font-awesome": "^4.7.0",
     "i18next": "3.4.4",
     "i18next-xhr-backend": "1.2.0",
     "lodash": "^4.17.4",
+    "material-icons-font": "^1.1.1",
     "materialize-css": "^0.98.1",
     "menubar": "^5.1.0",
     "moment": "2.15.1",

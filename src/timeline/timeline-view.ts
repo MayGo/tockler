@@ -50,8 +50,19 @@ export class TimelineView {
         search: '',
         order: '-beginDate'
     };
+    @bindable({ defaultBindingMode: bindingMode.twoWay })
+    tableSearchTask = 'AppTrackItem';
 
-    constructor(private settingsService: SettingsService, private trackItemService: TrackItemService, private eventAggregator: EventAggregator, private deepObserver: DeepObserver) {
+    tableFilters = [
+        { value: '', keys: ['app', 'title'] }
+    ];
+
+    constructor(
+        private settingsService: SettingsService,
+        private trackItemService: TrackItemService,
+        private eventAggregator: EventAggregator,
+        private deepObserver: DeepObserver
+    ) {
         this.resetLoadedItems();
         this.observerDisposer = deepObserver.observe(this, 'selectedTrackItem', (n, o, p) => {
             console.log('DATA CHANGED:', p, ':', o, '===>', n); // Display the changes in the console log
