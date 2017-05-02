@@ -738,6 +738,72 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+define('resources/deep-observer',["require", "exports", "aurelia-framework", "aurelia-dependency-injection"], function (require, exports, aurelia_framework_1, aurelia_dependency_injection_1) {
+    "use strict";
+    var DeepObserver = (function () {
+        function DeepObserver(bindingEngine) {
+            this._bindingEngine = bindingEngine;
+        }
+        DeepObserver.prototype.observe = function (target, property, callback) {
+            var _this = this;
+            var subscriptions = { root: null, children: [] };
+            subscriptions.root = (this._bindingEngine.propertyObserver(target, property)
+                .subscribe(function (n, o) {
+                _this.disconnect(subscriptions.children);
+                var path = property;
+                _this.recurse(target, property, subscriptions.children, callback, path);
+            }));
+            return function () { _this.disconnect(subscriptions.children); subscriptions.root.dispose(); };
+        };
+        DeepObserver.prototype.disconnect = function (subscriptions) {
+            while (subscriptions.length) {
+                subscriptions.pop().dispose();
+            }
+        };
+        DeepObserver.prototype.recurse = function (target, property, subscriptions, callback, path) {
+            var sub = target[property];
+            if (typeof sub === "object") {
+                for (var p in sub)
+                    if (sub.hasOwnProperty(p)) {
+                        this.recurse(sub, p, subscriptions, callback, "" + path + (sub instanceof Array ? '[' + p + ']' : '.' + p));
+                    }
+            }
+            if (target != property) {
+                subscriptions.push(this._bindingEngine.propertyObserver(target, property).subscribe(function (n, o) { return callback(n, o, path); }));
+            }
+        };
+        return DeepObserver;
+    }());
+    DeepObserver = __decorate([
+        aurelia_dependency_injection_1.autoinject(),
+        __metadata("design:paramtypes", [aurelia_framework_1.BindingEngine])
+    ], DeepObserver);
+    exports.DeepObserver = DeepObserver;
+});
+
+define('resources/index',["require", "exports"], function (require, exports) {
+    "use strict";
+    function configure(config) {
+        config.globalResources('./nvd3/nvd3-custom-element');
+        config.globalResources('./converters/diff-to-ms-value-converter');
+        config.globalResources('./converters/format-date-value-converter');
+        config.globalResources('./converters/ms-to-duration-value-converter');
+        config.globalResources('./converters/to-date-value-converter');
+        config.globalResources('./converters/format-date-value-converter');
+        config.globalResources('./converters/flatten-array-value-converter');
+    }
+    exports.configure = configure;
+});
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -864,180 +930,6 @@ define('menubar/menubar',["require", "exports", "aurelia-framework", "moment", "
             aurelia_materialize_bridge_1.MdToastService, aurelia_validation_1.ValidationControllerFactory])
     ], Menubar);
     exports.Menubar = Menubar;
-});
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-define('resources/deep-observer',["require", "exports", "aurelia-framework", "aurelia-dependency-injection"], function (require, exports, aurelia_framework_1, aurelia_dependency_injection_1) {
-    "use strict";
-    var DeepObserver = (function () {
-        function DeepObserver(bindingEngine) {
-            this._bindingEngine = bindingEngine;
-        }
-        DeepObserver.prototype.observe = function (target, property, callback) {
-            var _this = this;
-            var subscriptions = { root: null, children: [] };
-            subscriptions.root = (this._bindingEngine.propertyObserver(target, property)
-                .subscribe(function (n, o) {
-                _this.disconnect(subscriptions.children);
-                var path = property;
-                _this.recurse(target, property, subscriptions.children, callback, path);
-            }));
-            return function () { _this.disconnect(subscriptions.children); subscriptions.root.dispose(); };
-        };
-        DeepObserver.prototype.disconnect = function (subscriptions) {
-            while (subscriptions.length) {
-                subscriptions.pop().dispose();
-            }
-        };
-        DeepObserver.prototype.recurse = function (target, property, subscriptions, callback, path) {
-            var sub = target[property];
-            if (typeof sub === "object") {
-                for (var p in sub)
-                    if (sub.hasOwnProperty(p)) {
-                        this.recurse(sub, p, subscriptions, callback, "" + path + (sub instanceof Array ? '[' + p + ']' : '.' + p));
-                    }
-            }
-            if (target != property) {
-                subscriptions.push(this._bindingEngine.propertyObserver(target, property).subscribe(function (n, o) { return callback(n, o, path); }));
-            }
-        };
-        return DeepObserver;
-    }());
-    DeepObserver = __decorate([
-        aurelia_dependency_injection_1.autoinject(),
-        __metadata("design:paramtypes", [aurelia_framework_1.BindingEngine])
-    ], DeepObserver);
-    exports.DeepObserver = DeepObserver;
-});
-
-define('resources/index',["require", "exports"], function (require, exports) {
-    "use strict";
-    function configure(config) {
-        config.globalResources('./nvd3/nvd3-custom-element');
-        config.globalResources('./converters/diff-to-ms-value-converter');
-        config.globalResources('./converters/format-date-value-converter');
-        config.globalResources('./converters/ms-to-duration-value-converter');
-        config.globalResources('./converters/to-date-value-converter');
-        config.globalResources('./converters/format-date-value-converter');
-        config.globalResources('./converters/flatten-array-value-converter');
-    }
-    exports.configure = configure;
-});
-
-define('services/app-settings-service',["require", "exports"], function (require, exports) {
-    "use strict";
-    var remote = window.nodeRequire('electron').remote;
-    var AppSettingsService = (function () {
-        function AppSettingsService() {
-            this.service = remote.getGlobal('BackgroundService').getAppSettingsService();
-        }
-        return AppSettingsService;
-    }());
-    exports.AppSettingsService = AppSettingsService;
-});
-
-define('services/settings-service',["require", "exports"], function (require, exports) {
-    "use strict";
-    var remote = window.nodeRequire('electron').remote;
-    var SettingsService = (function () {
-        function SettingsService() {
-            this.service = remote.getGlobal('BackgroundService').getSettingsService();
-        }
-        SettingsService.prototype.saveRunningLogItemReferemce = function (refId) {
-            return this.service.saveRunningLogItemReferemce(refId);
-        };
-        SettingsService.prototype.updateByName = function (name, jsonData) {
-            return this.service.updateByName(name, jsonData);
-        };
-        SettingsService.prototype.getRunningLogItem = function () {
-            return this.service.getRunningLogItem();
-        };
-        SettingsService.prototype.fetchWorkSettings = function () {
-            return this.service.fetchWorkSettings();
-        };
-        SettingsService.prototype.fetchAnalyserSettings = function () {
-            return this.service.fetchAnalyserSettings();
-        };
-        return SettingsService;
-    }());
-    exports.SettingsService = SettingsService;
-});
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-define('services/track-item-service',["require", "exports", "aurelia-framework", "moment", "./settings-service"], function (require, exports, aurelia_framework_1, moment, settings_service_1) {
-    "use strict";
-    var remote = window.nodeRequire('electron').remote;
-    var TrackItemService = (function () {
-        function TrackItemService(settingsService) {
-            this.settingsService = settingsService;
-            this.service = remote.getGlobal('BackgroundService').getTrackItemService();
-        }
-        TrackItemService.prototype.findAllFromDay = function (from, type) {
-            return this.service.findAllFromDay(from, type);
-        };
-        TrackItemService.prototype.findFirstLogItems = function () {
-            return this.service.findFirstLogItems();
-        };
-        TrackItemService.prototype.createItem = function (trackItem) {
-            return this.service.createItem(trackItem);
-        };
-        TrackItemService.prototype.updateItem = function (trackItem) {
-            return this.service.updateItem(trackItem);
-        };
-        TrackItemService.prototype.deleteById = function (trackItemId) {
-            return this.service.deleteById(trackItemId);
-        };
-        TrackItemService.prototype.startNewLogItem = function (oldItem) {
-            var _this = this;
-            console.log("startNewLogItem");
-            var newItem = {};
-            newItem.app = oldItem.app || "WORK";
-            newItem.taskName = "LogTrackItem";
-            newItem.color = oldItem.color;
-            newItem.title = oldItem.title;
-            newItem.beginDate = moment().toDate();
-            newItem.endDate = moment().add(60, 'seconds').toDate();
-            return new Promise(function (resolve, reject) {
-                _this.service.createItem(newItem).then(function (item) {
-                    console.log("Created newItem to DB:", item);
-                    _this.settingsService.saveRunningLogItemReferemce(item.id);
-                    resolve(item);
-                });
-            });
-        };
-        ;
-        TrackItemService.prototype.stopRunningLogItem = function (runningLogItemId) {
-            var _this = this;
-            console.log("stopRunningLogItem");
-            return this.service.updateEndDateWithNow(runningLogItemId).then(function (item) {
-                console.log("Updated trackitem to DB:", item);
-                _this.settingsService.saveRunningLogItemReferemce(null);
-            });
-        };
-        ;
-        return TrackItemService;
-    }());
-    TrackItemService = __decorate([
-        aurelia_framework_1.autoinject,
-        __metadata("design:paramtypes", [settings_service_1.SettingsService])
-    ], TrackItemService);
-    exports.TrackItemService = TrackItemService;
 });
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -1219,6 +1111,114 @@ define('settings/settings',["require", "exports", "aurelia-framework", "../servi
             deep_observer_1.DeepObserver, aurelia_materialize_bridge_1.MdToastService])
     ], Settings);
     exports.Settings = Settings;
+});
+
+define('services/app-settings-service',["require", "exports"], function (require, exports) {
+    "use strict";
+    var remote = window.nodeRequire('electron').remote;
+    var AppSettingsService = (function () {
+        function AppSettingsService() {
+            this.service = remote.getGlobal('BackgroundService').getAppSettingsService();
+        }
+        return AppSettingsService;
+    }());
+    exports.AppSettingsService = AppSettingsService;
+});
+
+define('services/settings-service',["require", "exports"], function (require, exports) {
+    "use strict";
+    var remote = window.nodeRequire('electron').remote;
+    var SettingsService = (function () {
+        function SettingsService() {
+            this.service = remote.getGlobal('BackgroundService').getSettingsService();
+        }
+        SettingsService.prototype.saveRunningLogItemReferemce = function (refId) {
+            return this.service.saveRunningLogItemReferemce(refId);
+        };
+        SettingsService.prototype.updateByName = function (name, jsonData) {
+            return this.service.updateByName(name, jsonData);
+        };
+        SettingsService.prototype.getRunningLogItem = function () {
+            return this.service.getRunningLogItem();
+        };
+        SettingsService.prototype.fetchWorkSettings = function () {
+            return this.service.fetchWorkSettings();
+        };
+        SettingsService.prototype.fetchAnalyserSettings = function () {
+            return this.service.fetchAnalyserSettings();
+        };
+        return SettingsService;
+    }());
+    exports.SettingsService = SettingsService;
+});
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('services/track-item-service',["require", "exports", "aurelia-framework", "moment", "./settings-service"], function (require, exports, aurelia_framework_1, moment, settings_service_1) {
+    "use strict";
+    var remote = window.nodeRequire('electron').remote;
+    var TrackItemService = (function () {
+        function TrackItemService(settingsService) {
+            this.settingsService = settingsService;
+            this.service = remote.getGlobal('BackgroundService').getTrackItemService();
+        }
+        TrackItemService.prototype.findAllFromDay = function (from, type) {
+            return this.service.findAllFromDay(from, type);
+        };
+        TrackItemService.prototype.findFirstLogItems = function () {
+            return this.service.findFirstLogItems();
+        };
+        TrackItemService.prototype.createItem = function (trackItem) {
+            return this.service.createItem(trackItem);
+        };
+        TrackItemService.prototype.updateItem = function (trackItem) {
+            return this.service.updateItem(trackItem);
+        };
+        TrackItemService.prototype.deleteById = function (trackItemId) {
+            return this.service.deleteById(trackItemId);
+        };
+        TrackItemService.prototype.startNewLogItem = function (oldItem) {
+            var _this = this;
+            console.log("startNewLogItem");
+            var newItem = {};
+            newItem.app = oldItem.app || "WORK";
+            newItem.taskName = "LogTrackItem";
+            newItem.color = oldItem.color;
+            newItem.title = oldItem.title;
+            newItem.beginDate = moment().toDate();
+            newItem.endDate = moment().add(60, 'seconds').toDate();
+            return new Promise(function (resolve, reject) {
+                _this.service.createItem(newItem).then(function (item) {
+                    console.log("Created newItem to DB:", item);
+                    _this.settingsService.saveRunningLogItemReferemce(item.id);
+                    resolve(item);
+                });
+            });
+        };
+        ;
+        TrackItemService.prototype.stopRunningLogItem = function (runningLogItemId) {
+            var _this = this;
+            console.log("stopRunningLogItem");
+            return this.service.updateEndDateWithNow(runningLogItemId).then(function (item) {
+                console.log("Updated trackitem to DB:", item);
+                _this.settingsService.saveRunningLogItemReferemce(null);
+            });
+        };
+        ;
+        return TrackItemService;
+    }());
+    TrackItemService = __decorate([
+        aurelia_framework_1.autoinject,
+        __metadata("design:paramtypes", [settings_service_1.SettingsService])
+    ], TrackItemService);
+    exports.TrackItemService = TrackItemService;
 });
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {

@@ -1,12 +1,13 @@
 {
-  "name": "cli-ts-electron",
-  "description": "An Aurelia electron application.",
-  "version": "0.1.0",
+  "name": "Tockler",
+  "version": "2.4.4",
+  "description": "Automatically track applications usage and working time",
+  "author": "Maigo Erit <maigo.erit@gmail.com>",
+  "license": "GPL-2.0",
   "repository": {
-    "type": "???",
-    "url": "???"
+    "type": "git",
+    "url": "git@github.com:MayGo/tockler.git"
   },
-  "license": "MIT",
   "scripts": {
     "____pre____": "",
     "materialize": "./node_modules/.bin/r.js -o tools/rbuild.js",
@@ -16,7 +17,6 @@
     "postinstall": "install-app-deps"
   },
   "dependencies": {
- 
     "au-table": "^0.1.12",
     "aurelia-animator-css": "1.0.0",
     "aurelia-bootstrapper": "1.0.1",

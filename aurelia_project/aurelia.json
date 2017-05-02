@@ -1,5 +1,5 @@
 {
-  "name": "cli-ts-electron",
+  "name": "tockler",
   "type": "project:application",
   "platform": {
     "id": "web",
