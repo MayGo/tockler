@@ -77,17 +77,14 @@ xcopy .\node_modules\sqlite3 .\app\node_modules\sqlite3 /s /e /h
 npm run rebuild-sqlite-osx
 
 
-### Gulp Commands
+### Aurelia Commands
 ```bash
 # Most Frequently Used
-gulp dev     # [default] Run the app in debugging mode (Reload automatically)
-gulp run     # Run the app in production mode
+au run --watch     # Run the app in production mode
 
 # Other available commands
-gulp serve     # Run the app in debugging mode (Reload with CMD+R/F5)
-gulp prebuild  # Package OSX app for predistribution (Mainly for preview)
-gulp build     # Package windows and OSX app for distribution
-gulp sass      # Compile SASS files
+au package
+au release
 ```
 
 # Errors

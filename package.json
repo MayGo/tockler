@@ -97,5 +97,36 @@
     "typings": "1.3.0",
     "uglify-js": "2.6.3",
     "vinyl-fs": "2.4.4"
+  },
+  "build": {
+    "npmRebuild": true,
+    "appId": "ee.trimatech.Tockler",
+    "iconUrl": "shared/img/icon/timetracker_icon.ico",
+    "asar": false,
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "shared/img/icon/timetracker_icon.icns",
+      "icon-size": 40,
+      "contents": [
+        {
+          "x": 438,
+          "y": 144,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 192,
+          "y": 144,
+          "type": "file"
+        }
+      ]
+    },
+    "win": {
+      "iconUrl": "https://raw.githubusercontent.com/MayGo/tockler/master/build/icon.ico",
+      "icon": "build/icon.ico"
+    },
+    "linux": {
+      "target": "deb"
+    }
   }
 }
