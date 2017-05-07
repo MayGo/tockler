@@ -1,0 +1,14 @@
+appId: "ee.trimatech.tockler"
+productName: "Tockler"
+asar: false
+npmRebuild: false
+mac:
+  category: public.app-category.productivity
+  icon: shared/img/icon/timetracker_icon.icns
+  target: zip
+win:
+  icon: shared/img/icon/timetracker_icon.ico
+squirrelWindows:
+  iconUrl: https://raw.githubusercontent.com/MayGo/tockler/master/build/icon.ico
+    
+
