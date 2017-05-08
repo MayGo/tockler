@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  background-color: #f8fff8;
+  background-color: #f4f4f4;
   color: #424242;
 }
 
@@ -34,9 +34,6 @@ md-well li a {
   background-color: white;
 }
 
-.pictureDetail {
-  max-width: 425px;
-}
 
 /* animate page transitions */
 section.au-enter-active {
@@ -59,54 +56,6 @@ div.au-stagger {
   animation: fadeIn 2s;
 }
 
-.usercard {
-  overflow: hidden;
-  position: relative;
-  border: 1px solid #CCC;
-  border-radius: 8px;
-  text-align: center;
-  padding: 0;
-  background-color: #337ab7;
-  color: rgb(136, 172, 217);
-  margin-bottom: 32px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, .5);
-}
-
-.usercard .content {
-  margin-top: 10px;
-}
-
-.usercard .content .name {
-  color: white;
-  text-shadow: 0 0 6px rgba(0, 0, 0, .5);
-  font-size: 18px;
-}
-
-.usercard .header-bg {
-  /* This stretches the canvas across the entire hero unit */
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 70px;
-  border-bottom: 1px #FFF solid;
-  border-radius: 6px 6px 0 0;
-}
-
-.usercard .avatar {
-  position: relative;
-  margin-top: 15px;
-  z-index: 100;
-}
-
-.usercard .avatar img {
-  width: 100px;
-  height: 100px;
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  border-radius: 50%;
-  border: 2px #FFF solid;
-}
 
 /* animation definitions */
 @-webkit-keyframes fadeInRight {
@@ -217,3 +166,11 @@ div.au-stagger {
 .aut-desc:before {
     content: "\f161";
 }
+
+
+
+input[type="color"] {
+	width: 25px;
+	height: 25px;
+}
+

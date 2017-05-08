@@ -8,6 +8,7 @@ import { ValidationController, ValidationRules, ValidationControllerFactory, val
 import { MaterializeFormValidationRenderer } from 'aurelia-materialize-bridge';
 
 let logger = LogManager.getLogger('Menubar');
+
 const ipcRenderer = (<any>window).nodeRequire('electron').ipcRenderer;
 
 @autoinject
@@ -94,12 +95,4 @@ export class Menubar {
 
         this.loadItems();
     };
-
-    toggleMainWindow() {
-        ipcRenderer.send('toggle-main-window')
-    };
-
-    exitApp() {
-        ipcRenderer.send('close-app')
-    }
 }

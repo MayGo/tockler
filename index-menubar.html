@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Aurelia</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="styles/materialize.min.css">
-    <link rel="stylesheet" href="styles/styles.css">
-  </head>
 
-  <body aurelia-app="main-menubar">
+<head>
+  <title>Aurelia</title>
+  <link rel="stylesheet" href="scripts/css/font-awesome.min.css">
+  <link rel="stylesheet" href="scripts/css/material-design-iconic-font.min.css">
+  <link rel="stylesheet" href="styles/materialize.min.css">
+  <link rel="stylesheet" href="styles/styles.css">
+  <link rel="stylesheet" href="styles/timeline.css">
 
+</head>
+
+<body>
+  <div aurelia-app="main-menubar">
     <!-- Splash Screen -->
     <div class="splash center-align">
-      <h3 class="splash-text">Aurelia</h3>
+      <h3 class="splash-text" i18n="app.name"></h3>
       <!--Materialize Spinner -->
       <div class="preloader-wrapper active">
         <div class="spinner-layer spinner-blue">
@@ -60,13 +64,15 @@
         </div>
       </div>
     </div>
-    
+
     <script>
       window.nodeRequire = require;
       delete window.require;
       delete window.exports;
       delete window.module;
-    </script>    
+    </script>
     <script src="scripts/vendor-bundle.js" data-main="aurelia-bootstrapper"></script>
-  </body>
+  </div>
+</body>
+
 </html>
