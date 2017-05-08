@@ -1,7 +1,7 @@
 <template>
   <require from="./timeline-component"></require>
-
   <require from="nvd3/nv.d3.min.css"></require>
+  
   <section>
     <div class="row" style="margin:0">
       <div class="col s1 right-align">
@@ -13,7 +13,6 @@
       <div class="col s2" ref="dpWrapper">
         <input md-datepicker="container.bind: dpWrapper; value.two-way: searchDate;" type="date" placeholder="Search for day" style="margin:0; height: 2.2rem;"
         />
-
       </div>
       <div class="col s1">
         <a class="btn-flat waves-effect btn-floating" click.delegate="dayForward()">

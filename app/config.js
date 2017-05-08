@@ -1,5 +1,6 @@
 var path = require('path');
 
+const isDevelopment = require('electron-is-dev');
 
 var root = path.join(__dirname, '..')
 
@@ -12,7 +13,7 @@ var config = {
     pluginsPath: root,
 
     // a flag to whether the app is running in development mode
-    isDev: process.env.NODE_ENV === 'development',
+    isDev: isDevelopment,
 
     // name of the main window
     mainAppName: 'main-window'

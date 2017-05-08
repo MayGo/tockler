@@ -47,7 +47,10 @@ Feel free to make feature requests and 'Star' this project.
 
 Development
 ---
-Project is boilerplated from [https://github.com/chuyik/electron-boilerplate](https://github.com/chuyik/electron-boilerplate)
+Aurelia: http://aurelia.io/
+Aurelia Materialize Bridge: http://aurelia-ui-toolkits.github.io/demo-materialize/
+Typescript
+
 
 ### Quick Start
 > Prerequisites: [Node](https://nodejs.org/), [Git](https://git-scm.com/).
@@ -55,26 +58,13 @@ Project is boilerplated from [https://github.com/chuyik/electron-boilerplate](ht
 ```bash
 git clone https://github.com/Maygo/tockler.git  # Download this project
 
-cd tockler  # Switch directory
 npm install            # Install dependencies
+
+npm run materialize  # Prepare materialize-css
+npm run materializewin # Prepare materialize-css, In windows 
+
 au run --watch # Start application
 ```
-### Compiling sqlite3
-cd ./node_modules/sqlite3
-npm install nan@~2.3.3
-npm run prepublish
-node-gyp configure --module_name=node_sqlite3 --module_path=../lib/binding/node-v48-darwin-x64
-node-gyp rebuild --target=1.2.5 --arch=x64 --target_platform=darwin --dist-url=https://atom.io/download/atom-shell --module_name=node_sqlite3 --module_path=../lib/binding/node-v48-darwin-x64
-
-rename folder binding/node-v48-darwin-x64 to electron-v1.2-darwin-x64
-
-#### Other way win
-npm run rebuild-sqlite-win
-rmdir .\app\node_modules\sqlite3 /s
-xcopy .\node_modules\sqlite3 .\app\node_modules\sqlite3 /s /e /h
-
-#### Other way osx
-npm run rebuild-sqlite-osx
 
 
 ### Aurelia Commands
@@ -86,14 +76,6 @@ au run --watch     # Run the app in production mode
 au package
 au release
 ```
-
-# Errors
-
-On first run, Settings (sqlite) not found.
-
-Error: Module version mismatch. Expected 50, got 48.
-fix: npm rebuild --runtime=electron --target=1.4.3 --disturl=https://atom.io/download/atom-shell --build-from-source
-
 
 # signing
 https://4sysops.com/archives/sign-your-powershell-scripts-to-increase-security/'

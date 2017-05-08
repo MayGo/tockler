@@ -1,17 +1,15 @@
 var config = require('./app/config');
-
 const path = require('path');
+
 if (config.isDev) {
     const reloadFile = path.join(__dirname, 'tools', 'reload.electron');
     require('electron-reload')(reloadFile);
 }
 
-
 var app = require('electron').app;
 var notifier = require('node-notifier');
 var LogManager = require("./app/log-manager.js")
 LogManager.init({ userDir: app.getPath('userData') })
-
 
 var backgroundService = require('./app/background.service');
 
@@ -20,26 +18,25 @@ InitialDatagenerator.generate();
 
 var ipcMain = require('electron').ipcMain;
 
-require("electron").crashReporter.start(config.crashOpts);
-
-
 var AutoLaunch = require('auto-launch');
 var appLauncher = new AutoLaunch({
     name: 'Tockler'
 });
+
 appLauncher.isEnabled().then(function (enabled) {
     if (enabled) {
         return;
     }
+
     console.log('Enabling app launcher');
-    return appLauncher.enable()
+    
+    return appLauncher.enable();
+
 }).then(function (err) {
 
 });
 
-
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
-
 
 var windowManager = require('./app/window-manager');
 
@@ -58,22 +55,15 @@ app.on('ready', () => {
         console.log('The system is going to sleep');
         backgroundService.onSleep();
     });
+
     require('electron').powerMonitor.on('resume', function () {
         console.log('The system is going to resume');
         backgroundService.onResume();
     });
-
-    // Docs:
-    // https://github.com/mikaelbr/node-notifier
-    /*notifier.notify({
-     'title': 'Welcome!',
-     'message': 'Happy building apps.'
-     })*/
 });
 
 
 require('electron-context-menu')({});
-
 
 /**
  * Emitted when all windows are closed
@@ -84,13 +74,11 @@ app.on('window-all-closed', function () {
     //app.quit();
 });
 
-
 ipcMain.on('close-app', function () {
     console.log('Closing app');
     //pluginMgr.removeAll();
     app.quit();
 });
-
 
 /**
  * Emitted when no opened windows
@@ -105,21 +93,24 @@ app.on('activate-with-no-open-windows', () => {
 
 var iShouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
     console.log("Make single instance");
-    console.log(windowManager)
+
     if (windowManager && windowManager.mainWindow) {
         if (windowManager.mainWindow.isMinimized()) {
             windowManager.mainWindow.restore();
         }
+
         windowManager.mainWindow.show();
         windowManager.mainWindow.focus();
+
         console.log('Focusing main window');
     }
+
     return true;
 });
+
 if (iShouldQuit && !config.isDev) {
     console.log('Quiting instance.');
     //pluginMgr.removeAll();
     app.quit();
     return;
 }
-
