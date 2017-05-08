@@ -3,6 +3,8 @@ const config = require('./config');
 const path = require('path');
 const menubar = require('menubar');
 
+const ipcMain = require("electron").ipcMain;
+
 const BrowserWindow = electron.BrowserWindow;
 
 let WindowManager = {};
@@ -15,6 +17,7 @@ WindowManager.setMainWindow = function () {
         title: 'Tockler',
         icon: path.join(config.root, 'app/shared/img/icon/timetracker_icon.ico')
     });
+
     this.mainWindow.maximize();
     this.mainWindow.loadURL('file://' + config.root + '/index.html');
 
@@ -24,15 +27,15 @@ WindowManager.setMainWindow = function () {
     });
 
     this.mainWindow.on('focus', () => {
-        var sendEventName = 'mainWindow-focus';
+        var sendEventName = 'main-window-focus';
         console.log("Sending focus event: " + sendEventName);
         this.mainWindow.webContents.send(sendEventName, 'ping');
     });
 
+
     this.mainWindow.on('close', () => {
         if (this.mainWindow) {
             console.log("Closing window");
-            console.log(this.mainWindow);
             this.mainWindow = null;
         }
     });
@@ -41,7 +44,32 @@ WindowManager.setMainWindow = function () {
         this.mainWindow.openDevTools();
     }
 
+
+
 };
+
+WindowManager.initMainWindowEvents = function () {
+    console.log("Init main window events.")
+    ipcMain.on('toggle-main-window', (ev, name) => {
+        if (!this.mainWindow) {
+            console.log("MainWindow closed, opening");
+            WindowManager.setMainWindow();
+        }
+
+        console.log("Toggling main window");
+        if (this.mainWindow.isVisible()) {
+            console.log("Show main window");
+            this.mainWindow.show()
+        } else if (this.mainWindow.isMinimized()) {
+            console.log("Restore main window");
+            this.mainWindow.restore();
+        } else {
+            console.log("Hide main window");
+            this.mainWindow.hide()
+        }
+
+    })
+}
 
 WindowManager.setTrayWindow = function () {
     /**
@@ -56,13 +84,13 @@ WindowManager.setTrayWindow = function () {
         height: 500
     });
 
-    this.menubar.on('after-create-window', ()=> {
-       // if (config.isDev) {
+    this.menubar.on('after-create-window', () => {
+        // if (config.isDev) {
         console.log('Open menubar dev tools')
-            this.menubar.window.openDevTools();
-       // }
+        this.menubar.window.openDevTools();
+        // }
     });
-    this.menubar.on('after-show', ()=> {
+    this.menubar.on('after-show', () => {
         console.log('Show tray');
         this.menubar.window.webContents.send('focus-tray', 'ping');
         this.menubar.window.openDevTools();

@@ -15,6 +15,10 @@ var config = {
     // a flag to whether the app is running in development mode
     isDev: isDevelopment,
 
+    // enable tray icon for dev mode
+
+    trayEnabledInDev: true,
+
     // name of the main window
     mainAppName: 'main-window'
 }

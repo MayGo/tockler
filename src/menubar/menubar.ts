@@ -23,7 +23,6 @@ export class Menubar {
     constructor(private trackItemService: TrackItemService, private settingsService: SettingsService,
         private mdToastService: MdToastService, private controllerFactory: ValidationControllerFactory,
     ) {
-        ipcRenderer.on('focus-tray', this.refresh);
 
         this.validationController = controllerFactory.createForCurrentScope();
         this.validationController.addRenderer(new MaterializeFormValidationRenderer());
@@ -33,6 +32,7 @@ export class Menubar {
 
     async activate(): Promise<void> {
         this.refresh();
+        ipcRenderer.on('focus-tray', () => this.refresh());
         this.setValidationRules();
     }
 
@@ -94,4 +94,12 @@ export class Menubar {
 
         this.loadItems();
     };
+
+    toggleMainWindow() {
+        ipcRenderer.send('toggle-main-window')
+    };
+
+    exitApp() {
+        ipcRenderer.send('close-app')
+    }
 }

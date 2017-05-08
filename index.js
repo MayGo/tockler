@@ -29,7 +29,7 @@ appLauncher.isEnabled().then(function (enabled) {
     }
 
     console.log('Enabling app launcher');
-    
+
     return appLauncher.enable();
 
 }).then(function (err) {
@@ -45,7 +45,11 @@ var windowManager = require('./app/window-manager');
  */
 app.on('ready', () => {
     windowManager.setMainWindow();
-    //windowManager.setTrayWindow();
+    windowManager.initMainWindowEvents();
+    
+    if (!config.isDev || config.trayEnabledInDev) {
+        windowManager.setTrayWindow();
+    }
 
     backgroundService.init();
 
