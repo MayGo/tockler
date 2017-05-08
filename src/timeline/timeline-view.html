@@ -2,9 +2,8 @@
   <require from="./timeline-component"></require>
 
   <require from="nvd3/nv.d3.min.css"></require>
-  <section class="au-animate">
+  <section>
     <div class="row" style="margin:0">
-
       <div class="col s1 right-align">
         <a class="btn-flat waves-effect btn-floating" click.delegate="refresh()">
           <i class="zmdi zmdi-refresh blue-text"></i></a>
@@ -20,7 +19,9 @@
         <a class="btn-flat waves-effect btn-floating" click.delegate="dayForward()">
           <i class="zmdi zmdi-arrow-right blue-text"></i></a>
       </div>
-
+      <div class="col s1" style="padding-top:5px">
+        <md-progress show.bind="loading" md-type="circular" md-pixel-size="30" md-color="blue"></md-progress>
+      </div>
     </div>
     <div id="trackItemMiniEdit" if.bind="selectedTrackItem" css.bind="{left:selectedTrackItem.left, top:selectedTrackItem.top}">
       <form>
@@ -48,8 +49,20 @@
           </div>
         </div>
       </form>
-
     </div>
+
+    <div id="confirmColorChangeModal" md-modal md-modal.ref="confirmColorChangeModal">
+      <div class="modal-content">
+        <h4>Change color</h4>
+        <p>
+          <a click.delegate="changeColorAnswer('ALL_ITEMS')" md-button="flat: true;" md-waves="color: accent;" class="modal-action modal-close">All items</a>
+          <a click.delegate="changeColorAnswer('NEW_ITEMS')" md-button="flat: true;" md-waves="color: accent;" class="modal-action modal-close">This and new items</a>
+          <a click.delegate="changeColorAnswer()" md-button="flat: true;" md-waves="color: accent;" class="modal-action modal-close">Only this</a>
+
+        </p>
+      </div>
+    </div>
+
     <timeline-component selected-track-item.bind="selectedTrackItem" start-date.bind="searchDate" on-zoom-changed.bind="onZoomChanged"
       zoom-scale.bind="zoomScale" zoom-x.bind="zoomX"></timeline-component>
 

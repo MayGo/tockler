@@ -5,6 +5,7 @@ import * as _ from "lodash";
 import { EventAggregator } from 'aurelia-event-aggregator';
 import { DeepObserver } from "../resources/deep-observer";
 import { TrackItemService } from "../services/track-item-service";
+import { AppSettingsService } from "../services/app-settings-service";
 
 let logger = LogManager.getLogger('TimelineView');
 
@@ -57,19 +58,23 @@ export class TimelineView {
         { value: '', keys: ['app', 'title'] }
     ];
 
+    confirmColorChangeModal: any;
+
+
     constructor(
         private settingsService: SettingsService,
         private trackItemService: TrackItemService,
+        private appSettingsService: AppSettingsService,
         private eventAggregator: EventAggregator,
         private deepObserver: DeepObserver
     ) {
         this.resetLoadedItems();
         this.observerDisposer = deepObserver.observe(this, 'selectedTrackItem', (n, o, p) => {
-            console.log('DATA CHANGED:', p, ':', o, '===>', n); // Display the changes in the console log
+            logger.debug('DATA CHANGED:', p, ':', o, '===>', n); // Display the changes in the console log
         });
     }
     resetLoadedItems() {
-        console.log("Resetting loaded items");
+        logger.debug("Resetting loaded items");
         // this.selectedTrackItem = null;
         this.loadedItems = {
             AppTrackItem: [],
@@ -80,7 +85,7 @@ export class TimelineView {
 
 
     refreshWindow(event, arg) {
-        console.log("Main-Window gained focus, reloading");
+        logger.debug("Main-Window gained focus, reloading");
         this.refresh();
     };
 
@@ -89,7 +94,7 @@ export class TimelineView {
         let lastItem: any = (this.loadedItems['AppTrackItem'].length > 0) ? _(this.loadedItems['AppTrackItem']).last().valueOf() : null;
 
         var searchFrom = (lastItem) ? lastItem.beginDate : moment().startOf('day').toDate();
-        console.log('Refreshing from:', searchFrom);
+        logger.debug('Refreshing from:', searchFrom);
         this.list(searchFrom);
     };
 
@@ -112,25 +117,25 @@ export class TimelineView {
     }
 
     list(startDate) {
-        console.log("Load data from:", startDate);
+        logger.debug("Load data from:", startDate);
         this.zoomScale = sessionStorage.getItem('zoomScale') || 0;
         this.zoomX = sessionStorage.getItem('zoomX') || 0;
         this.loading = true;
 
         _.keys(this.loadedItems).forEach((taskName) => {
-            console.log('TIMELINE_LOAD_DAY_REQUEST sent', startDate, taskName);
+            logger.debug('TIMELINE_LOAD_DAY_REQUEST sent', startDate, taskName);
             ipcRenderer.send('TIMELINE_LOAD_DAY_REQUEST', startDate, taskName);
         })
     };
 
     parseReceivedTimelineData(event, startDate, taskName, items) {
-        console.log('TIMELINE_LOAD_DAY_RESPONSE received', taskName, items);
+        logger.debug('TIMELINE_LOAD_DAY_RESPONSE received', taskName, items);
 
         var nothingToUpdate = false;
         var upsert = function (arr, id, newval) {
             if (nothingToUpdate === true) {
                 arr.push(newval);
-                //console.log('Nothing to update, inserting instead');
+                //logger.debug('Nothing to update, inserting instead');
                 return;
             }
             var index = _.indexOf(arr, _.find(arr, { id: id }));
@@ -151,7 +156,7 @@ export class TimelineView {
         }
 
         this.loading = false;
-        console.log('Trackitems loaded, parsing ended.', taskName);
+        logger.debug('Trackitems loaded, parsing ended.', taskName);
         this.eventAggregator.publish('addItemsToTimeline', this.loadedItems[taskName]);
 
         this.updatePieCharts(this.loadedItems[taskName], taskName);
@@ -160,7 +165,7 @@ export class TimelineView {
             // setWorkStatsForDay(this.loadedItems[taskName]);
         }
 
-        console.log('Trackitems loaded, $digest.');
+        logger.debug('Trackitems loaded, $digest.');
     };
 
     selectedTrackItemChanged(newValue, oldValue) {
@@ -192,7 +197,7 @@ export class TimelineView {
 
     updatePieCharts(items, taskName) {
 
-        console.log('Track Items changed. Updating pie charts');
+        logger.debug('Track Items changed. Updating pie charts');
 
         var groupBy = (taskName === 'LogTrackItem') ? 'title' : 'app'
         this.pieData[taskName] = _(items)
@@ -202,7 +207,7 @@ export class TimelineView {
             })
             .valueOf();
 
-        console.log('Updating pie charts ended.');
+        logger.debug('Updating pie charts ended.');
 
     };
 
@@ -212,7 +217,7 @@ export class TimelineView {
     };
 
     showAddLogDialog(trackItem) {
-        console.log(trackItem);
+        logger.debug(trackItem);
         /* $mdDialog.show({
              templateUrl: 'app/trackItem/trackItem.edit.modal.html',
              controller: 'TrackItemEditModalController as trackItemModalCtrl',
@@ -222,13 +227,13 @@ export class TimelineView {
              },
              clickOutsideToClose: true
          }).then(function (trackItem) {
-             console.log('TrackItem added.');
+             logger.debug('TrackItem added.');
              this.saveTrackItem(trackItem)
          });*/
     };
 
     saveTrackItem(trackItem) {
-        console.log("Saving trackitem.", trackItem);
+        logger.debug("Saving trackitem.", trackItem);
         if (!trackItem.taskName) {
             trackItem.taskName = "LogTrackItem";
         }
@@ -236,36 +241,14 @@ export class TimelineView {
             if (trackItem.originalColor === trackItem.color) {
                 this.updateItem(trackItem);
             } else {
-                /* $mdDialog.show({
-                     templateUrl: 'app/trackItem/trackItem.color.modal.html',
-                     controller: 'TrackItemColorModalController as trackItemColorCtrl',
-                     parent: angular.element(document.body)
-                 })
-                     .then(function (answer) {
-                         if (answer === 'ALL_ITEMS') {
-                             this.loading = true;
-                             AppSettingsService.changeColorForApp(trackItem.app, trackItem.color);
-                             TrackItemService.updateColorForApp(trackItem.app, trackItem.color).then(function () {
-                                 console.log("updated all item with color");
-                                 this.reload();
-                             })
-                         } else if (answer === 'NEW_ITEMS') {
-                             AppSettingsService.changeColorForApp(trackItem.app, trackItem.color);
-                             updateItem(trackItem);
-                         } else {
-                             updateItem(trackItem);
-                         }
-
-                     }, function () {
-                         $scope.status = 'You cancelled the dialog.';
-                     });*/
+                this.confirmColorChangeModal.open();
             }
         } else {
             if (!trackItem.app) {
                 trackItem.app = "Default";
             }
             this.trackItemService.createItem(trackItem).then((item) => {
-                console.log("Created trackitem to DB:", item);
+                logger.debug("Created trackitem to DB:", item);
                 this.selectedTrackItem = null;
 
                 this.eventAggregator.publish('addItemsToTimeline', [trackItem]);
@@ -274,10 +257,30 @@ export class TimelineView {
             });
         }
 
-    };
+    }
+
+    changeColorAnswer(answer) {
+        let trackItem = this.selectedTrackItem;
+        if (answer === 'ALL_ITEMS') {
+            this.loading = true;
+            this.appSettingsService.changeColorForApp(trackItem.app, trackItem.color);
+            this.trackItemService.updateColorForApp(trackItem.app, trackItem.color).then(() => {
+                logger.debug("Updated all item with color");
+
+                this.resetLoadedItems();
+                this.list(this.searchDate);
+            })
+        } else if (answer === 'NEW_ITEMS') {
+            this.appSettingsService.changeColorForApp(trackItem.app, trackItem.color);
+            this.updateItem(trackItem);
+        } else {
+            this.updateItem(trackItem);
+        }
+    }
+
     updateItem(trackItem) {
         this.trackItemService.updateItem(trackItem).then((item) => {
-            console.log("Updated trackitem to DB:", item);
+            logger.debug("Updated trackitem to DB:", item);
             this.selectedTrackItem = null;
 
             this.eventAggregator.publish('addItemToTimeline', item);
@@ -292,11 +295,11 @@ export class TimelineView {
     };
 
     deleteTrackItem(trackItem) {
-        console.log("Deleting trackitem.", trackItem);
+        logger.debug("Deleting trackitem.", trackItem);
 
         if (trackItem.id) {
             this.trackItemService.deleteById(trackItem.id).then(function (item) {
-                console.log("Deleting trackitem from DB:", trackItem);
+                logger.debug("Deleting trackitem from DB:", trackItem);
                 this.selectedTrackItem = null;
 
                 var index = _.indexOf(this.trackItems, _.find(this.loadedItems[trackItem.taskName], { id: trackItem.id }));
@@ -306,19 +309,19 @@ export class TimelineView {
 
             });
         } else {
-            console.log("No id, not deleting from DB");
+            logger.debug("No id, not deleting from DB");
         }
 
     };
 
     closeMiniEdit() {
-        console.log("Closing mini edit.");
+        logger.debug("Closing mini edit.");
         this.selectedTrackItem = null;
     };
 
 
     attached() {
-        console.log("attached");
+        logger.debug("attached");
         ipcRenderer.on('main-window-focus', (event, arg) => this.refreshWindow(event, arg));
         ipcRenderer.on('TIMELINE_LOAD_DAY_RESPONSE', (event, startDate, taskName, items) => this.parseReceivedTimelineData(event, startDate, taskName, items));
         //this.refresh();
@@ -327,7 +330,7 @@ export class TimelineView {
         this.list(this.searchDate);
     }
     detached() {
-        console.log("detached");
+        logger.debug("detached");
         this.observerDisposer();
         ipcRenderer.removeListener('main-window-focus', this.refreshWindow);
         ipcRenderer.removeListener('TIMELINE_LOAD_DAY_RESPONSE', this.parseReceivedTimelineData);

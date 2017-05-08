@@ -28,7 +28,7 @@ export class TrackItemService {
     updateItem(trackItem) {
         return this.service.updateItem(trackItem);
     }
-    
+
     deleteById(trackItemId) {
         return this.service.deleteById(trackItemId);
     }
@@ -66,5 +66,9 @@ export class TrackItemService {
 
         });
     };
+
+    updateColorForApp(appName, color) {
+        return this.service.updateColorForApp(appName, color);
+    }
 
 }
