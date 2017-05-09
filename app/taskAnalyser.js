@@ -121,7 +121,7 @@ class TaskAnalyser {
                     var onlineItem = _.first(onlineItems);
                     var minutesAfterToSplit = settings.splitTaskAfterIdlingForMinutes || 3;
                     var minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
-                    console.log(minutesFromNow);
+                    console.log("Minutes from now:"+minutesFromNow);
                     if (minutesFromNow >= minutesAfterToSplit) {
                         let endDate = moment(onlineItem.endDate).add(minutesAfterToSplit, 'minutes').toDate();
                         deferred.resolve(endDate);

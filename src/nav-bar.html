@@ -1,0 +1,14 @@
+<template bindable="router">
+  <md-navbar fixed="true">
+    <a href="#/" class="navbar-brand">
+      <img src="./shared/img/icon/timetracker_icon.ico" width="24" height="24">
+      <span i18n="app.name"></span>
+    </a>
+
+    <ul class="right hide-on-med-and-down">
+      <li md-waves repeat.for="row of router.navigation" class="${row.isActive ? 'active' : ''}">
+        <a href.bind="row.href">${row.title}</a>
+      </li>
+    </ul>
+  </md-navbar>
+</template>

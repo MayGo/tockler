@@ -48,7 +48,10 @@ PluginManager.prototype.load = function (name, opt) {
 
     this.windows[name] = oWindow;
 
-    oWindow.loadURL('file://' + path.join(config.pluginsPath, name, 'index.html'));
+    console.error(path.join(config.pluginsPath, 'index.html'))
+    oWindow.loadURL('file://' + path.join(config.pluginsPath, 'index.html'));
+    //oWindow.loadURL('file://' + __dirname + '/index.html');
+
 
     var sendEventName = name + '-focus';
 

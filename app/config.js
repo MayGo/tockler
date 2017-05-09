@@ -1,4 +1,6 @@
-var path = require('path')
+var path = require('path');
+
+const isDevelopment = require('electron-is-dev');
 
 var root = path.join(__dirname, '..')
 
@@ -8,30 +10,19 @@ var config = {
     root: root,
 
     // plugins directory
-    pluginsPath: path.join(root, 'app/plugins'),
+    pluginsPath: root,
 
     // a flag to whether the app is running in development mode
-    isDev: process.env.NODE_ENV === 'development',
+    isDev: isDevelopment,
+
+    // enable tray icon for dev mode
+
+    trayEnabledInDev: true,
 
     // name of the main window
     mainAppName: 'main-window'
 }
 
-/**
- * Please refer to
- * `https://github.com/atom/electron/blob/master/docs%2Fapi%2Fbrowser-window.md#new-browserwindowoptions`
- * for windows configurations.
- */
-config.windows = {
-    'main-window': {
-        width: 1200,
-        height: 1000,
-        maximize: true,
-        show: false,         // Show window, default: true
-        showDevtools: true,  // Show devtools, default: true (Only in development mode)
-        title: 'Tockler'
-    }
-}
 
 /**
  * Please refer to

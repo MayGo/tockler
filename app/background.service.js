@@ -350,7 +350,7 @@ BackgroundService.saveForegroundWindowTitle = function () {
     };
 
     if (oneThread == false || oneThread == true && oneThreadRunning == false) {
-        console.log('...')
+        console.log('oneThreadRunning ...')
         oneThreadRunning = true;
         let ls = execFile(runExec, args);
         ls.stdout.on('data', (data) => {
