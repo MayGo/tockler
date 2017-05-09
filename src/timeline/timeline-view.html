@@ -1,7 +1,7 @@
 <template>
   <require from="./timeline-component"></require>
   <require from="nvd3/nv.d3.min.css"></require>
-  
+
   <section>
     <div class="row" style="margin:0">
       <div class="col s1 right-align">
@@ -66,6 +66,17 @@
       zoom-scale.bind="zoomScale" zoom-x.bind="zoomX"></timeline-component>
 
     <div class="divider"></div>
+
+
+    <div if.bind="dayStats.lateForWork">
+      <div if.bind="dayStats.lateForWork > 0">
+        Late for work: ${dayStats.lateForWork | msToDuration}
+      </div>
+      <div if.bind="dayStats.lateForWork < 0">
+        Before work: ${dayStats.lateForWork | msToDuration}
+      </div>
+    </div>
+
 
     <div class="row" style="min-height:200px">
       <md-card class="col s4">

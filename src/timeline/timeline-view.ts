@@ -44,7 +44,7 @@ export class TimelineView {
         StatusTrackItem: [],
         LogTrackItem: []
     };
-    dayStats = {};
+    dayStats = { lateForWork: null };
 
     table = {
         searchTask: 'LogTrackItem',
@@ -162,7 +162,7 @@ export class TimelineView {
         this.updatePieCharts(this.loadedItems[taskName], taskName);
 
         if (taskName === 'AppTrackItem') {
-            // setWorkStatsForDay(this.loadedItems[taskName]);
+            this.setWorkStatsForDay(this.loadedItems[taskName]);
         }
 
         logger.debug('Trackitems loaded, $digest.');
@@ -173,16 +173,22 @@ export class TimelineView {
     }
 
     setWorkStatsForDay(items) {
-        var firstItem = _.first(items);
-        /*  if (firstItem && settingsData.workDayStartTime) {
-  
-              var parts = settingsData.workDayStartTime.split(':')
-              var startDate = moment(firstItem.beginDate);
-              startDate.startOf('day');
-              startDate.hour(parts[0]);
-              startDate.minute(parts[1]);
-              this.dayStats.lateForWork = moment(firstItem.beginDate).diff(startDate)
-          }*/
+        logger.debug("WorkStatsForDay");
+        var firstItem: any = _.first(items);
+        this.settingsService.fetchWorkSettings().then((settingsData) => {
+            if (firstItem && settingsData.workDayStartTime) {
+                logger.debug("Setting WorkStatsForDay:", firstItem);
+                var parts = settingsData.workDayStartTime.split(':')
+                var startDate = moment(firstItem.beginDate);
+                startDate.startOf('day');
+                startDate.hour(parts[0]);
+                startDate.minute(parts[1]);
+                this.dayStats.lateForWork = moment(firstItem.beginDate).diff(startDate)
+            } else {
+                logger.debug("No data for WorkStatsForDay")
+            }
+        });
+
     }
 
     sumApp(p, c) {

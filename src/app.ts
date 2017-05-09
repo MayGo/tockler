@@ -4,7 +4,7 @@ export class App {
     router:Router;
 
     configureRouter(config:RouterConfiguration, router:Router) {
-        config.title = 'Aurelia';
+        config.title = 'Tockler';
         config.map([
             {route: ['menubar'], name: 'menubar', moduleId: './menubar/menubar', nav: true, title: 'Menubar'},
             {route: ['','timeline'], name: 'timeline', moduleId: './timeline/timeline-view', nav: true, title: 'Timeline'},
