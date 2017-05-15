@@ -12,9 +12,16 @@ export class TrackItemService {
         this.service = remote.getGlobal('BackgroundService').getTrackItemService();
     }
 
-    findAllFromDay(from: Date, type: string) {
-        return this.service.findAllFromDay(from, type)
+    /*  findAllItems(from, to, taskName, searchStr, paging) {
+          return this.service.findAllFromDay(from, to, taskName, searchStr, paging);
+      }*/
 
+    findAllDayItems(from, to, taskName) {
+        return this.service.findAllDayItems(from, to, taskName);
+    }
+
+    findAllFromDay(from: Date, type: string) {
+        return this.service.findAllFromDay(from, type);
     }
 
     findFirstLogItems() {

@@ -17,7 +17,7 @@ var config = {
 
     // enable tray icon for dev mode
 
-    trayEnabledInDev: true,
+    trayEnabledInDev: false,
 
     // name of the main window
     mainAppName: 'main-window'

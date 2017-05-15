@@ -1,14 +1,56 @@
 <template>
-  <section class="au-animate">
-    <div class="container">
+  <section>
+    <div>
+      <div class="row" style="margin:0">
+        <div class="col s1 right-align">
+          <a class="btn-flat waves-effect btn-floating" click.delegate="list()">
+            <i class="zmdi zmdi-refresh blue-text"></i></a>
+        </div>
+        <div class="col s2" ref="dpWrapper">
+          <input md-datepicker="container.bind: dpWrapper; value.two-way: searchMinDate;" type="date" placeholder="From" style="margin:0; height: 2.2rem;"
+          />
+        </div>
+        <div class="col s2" ref="dpWrapper">
+          <input md-datepicker="container.bind: dpWrapper; value.two-way: searchMaxDate;" type="date" placeholder="To" style="margin:0; height: 2.2rem;"
+          />
+        </div>
 
-      <h3>Summary</h3>
-
-      <div class="row au-stagger">
-        <div class="col s6 m3 card-container au-animate" >
-
+        <div class="col s1" style="padding-top:5px">
+          <md-progress show.bind="loading" md-type="circular" md-pixel-size="30" md-color="blue"></md-progress>
         </div>
       </div>
+
+      <table class="table table-striped" aurelia-table="data.bind: trackItems; display-data.bind: $displayData; filters.bind: tableFilters">
+        <thead>
+          <tr>
+            <th aut-sort="key: app;">App</th>
+            <th aut-sort="key: title;">Title</th>
+            <th aut-sort="key: beginDate; default: desc">Begin</th>
+            <th aut-sort="key: endDate;">End</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr repeat.for="trackItem of $displayData">
+            <td>${trackItem.app}</td>
+            <td>${trackItem.title}</td>
+            <td>${trackItem.beginDate | toDate | df: { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute:
+              '2-digit', second: '2-digit', hour12: false }}</td>
+            <td>${trackItem.endDate | toDate | df: { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute:
+              '2-digit', second: '2-digit', hour12: false }}</td>
+            <td>${trackItem.endDate | diffToMs: trackItem.beginDate | msToDuration}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td></td>
+            <td><strong>Total: </strong>${trackItemsTotal | msToDuration}
+            </td>
+            <td colspan="6"></td>
+          </tr>
+        </tfoot>
+      </table>
+
     </div>
   </section>
 </template>
