@@ -15,7 +15,7 @@ var exec = require("child_process").exec;
 var execSync = require("child_process").execSync;
 var execFile = require("child_process").execFile;
 
-var emptyItem = {title: 'EMPTY'};
+var emptyItem = { title: 'EMPTY' };
 
 var TrackItemService = null;
 var AppSettingsService = null;
@@ -25,6 +25,8 @@ const TrackItemCrud = require('./TrackItemCrud');
 const AppItemCrud = require('./AppItemCrud');
 const SettingsCrud = require('./SettingsCrud');
 const TrackItem = require('./db').TrackItem;
+
+const activeWin = require('active-win');
 
 const UserMessages = require('./user-messages');
 
@@ -51,11 +53,11 @@ var BACKGROUND_JOB_INTERVAL = 3000;
 var isSleeping = false;
 
 // hold last saved trackitems by taskName ('StatusTrackItem', 'AppTrackItem', 'LogTrackItem')
-var lastTrackItems = {StatusTrackItem: null, AppTrackItem: null, LogTrackItem: null}
+var lastTrackItems = { StatusTrackItem: null, AppTrackItem: null, LogTrackItem: null }
 
 var addInactivePeriod = function (beginDate, endDate) {
 
-    var item = {app: 'OFF', title: "Inactive"};
+    var item = { app: 'OFF', title: "Inactive" };
     item.taskName = 'StatusTrackItem';
     item.beginDate = beginDate;
     item.endDate = endDate;
@@ -285,88 +287,32 @@ BackgroundService.onResume = function () {
 let oneThreadRunning = false;
 BackgroundService.saveForegroundWindowTitle = function () {
 
-    //'darwin', 'freebsd', 'linux', 'sunos' or 'win32'
-    let runExec = "";
-    let args = [];
-    let oneThread = false;
-    if (process.platform === 'darwin') {
-        //Run applescript from shell.
-        runExec = "osascript";
-        oneThread = true;
-        args.push(path.join(__dirname, "get-foreground-window-title.osa"));
-    } else if (process.platform === 'win32') {
-        runExec = 'powershell.exe';
-        args.push('"& ""' + path.join(__dirname, "get-foreground-window-title.ps1") + '"""');
+    activeWin().then(result => {
 
-    } else if (process.platform === 'linux') {
-        runExec = "sh";
-        args.push(path.join(__dirname, "get-foreground-window-title.sh"));
-    }
-
-    //logger.debug('Script saveForegroundWindowTitle file: ' + script);
-
-    var handleSuccess = (stdout)=> {
-        logger.debug('Foreground window: ' + stdout);
-
-        var active = {};
-        var active_a = stdout.split(",");
-
-        if (typeof active_a[0] !== "undefined") {
-            active.app = active_a[0];
+        /*
+        {
+            title: 'npm install',
+            id: 54,
+            app: 'Terminal',
+            pid: 368
         }
-
-
-        if (typeof active_a[1] !== "undefined") {
-            active.title = active_a[1].replace(/\n$/, "").replace(/^\s/, "");
-        }
-
-        //logger.info(active);
+        */
+        let active = {};
+       // logger.info(result);
         var now = new Date();
         var beginDate = new Date();
+        
         //Begin date is always BACKGROUND_JOB_INTERVAL before current date
         beginDate.setMilliseconds(beginDate.getMilliseconds() - BACKGROUND_JOB_INTERVAL);
         active.beginDate = beginDate;
         active.endDate = now;
+        active.app = result.app;
+        active.title = result.title.replace(/\n$/, "").replace(/^\s/, "");
 
         logger.debug("Foreground window (parsed):", active);
 
         saveActiveWindow(active);
-    };
-
-    var handleError = (error)=> {
-
-        //logger.error('saveForegroundWindowTitle error: ' + error);
-
-        if (error.includes('UnauthorizedAccess') || error.includes('AuthorizationManager check failed')) {
-            error = 'Choose [A] Always run in opened command prompt.';
-            execSync('start cmd.exe  /K' + script);
-        }
-
-        if (error.includes('assistive') || error.includes('osascript')) {
-            error = 'Tockler is not allowed assistive access. Security & Privacy -> Accessibility -> enable tockler.app';
-            UserMessages.showError('Error getting window title', error.toString());
-        }
-
-    };
-
-    if (oneThread == false || oneThread == true && oneThreadRunning == false) {
-        console.log('oneThreadRunning ...')
-        oneThreadRunning = true;
-        let ls = execFile(runExec, args);
-        ls.stdout.on('data', (data) => {
-            console.log(`stdout: ${data}`);
-        });
-
-        ls.stderr.on('data', (data) => {
-            handleError(data);
-            handleSuccess(data);
-        });
-
-        ls.on('close', (code) => {
-            console.log(`child process exited with code ${code}`);
-        });
-    }
-
+    });
 
 };
 
@@ -467,7 +413,7 @@ BackgroundService.saveUserIdleTime = function () {
 
     //logger.debug('Script saveUserIdleTime file: ' + script)
 
-    var handleSuccess = (stdout)=> {
+    var handleSuccess = (stdout) => {
         logger.debug('Idle time: ' + stdout);
 
         var seconds = stdout;
@@ -475,7 +421,7 @@ BackgroundService.saveUserIdleTime = function () {
         saveIdleTrackItem(seconds);
     };
 
-    var handleError = (error)=> {
+    var handleError = (error) => {
         logger.error('saveUserIdleTime error: ' + error);
 
         if (error.includes('UnauthorizedAccess') || error.includes('AuthorizationManager check failed')) {
@@ -503,7 +449,7 @@ BackgroundService.saveUserIdleTime = function () {
         handleSuccess(stdout);
     };
 
-    execFile(runExec, args, {timeout: 2000}, callcack);
+    execFile(runExec, args, { timeout: 2000 }, callcack);
 };
 
 BackgroundService.init = function () {
