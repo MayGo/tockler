@@ -7,7 +7,6 @@ const SettingsCrud = require('./SettingsCrud');
 const AppItemCrud = require('./AppItemCrud');
 const path = require('path');
 const $q = require('q');
-const _ = require('lodash');
 const moment = require('moment');
 const iconUrl = path.join(__dirname, 'shared/img/icon/timetracker_icon.ico');
 
@@ -118,7 +117,7 @@ class TaskAnalyser {
         TrackItemCrud.findLastOnlineItem().then((onlineItems)=> {
             if (onlineItems && onlineItems.length > 0) {
                 SettingsCrud.fetchWorkSettings().then((settings)=>{
-                    var onlineItem = _.first(onlineItems);
+                    var onlineItem = onlineItems[0];
                     var minutesAfterToSplit = settings.splitTaskAfterIdlingForMinutes || 3;
                     var minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
                     console.log("Minutes from now:"+minutesFromNow);

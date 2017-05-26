@@ -5,7 +5,6 @@ var app = require('electron').app;
 var LogManager = require("./log-manager.js");
 var logger = LogManager.getLogger('BackgroundService');
 
-var _ = require('lodash');
 var $q = require('q');
 
 var moment = require('moment');
