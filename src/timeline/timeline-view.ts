@@ -69,9 +69,9 @@ export class TimelineView {
         private deepObserver: DeepObserver
     ) {
         this.resetLoadedItems();
-        this.observerDisposer = deepObserver.observe(this, 'selectedTrackItem', (n, o, p) => {
+        /*this.observerDisposer = deepObserver.observe(this, 'selectedTrackItem', (n, o, p) => {
             logger.debug('DATA CHANGED:', p, ':', o, '===>', n); // Display the changes in the console log
-        });
+        });*/
     }
     resetLoadedItems() {
         logger.debug("Resetting loaded items");

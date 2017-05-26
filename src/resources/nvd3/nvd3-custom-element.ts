@@ -1,7 +1,7 @@
 import { autoinject, noView, LogManager, bindable, bindingMode, BindingEngine } from "aurelia-framework";
 import * as moment from "moment";
 import * as d3 from 'd3';
-import * as nvd3 from 'nvd3';
+//import * as nvd3 from 'nvd3';
 
 declare var nv: any;
 
@@ -56,7 +56,7 @@ export class Nvd3CustomElement {
         let subscription = this.bindingEngine.collectionObserver(this.dataList).subscribe(this.listChanged);
         this.subscriptions.push(subscription);
 
-        nvd3.addGraph(() => {
+       /* nvd3.addGraph(() => {
             this.chart = nvd3.models.pieChart();
             // chart.title('stuff')
             // .titleOffset(-10);
@@ -82,7 +82,7 @@ export class Nvd3CustomElement {
             nvd3.utils.windowResize(this.chart.update);
             this.isInitializedResolve()
             return this.chart;
-        });
+        });*/
     }
 
     dataListChanged(oldList, newList) {
