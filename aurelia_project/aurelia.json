@@ -153,6 +153,17 @@
             "path": "../node_modules/d3-tip",
             "main": "index"
           },
+           {
+            "name": "britecharts",
+            "path": "../node_modules/britecharts/dist",
+            "main": "bundled/britecharts.min",
+            "deps": [
+              "d3"
+            ],
+            "resources": [
+              "css/britecharts.css"
+            ]
+          },
           {
             "name": "lodash",
             "path": "../node_modules/lodash/lodash.min"

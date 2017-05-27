@@ -11,6 +11,10 @@ timeline-component svg {
     overflow: hidden;
 }
 
+timeline-component .tick text {
+    font-size: 0.75rem;
+}
+
 .d3-tip {
     font-size: 12px;
     line-height: 1;

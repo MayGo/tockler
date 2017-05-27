@@ -1,11 +1,7 @@
 import { autoinject, noView, LogManager, bindable, bindingMode, BindingEngine } from "aurelia-framework";
 import * as moment from "moment";
 import * as d3 from 'd3';
-//import * as nvd3 from 'nvd3';
-
-declare var nv: any;
-
-//import nvd3css from 'nvd3/nv.d3.min.css!';
+import * as britecharts from 'britecharts';
 
 import { EventAggregator } from 'aurelia-event-aggregator';
 import { MsToDurationValueConverter } from "../../resources/converters/ms-to-duration-value-converter";
@@ -56,38 +52,38 @@ export class Nvd3CustomElement {
         let subscription = this.bindingEngine.collectionObserver(this.dataList).subscribe(this.listChanged);
         this.subscriptions.push(subscription);
 
-       /* nvd3.addGraph(() => {
-            this.chart = nvd3.models.pieChart();
-            // chart.title('stuff')
-            // .titleOffset(-10);
+        this.chart = britecharts.donut();
+        let donutContainer = d3.select('.pie-chart');
+console.error(this.chart)
+        let containerWidth = 100;//donutContainer.node() ? donutContainer.node().getBoundingClientRect().width : false;
 
-            this.chart.options(this.options);
+        this.chart
+            .isAnimated(true)
+            .highlightSliceById(2)
+            .width(containerWidth)
+            .height(containerWidth)
+            .externalRadius(containerWidth / 2.5)
+            .internalRadius(containerWidth / 5)
+            .on('customMouseOver', function (data) {
+                //legendChart.highlight(data.data.id);
+            })
+            .on('customMouseOut', function () {
+                //legendChart.clearHighlight();
+            });
 
-            this.chart.x(function (d) {
-                if (d.app === 'Default') {
-                    return d.title
-                }
-                return (d.app) ? d.app : 'undefined';
-            })
-            this.chart.y(function (d) {
-                return d.timeDiffInMs;
-            })
-            this.chart.color(function (d) {
-                return d.color;
-            })
-            this.chart.valueFormat((d) => {
-                return this.msToDuration.toView(d);
-            })
-
-            nvd3.utils.windowResize(this.chart.update);
-            this.isInitializedResolve()
-            return this.chart;
-        });*/
+        // donutContainer.datum(dataset).call(donutChart);
     }
 
     dataListChanged(oldList, newList) {
         logger.debug("DataList changed", oldList, newList);
-        this.listChanged(this.dataList)
+        /*
+                quantity	Number	Quantity of the group (required)
+        percentage	Number	Percentage of the total (optional)
+        name	String	Name of the group (required)
+        id*/
+        let donutData = this.dataList.map((item) => { return { quantity: item.timeDiffInMs, name: item.app } });
+        logger.debug("Donut data:", donutData);
+        this.listChanged(donutData)
     }
 
     listChanged(data) {
@@ -96,7 +92,7 @@ export class Nvd3CustomElement {
             // remove whole svg element with old data
             d3.select(this.element).select('svg').remove();
             //d3.selectAll('svg > *').remove();
-            d3.select(this.element).insert('svg', '.caption')
+            d3.select(this.element).insert('svg', '.pie-chart')
                 .datum(this.dataList)
                 .transition().duration(500)
                 .call(this.chart);

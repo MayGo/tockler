@@ -48,6 +48,7 @@
     "d3-tip": "^0.7.1",
     "material-design-iconic-font": "^2.2.0",
     "materialize-css": "0.98.1",
+    "britecharts": "^1.5.3",
     "requirejs": "^2.3.2",
     "au-table": "^0.1.12",
     "aurelia-animator-css": "1.0.0",
