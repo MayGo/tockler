@@ -127,6 +127,7 @@ export class TimelineView {
             ipcRenderer.send('TIMELINE_LOAD_DAY_REQUEST', startDate, taskName);
         })
     };
+    
 
     parseReceivedTimelineData(event, startDate, taskName, items) {
         logger.debug('TIMELINE_LOAD_DAY_RESPONSE received', taskName, items);

@@ -1,6 +1,8 @@
-import {Aurelia} from 'aurelia-framework'
+import { Aurelia, LogManager } from 'aurelia-framework'
 import environment from './environment';
 import * as Backend from 'i18next-xhr-backend';
+import { PLATFORM } from 'aurelia-pal';
+import 'materialize-css';
 
 //Configure Bluebird Promises.
 //Note: You may want to use environment-specific configuration.
@@ -9,39 +11,51 @@ import * as Backend from 'i18next-xhr-backend';
 //     wForgottenReturn: false
 //   }
 // });
+let logger = LogManager.getLogger('InitMain');
 
 export async function configure(aurelia: Aurelia) {
   aurelia.use
     .standardConfiguration()
-    .feature('resources');
+    //.feature(PLATFORM.moduleName("./resources"))
+    .plugin(PLATFORM.moduleName('aurelia-i18n'), (instance) => {
+      // register backend plugin
+      instance.i18next.use(Backend);
 
-  aurelia.use.plugin('aurelia-i18n', instance => {
-    instance.i18next.use(Backend);
-    return instance.setup({
-      ns: ['translation', 'admin'],
-      defaultNs: 'translation',
-      backend: {
-        loadPath: 'locales/{{lng}}/{{ns}}.json',
-      },
-      lng : 'en',
-      attributes : ['t','i18n'],
-      fallbackLng : 'en',
-      debug : false
-    });
-  });
+      function loadLocales(url, options, callback, data) {
+        try {
+          let waitForLocale = require('bundle-loader!./locales/en/' + url + '.json');
+          waitForLocale((locale) => {
+            callback(locale, {status: '200'});
+          })
+        } catch (e) {
+          logger.error(e);
+          callback(null, {status: '404'});
+        }
 
-  aurelia.use.plugin('aurelia-validation');
-  aurelia.use.plugin('aurelia-table');
-  aurelia.use.plugin('aurelia-materialize-bridge', b => b.useAll());
+      }
 
-  if (environment.debug) {
+      return instance.setup({
+        backend: {
+          loadPath: '{{ns}}',
+          parse: (data) => data,
+          ajax: loadLocales
+        },
+        lng: 'en',
+        attributes: ['t', 'i18n'],
+        fallbackLng: 'en',
+        debug: false,
+        ns: ['translation', 'validation', 'field', 'messages', 'nav'],
+        defaultNS: 'translation'
+      });
+    })
+    .plugin(PLATFORM.moduleName('aurelia-validation'))
+  //  .plugin(PLATFORM.moduleName('aurelia-table'))
+    .plugin(PLATFORM.moduleName('aurelia-materialize-bridge'), b => b.useAll());
+
+  //if (environment.debug) {
     aurelia.use.developmentLogging();
-  }
-
-  if (environment.testing) {
-    aurelia.use.plugin('aurelia-testing');
-  }
+ // }
 
   await aurelia.start();
-  aurelia.setRoot('app');
+  await aurelia.setRoot(PLATFORM.moduleName('app'));
 }

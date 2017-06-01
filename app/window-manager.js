@@ -19,7 +19,7 @@ WindowManager.setMainWindow = function () {
     });
 
     this.mainWindow.maximize();
-    this.mainWindow.loadURL('file://' + config.root + '/index.html');
+    this.mainWindow.loadURL('file://' + config.root + '/dist/index.html');
 
     this.mainWindow.on('closed', () => {
         this.mainWindow = null;

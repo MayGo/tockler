@@ -1,4 +1,4 @@
-var config = require('./app/config');
+var config = require('./config');
 const path = require('path');
 
 if (config.isDev) {
@@ -8,12 +8,12 @@ if (config.isDev) {
 
 var app = require('electron').app;
 var notifier = require('node-notifier');
-var LogManager = require("./app/log-manager.js")
+var LogManager = require("./log-manager.js")
 LogManager.init({ userDir: app.getPath('userData') })
 
-var backgroundService = require('./app/background.service');
+var backgroundService = require('./background.service');
 
-const InitialDatagenerator = require('./app/initialDataGenerator');
+const InitialDatagenerator = require('./initialDataGenerator');
 InitialDatagenerator.generate();
 
 var ipcMain = require('electron').ipcMain;
@@ -38,7 +38,7 @@ appLauncher.isEnabled().then(function (enabled) {
 
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
 
-var windowManager = require('./app/window-manager');
+var windowManager = require('./window-manager');
 
 /**
  * Emitted when app starts

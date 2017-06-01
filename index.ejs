@@ -2,10 +2,7 @@
 <html>
 
 <head>
-  <title>Tockler</title>
-  <link rel="stylesheet" href="scripts/css/font-awesome.min.css">
-  <link rel="stylesheet" href="scripts/css/material-design-iconic-font.min.css">
-  <link rel="stylesheet" href="styles/materialize.min.css">
+  <title><%- htmlWebpackPlugin.options.metadata.title %></title>
   
 </head>
 
@@ -63,13 +60,10 @@
       </div>
     </div>
 
-    <script>
-      window.nodeRequire = require;
-      delete window.require;
-      delete window.exports;
-      delete window.module;
-    </script>
-    <script src="scripts/vendor-bundle.js" data-main="aurelia-bootstrapper"></script>
+    <% if (htmlWebpackPlugin.options.metadata.server) { %>
+    <!-- Webpack Dev Server reload -->
+    <script src="/webpack-dev-server.js"></script>
+    <% } %>
   </div>
 </body>
 

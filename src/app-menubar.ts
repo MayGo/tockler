@@ -1,4 +1,4 @@
-import { Aurelia } from 'aurelia-framework';
+import { PLATFORM, Aurelia } from 'aurelia-framework';
 import { Router, RouterConfiguration } from 'aurelia-router';
 
 const ipcRenderer = (<any>window).nodeRequire('electron').ipcRenderer;
@@ -9,7 +9,7 @@ export class App {
   configureRouter(config: RouterConfiguration, router: Router) {
     config.title = 'Aurelia';
     config.map([
-      { route: [''], moduleId: './menubar/menubar' }
+      { route: [''], moduleId: PLATFORM.moduleName('./menubar/menubar') }
     ]);
 
     this.router = router;
