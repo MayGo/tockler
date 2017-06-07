@@ -338,7 +338,7 @@ export class TimelineView {
     }
     detached() {
         logger.debug("detached");
-        this.observerDisposer();
+        //this.observerDisposer();
         ipcRenderer.removeListener('main-window-focus', this.refreshWindow);
         ipcRenderer.removeListener('TIMELINE_LOAD_DAY_RESPONSE', this.parseReceivedTimelineData);
     }

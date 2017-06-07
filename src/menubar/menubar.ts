@@ -2,7 +2,7 @@ import { autoinject, LogManager } from "aurelia-framework";
 import * as moment from "moment";
 import { TrackItemService } from "../services/track-item-service";
 import { SettingsService } from "../services/settings-service";
-import {DialogService} from 'aurelia-dialog';
+import { DialogService } from 'aurelia-dialog';
 
 import { ValidationController, ValidationRules, ValidationControllerFactory, validateTrigger } from 'aurelia-validation';
 
@@ -38,6 +38,7 @@ export class Menubar {
 
     loadItems() {
         logger.debug("Loading items");
+        logger.debug("Loading items", this.trackItemService.findFirstLogItems());
         this.loading = true;
         this.trackItemService.findFirstLogItems().then((items) => {
             logger.debug("Loaded items", items);
@@ -47,7 +48,7 @@ export class Menubar {
             });
             this.trackItems = items;
             this.loading = false;
-        });
+        }, (err) => { logger.error(err) });
     }
 
     setValidationRules() {

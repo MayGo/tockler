@@ -122,18 +122,18 @@
         </div>
       </div>
 
-      <table class="table table-striped" aurelia-table="data.bind: loadedItems[tableSearchTask]; display-data.bind: $displayData; filters.bind: tableFilters">
+      <table class="table table-striped">
         <thead>
           <tr>
-            <th aut-sort="key: app;">App</th>
-            <th aut-sort="key: title;">Title</th>
-            <th aut-sort="key: beginDate; default: desc">Begin</th>
-            <th aut-sort="key: endDate;">End</th>
+            <th>App</th>
+            <th>Title</th>
+            <th>Begin</th>
+            <th>End</th>
             <th>Duration</th>
           </tr>
         </thead>
         <tbody>
-          <tr repeat.for="trackItem of $displayData">
+          <tr repeat.for="trackItem of loadedItems[tableSearchTask]">
             <td>${trackItem.app}</td>
             <td>${trackItem.title}</td>
             <td>${trackItem.beginDate | toDate | df: { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute:

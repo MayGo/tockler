@@ -4,35 +4,40 @@ import { SettingsService } from "./settings-service";
 
 const remote = (<any>window).nodeRequire('electron').remote;
 
+//import { requireTaskPool } from 'electron-remote';
+
+//const trackItemCrud = requireTaskPool(require.resolve('../../app/trackItemCrud'));
+const trackItemCrud = remote.require('../app/trackItemCrud');
+
 @autoinject
 export class TrackItemService {
     private service: any;
 
     constructor(private settingsService: SettingsService) {
-        this.service = remote.getGlobal('BackgroundService').getTrackItemService();
+        this.service = trackItemCrud;
     }
 
     /*  findAllItems(from, to, taskName, searchStr, paging) {
           return this.service.findAllFromDay(from, to, taskName, searchStr, paging);
       }*/
 
-    findAllDayItems(from, to, taskName) {
+    findAllDayItems(from, to, taskName): Promise<any>  {
         return this.service.findAllDayItems(from, to, taskName);
     }
 
-    findAllFromDay(from: Date, type: string) {
+    findAllFromDay(from: Date, type: string): Promise<any> {
         return this.service.findAllFromDay(from, type);
     }
 
-    findFirstLogItems() {
+    findFirstLogItems(): Promise<any>  {
         return this.service.findFirstLogItems();
     }
 
-    createItem(trackItem) {
+    createItem(trackItem): Promise<any>  {
         return this.service.createItem(trackItem);
     }
 
-    updateItem(trackItem) {
+    updateItem(trackItem): Promise<any>  {
         return this.service.updateItem(trackItem);
     }
 

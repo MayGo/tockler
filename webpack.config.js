@@ -34,7 +34,7 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
   },
   entry: {
     app: ['aurelia-bootstrapper'],
-    vendor: ['bluebird'],
+    
     bootstrap: [
       'bootstrap'
     ]
@@ -88,8 +88,7 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
       { test: /\.html$/i, loader: 'html-loader' },
       { test: /\.ts$/i, loader: 'awesome-typescript-loader', exclude: nodeModulesDir },
       { test: /\.json$/i, loader: 'json-loader' },
-      // use Bluebird as the global Promise implementation:
-      { test: /[\/\\]node_modules[\/\\]bluebird[\/\\].+\.js$/, loader: 'expose-loader?Promise' },
+    
       // exposes jQuery globally as $ and as jQuery:
       { test: require.resolve('jquery'), loader: 'expose-loader?$!expose-loader?jQuery' },
       // embed small images and fonts as Data Urls and larger ones as files:
@@ -116,7 +115,6 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
       'au-table': ['./au-table', './au-table-select', './au-table-sort', './au-table-pagination'],
     }),
     new ProvidePlugin({
-      'Promise': 'bluebird',
       'window.Tether': 'tether',
       'Tether': 'tether',
       '$': 'jquery',

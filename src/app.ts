@@ -1,13 +1,21 @@
 import { Router, RouterConfiguration } from "aurelia-router";
-import { PLATFORM } from "aurelia-framework";
+import { autoinject, PLATFORM } from "aurelia-framework";
+
+import { BindingSignaler } from 'aurelia-templating-resources';
 
 let mainConfig: any = {
     isDev: true,
     trayEnabledInDev: false,
 };
 
+@autoinject
 export class App {
     router: Router;
+
+    private rtUpdater: any;
+
+    constructor(private bindingSignaler: BindingSignaler) {
+    }
 
     configureRouter(config: RouterConfiguration, router: Router) {
         config.title = 'Tockler';
@@ -23,5 +31,16 @@ export class App {
         ]);
 
         this.router = router;
+    }
+
+    activate(params, config) {
+        this.rtUpdater = setInterval(() => this.bindingSignaler.signal('rt-update'), 1000);
+    }
+
+    deactivate() {
+        if (this.rtUpdater) {
+            clearInterval(this.rtUpdater);
+            this.rtUpdater = null;
+        }
     }
 }

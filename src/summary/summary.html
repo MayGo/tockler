@@ -1,57 +1,60 @@
 <template>
   <section>
-    <div>
-      <div class="row" style="margin:0">
-        <div class="col-1 right-align">
-          <a class="btn-flat waves-effect btn-floating" click.delegate="list()">
-            <i class="zmdi zmdi-refresh blue-text"></i></a>
-        </div>
-        <div class="col-2" ref="dpWrapper">
-          <input md-datepicker="container.bind: dpWrapper; value.two-way: searchMinDate;" type="date" placeholder="From" style="margin:0; height: 2.2rem;"
-          />
-        </div>
-        <div class="col-2" ref="dpWrapper">
-          <input md-datepicker="container.bind: dpWrapper; value.two-way: searchMaxDate;" type="date" placeholder="To" style="margin:0; height: 2.2rem;"
-          />
-        </div>
-
-        <div class="col-1" style="padding-top:5px">
-          <md-progress show.bind="loading" type="circular" md-pixel-size="30" md-color="blue"></md-progress>
+    <div class="row">
+      <div class="col col-md-auto">
+        <button type="button" class="btn btn-secondary" click.delegate="list()">
+        <i class="fa fa-refresh"></i>
+        </button>
+      </div>
+      <div class="col col-md-auto">
+        <div class="form-group mb-0">
+          <div class="input-group mb-0">
+            <span class="input-group-addon"><i class="fa fa-calendar"></i>
+          </span>
+            <input type="text" class="form-control boxed" placeholder="From" value.bind="searchMinDate">
+          </div>
         </div>
       </div>
-
-      <table class="table table-striped" 
-      >
-        <thead>
-          <tr>
-            <th aut-sort="key: app;">App</th>
-            <th aut-sort="key: title;">Title</th>
-            <th aut-sort="key: beginDate; default: desc">Begin</th>
-            <th aut-sort="key: endDate;">End</th>
-            <th>Duration</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr repeat.for="trackItem of trackItems">
-            <td>${trackItem.app}</td>
-            <td>${trackItem.title}</td>
-            <td>${trackItem.beginDate | toDate | df: { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute:
-              '2-digit', second: '2-digit', hour12: false }}</td>
-            <td>${trackItem.endDate | toDate | df: { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute:
-              '2-digit', second: '2-digit', hour12: false }}</td>
-            <td>${trackItem.endDate | diffToMs: trackItem.beginDate | msToDuration}</td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <td></td>
-            <td><strong>Total: </strong>${trackItemsTotal | msToDuration}
-            </td>
-            <td colspan="6"></td>
-          </tr>
-        </tfoot>
-      </table>
-
+      <div class="col col-md-auto">
+        <div class="form-group mb-0">
+          <div class="input-group mb-0">
+            <span class="input-group-addon"><i class="fa fa-calendar"></i>
+          </span>
+            <input type="text" class="form-control boxed" placeholder="To" value.bind="searchMaxDate">
+          </div>
+        </div>
+      </div>
     </div>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>App</th>
+          <th>Title</th>
+          <th>Begin</th>
+          <th>End</th>
+          <th>Duration</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr repeat.for="trackItem of trackItems">
+          <td>${trackItem.app}</td>
+          <td>${trackItem.title}</td>
+          <td>${trackItem.beginDate | toDate | df: { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute:
+            '2-digit', second: '2-digit', hour12: false }}</td>
+          <td>${trackItem.endDate | toDate | df: { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute:
+            '2-digit', second: '2-digit', hour12: false }}</td>
+          <td>${trackItem.endDate | diffToMs: trackItem.beginDate | msToDuration}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td></td>
+          <td><strong>Total: </strong>${trackItemsTotal | msToDuration}
+          </td>
+          <td colspan="6"></td>
+        </tr>
+      </tfoot>
+    </table>
   </section>
 </template>

@@ -5,7 +5,6 @@ import { PLATFORM } from 'aurelia-pal';
 
 import 'tether';
 import 'bootstrap';
-import 'bootstrap/dist/css/bootstrap-grid.css';
 import './style/_themes/blue-theme.scss';
 import './style/app.scss';
 
