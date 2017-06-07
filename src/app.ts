@@ -1,7 +1,10 @@
 import { Router, RouterConfiguration } from "aurelia-router";
 import { PLATFORM } from "aurelia-framework";
 
-let mainConfig: any = (<any>window).nodeRequire('./app/config');
+let mainConfig: any = {
+    isDev: true,
+    trayEnabledInDev: false,
+};
 
 export class App {
     router: Router;

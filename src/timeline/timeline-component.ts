@@ -21,11 +21,11 @@ export class TimelineComponent {
         top: 20,
         right: 30,
         bottom: 15,
-        left: 10
+        left: 15
     };
 
 
-    h = 140;
+    h = 145;
     w = window.innerWidth;
 
     height = this.h - this.margin.top - this.margin.bottom - 5;
@@ -154,7 +154,7 @@ export class TimelineComponent {
             .tickPadding(4);
 
         var yAxisMain = d3.axisLeft(this.yScaleMain)
-            .tickSize(-2)
+            .tickSize(0)
             .tickPadding(-90);
 
         this.main.append("g").attr("class", "x axis")
@@ -387,7 +387,7 @@ export class TimelineComponent {
 
     onClickTrackItem(d, i, element) {
 
-        console.log("onClickTrackItem", d, i);
+        logger.debug("Clicked track item", d, i);
         //clearBrush();
         var p = d3.select(element);
         var data: any = p.data()[0];
@@ -398,18 +398,18 @@ export class TimelineComponent {
         var y = new Number(p.attr('y'));
 
         // Create object from TrackItem object, to prevent updating trackitem
-        /*  this.selectedTrackItem = {
-              id: data.id,
-              app: data.app,
-              taskName: data.taskName,
-              beginDate: new Date(data.beginDate),
-              endDate: new Date(data.endDate),
-              title: data.title,
-              color: data.color,
-              originalColor: data.color,
-              left: x + 'px',
-              top: y + 'px'
-          };*/
+        this.selectedTrackItem = {
+            id: data.id,
+            app: data.app,
+            taskName: data.taskName,
+            beginDate: new Date(data.beginDate),
+            endDate: new Date(data.endDate),
+            title: data.title,
+            color: data.color,
+            originalColor: data.color,
+            left: x + 'px',
+            top: y + 'px'
+        };
 
         if (data.taskName === 'LogTrackItem') {
             selectionToolSvg.selectAll("path").style('display', 'inherit');
@@ -498,8 +498,8 @@ export class TimelineComponent {
 
         // var x = new Number(p.attr('x'));
         if (this.selectedTrackItem !== null && this.selectedTrackItem.taskName !== 'LogTrackItem') {
-            this.selectedTrackItem = null;
-            //$scope.$apply();
+            // logger.debug("selectedTrackItem = null");
+            //this.selectedTrackItem = null;
         }
 
     };
@@ -530,8 +530,9 @@ export class TimelineComponent {
         logger.debug("selectionToolBrushEnd extent:", extent);
 
         if (extent[0] - extent[1] == 0) {
-            console.log("Just a click");
+            logger.debug("Just a click");
             if (this.selectedTrackItem !== null) {
+                logger.debug("selectedTrackItem = null")
                 this.selectedTrackItem = null;
             }
             return;
@@ -554,7 +555,8 @@ export class TimelineComponent {
         newTrackItem.beginDate = beginDate;
         newTrackItem.endDate = endDate;
 
-        this.selectedTrackItem = newTrackItem;
+        logger.debug("selectedTrackItem = newTrackItem", newTrackItem)
+        Object.assign(this.selectedTrackItem, newTrackItem);
         // prevent event bubbling up, to unselect when clicking outside
         event.stopPropagation();
     };

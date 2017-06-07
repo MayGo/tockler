@@ -1,12 +1,11 @@
 
 <template>
-  <require from="materialize-css/materialize.css"></require>
   <require from="britecharts/dist/css/britecharts.css"></require>
   <require from="./style/timeline.css"></require>
   <require from="./style/styles.css"></require>
-  <md-colors md-primary-color="#2196f3" md-accent-color="#6bcfc6"></md-colors>
+  
 
-  <md-navbar>
+  <header>
     <a href="#/" class="navbar-brand">
       <img src="./shared/img/icon/timetracker_icon.ico" width="24" height="24">
       <span i18n="app.name"></span>
@@ -15,7 +14,7 @@
       <li><a click.delegate="toggleMainWindow(newItem)"><i class="zmdi zmdi-view-module"></i></a></li>
       <li><a click.delegate="exitApp(newItem)"><i class="zmdi zmdi-power"></i></a></li>
     </ul>
-  </md-navbar>
+  </header>
 
   <router-view></router-view>
 

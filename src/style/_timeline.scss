@@ -2,6 +2,9 @@
 
 
 timeline-component {
+    background-color: white;
+    border-top: 1px solid $color-divider;
+    border-bottom: 1px solid $color-divider;
     display: block;
     padding: 10px;
     overflow: hidden;

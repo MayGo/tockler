@@ -1,10 +1,11 @@
 var config = require('./config');
 const path = require('path');
 
-if (config.isDev) {
-    const reloadFile = path.join(__dirname, 'tools', 'reload.electron');
-    require('electron-reload')(reloadFile);
-}
+//if (config.isDev) {
+const reloadFile = path.join(config.root , 'dist');
+// require('electron-reload')(reloadFile);
+require('electron-reload')(reloadFile)
+//}
 
 var app = require('electron').app;
 var notifier = require('node-notifier');
@@ -46,7 +47,7 @@ var windowManager = require('./window-manager');
 app.on('ready', () => {
     windowManager.setMainWindow();
     windowManager.initMainWindowEvents();
-    
+
     if (!config.isDev || config.trayEnabledInDev) {
         windowManager.setTrayWindow();
     }
@@ -116,5 +117,4 @@ if (iShouldQuit && !config.isDev) {
     console.log('Quiting instance.');
     //pluginMgr.removeAll();
     app.quit();
-    return;
 }

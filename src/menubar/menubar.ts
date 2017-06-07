@@ -2,10 +2,9 @@ import { autoinject, LogManager } from "aurelia-framework";
 import * as moment from "moment";
 import { TrackItemService } from "../services/track-item-service";
 import { SettingsService } from "../services/settings-service";
+import {DialogService} from 'aurelia-dialog';
 
-import { MdToastService } from 'aurelia-materialize-bridge';
 import { ValidationController, ValidationRules, ValidationControllerFactory, validateTrigger } from 'aurelia-validation';
-import { MaterializeFormValidationRenderer } from 'aurelia-materialize-bridge';
 
 let logger = LogManager.getLogger('Menubar');
 
@@ -22,11 +21,11 @@ export class Menubar {
     validationController: ValidationController;
 
     constructor(private trackItemService: TrackItemService, private settingsService: SettingsService,
-        private mdToastService: MdToastService, private controllerFactory: ValidationControllerFactory,
+        private dialogService: DialogService, private controllerFactory: ValidationControllerFactory,
     ) {
 
         this.validationController = controllerFactory.createForCurrentScope();
-        this.validationController.addRenderer(new MaterializeFormValidationRenderer());
+        //this.validationController.addRenderer(new MaterializeFormValidationRenderer());
         this.validationController.validateTrigger = validateTrigger.blur;
     }
 

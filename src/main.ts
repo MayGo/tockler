@@ -2,7 +2,13 @@ import { Aurelia, LogManager } from 'aurelia-framework'
 import environment from './environment';
 import * as Backend from 'i18next-xhr-backend';
 import { PLATFORM } from 'aurelia-pal';
-import 'materialize-css';
+
+import 'tether';
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap-grid.css';
+import './style/_themes/blue-theme.scss';
+import './style/app.scss';
+
 
 //Configure Bluebird Promises.
 //Note: You may want to use environment-specific configuration.
@@ -16,7 +22,8 @@ let logger = LogManager.getLogger('InitMain');
 export async function configure(aurelia: Aurelia) {
   aurelia.use
     .standardConfiguration()
-    //.feature(PLATFORM.moduleName("./resources"))
+    .feature(PLATFORM.moduleName("resources/index"))
+    .plugin(PLATFORM.moduleName('aurelia-dialog'))
     .plugin(PLATFORM.moduleName('aurelia-i18n'), (instance) => {
       // register backend plugin
       instance.i18next.use(Backend);
@@ -25,11 +32,11 @@ export async function configure(aurelia: Aurelia) {
         try {
           let waitForLocale = require('bundle-loader!./locales/en/' + url + '.json');
           waitForLocale((locale) => {
-            callback(locale, {status: '200'});
+            callback(locale, { status: '200' });
           })
         } catch (e) {
           logger.error(e);
-          callback(null, {status: '404'});
+          callback(null, { status: '404' });
         }
 
       }
@@ -49,12 +56,11 @@ export async function configure(aurelia: Aurelia) {
       });
     })
     .plugin(PLATFORM.moduleName('aurelia-validation'))
-  //  .plugin(PLATFORM.moduleName('aurelia-table'))
-    .plugin(PLATFORM.moduleName('aurelia-materialize-bridge'), b => b.useAll());
+    .plugin(PLATFORM.moduleName('au-table'))
 
   //if (environment.debug) {
-    aurelia.use.developmentLogging();
- // }
+  aurelia.use.developmentLogging();
+  // }
 
   await aurelia.start();
   await aurelia.setRoot(PLATFORM.moduleName('app'));

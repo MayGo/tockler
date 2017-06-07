@@ -32,7 +32,7 @@ export class Summary {
     }
 
     async activate(): Promise<void> {
-        this.list();
+       return this.list();
     }
 
     getTomorrow(d) {

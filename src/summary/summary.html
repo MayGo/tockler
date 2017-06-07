@@ -2,25 +2,26 @@
   <section>
     <div>
       <div class="row" style="margin:0">
-        <div class="col s1 right-align">
+        <div class="col-1 right-align">
           <a class="btn-flat waves-effect btn-floating" click.delegate="list()">
             <i class="zmdi zmdi-refresh blue-text"></i></a>
         </div>
-        <div class="col s2" ref="dpWrapper">
+        <div class="col-2" ref="dpWrapper">
           <input md-datepicker="container.bind: dpWrapper; value.two-way: searchMinDate;" type="date" placeholder="From" style="margin:0; height: 2.2rem;"
           />
         </div>
-        <div class="col s2" ref="dpWrapper">
+        <div class="col-2" ref="dpWrapper">
           <input md-datepicker="container.bind: dpWrapper; value.two-way: searchMaxDate;" type="date" placeholder="To" style="margin:0; height: 2.2rem;"
           />
         </div>
 
-        <div class="col s1" style="padding-top:5px">
-          <md-progress show.bind="loading" md-type="circular" md-pixel-size="30" md-color="blue"></md-progress>
+        <div class="col-1" style="padding-top:5px">
+          <md-progress show.bind="loading" type="circular" md-pixel-size="30" md-color="blue"></md-progress>
         </div>
       </div>
 
-      <table class="table table-striped" aurelia-table="data.bind: trackItems; display-data.bind: $displayData; filters.bind: tableFilters">
+      <table class="table table-striped" 
+      >
         <thead>
           <tr>
             <th aut-sort="key: app;">App</th>
@@ -31,7 +32,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr repeat.for="trackItem of $displayData">
+          <tr repeat.for="trackItem of trackItems">
             <td>${trackItem.app}</td>
             <td>${trackItem.title}</td>
             <td>${trackItem.beginDate | toDate | df: { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute:

@@ -1,55 +1,20 @@
-const {series, crossEnv, concurrent, rimraf} = require('nps-utils')
-const {config: {port : E2E_PORT}} = require('./test/protractor.conf')
+const { series, crossEnv, concurrent, rimraf } = require('nps-utils')
+const { config: { port: E2E_PORT } } = require('./test/protractor.conf')
 
 module.exports = {
   scripts: {
     default: 'nps webpack',
-    electron: 'cross-env NODE_ENV=development electron ./app',
-    test: {
-      default: 'nps test.jest',
-      jest: {
-        default: series(
-          rimraf('test/coverage-jest'),
-          'jest'
-        ),
-        accept: 'jest -u',
-        watch: 'jest --watch',
-      },
-      karma: {
-        default: series(
-          rimraf('test/coverage-karma'),
-          'karma start test/karma.conf.js'
-        ),
-        watch: 'karma start test/karma.conf.js --no-single-run',
-        debug: 'karma start test/karma.conf.js --no-single-run --debug',
-      },
-      all: concurrent({
-        browser: series.nps('test.karma', 'e2e'),
-        jest: 'nps test.jest',
-      })
-    },
-    e2e: {
-      default: concurrent({
-        webpack: `webpack-dev-server --inline --port=${E2E_PORT}`,
-        protractor: 'nps e2e.whenReady',
-      }) + ' --kill-others --success first',
-      protractor: {
-        install: 'webdriver-manager update',
-        default: series(
-          'nps e2e.protractor.install',
-          'protractor test/protractor.conf.js'
-        ),
-        debug: series(
-          'nps e2e.protractor.install',
-          'protractor test/protractor.conf.js --elementExplorer'
-        ),
-      },
-      whenReady: series(
-        `wait-on --timeout 120000 http-get://localhost:${E2E_PORT}/index.html`,
-        'nps e2e.protractor'
-      ),
-    },
+
+    run: concurrent.nps(
+      'electron.run',
+      'webpack.build.development'
+    ),
+
     build: 'nps webpack.build',
+    electron: {
+      run: 'cross-env NODE_ENV=development electron ./app',
+      build: 'webpack --config webpack.config.main.js --progress -d'
+    },
     webpack: {
       default: 'nps webpack.server',
       build: {
@@ -58,7 +23,7 @@ module.exports = {
         development: {
           default: series(
             'nps webpack.build.before',
-            'webpack --progress -d'
+            'webpack --watch --progress -d'
           ),
           extractCss: series(
             'nps webpack.build.before',

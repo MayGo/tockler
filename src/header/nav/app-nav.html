@@ -1,0 +1,10 @@
+<template>
+    <div class="header-block header-block-nav">
+        <ul class="nav-profile">
+
+            <li repeat.for="row of router.navigation" class="notifications new ${row.isActive ? 'active' : ''}">
+                <a href.bind="row.href">${row.title} </a>
+            </li>
+        </ul>
+    </div>
+</template>

@@ -8,15 +8,15 @@
         <div class="form-group">
           <div class="row">
             <div class="col s6">
-              <md-input md-label="Start" md-value.bind="workSettings.workDayStartTime"></md-input>
+              <input md-label="Start" value.bind="workSettings.workDayStartTime"></input>
             </div>
             <div class="col s6">
-              <md-input md-label="End" md-value.bind="workSettings.workDayEndTime"></md-input>
+              <input md-label="End" value.bind="workSettings.workDayEndTime"></input>
             </div>
           </div>
           <div class="row">
             <div class="col s6">
-              <md-input md-type="number" md-label="Split task after idling for minutes" md-value.bind="workSettings.splitTaskAfterIdlingForMinutes"></md-input>
+              <input type="number" md-label="Split task after idling for minutes" value.bind="workSettings.splitTaskAfterIdlingForMinutes"></input>
             </div>
           </div>
           <button md-button="flat: true;" click.delegate="defaultWorkSettings()">Defaults</button>
@@ -29,20 +29,20 @@
       <div repeat.for="item of analyserSettings">
         <div class="form-group">
           <div class="row">
-            <div class="col s3">
-              <md-input md-label="RegEx to find task" md-value.bind="item.findRe"></md-input>
+            <div class="col-3">
+              <input md-label="RegEx to find task" value.bind="item.findRe"></input>
             </div>
-            <div class="col s2">
-              <md-input md-label="RegEx for group" md-value.bind="item.takeGroup"></md-input>
+            <div class="col-2">
+              <input md-label="RegEx for group" value.bind="item.takeGroup"></input>
             </div>
-            <div class="col s3">
-              <md-input md-label="RegEx for title" md-value.bind="item.takeTitle"></md-input>
+            <div class="col-3">
+              <input md-label="RegEx for title" value.bind="item.takeTitle"></input>
             </div>
-            <div class="col s2" style="margin-top: 10px;">
+            <div class="col-2" style="margin-top: 10px;">
               <md-switch md-label-on="Active" md-label-off="Disabled" md-checked.bind="item.active"></md-switch>
 
             </div>
-            <div class="col s2">
+            <div class="col-2">
               <a class="btn-flat waves-effect btn-floating" click.delegate="removeAnalyserItem($index)">
                 <i class="zmdi zmdi-delete black-text"></i></a>
               <a class="btn-flat waves-effect btn-floating" click.delegate="testAnalyserItem(item, $index)">
@@ -50,8 +50,8 @@
             </div>
 
 
-            <div class="col s12" if.bind="lastAnalyserTestItemIndex==$index && analyserTestItems.length==0">No items found</div>
-            <div class="col s12" if.bind="lastAnalyserTestItemIndex==$index" repeat.for="aItem of analyserTestItems">
+            <div class="col-12" if.bind="lastAnalyserTestItemIndex==$index && analyserTestItems.length==0">No items found</div>
+            <div class="col-12" if.bind="lastAnalyserTestItemIndex==$index" repeat.for="aItem of analyserTestItems">
               <div><b>${aItem.title}</b></div>
               <div>
                 <span>${aItem.findRe}</span> <i>|</i>

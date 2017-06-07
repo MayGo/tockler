@@ -1,0 +1,13 @@
+<template>
+  <div id="confirmColorChangeModal">
+    <div class="modal-content">
+      <h4>Change color</h4>
+      <p>
+        <a click.delegate="changeColorAnswer('ALL_ITEMS')" class="modal-action modal-close">All items</a>
+        <a click.delegate="changeColorAnswer('NEW_ITEMS')" class="modal-action modal-close">This and new items</a>
+        <a click.delegate="changeColorAnswer()" class="modal-action modal-close">Only this</a>
+
+      </p>
+    </div>
+  </div>
+</template>

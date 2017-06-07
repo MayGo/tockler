@@ -1,0 +1,129 @@
+
+@import 'variables';
+
+@import "../../node_modules/bootstrap/scss/bootstrap";
+@import 'main';
+@import 'timeline';
+@import '../header/app-header.scss';
+@import '../header/nav/app-nav.scss';
+
+.app {
+	position: relative;
+	width: 100%;
+	min-height: 100vh;
+	margin: 0 auto;
+	left: 0;
+	background-color: $color-bg;
+	box-shadow: 0 0 3px #ccc;
+	transition: left 0.3s ease, padding-left 0.3s ease; 
+	overflow: hidden;
+
+	.content {
+
+		$padding-x: $content-padding-x-md;
+		$padding-y: $content-padding-y-md;
+
+		padding: $header-height + $padding-y $padding-x $footer-height + $padding-y $padding-x;
+		min-height: 100vh;	
+
+		@include media(xl) {
+			$padding-x: $content-padding-x-xl;
+			$padding-y: $content-padding-y-xl;
+
+			padding: $header-height + $padding-y $padding-x $footer-height + $padding-y $padding-x;
+		}
+
+		@include media(lg) {
+			$padding-x: $content-padding-x-lg;
+			$padding-y: $content-padding-y-lg;
+
+			padding: $header-height + $padding-y $padding-x $footer-height + $padding-y $padding-x;
+		}
+
+		@include media(md) {
+			$padding-x: $content-padding-x-md;
+			$padding-y: $content-padding-y-md;
+
+			padding: $header-height + $padding-y $padding-x $footer-height + $padding-y $padding-x;
+		}
+
+		@include media-down(sm) {
+			$padding-x: $content-padding-x-sm;
+			$padding-y: $content-padding-y-sm;
+
+			padding: $header-height-xs + $padding-y $padding-x $footer-height + $padding-y $padding-x;
+		}
+	}
+
+	&.blank {
+		background-color: #667380;
+	}
+
+}
+
+
+
+
+/* animate page transitions */
+section.au-enter-active {
+  -webkit-animation: fadeInRight 1s;
+  animation: fadeInRight 1s;
+}
+
+div.au-stagger {
+  /* 50ms will be applied between each successive enter operation */
+  -webkit-animation-delay: 50ms;
+  animation-delay: 50ms;
+}
+
+#trackItemMiniEdit {
+  background: $color-bg;
+  border-radius: 5px;
+  padding: 5px;
+  height: 35px;
+  top: 0px;
+  margin-top: 125px;
+  position: absolute;
+  box-shadow: 2px 2px 5px #999999;
+}
+
+#trackItemMiniEdit input input {
+  
+  height: 1rem;
+  margin: 0;
+}
+#trackItemMiniEdit .input-field{
+  margin-top:7px;
+}
+
+
+
+
+
+
+.aut-sort:before {
+    font-family: FontAwesome;
+    padding-right: 0.5em;
+    width: 1.28571429em;
+    display: inline-block;
+    text-align: center;
+}
+
+.aut-sortable:before {
+    content: "\f0dc";
+}
+
+.aut-asc:before {
+    content: "\f160";
+}
+
+.aut-desc:before {
+    content: "\f161";
+}
+
+
+
+input[type="color"] {
+	width: 25px;
+	height: 25px;
+}

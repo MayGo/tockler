@@ -170,7 +170,7 @@ export class TimelineView {
     };
 
     selectedTrackItemChanged(newValue, oldValue) {
-        logger.debug("selectedTrackItemChanged", newValue, oldValue);
+        logger.debug("selectedTrackItemChanged, newValue, oldValue", newValue, oldValue);
     }
 
     setWorkStatsForDay(items) {

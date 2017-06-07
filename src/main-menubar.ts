@@ -31,7 +31,6 @@ export async function configure(aurelia: Aurelia) {
     })
     .plugin(PLATFORM.moduleName('aurelia-validation'))
   //  .plugin(PLATFORM.moduleName('aurelia-table'))
-    .plugin(PLATFORM.moduleName('aurelia-materialize-bridge'), b => b.useAll());
 
   if (environment.debug) {
     aurelia.use.developmentLogging();

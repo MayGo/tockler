@@ -2,69 +2,65 @@
   <require from="./timeline-component"></require>
 
   <section>
-    <div class="row" style="margin:0">
-      <div class="col s1 right-align">
-        <a class="btn-flat waves-effect btn-floating" click.delegate="refresh()">
-          <i class="zmdi zmdi-refresh blue-text"></i></a>
-        <a class="btn-flat waves-effect btn-floating" click.delegate="dayBack()">
-          <i class="zmdi zmdi-arrow-left blue-text"></i></a>
+    <div class="row">
+      <div class="col col-md-auto">
+        <button type="button" class="btn btn-secondary" click.delegate="refresh()">
+        <i class="fa fa-refresh"></i>
+        </button>
+        <button type="button" class="btn btn-secondary" click.delegate="dayBack()">
+        <i class="fa fa-arrow-left"></i>
+        </button>
       </div>
-      <div class="col s2" ref="dpWrapper">
-        <input md-datepicker="container.bind: dpWrapper; value.two-way: searchDate;" type="date" placeholder="Search for day" style="margin:0; height: 2.2rem;"
-        />
+      <div class="col col-md-auto">
+        <div class="form-group mb-0">
+          <div class="input-group mb-0">
+            <span class="input-group-addon"><i class="fa fa-calendar"></i>
+          </span>
+            <input type="text" class="form-control boxed" placeholder="Search for day">
+          </div>
+
+        </div>
       </div>
-      <div class="col s1">
-        <a class="btn-flat waves-effect btn-floating" click.delegate="dayForward()">
-          <i class="zmdi zmdi-arrow-right blue-text"></i></a>
-      </div>
-      <div class="col s1" style="padding-top:5px">
-        <md-progress show.bind="loading" md-type="circular" md-pixel-size="30" md-color="blue"></md-progress>
+      <div class="col col-md-auto">
+
+        <button type="button" class="btn btn-secondary" click.delegate="dayForward()">
+        <i class="fa fa-arrow-right"></i>
+        </button>
       </div>
     </div>
-    <div id="trackItemMiniEdit" if.bind="selectedTrackItem" css.bind="{left:selectedTrackItem.left, top:selectedTrackItem.top}">
+    <div id="trackItemMiniEdit" show.bind="selectedTrackItem" css.bind="{left:selectedTrackItem.left, top:selectedTrackItem.top}">
       <form>
         <div class="row">
-          <div class="col s2">
-            <md-input md-placeholder="Group" md-value.bind="selectedTrackItem.app"></md-input>
+          <div class="col-2 pr-1">
+            <div class="form-group">
+              <input class="form-control form-control-sm boxed" placeholder="Group" type="text" value.bind="selectedTrackItem.app">
+            </div>
           </div>
-          <div class="col s6">
-            <md-input md-placeholder="Title" md-value.bind="selectedTrackItem.title"></md-input>
+          <div class="col pr-1">
+            <div class="form-group">
+              <input class="form-control form-control-sm boxed" placeholder="Title" type="text" value.bind="selectedTrackItem.title">
+            </div>
+
           </div>
-          <div class="col s1">
-            <md-input md-type="color" md-value.bind="selectedTrackItem.color"></md-input>
+          <div class="col col-md-auto pr-1">
+            <div class="form-group">
+              <input class="form-control form-control-sm boxed" placeholder="Title" type="color" value.bind="selectedTrackItem.color">
+            </div>
           </div>
-          <div class="col s1">
-            <a class="btn-flat waves-effect btn-floating" click.delegate="saveTrackItem(selectedTrackItem)">
-              <i class="zmdi zmdi-play-circle blue-text"></i></a>
-          </div>
-          <div class="col s1" if.bind="selectedTrackItem.id">
-            <a class="btn-flat waves-effect btn-floating" click.delegate="deleteTrackItem(selectedTrackItem)">
-              <i class="zmdi zmdi-delete red-text"></i></a>
-          </div>
-          <div class="col s1">
-            <a class="btn-flat waves-effect btn-floating" click.delegate="closeMiniEdit()">
-              <i class="zmdi zmdi-close black-text"></i></a>
+          <div class="col col-md-auto">
+            <button type="button" class="btn btn-info-outline btn-sm btn-no-border" click.delegate="saveTrackItem(selectedTrackItem)"><i class="fa fa-play-circle"></i></button>
+            <button if.bind="selectedTrackItem.id" type="button" class="btn btn-danger-outline btn-sm btn-no-border" click.delegate="deleteTrackItem(selectedTrackItem)"><i class="fa fa-trash-o"></i></button>
+
+            <button type="button" class="btn btn-warning-outline btn-sm btn-no-border" click.delegate="closeMiniEdit()"><i class="fa fa-times"></i></button>
           </div>
         </div>
       </form>
     </div>
 
-    <div id="confirmColorChangeModal" md-modal md-modal.ref="confirmColorChangeModal">
-      <div class="modal-content">
-        <h4>Change color</h4>
-        <p>
-          <a click.delegate="changeColorAnswer('ALL_ITEMS')" md-button="flat: true;" md-waves="color: accent;" class="modal-action modal-close">All items</a>
-          <a click.delegate="changeColorAnswer('NEW_ITEMS')" md-button="flat: true;" md-waves="color: accent;" class="modal-action modal-close">This and new items</a>
-          <a click.delegate="changeColorAnswer()" md-button="flat: true;" md-waves="color: accent;" class="modal-action modal-close">Only this</a>
-
-        </p>
-      </div>
-    </div>
-
     <timeline-component selected-track-item.bind="selectedTrackItem" start-date.bind="searchDate" on-zoom-changed.bind="onZoomChanged"
       zoom-scale.bind="zoomScale" zoom-x.bind="zoomX"></timeline-component>
 
-    <div class="divider"></div>
+    <hr/>
 
     <div if.bind="dayStats.lateForWork">
       <div if.bind="dayStats.lateForWork > 0">
@@ -77,33 +73,46 @@
 
 
     <div class="row">
-      <md-card class="col s4">
-        <div style="height:300px;">
-          <nvd3 options.bind="pieOptions" data-list.bind="pieData['AppTrackItem']"></nvd3>
+      <div class="col">
+        <div class="card">
+          <div class="card-block" style="height:300px;">
+            <nvd3 options.bind="pieOptions" data-list.bind="pieData['AppTrackItem']"></nvd3>
+          </div>
         </div>
-      </md-card>
-      <md-card class="col s4">
-        <div style="height:300px">
-          <nvd3 options.bind="pieOptions" data-list.bind="pieData['LogTrackItem']"></nvd3>
+      </div>
+      <div class="col">
+        <div class="card">
+          <div class="card-block" style="height:300px;">
+            <nvd3 options.bind="pieOptions" data-list.bind="pieData['LogTrackItem']"></nvd3>
+          </div>
         </div>
-      </md-card>
-      <md-card class="col s4">
-        <div style="height:300px">
-          <nvd3 options.bind="pieOptions" data-list.bind="pieData['StatusTrackItem']"></nvd3>
+      </div>
+      <div class="col">
+        <div class="card">
+          <div class="card-block" style="height:300px;">
+            <nvd3 options.bind="pieOptions" data-list.bind="pieData['StatusTrackItem']"></nvd3>
+          </div>
         </div>
-      </md-card>
+      </div>
+
+
     </div>
 
-    <div class="divider"></div>
+    <hr/>
 
     <div>
       <div class="form-group">
         <div class="row">
-          <div class="col s10">
-            <md-input md-label="Search" md-value.bind="tableFilters[0].value"></md-input>
+          <div class="col-10">
+
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-search"></i></span>
+              <input class="form-control boxed" placeholder="Search" type="search" value.bind="tableFilters[0].value">
+
+            </div>
           </div>
-          <div class="col s2">
-            <select md-select="label: Search item type" value.two-way="tableSearchTask">
+          <div class="col-2">
+            <select class="form-control" value.two-way="tableSearchTask">
               <option value="" disabled selected>select an item</option>
               <option value="AppTrackItem">Apps</option>
               <option value="StatusTrackItem">Statuses</option>

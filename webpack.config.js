@@ -2,7 +2,7 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const { AureliaPlugin } = require('aurelia-webpack-plugin');
+const { AureliaPlugin, ModuleDependenciesPlugin } = require('aurelia-webpack-plugin');
 const { optimize: { CommonsChunkPlugin }, ProvidePlugin } = require('webpack')
 const { TsConfigPathsPlugin, CheckerPlugin } = require('awesome-typescript-loader');
 
@@ -16,25 +16,28 @@ const title = 'Tockler';
 const outDir = path.resolve(__dirname, 'dist');
 const srcDir = path.resolve(__dirname, 'src');
 const nodeModulesDir = path.resolve(__dirname, 'node_modules');
-const baseUrl = '/';
+const baseUrl = '';
 
 const cssRules = [
   { loader: 'css-loader' },
   {
     loader: 'postcss-loader',
-    options: { plugins: () => [require('autoprefixer')({ browsers: ['last 2 versions'] })]}
+    options: { plugins: () => [require('autoprefixer')({ browsers: ['last 2 versions'] })] }
   }
 ]
 
-module.exports = ({production, server, extractCss, coverage} = {}) => ({
+module.exports = ({ production, server, extractCss, coverage } = {}) => ({
+  target: 'electron-renderer',
   resolve: {
     extensions: ['.ts', '.js'],
-    modules: [srcDir, 'node_modules'],
+    modules: [srcDir, 'node_modules']
   },
   entry: {
     app: ['aurelia-bootstrapper'],
-    vendor: ['bluebird', 'jquery'],
-    materialize: ['materialize-css']
+    vendor: ['bluebird'],
+    bootstrap: [
+      'bootstrap'
+    ]
   },
   output: {
     path: outDir,
@@ -48,9 +51,13 @@ module.exports = ({production, server, extractCss, coverage} = {}) => ({
     // serve index.html for all 404 (required for push-state)
     historyApiFallback: true,
   },
-  
+  /* node: {
+    __dirname: false,
+    __filename: false
+  },*/
   module: {
     rules: [
+
       // CSS required in JS/TS files should use the style-loader that auto-injects it into the website
       // only when the issuer is a .js/.ts file, so the loaders are not applied inside html templates
       {
@@ -67,6 +74,16 @@ module.exports = ({production, server, extractCss, coverage} = {}) => ({
         // CSS required in templates cannot be extracted safely
         // because Aurelia would try to require it again in runtime
         use: cssRules,
+      },
+      {
+        test: /\.scss$/,
+        use: [{
+          loader: "style-loader" // creates style nodes from JS strings
+        }, {
+          loader: "css-loader" // translates CSS into CommonJS
+        }, {
+          loader: "sass-loader" // compiles Sass to CSS
+        }]
       },
       { test: /\.html$/i, loader: 'html-loader' },
       { test: /\.ts$/i, loader: 'awesome-typescript-loader', exclude: nodeModulesDir },
@@ -89,9 +106,19 @@ module.exports = ({production, server, extractCss, coverage} = {}) => ({
     ]
   },
   plugins: [
-    new AureliaPlugin(),
+    new AureliaPlugin({
+      pal: "aurelia-pal-browser",
+      dist: 'es2015'
+
+   
+   }),
+     new ModuleDependenciesPlugin({
+      'au-table': ['./au-table', './au-table-select', './au-table-sort', './au-table-pagination'],
+    }),
     new ProvidePlugin({
       'Promise': 'bluebird',
+      'window.Tether': 'tether',
+      'Tether': 'tether',
       '$': 'jquery',
       'jQuery': 'jquery',
       'window.jQuery': 'jquery',
