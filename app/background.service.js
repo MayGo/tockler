@@ -297,10 +297,10 @@ BackgroundService.saveForegroundWindowTitle = function () {
         }
         */
         let active = {};
-       // logger.info(result);
+        // logger.info(result);
         var now = new Date();
         var beginDate = new Date();
-        
+
         //Begin date is always BACKGROUND_JOB_INTERVAL before current date
         beginDate.setMilliseconds(beginDate.getMilliseconds() - BACKGROUND_JOB_INTERVAL);
         active.beginDate = beginDate;
@@ -451,6 +451,8 @@ BackgroundService.saveUserIdleTime = function () {
     execFile(runExec, args, { timeout: 2000 }, callcack);
 };
 
+const { ipcMain } = require('electron');
+
 BackgroundService.init = function () {
 
     logger.info('Environment:' + process.env.NODE_ENV);
@@ -467,6 +469,14 @@ BackgroundService.init = function () {
         self.saveRunningLogItem();
 
     }, BACKGROUND_JOB_INTERVAL);
+
+
+
+    ipcMain.on('TIMELINE_LOAD_DAY_REQUEST', function (event, startDate, taskName) {
+        console.log('TIMELINE_LOAD_DAY_REQUEST', startDate, taskName);
+        TrackItemService.findAllFromDay(startDate, taskName).then((items) => event.sender.send('TIMELINE_LOAD_DAY_RESPONSE', startDate, taskName, items))
+    });
+
 };
 
 

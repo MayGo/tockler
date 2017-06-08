@@ -1,66 +1,71 @@
 <template>
-
-    <form>
-        <div if.bind="!runningLogItem" class="row mb-1 pl-1">
-            <div class="col-2 pr-1 align-self-center ">
+    <div class="menubar">
+        <form>
+            <div if.bind="!runningLogItem" class="row mt-1 pl-1">
+                <div class="col-4 pr-1 align-self-center ">
                     <input class="form-control form-control-sm boxed" placeholder="Group" type="text" value.bind="newItem.app & validate">
-            </div>
-            <div class="col pr-1 align-self-center ">
+                </div>
+                <div class="col pr-1 align-self-center ">
                     <input class="form-control form-control-sm boxed" placeholder="Title" type="text" value.bind="newItem.title & validate">
-            </div>
-            <div class="col col-md-auto pr-1 align-self-center ">
+                </div>
+                <div class="col col-auto pr-1 align-self-center ">
                     <input class="form-control form-control-sm boxed" placeholder="Title" type="color" value.bind="newItem.color & validate">
+                </div>
+                <div class="pl-0 col col-auto align-self-center ">
+                    <button type="button" class="m-0 btn btn-info-outline btn-no-border" click.delegate="startNewLogItem(newItem)"><i class="fa fa-play-circle"></i></button>
+                </div>
             </div>
-            <div class="col col-md-auto align-self-center ">
-                <button type="button" class="m-0 btn btn-info-outline btn-no-border" click.delegate="startNewLogItem(newItem)"><i class="fa fa-play-circle"></i></button>
+        </form>
+        <div if.bind="runningLogItem" class="mt-1 pl-1" css="background: #fff; border-left: 5px solid ${runningLogItem.color}">
+            <div class="row ">
+                <div class="col">
+                    <div class="row">
+                        <div class="col-4">
+                            ${runningLogItem.app}
+                        </div>
+                        <div class="col-8">
+                            ${runningLogItem.title}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <small>${runningLogItem.beginDate | formatDate}</small>
+                        </div>
+                        <div class="m-0 col-auto">
+                            <small><b> ${runningLogItem.beginDate | rt & signal:'rt-update'}</b></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="pl-0 col col-auto align-self-center ">
+                    <button type="button" class="m-0 btn btn-info-outline btn-no-border" click.delegate="stopRunningLogItem()"><i class="fa fa-stop"></i></button>
+                </div>
             </div>
         </div>
-    </form>
-    <div if.bind="runningLogItem" class="mb-1 pl-1" css="background: #fff; border-left: 5px solid ${runningLogItem.color}">
-        <div class="row ">
-            <div class="col">
-                <div class="row">
-                    <div class="col-2">
-                        ${runningLogItem.app}
+        <div class="mt-1 pl-1" css="background: #fff; border-left: 5px solid ${item.color}" repeat.for="item of trackItems">
+            <div class="row ">
+                <div class="col">
+                    <div class="row">
+                        <div class="col-4">
+                            ${item.app}
+                        </div>
+                        <div class="col">
+                            ${item.title}
+                        </div>
                     </div>
-                    <div class="col">
-                        ${runningLogItem.title}
+                    <div class="row">
+                        <div class="col">
+                            <small>${item.beginDate | formatDate} - ${item.endDate | formatDate}
+                            <b> ${item.endDate.getTime()-item.beginDate.getTime() | msToDuration} </b></small>
+                        </div>
+                        <div class="m-0 col-auto">
+                            <small><b> ${item.beginDate | rt & signal:'rt-update'}</b></small>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col col-md-auto">
-                        <small>${runningLogItem.beginDate | formatDate}
-                            <b> ${runningLogItem.beginDate | rt & signal:'rt-update'}</b></small>
-                    </div>
+                <div class="pl-0 col col-auto align-self-center ">
+                    <button type="button" class="m-0 btn btn-info-outline btn-no-border" click.delegate="startNewLogItem(newItem)"><i class="fa fa-play-circle"></i></button>
                 </div>
-            </div>
-            <div class="col col-md-auto align-self-center ">
-                <button type="button" class="m-0 btn btn-info-outline btn-no-border" click.delegate="stopRunningLogItem()"><i class="fa fa-stop"></i></button>
             </div>
         </div>
     </div>
-    <div class="mb-1 pl-1" css="background: #fff; border-left: 5px solid ${item.color}" repeat.for="item of trackItems">
-        <div class="row ">
-            <div class="col">
-                <div class="row">
-                    <div class="col-2">
-                        ${item.app}
-                    </div>
-                    <div class="col">
-                        ${item.title}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col col-md-auto">
-                        <small>${item.beginDate | formatDate} - ${item.endDate | formatDate}
-                            <b> ${item.endDate.getTime()-item.beginDate.getTime() | msToDuration}</b></small>
-                    </div>
-                </div>
-            </div>
-            <div class="col col-md-auto align-self-center ">
-                <button type="button" class="m-0 btn btn-info-outline btn-no-border" click.delegate="startNewLogItem(newItem)"><i class="fa fa-play-circle"></i></button>
-            </div>
-        </div>
-    </div>
-
 </template>

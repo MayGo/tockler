@@ -127,7 +127,7 @@ export class TimelineView {
             ipcRenderer.send('TIMELINE_LOAD_DAY_REQUEST', startDate, taskName);
         })
     };
-    
+
 
     parseReceivedTimelineData(event, startDate, taskName, items) {
         logger.debug('TIMELINE_LOAD_DAY_RESPONSE received', taskName, items);
@@ -204,7 +204,7 @@ export class TimelineView {
 
     updatePieCharts(items, taskName) {
 
-        logger.debug('Track Items changed. Updating pie charts');
+        logger.debug('Track Items changed. Updating pie charts:' + taskName);
 
         var groupBy = (taskName === 'LogTrackItem') ? 'title' : 'app'
         this.pieData[taskName] = _(items)
@@ -214,7 +214,7 @@ export class TimelineView {
             })
             .valueOf();
 
-        logger.debug('Updating pie charts ended.');
+        logger.debug('Updating pie charts ended.' + taskName);
 
     };
 
@@ -329,17 +329,17 @@ export class TimelineView {
 
     attached() {
         logger.debug("attached");
-        ipcRenderer.on('main-window-focus', (event, arg) => this.refreshWindow(event, arg));
-        ipcRenderer.on('TIMELINE_LOAD_DAY_RESPONSE', (event, startDate, taskName, items) => this.parseReceivedTimelineData(event, startDate, taskName, items));
+        ipcRenderer.on('main-window-focus', this.refreshWindow.bind(this));
+        ipcRenderer.on('TIMELINE_LOAD_DAY_RESPONSE', this.parseReceivedTimelineData.bind(this));
         //this.refresh();
         // Initialy load todays data
         this.searchDate = moment().startOf('day').toDate();
-        this.list(this.searchDate);
+        //this.list(this.searchDate);
     }
     detached() {
-        logger.debug("detached");
+        logger.debug("detached. Removing listeners");
         //this.observerDisposer();
-        ipcRenderer.removeListener('main-window-focus', this.refreshWindow);
-        ipcRenderer.removeListener('TIMELINE_LOAD_DAY_RESPONSE', this.parseReceivedTimelineData);
+        ipcRenderer.removeAllListeners('main-window-focus');
+        ipcRenderer.removeAllListeners('TIMELINE_LOAD_DAY_RESPONSE');
     }
 }

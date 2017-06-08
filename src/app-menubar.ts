@@ -1,8 +1,6 @@
 import { PLATFORM, Aurelia } from 'aurelia-framework';
 import { Router, RouterConfiguration } from 'aurelia-router';
 
-const ipcRenderer = (<any>window).nodeRequire('electron').ipcRenderer;
-
 export class App {
   router: Router;
 
@@ -15,11 +13,4 @@ export class App {
     this.router = router;
   }
 
-  toggleMainWindow() {
-    ipcRenderer.send('toggle-main-window')
-  };
-
-  exitApp() {
-    ipcRenderer.send('close-app')
-  }
 }

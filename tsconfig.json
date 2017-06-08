@@ -18,6 +18,7 @@
     "node_modules",
     "node_modules/aurelia-validation/node_modules",
     "dist",
+    "packaged",
     "static"
   ]
 }

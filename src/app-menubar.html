@@ -1,21 +1,14 @@
-
 <template>
-  <require from="britecharts/dist/css/britecharts.css"></require>
-  <require from="./style/timeline.css"></require>
-  <require from="./style/styles.css"></require>
-  
 
-  <header>
-    <a href="#/" class="navbar-brand">
-      <img src="./shared/img/icon/timetracker_icon.ico" width="24" height="24">
-      <span i18n="app.name"></span>
-    </a>
-    <ul class="right">
-      <li><a click.delegate="toggleMainWindow(newItem)"><i class="zmdi zmdi-view-module"></i></a></li>
-      <li><a click.delegate="exitApp(newItem)"><i class="zmdi zmdi-power"></i></a></li>
-    </ul>
-  </header>
+  <require from="./header/app-header"></require>
 
-  <router-view></router-view>
+  <div class="main-wrapper">
+    <div class="app">
+      <app-header router.bind="router" is-menubar.bind="true"></app-header>
+      <article class="content">
+        <router-view></router-view>
+      </article>
+    </div>
+  </div>
 
 </template>

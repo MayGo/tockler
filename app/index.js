@@ -1,11 +1,10 @@
 var config = require('./config');
 const path = require('path');
 
-//if (config.isDev) {
-const reloadFile = path.join(config.root , 'dist');
-// require('electron-reload')(reloadFile);
-require('electron-reload')(reloadFile)
-//}
+if (config.isDev) {
+    const reloadFile = path.join(config.root, 'dist');
+    require('electron-reload')(reloadFile)
+}
 
 var app = require('electron').app;
 var notifier = require('node-notifier');

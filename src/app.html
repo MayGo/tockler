@@ -1,14 +1,15 @@
 <template>
   <require from="britecharts/dist/css/britecharts.css"></require>
 
-  <require from="material-design-iconic-font/dist/css/material-design-iconic-font.css"></require>
-  <require from="font-awesome/css/font-awesome.css"></require>
+
   <require from="./header/app-header"></require>
 
   <div class="main-wrapper">
     <div class="app">
       <app-header router.bind="router"></app-header>
-      <router-view></router-view>
+      <article class="content">
+        <router-view></router-view>
+      </article>
     </div>
   </div>
 </template>

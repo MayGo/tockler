@@ -124,7 +124,7 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
     new TsConfigPathsPlugin(),
     new CheckerPlugin(),
     new HtmlWebpackPlugin({
-      template: 'index.ejs',
+      template: 'src/index.ejs',
       minify: production ? {
         removeComments: true,
         collapseWhitespace: true
@@ -134,6 +134,7 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
         title, server, baseUrl
       },
     }),
+   
 
     ...when(extractCss, new ExtractTextPlugin({
       filename: production ? '[contenthash].css' : '[id].css',

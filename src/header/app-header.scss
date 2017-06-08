@@ -1,7 +1,6 @@
 .header {
 	background-color: $color-divider;
 	height: $header-height;
-	left: $sidebar-width;
 	right: 0;
 	transition: left 0.3s ease;
 	z-index: 10;
@@ -14,6 +13,7 @@
 
 	@include media-down(md) {
 		left: 0;
+		position:fixed;
 	}
 
 	@include media-down(sm) {

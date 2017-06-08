@@ -7,4 +7,6 @@ let logger = LogManager.getLogger('AppHeader');
 export class AppHeader {
 	@bindable
 	router
+	@bindable
+	isMenubar
 }

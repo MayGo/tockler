@@ -1,5 +1,6 @@
 <template>
     <require from="./nav/app-nav"></require>
+    <require from="./nav-menubar/app-nav-menubar"></require>
 
     <header class="header">
         <div class="brand">
@@ -9,7 +10,8 @@
             </a>
         </div>
 
-        <app-nav router.bind="router"></app-nav>
+        <app-nav if.bind="!isMenubar" router.bind="router"></app-nav>
+        <app-nav-menubar if.bind="isMenubar" ></app-nav-menubar>
 
     </header>
 </template>

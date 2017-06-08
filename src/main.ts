@@ -7,7 +7,11 @@ import 'tether';
 import 'bootstrap';
 import './style/_themes/blue-theme.scss';
 import './style/app.scss';
+import 'material-design-iconic-font/dist/css/material-design-iconic-font.css';
+import 'font-awesome/css/font-awesome.css';
 
+
+const remote = (<any>window).nodeRequire('electron').remote;
 
 //Configure Bluebird Promises.
 //Note: You may want to use environment-specific configuration.
@@ -61,6 +65,9 @@ export async function configure(aurelia: Aurelia) {
   aurelia.use.developmentLogging();
   // }
 
+  const window = remote.getCurrentWindow();
+  const isMenubarWin = (window.id == 2)
+
   await aurelia.start();
-  await aurelia.setRoot(PLATFORM.moduleName('app'));
+  await aurelia.setRoot((isMenubarWin) ? PLATFORM.moduleName('app-menubar') : PLATFORM.moduleName('app'));
 }

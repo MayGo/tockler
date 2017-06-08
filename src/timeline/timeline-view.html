@@ -1,5 +1,6 @@
 <template>
   <require from="./timeline-component"></require>
+  <require from="resources/charts/donut-chart-custom-element"></require>
 
   <section>
     <div class="row">
@@ -75,22 +76,22 @@
     <div class="row">
       <div class="col">
         <div class="card">
-          <div class="card-block" style="height:300px;">
-            <nvd3 options.bind="pieOptions" data-list.bind="pieData['AppTrackItem']"></nvd3>
+          <div class="card-block" >
+            <donut-chart data-list.bind="pieData['AppTrackItem']"></donut-chart>
           </div>
         </div>
       </div>
       <div class="col">
         <div class="card">
-          <div class="card-block" style="height:300px;">
-            <nvd3 options.bind="pieOptions" data-list.bind="pieData['LogTrackItem']"></nvd3>
+          <div class="card-block" >
+            <donut-chart data-list.bind="pieData['LogTrackItem']"></donut-chart>
           </div>
         </div>
       </div>
       <div class="col">
         <div class="card">
-          <div class="card-block" style="height:300px;">
-            <nvd3 options.bind="pieOptions" data-list.bind="pieData['StatusTrackItem']"></nvd3>
+          <div class="card-block" >
+            <donut-chart data-list.bind="pieData['StatusTrackItem']"></donut-chart>
           </div>
         </div>
       </div>

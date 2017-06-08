@@ -77,7 +77,7 @@ WindowManager.setTrayWindow = function () {
      * https://github.com/maxogden/menubar
      */
     this.menubar = menubar({
-        index: 'file://' + config.root + '/index-menubar.html',
+        index: 'file://' + config.root + '/dist/index.html',
         icon: path.join(config.root, 'app/shared/img/icon/timetracker_icon.png'),
         preloadWindow: true,
         width: 400,
@@ -85,16 +85,16 @@ WindowManager.setTrayWindow = function () {
     });
 
     this.menubar.on('after-create-window', () => {
-        // if (config.isDev) {
-        console.log('Open menubar dev tools')
-        this.menubar.window.openDevTools();
-        // }
+
     });
     this.menubar.on('after-show', () => {
         console.log('Show tray');
         this.menubar.window.webContents.send('focus-tray', 'ping');
-        this.menubar.window.openDevTools();
 
+        if (config.isDev) {
+            console.log('Open menubar dev tools');
+            this.menubar.window.openDevTools();
+        }
     })
 
 };

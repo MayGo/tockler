@@ -2,6 +2,8 @@ appId: "ee.trimatech.tockler"
 productName: "Tockler"
 asar: false
 npmRebuild: false
+directories:
+  output: "packaged"
 files:
 - "!aurelia_project"
 - "!custom_typings"
