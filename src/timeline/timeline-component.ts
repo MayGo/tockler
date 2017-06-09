@@ -89,9 +89,9 @@ export class TimelineComponent {
             this.addItemsToTimeline(trackItems);
         });
 
-        let subscriptionRemove = this.eventAggregator.subscribe('removeItemsFromTimeline', trackItems => {
-            logger.debug('removeItemsFromTimeline', trackItems);
-            this.removeItemsFromTimeline(trackItems);
+        let subscriptionRemove = this.eventAggregator.subscribe('cleanDataAndAddItemsToTimeline', trackItems => {
+            logger.debug('cleanDataAndAddItemsToTimeline', trackItems);
+            this.cleanDataAndAddItemsToTimeline(trackItems);
         });
 
         this.subscriptions.push(subscriptionAdd);

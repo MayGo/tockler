@@ -294,14 +294,15 @@ export class TimelineView {
         this.trackItemService.updateItem(trackItem).then((item) => {
             logger.debug("Updated trackitem to DB:", item);
             this.selectedTrackItem = null;
-
-            this.eventAggregator.publish('addItemToTimeline', item);
+            
             var update = function (arr, id, newval) {
                 var index = _.indexOf(arr, _.find(arr, { id: id }));
                 arr.splice(index, 1, newval);
             };
 
             update(this.loadedItems[trackItem.taskName], item.id, item);
+
+            this.eventAggregator.publish('cleanDataAndAddItemsToTimeline', _.flatten(_.values(this.loadedItems)));
             this.updatePieCharts(this.loadedItems[trackItem.taskName], trackItem.taskName);
         });
     };
@@ -317,7 +318,7 @@ export class TimelineView {
                 var index = _.indexOf(this.trackItems, _.find(this.loadedItems[trackItem.taskName], { id: trackItem.id }));
                 this.loadedItems[trackItem.taskName].splice(index, 1);
                 this.updatePieCharts(this.loadedItems[trackItem.taskName], trackItem.taskName);
-                this.eventAggregator.publish('removeItemsFromTimeline', _.flatten(_.values(this.loadedItems)));
+                this.eventAggregator.publish('cleanDataAndAddItemsToTimeline', _.flatten(_.values(this.loadedItems)));
 
             });
         } else {
