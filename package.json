@@ -82,6 +82,7 @@
     "bluebird": "3.5.0",
     "bootstrap": "4.0.0-alpha.6",
     "britecharts": "1.6.0",
+    "bootstrap-datepicker": "^1.6.4",
     "copy-webpack-plugin": "4.0.1",
     "cross-env": "^5.0.0",
     "css-loader": "0.28.1",

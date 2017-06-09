@@ -1,6 +1,7 @@
 <template>
   <require from="./timeline-component"></require>
   <require from="resources/charts/donut-chart-custom-element"></require>
+  <require from="resources/elements/bootstrap-datepicker/bootstrap-datepicker"></require>
 
   <section>
     <div class="row">
@@ -13,14 +14,7 @@
         </button>
       </div>
       <div class="col col-md-auto">
-        <div class="form-group mb-0">
-          <div class="input-group mb-0">
-            <span class="input-group-addon"><i class="fa fa-calendar"></i>
-          </span>
-            <input type="text" class="form-control boxed" placeholder="Search for day">
-          </div>
-
-        </div>
+        <bootstrap-datepicker placeholder="Select day" dateobj.bind="searchDate"></bootstrap-datepicker>
       </div>
       <div class="col col-md-auto">
 
@@ -76,21 +70,21 @@
     <div class="row">
       <div class="col">
         <div class="card">
-          <div class="card-block" >
+          <div class="card-block">
             <donut-chart data-list.bind="pieData['AppTrackItem']"></donut-chart>
           </div>
         </div>
       </div>
       <div class="col">
         <div class="card">
-          <div class="card-block" >
+          <div class="card-block">
             <donut-chart data-list.bind="pieData['LogTrackItem']"></donut-chart>
           </div>
         </div>
       </div>
       <div class="col">
         <div class="card">
-          <div class="card-block" >
+          <div class="card-block">
             <donut-chart data-list.bind="pieData['StatusTrackItem']"></donut-chart>
           </div>
         </div>
