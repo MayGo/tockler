@@ -29,7 +29,7 @@
         </button>
       </div>
     </div>
-    <div id="trackItemMiniEdit" show.bind="selectedTrackItem" css.bind="{left:selectedTrackItem.left, top:selectedTrackItem.top}">
+    <div id="trackItemMiniEdit" if.bind="selectedTrackItem" css.bind="{left:selectedTrackItem.left, top:selectedTrackItem.top}">
       <form>
         <div class="row">
           <div class="col-2 pr-1">

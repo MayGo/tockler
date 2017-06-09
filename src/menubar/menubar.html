@@ -3,16 +3,22 @@
         <form>
             <div if.bind="!runningLogItem" class="row mt-1 pl-1">
                 <div class="col-4 pr-1 align-self-center ">
-                    <input class="form-control form-control-sm boxed" placeholder="Group" type="text" value.bind="newItem.app & validate">
+                    <div class="form-group">
+                        <input class="form-control form-control-sm boxed" placeholder="Group" type="text" value.bind="newItem.app & validate">
+                    </div>
                 </div>
                 <div class="col pr-1 align-self-center ">
-                    <input class="form-control form-control-sm boxed" placeholder="Title" type="text" value.bind="newItem.title & validate">
+                    <div class="form-group">
+                        <input class="form-control form-control-sm boxed" placeholder="Title" type="text" value.bind="newItem.title & validate">
+                    </div>
                 </div>
                 <div class="col col-auto pr-1 align-self-center ">
-                    <input class="form-control form-control-sm boxed" placeholder="Title" type="color" value.bind="newItem.color & validate">
+                    <div class="form-group">
+                        <input class="form-control form-control-sm boxed" placeholder="Title" type="color" value.bind="newItem.color & validate">
+                    </div>
                 </div>
                 <div class="pl-0 col col-auto align-self-center ">
-                    <button type="button" class="m-0 btn btn-info-outline btn-no-border" click.delegate="startNewLogItem(newItem)"><i class="fa fa-play-circle"></i></button>
+                    <button type="submit" class="m-0 btn btn-info-outline btn-no-border" click.delegate="startNewLogItem(newItem)"><i class="fa fa-play-circle"></i></button>
                 </div>
             </div>
         </form>

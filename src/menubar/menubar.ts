@@ -5,6 +5,7 @@ import { SettingsService } from "../services/settings-service";
 import { DialogService } from 'aurelia-dialog';
 
 import { ValidationController, ValidationRules, ValidationControllerFactory, validateTrigger } from 'aurelia-validation';
+import { BootstrapFormRenderer } from "resources/bootstrap-form-renderer";
 
 let logger = LogManager.getLogger('Menubar');
 
@@ -25,7 +26,7 @@ export class Menubar {
     ) {
 
         this.validationController = controllerFactory.createForCurrentScope();
-        //this.validationController.addRenderer(new MaterializeFormValidationRenderer());
+        this.validationController.addRenderer(new BootstrapFormRenderer());
         this.validationController.validateTrigger = validateTrigger.blur;
     }
 
@@ -68,6 +69,8 @@ export class Menubar {
                     logger.debug("Setting running log item:", item);
                     this.runningLogItem = item;
                 })
+            } else {
+                logger.error("Not Valid", v)
             }
         });
 

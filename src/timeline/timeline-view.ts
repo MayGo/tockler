@@ -1,3 +1,4 @@
+import { ChangeColorConfirmModal } from './change-color-confirm-modal';
 import { autoinject, bindable, bindingMode, LogManager } from "aurelia-framework";
 import { SettingsService } from "../services/settings-service";
 import * as moment from "moment";
@@ -6,6 +7,8 @@ import { EventAggregator } from 'aurelia-event-aggregator';
 import { DeepObserver } from "../resources/deep-observer";
 import { TrackItemService } from "../services/track-item-service";
 import { AppSettingsService } from "../services/app-settings-service";
+
+import { DialogService } from 'aurelia-dialog';
 
 let logger = LogManager.getLogger('TimelineView');
 
@@ -58,15 +61,13 @@ export class TimelineView {
         { value: '', keys: ['app', 'title'] }
     ];
 
-    confirmColorChangeModal: any;
-
-
     constructor(
         private settingsService: SettingsService,
         private trackItemService: TrackItemService,
         private appSettingsService: AppSettingsService,
         private eventAggregator: EventAggregator,
-        private deepObserver: DeepObserver
+        private deepObserver: DeepObserver,
+        private dialogService: DialogService
     ) {
         this.resetLoadedItems();
         /*this.observerDisposer = deepObserver.observe(this, 'selectedTrackItem', (n, o, p) => {
@@ -238,6 +239,30 @@ export class TimelineView {
              this.saveTrackItem(trackItem)
          });*/
     };
+    showChangeColorDialog() {
+
+        this.dialogService.open({
+            viewModel: ChangeColorConfirmModal,
+            model: this.selectedTrackItem, lock: false
+        }).whenClosed(response => {
+            if (!response.wasCancelled) {
+                let trackItem = response.output;
+                if (trackItem) {
+                    logger.debug("Updating color for item:", trackItem)
+                    this.updateItem(trackItem);
+                    this.selectedTrackItem = null;
+                } else {
+                    logger.debug("Reloading items")
+                    this.resetLoadedItems();
+                    this.list(this.searchDate);
+                }
+            } else {
+                logger.debug('Color change canceled!');
+            }
+        });
+    }
+
+
 
     saveTrackItem(trackItem) {
         logger.debug("Saving trackitem.", trackItem);
@@ -248,7 +273,7 @@ export class TimelineView {
             if (trackItem.originalColor === trackItem.color) {
                 this.updateItem(trackItem);
             } else {
-                this.confirmColorChangeModal.open();
+                this.showChangeColorDialog();
             }
         } else {
             if (!trackItem.app) {
@@ -262,26 +287,6 @@ export class TimelineView {
                 this.loadedItems[trackItem.taskName].push(item);
                 this.updatePieCharts(this.loadedItems[trackItem.taskName], trackItem.taskName);
             });
-        }
-
-    }
-
-    changeColorAnswer(answer) {
-        let trackItem = this.selectedTrackItem;
-        if (answer === 'ALL_ITEMS') {
-            this.loading = true;
-            this.appSettingsService.changeColorForApp(trackItem.app, trackItem.color);
-            this.trackItemService.updateColorForApp(trackItem.app, trackItem.color).then(() => {
-                logger.debug("Updated all item with color");
-
-                this.resetLoadedItems();
-                this.list(this.searchDate);
-            })
-        } else if (answer === 'NEW_ITEMS') {
-            this.appSettingsService.changeColorForApp(trackItem.app, trackItem.color);
-            this.updateItem(trackItem);
-        } else {
-            this.updateItem(trackItem);
         }
     }
 

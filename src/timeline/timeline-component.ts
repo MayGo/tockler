@@ -548,7 +548,8 @@ export class TimelineComponent {
         let newTrackItem: any = {};
 
         if (this.selectedTrackItem == null) {
-            newTrackItem = { color: '#32CD32' };
+            logger.debug("Creating new selectedTrackItem");
+            this.selectedTrackItem = { color: '#32CD32' };
         }
 
         newTrackItem.left = d3.select(".brush rect.selection").attr("x") + 'px';
