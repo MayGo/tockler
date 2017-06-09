@@ -160,6 +160,7 @@ export class TimelineView {
         this.loading = false;
         logger.debug('Trackitems loaded, parsing ended.', taskName);
         this.eventAggregator.publish('addItemsToTimeline', this.loadedItems[taskName]);
+        
 
         this.updatePieCharts(this.loadedItems[taskName], taskName);
 
@@ -167,7 +168,6 @@ export class TimelineView {
             this.setWorkStatsForDay(this.loadedItems[taskName]);
         }
 
-        logger.debug('Trackitems loaded, $digest.');
     };
 
     selectedTrackItemChanged(newValue, oldValue) {

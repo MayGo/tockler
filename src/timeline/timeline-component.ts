@@ -295,15 +295,36 @@ export class TimelineComponent {
         var rects = this.mini.select("#miniItemsId").selectAll(".miniItems")
             .data(this.allItems);
 
+
+        //Update old items
+        rects
+            .style("fill", (d) => {
+                return d.color;
+            })
+            .attr("x", (d) => {
+                return this.xScaleMini(new Date(d.beginDate));
+            })
+            .attr("y", (d) => {
+                return this.yScaleMini(d.taskName);
+            })
+            .attr("width", (d) => {
+                if ((this.xScaleMini(new Date(d.endDate)) - this.xScaleMini(new Date(d.beginDate))) < 0) {
+                    console.error("Negative value, error with dates.");
+                    console.log(d);
+                    return 0;
+                }
+                return (this.xScaleMini(new Date(d.endDate)) - this.xScaleMini(new Date(d.beginDate)));
+            });
+
+        //enter new items
         rects.enter()
             .append("rect")
             .attr("class", "miniItems")
             .attr("id", (d) => {
                 return "mini_" + d.id;
             })
-            .attr("height", 7);
-
-        rects
+            .attr("height", 7)
+            //Apply same as "Update old items"
             .style("fill", (d) => {
                 return d.color;
             })
@@ -352,21 +373,14 @@ export class TimelineComponent {
         var rects = this.main.select("#mainItemsId").selectAll(".mainItems")
             .data(visItems);
 
-        // insert
-        rects.enter().append("rect")
-            .attr("class", "mainItems")
-            .attr("id", (d) => {
-                return "main_" + d.id;
-            })
-            .attr("height", (d) => {
-                return 20;
-            })
-            ;
+        //remove
+        rects.exit().remove();
 
         //update
-        rects.style("fill", (d) => {
-            return d.color;
-        })
+        rects
+            .style("fill", (d) => {
+                return d.color;
+            })
             .attr("x", (d) => {
                 return this.xScaleMain(new Date(d.beginDate));
             })
@@ -377,7 +391,30 @@ export class TimelineComponent {
                 return this.xScaleMain(new Date(d.endDate)) - this.xScaleMain(new Date(d.beginDate));
             });
 
-        rects.exit().remove();
+        // insert
+        rects.enter().append("rect")
+            .attr("class", "mainItems")
+            .attr("id", (d) => {
+                return "main_" + d.id;
+            })
+            .attr("height", (d) => {
+                return 20;
+            })
+            // add same style as "update"
+            .style("fill", (d) => {
+                return d.color;
+            })
+            .attr("x", (d) => {
+                return this.xScaleMain(new Date(d.beginDate));
+            })
+            .attr("y", (d) => {
+                return this.yScaleMain(d.taskName);
+            })
+            .attr("width", (d) => {
+                return this.xScaleMain(new Date(d.endDate)) - this.xScaleMain(new Date(d.beginDate));
+            })
+
+
         let self = this;
         rects.on('click', function (d, i) { self.onClickTrackItem(d, i, this) })
             .on('mouseover', function (d, i, e) { self.tip.show(d, i, e) })
