@@ -6,7 +6,6 @@ timeline-component {
     border-top: 1px solid $color-divider;
     border-bottom: 1px solid $color-divider;
     display: block;
-    padding: 10px;
     overflow: hidden;
 }
 
@@ -64,34 +63,6 @@ timeline-component .tick text {
     fill: rgb(126, 126, 126);;
 }
 
-.brush .extent {
-    stroke: #518cc1;
-    fill: #049CD9;
-    fill-opacity: .125;
-    shape-rendering: crispEdges;
-    stroke-width: 1;
-}
-
-.brush .resize text{
-    fill: #049CD9;
-}
-
-.brush .resize path {
-    fill: #b8b8b8;
-    fill-opacity: .125;
-}
-
-.miniBrush .extent {
-    stroke: #518cc1;
-    fill: #049CD9;
-    fill-opacity: .125;
-    shape-rendering: crispEdges;
-    stroke-width: 1;
-}
-.miniBrush .resize path {
-    fill: #b8b8b8;
-    fill-opacity: .125;
-}
 
 
 .zoom-overlay {
