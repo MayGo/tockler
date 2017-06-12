@@ -3,7 +3,9 @@ import * as moment from "moment";
 import "bootstrap-datepicker";
 import * as $ from 'jquery';
 
-
+/*
+ <bootstrap-datepicker id="someday" name="someday" dateobj.bind="someday"></bootstrap-datepicker>
+ */
 
 let logger = LogManager.getLogger('BootstrapDatepicker');
 

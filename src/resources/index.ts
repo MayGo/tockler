@@ -6,5 +6,6 @@ export function configure(config: FrameworkConfiguration) {
   config.globalResources(PLATFORM.moduleName('./converters/to-date-value-converter'));
   config.globalResources(PLATFORM.moduleName('./converters/format-date-value-converter'));
   config.globalResources(PLATFORM.moduleName('./converters/flatten-array-value-converter'));
+  config.globalResources(PLATFORM.moduleName('./attributes/tooltip/tooltip-custom-attribute'));
 
 }

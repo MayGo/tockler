@@ -5,7 +5,7 @@ import { BindingSignaler } from 'aurelia-templating-resources';
 
 let mainConfig: any = {
     isDev: true,
-    trayEnabledInDev: false,
+    trayEnabledInDev: true,
 };
 
 @autoinject
@@ -23,11 +23,11 @@ export class App {
             {
                 route: ['menubar'], name: 'menubar', moduleId: PLATFORM.moduleName('./menubar/menubar'),
                 nav: (mainConfig.isDev && !mainConfig.trayEnabledInDev),
-                title: 'Menubar'
+                title: 'nav:menubar'
             },
-            { route: ['', 'timeline'], name: 'timeline', moduleId: PLATFORM.moduleName('./timeline/timeline-view'), nav: true, title: 'Timeline' },
-            { route: 'summary', name: 'summary', moduleId: PLATFORM.moduleName('./summary/summary'), nav: true, title: 'Summary' },
-            { route: 'settings', name: 'settings', moduleId: PLATFORM.moduleName('./settings/settings'), nav: true, title: 'Settings' }
+            { route: ['', 'timeline'], name: 'timeline', moduleId: PLATFORM.moduleName('./timeline/timeline-view'), nav: true, title: 'nav:timeline' },
+            { route: 'summary', name: 'summary', moduleId: PLATFORM.moduleName('./summary/summary'), nav: true, title: 'nav:summary' },
+            { route: 'settings', name: 'settings', moduleId: PLATFORM.moduleName('./settings/settings'), nav: true, title: 'nav:settings', settings: { icon: 'fa fa-cog' } }
         ]);
 
         this.router = router;

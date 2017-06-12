@@ -10,6 +10,8 @@ import './style/app.scss';
 import 'material-design-iconic-font/dist/css/material-design-iconic-font.css';
 import 'font-awesome/css/font-awesome.css';
 import "aurelia-dialog/styles/output.css";
+import { Router } from "aurelia-router";
+import { EventAggregator } from "aurelia-event-aggregator";
 
 
 
@@ -58,7 +60,14 @@ export async function configure(aurelia: Aurelia) {
         debug: false,
         ns: ['translation', 'validation', 'field', 'messages', 'nav'],
         defaultNS: 'translation'
-      });
+      }).then(() => {
+        const router = aurelia.container.get(Router);
+        const events = aurelia.container.get(EventAggregator);
+        router.transformTitle = title => instance.tr(title);
+        events.subscribe('i18n:locale:changed', () => {
+          router.updateTitle();
+        });
+      });;
     })
     .plugin(PLATFORM.moduleName('aurelia-validation'))
     .plugin(PLATFORM.moduleName('au-table'))

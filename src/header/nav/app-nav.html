@@ -3,7 +3,10 @@
         <ul class="nav-profile">
 
             <li repeat.for="row of router.navigation" class="notifications new ${row.isActive ? 'active' : ''}">
-                <a href.bind="row.href">${row.title}</a>
+                <a href.bind="row.href">
+                    <span if.bind="!row.settings.icon" i18n.bind="row.title"></span>
+                    <i if.bind="row.settings.icon" class="${row.settings.icon}" tooltip.bind="row.title"></i>
+                </a>
             </li>
         </ul>
     </div>
