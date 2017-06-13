@@ -15,11 +15,11 @@ files:
 - "!release"
 mac:
   category: public.app-category.productivity
-  icon: shared/img/icon/timetracker_icon.icns
+  icon: shared/img/icon/tockler_icon.icns
   target: zip
 win:
-  icon: shared/img/icon/timetracker_icon.ico
+  icon: shared/img/icon/tockler_icon.ico
 squirrelWindows:
-  iconUrl: https://raw.githubusercontent.com/MayGo/tockler/master/build/icon.ico
+  iconUrl: https://raw.githubusercontent.com/MayGo/tockler/master/shared/img/icon/tockler_icon.ico
     
 

@@ -3,7 +3,9 @@
 const notifier = require('node-notifier');
 const path = require('path');
 const moment = require('moment');
-const iconUrl = path.join(__dirname, 'shared/img/icon/timetracker_icon.ico');
+
+const config = require('./config');
+const iconUrl = config.icon;
 
 var LogManager = require("./log-manager.js");
 var logger = LogManager.getLogger('UserMessages');

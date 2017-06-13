@@ -15,7 +15,7 @@ WindowManager.setMainWindow = function () {
         height: 1000,
         show: true,
         title: 'Tockler',
-        icon: path.join(config.root, 'app/shared/img/icon/timetracker_icon.ico')
+        icon: config.icon
     });
 
     this.mainWindow.maximize();
@@ -78,7 +78,7 @@ WindowManager.setTrayWindow = function () {
      */
     this.menubar = menubar({
         index: 'file://' + config.root + '/dist/index.html',
-        icon: path.join(config.root, 'app/shared/img/icon/timetracker_icon.png'),
+        icon: config.icon,
         preloadWindow: true,
         width: 400,
         height: 500
