@@ -55,8 +55,6 @@
     <timeline-component selected-track-item.bind="selectedTrackItem" start-date.bind="searchDate" on-zoom-changed.bind="onZoomChanged"
       zoom-scale.bind="zoomScale" zoom-x.bind="zoomX"></timeline-component>
 
-    <hr/>
-
     <div if.bind="dayStats.lateForWork">
       <div if.bind="dayStats.lateForWork > 0">
         Late for work: ${dayStats.lateForWork | msToDuration}
