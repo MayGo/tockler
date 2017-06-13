@@ -20,10 +20,9 @@ export class TimelineComponent {
     margin = {
         top: 20,
         right: 30,
-        bottom: 15,
+        bottom: 20,
         left: 15
     };
-
 
     h = 145;
     w = window.innerWidth;
@@ -36,8 +35,9 @@ export class TimelineComponent {
     mainHeight = 70;
     miniHeight = 30;
 
-
     logTrackItemHeight = (this.mainHeight + this.miniHeight - (this.margin.top + this.margin.bottom)) / 3;
+
+    tickFormat = "%H:%M";
 
     timeDomainStart: any = moment().startOf('day').toDate();
     timeDomainEnd: any = d3.utcDay.offset(this.timeDomainStart, 1);
@@ -114,39 +114,68 @@ export class TimelineComponent {
     }
 
     init(el) {
-        console.log("Initializing chart.");
+        logger.debug("Initializing charts");
 
-        this.chart = d3.select(el)
+        this.initMainChart(el);
+        this.initMiniChart(el);
+
+        this.initMainAxis();
+        this.initMainBrush();
+        this.initMainItemsLayerOnTopOfBrush();
+
+        this.initMiniAxis();
+        this.initMiniBrush();
+
+        // tooltips
+        this.tip = this.initTooltips(this.main);
+        console.log("Initializing chart done.");
+
+    }
+
+    initMainChart(el) {
+        let chartMain = d3.select(el)
             .append("svg")
-            .attr("class", "chart")
             .attr("width", this.width + this.margin.left + this.margin.right)
-            .attr("height", this.height + this.margin.top + this.margin.bottom);
+            .attr("height", this.mainHeight + this.margin.top);
 
-
-        this.chart.append("defs").append("clipPath")
-            .attr("id", "clip")
+        chartMain.append("defs").append("clipPath")
+            .attr("id", "mainClip")
             .append("rect")
             .attr("width", this.width)
             .attr("height", this.mainHeight);
 
-        this.main = this.chart.append("g")
+
+        this.main = chartMain.append("g")
             .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")")
             .attr("width", this.width)
             .attr("height", this.mainHeight)
             .attr("class", "main");
+    }
+    initMainItemsLayerOnTopOfBrush(){
+          this.main.append("g")
+            .attr("id", "mainItemsId")
+            .attr("clip-path", "url(#mainClip)");
+    }
 
-        this.mini = this.chart.append("g")
-            .attr("transform", "translate(" + this.margin.left + "," + (this.mainHeight + this.margin.top) + ")")
+    initMiniChart(el) {
+        let chartMini = d3.select(el)
+            .append("svg")
+            .attr("width", this.width + this.margin.left + this.margin.right)
+            .attr("height", this.miniHeight + this.margin.bottom);
+
+        this.mini = chartMini.append("g")
+            .attr("transform", "translate(" + this.margin.left + ",0)")
             .attr("width", this.width)
             .attr("height", this.miniHeight)
             .attr("class", "mini");
 
-        // MAIN AXIS
+        this.mini.append("g")
+            .attr("id", "miniItemsId");
+    }
 
-        var tickFormat = "%H:%M";
-
+    initMainAxis() {
         this.xAxisMain = d3.axisTop(this.xScaleMain)
-            .tickFormat(d3.timeFormat(tickFormat))
+            .tickFormat(d3.timeFormat(this.tickFormat))
             .ticks(20)
             .tickSize(this.mainHeight)
             .tickPadding(4);
@@ -160,38 +189,16 @@ export class TimelineComponent {
             .transition()
             .call(this.xAxisMain);
 
-        // BRUSH
-        // item selection/creation brush
-        console.log("Init selection tool.");
-        let self = this;
-        this.mainBrush = d3.brushX()
-            .on("start", function () { self.selectionToolBrushStart(this) })
-            .on("end", function () { self.selectionToolBrushEnd() })
-            .on("brush", function () { self.selectionToolBrushing() });
-
-        this.main.append('g')
-            .attr('class', 'mainBrush').call(this.mainBrush);
-
-
-
-        // track items clip
-        // y axis labels is on top of items
-        this.main.append("g")
-            .attr("id", "mainItemsId")
-            .attr("clip-path", "url(#clip)");
-
         this.main.append("g").attr("class", "y axis")
             .transition()
             .call(yAxisMain);
+    }
 
-
-        // MINI AXIS
+    initMiniAxis() {
         // miniBrush is on top of items layer and  axis labels is on top of items
-        this.mini.append("g")
-            .attr("id", "miniItemsId");
 
         var xAxisMini = d3.axisBottom(this.xScaleMini)
-            .tickFormat(d3.timeFormat(tickFormat))
+            .tickFormat(d3.timeFormat(this.tickFormat))
             .ticks(d3.timeMinute, 60)
             .tickSize(3)
             .tickPadding(4);
@@ -200,22 +207,25 @@ export class TimelineComponent {
             .attr("transform", "translate(0, " + this.miniHeight + ")")
             .transition()
             .call(xAxisMini);
+    }
 
-        //miniBrush
+    initMainBrush() {
+        this.mainBrush = d3.brushX()
+            .on("start", () => this.selectionToolBrushStart())
+            .on("end", () => this.selectionToolBrushEnd())
+            .on("brush", () => this.selectionToolBrushing());
+
+        this.main.append('g')
+            .attr('class', 'mainBrush').call(this.mainBrush);
+    }
+
+    initMiniBrush() {
         this.miniBrush = d3.brushX()
             .on("brush", () => this.displaySelectedInMain());
 
         this.mini.append("g")
             .attr("class", "miniBrush")
-            .call(this.miniBrush)
-        // .selectAll("rect")
-        // .attr("y", 1)
-        //.attr("height", this.miniHeight);
-
-        // tooltips
-        this.tip = this.initTooltips(this.chart);
-        console.log("Initializing chart done.");
-
+            .call(this.miniBrush);
     }
 
     changeDay(day) {
@@ -227,8 +237,8 @@ export class TimelineComponent {
         }
         console.log('Changing day: ' + day);
         //Remove everything
-        this.chart.selectAll('.miniItems').remove();
-        this.chart.selectAll('.mainItems').remove();
+        this.main.selectAll('.miniItems').remove();
+        this.mini.selectAll('.mainItems').remove();
 
         this.allItems = [];
         this.updateDomain(day);
@@ -401,11 +411,9 @@ export class TimelineComponent {
     onClickTrackItem(d, i, element) {
 
         logger.debug("Clicked track item", d, i);
-        //clearBrush();
         var p = d3.select(element);
         var data: any = p.data()[0];
 
-        var selectionToolSvg = d3.select(".brush");
         var translate = p.attr('transform');
         var x = new Number(p.attr('x'));
         var y = new Number(p.attr('y'));
@@ -423,17 +431,6 @@ export class TimelineComponent {
             left: x + 'px',
             top: y + 'px'
         };
-
-        if (data.taskName === 'LogTrackItem') {
-            selectionToolSvg.selectAll("path").style('display', 'inherit');
-        } else {
-            selectionToolSvg.selectAll("path").style('display', 'none');
-        }
-
-        // position brush same as trackitem
-        selectionToolSvg.selectAll(".selection")
-            .attr('height', p.attr('height'))
-            .attr('y', p.attr('y'));
 
         // Make brush same size as trackitem
         this.moveMainBrush(new Date(data.beginDate), new Date(data.endDate));
@@ -463,26 +460,17 @@ export class TimelineComponent {
         return d3tip;
     }
 
-    clearBrush() {
-        console.log("Clear brush");
-        console.log(this.selectedTrackItem);
-        // Hide selection brushes
-        //this.mainBrush.clear();
-        // d3.select(".brush").call(this.mainBrush);
-        // d3.select(".brush").selectAll("rect").attr('height', logTrackItemHeight);
-    }
-
-    selectionToolBrushStart(element) {
+    selectionToolBrushStart() {
 
         if (!d3.event.sourceEvent) return; // Only transition after input.
         if (!d3.event.selection) return; // Ignore empty selections.
 
         logger.debug("selectionToolBrushStart");
 
-         if (this.selectedTrackItem !== null && this.selectedTrackItem.taskName !== 'LogTrackItem') {
-             logger.debug("selectionToolBrushStart. selectedTrackItem = null");
-             this.selectedTrackItem = null;
-         }
+        if (this.selectedTrackItem !== null && this.selectedTrackItem.taskName !== 'LogTrackItem') {
+            logger.debug("selectionToolBrushStart. selectedTrackItem = null");
+            this.selectedTrackItem = null;
+        }
 
     };
 
@@ -503,7 +491,7 @@ export class TimelineComponent {
         if (!d3.event.sourceEvent) return; // Only transition after input.
         if (!d3.event.selection) return; // Ignore empty selections.
 
-       
+
 
         var selection = d3.event.selection;
 

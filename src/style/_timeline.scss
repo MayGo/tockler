@@ -2,15 +2,14 @@
 
 
 timeline-component {
-    background-color: white;
     border-top: 1px solid $color-divider;
-    border-bottom: 1px solid $color-divider;
     display: block;
     overflow: hidden;
 }
 
 timeline-component svg {
     overflow: hidden;
+    border-bottom: 1px solid $color-divider;
 }
 
 timeline-component .tick text {
