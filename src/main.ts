@@ -10,6 +10,7 @@ import './style/app.scss';
 import 'material-design-iconic-font/dist/css/material-design-iconic-font.css';
 import 'font-awesome/css/font-awesome.css';
 import "aurelia-dialog/styles/output.css";
+import 'typeface-berkshire-swash'
 import { Router } from "aurelia-router";
 import { EventAggregator } from "aurelia-event-aggregator";
 

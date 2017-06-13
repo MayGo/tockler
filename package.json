@@ -41,9 +41,7 @@
     "randomcolor": "^0.4.4",
     "requirejs": "^2.3.3",
     "sequelize": "3.30.4",
-    "sqlite3": "^3.1.8",
-    "tether": "^1.4.0",
-    "toastr": "^2.1.2"
+    "sqlite3": "^3.1.8"
   },
   "peerDependencies": {},
   "devDependencies": {
@@ -129,6 +127,9 @@
     "url-loader": "0.5.8",
     "wait-on": "2.0.2",
     "webpack": "^2.6.1",
-    "webpack-dev-server": "2.4.5"
+    "webpack-dev-server": "2.4.5",
+    "tether": "^1.4.0",
+    "toastr": "^2.1.2",
+    "typeface-berkshire-swash": "0.0.22"
   }
 }
