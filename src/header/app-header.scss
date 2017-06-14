@@ -33,14 +33,19 @@
 
 	.brand {
 		a{
-			padding: 10px 20px 10px 20px;
+			padding: 10px 20px;
 			color: $color-text;
 			text-decoration: none;
 			border: 0px;
 			border-right: 1px;
 			border-color: darken($color-divider, 25%);;
 			border-style: solid;
+			
+			@include media-down(sm) {
+				padding: 5px 20px;
+			}
 		}
+		
 		
 		font-family: 'Berkshire Swash', cursive;
 		text-align: left;
