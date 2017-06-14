@@ -18,6 +18,12 @@ Automatically track applications usage and working time.
 # Features to be implemented
 - Remind to take a break
 
+# Tech
+- [Electron](https://electron.atom.io/) with [Webpack](https://webpack.github.io/) and [Typescript](https://www.typescriptlang.org/)
+- [Aurelia](http://aurelia.io/)
+- [D3 v4](https://d3js.org/) and [Britecharts](http://eventbrite.github.io/britecharts/)
+- [Bootstrap 4](https://v4-alpha.getbootstrap.com/) and [Modular Admin theme](http://modularcode.io/modular-admin-html/)
+
 
 
 ![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/timeline_view.png "Tockler screenshot")
