@@ -9,7 +9,7 @@ var config = {
     // root directory
     root: root,
 
-    icon: path.join(root, 'app/shared/img/icon/tockler_icon.png'),
+    icon: path.join(root, 'shared/img/icon/tockler_icon.png'),
 
     // plugins directory
     pluginsPath: root,
