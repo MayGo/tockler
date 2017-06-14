@@ -3,10 +3,7 @@ import { autoinject, PLATFORM } from "aurelia-framework";
 
 import { BindingSignaler } from 'aurelia-templating-resources';
 
-let mainConfig: any = {
-    isDev: true,
-    trayEnabledInDev: true,
-};
+const mainConfig = (<any>window).nodeRequire('electron').remote.getGlobal('shared');
 
 @autoinject
 export class App {
