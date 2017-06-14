@@ -35,7 +35,9 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <small>${runningLogItem.beginDate | formatDate}</small>
+                            <small>${runningLogItem.beginDate | formatDate}
+                                <b> ${undefined | diffToMs: runningLogItem.beginDate | msToDuration & signal:'rt-update'} </b>
+                            </small>
                         </div>
                         <div class="m-0 col-auto">
                             <small><b> ${runningLogItem.beginDate | rt & signal:'rt-update'}</b></small>
