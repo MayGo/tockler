@@ -1,17 +1,21 @@
-var config = require('./config');
+const config = require('./config');
 const path = require('path');
+const app = require('electron').app;
+
+const LogManager = require("./log-manager.js");
+LogManager.init({ userDir: app.getPath('userData') });
+
+const AppUpdater = require("./app-updater.js");
+AppUpdater.configure();
 
 if (config.isDev) {
     const reloadFile = path.join(config.root, 'dist');
     require('electron-reload')(reloadFile)
 }
 
-var app = require('electron').app;
-var notifier = require('node-notifier');
-var LogManager = require("./log-manager.js")
-LogManager.init({ userDir: app.getPath('userData') })
+const notifier = require('node-notifier');
 
-var backgroundService = require('./background.service');
+const backgroundService = require('./background.service');
 
 const InitialDatagenerator = require('./initialDataGenerator');
 InitialDatagenerator.generate();
@@ -44,6 +48,9 @@ var windowManager = require('./window-manager');
  * Emitted when app starts
  */
 app.on('ready', () => {
+
+    AppUpdater.checkForUpdates();
+
     windowManager.setMainWindow();
     windowManager.initMainWindowEvents();
 

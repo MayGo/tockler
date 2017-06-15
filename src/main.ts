@@ -5,6 +5,7 @@ import { PLATFORM } from 'aurelia-pal';
 
 import 'tether';
 import 'bootstrap';
+import 'toastr/build/toastr.css';
 import './style/_themes/blue-theme.scss';
 import './style/app.scss';
 import 'material-design-iconic-font/dist/css/material-design-iconic-font.css';

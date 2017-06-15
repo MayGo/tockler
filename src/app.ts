@@ -2,8 +2,11 @@ import { Router, RouterConfiguration } from "aurelia-router";
 import { autoinject, PLATFORM } from "aurelia-framework";
 
 import { BindingSignaler } from 'aurelia-templating-resources';
+import * as toastr from "toastr";
 
 const mainConfig = (<any>window).nodeRequire('electron').remote.getGlobal('shared');
+
+const ipcRenderer = (<any>window).nodeRequire('electron').ipcRenderer;
 
 @autoinject
 export class App {
@@ -12,6 +15,9 @@ export class App {
     private rtUpdater: any;
 
     constructor(private bindingSignaler: BindingSignaler) {
+        ipcRenderer.on('message', function (event, text) {
+            toastr.info(text);
+        });
     }
 
     configureRouter(config: RouterConfiguration, router: Router) {
