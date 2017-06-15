@@ -16,7 +16,9 @@ files:
 mac:
   category: public.app-category.productivity
   icon: shared/img/icon/tockler_icon.icns
-  target: zip
+  target: default
+  publish: 
+  - github
 win:
   icon: shared/img/icon/tockler_icon.ico
 squirrelWindows:
