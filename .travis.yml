@@ -21,8 +21,10 @@ addons:
 install:
 - nvm install 6
 - npm install electron-builder@next
-- npm install
-- npm prune
+- npm install yarn -g
+- npm install nps -g
+- yarn install
+- nps build
 script:
 - npm run release
 branches:

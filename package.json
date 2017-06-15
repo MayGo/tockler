@@ -21,7 +21,8 @@
     "build:main": "tsc --project tsconfig.main.json --rootDir ./src/ --outDir ./",
     "build": "concurrently \"npm run build:render\" \"npm run build:main\"",
     "debug": "concurrently \"cross-env NODE_ENV=debug webpack-dev-server --content-base dist --watch\" \"wait-on http://localhost:8081 && electron . --enable-logging --remote-debugging-port=9222\"",
-    "develop": "concurrently \"cross-env NODE_ENV=develop webpack-dev-server --watch\" \"wait-on http://localhost:8081 && electron .\""
+    "develop": "concurrently \"cross-env NODE_ENV=develop webpack-dev-server --watch\" \"wait-on http://localhost:8081 && electron .\"",
+    "release": "build -c electron-builder.yml"
   },
   "dependencies": {
     "active-win": "^2.0.0",
