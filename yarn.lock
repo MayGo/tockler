@@ -1204,6 +1204,12 @@ boom@2.x.x:
   dependencies:
     hoek "2.x.x"
 
+bootstrap-datepicker@^1.6.4:
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/bootstrap-datepicker/-/bootstrap-datepicker-1.6.4.tgz#889ebeced8eaa2ff15ec1f273e4b07531cc43da0"
+  dependencies:
+    jquery ">=1.7.1"
+
 bootstrap@4.0.0-alpha.6:
   version "4.0.0-alpha.6"
   resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-4.0.0-alpha.6.tgz#4f54dd33ac0deac3b28407bc2df7ec608869c9c8"
@@ -2508,6 +2514,13 @@ electron-builder-http@15.6.2, electron-builder-http@~15.6.2:
     debug "2.6.3"
     fs-extra-p "^4.1.0"
 
+electron-builder-http@~19.2.3:
+  version "19.2.3"
+  resolved "https://registry.yarnpkg.com/electron-builder-http/-/electron-builder-http-19.2.3.tgz#b2d7c938ff33a28c3a1b891e872dc89310412a96"
+  dependencies:
+    debug "2.6.8"
+    fs-extra-p "^4.3.0"
+
 electron-builder-util@15.6.2, electron-builder-util@~15.6.2:
   version "15.6.2"
   resolved "https://registry.yarnpkg.com/electron-builder-util/-/electron-builder-util-15.6.2.tgz#005ea4d1b38834f17968af0930ebe05f91ab3d06"
@@ -2670,6 +2683,21 @@ electron-squirrel-startup@^1.0.0:
 electron-to-chromium@^1.2.7, electron-to-chromium@^1.3.11:
   version "1.3.13"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.13.tgz#1b3a5eace6e087bb5e257a100b0cbfe81b2891fc"
+
+electron-updater@^2.2.1:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/electron-updater/-/electron-updater-2.2.2.tgz#4aa89e84f909c1974424a55c737779f3171da0b3"
+  dependencies:
+    bluebird-lst "^1.0.2"
+    debug "^2.6.8"
+    electron-builder-http "~19.2.3"
+    electron-is-dev "^0.1.2"
+    fs-extra-p "^4.3.0"
+    js-yaml "^3.8.4"
+    semver "^5.3.0"
+    source-map-support "^0.4.15"
+    uuid-1345 "^0.99.6"
+    xelement "^1.0.16"
 
 electron@1.6.2:
   version "1.6.2"
@@ -3147,7 +3175,7 @@ fs-access@^1.0.0:
   dependencies:
     null-check "^1.0.0"
 
-fs-extra-p@^4.1.0:
+fs-extra-p@^4.1.0, fs-extra-p@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/fs-extra-p/-/fs-extra-p-4.3.0.tgz#2e148a544287df0258931cabc583063b4eed2303"
   dependencies:
@@ -4271,7 +4299,7 @@ joi@^9.2.0:
     moment "2.x.x"
     topo "2.x.x"
 
-jquery@3.2.1, jquery@>=1.7, jquery@>=1.9.1:
+jquery@3.2.1, jquery@>=1.7, jquery@>=1.7.1, jquery@>=1.9.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.2.1.tgz#5c4d9de652af6cd0a770154a631bba12b015c787"
 
@@ -4283,7 +4311,7 @@ js-tokens@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.1.tgz#08e9f132484a2c45a30907e9dc4d5567b7f114d7"
 
-js-yaml@^3.4.3, js-yaml@^3.7.0, js-yaml@^3.8.2:
+js-yaml@^3.4.3, js-yaml@^3.7.0, js-yaml@^3.8.2, js-yaml@^3.8.4:
   version "3.8.4"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.8.4.tgz#520b4564f86573ba96662af85a8cafa7b4b5a6f6"
   dependencies:
@@ -7239,6 +7267,10 @@ typedoc@^0.5.7:
     typedoc-default-themes "^0.4.2"
     typescript "2.2.2"
 
+typeface-berkshire-swash@0.0.22:
+  version "0.0.22"
+  resolved "https://registry.yarnpkg.com/typeface-berkshire-swash/-/typeface-berkshire-swash-0.0.22.tgz#7ec39c47d28f1b65bece2cc674dfbfbace01e377"
+
 typescript@2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.2.2.tgz#606022508479b55ffa368b58fee963a03dfd7b0c"
@@ -7739,6 +7771,12 @@ wtf-8@1.0.0:
 xdg-basedir@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/xdg-basedir/-/xdg-basedir-3.0.0.tgz#496b2cc109eca8dbacfe2dc72b603c17c5870ad4"
+
+xelement@^1.0.16:
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/xelement/-/xelement-1.0.16.tgz#900bb46c20fc2dffadff778a9d2dc36699d0ff7e"
+  dependencies:
+    sax "^1.2.1"
 
 xml-char-classes@^1.0.0:
   version "1.0.0"
