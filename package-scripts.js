@@ -11,6 +11,7 @@ module.exports = {
     ),
 
     build: 'nps webpack.build',
+    release: 'build -c electron-builder.yml',
     electron: {
       run: 'cross-env NODE_ENV=development electron ./app',
       build: 'webpack --config webpack.config.main.js --progress -d'

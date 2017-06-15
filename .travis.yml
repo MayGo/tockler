@@ -9,6 +9,7 @@ matrix:
     env: CC=clang CXX=clang++ npm_config_clang=1
     compiler: clang
 cache:
+  yarn: true
   directories:
   - node_modules
   - "$HOME/.electron"
@@ -24,9 +25,9 @@ install:
 - npm install yarn -g
 - npm install nps -g
 - yarn install
-- nps build
 script:
-- npm run release
+- nps webpack.build.development
+- nps release
 branches:
   except:
   - "/^v\\d+\\.\\d+\\.\\d+$/"
