@@ -23,5 +23,5 @@ script:
   - nps release
 
 branches:
-  except:
-  - "/^v\\d+\\.\\d+\\.\\d+$/"
+  only:
+    - master
