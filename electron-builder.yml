@@ -17,13 +17,6 @@ publish:
   - github
 mac:
   category: public.app-category.productivity
-  icon: shared/img/icon/tockler_icon.icns
   target: default
-win:
-  icon: shared/img/icon/tockler_icon.ico
-linux:
-  icon: shared/img/icon
-squirrelWindows:
-  iconUrl: https://raw.githubusercontent.com/MayGo/tockler/master/shared/img/icon/tockler_icon.ico
     
 
