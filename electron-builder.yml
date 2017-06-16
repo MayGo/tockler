@@ -13,14 +13,16 @@ files:
 - "!test"
 - "!screenshots"
 - "!release"
+publish: 
+  - github
 mac:
   category: public.app-category.productivity
   icon: shared/img/icon/tockler_icon.icns
   target: default
-  publish: 
-  - github
 win:
   icon: shared/img/icon/tockler_icon.ico
+linux:
+  icon: shared/img/icon/tockler_icon.icns
 squirrelWindows:
   iconUrl: https://raw.githubusercontent.com/MayGo/tockler/master/shared/img/icon/tockler_icon.ico
     
