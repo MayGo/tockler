@@ -1,5 +1,6 @@
 os:
   - osx
+  - linux
 
 sudo: true
 
