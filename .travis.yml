@@ -1,6 +1,8 @@
 os:
   - osx
 
+sudo: true
+
 language: node_js
 node_js:
   - "7"
@@ -17,8 +19,7 @@ install:
   - yarn install
 
 script:
-  - nps webpack.build.development
-  - nps release
+  - nps build
 after_success:
   - nps release
 

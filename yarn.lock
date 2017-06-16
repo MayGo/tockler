@@ -202,11 +202,11 @@
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/debug/-/debug-0.0.29.tgz#a1e514adfbd92f03a224ba54d693111dbf1f3754"
 
-"@types/electron@1.4.24":
-  version "1.4.24"
-  resolved "https://registry.yarnpkg.com/@types/electron/-/electron-1.4.24.tgz#825c224a33b1bf802725286b8cc1f7af5f43657f"
+"@types/electron@1.6.10":
+  version "1.6.10"
+  resolved "https://registry.yarnpkg.com/@types/electron/-/electron-1.6.10.tgz#7e87888ed3888767cca68e92772c2c8ea46bc873"
   dependencies:
-    "@types/node" "*"
+    electron "*"
 
 "@types/fs-extra@0.0.33":
   version "0.0.33"
@@ -230,9 +230,9 @@
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/@types/i18next-xhr-backend/-/i18next-xhr-backend-1.2.2.tgz#761a2730b4f7e4dde3be96e8efe6ac9df362abcf"
 
-"@types/jest@19.2.3":
-  version "19.2.3"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-19.2.3.tgz#61748040e8589a891dfc2ec1d16a2dd74482980e"
+"@types/jest@19.2.4":
+  version "19.2.4"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-19.2.4.tgz#543651712535962b7dc615e18e4a381fc2687442"
 
 "@types/lodash@4.14.64", "@types/lodash@^4.14.37":
   version "4.14.64"
@@ -246,9 +246,13 @@
   version "2.0.29"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-2.0.29.tgz#5002e14f75e2d71e564281df0431c8c1b4a2a36a"
 
-"@types/node@*", "@types/node@7.0.18":
+"@types/node@*":
   version "7.0.18"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.18.tgz#cd67f27d3dc0cfb746f0bdd5e086c4c5d55be173"
+
+"@types/node@7.0.31":
+  version "7.0.31"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.31.tgz#80ea4d175599b2a00149c29a10a4eb2dff592e86"
 
 "@types/node@^6.0.46":
   version "6.0.78"
@@ -2699,7 +2703,7 @@ electron-updater@^2.2.1:
     uuid-1345 "^0.99.6"
     xelement "^1.0.16"
 
-electron@1.6.2:
+electron@*, electron@1.6.2:
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/electron/-/electron-1.6.2.tgz#b0ccd7703f86d09c4d2a7273455c3f993f158994"
   dependencies:

@@ -42,7 +42,7 @@ module.exports = {
           ),
           default: series(
             'nps webpack.build.before',
-            'webpack --progress -p --env.production --env.extractCss'
+            'webpack --progress --env.production'
           ),
           serve: series.nps(
             'webpack.build.production',
