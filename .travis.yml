@@ -11,6 +11,7 @@ addons:
     packages:
     - libgnome-keyring-dev
     - icnsutils
+    - graphicsmagick
 
 sudo: true
 
