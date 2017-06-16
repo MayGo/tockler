@@ -7,6 +7,7 @@ Automatically track applications usage and working time.
 - OS X [Download ver 2.4.4](https://github.com/MayGo/tockler/releases/download/v2.4.4/Tockler-2.4.4.dmg) (Tested El Capitan/Sierra). Needs permission: Security & Privacy -> Accessibility -> enable tockler.app
 
 # Features
+
 - Timeline chart
 - Pie charts
 - View application usage and online time in timeline and table
@@ -16,9 +17,18 @@ Automatically track applications usage and working time.
 - Group log items (e.g 'Working with tockler' or 'JIRA-1234')
 
 # Features to be implemented
+
 - Remind to take a break
 
+# Made with
 
+- [Electron](https://electron.atom.io/) with [Webpack](https://webpack.github.io/) and [Typescript](https://www.typescriptlang.org/)
+- [Aurelia](http://aurelia.io/)
+- [D3 v4](https://d3js.org/) and [Britecharts](http://eventbrite.github.io/britecharts/)
+- [Bootstrap 4](https://v4-alpha.getbootstrap.com/) and [Modular Admin theme](http://modularcode.io/modular-admin-html/)
+
+
+# Screenshots
 
 ![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/timeline_view.png "Tockler screenshot")
 ![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/timeline_view_table.png "Timeline views table")
@@ -28,7 +38,6 @@ Automatically track applications usage and working time.
 ![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/summary_view.png "Summary view")
 ![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/tray_view.png "Tray view")
 ![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/tray_view_running_item.png "Tray view when log item running")
-
 
 # Donations 
 
@@ -42,7 +51,6 @@ Feel free to make feature requests and 'Star' this project.
 <a href='https://pledgie.com/campaigns/31267'><img alt='Click here to lend your support to: Tockler and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/31267.png?skin_name=chrome' border='0' ></a>
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAHHBZZCZVDMA)
-
 
 
 Development

@@ -2,6 +2,8 @@ appId: "ee.trimatech.tockler"
 productName: "Tockler"
 asar: false
 npmRebuild: false
+directories:
+  output: "packaged"
 files:
 - "!aurelia_project"
 - "!custom_typings"
@@ -13,11 +15,13 @@ files:
 - "!release"
 mac:
   category: public.app-category.productivity
-  icon: shared/img/icon/timetracker_icon.icns
-  target: zip
+  icon: shared/img/icon/tockler_icon.icns
+  target: default
+  publish: 
+  - github
 win:
-  icon: shared/img/icon/timetracker_icon.ico
+  icon: shared/img/icon/tockler_icon.ico
 squirrelWindows:
-  iconUrl: https://raw.githubusercontent.com/MayGo/tockler/master/build/icon.ico
+  iconUrl: https://raw.githubusercontent.com/MayGo/tockler/master/shared/img/icon/tockler_icon.ico
     
 

@@ -1,0 +1,16 @@
+<template>
+  
+  <div class="input-group">
+    <input
+    ref="inputEl"
+    type="text" 
+    class=" form-control" 
+    blur.trigger="parseDate()" 
+    placeholder.bind="placeholder"
+    focus.bind="isFocused"/>
+    <span class="input-group-addon" click.delegate="isFocused=true">
+                            <i class="fa fa-calendar"></i>
+                        </span>
+  </div>
+
+</template>

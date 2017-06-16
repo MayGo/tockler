@@ -1,0 +1,18 @@
+<template>
+
+  <ux-dialog>
+    <ux-dialog-body>
+      <h2>Change color</h2>
+      <div class="row">
+        <button type="button" class="btn btn-info-outline col" click.delegate="changeColorAnswer('ALL_ITEMS')">All items</button>
+      </div>
+      <div class="row">
+        <button type="button" class="btn btn-info-outline col" click.delegate="changeColorAnswer('NEW_ITEMS')">This and new items</button>
+      </div>
+      <div class="row">
+        <button type="button" class="btn btn-info-outline col" click.delegate="changeColorAnswer()">Only this</button>
+      </div>
+    </ux-dialog-body>
+  </ux-dialog>
+
+</template>

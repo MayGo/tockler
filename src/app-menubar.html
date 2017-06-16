@@ -1,17 +1,14 @@
 <template>
-  <md-colors md-primary-color="#2196f3" md-accent-color="#6bcfc6"></md-colors>
 
-  <md-navbar>
-    <a href="#/" class="navbar-brand">
-      <img src="./shared/img/icon/timetracker_icon.ico" width="24" height="24">
-      <span i18n="app.name"></span>
-    </a>
-    <ul class="right">
-      <li><a click.delegate="toggleMainWindow(newItem)"><i class="zmdi zmdi-view-module"></i></a></li>
-      <li><a click.delegate="exitApp(newItem)"><i class="zmdi zmdi-power"></i></a></li>
-    </ul>
-  </md-navbar>
+  <require from="./header/app-header"></require>
 
-  <router-view></router-view>
+  <div class="main-wrapper">
+    <div class="app">
+      <app-header router.bind="router" is-menubar.bind="true"></app-header>
+      <article class="content">
+        <router-view></router-view>
+      </article>
+    </div>
+  </div>
 
 </template>

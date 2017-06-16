@@ -1,27 +1,24 @@
 {
-  "compileOnSave": false,
   "compilerOptions": {
-    "sourceMap": true,
     "target": "es5",
-    "module": "amd",
-    "declaration": false,
-    "noImplicitAny": false,
-    "removeComments": true,
+    "module": "es2015",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",
-    "lib": ["es2015", "dom"],
-    "skipLibCheck": true
+    "allowJs": true,
+    "sourceRoot": "src",
+    "baseUrl": "src",
+    "skipLibCheck": true,
+    "lib": [
+      "es2017",
+      "dom"
+    ]
   },
   "exclude": [
-    "node_modules"
-  ],
-  "filesGlob": [
-    "./src/**/*.ts",
-    "./test/**/*.ts",
-    "./custom_typings/**/*.d.ts"
-  ],
-  "atom": {
-    "rewriteTsconfig": false
-  }
+    "node_modules",
+    "node_modules/aurelia-validation/node_modules",
+    "dist",
+    "packaged",
+    "static"
+  ]
 }

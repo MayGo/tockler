@@ -1,0 +1,27 @@
+os:
+  - osx
+
+sudo: true
+
+language: node_js
+node_js:
+  - "7"
+
+cache:
+  yarn: true
+  timeout: 600
+  directories:
+    - node_modules
+    - $HOME/.electron
+
+install:
+  - npm install yarn -g nps
+  - yarn install
+
+script:
+  - nps build
+  - nps release
+
+branches:
+  only:
+    - master

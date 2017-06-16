@@ -5,7 +5,7 @@ import * as _ from "lodash";
 import { TrackItemService } from "../services/track-item-service";
 import { DeepObserver } from "../resources/deep-observer";
 import { bindable } from "aurelia-templating";
-import { MdToastService } from 'aurelia-materialize-bridge';
+import * as toastr from "toastr";
 
 let logger = LogManager.getLogger('Settings');
 
@@ -30,7 +30,7 @@ export class Settings {
     observerDisposer: any;
 
     constructor(private settingsService: SettingsService, private trackItemService: TrackItemService,
-        private deepObserver: DeepObserver, private mdToastService: MdToastService) {
+        private deepObserver: DeepObserver) {
 
     }
 
@@ -84,7 +84,7 @@ export class Settings {
 
         this.settingsService.updateByName('ANALYSER_SETTINGS', this.analyserSettings).then((item) => {
             console.log("Updated ANALYSER_SETTINGS!", item);
-            this.mdToastService.show('Saved!', 4000);
+            toastr.info('Saved!');
         })
     }
 

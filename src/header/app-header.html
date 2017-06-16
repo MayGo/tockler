@@ -1,0 +1,17 @@
+<template>
+    <require from="./nav/app-nav"></require>
+    <require from="./nav-menubar/app-nav-menubar"></require>
+
+    <header class="header">
+        <div class="brand">
+            <a href="#/">
+                    <img src="../../shared/img/icon/tockler_icon.ico" width="28" height="28">
+                    <span i18n="app.name"></span>
+            </a>
+        </div>
+
+        <app-nav if.bind="!isMenubar" router.bind="router"></app-nav>
+        <app-nav-menubar if.bind="isMenubar" ></app-nav-menubar>
+
+    </header>
+</template>

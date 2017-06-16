@@ -15,11 +15,11 @@ WindowManager.setMainWindow = function () {
         height: 1000,
         show: true,
         title: 'Tockler',
-        icon: path.join(config.root, 'app/shared/img/icon/timetracker_icon.ico')
+        icon: config.icon
     });
 
     this.mainWindow.maximize();
-    this.mainWindow.loadURL('file://' + config.root + '/index.html');
+    this.mainWindow.loadURL('file://' + config.root + '/dist/index.html');
 
     this.mainWindow.on('closed', () => {
         this.mainWindow = null;
@@ -77,24 +77,24 @@ WindowManager.setTrayWindow = function () {
      * https://github.com/maxogden/menubar
      */
     this.menubar = menubar({
-        index: 'file://' + config.root + '/index-menubar.html',
-        icon: path.join(config.root, 'app/shared/img/icon/timetracker_icon.png'),
+        index: 'file://' + config.root + '/dist/index.html',
+        icon: config.icon,
         preloadWindow: true,
         width: 400,
         height: 500
     });
 
     this.menubar.on('after-create-window', () => {
-        // if (config.isDev) {
-        console.log('Open menubar dev tools')
-        this.menubar.window.openDevTools();
-        // }
+
     });
     this.menubar.on('after-show', () => {
         console.log('Show tray');
         this.menubar.window.webContents.send('focus-tray', 'ping');
-        this.menubar.window.openDevTools();
 
+        if (config.isDev) {
+            console.log('Open menubar dev tools');
+            this.menubar.window.openDevTools();
+        }
     })
 
 };

@@ -1,3 +1,4 @@
+import { ChangeColorConfirmModal } from './change-color-confirm-modal';
 import { autoinject, bindable, bindingMode, LogManager } from "aurelia-framework";
 import { SettingsService } from "../services/settings-service";
 import * as moment from "moment";
@@ -6,6 +7,8 @@ import { EventAggregator } from 'aurelia-event-aggregator';
 import { DeepObserver } from "../resources/deep-observer";
 import { TrackItemService } from "../services/track-item-service";
 import { AppSettingsService } from "../services/app-settings-service";
+
+import { DialogService } from 'aurelia-dialog';
 
 let logger = LogManager.getLogger('TimelineView');
 
@@ -58,15 +61,13 @@ export class TimelineView {
         { value: '', keys: ['app', 'title'] }
     ];
 
-    confirmColorChangeModal: any;
-
-
     constructor(
         private settingsService: SettingsService,
         private trackItemService: TrackItemService,
         private appSettingsService: AppSettingsService,
         private eventAggregator: EventAggregator,
-        private deepObserver: DeepObserver
+        private deepObserver: DeepObserver,
+        private dialogService: DialogService
     ) {
         this.resetLoadedItems();
         /*this.observerDisposer = deepObserver.observe(this, 'selectedTrackItem', (n, o, p) => {
@@ -128,6 +129,7 @@ export class TimelineView {
         })
     };
 
+
     parseReceivedTimelineData(event, startDate, taskName, items) {
         logger.debug('TIMELINE_LOAD_DAY_RESPONSE received', taskName, items);
 
@@ -158,6 +160,7 @@ export class TimelineView {
         this.loading = false;
         logger.debug('Trackitems loaded, parsing ended.', taskName);
         this.eventAggregator.publish('addItemsToTimeline', this.loadedItems[taskName]);
+        
 
         this.updatePieCharts(this.loadedItems[taskName], taskName);
 
@@ -165,11 +168,10 @@ export class TimelineView {
             this.setWorkStatsForDay(this.loadedItems[taskName]);
         }
 
-        logger.debug('Trackitems loaded, $digest.');
     };
 
     selectedTrackItemChanged(newValue, oldValue) {
-        logger.debug("selectedTrackItemChanged", newValue, oldValue);
+        logger.debug("selectedTrackItemChanged, newValue, oldValue", newValue, oldValue);
     }
 
     setWorkStatsForDay(items) {
@@ -203,7 +205,7 @@ export class TimelineView {
 
     updatePieCharts(items, taskName) {
 
-        logger.debug('Track Items changed. Updating pie charts');
+        logger.debug('Track Items changed. Updating pie charts:' + taskName);
 
         var groupBy = (taskName === 'LogTrackItem') ? 'title' : 'app'
         this.pieData[taskName] = _(items)
@@ -213,7 +215,7 @@ export class TimelineView {
             })
             .valueOf();
 
-        logger.debug('Updating pie charts ended.');
+        logger.debug('Updating pie charts ended.' + taskName);
 
     };
 
@@ -237,6 +239,30 @@ export class TimelineView {
              this.saveTrackItem(trackItem)
          });*/
     };
+    showChangeColorDialog() {
+
+        this.dialogService.open({
+            viewModel: ChangeColorConfirmModal,
+            model: this.selectedTrackItem, lock: false
+        }).whenClosed(response => {
+            if (!response.wasCancelled) {
+                let trackItem = response.output;
+                if (trackItem) {
+                    logger.debug("Updating color for item:", trackItem)
+                    this.updateItem(trackItem);
+                    this.selectedTrackItem = null;
+                } else {
+                    logger.debug("Reloading items")
+                    this.resetLoadedItems();
+                    this.list(this.searchDate);
+                }
+            } else {
+                logger.debug('Color change canceled!');
+            }
+        });
+    }
+
+
 
     saveTrackItem(trackItem) {
         logger.debug("Saving trackitem.", trackItem);
@@ -247,7 +273,7 @@ export class TimelineView {
             if (trackItem.originalColor === trackItem.color) {
                 this.updateItem(trackItem);
             } else {
-                this.confirmColorChangeModal.open();
+                this.showChangeColorDialog();
             }
         } else {
             if (!trackItem.app) {
@@ -262,40 +288,21 @@ export class TimelineView {
                 this.updatePieCharts(this.loadedItems[trackItem.taskName], trackItem.taskName);
             });
         }
-
-    }
-
-    changeColorAnswer(answer) {
-        let trackItem = this.selectedTrackItem;
-        if (answer === 'ALL_ITEMS') {
-            this.loading = true;
-            this.appSettingsService.changeColorForApp(trackItem.app, trackItem.color);
-            this.trackItemService.updateColorForApp(trackItem.app, trackItem.color).then(() => {
-                logger.debug("Updated all item with color");
-
-                this.resetLoadedItems();
-                this.list(this.searchDate);
-            })
-        } else if (answer === 'NEW_ITEMS') {
-            this.appSettingsService.changeColorForApp(trackItem.app, trackItem.color);
-            this.updateItem(trackItem);
-        } else {
-            this.updateItem(trackItem);
-        }
     }
 
     updateItem(trackItem) {
         this.trackItemService.updateItem(trackItem).then((item) => {
             logger.debug("Updated trackitem to DB:", item);
             this.selectedTrackItem = null;
-
-            this.eventAggregator.publish('addItemToTimeline', item);
+            
             var update = function (arr, id, newval) {
                 var index = _.indexOf(arr, _.find(arr, { id: id }));
                 arr.splice(index, 1, newval);
             };
 
             update(this.loadedItems[trackItem.taskName], item.id, item);
+
+            this.eventAggregator.publish('cleanDataAndAddItemsToTimeline', _.flatten(_.values(this.loadedItems)));
             this.updatePieCharts(this.loadedItems[trackItem.taskName], trackItem.taskName);
         });
     };
@@ -311,7 +318,7 @@ export class TimelineView {
                 var index = _.indexOf(this.trackItems, _.find(this.loadedItems[trackItem.taskName], { id: trackItem.id }));
                 this.loadedItems[trackItem.taskName].splice(index, 1);
                 this.updatePieCharts(this.loadedItems[trackItem.taskName], trackItem.taskName);
-                this.eventAggregator.publish('removeItemsFromTimeline', _.flatten(_.values(this.loadedItems)));
+                this.eventAggregator.publish('cleanDataAndAddItemsToTimeline', _.flatten(_.values(this.loadedItems)));
 
             });
         } else {
@@ -328,17 +335,17 @@ export class TimelineView {
 
     attached() {
         logger.debug("attached");
-        ipcRenderer.on('main-window-focus', (event, arg) => this.refreshWindow(event, arg));
-        ipcRenderer.on('TIMELINE_LOAD_DAY_RESPONSE', (event, startDate, taskName, items) => this.parseReceivedTimelineData(event, startDate, taskName, items));
+        ipcRenderer.on('main-window-focus', this.refreshWindow.bind(this));
+        ipcRenderer.on('TIMELINE_LOAD_DAY_RESPONSE', this.parseReceivedTimelineData.bind(this));
         //this.refresh();
         // Initialy load todays data
         this.searchDate = moment().startOf('day').toDate();
-        this.list(this.searchDate);
+        //this.list(this.searchDate);
     }
     detached() {
-        logger.debug("detached");
-        this.observerDisposer();
-        ipcRenderer.removeListener('main-window-focus', this.refreshWindow);
-        ipcRenderer.removeListener('TIMELINE_LOAD_DAY_RESPONSE', this.parseReceivedTimelineData);
+        logger.debug("detached. Removing listeners");
+        //this.observerDisposer();
+        ipcRenderer.removeAllListeners('main-window-focus');
+        ipcRenderer.removeAllListeners('TIMELINE_LOAD_DAY_RESPONSE');
     }
 }

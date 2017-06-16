@@ -2,10 +2,10 @@ import { autoinject, LogManager } from "aurelia-framework";
 import * as moment from "moment";
 import { TrackItemService } from "../services/track-item-service";
 import { SettingsService } from "../services/settings-service";
+import { DialogService } from 'aurelia-dialog';
 
-import { MdToastService } from 'aurelia-materialize-bridge';
 import { ValidationController, ValidationRules, ValidationControllerFactory, validateTrigger } from 'aurelia-validation';
-import { MaterializeFormValidationRenderer } from 'aurelia-materialize-bridge';
+import { BootstrapFormRenderer } from "resources/bootstrap-form-renderer";
 
 let logger = LogManager.getLogger('Menubar');
 
@@ -22,11 +22,11 @@ export class Menubar {
     validationController: ValidationController;
 
     constructor(private trackItemService: TrackItemService, private settingsService: SettingsService,
-        private mdToastService: MdToastService, private controllerFactory: ValidationControllerFactory,
+        private dialogService: DialogService, private controllerFactory: ValidationControllerFactory,
     ) {
 
         this.validationController = controllerFactory.createForCurrentScope();
-        this.validationController.addRenderer(new MaterializeFormValidationRenderer());
+        this.validationController.addRenderer(new BootstrapFormRenderer());
         this.validationController.validateTrigger = validateTrigger.blur;
     }
 
@@ -39,6 +39,7 @@ export class Menubar {
 
     loadItems() {
         logger.debug("Loading items");
+        logger.debug("Loading items", this.trackItemService.findFirstLogItems());
         this.loading = true;
         this.trackItemService.findFirstLogItems().then((items) => {
             logger.debug("Loaded items", items);
@@ -48,7 +49,7 @@ export class Menubar {
             });
             this.trackItems = items;
             this.loading = false;
-        });
+        }, (err) => { logger.error(err) });
     }
 
     setValidationRules() {
@@ -68,6 +69,8 @@ export class Menubar {
                     logger.debug("Setting running log item:", item);
                     this.runningLogItem = item;
                 })
+            } else {
+                logger.error("Not Valid", v)
             }
         });
 

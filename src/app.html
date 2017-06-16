@@ -1,13 +1,15 @@
 <template>
-  <require from="britecharts/css/britecharts.css"></require>
-  <require from="./style/timeline.css"></require>
-  <require from="./style/styles.css"></require>
-  <require from="./nav-bar.html"></require>
-  <md-colors md-primary-color="#2196f3" md-accent-color="#6bcfc6"></md-colors>
+  <require from="britecharts/dist/css/britecharts.css"></require>
 
-  <nav-bar router.bind="router"></nav-bar>
 
-  <div>
-    <router-view></router-view>
+  <require from="./header/app-header"></require>
+
+  <div class="main-wrapper">
+    <div class="app">
+      <app-header router.bind="router"></app-header>
+      <article class="content">
+        <router-view></router-view>
+      </article>
+    </div>
   </div>
 </template>

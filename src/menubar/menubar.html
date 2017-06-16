@@ -1,61 +1,79 @@
 <template>
-
-    <form>
-        <div if.bind="!runningLogItem" class="row" style="margin:0">
-            <div class="col s3">
-                <md-input md-label="Group" md-value.bind="newItem.app & validate"></md-input>
+    <div class="menubar">
+        <form>
+            <div if.bind="!runningLogItem" class="row mt-1 pl-1">
+                <div class="col-4 pr-1 align-self-center ">
+                    <div class="form-group">
+                        <input class="form-control form-control-sm boxed" placeholder="Group" type="text" value.bind="newItem.app & validate">
+                    </div>
+                </div>
+                <div class="col pr-1 align-self-center ">
+                    <div class="form-group">
+                        <input class="form-control form-control-sm boxed" placeholder="Title" type="text" value.bind="newItem.title & validate">
+                    </div>
+                </div>
+                <div class="col col-auto pr-1 align-self-center ">
+                    <div class="form-group">
+                        <input class="form-control form-control-sm boxed" placeholder="Title" type="color" value.bind="newItem.color & validate">
+                    </div>
+                </div>
+                <div class="pl-0 col col-auto align-self-center ">
+                    <button type="submit" class="m-0 btn btn-info-outline btn-no-border" click.delegate="startNewLogItem(newItem)"><i class="fa fa-play-circle"></i></button>
+                </div>
             </div>
-            <div class="col s6">
-                <md-input md-label="Title" md-value.bind="newItem.title & validate"></md-input>
-            </div>
-            <div class="col s1" style="margin-top:20px">
-                <md-input md-type="color" md-value.bind="newItem.color & validate"></md-input>
-            </div>
-            <div class="col s2" style="margin-top:25px">
-                <a class="btn-flat waves-effect btn-floating" click.delegate="startNewLogItem(newItem)">
-                    <i class="zmdi zmdi-play-circle blue-text"></i></a>
+        </form>
+        <div if.bind="runningLogItem" class="mt-1 pl-1" css="background: #fff; border-left: 5px solid ${runningLogItem.color}">
+            <div class="row ">
+                <div class="col">
+                    <div class="row">
+                        <div class="col-4">
+                            ${runningLogItem.app}
+                        </div>
+                        <div class="col-8">
+                            ${runningLogItem.title}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <small>${runningLogItem.beginDate | formatDate}
+                                <b> ${undefined | diffToMs: runningLogItem.beginDate | msToDuration & signal:'rt-update'} </b>
+                            </small>
+                        </div>
+                        <div class="m-0 col-auto">
+                            <small><b> ${runningLogItem.beginDate | rt & signal:'rt-update'}</b></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="pl-0 col col-auto align-self-center ">
+                    <button type="button" class="m-0 btn btn-info-outline btn-no-border" click.delegate="stopRunningLogItem()"><i class="fa fa-stop"></i></button>
+                </div>
             </div>
         </div>
-
-        <md-collection>
-            <md-collection-item css="border-left: 5px solid ${runningLogItem.color}" if.bind="runningLogItem">
-                <div class="row" style="margin:0;margin-top:22px;">
-                    <div class="col s4">
-                        ${runningLogItem.app}
+        <div class="mt-1 pl-1" css="background: #fff; border-left: 5px solid ${item.color}" repeat.for="item of trackItems">
+            <div class="row ">
+                <div class="col">
+                    <div class="row">
+                        <div class="col-4">
+                            ${item.app}
+                        </div>
+                        <div class="col">
+                            ${item.title}
+                        </div>
                     </div>
-                    <div class="col s7">
-                        ${runningLogItem.title}
-                    </div>
-
-                    <div class="col s1">
-                        <a class="btn-flat waves-effect btn-floating" click.delegate="stopRunningLogItem()">
-                            <i class="zmdi zmdi-stop blue-text"></i></a>
-                    </div>
-                </div>
-                <div class="row" style="margin:0;">
-                    <div class="col s4">
-                        <span>  <small>${item.beginDate | formatDate}
-                            <b> ${item.endDate.getTime()-item.beginDate.getTime() | msToDuration}</b></small>
-                        </span>
+                    <div class="row">
+                        <div class="col">
+                            <small>${item.beginDate | formatDate} - ${item.endDate | formatDate}
+                            <b> ${item.endDate.getTime()-item.beginDate.getTime() | msToDuration} </b></small>
+                        </div>
+                        <div class="m-0 col-auto">
+                            <small><b> ${item.beginDate | rt & signal:'rt-update'}</b></small>
+                        </div>
                     </div>
                 </div>
-            </md-collection-item>
-            <md-collection-header>
-                <h5>Last tasks</h5>
-            </md-collection-header>
-            <md-collection-item css="border-left: 5px solid ${item.color}" repeat.for="item of trackItems">
-                <div> <b>${item.app} </b> ${item.title}
-                    <div class="secondary-content">
-                        <a class="btn-flat waves-effect btn-floating" click.delegate="startNewLogItem(item)">
-                            <i class="zmdi zmdi-play-circle blue-text"></i></a>
-                    </div>
+                <div class="pl-0 col col-auto align-self-center ">
+                    <button type="button" class="m-0 btn btn-info-outline btn-no-border" click.delegate="startNewLogItem(newItem)"><i class="fa fa-play-circle"></i></button>
                 </div>
-                <span>  <small>${item.beginDate | formatDate} - ${item.endDate | formatDate}
-                            <b> ${item.endDate.getTime()-item.beginDate.getTime() | msToDuration}</b></small>
-                        </span>
-
-            </md-collection-item>
-        </md-collection>
-    </form>
-
+            </div>
+        </div>
+    </div>
 </template>

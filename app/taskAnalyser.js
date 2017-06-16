@@ -2,13 +2,14 @@
 
 const notifier = require('node-notifier');
 
+const config = require('./config');
 const TrackItemCrud = require('./TrackItemCrud');
 const SettingsCrud = require('./SettingsCrud');
 const AppItemCrud = require('./AppItemCrud');
 const path = require('path');
 const $q = require('q');
 const moment = require('moment');
-const iconUrl = path.join(__dirname, 'shared/img/icon/timetracker_icon.ico');
+const iconUrl = config.icon;
 
 notifier.on('click', function (notifierObject, options) {
     if (TaskAnalyser.newItem == null) {

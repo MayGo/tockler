@@ -221,9 +221,3 @@ module.exports.deleteByIds = function (ids) {
     return deferred.promise;
 };
 
-const {ipcMain} = require('electron');
-
-ipcMain.on('TIMELINE_LOAD_DAY_REQUEST', function (event, startDate, taskName) {
-    console.log('TIMELINE_LOAD_DAY_REQUEST', startDate, taskName);
-    module.exports.findAllFromDay(startDate, taskName).then((items)=>event.sender.send('TIMELINE_LOAD_DAY_RESPONSE', startDate, taskName, items))
-});
