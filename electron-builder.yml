@@ -17,6 +17,3 @@ publish:
   - github
 mac:
   category: public.app-category.productivity
-  target: default
-    
-
