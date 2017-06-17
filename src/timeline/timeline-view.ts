@@ -160,7 +160,7 @@ export class TimelineView {
         this.loading = false;
         logger.debug('Trackitems loaded, parsing ended.', taskName);
         this.eventAggregator.publish('addItemsToTimeline', this.loadedItems[taskName]);
-        
+
 
         this.updatePieCharts(this.loadedItems[taskName], taskName);
 
@@ -294,7 +294,7 @@ export class TimelineView {
         this.trackItemService.updateItem(trackItem).then((item) => {
             logger.debug("Updated trackitem to DB:", item);
             this.selectedTrackItem = null;
-            
+
             var update = function (arr, id, newval) {
                 var index = _.indexOf(arr, _.find(arr, { id: id }));
                 arr.splice(index, 1, newval);
@@ -311,11 +311,11 @@ export class TimelineView {
         logger.debug("Deleting trackitem.", trackItem);
 
         if (trackItem.id) {
-            this.trackItemService.deleteById(trackItem.id).then(function (item) {
+            this.trackItemService.deleteById(trackItem.id).then((item) => {
                 logger.debug("Deleting trackitem from DB:", trackItem);
                 this.selectedTrackItem = null;
 
-                var index = _.indexOf(this.trackItems, _.find(this.loadedItems[trackItem.taskName], { id: trackItem.id }));
+                var index = this.loadedItems[trackItem.taskName].findIndex(item => item.id === trackItem.id);
                 this.loadedItems[trackItem.taskName].splice(index, 1);
                 this.updatePieCharts(this.loadedItems[trackItem.taskName], trackItem.taskName);
                 this.eventAggregator.publish('cleanDataAndAddItemsToTimeline', _.flatten(_.values(this.loadedItems)));

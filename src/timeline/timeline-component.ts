@@ -151,8 +151,8 @@ export class TimelineComponent {
             .attr("height", this.mainHeight)
             .attr("class", "main");
     }
-    initMainItemsLayerOnTopOfBrush(){
-          this.main.append("g")
+    initMainItemsLayerOnTopOfBrush() {
+        this.main.append("g")
             .attr("id", "mainItemsId")
             .attr("clip-path", "url(#mainClip)");
     }
@@ -335,6 +335,8 @@ export class TimelineComponent {
 
     cleanDataAndAddItemsToTimeline(trackItems) {
         console.log('cleanDataAndAddItemsToTimeline');
+        this.mini.selectAll('.miniItems').remove();
+        this.main.selectAll('.mainItems').remove();
         this.allItems = [];
         this.addItemsToTimeline(trackItems);
     }
