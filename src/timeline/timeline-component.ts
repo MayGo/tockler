@@ -273,7 +273,7 @@ export class TimelineComponent {
         this.xScaleMini.domain([timeDomainStart, timeDomainEnd]);
     }
 
-    addItemsToTimeline(trackItems) {
+    addItemsToTimeline(trackItems, removeOldValues = false) {
         console.log('addItemsToTimeline', trackItems.length);
         this.allItems.push(...trackItems);
 
@@ -329,16 +329,19 @@ export class TimelineComponent {
                 return (this.xScaleMini(new Date(d.endDate)) - this.xScaleMini(new Date(d.beginDate)));
             });
 
+        if (removeOldValues) {
+            // Remove old elements as needed.
+            rects.exit().remove();
+        }
+
         logger.debug("Displaying selected in main");
         this.displaySelectedInMain();
     }
 
     cleanDataAndAddItemsToTimeline(trackItems) {
         console.log('cleanDataAndAddItemsToTimeline');
-        this.mini.selectAll('.miniItems').remove();
-        this.main.selectAll('.mainItems').remove();
         this.allItems = [];
-        this.addItemsToTimeline(trackItems);
+        this.addItemsToTimeline(trackItems, true);
     }
 
     displaySelectedInMain() {
