@@ -232,13 +232,13 @@ export class TimelineComponent {
 
         // if 'day' is undefined, exit
         if (!day) {
-            console.log("Not changeing, no day.")
+            logger.debug("Not changeing, no day.")
             return;
         }
-        console.log('Changing day: ' + day);
+        logger.debug('Changing day: ' + day);
         //Remove everything
-        this.main.selectAll('.miniItems').remove();
-        this.mini.selectAll('.mainItems').remove();
+        this.mini.selectAll('.miniItems').remove();
+        this.main.selectAll('.mainItems').remove();
 
         this.allItems = [];
         this.updateDomain(day);
