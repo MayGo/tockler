@@ -27,17 +27,13 @@ Automatically track applications usage and working time.
 - [D3 v4](https://d3js.org/) and [Britecharts](http://eventbrite.github.io/britecharts/)
 - [Bootstrap 4](https://v4-alpha.getbootstrap.com/) and [Modular Admin theme](http://modularcode.io/modular-admin-html/)
 
-
 # Screenshots
 
-![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/timeline_view.png "Tockler screenshot")
-![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/timeline_view_table.png "Timeline views table")
-![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/select_to_create_log_item.png "Tockler screenshot")
-![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/list_view.png "List view")
-![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/list_view_selected.png "List view when item selected")
-![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/summary_view.png "Summary view")
-![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/tray_view.png "Tray view")
-![alt text](https://github.com/MayGo/tockler/raw/master/screenshots/tray_view_running_item.png "Tray view when log item running")
+![Timeline](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-timeline.png "Timeline")
+![Changing items color](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-change_color.png "Changing items color")
+![Settings](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-settings.png "Settings")
+![Summary](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-summary.png "Summary")
+![Tray window](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-tray.png "Tray window")
 
 # Donations 
 
@@ -55,10 +51,6 @@ Feel free to make feature requests and 'Star' this project.
 
 Development
 ---
-Aurelia: http://aurelia.io/
-Aurelia Materialize Bridge: http://aurelia-ui-toolkits.github.io/demo-materialize/
-Typescript
-
 
 ### Quick Start
 > Prerequisites: [Node](https://nodejs.org/), [Git](https://git-scm.com/).
@@ -66,26 +58,15 @@ Typescript
 ```bash
 git clone https://github.com/Maygo/tockler.git  # Download this project
 
-npm install            # Install dependencies
+npm install yarn -g     # install yarn or binary from https://yarnpkg.com
 
-npm run materialize  # Prepare materialize-css
-npm run materializewin # Prepare materialize-css, In windows 
+yarn install            # Install dependencies
 
-au run --watch # Start application
+nps run # Start application
+
 ```
 
-
-### Aurelia Commands
-```bash
-# Most Frequently Used
-au run --watch     # Run the app in production mode
-
-# Other available commands
-au package
-au release
-```
-
-# signing
+# Signing
 https://4sysops.com/archives/sign-your-powershell-scripts-to-increase-security/'
 in powershell as admin
 ```
@@ -97,6 +78,6 @@ Set-AuthenticodeSignature -FilePath '.\app\get-user-idle-time.ps1' -Certificate 
 ```
 # License
 GNU General Public License v2.0
-Copyright (c) 2016 MayGo @ [trimatech.ee](http://trimatech.ee)
+2017 MayGo @ [trimatech.ee](http://trimatech.ee)
 
 
