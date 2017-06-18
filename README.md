@@ -1,10 +1,11 @@
-Tockler
+![Tockler](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-logo.png "Tockler")
 -------
 
 Automatically track applications usage and working time.
 
-- Windows [Download ver 2.4.0](https://github.com/MayGo/tockler/releases/download/v2.4.0/Tockler.Setup.2.4.0.exe) (Tested win 10)
-- OS X [Download ver 2.4.4](https://github.com/MayGo/tockler/releases/download/v2.4.4/Tockler-2.4.4.dmg) (Tested El Capitan/Sierra). Needs permission: Security & Privacy -> Accessibility -> enable tockler.app
+- Windows [Download ver 3.0.2](https://github.com/MayGo/tockler/releases/download/v3.0.2/Tockler-Setup-3.0.2.exe)
+- OS X [Download ver 3.0.2](https://github.com/MayGo/tockler/releases/download/v3.0.2/Tockler-3.0.2.dmg) 
+- Linux [Download ver 3.0.2](https://github.com/MayGo/tockler/releases/download/v3.0.2/Tockler-3.0.2-x86_64.AppImage) 
 
 # Features
 
