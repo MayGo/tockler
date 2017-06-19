@@ -1,23 +1,18 @@
-(function () {
-    'use strict';
-    var logger;
-    var path = require('path');
-    var bunyan = require('bunyan');
+import * as path from 'path';
+import * as bunyan from 'bunyan';
 
-    function LogManager() {
+export default class LogManager {
+    static logger;
 
+    constructor() {
     }
 
-    /*
-     Initiates LogManager with received settings
-     */
-    LogManager.init = function init(settings) {
-
-        if (!logger) {
+    static init(settings) {
+        if (!LogManager.logger) {
 
             var outputPath = path.join(settings.userDir, 'stdout.json');
             // Create logger
-            logger = bunyan.createLogger({
+            LogManager.logger = bunyan.createLogger({
                 name: 'tockler',
                 streams: [
                     {
@@ -34,17 +29,11 @@
                 ]
             });
 
-            logger.info('Saving logs in directory:' + settings.userDir);
+            LogManager.logger.info('Saving logs in directory:' + settings.userDir);
 
         }
+    }
+    static getLogger(name) {
+        return LogManager.logger.child({ logger_name: name });
     };
-
-    /*
-     Returns a new instance of LogManager
-     */
-    LogManager.getLogger = function getInstance(name) {
-        return logger.child({logger_name: name});
-    };
-
-    module.exports = LogManager;
-}());
+}

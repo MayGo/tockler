@@ -1,6 +1,21 @@
 {
-  "extends": "./tsconfig.json",
-  "files":[
-    "src/index.ts"
-  ]
+  "compilerOptions": {
+    "target": "es5",
+    "module": "es2015",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "lib": [
+      "es2017",
+      "dom"
+    ],
+    "outDir": "out",
+    "baseUrl": "app",
+    "rootDir": "app"
+  },
+  "include": [
+    "app/*.ts"
+  ],
+  "exclude": []
 }

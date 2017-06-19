@@ -1,12 +1,21 @@
-const config = require('./config');
-const path = require('path');
-const app = require('electron').app;
+import { app} from "electron";
 
-const LogManager = require("./log-manager.js");
-LogManager.init({ userDir: app.getPath('userData') });
+import AppManager from "./app-manager";
+AppManager.init();
 
-const AppUpdater = require("./app-updater.js");
-AppUpdater.configure();
+import WindowManager from "./window-manager";
+
+import LogManager from "./log-manager";
+
+import AppUpdater from "./app-updater";
+import config from './config';
+
+// Share configs between multiple windows
+(<any>global).shared = config
+
+import * as path from 'path'
+
+AppUpdater.init();
 
 if (config.isDev) {
     const reloadFile = path.join(config.root, 'dist');
@@ -17,8 +26,8 @@ const notifier = require('node-notifier');
 
 const backgroundService = require('./background.service');
 
-const InitialDatagenerator = require('./initialDataGenerator');
-InitialDatagenerator.generate();
+///const InitialDatagenerator = require('./initialDataGenerator');
+//InitialDatagenerator.generate();
 
 var ipcMain = require('electron').ipcMain;
 
@@ -44,23 +53,23 @@ app.commandLine.appendSwitch('disable-renderer-backgrounding');
 
 var windowManager = require('./window-manager');
 
+
+
 /**
  * Emitted when app starts
  */
 app.on('ready', () => {
 
-    AppUpdater.checkForUpdates();
-
-    windowManager.setMainWindow();
-    windowManager.initMainWindowEvents();
+    WindowManager.setMainWindow();
+    WindowManager.initMainWindowEvents();
 
     if (!config.isDev || config.trayEnabledInDev) {
-        windowManager.setTrayWindow();
+        WindowManager.setTrayWindow();
     }
 
     backgroundService.init();
 
-    global.BackgroundService = backgroundService;
+    //global.BackgroundService = backgroundService;
 
     require('electron').powerMonitor.on('suspend', function () {
         console.log('The system is going to sleep');
