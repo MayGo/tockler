@@ -13,7 +13,22 @@ files:
 - "!test"
 - "!screenshots"
 - "!release"
+
 publish: 
   - github
+
 mac:
   category: public.app-category.productivity
+
+win:
+  target: 
+  - nsis
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+linux:
+  category: Utility,
+  target: 
+  - AppImage
+  - deb
+
