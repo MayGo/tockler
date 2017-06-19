@@ -6,14 +6,20 @@ module.exports = {
     default: 'nps webpack',
 
     run: concurrent.nps(
-      'electron.run',
+      'electron',
       'webpack.build.development'
     ),
+
 
     build: 'nps webpack.build',
     release: 'build -c electron-builder.yml',
     electron: {
-      run: 'cross-env NODE_ENV=development electron ./app',
+      default: series(
+        'nps electron.compile',
+        'nps electron.run'
+      ),
+      compile: series(rimraf("out"), 'tsc -p tsconfig.main.json'),
+      run: 'cross-env NODE_ENV=development electron ./app/out',
       build: 'webpack --config webpack.config.main.js --progress -d'
     },
     webpack: {

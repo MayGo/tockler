@@ -25,6 +25,7 @@
     "release": "build -c electron-builder.yml"
   },
   "dependencies": {
+    "@types/sequelize": "^4.0.61",
     "active-win": "^2.0.0",
     "auto-launch": "^5.0.1",
     "bunyan": "^1.8.1",
@@ -81,8 +82,8 @@
     "awesome-typescript-loader": "3.1.3",
     "bluebird": "3.5.0",
     "bootstrap": "4.0.0-alpha.6",
-    "britecharts": "1.6.0",
     "bootstrap-datepicker": "^1.6.4",
+    "britecharts": "1.6.0",
     "copy-webpack-plugin": "4.0.1",
     "cross-env": "^5.0.0",
     "css-loader": "0.28.1",
@@ -123,15 +124,15 @@
     "protractor": "5.1.1",
     "sass-loader": "^6.0.3",
     "style-loader": "0.17.0",
+    "tether": "^1.4.0",
+    "toastr": "^2.1.2",
     "ts-jest": "20.0.0",
     "ts-node": "3.0.4",
+    "typeface-berkshire-swash": "0.0.22",
     "typescript": "2.3.2",
     "url-loader": "0.5.8",
     "wait-on": "2.0.2",
     "webpack": "^2.6.1",
-    "webpack-dev-server": "2.4.5",
-    "tether": "^1.4.0",
-    "toastr": "^2.1.2",
-    "typeface-berkshire-swash": "0.0.22"
+    "webpack-dev-server": "2.4.5"
   }
 }
