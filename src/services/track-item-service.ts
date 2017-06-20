@@ -4,17 +4,12 @@ import { SettingsService } from "./settings-service";
 
 const remote = (<any>window).nodeRequire('electron').remote;
 
-//import { requireTaskPool } from 'electron-remote';
-
-//const trackItemCrud = requireTaskPool(require.resolve('../../app/trackItemCrud'));
-const trackItemCrud = remote.require('../app/trackItemCrud');
-
 @autoinject
 export class TrackItemService {
     private service: any;
 
     constructor(private settingsService: SettingsService) {
-        this.service = trackItemCrud;
+        this.service = remote.getGlobal('TrackItemService');
     }
 
     /*  findAllItems(from, to, taskName, searchStr, paging) {

@@ -1,6 +1,4 @@
-const LogManager = require("./log-manager.js");
-const logger = LogManager.getLogger('Database');
-
+import {logManager} from "../log-manager";
 import { models, sequelize } from "../models/index";
 import { AppItemAttributes, AppItemInstance } from "../models/interfaces/app-item-interface";
 import { Transaction } from "sequelize";
@@ -8,14 +6,16 @@ import { randomcolor } from "randomcolor";
 
 
 export class AppItemService {
+  logger = logManager.getLogger('AppItemService');
+
   createAppItem(appItemAttributes: AppItemAttributes): Promise<AppItemInstance> {
     let promise = new Promise<AppItemInstance>((resolve: Function, reject: Function) => {
       sequelize.transaction((t: Transaction) => {
         return models.AppItem.create(appItemAttributes).then((appItem: AppItemInstance) => {
-          logger.info(`Created appItem with title ${appItemAttributes.name}.`);
+          this.logger.info(`Created appItem with title ${appItemAttributes.name}.`);
           resolve(appItem);
         }).catch((error: Error) => {
-          logger.error(error.message);
+          this.logger.error(error.message);
           reject(error);
         });
       });
@@ -29,13 +29,13 @@ export class AppItemService {
       sequelize.transaction((t: Transaction) => {
         return models.AppItem.findOne({ where: { name: name } }).then((appItem: AppItemInstance) => {
           if (appItem) {
-            logger.info(`Retrieved appItem with name ${name}.`);
+            this.logger.info(`Retrieved appItem with name ${name}.`);
           } else {
-            logger.info(`AppItem with name ${name} does not exist.`);
+            this.logger.info(`AppItem with name ${name} does not exist.`);
           }
           resolve(appItem);
         }).catch((error: Error) => {
-          logger.error(error.message);
+          this.logger.error(error.message);
           reject(error);
         });
       });
@@ -48,10 +48,10 @@ export class AppItemService {
     let promise = new Promise<Array<AppItemInstance>>((resolve: Function, reject: Function) => {
       sequelize.transaction((t: Transaction) => {
         return models.AppItem.findAll(params).then((appItems: Array<AppItemInstance>) => {
-          logger.info("Retrieved all appItems.");
+          this.logger.debug("Retrieved all appItems.");
           resolve(appItems);
         }).catch((error: Error) => {
-          logger.error(error.message);
+          this.logger.error(error.message);
           reject(error);
         });
       });
@@ -66,13 +66,13 @@ export class AppItemService {
         return models.AppItem.update(appItemAttributes, { where: { name: name } })
           .then((results: [number, Array<AppItemInstance>]) => {
             if (results.length > 0) {
-              logger.info(`Updated appItem with name ${name}.`);
+              this.logger.info(`Updated appItem with name ${name}.`);
             } else {
-              logger.info(`AppItem with name ${name} does not exist.`);
+              this.logger.info(`AppItem with name ${name} does not exist.`);
             }
             resolve(null);
           }).catch((error: Error) => {
-            logger.error(error.message);
+            this.logger.error(error.message);
             reject(error);
           });
       });
@@ -86,13 +86,13 @@ export class AppItemService {
       sequelize.transaction((t: Transaction) => {
         return models.AppItem.destroy({ where: { name: name } }).then((afffectedRows: number) => {
           if (afffectedRows > 0) {
-            logger.info(`Deleted appItem with name ${name}`);
+            this.logger.info(`Deleted appItem with name ${name}`);
           } else {
-            logger.info(`AppItem with name ${name} does not exist.`);
+            this.logger.info(`AppItem with name ${name} does not exist.`);
           }
           resolve(null);
         }).catch((error: Error) => {
-          logger.error(error.message);
+          this.logger.error(error.message);
           reject(error);
         });
       });

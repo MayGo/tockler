@@ -1,19 +1,20 @@
-import { app} from "electron";
+import { backgroundService } from './background.service';
+import { app, ipcMain} from "electron";
+
+import {logManager} from "./log-manager";
 
 import AppManager from "./app-manager";
 AppManager.init();
 
 import WindowManager from "./window-manager";
 
-import LogManager from "./log-manager";
-
 import AppUpdater from "./app-updater";
 import config from './config';
 
-// Share configs between multiple windows
-(<any>global).shared = config
 
-import * as path from 'path'
+
+
+import * as path from 'path';
 
 AppUpdater.init();
 
@@ -24,12 +25,8 @@ if (config.isDev) {
 
 const notifier = require('node-notifier');
 
-const backgroundService = require('./background.service');
-
 ///const InitialDatagenerator = require('./initialDataGenerator');
 //InitialDatagenerator.generate();
-
-var ipcMain = require('electron').ipcMain;
 
 var AutoLaunch = require('auto-launch');
 var appLauncher = new AutoLaunch({

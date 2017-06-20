@@ -1,11 +1,12 @@
 'use strict';
+import { TrackItemInstance } from './models/interfaces/track-item-interface';
+import { settingsService } from './services/settings-service';
+import { trackItemService } from './services/track-item-service';
+import { appItemService } from './services/app-item-service';
 
 const notifier = require('node-notifier');
 
 const config = require('./config');
-const TrackItemCrud = require('./TrackItemCrud');
-const SettingsCrud = require('./SettingsCrud');
-const AppItemCrud = require('./AppItemCrud');
 const path = require('path');
 const $q = require('q');
 const moment = require('moment');
@@ -17,9 +18,9 @@ notifier.on('click', function (notifierObject, options) {
         return;
     }
     console.log("Clicked. Creating new task", TaskAnalyser.newItem);
-    AppItemCrud.getAppColor(TaskAnalyser.newItem.app).then((color) => {
+    appItemService.getAppColor(TaskAnalyser.newItem.app).then((color) => {
         TaskAnalyser.newItem.color = color;
-        TrackItemCrud.createItem(TaskAnalyser.newItem).then((trackItem)=> {
+        trackItemService.createItem(TaskAnalyser.newItem).then((trackItem) => {
             console.log("Created new task, saving reference: ", trackItem.id);
             TaskAnalyser.newItem = null;
 
@@ -31,13 +32,14 @@ notifier.on('click', function (notifierObject, options) {
                 wait: false // Wait with callback, until user action is taken against notification
             });
 
-            SettingsCrud.saveRunningLogItemReferemce(trackItem.id);
+            settingsService.saveRunningLogItemReferemce(trackItem.id);
         });
     });
 });
 
-class TaskAnalyser {
+export default class TaskAnalyser {
 
+    static _newItem;
 
     static get newItem() {
         return TaskAnalyser._newItem;
@@ -66,7 +68,7 @@ class TaskAnalyser {
             return;
         }
 
-        SettingsCrud.fetchAnalyserSettings().then((analyserItems)=> {
+        settingsService.fetchAnalyserSettings().then((analyserItems) => {
             for (let patObj of analyserItems) {
                 if (!patObj.findRe || !patObj.active) {
                     continue;
@@ -81,7 +83,7 @@ class TaskAnalyser {
                 let title = TaskAnalyser.findFirst(item.title, patObj.takeTitle) || item.title;
                 let app = TaskAnalyser.findFirst(item.title, patObj.takeGroup) || foundStr;
 
-                SettingsCrud.getRunningLogItem().then((runningItem)=> {
+                settingsService.getRunningLogItem().then((runningItem: TrackItemInstance) => {
                     if (runningItem && runningItem.title === title && runningItem.app == app) {
                         console.log("Same item, not notifying to create new item.");
                         return;
@@ -115,25 +117,25 @@ class TaskAnalyser {
             return deferred.promise;
         }
 
-        TrackItemCrud.findLastOnlineItem().then((onlineItems)=> {
+        trackItemService.findLastOnlineItem().then((onlineItems) => {
             if (onlineItems && onlineItems.length > 0) {
-                SettingsCrud.fetchWorkSettings().then((settings)=>{
+                settingsService.fetchWorkSettings().then((settings) => {
                     var onlineItem = onlineItems[0];
                     var minutesAfterToSplit = settings.splitTaskAfterIdlingForMinutes || 3;
                     var minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
-                    console.log("Minutes from now:"+minutesFromNow);
+                    console.log("Minutes from now:" + minutesFromNow);
                     if (minutesFromNow >= minutesAfterToSplit) {
                         let endDate = moment(onlineItem.endDate).add(minutesAfterToSplit, 'minutes').toDate();
                         deferred.resolve(endDate);
-                    }else{
+                    } else {
                         deferred.resolve();
                     }
-                }).catch((error)=>{
+                }).catch((error) => {
                     console.error("Fetching work settings failed.", error);
                     deferred.resolve();
                 });
 
-            }else{
+            } else {
                 deferred.resolve();
             }
 
@@ -142,4 +144,3 @@ class TaskAnalyser {
         return deferred.promise;
     }
 }
-module.exports = TaskAnalyser;

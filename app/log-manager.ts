@@ -1,18 +1,20 @@
+import { app } from "electron";
 import * as path from 'path';
 import * as bunyan from 'bunyan';
 
-export default class LogManager {
-    static logger;
+export class LogManager {
+    logger;
 
     constructor() {
+        this.init({ userDir: app.getPath('userData') });
     }
 
-    static init(settings) {
-        if (!LogManager.logger) {
+    init(settings) {
+        if (!this.logger) {
 
             var outputPath = path.join(settings.userDir, 'stdout.json');
             // Create logger
-            LogManager.logger = bunyan.createLogger({
+            this.logger = bunyan.createLogger({
                 name: 'tockler',
                 streams: [
                     {
@@ -29,11 +31,14 @@ export default class LogManager {
                 ]
             });
 
-            LogManager.logger.info('Saving logs in directory:' + settings.userDir);
+            this.logger.info('Saving logs in directory:' + settings.userDir);
 
         }
     }
-    static getLogger(name) {
-        return LogManager.logger.child({ logger_name: name });
+    getLogger(name) {
+        //console.log("Getting logger for: " + name);
+        return this.logger.child({ logger_name: name });
     };
 }
+
+export const logManager = new LogManager();

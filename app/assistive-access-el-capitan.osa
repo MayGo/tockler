@@ -1,2 +1,0 @@
-set sh to "sqlite3 \"/Library/Application Support/com.apple.TCC/TCC.db\" \"INSERT or REPLACE INTO access VALUES('kTCCServiceAccessibility','ee.trimatech.Tockler',0,1,1,NULL,NULL);\""
-do shell script sh with administrator privileges

@@ -1,5 +1,4 @@
-const LogManager = require("./log-manager.js");
-const logger = LogManager.getLogger('Database');
+import {logManager} from "../log-manager";
 
 import { models, sequelize } from "../models/index";
 import { TrackItemAttributes, TrackItemInstance } from "../models/interfaces/track-item-interface";
@@ -7,14 +6,16 @@ import { Transaction } from "sequelize";
 import * as moment from "moment";
 
 export class TrackItemService {
+
+  logger = logManager.getLogger('TrackItemService')
   createTrackItem(trackItemAttributes: TrackItemAttributes): Promise<TrackItemInstance> {
     let promise = new Promise<TrackItemInstance>((resolve: Function, reject: Function) => {
       sequelize.transaction((t: Transaction) => {
         return models.TrackItem.create(trackItemAttributes).then((trackItem: TrackItemInstance) => {
-          logger.info(`Created trackItem with title ${trackItemAttributes.title}.`);
+          this.logger.info(`Created trackItem with title ${trackItemAttributes.title}.`);
           resolve(trackItem);
         }).catch((error: Error) => {
-          logger.error(error.message);
+          this.logger.error(error.message);
           reject(error);
         });
       });
@@ -28,13 +29,13 @@ export class TrackItemService {
       sequelize.transaction((t: Transaction) => {
         return models.TrackItem.findOne({ where: { name: name } }).then((trackItem: TrackItemInstance) => {
           if (trackItem) {
-            logger.info(`Retrieved trackItem with name ${name}.`);
+            this.logger.info(`Retrieved trackItem with name ${name}.`);
           } else {
-            logger.info(`TrackItem with name ${name} does not exist.`);
+            this.logger.info(`TrackItem with name ${name} does not exist.`);
           }
           resolve(trackItem);
         }).catch((error: Error) => {
-          logger.error(error.message);
+          this.logger.error(error.message);
           reject(error);
         });
       });
@@ -47,10 +48,10 @@ export class TrackItemService {
     let promise = new Promise<Array<TrackItemInstance>>((resolve: Function, reject: Function) => {
       sequelize.transaction((t: Transaction) => {
         return models.TrackItem.findAll().then((trackItems: Array<TrackItemInstance>) => {
-          logger.info("Retrieved all trackItems.");
+          this.logger.info("Retrieved all trackItems.");
           resolve(trackItems);
         }).catch((error: Error) => {
-          logger.error(error.message);
+          this.logger.error(error.message);
           reject(error);
         });
       });
@@ -65,13 +66,13 @@ export class TrackItemService {
         return models.TrackItem.update(trackItemAttributes, { where: { name: name } })
           .then((results: [number, Array<TrackItemInstance>]) => {
             if (results.length > 0) {
-              logger.info(`Updated trackItem with name ${name}.`);
+              this.logger.info(`Updated trackItem with name ${name}.`);
             } else {
-              logger.info(`TrackItem with name ${name} does not exist.`);
+              this.logger.info(`TrackItem with name ${name} does not exist.`);
             }
             resolve(null);
           }).catch((error: Error) => {
-            logger.error(error.message);
+            this.logger.error(error.message);
             reject(error);
           });
       });
@@ -85,13 +86,13 @@ export class TrackItemService {
       sequelize.transaction((t: Transaction) => {
         return models.TrackItem.destroy({ where: { name: name } }).then((afffectedRows: number) => {
           if (afffectedRows > 0) {
-            logger.info(`Deleted trackItem with name ${name}`);
+            this.logger.info(`Deleted trackItem with name ${name}`);
           } else {
-            logger.info(`TrackItem with name ${name} does not exist.`);
+            this.logger.info(`TrackItem with name ${name} does not exist.`);
           }
           resolve(null);
         }).catch((error: Error) => {
-          logger.error(error.message);
+          this.logger.error(error.message);
           reject(error);
         });
       });
@@ -163,7 +164,7 @@ export class TrackItemService {
     var to = moment(day).add(1, 'days');
     console.log('findAllFromDay ' + taskName + ' from:' + day + ', to:' + to.toDate());
 
-    return module.exports.findAllDayItems(day, to.toDate(), taskName);
+    return this.findAllDayItems(day, to.toDate(), taskName);
   }
 
   findFirstLogItems() {
@@ -219,7 +220,7 @@ export class TrackItemService {
           //console.log("Saved track item to DB:", itemData.id);
           resolve(itemData);
         }).catch((error: Error) => {
-          logger.error(error.message);
+          this.logger.error(error.message);
           reject(error);
         })
     });
@@ -236,7 +237,7 @@ export class TrackItemService {
         app: appName
       }
     }).catch((error: Error) => {
-      logger.error(error.message);
+      this.logger.error(error.message);
 
     });
   }
@@ -257,7 +258,7 @@ export class TrackItemService {
           console.log("Saved track item to DB with now:", id);
           resolve(id);
         }).catch((error: Error) => {
-          logger.error(error.message);
+          this.logger.error(error.message);
           reject(error);
         });
     });
@@ -273,7 +274,7 @@ export class TrackItemService {
         console.log("Deleted track item with ID:", id);
         resolve(id);
       }).catch((error: Error) => {
-        logger.error(error.message);
+        this.logger.error(error.message);
         reject(error);
       });
     });
@@ -293,7 +294,7 @@ export class TrackItemService {
         console.log("Deleted track items with IDs:", ids);
         resolve(ids);
       }).catch((error: Error) => {
-        logger.error(error.message);
+        this.logger.error(error.message);
         reject(error);
       });
     });

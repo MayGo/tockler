@@ -1,13 +1,11 @@
-import { menubar } from 'menubar';
+import * as menubar  from 'menubar';
 import { app, ipcMain, BrowserWindow } from "electron"
 import config from "./config"
 import * as path from "path"
 import { sequelize } from "./models/index";
 
-import LogManager from "./log-manager.js";
-var logger = LogManager.getLogger('WindowManager');
-
-
+import {logManager} from "./log-manager";
+var logger = logManager.getLogger('WindowManager');
 
 export default class WindowManager {
     static mainWindow;
@@ -20,6 +18,7 @@ export default class WindowManager {
     }
 
     static setMainWindow() {
+        logger.info("Creating main window.");
         this.mainWindow = new BrowserWindow({
             width: 1200,
             height: 1000,
@@ -58,7 +57,7 @@ export default class WindowManager {
 
 
     static initMainWindowEvents() {
-        console.log("Init main window events.")
+        logger.info("Init main window events.")
         ipcMain.on('toggle-main-window', (ev, name) => {
             if (!this.mainWindow) {
                 console.log("MainWindow closed, opening");
@@ -81,6 +80,7 @@ export default class WindowManager {
     }
 
     static setTrayWindow() {
+        logger.info("Creating tray window.");
         /**
          * Docs:
          * https://github.com/maxogden/menubar

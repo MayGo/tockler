@@ -1,17 +1,27 @@
-import { app, BrowserWindow, dialog } from "electron"
-import config from "./config"
+import { appItemService } from './services/app-item-service';
+import { trackItemService } from './services/track-item-service';
+import { app, BrowserWindow, dialog, ipcMain } from "electron";
+import config from "./config";
 import { sequelize } from "./models/index";
 
-import LogManager from "./log-manager.js";
-var logger = LogManager.getLogger('BackgroundService');
+import { logManager } from "./log-manager";
+import { settingsService } from "./services/settings-service";
+var logger = logManager.getLogger('AppManager');
 
 export default class AppManager {
-  constructor() {
 
-  }
   static init() {
-    AppManager.initLogging();
     AppManager.syncDb();
+    AppManager.initGlobalClasses();
+    AppManager.initIpc();
+  
+  }
+
+  static initIpc() {
+    ipcMain.on('TIMELINE_LOAD_DAY_REQUEST', (event, startDate, taskName) => {
+      console.log('TIMELINE_LOAD_DAY_REQUEST', startDate, taskName);
+      trackItemService.findAllFromDay(startDate, taskName).then((items) => event.sender.send('TIMELINE_LOAD_DAY_RESPONSE', startDate, taskName, items))
+    });
   }
 
   static syncDb() {
@@ -22,7 +32,13 @@ export default class AppManager {
       logger.error(error.message);
     });
   }
-  static initLogging() {
-    LogManager.init({ userDir: app.getPath('userData') });
+
+  static initGlobalClasses() {
+    // Share configs between multiple windows
+    (<any>global).shared = config;
+
+    (<any>global).SettingsService = settingsService;
+    (<any>global).AppItemService = appItemService;
+    (<any>global).TrackItemService = trackItemService;
   }
 }

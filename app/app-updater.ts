@@ -1,7 +1,10 @@
 import { app, BrowserWindow, dialog } from "electron"
 import { autoUpdater } from "electron-updater"
 import * as os from "os"
-import config from "./config"
+import config from "./config";
+
+import {logManager} from "./log-manager";
+const logger = logManager.getLogger('AppUpdater');
 
 export default class AppUpdater {
   constructor() {
@@ -17,9 +20,7 @@ export default class AppUpdater {
       return
     }
 
-    const log = require("electron-log")
-    log.transports.file.level = "info"
-    autoUpdater.logger = log
+    autoUpdater.logger = logger
 
     autoUpdater.signals.updateDownloaded(versionInfo => {
       const dialogOptions = {

@@ -11,4 +11,10 @@ export interface TrackItemAttributes {
 
 export interface TrackItemInstance extends Instance<TrackItemAttributes> {
   dataValues: TrackItemAttributes;
+  app?: string;
+  taskName?: string;
+  title?: string;
+  color?: string;
+  beginDate?: Date;
+  endDate?: Date;
 }
