@@ -3,65 +3,38 @@ const { config: { port: E2E_PORT } } = require('./test/protractor.conf')
 
 module.exports = {
   scripts: {
-    default: 'nps webpack',
-
     run: concurrent.nps(
-      'electron',
-      'webpack.build.development'
+      'clean',
+      'main',
+      'renderer'
     ),
 
+    clean: rimraf('dist'),
 
-    build: 'nps webpack.build',
+
+    build: 'nps renderer.build',
     release: 'build -c electron-builder.yml',
-    electron: {
+    main: {
       default: series(
-        'nps electron.compile',
-        'nps electron.run'
+        'nps main.build.dev',
+        'nps main.run'
       ),
-      compile: series(rimraf("out"), 'tsc -p tsconfig.main.json'),
-      run: 'cross-env NODE_ENV=development electron ./app/out',
-      build: 'webpack --config webpack.config.main.js --progress -d'
-    },
-    webpack: {
-      default: 'nps webpack.server',
+      run: 'cross-env NODE_ENV=development electron ./dist',
       build: {
-        before: rimraf('dist'),
-        default: 'nps webpack.build.production',
-        development: {
-          default: series(
-            'nps webpack.build.before',
-            'webpack --watch --progress -d'
-          ),
-          extractCss: series(
-            'nps webpack.build.before',
-            'webpack --progress -d --env.extractCss'
-          ),
-          serve: series.nps(
-            'webpack.build.development',
-            'serve'
-          ),
-        },
-        production: {
-          inlineCss: series(
-            'nps webpack.build.before',
-            'webpack --progress -p --env.production'
-          ),
-          default: series(
-            'nps webpack.build.before',
-            'webpack --progress --env.production'
-          ),
-          serve: series.nps(
-            'webpack.build.production',
-            'serve'
-          ),
-        }
-      },
-      server: {
-        default: `webpack-dev-server -d --devtool '#source-map' --inline --env.server`,
-        extractCss: `webpack-dev-server -d --devtool '#source-map' --inline --env.server --env.extractCss`,
-        hmr: `webpack-dev-server -d --devtool '#source-map' --inline --hot --env.server`
-      },
+        dev: 'webpack --config webpack.config.main.js --progress -d'
+      }
     },
-    serve: 'http-server dist --cors',
-  },
+    renderer: {
+      default: 'nps renderer.build.development',
+      build: {
+        development: 'webpack --watch --progress -d',
+        production: {
+          default: series(
+            'nps renderer.build.before',
+            'webpack --progress --env.production'
+          )
+        }
+      }
+    }
+  }
 }
