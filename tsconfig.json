@@ -9,6 +9,7 @@
     "sourceRoot": "src",
     "baseUrl": "src",
     "skipLibCheck": true,
+    "sourceMap": true,
     "lib": [
       "es2017",
       "dom"

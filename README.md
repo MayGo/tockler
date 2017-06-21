@@ -65,6 +65,10 @@ yarn install            # Install dependencies
 
 nps run # Start application
 
+# or in separate terminals:
+nps main
+npm renderer
+
 ```
 
 # Signing

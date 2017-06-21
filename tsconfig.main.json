@@ -1,27 +1,27 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "es2015",
+    "module": "commonjs",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "skipLibCheck": true,
     "lib": [
-      "es2017",
-      "dom"
+      "es2017"
     ],
+    "sourceMap": true,
     "outDir": "out",
     "baseUrl": "app",
     "rootDir": "app"
   },
-  "include": [
-    "app/*.ts"
+  "files": [
+    "app/index.ts"
   ],
   "exclude": [
     "node_modules",
-    "node_modules/aurelia-validation/node_modules",
     "dist",
     "packaged",
-    "static"
+    "static",
+    "src"
   ]
 }
