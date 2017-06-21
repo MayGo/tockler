@@ -15,7 +15,8 @@
     "rootDir": "app"
   },
   "files": [
-    "app/index.ts"
+    "app/index.ts",
+    "app/typings.d.ts"
   ],
   "exclude": [
     "node_modules",
