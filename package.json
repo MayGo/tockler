@@ -25,7 +25,6 @@
     "release": "build -c electron-builder.yml"
   },
   "dependencies": {
-    "@types/sequelize": "^4.0.61",
     "active-win": "^2.0.0",
     "auto-launch": "^5.0.1",
     "bunyan": "^1.8.1",
@@ -49,12 +48,12 @@
   },
   "peerDependencies": {},
   "devDependencies": {
+    "@types/sequelize": "^4.0.61",
     "@types/d3": "^4.9.0",
-    "@types/electron": "1.6.10",
     "@types/i18next-xhr-backend": "1.2.2",
     "@types/jest": "19.2.4",
     "@types/lodash": "4.14.64",
-    "@types/node": "7.0.31",
+    "@types/node": "8.0.1",
     "@types/webpack": "2.2.15",
     "au-table": "^0.1.12",
     "aurelia-animator-css": "1.0.0",

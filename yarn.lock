@@ -206,12 +206,6 @@
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/debug/-/debug-0.0.29.tgz#a1e514adfbd92f03a224ba54d693111dbf1f3754"
 
-"@types/electron@1.6.10":
-  version "1.6.10"
-  resolved "https://registry.yarnpkg.com/@types/electron/-/electron-1.6.10.tgz#7e87888ed3888767cca68e92772c2c8ea46bc873"
-  dependencies:
-    electron "*"
-
 "@types/fs-extra@0.0.33":
   version "0.0.33"
   resolved "https://registry.yarnpkg.com/@types/fs-extra/-/fs-extra-0.0.33.tgz#a8719c417b080c012d3497b28e228ac09745fdf2"
@@ -250,9 +244,9 @@
   version "2.0.29"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-2.0.29.tgz#5002e14f75e2d71e564281df0431c8c1b4a2a36a"
 
-"@types/node@*", "@types/node@7.0.31":
-  version "7.0.31"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.31.tgz#80ea4d175599b2a00149c29a10a4eb2dff592e86"
+"@types/node@*", "@types/node@8.0.1":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.1.tgz#89c271e0c3b9ebb6a3756dd601336970b6228b77"
 
 "@types/node@^6.0.46":
   version "6.0.78"
@@ -2519,22 +2513,22 @@ ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
 
-electron-builder-http@19.6.0, electron-builder-http@~19.6.0:
-  version "19.6.0"
-  resolved "https://registry.yarnpkg.com/electron-builder-http/-/electron-builder-http-19.6.0.tgz#7429a70d63f43f2d78b21613bd4ae5cded70562a"
+electron-builder-http@19.6.4, electron-builder-http@~19.6.0, electron-builder-http@~19.6.4:
+  version "19.6.4"
+  resolved "https://registry.yarnpkg.com/electron-builder-http/-/electron-builder-http-19.6.4.tgz#1104556edb90ee951abdc2083ec82bd01a599b21"
   dependencies:
     debug "2.6.8"
     fs-extra-p "^4.3.0"
 
-electron-builder-util@19.6.0, electron-builder-util@~19.6.0:
-  version "19.6.0"
-  resolved "https://registry.yarnpkg.com/electron-builder-util/-/electron-builder-util-19.6.0.tgz#5901fa631ab7ecf16fb86c6905ef2785144bc205"
+electron-builder-util@19.6.4, electron-builder-util@~19.6.0:
+  version "19.6.4"
+  resolved "https://registry.yarnpkg.com/electron-builder-util/-/electron-builder-util-19.6.4.tgz#f71ab422cd918579d0cf6cfe594134eddcd5594b"
   dependencies:
     "7zip-bin" "^2.1.0"
     bluebird-lst "^1.0.2"
     chalk "^1.1.3"
     debug "2.6.8"
-    electron-builder-http "~19.6.0"
+    electron-builder-http "~19.6.4"
     fcopy-pre-bundled "0.3.4"
     fs-extra-p "^4.3.0"
     ini "^1.3.4"
@@ -2545,8 +2539,8 @@ electron-builder-util@19.6.0, electron-builder-util@~19.6.0:
     tunnel-agent "^0.6.0"
 
 electron-builder@next:
-  version "19.6.2"
-  resolved "https://registry.yarnpkg.com/electron-builder/-/electron-builder-19.6.2.tgz#5d1775bf3721f1792b76beebf97e8e9138c33e96"
+  version "19.6.4"
+  resolved "https://registry.yarnpkg.com/electron-builder/-/electron-builder-19.6.4.tgz#315725014a39c25b24e426ad521308c3bc382059"
   dependencies:
     "7zip-bin" "^2.1.0"
     ajv "^5.2.0"
@@ -2557,8 +2551,8 @@ electron-builder@next:
     chromium-pickle-js "^0.2.0"
     cuint "^0.2.2"
     debug "2.6.8"
-    electron-builder-http "19.6.0"
-    electron-builder-util "19.6.0"
+    electron-builder-http "19.6.4"
+    electron-builder-util "19.6.4"
     electron-download-tf "4.3.1"
     electron-osx-sign "0.4.6"
     electron-publish "19.6.0"
@@ -2695,12 +2689,12 @@ electron-to-chromium@^1.2.7, electron-to-chromium@^1.3.14:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.14.tgz#64af0f9efd3c3c6acd57d71f83b49ca7ee9c4b43"
 
 electron-updater@^2.3.1:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/electron-updater/-/electron-updater-2.4.0.tgz#41b4cf83a08c97869e53050aea1c96293e4d3ab1"
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/electron-updater/-/electron-updater-2.4.1.tgz#a653804cc21542ed30259fb1f7889f1180f167f6"
   dependencies:
     bluebird-lst "^1.0.2"
     debug "^2.6.8"
-    electron-builder-http "~19.6.0"
+    electron-builder-http "~19.6.4"
     electron-is-dev "^0.1.2"
     fs-extra-p "^4.3.0"
     js-yaml "^3.8.4"
@@ -2709,7 +2703,7 @@ electron-updater@^2.3.1:
     uuid-1345 "^0.99.6"
     xelement "^1.0.16"
 
-electron@*, electron@1.6.2:
+electron@1.6.2:
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/electron/-/electron-1.6.2.tgz#b0ccd7703f86d09c4d2a7273455c3f993f158994"
   dependencies:
@@ -6109,8 +6103,8 @@ readable-stream@1.0, readable-stream@~1.0.2:
     string_decoder "~0.10.x"
 
 readable-stream@^2.0.1, readable-stream@^2.0.2, readable-stream@^2.0.5, readable-stream@^2.0.6, readable-stream@^2.1.4, readable-stream@^2.2.2, readable-stream@^2.2.6, readable-stream@^2.2.9:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.0.tgz#640f5dcda88c91a8dc60787145629170813a1ed2"
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.1.tgz#84e26965bb9e785535ed256e8d38e92c69f09d10"
   dependencies:
     core-util-is "~1.0.0"
     inherits "~2.0.3"
