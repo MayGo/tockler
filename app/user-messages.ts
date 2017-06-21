@@ -1,17 +1,24 @@
 'use strict';
 
-const notifier = require('node-notifier');
-const path = require('path');
-const moment = require('moment');
+import * as notifier from "node-notifier";
+import * as path from "path";
+import * as moment from "moment";
 
-const config = require('./config');
+import config from "./config"
+
+import {logManager} from "./log-manager";
+
+const logger = logManager.getLogger('UserMessages');
+
 const iconUrl = config.icon;
 
-var LogManager = require("./log-manager.js");
-var logger = LogManager.getLogger('UserMessages');
+export default class UserMessages {
+    static lastError = '';
+    static lastTime = moment();
 
-class UserMessages {
+    constructor() {
 
+    }
     static showError(title, error) {
         let diffInMinutes = moment().diff(UserMessages.lastTime, 'minutes');
 
@@ -35,8 +42,3 @@ class UserMessages {
         });
     }
 }
-
-UserMessages.lastError = '';
-UserMessages.lastTime = moment();
-
-module.exports = UserMessages;

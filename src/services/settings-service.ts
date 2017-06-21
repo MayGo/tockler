@@ -5,7 +5,7 @@ export class SettingsService {
     private service: any;
 
     constructor() {
-        this.service = remote.getGlobal('BackgroundService').getSettingsService();
+        this.service = remote.getGlobal('SettingsService');
     }
 
     saveRunningLogItemReferemce(refId) {
