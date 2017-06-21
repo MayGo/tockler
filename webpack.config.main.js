@@ -5,35 +5,20 @@ const { TsConfigPathsPlugin, CheckerPlugin } = require('awesome-typescript-loade
 
 const nodeExternals = require('webpack-node-externals');
 
-// primary config:
-const outDir = path.resolve(__dirname, 'dist');
-const srcDir = path.resolve(__dirname, 'app');
-const nodeModulesDir = path.resolve(__dirname, 'node_modules');
-const pkgJson = require('./package.json');
-
-
-const tsConfigBase = 'tsconfig.webpack.json';
-const customTsConfigFileName = 'tsconfig.main.json';
-
-const atlConfig = {
-  configFileName: customTsConfigFileName
-};
-
 module.exports = ({ production, server, extractCss, coverage } = {}) => ({
   target: 'electron-main',
-  
+
   externals: [nodeExternals()],
 
   resolve: {
     extensions: ['.ts', '.js']
   },
   entry: {
-    'index': './app/index.ts'
+    'index': path.resolve(__dirname, 'app', 'index.ts')
   },
   output: {
-    path: outDir,
+    path: path.resolve(__dirname, 'dist'),
     filename: 'index.js'
-
   },
 
 
@@ -45,7 +30,8 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
     rules: [
       {
         test: /\.ts$/i,
-        loader: 'awesome-typescript-loader?' + JSON.stringify(atlConfig)
+        loader: 'awesome-typescript-loader',
+        options: { configFileName: 'tsconfig.main.json' }
       }
     ]
   },
