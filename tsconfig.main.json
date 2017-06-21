@@ -6,9 +6,6 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "skipLibCheck": true,
-    "lib": [
-      "es2017"
-    ],
     "sourceMap": true,
     "outDir": "out",
     "baseUrl": "app",
