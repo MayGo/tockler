@@ -1,8 +1,8 @@
-import {logManager} from "../log-manager";
+import { logManager } from "../log-manager";
 import { models, sequelize } from "../models/index";
 import { AppItemAttributes, AppItemInstance } from "../models/interfaces/app-item-interface";
 import { Transaction } from "sequelize";
-import { randomcolor } from "randomcolor";
+import * as randomcolor from "randomcolor";
 
 
 export class AppItemService {
@@ -114,7 +114,7 @@ export class AppItemService {
           resolve(appItems[0].color);
         } else {
           var color = randomcolor();
-          this.createAppItem({ name: appName, color: color }).then(function (item) {
+          this.createAppItem({ name: appName, color: color }).then((item) => {
             console.log("Created color item to DB:", item);
           });
           resolve(color);
@@ -145,7 +145,7 @@ export class AppItemService {
 
           resolve(appItems[0]);
         } else {
-          this.createAppItem({ name: appName, color: color }).then(function (item) {
+          this.createAppItem({ name: appName, color: color }).then((item) => {
             console.log("Created color item to DB:", item);
             resolve(item);
           });

@@ -20,7 +20,7 @@ notifier.on('click', function (notifierObject, options) {
     console.log("Clicked. Creating new task", TaskAnalyser.newItem);
     appItemService.getAppColor(TaskAnalyser.newItem.app).then((color) => {
         TaskAnalyser.newItem.color = color;
-        trackItemService.createItem(TaskAnalyser.newItem).then((trackItem) => {
+        trackItemService.createItem(TaskAnalyser.newItem).then((trackItem: any) => {
             console.log("Created new task, saving reference: ", trackItem.id);
             TaskAnalyser.newItem = null;
 

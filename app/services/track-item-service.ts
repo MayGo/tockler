@@ -1,4 +1,4 @@
-import {logManager} from "../log-manager";
+import { logManager } from "../log-manager";
 
 import { models, sequelize } from "../models/index";
 import { TrackItemAttributes, TrackItemInstance } from "../models/interfaces/track-item-interface";
@@ -199,12 +199,11 @@ export class TrackItemService {
     });
   }
 
-  createItem = function (itemData) {
-    'use strict';
+  createItem(itemData) {
     return this.createTrackItem(itemData);
   }
 
-  updateItem = function (itemData) {
+  updateItem(itemData) {
 
     let promise = new Promise<void>((resolve: Function, reject: Function) => {
       models.TrackItem.update({
@@ -227,7 +226,7 @@ export class TrackItemService {
     return promise;
   }
 
-  updateColorForApp = function (appName, color) {
+  updateColorForApp(appName, color) {
 
     console.log("Updating app color:", appName, color);
 
@@ -254,7 +253,7 @@ export class TrackItemService {
       }, {
           fields: ['endDate'],
           where: { id: id }
-        }).then(function () {
+        }).then(() => {
           console.log("Saved track item to DB with now:", id);
           resolve(id);
         }).catch((error: Error) => {
@@ -270,7 +269,7 @@ export class TrackItemService {
 
       models.TrackItem.destroy({
         where: { id: id }
-      }).then(function () {
+      }).then(() => {
         console.log("Deleted track item with ID:", id);
         resolve(id);
       }).catch((error: Error) => {
@@ -281,7 +280,7 @@ export class TrackItemService {
     return promise;
   }
 
-  deleteByIds = function (ids) {
+  deleteByIds(ids) {
     let promise = new Promise<void>((resolve: Function, reject: Function) => {
 
       models.TrackItem.destroy({
@@ -290,7 +289,7 @@ export class TrackItemService {
             $in: ids
           }
         }
-      }).then(function () {
+      }).then(() => {
         console.log("Deleted track items with IDs:", ids);
         resolve(ids);
       }).catch((error: Error) => {

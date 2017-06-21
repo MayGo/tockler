@@ -81,7 +81,7 @@ export class BackgroundService {
 
         var deferred = $q.defer();
 
-        appItemService.getAppColor(rawItem.app).then(function (color) {
+        appItemService.getAppColor(rawItem.app).then((color) => {
             rawItem.color = color;
 
             var type = rawItem.taskName;
@@ -99,20 +99,20 @@ export class BackgroundService {
                 logger.debug('Midnight- almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
                 rawItem.endDate = almostMidnight;
                 rawItem.endDateOverride = almostMidnight;
-                this.createOrUpdate(rawItem).then(function (item1) {
+                this.createOrUpdate(rawItem).then((item1) => {
                     lastTrackItems[type] = null;
                     logger.debug('Midnight- Saved one: ', item1);
                     item1.beginDate = afterMidnight;
                     item1.endDate = originalEndDate;
                     item1.endDateOverride = originalEndDate;
                     logger.debug('Midnight- Saving second: ', item1);
-                    this.createOrUpdate(this.getRawTrackItem(item1)).then(function (item2) {
+                    this.createOrUpdate(this.getRawTrackItem(item1)).then((item2) => {
                         logger.debug('Midnight- Saved second: ', item2);
                         deferred.resolve(item2);
-                    }).catch(function (error) {
+                    }).catch((error) => {
                         console.error("Second Item not updated.", error)
                     });
-                }).catch(function (error) {
+                }).catch((error) => {
                     console.error("First Item not updated.", error)
                 });
             } else {
@@ -127,9 +127,9 @@ export class BackgroundService {
                         promise = trackItemService.updateItem(lastTrackItems[type])
                     }
 
-                    promise.then(function () {
+                    promise.then(() => {
                         //rawItem.endDate = new Date();
-                        trackItemService.createItem(rawItem).then(function (item) {
+                        trackItemService.createItem(rawItem).then((item) => {
                             logger.debug("Created track item to DB:", item);
                             lastTrackItems[type] = item;
                             TaskAnalyser.analyseAndNotify(item);
@@ -141,20 +141,20 @@ export class BackgroundService {
                             });
 
                             deferred.resolve(item);
-                        }).catch(function (error) {
+                        }).catch((error) => {
                             console.error("New Item not created.", error)
                         });
-                    }).catch(function (error) {
+                    }).catch((error) => {
                         console.error("Old Item not updated.", error)
                     });
 
                 } else if (BackgroundUtils.isSameItems(rawItem, lastTrackItems[type])) {
                     lastTrackItems[type].endDate = rawItem.endDateOverride || new Date();
-                    trackItemService.updateItem(lastTrackItems[type]).then(function (item) {
+                    trackItemService.updateItem(lastTrackItems[type]).then((item) => {
                         logger.debug("Saved track item(endDate change) to DB:", item);
                         lastTrackItems[type] = item;
                         deferred.resolve(item);
-                    }).catch(function (error) {
+                    }).catch((error) => {
                         console.error("Item not updated.", error)
                     });
                 } else {
