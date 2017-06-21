@@ -4,7 +4,7 @@ import { settingsService } from './services/settings-service';
 import { trackItemService } from './services/track-item-service';
 import { appItemService } from './services/app-item-service';
 
-const notifier = require('node-notifier');
+import * as notifier from "node-notifier";
 
 const config = require('./config');
 const path = require('path');

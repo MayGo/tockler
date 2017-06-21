@@ -1,10 +1,10 @@
-import * as menubar  from 'menubar';
+import * as menubar from 'menubar';
 import { app, ipcMain, BrowserWindow } from "electron"
 import config from "./config"
 import * as path from "path"
 import { sequelize } from "./models/index";
 
-import {logManager} from "./log-manager";
+import { logManager } from "./log-manager";
 var logger = logManager.getLogger('WindowManager');
 
 export default class WindowManager {
@@ -14,7 +14,7 @@ export default class WindowManager {
 
     }
     static init() {
-       
+
     }
 
     static setMainWindow() {
@@ -106,6 +106,7 @@ export default class WindowManager {
             }
         })
     };
-
-
 };
+
+export const windowManager = new WindowManager();
+

@@ -1,19 +1,13 @@
 import { backgroundService } from './background.service';
-import { app, ipcMain} from "electron";
-
-import {logManager} from "./log-manager";
+import { app, ipcMain, powerMonitor } from "electron";
+import { logManager } from "./log-manager";
 
 import AppManager from "./app-manager";
 AppManager.init();
 
-import WindowManager from "./window-manager";
-
+import windowManager from "./window-manager";
 import AppUpdater from "./app-updater";
 import config from './config';
-
-
-
-
 import * as path from 'path';
 
 AppUpdater.init();
@@ -23,18 +17,14 @@ if (config.isDev) {
     require('electron-reload')(reloadFile)
 }
 
-const notifier = require('node-notifier');
-
-///const InitialDatagenerator = require('./initialDataGenerator');
-//InitialDatagenerator.generate();
-
 var AutoLaunch = require('auto-launch');
 var appLauncher = new AutoLaunch({
     name: 'Tockler'
 });
 
-appLauncher.isEnabled().then(function (enabled) {
+appLauncher.isEnabled().then((enabled) => {
     if (enabled) {
+        console.log('AppLauncher is enabled');
         return;
     }
 
@@ -42,38 +32,32 @@ appLauncher.isEnabled().then(function (enabled) {
 
     return appLauncher.enable();
 
-}).then(function (err) {
-
+}).then((err) => {
+    console.error("Error with appLauncher:", err);
 });
 
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
-
-var windowManager = require('./window-manager');
-
-
 
 /**
  * Emitted when app starts
  */
 app.on('ready', () => {
 
-    WindowManager.setMainWindow();
-    WindowManager.initMainWindowEvents();
+    windowManager.setMainWindow();
+    windowManager.initMainWindowEvents();
 
     if (!config.isDev || config.trayEnabledInDev) {
-        WindowManager.setTrayWindow();
+        windowManager.setTrayWindow();
     }
 
     backgroundService.init();
 
-    //global.BackgroundService = backgroundService;
-
-    require('electron').powerMonitor.on('suspend', function () {
+    powerMonitor.on('suspend', function () {
         console.log('The system is going to sleep');
         backgroundService.onSleep();
     });
 
-    require('electron').powerMonitor.on('resume', function () {
+    powerMonitor.on('resume', function () {
         console.log('The system is going to resume');
         backgroundService.onResume();
     });
