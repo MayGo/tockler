@@ -9,10 +9,14 @@ module.exports = {
       'renderer'
     ),
 
+    build: concurrent.nps(
+      'clean',
+      'main.build.prod',
+      'renderer.build.prod'
+    ),
+
     clean: rimraf('dist'),
 
-
-    build: 'nps renderer.build',
     release: 'build -c electron-builder.yml',
     main: {
       default: series(
@@ -21,19 +25,15 @@ module.exports = {
       ),
       run: 'cross-env NODE_ENV=development electron ./dist',
       build: {
-        dev: 'webpack --config webpack.config.main.js --progress -d'
+        dev: 'webpack --config webpack.config.main.js --progress -d',
+        prod: 'webpack --config webpack.config.main.js --progress --env.production'
       }
     },
     renderer: {
-      default: 'nps renderer.build.development',
+      default: 'nps renderer.build.dev',
       build: {
-        development: 'webpack --watch --progress -d',
-        production: {
-          default: series(
-            'nps renderer.build.before',
-            'webpack --progress --env.production'
-          )
-        }
+        dev: 'webpack --watch --progress -d',
+        prod: 'webpack --progress --env.production'
       }
     }
   }
