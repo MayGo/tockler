@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "module": "commonjs",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -15,7 +15,8 @@
     "rootDir": "app"
   },
   "files": [
-    "app/index.ts"
+    "app/index.ts",
+    "app/typings.d.ts"
   ],
   "exclude": [
     "node_modules",
