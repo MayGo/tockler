@@ -13,7 +13,7 @@
     "start": "nps",
     "test": "nps test",
     "____pre____": "",
-    "postinstall": "install-app-deps",
+    "postinstall": "electron-builder install-app-deps",
     "build_mac": "build -c electron-builder.yml --mac",
     "build_linux": "build -c electron-builder.yml --linux",
     "build_windows": "build -c electron-builder.yml --win",
