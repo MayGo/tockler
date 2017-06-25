@@ -1,15 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2015",
     "module": "commonjs",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "skipLibCheck": true,
     "sourceMap": true,
-    "outDir": "out",
-    "baseUrl": "app",
-    "rootDir": "app"
+    "outDir": "out"
   },
   "files": [
     "app/index.ts",
