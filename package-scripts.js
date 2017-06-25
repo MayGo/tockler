@@ -1,5 +1,4 @@
 const { series, crossEnv, concurrent, rimraf } = require('nps-utils')
-const { config: { port: E2E_PORT } } = require('./test/protractor.conf')
 
 module.exports = {
   scripts: {
