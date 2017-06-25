@@ -8,6 +8,7 @@ import SettingsModel from './settings-model';
 import * as fs from "fs";
 import * as path from "path";
 import * as SequelizeStatic from "sequelize";
+import * as SequelizeMock from "sequelize-mock";
 import config from "../config";
 
 
@@ -20,7 +21,6 @@ export interface SequelizeModels {
 }
 
 class Database {
-  private _basename: string;
   private _models: SequelizeModels;
   private _sequelize: Sequelize;
 
@@ -28,22 +28,25 @@ class Database {
 
     let dbConfig = config.databaseConfig;
 
-    this._sequelize = new SequelizeStatic(dbConfig.database, dbConfig.username,
-      dbConfig.password, {
-        dialect: 'sqlite',
-        storage: dbConfig.outputPath,
-        logging: false
-      });
+    if (config.isTest) {
+      this._sequelize = new SequelizeMock();
+    } else {
+      this._sequelize = new SequelizeStatic(dbConfig.database, dbConfig.username,
+        dbConfig.password, {
+          dialect: 'sqlite',
+          storage: dbConfig.outputPath,
+          logging: false
+        });
+    }
 
-    this._basename = path.basename("index.js");
 
     let modules = [
       AppItemModel,
       TrackItemModel,
       SettingsModel,
     ];
+
     this._models = ({} as any);
-    console.log(__dirname)
 
     // Initialize models
     modules.forEach((module) => {
@@ -57,9 +60,6 @@ class Database {
         this._models[key].associate(this._models);
       }
     });
-
-
-
   }
 
   getModels() {

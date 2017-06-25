@@ -21,6 +21,7 @@ export default {
 
     // a flag to whether the app is running in development mode
     isDev: isDevelopment,
+    isTest: process.env.NODE_ENV === 'test',
 
     // enable tray icon for dev mode
 
