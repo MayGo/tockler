@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es5",
     "module": "commonjs",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -16,6 +16,7 @@
     "app/typings.d.ts"
   ],
   "exclude": [
+    "__tests__",
     "node_modules",
     "dist",
     "packaged",
