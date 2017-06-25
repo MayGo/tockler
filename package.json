@@ -27,10 +27,10 @@
   "dependencies": {
     "active-win": "^2.0.0",
     "auto-launch": "^5.0.1",
-    "bunyan": "^1.8.1",
     "compare-versions": "^3.0.0",
     "electron-context-menu": "^0.6.0",
     "electron-is-dev": "^0.1.2",
+    "electron-log": "^2.2.6",
     "electron-squirrel-startup": "^1.0.0",
     "electron-updater": "^2.3.1",
     "lodash": "^4.17.4",
