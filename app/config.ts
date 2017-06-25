@@ -1,12 +1,12 @@
-var path = require('path');
+
+import { app } from "electron";
+
+import * as path from 'path';
 
 const isDevelopment = require('electron-is-dev');
 
 var root = path.join(__dirname, '..');
-var app = require('electron').app;
 var userDir = app.getPath('userData');
-
-
 
 export default {
 
@@ -24,7 +24,7 @@ export default {
 
     // enable tray icon for dev mode
 
-    trayEnabledInDev: true,
+    trayEnabledInDev: false,
 
     // name of the main window
     mainAppName: 'main-window',
