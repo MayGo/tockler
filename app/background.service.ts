@@ -25,13 +25,8 @@ import { TrackItemType } from "./track-item-type.enum";
 
 const emptyItem = { title: 'EMPTY' };
 
-var rawItems = [emptyItem, emptyItem, emptyItem];
-
 var BACKGROUND_JOB_INTERVAL = 3000;
 var IDLE_IN_SECONDS_TO_LOG = 60 * 1;
-
-// on sleep computer can come out of it just for breif moment, at least mac
-var isSleeping = false;
 
 let shouldSplitLogItemFromDate = null;
 
@@ -120,7 +115,7 @@ export class BackgroundService {
                 item = await stateManager.updateRunningTrackItemEndDate(type);
 
             } else if (!stateManager.hasSameRunningTrackItem(rawItem)) {
-console.log("...")
+
                 item = await stateManager.createNewRunningTrackItem(rawItem);
 
                 TaskAnalyser.analyseAndNotify(item);
@@ -136,21 +131,15 @@ console.log("...")
         return item;
     }
 
-    addRawTrackItemToList(item) {
-        // Keep only 3 items in array
-        rawItems.unshift(item);
-        rawItems.pop();
-    }
-
     saveActiveWindow(newAppTrackItem) {
-        if (isSleeping) {
+        if (stateManager.isSystemSleeping()) {
             logger.info('Computer is sleeping, not running saveActiveWindow');
             return;
         }
-        if (lastTrackItems.StatusTrackItem !== null && lastTrackItems.StatusTrackItem.app === 'IDLE') {
+
+        if (stateManager.isSystemIdling()) {
             logger.debug('Not saving, app is idling', newAppTrackItem);
-            //addRawTrackItemToList(emptyItem);
-            lastTrackItems.AppTrackItem = null;
+            stateManager.resetAppTrackItem();
             return;
         }
 
@@ -168,20 +157,14 @@ console.log("...")
 
     saveIdleTrackItem(seconds) {
 
-        if (isSleeping) {
+        if (stateManager.isSystemSleeping()) {
             logger.info('Computer is sleeping, not running saveIdleTrackItem');
             return;
         }
 
-
-        var appName = (seconds > IDLE_IN_SECONDS_TO_LOG) ? 'IDLE' : 'ONLINE';
-        var appTitle = (seconds > IDLE_IN_SECONDS_TO_LOG) ? 'idle' : 'online';
-
+        let state: State = (seconds > IDLE_IN_SECONDS_TO_LOG) ? State.Idle : State.Online;
         // Cannot go from OFFLINE to IDLE
-        if (lastTrackItems.StatusTrackItem !== null &&
-            lastTrackItems.StatusTrackItem.app === 'OFFLINE' &&
-            appName === 'IDLE'
-        ) {
+        if (stateManager.isSystemOffline() && state === State.Idle) {
             logger.info('Not saving. Cannot go from OFFLINE to IDLE');
             return;
         }
@@ -192,8 +175,8 @@ console.log("...")
 
         var rawItem: any = {
             taskName: 'StatusTrackItem',
-            app: appName,
-            title: appTitle,
+            app: state,
+            title: state.toString().toLowerCase(),
             beginDate: beginDate,
             endDate: new Date()
         };
@@ -207,21 +190,17 @@ console.log("...")
     }
 
     onSleep() {
-        isSleeping = true;
-        //lastStatusTrackItemSaved = null;
-        lastTrackItems.AppTrackItem = null;
+        stateManager.setSystemToSleep();
     }
 
     onResume() {
-        this.addRawTrackItemToList(emptyItem);
-        this.addRawTrackItemToList(emptyItem);
-        this.addRawTrackItemToList(emptyItem);
-        if (lastTrackItems.StatusTrackItem != null) {
-            this.addInactivePeriod(lastTrackItems.StatusTrackItem.endDate, new Date());
+        stateManager.setAwakeFromSleep();
+        let statusTrackItem = stateManager.getRunningTrackItem(TrackItemType.StatusTrackItem);
+        if (statusTrackItem != null) {
+            this.addInactivePeriod(statusTrackItem.endDate, new Date());
         } else {
             logger.info('No lastTrackItems.StatusTrackItem for addInactivePeriod.');
         }
-        isSleeping = false;
     }
     saveForegroundWindowTitle() {
 
@@ -256,14 +235,12 @@ console.log("...")
 
     saveRunningLogItem() {
         // saveRunningLogItem can be run before app comes back ONLINE and running log item have to be split.
-        //
-        if (lastTrackItems.StatusTrackItem !== null &&
-            lastTrackItems.StatusTrackItem.app !== 'ONLINE') {
+        if ((stateManager.isSystemOnline())) {
             logger.info('Not saving running log item. Not online');
             return;
         }
 
-        if (isSleeping) {
+        if (stateManager.isSystemSleeping()) {
             logger.info('Computer is sleeping, not running saveRunningLogItem');
             return;
         }
@@ -275,6 +252,7 @@ console.log("...")
             splitEndDate = shouldSplitLogItemFromDate;
             shouldSplitLogItemFromDate = null;
         }
+
         settingsService.findByName('RUNNING_LOG_ITEM').then((item: any) => {
             var deferred = $q.defer();
             logger.debug("Found RUNNING_LOG_ITEM config: ", item);
@@ -297,13 +275,13 @@ console.log("...")
                     }
                     // set first LogTrackItem because
                     // when restarting application there would be multiple same items
-                    lastTrackItems.LogTrackItem = logItem;
+                    stateManager.setRunningTrackItem(logItem);
 
                     this.createOrUpdate(rawItem).then((savedItem) => {
 
                         if (splitEndDate) {
                             logger.info("Splitting LogItem, new item has endDate: ", splitEndDate);
-                            lastTrackItems.LogTrackItem = null;
+                            stateManager.resetLogTrackItem();
                             let newRawItem = this.getRawTrackItem(logItem);
 
                             let newBeginDate = new Date();

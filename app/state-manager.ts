@@ -18,6 +18,8 @@ interface TrackItems {
 
 export class StateManager {
 
+    private isSleeping = false;
+
     lastTrackItems: TrackItems = {
         StatusTrackItem: null,
         AppTrackItem: null,
@@ -29,12 +31,9 @@ export class StateManager {
 
     setRunningTrackItem(item: TrackItemInstance) {
         this.lastTrackItems[item.taskName] = item;
-        console.log(item.taskName);
-        console.log(this.lastTrackItems[item.taskName]);
     }
 
     getRunningTrackItem(type: TrackItemType): TrackItemInstance {
-        
         return this.lastTrackItems[type];
     }
 
@@ -49,6 +48,44 @@ export class StateManager {
     resetStatusTrackItem() {
         this.resetRunningTrackItem(TrackItemType.StatusTrackItem);
     }
+
+    resetLogTrackItem() {
+        this.resetRunningTrackItem(TrackItemType.LogTrackItem);
+    }
+
+    resetAppTrackItem() {
+        this.resetRunningTrackItem(TrackItemType.AppTrackItem);
+    }
+
+    isSystemIdling() {
+        let item = this.getRunningTrackItem(TrackItemType.StatusTrackItem);
+        return item !== null && item.app === State.Idle;
+    }
+
+    isSystemOffline() {
+        let item = this.getRunningTrackItem(TrackItemType.StatusTrackItem);
+        return item !== null && item.app === State.Offline;
+    }
+
+    isSystemOnline() {
+        let item = this.getRunningTrackItem(TrackItemType.StatusTrackItem);
+        return item !== null && item.app === State.Online;
+    }
+
+    isSystemSleeping() {
+        return this.isSleeping;
+    }
+
+    setSystemToSleep() {
+        this.isSleeping = true;
+        this.resetAppTrackItem();
+    }
+
+    setAwakeFromSleep() {
+        this.isSleeping = false;
+    }
+
+
 
     async endRunningTrackItem(rawItem: TrackItemAttributes) {
         let runningItem = this.getRunningTrackItem(rawItem.taskName);
