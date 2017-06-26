@@ -68,7 +68,7 @@ export default class TaskAnalyser {
             return;
         }
 
-        settingsService.fetchAnalyserSettings().then((analyserItems) => {
+        settingsService.fetchAnalyserSettings().then((analyserItems: any) => {
             for (let patObj of analyserItems) {
                 if (!patObj.findRe || !patObj.active) {
                     continue;
@@ -119,7 +119,7 @@ export default class TaskAnalyser {
 
         trackItemService.findLastOnlineItem().then((onlineItems) => {
             if (onlineItems && onlineItems.length > 0) {
-                settingsService.fetchWorkSettings().then((settings) => {
+                settingsService.fetchWorkSettings().then((settings: any) => {
                     var onlineItem = onlineItems[0];
                     var minutesAfterToSplit = settings.splitTaskAfterIdlingForMinutes || 3;
                     var minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
