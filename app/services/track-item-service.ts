@@ -7,7 +7,7 @@ import * as moment from "moment";
 
 export class TrackItemService {
 
-  logger = logManager.getLogger('TrackItemService')
+  logger = logManager.getLogger('TrackItemService');
   createTrackItem(trackItemAttributes: TrackItemAttributes): Promise<TrackItemInstance> {
     let promise = new Promise<TrackItemInstance>((resolve: Function, reject: Function) => {
       sequelize.transaction((t: Transaction) => {
@@ -203,27 +203,19 @@ export class TrackItemService {
     return this.createTrackItem(itemData);
   }
 
-  updateItem(itemData) {
+  async updateItem(itemData) {
 
-    let promise = new Promise<void>((resolve: Function, reject: Function) => {
-      models.TrackItem.update({
-        app: itemData.app,
-        title: itemData.title,
-        color: itemData.color,
-        beginDate: itemData.beginDate,
-        endDate: itemData.endDate
-      }, {
-          fields: ['beginDate', 'endDate', 'app', 'title', 'color'],
-          where: { id: itemData.id }
-        }).then(() => {
-          //console.log("Saved track item to DB:", itemData.id);
-          resolve(itemData);
-        }).catch((error: Error) => {
-          this.logger.error(error.message);
-          reject(error);
-        })
-    });
-    return promise;
+    let item = await models.TrackItem.update({
+      app: itemData.app,
+      title: itemData.title,
+      color: itemData.color,
+      beginDate: itemData.beginDate,
+      endDate: itemData.endDate
+    }, {
+        fields: ['beginDate', 'endDate', 'app', 'title', 'color'],
+        where: { id: itemData.id }
+      });
+    return item;
   }
 
   updateColorForApp(appName, color) {

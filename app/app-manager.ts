@@ -1,4 +1,4 @@
-import { appItemService } from './services/app-item-service';
+import { appSettingService } from './services/app-setting-service';
 import { trackItemService } from './services/track-item-service';
 import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import config from "./config";
@@ -38,7 +38,7 @@ export default class AppManager {
     (<any>global).shared = config;
 
     (<any>global).SettingsService = settingsService;
-    (<any>global).AppItemService = appItemService;
+    (<any>global).AppSettingService = appSettingService;
     (<any>global).TrackItemService = trackItemService;
   }
 }

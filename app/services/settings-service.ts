@@ -1,6 +1,6 @@
 import { TrackItemInstance } from '../models/interfaces/track-item-interface';
 import { trackItemService } from './track-item-service';
-import {logManager} from "../log-manager";
+import { logManager } from "../log-manager";
 
 import { models, sequelize } from "../models/index";
 import { SettingsAttributes, SettingsInstance } from "../models/interfaces/settings-interface";
@@ -102,19 +102,15 @@ export class SettingsService {
     return promise;
   }
 
-  findByName(name: string) {
-    let promise = new Promise<SettingsInstance>((resolve: Function, reject: Function) => {
-      models.Settings.findCreateFind({
-        where: {
-          name: name
-        }
-      }).then((items) => {
-        var item = items[0];
-        item.jsonDataParsed = JSON.parse(item.jsonData);
-        resolve(item);
-      });
+  async findByName(name: string) {
+    let items = await models.Settings.findOrCreate({
+      where: {
+        name: name
+      }
     });
-    return promise;
+    var item = items[0];
+    item.jsonDataParsed = JSON.parse(item.jsonData);
+    return item;
   }
 
   updateByName(name: string, jsonData: any) {
@@ -123,30 +119,17 @@ export class SettingsService {
       where: {
         name: name
       }
-    })
+    });
   }
 
-  fetchWorkSettings() {
-    let promise = new Promise<any>((resolve: Function, reject: Function) => {
-      this.findByName('WORK_SETTINGS').then((item: any) => {
-        //console.log('Fetched work item:', item);
-        resolve(item.jsonDataParsed)
-      });
-    });
-    return promise;
+  async fetchWorkSettings() {
+   let item = await this.findByName('WORK_SETTINGS');
+   return item.jsonDataParsed;
   }
 
-  fetchAnalyserSettings() {
-    let promise = new Promise<any>((resolve: Function, reject: Function) => {
-      this.findByName('ANALYSER_SETTINGS').then((item: any) => {
-        //console.log('Fetched work item:', item);
-        resolve(item.jsonDataParsed)
-      }).catch((error: Error) => {
-        this.logger.error(error.message);
-        reject(error);
-      })
-    });
-    return promise;
+  async fetchAnalyserSettings() {
+    let item = await this.findByName('ANALYSER_SETTINGS');
+    return item.jsonDataParsed;
   }
 
   getRunningLogItem() {
@@ -156,8 +139,8 @@ export class SettingsService {
         if (item.jsonDataParsed.id) {
           models.TrackItem.findById(item.jsonDataParsed.id).then((logItem) => {
             //console.log("resolved log item RUNNING_LOG_ITEM: ", logItem);
-            resolve(logItem)
-          })
+            resolve(logItem);
+          });
         } else {
           console.log("No RUNNING_LOG_ITEM ref id");
           resolve();
@@ -177,7 +160,7 @@ export class SettingsService {
         console.log("Updated log item to DB:", item);
       });
     }
-  };
+  }
 }
 
 export const settingsService = new SettingsService();

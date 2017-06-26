@@ -1,8 +1,8 @@
 
 import { TrackItemAttributes, TrackItemInstance } from './interfaces/track-item-interface';
-import { AppItemAttributes, AppItemInstance } from './interfaces/app-item-interface';
+import { AppSettingAttributes, AppSettingInstance } from './interfaces/app-setting-interface';
 import { SettingsAttributes, SettingsInstance } from './interfaces/settings-interface';
-import AppItemModel from './app-item-model';
+import AppSettingModel from './app-setting-model';
 import TrackItemModel from './track-item-model';
 import SettingsModel from './settings-model';
 import * as fs from "fs";
@@ -14,10 +14,14 @@ import config from "../config";
 
 import { DataTypes, Sequelize } from "sequelize";
 
+interface CustomModel<TInstance, TAttributes> extends SequelizeStatic.Model<TInstance, TAttributes> {
+  $queueResult(s: any): any;
+  $clearQueue();
+}
 export interface SequelizeModels {
-  TrackItem: SequelizeStatic.Model<TrackItemInstance, TrackItemAttributes>;
-  AppItem: SequelizeStatic.Model<AppItemInstance, AppItemAttributes>;
-  Settings: SequelizeStatic.Model<SettingsInstance, SettingsAttributes>;
+  TrackItem: CustomModel<TrackItemInstance, TrackItemAttributes>;
+  AppSetting: CustomModel<AppSettingInstance, AppSettingAttributes>;
+  Settings: CustomModel<SettingsInstance, SettingsAttributes>;
 }
 
 class Database {
@@ -28,8 +32,11 @@ class Database {
 
     let dbConfig = config.databaseConfig;
 
-    if (config.isTest) {
-      this._sequelize = new SequelizeMock();
+    if (config.isTest === true) {
+      this._sequelize = new SequelizeMock('', '',
+        '', {
+          autoQueryFallback: false
+        });
     } else {
       this._sequelize = new SequelizeStatic(dbConfig.database, dbConfig.username,
         dbConfig.password, {
@@ -41,7 +48,7 @@ class Database {
 
 
     let modules = [
-      AppItemModel,
+      AppSettingModel,
       TrackItemModel,
       SettingsModel,
     ];

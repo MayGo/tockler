@@ -34,6 +34,11 @@ module.exports = {
         dev: 'webpack --watch --progress -d',
         prod: 'webpack --progress --env.production'
       }
+    },
+    test: {
+      default: 'nps test.e2e',
+      unit: 'jest',
+      e2e: 'jest -c jest-e2e.json'
     }
   }
 }

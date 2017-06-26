@@ -1,13 +1,15 @@
-'use strict';
+
 import TaskAnalyser from './task-analyser';
 import { settingsService } from './services/settings-service';
 import { trackItemService } from './services/track-item-service';
-import { appItemService } from './services/app-item-service';
-
+import { appSettingService } from './services/app-setting-service';
+import { TrackItemInstance, TrackItemAttributes } from './models/interfaces/track-item-interface';
+import { State } from './state.enum';
 import { app, ipcMain, dialog } from "electron";
 import config from "./config";
 
 import { logManager } from "./log-manager";
+import { stateManager } from "./state-manager";
 var logger = logManager.getLogger('BackgroundService');
 
 var $q = require('q');
@@ -18,6 +20,7 @@ import UserMessages from "./user-messages";
 import BackgroundUtils from "./background.utils";
 import * as path from 'path';
 import { exec, execSync, execFile } from "child_process";
+import { TrackItemType } from "./track-item-type.enum";
 
 
 const emptyItem = { title: 'EMPTY' };
@@ -29,10 +32,6 @@ var IDLE_IN_SECONDS_TO_LOG = 60 * 1;
 
 // on sleep computer can come out of it just for breif moment, at least mac
 var isSleeping = false;
-
-// hold last saved trackitems by taskName ('StatusTrackItem', 'AppTrackItem', 'LogTrackItem')
-var lastTrackItems = { StatusTrackItem: null, AppTrackItem: null, LogTrackItem: null }
-
 
 let shouldSplitLogItemFromDate = null;
 
@@ -56,13 +55,13 @@ export class BackgroundService {
 
     addInactivePeriod(beginDate, endDate) {
 
-        var item: any = { app: 'OFF', title: "Inactive" };
+        var item: any = { app: State.Offline, title: "Inactive" };
         item.taskName = 'StatusTrackItem';
         item.beginDate = beginDate;
         item.endDate = endDate;
         logger.info("Adding inactive trackitem", item);
-        lastTrackItems.StatusTrackItem = null;
-        this.createOrUpdate(item);
+        stateManager.resetStatusTrackItem();
+        return this.createOrUpdate(item);
     }
 
     getRawTrackItem(savedItem) {
@@ -77,92 +76,64 @@ export class BackgroundService {
         return item;
     }
 
-    createOrUpdate(rawItem) {
+    async createItems(items) {
+        const promiseArray = items.map(async (newItem) => {
+            const savedItem = await trackItemService.createItem(newItem);
+            return savedItem;
+        });
+        return await Promise.all(promiseArray);
 
-        var deferred = $q.defer();
+    }
 
-        appItemService.getAppColor(rawItem.app).then((color) => {
-            rawItem.color = color;
+    async createOrUpdate(rawItem) {
 
-            var type = rawItem.taskName;
+        let color = await appSettingService.getAppColor(rawItem.app);
+        rawItem.color = color;
 
-            if (!type) {
-                logger.error('TaskName not defined:', rawItem);
+        let item: any;
+
+        let type: TrackItemType = rawItem.taskName;
+
+        if (!type) {
+            throw new Error('TaskName not defined.');
+        }
+
+        if (BackgroundUtils.shouldSplitInTwoOnMidnight(rawItem.beginDate, rawItem.endDate)) {
+
+            let items: TrackItemAttributes[] = BackgroundUtils.splitItemIntoDayChunks(rawItem);
+
+            if (stateManager.hasSameRunningTrackItem(rawItem)) {
+                let firstItem = items.shift();
+                stateManager.endRunningTrackItem(firstItem);
             }
 
-            if (BackgroundUtils.shouldSplitInTwoOnMidnight(rawItem.beginDate, rawItem.endDate)) {
-                logger.info('its midnight for item:', rawItem);
-                var almostMidnight = moment(rawItem.beginDate).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
-                var afterMidnight = BackgroundUtils.dateToAfterMidnight(rawItem.beginDate);
-                var originalEndDate = rawItem.endDate;
+            let savedItems = await this.createItems(items);
 
-                logger.debug('Midnight- almostMidnight: ' + almostMidnight + ', ' + afterMidnight);
-                rawItem.endDate = almostMidnight;
-                rawItem.endDateOverride = almostMidnight;
-                this.createOrUpdate(rawItem).then((item1) => {
-                    lastTrackItems[type] = null;
-                    logger.debug('Midnight- Saved one: ', item1);
-                    item1.beginDate = afterMidnight;
-                    item1.endDate = originalEndDate;
-                    item1.endDateOverride = originalEndDate;
-                    logger.debug('Midnight- Saving second: ', item1);
-                    this.createOrUpdate(this.getRawTrackItem(item1)).then((item2) => {
-                        logger.debug('Midnight- Saved second: ', item2);
-                        deferred.resolve(item2);
-                    }).catch((error) => {
-                        console.error("Second Item not updated.", error)
-                    });
-                }).catch((error) => {
-                    console.error("First Item not updated.", error)
-                });
-            } else {
+            let lastItem = savedItems[savedItems.length - 1];
+            item = lastItem;
+            stateManager.setRunningTrackItem(item);
 
-                if (!BackgroundUtils.isSameItems(rawItem, lastTrackItems[type])) {
+        } else {
 
-                    var promise = $q.when();
+            if (stateManager.hasSameRunningTrackItem(rawItem)) {
 
-                    if (lastTrackItems[type]) {
-                        lastTrackItems[type].endDate = rawItem.beginDate;
-                        logger.debug("Saving old trackItem:", lastTrackItems[type]);
-                        promise = trackItemService.updateItem(lastTrackItems[type])
-                    }
+                item = await stateManager.updateRunningTrackItemEndDate(type);
 
-                    promise.then(() => {
-                        //rawItem.endDate = new Date();
-                        trackItemService.createItem(rawItem).then((item) => {
-                            logger.debug("Created track item to DB:", item);
-                            lastTrackItems[type] = item;
-                            TaskAnalyser.analyseAndNotify(item);
-                            TaskAnalyser.analyseAndSplit(item).then((fromDate) => {
-                                if (fromDate) {
-                                    logger.info("Splitting LogTrackItem from date:", fromDate);
-                                    shouldSplitLogItemFromDate = fromDate;
-                                }
-                            });
+            } else if (!stateManager.hasSameRunningTrackItem(rawItem)) {
+console.log("...")
+                item = await stateManager.createNewRunningTrackItem(rawItem);
 
-                            deferred.resolve(item);
-                        }).catch((error) => {
-                            console.error("New Item not created.", error)
-                        });
-                    }).catch((error) => {
-                        console.error("Old Item not updated.", error)
-                    });
+                TaskAnalyser.analyseAndNotify(item);
 
-                } else if (BackgroundUtils.isSameItems(rawItem, lastTrackItems[type])) {
-                    lastTrackItems[type].endDate = rawItem.endDateOverride || new Date();
-                    trackItemService.updateItem(lastTrackItems[type]).then((item) => {
-                        logger.debug("Saved track item(endDate change) to DB:", item);
-                        lastTrackItems[type] = item;
-                        deferred.resolve(item);
-                    }).catch((error) => {
-                        console.error("Item not updated.", error)
-                    });
-                } else {
-                    logger.error("Nothing to do with item", rawItem);
+                let fromDate: Date = await TaskAnalyser.analyseAndSplit(item);
+                if (fromDate) {
+                    logger.info("Splitting LogTrackItem from date:", fromDate);
+                    shouldSplitLogItemFromDate = fromDate;
                 }
             }
-        })
-        return deferred.promise;
+        }
+
+        return item;
     }
 
     addRawTrackItemToList(item) {
@@ -180,7 +151,7 @@ export class BackgroundService {
             logger.debug('Not saving, app is idling', newAppTrackItem);
             //addRawTrackItemToList(emptyItem);
             lastTrackItems.AppTrackItem = null;
-            return
+            return;
         }
 
         if (!newAppTrackItem.title && !newAppTrackItem.app) {
@@ -212,7 +183,7 @@ export class BackgroundService {
             appName === 'IDLE'
         ) {
             logger.info('Not saving. Cannot go from OFFLINE to IDLE');
-            return
+            return;
         }
 
         var beginDate = new Date();
@@ -228,10 +199,10 @@ export class BackgroundService {
         };
 
 
-        appItemService.getAppColor(rawItem.app).then((color) => {
+        appSettingService.getAppColor(rawItem.app).then((color) => {
             rawItem.color = color;
             this.createOrUpdate(rawItem);
-        })
+        });
 
     }
 
@@ -248,7 +219,7 @@ export class BackgroundService {
         if (lastTrackItems.StatusTrackItem != null) {
             this.addInactivePeriod(lastTrackItems.StatusTrackItem.endDate, new Date());
         } else {
-            logger.info('No lastTrackItems.StatusTrackItem for addInactivePeriod.')
+            logger.info('No lastTrackItems.StatusTrackItem for addInactivePeriod.');
         }
         isSleeping = false;
     }
@@ -289,7 +260,7 @@ export class BackgroundService {
         if (lastTrackItems.StatusTrackItem !== null &&
             lastTrackItems.StatusTrackItem.app !== 'ONLINE') {
             logger.info('Not saving running log item. Not online');
-            return
+            return;
         }
 
         if (isSleeping) {
@@ -310,7 +281,7 @@ export class BackgroundService {
             if (item.jsonDataParsed.id) {
                 trackItemService.findById(item.jsonDataParsed.id).then((logItem: any) => {
                     if (!logItem) {
-                        logger.error("RUNNING_LOG_ITEM not found by id", item.jsonDataParsed.id)
+                        logger.error("RUNNING_LOG_ITEM not found by id", item.jsonDataParsed.id);
                         return;
                     }
                     logger.debug("Found RUNNING_LOG_ITEM real LogItem: ", logItem);
@@ -353,10 +324,10 @@ export class BackgroundService {
                         }
 
                     });
-                })
+                });
             } else {
                 logger.debug("No RUNNING_LOG_ITEM ref id");
-                deferred.resolve()
+                deferred.resolve();
             }
             return deferred.promise;
         });
