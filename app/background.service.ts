@@ -33,16 +33,18 @@ let oneThreadRunning = false;
 
 export class BackgroundService {
 
-    addInactivePeriod(beginDate, endDate) {
+    async addInactivePeriod(beginDate, endDate) {
 
-        var item: any = { app: State.Offline, title: "Inactive" };
-        item.taskName = 'StatusTrackItem';
-        item.beginDate = beginDate;
-        item.endDate = endDate;
-        logger.info("Adding inactive trackitem", item);
+        var rawItem: any = { app: State.Offline, title: State.Offline.toString().toLowerCase() };
+        rawItem.taskName = TrackItemType.StatusTrackItem;
+        rawItem.beginDate = beginDate;
+        rawItem.endDate = endDate;
+        logger.info("Adding inactive trackitem", rawItem);
 
         stateManager.resetStatusTrackItem();
-        return this.createOrUpdate(item);
+
+        let item = await this.createOrUpdate(rawItem);
+        return item;
     }
 
     async createItems(items) {
@@ -159,11 +161,11 @@ export class BackgroundService {
         stateManager.setSystemToSleep();
     }
 
-    onResume() {
-        stateManager.setAwakeFromSleep();
+    async onResume() {
         let statusTrackItem = stateManager.getRunningTrackItem(TrackItemType.StatusTrackItem);
         if (statusTrackItem != null) {
-            this.addInactivePeriod(statusTrackItem.endDate, new Date());
+            let item = await this.addInactivePeriod(statusTrackItem.endDate, new Date());
+            stateManager.setAwakeFromSleep();
         } else {
             logger.info('No lastTrackItems.StatusTrackItem for addInactivePeriod.');
         }

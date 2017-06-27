@@ -78,11 +78,13 @@ export class StateManager {
 
     setSystemToSleep() {
         this.isSleeping = true;
+        logger.info("System is going to sleep state.");
         this.resetAppTrackItem();
     }
 
     setAwakeFromSleep() {
         this.isSleeping = false;
+        logger.info("System is awakeing from sleep state.");
     }
 
 

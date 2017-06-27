@@ -194,7 +194,7 @@ describe('addInactivePeriod', () => {
         const item = await backgroundService.addInactivePeriod(beginDate, endDate);
 
 
-        expect(item.title).toEqual('Inactive');
+        expect(item.title).toEqual('offline');
         expect(item.taskName).toEqual(TrackItemType.StatusTrackItem);
         expect(item.app).toEqual(appName);
         expect(item.beginDate).toEqual(beginDate);
