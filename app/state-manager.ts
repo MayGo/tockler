@@ -93,8 +93,8 @@ export class StateManager {
         let runningItem = this.getRunningTrackItem(rawItem.taskName);
 
         if (runningItem) {
-            runningItem.endDate = runningItem.beginDate;
-            logger.debug("Saving old trackItem:", runningItem);
+            runningItem.endDate = rawItem.beginDate;
+            logger.info("Ending trackItem:", runningItem.toJSON());
             await trackItemService.updateItem(runningItem);
             this.resetRunningTrackItem(rawItem.taskName);
         }
