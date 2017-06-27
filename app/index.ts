@@ -1,3 +1,4 @@
+import { backgroundJob } from './background.job';
 import { backgroundService } from './background.service';
 import { app, ipcMain, powerMonitor } from "electron";
 import { logManager } from "./log-manager";
@@ -50,7 +51,7 @@ app.on('ready', () => {
         windowManager.setTrayWindow();
     }
 
-    backgroundService.init();
+    backgroundJob.init();
 
     powerMonitor.on('suspend', function () {
         console.log('The system is going to sleep');

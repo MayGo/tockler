@@ -1,5 +1,6 @@
 
 import { logManager } from './log-manager';
+import { appConstants } from './app-constants';
 import { TrackItemAttributes } from './models/interfaces/track-item-interface';
 import * as moment from 'moment';
 
@@ -13,6 +14,13 @@ export default class BackgroundUtils {
         }
 
         return false;
+    }
+
+    static currentTimeMinusJobInterval() {
+        let now = new Date();
+        //Begin date is always BACKGROUND_JOB_INTERVAL before current date
+        now.setMilliseconds(now.getMilliseconds() - appConstants.BACKGROUND_JOB_INTERVAL);
+        return now;
     }
 
     static shouldSplitInTwoOnMidnight(beginDate, endDate) {
@@ -34,6 +42,20 @@ export default class BackgroundUtils {
     static daysBetween(beginDate, endDate) {
         return moment(endDate).endOf('day').diff(moment(beginDate).startOf('day'), 'days');
     }
+
+    static getRawTrackItem(savedItem) {
+        var item = {
+            app: savedItem.app,
+            title: savedItem.title,
+            taskName: savedItem.taskName,
+            color: savedItem.color,
+            beginDate: savedItem.beginDate,
+            endDate: savedItem.endDate
+        };
+
+        return item;
+    }
+
 
     static splitItemIntoDayChunks(item: TrackItemAttributes): TrackItemAttributes[] {
         let daysBetween: number = BackgroundUtils.daysBetween(item.beginDate, item.endDate) + 1;

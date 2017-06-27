@@ -104,7 +104,7 @@ export class StateManager {
         this.endRunningTrackItem(rawItem);
 
         let item = await trackItemService.createItem(rawItem);
-        logger.debug("Created track item to DB and set running item:", item);
+        logger.debug("Created track item to DB and set running item:", item.toJSON());
 
         this.setRunningTrackItem(item);
         return item;
@@ -116,7 +116,7 @@ export class StateManager {
         let runningItem = this.getRunningTrackItem(type);
         runningItem.endDate = new Date();
         await trackItemService.updateItem(runningItem);
-        logger.debug("Saved track item(endDate change) to DB:", runningItem);
+        logger.info("Saved track item(endDate change) to DB:", runningItem.toJSON());
         return runningItem;
     }
 
