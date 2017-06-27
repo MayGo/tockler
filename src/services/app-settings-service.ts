@@ -6,7 +6,7 @@ export class AppSettingsService {
     private service: any;
 
     constructor() {
-        this.service = remote.getGlobal('AppItemService');
+        this.service = remote.getGlobal('AppSettingService');
     }
 
     changeColorForApp(appName, color) {

@@ -2,15 +2,15 @@
 
 import * as SequelizeStatic from "sequelize";
 import { DataTypes, Sequelize } from "sequelize";
-import { AppItemAttributes, AppItemInstance } from "./interfaces/app-item-interface";
+import { AppSettingAttributes, AppSettingInstance } from "./interfaces/app-setting-interface";
 
 export default function (sequelize: Sequelize):
-  SequelizeStatic.Model<AppItemInstance, AppItemAttributes> {
-  let AppItem = sequelize.define<AppItemInstance, AppItemAttributes>('AppItem', {
+  SequelizeStatic.Model<AppSettingInstance, AppSettingAttributes> {
+  let AppSetting = sequelize.define<AppSettingInstance, AppSettingAttributes>('AppSetting', {
     name: SequelizeStatic.STRING,
     color: SequelizeStatic.STRING
   }, { timestamps: false });
 
-  return AppItem;
+  return AppSetting;
 }
 

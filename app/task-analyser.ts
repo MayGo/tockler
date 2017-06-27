@@ -2,7 +2,7 @@
 import { TrackItemInstance } from './models/interfaces/track-item-interface';
 import { settingsService } from './services/settings-service';
 import { trackItemService } from './services/track-item-service';
-import { appItemService } from './services/app-item-service';
+import { appSettingService } from './services/app-setting-service';
 
 import * as notifier from "node-notifier";
 
@@ -18,7 +18,7 @@ notifier.on('click', function (notifierObject, options) {
         return;
     }
     console.log("Clicked. Creating new task", TaskAnalyser.newItem);
-    appItemService.getAppColor(TaskAnalyser.newItem.app).then((color) => {
+    appSettingService.getAppColor(TaskAnalyser.newItem.app).then((color) => {
         TaskAnalyser.newItem.color = color;
         trackItemService.createItem(TaskAnalyser.newItem).then((trackItem: any) => {
             console.log("Created new task, saving reference: ", trackItem.id);
@@ -68,7 +68,7 @@ export default class TaskAnalyser {
             return;
         }
 
-        settingsService.fetchAnalyserSettings().then((analyserItems) => {
+        settingsService.fetchAnalyserSettings().then((analyserItems: any) => {
             for (let patObj of analyserItems) {
                 if (!patObj.findRe || !patObj.active) {
                     continue;
@@ -119,7 +119,7 @@ export default class TaskAnalyser {
 
         trackItemService.findLastOnlineItem().then((onlineItems) => {
             if (onlineItems && onlineItems.length > 0) {
-                settingsService.fetchWorkSettings().then((settings) => {
+                settingsService.fetchWorkSettings().then((settings: any) => {
                     var onlineItem = onlineItems[0];
                     var minutesAfterToSplit = settings.splitTaskAfterIdlingForMinutes || 3;
                     var minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');

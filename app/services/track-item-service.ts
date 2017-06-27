@@ -7,100 +7,25 @@ import * as moment from "moment";
 
 export class TrackItemService {
 
-  logger = logManager.getLogger('TrackItemService')
-  createTrackItem(trackItemAttributes: TrackItemAttributes): Promise<TrackItemInstance> {
-    let promise = new Promise<TrackItemInstance>((resolve: Function, reject: Function) => {
-      sequelize.transaction((t: Transaction) => {
-        return models.TrackItem.create(trackItemAttributes).then((trackItem: TrackItemInstance) => {
-          this.logger.info(`Created trackItem with title ${trackItemAttributes.title}.`);
-          resolve(trackItem);
-        }).catch((error: Error) => {
-          this.logger.error(error.message);
-          reject(error);
-        });
-      });
-    });
+  logger = logManager.getLogger('TrackItemService');
 
-    return promise;
+  async createTrackItem(trackItemAttributes: TrackItemAttributes): Promise<TrackItemInstance> {
+    let trackItem = await models.TrackItem.create(trackItemAttributes);
+    this.logger.info(`Created trackItem with title ${trackItemAttributes.title}.`);
+    return trackItem;
   }
 
-  retrieveTrackItem(name: string): Promise<TrackItemInstance> {
-    let promise = new Promise<TrackItemInstance>((resolve: Function, reject: Function) => {
-      sequelize.transaction((t: Transaction) => {
-        return models.TrackItem.findOne({ where: { name: name } }).then((trackItem: TrackItemInstance) => {
-          if (trackItem) {
-            this.logger.info(`Retrieved trackItem with name ${name}.`);
-          } else {
-            this.logger.info(`TrackItem with name ${name} does not exist.`);
-          }
-          resolve(trackItem);
-        }).catch((error: Error) => {
-          this.logger.error(error.message);
-          reject(error);
-        });
-      });
-    });
+  async updateTrackItem(name: string, trackItemAttributes: any): Promise<[number, Array<TrackItemInstance>]> {
+    let results = await models.TrackItem.update(trackItemAttributes, { where: { name: name } });
 
-    return promise;
+    if (results.length > 0) {
+      this.logger.info(`Updated trackItem with name ${name}.`);
+    } else {
+      this.logger.info(`TrackItem with name ${name} does not exist.`);
+    }
+
+    return results;
   }
-
-  retrieveTrackItems(): Promise<Array<TrackItemInstance>> {
-    let promise = new Promise<Array<TrackItemInstance>>((resolve: Function, reject: Function) => {
-      sequelize.transaction((t: Transaction) => {
-        return models.TrackItem.findAll().then((trackItems: Array<TrackItemInstance>) => {
-          this.logger.info("Retrieved all trackItems.");
-          resolve(trackItems);
-        }).catch((error: Error) => {
-          this.logger.error(error.message);
-          reject(error);
-        });
-      });
-    });
-
-    return promise;
-  }
-
-  updateTrackItem(name: string, trackItemAttributes: any): Promise<void> {
-    let promise = new Promise<void>((resolve: Function, reject: Function) => {
-      sequelize.transaction((t: Transaction) => {
-        return models.TrackItem.update(trackItemAttributes, { where: { name: name } })
-          .then((results: [number, Array<TrackItemInstance>]) => {
-            if (results.length > 0) {
-              this.logger.info(`Updated trackItem with name ${name}.`);
-            } else {
-              this.logger.info(`TrackItem with name ${name} does not exist.`);
-            }
-            resolve(null);
-          }).catch((error: Error) => {
-            this.logger.error(error.message);
-            reject(error);
-          });
-      });
-    });
-
-    return promise;
-  }
-
-  deleteTrackItem(name: string): Promise<void> {
-    let promise = new Promise<void>((resolve: Function, reject: Function) => {
-      sequelize.transaction((t: Transaction) => {
-        return models.TrackItem.destroy({ where: { name: name } }).then((afffectedRows: number) => {
-          if (afffectedRows > 0) {
-            this.logger.info(`Deleted trackItem with name ${name}`);
-          } else {
-            this.logger.info(`TrackItem with name ${name} does not exist.`);
-          }
-          resolve(null);
-        }).catch((error: Error) => {
-          this.logger.error(error.message);
-          reject(error);
-        });
-      });
-    });
-
-    return promise;
-  }
-
 
   findAllItems(from, to, taskName, searchStr, paging) {
 
@@ -128,7 +53,7 @@ export class TrackItemService {
     if (searchStr) {
       where.title = {
         $like: '%' + searchStr + '%'
-      }
+      };
     }
 
     return models.TrackItem.findAndCountAll({
@@ -203,27 +128,19 @@ export class TrackItemService {
     return this.createTrackItem(itemData);
   }
 
-  updateItem(itemData) {
+  async updateItem(itemData) {
 
-    let promise = new Promise<void>((resolve: Function, reject: Function) => {
-      models.TrackItem.update({
-        app: itemData.app,
-        title: itemData.title,
-        color: itemData.color,
-        beginDate: itemData.beginDate,
-        endDate: itemData.endDate
-      }, {
-          fields: ['beginDate', 'endDate', 'app', 'title', 'color'],
-          where: { id: itemData.id }
-        }).then(() => {
-          //console.log("Saved track item to DB:", itemData.id);
-          resolve(itemData);
-        }).catch((error: Error) => {
-          this.logger.error(error.message);
-          reject(error);
-        })
-    });
-    return promise;
+    let item = await models.TrackItem.update({
+      app: itemData.app,
+      title: itemData.title,
+      color: itemData.color,
+      beginDate: itemData.beginDate,
+      endDate: itemData.endDate
+    }, {
+        fields: ['beginDate', 'endDate', 'app', 'title', 'color'],
+        where: { id: itemData.id }
+      });
+    return item;
   }
 
   updateColorForApp(appName, color) {

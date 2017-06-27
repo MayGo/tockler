@@ -8,7 +8,7 @@ export default function (sequelize: Sequelize):
   SequelizeStatic.Model<SettingsInstance, SettingsAttributes> {
   let Settings = sequelize.define<SettingsInstance, SettingsAttributes>('Settings', {
     name: SequelizeStatic.STRING,
-    jsonData: { type: SequelizeStatic.TEXT, defaultValue: '{}' }
+    jsonData: { type: SequelizeStatic.STRING, defaultValue: '{}' }
   });
 
   return Settings;

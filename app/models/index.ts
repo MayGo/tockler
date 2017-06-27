@@ -1,26 +1,30 @@
 
 import { TrackItemAttributes, TrackItemInstance } from './interfaces/track-item-interface';
-import { AppItemAttributes, AppItemInstance } from './interfaces/app-item-interface';
+import { AppSettingAttributes, AppSettingInstance } from './interfaces/app-setting-interface';
 import { SettingsAttributes, SettingsInstance } from './interfaces/settings-interface';
-import AppItemModel from './app-item-model';
+import AppSettingModel from './app-setting-model';
 import TrackItemModel from './track-item-model';
 import SettingsModel from './settings-model';
 import * as fs from "fs";
 import * as path from "path";
 import * as SequelizeStatic from "sequelize";
+import * as SequelizeMock from "sequelize-mock";
 import config from "../config";
 
 
 import { DataTypes, Sequelize } from "sequelize";
 
+interface CustomModel<TInstance, TAttributes> extends SequelizeStatic.Model<TInstance, TAttributes> {
+  $queueResult(s: any): any;
+  $clearQueue();
+}
 export interface SequelizeModels {
-  TrackItem: SequelizeStatic.Model<TrackItemInstance, TrackItemAttributes>;
-  AppItem: SequelizeStatic.Model<AppItemInstance, AppItemAttributes>;
-  Settings: SequelizeStatic.Model<SettingsInstance, SettingsAttributes>;
+  TrackItem: CustomModel<TrackItemInstance, TrackItemAttributes>;
+  AppSetting: CustomModel<AppSettingInstance, AppSettingAttributes>;
+  Settings: CustomModel<SettingsInstance, SettingsAttributes>;
 }
 
 class Database {
-  private _basename: string;
   private _models: SequelizeModels;
   private _sequelize: Sequelize;
 
@@ -28,22 +32,28 @@ class Database {
 
     let dbConfig = config.databaseConfig;
 
-    this._sequelize = new SequelizeStatic(dbConfig.database, dbConfig.username,
-      dbConfig.password, {
-        dialect: 'sqlite',
-        storage: dbConfig.outputPath,
-        logging: false
-      });
+    if (config.isTest === true) {
+      this._sequelize = new SequelizeMock('', '',
+        '', {
+          autoQueryFallback: false
+        });
+    } else {
+      this._sequelize = new SequelizeStatic(dbConfig.database, dbConfig.username,
+        dbConfig.password, {
+          dialect: 'sqlite',
+          storage: dbConfig.outputPath,
+          logging: false
+        });
+    }
 
-    this._basename = path.basename("index.js");
 
     let modules = [
-      AppItemModel,
+      AppSettingModel,
       TrackItemModel,
       SettingsModel,
     ];
+
     this._models = ({} as any);
-    console.log(__dirname)
 
     // Initialize models
     modules.forEach((module) => {
@@ -57,9 +67,6 @@ class Database {
         this._models[key].associate(this._models);
       }
     });
-
-
-
   }
 
   getModels() {

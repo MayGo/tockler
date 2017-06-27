@@ -1,0 +1,16 @@
+{
+  "unmockedModulePathPatterns": [
+    "babel",
+    "<rootDir>/node_modules/source-map-support"
+  ],
+  "moduleFileExtensions": [
+    "ts",
+    "js"
+  ],
+  "setupTestFrameworkScriptFile": "<rootDir>/util/jest-setup.js",
+  "transform": {
+    "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+  },
+  "testRegex": "/__e2e__/.*\\.test\\.ts$",
+  "testEnvironment": "node"
+}

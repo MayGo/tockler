@@ -1,21 +1,20 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2015",
     "module": "commonjs",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "skipLibCheck": true,
     "sourceMap": true,
-    "outDir": "out",
-    "baseUrl": "app",
-    "rootDir": "app"
+    "outDir": "out"
   },
   "files": [
     "app/index.ts",
     "app/typings.d.ts"
   ],
   "exclude": [
+    "__tests__",
     "node_modules",
     "dist",
     "packaged",

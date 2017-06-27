@@ -6,6 +6,9 @@ directories:
   output: "packaged"
 files:
 - "!aurelia_project"
+- "!__tests__"
+- "!__e2e__"
+- "!__mocks__"
 - "!custom_typings"
 - "!src"
 - "!fonts"
