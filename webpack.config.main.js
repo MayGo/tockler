@@ -41,7 +41,7 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
       {
         test: /\.ts$/i,
         loader: 'awesome-typescript-loader',
-        options: { configFileName: tsConfigPath, tsconfig: tsConfigPath }
+        options: tsOptions
       }
     ]
   },
