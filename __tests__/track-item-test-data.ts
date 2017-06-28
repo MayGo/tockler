@@ -1,7 +1,5 @@
-
-
+import { TrackItemAttributes } from '../app/models/interfaces/track-item-interface';
 import { TrackItemType } from '../app/track-item-type.enum';
-import { TrackItemAttributes } from './models/interfaces/track-item-interface';
 import * as moment from 'moment';
 
 export default class TrackItemTestData {
