@@ -56,3 +56,36 @@ describe('isSystemOnline', () => {
         expect(state).toEqual(false);
     });
 });
+
+
+describe('endRunningTrackItem', () => {
+
+    afterEach(async () => {
+        stateManager.resetRunningTrackItem(TrackItemType.StatusTrackItem);
+        models.TrackItem.$clearQueue();
+    });
+
+    it('returns true if has running item to end', async () => {
+        models.TrackItem.$queueResult([]);
+
+        stateManager.resetRunningTrackItem(TrackItemType.StatusTrackItem);
+        let itemRunning: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
+        stateManager.setRunningTrackItem(itemRunning);
+
+        let rawItem: TrackItemAttributes = TrackItemTestData.getStatusTrackItem({ app: State.Online });
+
+        let hadRunningItemToUpdate = await stateManager.endRunningTrackItem(rawItem);
+        expect(hadRunningItemToUpdate).toEqual(true);
+    });
+
+    it('returns false if has no running item to end', async () => {
+
+        stateManager.resetRunningTrackItem(TrackItemType.StatusTrackItem);
+
+        let rawItem: TrackItemAttributes = TrackItemTestData.getStatusTrackItem({ app: State.Online });
+
+        let hadRunningItemToUpdate = await stateManager.endRunningTrackItem(rawItem);
+        expect(hadRunningItemToUpdate).toEqual(false);
+    });
+
+});
