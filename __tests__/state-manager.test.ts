@@ -69,13 +69,17 @@ describe('endRunningTrackItem', () => {
         models.TrackItem.$queueResult([]);
 
         stateManager.resetRunningTrackItem(TrackItemType.StatusTrackItem);
-        let itemRunning: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
+        let rawItemRunning = TrackItemTestData.getStatusTrackItem({ app: State.Online });
+        let itemRunning: TrackItemInstance = models.TrackItem.build(rawItemRunning);
         stateManager.setRunningTrackItem(itemRunning);
 
-        let rawItem: TrackItemAttributes = TrackItemTestData.getStatusTrackItem({ app: State.Online });
+        let rawItem: TrackItemAttributes = TrackItemTestData.getStatusTrackItem({ app: State.Online }, 1);
 
-        let hadRunningItemToUpdate = await stateManager.endRunningTrackItem(rawItem);
-        expect(hadRunningItemToUpdate).toEqual(true);
+        expect(rawItemRunning.endDate).not.toEqual(rawItem.beginDate);
+
+        let updatedItem = await stateManager.endRunningTrackItem(rawItem);
+        expect(updatedItem).not.toEqual(rawItemRunning);
+        expect(updatedItem.endDate).toEqual(rawItem.beginDate);
     });
 
     it('returns false if has no running item to end', async () => {
@@ -84,8 +88,8 @@ describe('endRunningTrackItem', () => {
 
         let rawItem: TrackItemAttributes = TrackItemTestData.getStatusTrackItem({ app: State.Online });
 
-        let hadRunningItemToUpdate = await stateManager.endRunningTrackItem(rawItem);
-        expect(hadRunningItemToUpdate).toEqual(false);
+        let updatedItem = await stateManager.endRunningTrackItem(rawItem);
+        expect(updatedItem).toEqual(null);
     });
 
 });
