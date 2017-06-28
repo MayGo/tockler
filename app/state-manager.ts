@@ -97,10 +97,9 @@ export class StateManager {
             logger.info("Ending trackItem:", runningItem.toJSON());
             await trackItemService.updateItem(runningItem, runningItem.id);
             this.resetRunningTrackItem(rawItem.taskName);
-            return true;
         }
 
-        return false;
+        return runningItem;
     }
 
     async createNewRunningTrackItem(rawItem: TrackItemAttributes) {
