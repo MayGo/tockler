@@ -124,11 +124,7 @@ export class TrackItemService {
     });
   }
 
-  createItem(itemData) {
-    return this.createTrackItem(itemData);
-  }
-
-  async updateItem(itemData) {
+  async updateItem(itemData: TrackItemAttributes, id: number): Promise<[number, TrackItemInstance[]]> {
 
     let item = await models.TrackItem.update({
       app: itemData.app,
@@ -138,7 +134,7 @@ export class TrackItemService {
       endDate: itemData.endDate
     }, {
         fields: ['beginDate', 'endDate', 'app', 'title', 'color'],
-        where: { id: itemData.id }
+        where: { id: id }
       });
     return item;
   }
