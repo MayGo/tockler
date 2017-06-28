@@ -29,7 +29,7 @@ export class TrackItemService {
     }
 
     createItem(trackItem): Promise<any>  {
-        return this.service.createItem(trackItem);
+        return this.service.createTrackItem(trackItem);
     }
 
     updateItem(trackItem): Promise<any>  {

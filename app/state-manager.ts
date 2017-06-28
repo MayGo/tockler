@@ -95,29 +95,28 @@ export class StateManager {
         if (runningItem) {
             runningItem.endDate = rawItem.beginDate;
             logger.info("Ending trackItem:", runningItem.toJSON());
-            await trackItemService.updateItem(runningItem);
+            await trackItemService.updateItem(runningItem, runningItem.id);
             this.resetRunningTrackItem(rawItem.taskName);
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     async createNewRunningTrackItem(rawItem: TrackItemAttributes) {
         this.endRunningTrackItem(rawItem);
 
-        let item = await trackItemService.createItem(rawItem);
+        let item = await trackItemService.createTrackItem(rawItem);
         logger.debug("Created track item to DB and set running item:", item.toJSON());
 
         this.setRunningTrackItem(item);
         return item;
     }
 
-
-
     async updateRunningTrackItemEndDate(type: TrackItemType) {
         let runningItem = this.getRunningTrackItem(type);
         runningItem.endDate = new Date();
-        await trackItemService.updateItem(runningItem);
+        await trackItemService.updateItem(runningItem, runningItem.id);
         logger.info("Saved track item(endDate change) to DB:", runningItem.toJSON());
         return runningItem;
     }

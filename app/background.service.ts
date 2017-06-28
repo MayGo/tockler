@@ -49,7 +49,7 @@ export class BackgroundService {
 
     async createItems(items) {
         const promiseArray = items.map(async (newItem) => {
-            const savedItem = await trackItemService.createItem(newItem);
+            const savedItem = await trackItemService.createTrackItem(newItem);
             return savedItem;
         });
         return await Promise.all(promiseArray);
