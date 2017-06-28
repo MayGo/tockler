@@ -2,19 +2,11 @@ jest.autoMockOff();
 
 import BackgroundUtils from '../app/background.utils';
 import { models } from '../app/models';
-import { TrackItemAttributes } from '../app/models/interfaces/track-item-interface';
+import { TrackItemAttributes, TrackItemInstance } from '../app/models/interfaces/track-item-interface';
 import { stateManager } from '../app/state-manager';
+import { State } from '../app/state.enum';
 import { TrackItemType } from '../app/track-item-type.enum';
-import {
-    TrackItemInstance,
-} from '../packaged/mac/Tockler.app/Contents/Resources/app/app/models/interfaces/track-item-interface';
 import TrackItemTestData from './track-item-test-data';
-
-import * as moment from 'moment';
-import { State } from "../app/state.enum";
-
-
-const dateFormat = "YYYY-MM-DD HH:mm:ss";
 
 describe('isSystemOnline', () => {
 
