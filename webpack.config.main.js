@@ -10,9 +10,9 @@ const tsConfigPath = path.resolve(__dirname, 'app', 'tsconfig.main.json');
 let tsOptions = { configFileName: tsConfigPath }
 
 // AppVeyor fix, needs tsconfig insteadof configFileName
-//if (os.platform() === 'win32') {
+if (os.platform() === 'win32') {
   tsOptions = { tsconfig: tsConfigPath }
-//}
+}
 console.log("Using tsOptions:", tsOptions)
 
 module.exports = ({ production, server, extractCss, coverage } = {}) => ({
