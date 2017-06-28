@@ -52,7 +52,7 @@ export class TrackItemService {
         newItem.endDate = moment().add(60, 'seconds').toDate();
 
         return new Promise((resolve, reject) => {
-            this.service.createItem(newItem).then((item) => {
+            this.service.createTrackItem(newItem).then((item) => {
                 console.log("Created newItem to DB:", item);
 
                 this.settingsService.saveRunningLogItemReferemce(item.id);
@@ -60,7 +60,7 @@ export class TrackItemService {
             });
         });
 
-    };
+    }
 
     stopRunningLogItem(runningLogItemId) {
         console.log("stopRunningLogItem");
@@ -72,7 +72,7 @@ export class TrackItemService {
             this.settingsService.saveRunningLogItemReferemce(null);
 
         });
-    };
+    }
 
     updateColorForApp(appName, color) {
         return this.service.updateColorForApp(appName, color);
