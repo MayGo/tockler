@@ -120,7 +120,7 @@ export default class TaskAnalyser {
             var minutesAfterToSplit = settings.splitTaskAfterIdlingForMinutes || 3;
             var minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
 
-            console.log("Minutes from now:" + minutesFromNow);
+            console.log(`Minutes from now:  ${minutesFromNow}, minutesAfterToSplit: ${minutesAfterToSplit}`);
 
             if (minutesFromNow >= minutesAfterToSplit) {
                 let endDate = moment(onlineItem.endDate).add(minutesAfterToSplit, 'minutes').toDate();
@@ -128,6 +128,6 @@ export default class TaskAnalyser {
             }
         } 
 
-        return null;
+       // return null;
     }
 }

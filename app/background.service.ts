@@ -12,10 +12,7 @@ import { logManager } from "./log-manager";
 import { stateManager } from "./state-manager";
 var logger = logManager.getLogger('BackgroundService');
 
-var $q = require('q');
-
 import * as moment from 'moment';
-import * as activeWin from 'active-win';
 import UserMessages from "./user-messages";
 import BackgroundUtils from "./background.utils";
 import * as path from 'path';
@@ -100,109 +97,6 @@ export class BackgroundService {
         }
 
         return item;
-    }
-
-    saveActiveWindow(newAppTrackItem) {
-        if (stateManager.isSystemSleeping()) {
-            logger.info('Computer is sleeping, not running saveActiveWindow');
-            return 'SLEEPING'; //TODO: throw exception
-        }
-
-        if (stateManager.isSystemIdling()) {
-            logger.debug('Not saving, app is idling', newAppTrackItem);
-            stateManager.resetAppTrackItem();
-            return 'IDLING'; //TODO: throw exception
-        }
-
-        if (!newAppTrackItem.title && !newAppTrackItem.app) {
-            // Lock screen have no title, maybe something
-            newAppTrackItem.app = 'NATIVE';
-            newAppTrackItem.taskName = 'AppTrackItem';
-            newAppTrackItem.title = 'NO_TITLE';
-        } else {
-            newAppTrackItem.taskName = 'AppTrackItem';
-        }
-
-        this.createOrUpdate(newAppTrackItem);
-    }
-
-    saveIdleTrackItem(seconds) {
-
-        if (stateManager.isSystemSleeping()) {
-            logger.info('Computer is sleeping, not running saveIdleTrackItem');
-            return 'SLEEPING';
-        }
-
-        let state: State = (seconds > appConstants.IDLE_IN_SECONDS_TO_LOG) ? State.Idle : State.Online;
-        // Cannot go from OFFLINE to IDLE
-        if (stateManager.isSystemOffline() && state === State.Idle) {
-            logger.info('Not saving. Cannot go from OFFLINE to IDLE');
-            return 'BAD_STATE';
-        }
-
-        var rawItem: any = {
-            taskName: 'StatusTrackItem',
-            app: state,
-            title: state.toString().toLowerCase(),
-            beginDate: BackgroundUtils.currentTimeMinusJobInterval(),
-            endDate: new Date()
-        };
-
-        this.createOrUpdate(rawItem);
-    }
-
-    async updateRunningLogItem() {
-        // saveRunningLogItem can be run before app comes back ONLINE and running log item have to be split.
-        if (!stateManager.isSystemOnline()) {
-            logger.info('Not saving running log item. Not online');
-            return 'NOT_ONLINE';
-        }
-
-        if (stateManager.isSystemSleeping()) {
-            logger.info('Computer is sleeping, not running saveRunningLogItem');
-            return 'SLEEPING';
-        }
-
-
-        let logItemMarkedAsRunning = stateManager.getLogTrackItemMarkedAsRunning();
-        if (!logItemMarkedAsRunning) {
-            logger.debug("RUNNING_LOG_ITEM not found.");
-            return 'RUNNING_LOG_ITEM_NOT_FOUND';
-        }
-
-        let splitEndDate: Date = await TaskAnalyser.getTaskSplitDate();
-
-        if (splitEndDate) {
-            logger.info("Splitting LogItem, new item has endDate: ", splitEndDate);
-
-            if (logItemMarkedAsRunning.beginDate > splitEndDate) {
-                logger.error("BeginDate is after endDate. Not saving RUNNING_LOG_ITEM");
-                return;
-            }
-
-            stateManager.endRunningTrackItem({ endDate: splitEndDate, taskName: TrackItemType.LogTrackItem });
-
-            let newRawItem = BackgroundUtils.getRawTrackItem(logItemMarkedAsRunning);
-
-            newRawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
-            newRawItem.endDate = Date.now();
-            let newSavedItem = await backgroundService.createOrUpdate(newRawItem);
-
-            stateManager.setLogTrackItemMarkedAsRunning(newSavedItem);
-            return newSavedItem;
-        } else {
-            let rawItem: any = BackgroundUtils.getRawTrackItem(logItemMarkedAsRunning);
-
-            rawItem.endDate = Date.now();
-            let savedItem = await backgroundService.createOrUpdate(rawItem);
-            // at midnight track item is split and new items ID should be RUNNING_LOG_ITEM
-            if (savedItem.id !== logItemMarkedAsRunning.id) {
-                logger.info('RUNNING_LOG_ITEM changed at midnight.');
-                stateManager.setLogTrackItemMarkedAsRunning(savedItem);
-            }
-            return savedItem;
-        }
-
     }
 
     onSleep() {

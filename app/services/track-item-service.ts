@@ -5,6 +5,9 @@ import { TrackItemAttributes, TrackItemInstance } from "../models/interfaces/tra
 import { Transaction } from "sequelize";
 import * as moment from "moment";
 import { settingsService } from "./settings-service";
+import { State } from "../state.enum";
+import { stateManager } from "../state-manager";
+import { TrackItemType } from "../track-item-type.enum";
 
 export class TrackItemService {
 
@@ -108,16 +111,26 @@ export class TrackItemService {
   findLastOnlineItem() {
     //ONLINE item can be just inserted, we want old one.
     // 2 seconds should be enough
-    let beginDate = moment().subtract(5, 'seconds').toDate();
+    let currentStatusItem = stateManager.getRunningTrackItem(TrackItemType.StatusTrackItem);
+
+    if (currentStatusItem && currentStatusItem.app != State.Online) {
+      throw new Error("Not online.");
+    }
+
+    let whereQuery: any = {
+      app: State.Online,
+      taskName: 'StatusTrackItem'
+    };
+    
+    if (currentStatusItem) {
+      whereQuery.id = {
+        $ne: currentStatusItem.id
+      };
+    }
+
 
     return models.TrackItem.findAll({
-      where: {
-        app: 'ONLINE',
-        beginDate: {
-          $lte: beginDate
-        },
-        taskName: 'StatusTrackItem'
-      },
+      where: whereQuery,
       limit: 1,
       order: [
         ['endDate', 'DESC']
