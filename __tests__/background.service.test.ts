@@ -43,7 +43,7 @@ describe('createOrUpdate', () => {
         expect(item.color).toContain('#');
     });
 
-    fit('splits item at midnight', async () => {
+    it('splits item at midnight', async () => {
         //Create mock data
         models.AppSetting.$queueResult([]);
 

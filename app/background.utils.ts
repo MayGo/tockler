@@ -24,7 +24,7 @@ export default class BackgroundUtils {
     }
 
     static shouldSplitInTwoOnMidnight(beginDate, endDate) {
-        return beginDate.getDate() < endDate.getDate();
+        return BackgroundUtils.daysBetween(beginDate, endDate) > 0;
     }
 
     static dateToAfterMidnight(d) {
