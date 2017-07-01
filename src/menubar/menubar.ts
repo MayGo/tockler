@@ -46,9 +46,12 @@ export class Menubar {
         ipcRenderer.removeAllListeners('log-item-started');
     }
 
-    logItemStarted(item) {
+    logItemStarted(event, item) {
         logger.info("log-item-started", item);
-        this.runningLogItem = item;
+        let parsedItem = item;
+        parsedItem.beginDate = new Date(item.beginDate);
+        parsedItem.endDate = new Date(item.endDate);
+        this.runningLogItem = parsedItem;
     }
 
     loadItems() {
@@ -89,10 +92,11 @@ export class Menubar {
     stopRunningLogItem() {
         if (this.runningLogItem && this.runningLogItem.id) {
 
-            this.trackItemService.stopRunningLogItem(this.runningLogItem.id).then(() => {
-                this.runningLogItem = null;
-                this.loadItems();
-            });
+            this.trackItemService.stopRunningLogItem(this.runningLogItem.id);
+
+            this.runningLogItem = null;
+            this.loadItems();
+
         } else {
             console.debug("No running log item");
         }

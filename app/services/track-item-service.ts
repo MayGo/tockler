@@ -88,7 +88,7 @@ export class TrackItemService {
   findAllFromDay(day, taskName) {
 
     var to = moment(day).add(1, 'days');
-    console.log('findAllFromDay ' + taskName + ' from:' + day + ', to:' + to.toDate());
+    this.logger.info('findAllFromDay ' + taskName + ' from:' + day + ', to:' + to.toDate());
 
     return this.findAllDayItems(day, to.toDate(), taskName);
   }
@@ -142,7 +142,7 @@ export class TrackItemService {
 
   updateColorForApp(appName, color) {
 
-    console.log("Updating app color:", appName, color);
+    this.logger.info("Updating app color:", appName, color);
 
     return models.TrackItem.update({ color: color }, {
       fields: ['color'],
@@ -168,7 +168,7 @@ export class TrackItemService {
           fields: ['endDate'],
           where: { id: id }
         }).then(() => {
-          console.log("Saved track item to DB with now:", id);
+          this.logger.info("Saved track item to DB with now:", id);
           resolve(id);
         }).catch((error: Error) => {
           this.logger.error(error.message);
@@ -184,7 +184,7 @@ export class TrackItemService {
       models.TrackItem.destroy({
         where: { id: id }
       }).then(() => {
-        console.log("Deleted track item with ID:", id);
+        this.logger.info("Deleted track item with ID:", id);
         resolve(id);
       }).catch((error: Error) => {
         this.logger.error(error.message);
@@ -204,7 +204,7 @@ export class TrackItemService {
           }
         }
       }).then(() => {
-        console.log("Deleted track items with IDs:", ids);
+        this.logger.info("Deleted track items with IDs:", ids);
         resolve(ids);
       }).catch((error: Error) => {
         this.logger.error(error.message);

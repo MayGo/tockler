@@ -36,7 +36,12 @@ export class StateManager {
     initIpc() {
         ipcMain.on('start-new-log-item', (event, rawItem: TrackItemAttributes) => {
             logger.info('start-new-log-item', rawItem);
-            this.createNewRunningTrackItem(rawItem).then((item) => event.sender.send('log-item-started', item));
+            this.createNewRunningTrackItem(rawItem)
+                .then((item: TrackItemInstance) => {
+                    logger.info('log-item-started', item.toJSON());
+                    this.setLogTrackItemMarkedAsRunning(item);
+                    event.sender.send('log-item-started', item.toJSON());
+                });
         });
 
         ipcMain.on('end-running-log-item', (event) => {
@@ -52,7 +57,7 @@ export class StateManager {
         this.setRunningTrackItem(logItem);
 
         if (this.logTrackItemMarkedAsRunning) {
-            logger.info("Restored running LogTrackItem:", logItem);
+            logger.info("Restored running LogTrackItem:", logItem.toJSON());
         }
 
         return logItem;

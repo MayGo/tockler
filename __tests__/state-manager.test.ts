@@ -3,11 +3,12 @@ jest.autoMockOff();
 import BackgroundUtils from '../app/background.utils';
 import { models } from '../app/models';
 import { TrackItemAttributes, TrackItemInstance } from '../app/models/interfaces/track-item-interface';
+import { settingsService } from '../app/services/settings-service';
+import { trackItemService } from '../app/services/track-item-service';
 import { stateManager } from '../app/state-manager';
 import { State } from '../app/state.enum';
 import { TrackItemType } from '../app/track-item-type.enum';
 import TrackItemTestData from './track-item-test-data';
-import { settingsService } from "../app/services/settings-service";
 
 describe('isSystemOnline', () => {
 
@@ -94,6 +95,7 @@ describe('endRunningTrackItem', () => {
     });
 
 });
+
 describe('setLogTrackItemMarkedAsRunning', () => {
 
     afterEach(async () => {
@@ -112,6 +114,32 @@ describe('setLogTrackItemMarkedAsRunning', () => {
         expect(saveRunningLogItemReferenceMock.mock.calls.length).toBe(1);
         let saveRunningLogItemReferenceMockCalledWith = saveRunningLogItemReferenceMock.mock.calls[0][0];
         expect(saveRunningLogItemReferenceMockCalledWith).toBe(itemRunning.id);
+    });
+
+});
+
+
+describe('restoreState', () => {
+
+    afterEach(async () => {
+
+    });
+
+    it('saves running log item id', async () => {
+
+        let rawItemRunning = TrackItemTestData.getLogTrackItem();
+        let itemRunning: TrackItemInstance = models.TrackItem.build(rawItemRunning);
+
+        let findRunningLogItemMock = jest.fn();
+        trackItemService.findRunningLogItem = findRunningLogItemMock;
+        findRunningLogItemMock.mockReturnValueOnce(itemRunning);
+
+        let restoredItem = await stateManager.restoreState();
+
+        expect(findRunningLogItemMock.mock.calls.length).toBe(1);
+        expect(stateManager.getRunningTrackItem(TrackItemType.LogTrackItem)).toBe(itemRunning);
+        expect(stateManager.getLogTrackItemMarkedAsRunning()).toBe(itemRunning);
+        expect(restoredItem).toBe(itemRunning);
     });
 
 });

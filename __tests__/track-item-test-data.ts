@@ -9,6 +9,7 @@ export default class TrackItemTestData {
             app: 'Chrome',
             title: 'google.com',
             taskName: TrackItemType.AppTrackItem,
+            color: '#123456',
             beginDate: moment().startOf('day').add(addHours, 'hours').toDate(),
             endDate: moment().startOf('day').add(addHours + 1, 'hours').toDate()
         };
@@ -21,6 +22,7 @@ export default class TrackItemTestData {
             app: 'WORK',
             title: 'Some work.',
             taskName: TrackItemType.LogTrackItem,
+            color: '#123456',
             beginDate: moment().startOf('day').add(addDays, 'hours').toDate(),
             endDate: moment().startOf('day').add(addDays + 1, 'hours').toDate()
         };
@@ -32,6 +34,7 @@ export default class TrackItemTestData {
         const rawItem: TrackItemAttributes = {
             app: 'IDLE',
             taskName: TrackItemType.StatusTrackItem,
+            color: '#123456',
             beginDate: moment().startOf('day').add(addDays, 'hours').toDate(),
             endDate: moment().startOf('day').add(addDays + 1, 'hours').toDate()
         };

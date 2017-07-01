@@ -5,6 +5,7 @@ import config from "./config";
 import { sequelize } from "./models/index";
 
 import { logManager } from "./log-manager";
+import { stateManager } from "./state-manager";
 import { settingsService } from "./services/settings-service";
 var logger = logManager.getLogger('AppManager');
 
@@ -14,7 +15,7 @@ export default class AppManager {
     AppManager.syncDb();
     AppManager.initGlobalClasses();
     AppManager.initIpc();
-  
+    stateManager.restoreState();
   }
 
   static initIpc() {
