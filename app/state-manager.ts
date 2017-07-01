@@ -88,6 +88,10 @@ export class StateManager {
         return this.lastTrackItems[type];
     }
 
+    getCurrentStatusTrackItem(){
+        return this.getCurrentTrackItem(TrackItemType.StatusTrackItem);
+    }
+
     hasSameRunningTrackItem(rawItem: TrackItemAttributes): boolean {
         return BackgroundUtils.isSameItems(rawItem, this.getCurrentTrackItem(rawItem.taskName));
     }

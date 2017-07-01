@@ -104,7 +104,7 @@ export class BackgroundService {
     }
 
     async onResume() {
-        let statusTrackItem = stateManager.getCurrentTrackItem(TrackItemType.StatusTrackItem);
+        let statusTrackItem = stateManager.getCurrentStatusTrackItem();
         if (statusTrackItem != null) {
             let item = await this.addInactivePeriod(statusTrackItem.endDate, new Date());
             stateManager.setAwakeFromSleep();

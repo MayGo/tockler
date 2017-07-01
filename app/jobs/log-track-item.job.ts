@@ -9,10 +9,8 @@ import { TrackItemType } from "../track-item-type.enum";
 import { backgroundService } from '../background.service';
 import BackgroundUtils from "../background.utils";
 import { TrackItemInstance } from "../models/interfaces/track-item-interface";
-
-let shouldSplitLogItemFromDate = null;
-
-
+import { trackItemService } from "../services/track-item-service";
+import { settingsService } from "../services/settings-service";
 
 export class LogTrackItemJob {
 
@@ -23,7 +21,7 @@ export class LogTrackItemJob {
             this.checkIfIsInCorrectState();
             this.updateRunningLogItem();
         } catch (error) {
-            logger.error(error);
+            logger.error(error.message);
         }
     }
 
@@ -42,7 +40,7 @@ export class LogTrackItemJob {
     async updateRunningLogItem() {
 
         let oldOnlineItem = this.onlineItemWhenLastSplit;
-        this.onlineItemWhenLastSplit = stateManager.getCurrentTrackItem(TrackItemType.StatusTrackItem);
+        this.onlineItemWhenLastSplit = stateManager.getCurrentStatusTrackItem();
 
         let logItemMarkedAsRunning = stateManager.getLogTrackItemMarkedAsRunning();
         if (!logItemMarkedAsRunning) {
@@ -50,42 +48,56 @@ export class LogTrackItemJob {
             return null;
         }
 
-        let splitEndDate: Date = await TaskAnalyser.getTaskSplitDate();
+        let rawItem: any = BackgroundUtils.getRawTrackItem(logItemMarkedAsRunning);
+        rawItem.endDate = Date.now();
 
-        let shouldSplit = oldOnlineItem != this.onlineItemWhenLastSplit;
+        let shouldTrySplitting = oldOnlineItem != this.onlineItemWhenLastSplit;
 
-        if (splitEndDate && shouldSplit) {
-     
-            logger.info("Splitting LogItem, new item has endDate: ", splitEndDate);
+        if (shouldTrySplitting) {
+            let splitEndDate: Date = await this.getTaskSplitDate();
+            if (splitEndDate) {
+                logger.info("Splitting LogItem, new item has endDate: ", splitEndDate);
 
-            if (logItemMarkedAsRunning.beginDate > splitEndDate) {
-                logger.error("BeginDate is after endDate. Not saving RUNNING_LOG_ITEM");
-                return;
+                if (logItemMarkedAsRunning.beginDate > splitEndDate) {
+                    logger.error("BeginDate is after endDate. Not saving RUNNING_LOG_ITEM");
+                    return;
+                }
+
+                stateManager.endRunningTrackItem({ endDate: splitEndDate, taskName: TrackItemType.LogTrackItem });
+
+                rawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
             }
-
-            stateManager.endRunningTrackItem({ endDate: splitEndDate, taskName: TrackItemType.LogTrackItem });
-
-            let newRawItem = BackgroundUtils.getRawTrackItem(logItemMarkedAsRunning);
-
-            newRawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
-            newRawItem.endDate = Date.now();
-            let newSavedItem = await backgroundService.createOrUpdate(newRawItem);
-
-            stateManager.setLogTrackItemMarkedAsRunning(newSavedItem);
-            return newSavedItem;
-        } else {
-            let rawItem: any = BackgroundUtils.getRawTrackItem(logItemMarkedAsRunning);
-
-            rawItem.endDate = Date.now();
-            let savedItem = await backgroundService.createOrUpdate(rawItem);
-            // at midnight track item is split and new items ID should be RUNNING_LOG_ITEM
-            if (savedItem.id !== logItemMarkedAsRunning.id) {
-                logger.info('RUNNING_LOG_ITEM changed at midnight.');
-                stateManager.setLogTrackItemMarkedAsRunning(savedItem);
-            }
-            return savedItem;
         }
 
+        let savedItem = await backgroundService.createOrUpdate(rawItem);
+        // at midnight track item is split and new items ID should be RUNNING_LOG_ITEM
+        if (savedItem.id !== logItemMarkedAsRunning.id) {
+            logger.info('RUNNING_LOG_ITEM changed.');
+            stateManager.setLogTrackItemMarkedAsRunning(savedItem);
+        }
+        return savedItem;
+
+
+    }
+
+    async getTaskSplitDate() {
+        let onlineItems = await trackItemService.findLastOnlineItem();
+        if (onlineItems && onlineItems.length > 0) {
+            let settings = await settingsService.fetchWorkSettings();
+
+            let onlineItem: any = onlineItems[0];
+            var minutesAfterToSplit = settings.splitTaskAfterIdlingForMinutes || 3;
+            var minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
+
+            console.log(`Minutes from now:  ${minutesFromNow}, minutesAfterToSplit: ${minutesAfterToSplit}`);
+
+            if (minutesFromNow >= minutesAfterToSplit) {
+                let endDate = moment(onlineItem.endDate).add(minutesAfterToSplit, 'minutes').toDate();
+                return endDate;
+            }
+        }
+
+        return null;
     }
 }
 

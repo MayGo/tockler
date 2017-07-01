@@ -700,7 +700,7 @@ export c<span class="missing-if-branch" title="if path not taken" >I</span>lass 
     }<span class="missing-if-branch" title="if path not taken" >I</span>
 <span class="cstat-no" title="statement not covered" ></span>
     async onResume() {<span class="cstat-no" title="statement not covered" ></span>
-        let statusTrackItem = stateManager.getCurrentTrackItem(TrackItemType.StatusTrackItem);
+        let statusTrackItem = stateManager.getCurrentStatusTrackItem();
         if (statusTrackItem != null) {
             let item = await this.addInactivePeriod(statusTrackItem.endDate, new Date());
             stateManager.setAwakeFromSleep();

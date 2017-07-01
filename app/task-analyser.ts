@@ -110,24 +110,4 @@ export default class TaskAnalyser {
             }
         });
     }
-
-    static async getTaskSplitDate() {
-        let onlineItems = await trackItemService.findLastOnlineItem();
-        if (onlineItems && onlineItems.length > 0) {
-            let settings = await settingsService.fetchWorkSettings();
-
-            var onlineItem = onlineItems[0];
-            var minutesAfterToSplit = settings.splitTaskAfterIdlingForMinutes || 3;
-            var minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
-
-            console.log(`Minutes from now:  ${minutesFromNow}, minutesAfterToSplit: ${minutesAfterToSplit}`);
-
-            if (minutesFromNow >= minutesAfterToSplit) {
-                let endDate = moment(onlineItem.endDate).add(minutesAfterToSplit, 'minutes').toDate();
-                return endDate;
-            }
-        } 
-
-       // return null;
-    }
 }

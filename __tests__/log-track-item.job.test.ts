@@ -6,11 +6,12 @@ import { models } from '../app/models';
 import { TrackItemAttributes, TrackItemInstance } from '../app/models/interfaces/track-item-interface';
 import { stateManager } from '../app/state-manager';
 import { State } from '../app/state.enum';
-import TaskAnalyser from '../app/task-analyser';
 import { TrackItemType } from '../app/track-item-type.enum';
 import TrackItemTestData from './track-item-test-data';
 
 import * as moment from 'moment';
+import { trackItemService } from "../app/services/track-item-service";
+import { settingsService } from "../app/services/settings-service";
 
 const dateFormat = "YYYY-MM-DD HH:mm:ss";
 
@@ -77,7 +78,7 @@ describe('updateRunningLogItem saving', () => {
         stateManager.getLogTrackItemMarkedAsRunning = getLogTrackItemMarkedAsRunningMock;
 
         getTaskSplitDateMock = jest.fn();
-        TaskAnalyser.getTaskSplitDate = getTaskSplitDateMock;
+        logTrackItemJob.getTaskSplitDate = getTaskSplitDateMock;
 
         endRunningTrackItemMock = jest.fn();
         stateManager.endRunningTrackItem = endRunningTrackItemMock;
@@ -171,4 +172,28 @@ describe('updateRunningLogItem saving', () => {
         let endRunningTrackItemMockWith = endRunningTrackItemMock.mock.calls[0][0];
         expect(endRunningTrackItemMockWith.endDate).toBe(splitEndDate);
     });
+});
+
+
+describe('TaskAnalyser', () => {
+
+    it('returns split date', async () => {
+
+        let lastOnlineItem: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
+
+        let findLastOnlineItemMock = jest.fn();
+        trackItemService.findLastOnlineItem = findLastOnlineItemMock;
+        findLastOnlineItemMock.mockReturnValueOnce([lastOnlineItem]);
+
+        let fetchWorkSettingsMock = jest.fn();
+        settingsService.fetchWorkSettings = fetchWorkSettingsMock;
+        fetchWorkSettingsMock.mockReturnValueOnce({ splitTaskAfterIdlingForMinutes: 1 });
+
+        let shouldReturnDate = moment(lastOnlineItem.endDate).add(1, 'minutes');
+
+        let splitDate = await logTrackItemJob.getTaskSplitDate();
+        expect(shouldReturnDate).toEqual(splitDate);
+
+    });
+
 });
