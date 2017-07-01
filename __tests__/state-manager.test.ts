@@ -7,6 +7,7 @@ import { stateManager } from '../app/state-manager';
 import { State } from '../app/state.enum';
 import { TrackItemType } from '../app/track-item-type.enum';
 import TrackItemTestData from './track-item-test-data';
+import { settingsService } from "../app/services/settings-service";
 
 describe('isSystemOnline', () => {
 
@@ -65,7 +66,7 @@ describe('endRunningTrackItem', () => {
         models.TrackItem.$clearQueue();
     });
 
-    it('returns true if has running item to end', async () => {
+    it('returns item if has running item to end', async () => {
         models.TrackItem.$queueResult([]);
 
         stateManager.resetRunningTrackItem(TrackItemType.StatusTrackItem);
@@ -82,7 +83,7 @@ describe('endRunningTrackItem', () => {
         expect(updatedItem.endDate).toEqual(rawItem.beginDate);
     });
 
-    it('returns false if has no running item to end', async () => {
+    it('returns null if has no running item to end', async () => {
 
         stateManager.resetRunningTrackItem(TrackItemType.StatusTrackItem);
 
@@ -90,6 +91,27 @@ describe('endRunningTrackItem', () => {
 
         let updatedItem = await stateManager.endRunningTrackItem(rawItem);
         expect(updatedItem).toEqual(null);
+    });
+
+});
+describe('setLogTrackItemMarkedAsRunning', () => {
+
+    afterEach(async () => {
+
+    });
+
+    it('saves running log item id', async () => {
+
+        let rawItemRunning = TrackItemTestData.getStatusTrackItem({ app: State.Online });
+        let itemRunning: TrackItemInstance = models.TrackItem.build(rawItemRunning);
+
+        let saveRunningLogItemReferenceMock = jest.fn();
+        settingsService.saveRunningLogItemReference = saveRunningLogItemReferenceMock;
+        stateManager.setLogTrackItemMarkedAsRunning(itemRunning);
+
+        expect(saveRunningLogItemReferenceMock.mock.calls.length).toBe(1);
+        let saveRunningLogItemReferenceMockCalledWith = saveRunningLogItemReferenceMock.mock.calls[0][0];
+        expect(saveRunningLogItemReferenceMockCalledWith).toBe(itemRunning.id);
     });
 
 });

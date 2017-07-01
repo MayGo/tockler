@@ -4,6 +4,7 @@ import { models, sequelize } from "../models/index";
 import { TrackItemAttributes, TrackItemInstance } from "../models/interfaces/track-item-interface";
 import { Transaction } from "sequelize";
 import * as moment from "moment";
+import { settingsService } from "./settings-service";
 
 export class TrackItemService {
 
@@ -11,7 +12,7 @@ export class TrackItemService {
 
   async createTrackItem(trackItemAttributes: TrackItemAttributes): Promise<TrackItemInstance> {
     let trackItem = await models.TrackItem.create(trackItemAttributes);
-    this.logger.info(`Created trackItem with title ${trackItemAttributes.title}.`);
+    this.logger.info(`Created trackItem :`, trackItem.toJSON());
     return trackItem;
   }
 
@@ -211,6 +212,30 @@ export class TrackItemService {
       });
     });
     return promise;
+  }
+
+  async findRunningLogItem() {
+    let item = await settingsService.findByName('RUNNING_LOG_ITEM');
+
+    if (!item) {
+      this.logger.debug("No RUNNING_LOG_ITEM.");
+      return null;
+    }
+
+    this.logger.debug("Found RUNNING_LOG_ITEM config: ", item.toJSON());
+
+    let logTrackItemId = item.jsonDataParsed.id;
+    if (!logTrackItemId) {
+      this.logger.debug("No RUNNING_LOG_ITEM ref id");
+      return null;
+    }
+
+    let logItem = await trackItemService.findById(logTrackItemId);
+    if (!logItem) {
+      this.logger.error("RUNNING_LOG_ITEM not found by id:", logTrackItemId);
+      return null;
+    }
+    return logItem;
   }
 }
 

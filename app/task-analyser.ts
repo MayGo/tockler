@@ -20,6 +20,7 @@ notifier.on('click', function (notifierObject, options) {
     console.log("Clicked. Creating new task", TaskAnalyser.newItem);
     appSettingService.getAppColor(TaskAnalyser.newItem.app).then((color) => {
         TaskAnalyser.newItem.color = color;
+        //TODO: refactor
         trackItemService.createTrackItem(TaskAnalyser.newItem).then((trackItem: any) => {
             console.log("Created new task, saving reference: ", trackItem.id);
             TaskAnalyser.newItem = null;
@@ -32,7 +33,7 @@ notifier.on('click', function (notifierObject, options) {
                 wait: false // Wait with callback, until user action is taken against notification
             });
 
-            settingsService.saveRunningLogItemReferemce(trackItem.id);
+            settingsService.saveRunningLogItemReference(trackItem.id);
         });
     });
 });
@@ -110,37 +111,23 @@ export default class TaskAnalyser {
         });
     }
 
-    static analyseAndSplit(item) {
-        var deferred = $q.defer();
-        if (item.taskName != 'StatusTrackItem') {
-            deferred.resolve();
-            return deferred.promise;
-        }
+    static async getTaskSplitDate() {
+        let onlineItems = await trackItemService.findLastOnlineItem();
+        if (onlineItems && onlineItems.length > 0) {
+            let settings = await settingsService.fetchWorkSettings();
 
-        trackItemService.findLastOnlineItem().then((onlineItems) => {
-            if (onlineItems && onlineItems.length > 0) {
-                settingsService.fetchWorkSettings().then((settings: any) => {
-                    var onlineItem = onlineItems[0];
-                    var minutesAfterToSplit = settings.splitTaskAfterIdlingForMinutes || 3;
-                    var minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
-                    console.log("Minutes from now:" + minutesFromNow);
-                    if (minutesFromNow >= minutesAfterToSplit) {
-                        let endDate = moment(onlineItem.endDate).add(minutesAfterToSplit, 'minutes').toDate();
-                        deferred.resolve(endDate);
-                    } else {
-                        deferred.resolve();
-                    }
-                }).catch((error) => {
-                    console.error("Fetching work settings failed.", error);
-                    deferred.resolve();
-                });
+            var onlineItem = onlineItems[0];
+            var minutesAfterToSplit = settings.splitTaskAfterIdlingForMinutes || 3;
+            var minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
 
-            } else {
-                deferred.resolve();
+            console.log("Minutes from now:" + minutesFromNow);
+
+            if (minutesFromNow >= minutesAfterToSplit) {
+                let endDate = moment(onlineItem.endDate).add(minutesAfterToSplit, 'minutes').toDate();
+                return endDate;
             }
+        } 
 
-        });
-
-        return deferred.promise;
+        return null;
     }
 }

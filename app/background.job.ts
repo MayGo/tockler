@@ -39,7 +39,7 @@ export class BackgroundJob {
         setInterval(() => {
             this.saveUserIdleTime();
             this.saveForegroundWindowTitle();
-            this.saveRunningLogItem();
+            this.updateRunningLogItem();
 
         }, appConstants.BACKGROUND_JOB_INTERVAL);
     }
@@ -71,81 +71,9 @@ export class BackgroundJob {
 
     }
 
-    saveRunningLogItem() {
-        // saveRunningLogItem can be run before app comes back ONLINE and running log item have to be split.
-        if (!stateManager.isSystemOnline()) {
-            logger.info('Not saving running log item. Not online');
-            return;
-        }
-
-        if (stateManager.isSystemSleeping()) {
-            logger.info('Computer is sleeping, not running saveRunningLogItem');
-            return;
-        }
-
-        let splitEndDate = null;
-
-        // Getting and reseting variable
-        if (shouldSplitLogItemFromDate != null) {
-            splitEndDate = shouldSplitLogItemFromDate;
-            shouldSplitLogItemFromDate = null;
-        }
-
-        settingsService.findByName('RUNNING_LOG_ITEM').then((item: any) => {
-            var deferred = $q.defer();
-            logger.debug("Found RUNNING_LOG_ITEM config: ", item);
-            if (item.jsonDataParsed.id) {
-                trackItemService.findById(item.jsonDataParsed.id).then((logItem: any) => {
-                    if (!logItem) {
-                        logger.error("RUNNING_LOG_ITEM not found by id", item.jsonDataParsed.id);
-                        return;
-                    }
-                    logger.debug("Found RUNNING_LOG_ITEM real LogItem: ", logItem);
-                    let rawItem: any = BackgroundUtils.getRawTrackItem(logItem);
-                    rawItem.endDate = new Date();
-                    if (splitEndDate != null) {
-                        logger.info("Splitting LogItem, old item has endDate: ", splitEndDate);
-                        rawItem.endDateOverride = splitEndDate;
-                        rawItem.endDate = splitEndDate;
-                        if (rawItem.beginDate > splitEndDate) {
-                            logger.error("BeginDate is after endDate. Not saving RUNNING_LOG_ITEM");
-                        }
-                    }
-                    // set first LogTrackItem because
-                    // when restarting application there would be multiple same items
-                    stateManager.setRunningTrackItem(logItem);
-
-                    backgroundService.createOrUpdate(rawItem).then((savedItem) => {
-
-                        if (splitEndDate) {
-                            logger.info("Splitting LogItem, new item has endDate: ", splitEndDate);
-                            stateManager.resetLogTrackItem();
-                            let newRawItem = BackgroundUtils.getRawTrackItem(logItem);
-
-                            newRawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
-                            newRawItem.endDate = new Date();
-                            backgroundService.createOrUpdate(newRawItem).then((newSavedItem) => {
-                                logger.info('RUNNING_LOG_ITEM has split', newSavedItem.id);
-                                settingsService.saveRunningLogItemReferemce(newSavedItem.id);
-                            });
-                        } else {
-                            // at midnight track item is split and new items ID should be RUNNING_LOG_ITEM
-                            if (savedItem.id !== logItem.id) {
-                                logger.info('RUNNING_LOG_ITEM changed at midnight.');
-                                settingsService.saveRunningLogItemReferemce(savedItem.id);
-                            }
-                        }
-
-                    });
-                });
-            } else {
-                logger.debug("No RUNNING_LOG_ITEM ref id");
-                deferred.resolve();
-            }
-            return deferred.promise;
-        });
+    updateRunningLogItem() {
+        backgroundService.updateRunningLogItem();
     }
-
 
     saveUserIdleTime() {
 

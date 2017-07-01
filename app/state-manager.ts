@@ -2,12 +2,13 @@ import { TrackItemInstance, TrackItemAttributes } from './models/interfaces/trac
 import { State } from './state.enum';
 import { TrackItemType } from './track-item-type.enum';
 
-import { app } from 'electron';
+import { app, ipcMain } from "electron";
 import * as path from 'path';
 import BackgroundUtils from "./background.utils";
 import { trackItemService } from "./services/track-item-service";
 
 import { logManager } from "./log-manager";
+import { settingsService } from "./services/settings-service";
 var logger = logManager.getLogger('StateManager');
 
 interface TrackItems {
@@ -20,6 +21,8 @@ export class StateManager {
 
     private isSleeping = false;
 
+    private logTrackItemMarkedAsRunning: TrackItemInstance = null;
+
     lastTrackItems: TrackItems = {
         StatusTrackItem: null,
         AppTrackItem: null,
@@ -27,7 +30,50 @@ export class StateManager {
     };
 
     constructor() {
+        this.initIpc();
     }
+
+    initIpc() {
+        ipcMain.on('start-new-log-item', (event, rawItem: TrackItemAttributes) => {
+            logger.info('start-new-log-item', rawItem);
+            this.createNewRunningTrackItem(rawItem).then((item) => event.sender.send('log-item-started', item));
+        });
+
+        ipcMain.on('end-running-log-item', (event) => {
+            logger.info('end-running-log-item');
+            this.stopRunningLogTrackItem();
+        });
+    }
+
+    async restoreState() {
+        logger.info("Restoring state.");
+        let logItem = await trackItemService.findRunningLogItem();
+        this.logTrackItemMarkedAsRunning = logItem;
+        this.setRunningTrackItem(logItem);
+
+        if (this.logTrackItemMarkedAsRunning) {
+            logger.info("Restored running LogTrackItem:", logItem);
+        }
+
+        return logItem;
+    }
+
+    getLogTrackItemMarkedAsRunning() {
+        return this.logTrackItemMarkedAsRunning;
+    }
+
+    setLogTrackItemMarkedAsRunning(item: TrackItemInstance) {
+        settingsService.saveRunningLogItemReference(item.id);
+        logger.info("Mark new LogTrackItem as running:", item.toJSON());
+        this.logTrackItemMarkedAsRunning = item;
+    }
+
+    async stopRunningLogTrackItem() {
+        let item = await this.updateRunningTrackItemEndDate(TrackItemType.LogTrackItem);
+        this.resetLogTrackItem();
+        settingsService.saveRunningLogItemReference(null);
+    }
+
 
     setRunningTrackItem(item: TrackItemInstance) {
         this.lastTrackItems[item.taskName] = item;

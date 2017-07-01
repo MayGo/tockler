@@ -9,5 +9,5 @@ export interface SettingsInstance extends Instance<SettingsAttributes> {
   dataValues: SettingsAttributes;
   name?: string;
   jsonData?: string;
-  jsonDataParsed?: string;
+  jsonDataParsed?: any;
 }

@@ -36,6 +36,20 @@ export class Menubar {
         ipcRenderer.on('focus-tray', () => this.refresh());
         this.setValidationRules();
     }
+    attached() {
+        logger.debug("attached");
+        ipcRenderer.on('log-item-started', this.logItemStarted.bind(this));
+    }
+
+    detached() {
+        logger.debug("detached. Removing listeners");
+        ipcRenderer.removeAllListeners('log-item-started');
+    }
+
+    logItemStarted(item) {
+        logger.info("log-item-started", item);
+        this.runningLogItem = item;
+    }
 
     loadItems() {
         logger.debug("Loading items");
@@ -49,7 +63,7 @@ export class Menubar {
             });
             this.trackItems = items;
             this.loading = false;
-        }, (err) => { logger.error(err) });
+        }, (err) => { logger.error(err); });
     }
 
     setValidationRules() {
@@ -64,13 +78,9 @@ export class Menubar {
         this.newItem = oldItem;
         this.validationController.validate().then(v => {
             if (v.valid) {
-                this.stopRunningLogItem();
-                this.trackItemService.startNewLogItem(this.newItem).then((item) => {
-                    logger.debug("Setting running log item:", item);
-                    this.runningLogItem = item;
-                })
+                this.trackItemService.startNewLogItem(this.newItem);
             } else {
-                logger.error("Not Valid", v)
+                logger.error("Not Valid", v);
             }
         });
 
@@ -82,7 +92,7 @@ export class Menubar {
             this.trackItemService.stopRunningLogItem(this.runningLogItem.id).then(() => {
                 this.runningLogItem = null;
                 this.loadItems();
-            })
+            });
         } else {
             console.debug("No running log item");
         }
@@ -97,5 +107,6 @@ export class Menubar {
         });
 
         this.loadItems();
-    };
+    }
+
 }

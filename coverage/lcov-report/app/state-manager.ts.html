@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for app/state-manager.ts</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">All files</a> / <a href="index.html">app</a> state-manager.ts
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">73.22% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>134/183</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">60.49% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>49/81</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">76.6% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>36/47</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">78.62% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>114/145</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line medium'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">31x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-yes">60x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">32x</span>
+<span class="cline-any cline-yes">72x</span>
+<span class="cline-any cline-yes">72x</span>
+<span class="cline-any cline-yes">72x</span>
+<span class="cline-any cline-yes">72x</span>
+<span class="cline-any cline-yes">32x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">40x</span>
+<span class="cline-any cline-yes">72x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">52x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">66x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">9x</span></td><td class="text"><pre class="prettyprint lang-js">import { TrackItemInstance, TrackItemAttributes } from './models/interfaces/track-item-interface';
+import { State } from './state.enum';
+import { TrackItemType } from './track-item-type.enum';
+<span class="cstat-no" title="statement not covered" ></span>
+import { app, ipcMain } from "electron";
+import * as path from 'path';
+import BackgroundUtils from "./background.utils";
+import { trackItemService } from "./services/track-item-service";
+&nbsp;
+import { logManager } from "./log-manager";
+import { settingsService } from "./services/settings-service";
+var logger = logManager.getLogger('StateManager');
+&nbsp;
+interface TrackItems {
+    Stat<span class="missing-if-branch" title="if path not taken" >I</span>usTrack<span class="cstat-no" title="statement not covered" >Item: TrackItemInstance;</span>
+    AppTrackItem: TrackItemInstance;
+    LogTrack<span class="missing-if-branch" title="if path not taken" >I</span>Item: TrackItemIn<span class="branch-1 cbranch-no" title="branch not covered" >stance;<span class="cstat-no" title="statement not covered" ><span class="branch-2 cbranch-no" title="branch not covered" ></span></span></span>
+}<span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="if path not taken" >I</span></span>
+&nbsp;
+export class StateManager {
+&nbsp;
+    private isSl<span class="branch-3 cbranch-no" title="branch not covered" >eeping =<span class="cstat-no" title="statement not covered" > false;<span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ></span></span></span></span></span>
+<span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ><span class="branch-4 cbranch-no" title="branch not covered" ></span></span></span></span>
+    private logTrackItemMarkedAsRunning: TrackItemInstance = null;
+<span class="branch-1 cbranch-no" title="branch not covered" ></span>
+    lastTrackItems: <span class="missing-if-branch" title="else path not taken" >E</span>TrackItems = {<span class="branch-3 cbranch-no" title="branch not covered" ><span class="branch-2 cbranch-no" title="branch not covered" ></span></span>
+        StatusTrackI<span class="cstat-no" title="statement not covered" >tem: null,<span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ></span></span></span></span>
+        AppTrackItem<span class="cstat-no" title="statement not covered" >: null,<span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ></span></span></span></span>
+        LogTrackItem<span class="cstat-no" title="statement not covered" >: null<span class="cstat-no" title="statement not covered" ></span></span>
+    };<span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ></span></span>
+&nbsp;
+    constructor() {
+        this.initIpc();
+    }<span class="branch-1 cbranch-no" title="branch not covered" ></span>
+&nbsp;
+    initIpc() {
+        ipcMain.on('start-new-log-item', (event, rawItem: TrackItemAttributes) =&gt; {
+            logger.info('start-new-log-item', rawItem);
+            this.createNewRunningTrackItem(rawItem).then((item) =&gt; event.sender.send('log-item-started', item));
+        });
+&nbsp;
+        ipcMain.on('end-running-log-item', (event) =&gt; {
+            logger.info('end-running-log-item');
+            this.stopRunningLogTrackItem();
+        });
+    }
+&nbsp;
+    async restoreState() {
+        logger.info("Restoring state.");
+        let logItem = await trackItemService.findRunningLogItem();
+        this.logTrackItemMarkedAsRunning = logItem;
+        this.setRunningTrackItem(logItem);
+&nbsp;
+        if (this.logTrackItemMarkedAsRunning) {
+            logger.info("Restored running LogTrackItem:", logItem);
+        }
+&nbsp;
+        return logItem;
+    }<span class="fstat-no" title="function not covered" ></span>
+<span class="cstat-no" title="statement not covered" ></span>
+    getLogTr<span class="cstat-no" title="statement not covered" >ackItemMarkedAsRunning() {<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ></span></span></span>
+        return this.logTrackItemMarkedAsRunning;
+    }<span class="fstat-no" title="function not covered" ></span>
+<span class="cstat-no" title="statement not covered" ></span>
+    setLogTr<span class="cstat-no" title="statement not covered" >ackItemMarkedAsRunning(item: Trac</span>kItemInstance) {
+        settingsService.saveRunningLogItemReference(item.id);
+        logger.info("Mark new LogTrackItem as running:", item.toJSON());
+        this.logTrackItemMarkedAsRunning =<span class="fstat-no" title="function not covered" > i</span>tem;
+    }<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ></span></span>
+&nbsp;
+    async st<span class="cstat-no" title="statement not covered" >opRunningLogTrackItem() {<span class="fstat-no" title="function not covered" ></span></span>
+        let item<span class="cstat-no" title="statement not covered" > = await this.updateRunningTrackItemEndDate(TrackItemType.LogTrackItem);</span>
+        this.resetLogTrackItem();
+        settingsService.<span class="cstat-no" title="statement not covered" >saveRunningLogItemReference(null)</span>;
+    }<span class="cstat-no" title="statement not covered" ></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" ></span>
+    setRunningTrackItem(<span class="cstat-no" title="statement not covered" >item: TrackItemInstance) {</span>
+        this.lastTrackIt<span class="cstat-no" title="statement not covered" >ems[item.taskName] = item;</span>
+    }<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" ></span>
+    getRunningTrackItem(type: TrackItemType): TrackItemInstance {
+        return this.last<span class="cstat-no" title="statement not covered" >TrackItems[type];</span>
+    }
+&nbsp;
+    hasSameRunningTrackItem(rawItem: TrackItemAttributes): boolean {
+        return BackgroundUtils.isSameItems(rawItem, this.getRunningTrackItem(rawItem.taskName));
+    }<span class="fstat-no" title="function not covered" ></span>
+<span class="cstat-no" title="statement not covered" ></span>
+    resetRunningTrackItem(type: TrackItemType) {
+        this.lastTrackItems[type] = null;
+    }
+&nbsp;
+    resetStatusTrackItem() {
+        this.resetRunningTrackItem(TrackItemType.StatusTrackItem);
+    }<span class="fstat-no" title="function not covered" ></span>
+<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ></span></span>
+    resetLogTrackItem() {
+        this<span class="cstat-no" title="statement not covered" >.resetRunningTrackItem(Tr<span class="fstat-no" title="function not covered" >ac</span>kItemType.LogTrackItem);</span>
+    }<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" ></span>
+    resetAppTrackItem() {
+        this.resetRunnin<span class="cstat-no" title="statement not covered" >gTrackItem(TrackIt</span>emType.AppTrackItem);
+    }<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" ></span>
+    isSystemIdling() {<span class="cstat-no" title="statement not covered" ></span>
+        let item = this.getRunningTrackItem(TrackItemType.StatusTrackItem);
+        return item !== null &amp;&amp; item.app === State.Idle;
+    }
+&nbsp;
+    isSystemOffline() {
+        let item = this.getRunningTrackItem(TrackItemType.StatusTrackItem);
+        return item !== null &amp;&amp; item.app === State.Offline;
+    }
+&nbsp;
+    isSystemOnline() {
+        let item = this.getRunningTrackItem(TrackItemType.StatusTrackItem);
+        return item !== null &amp;&amp; item.app === State.Online;
+    }
+&nbsp;
+    isSystemSleeping() {
+        return this.isSleeping;
+    }
+&nbsp;
+    setSystemToSleep() {
+        this.isSleeping = true;<span class="fstat-no" title="function not covered" ></span>
+<span class="cstat-no" title="statement not covered" >        logger.info("System is going to sleep state.");</span>
+        this.resetAppTrackItem();
+    }
+&nbsp;
+    setAwakeFromSleep() {
+        this.isSleeping = false;
+        logger.info("System is awakeing from sleep state.");
+    }
+&nbsp;
+&nbsp;
+&nbsp;
+    async endRunningTrackItem(rawItem: TrackItemAttributes) {
+        let runningItem = this.getRunningTrackItem(rawItem.taskName);
+&nbsp;
+        if (runningItem) {
+            runningItem.endDate = rawItem.beginDate;
+            logger.info("Ending trackItem:", runningItem.toJSON());
+            await trackItemService.updateItem(runningItem, runningItem.id);
+            this.resetRunningTrackItem(rawItem.taskName);
+        }
+&nbsp;
+        return runningItem;
+    }
+&nbsp;
+    async createNewRunningTrackItem(rawItem: TrackItemAttributes) {
+        this.endRunningTrackItem(rawItem);
+&nbsp;
+        let item = await trackItemService.createTrackItem(rawItem);
+        logger.debug("Created track item to DB and set running item:", item.toJSON());
+&nbsp;
+        this.setRunningTrackItem(item);
+        return item;
+    }
+&nbsp;
+    async updateRunningTrackItemEndDate(type: TrackItemType) {
+        let runningItem = this.getRunningTrackItem(type);
+        runningItem.endDate = new Date();
+        await trackItemService.updateItem(runningItem, runningItem.id);
+        logger.info("Saved track item(endDate change) to DB:", runningItem.toJSON());
+        return runningItem;
+    }
+&nbsp;
+}
+&nbsp;
+export const stateManager = new StateManager();</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sat Jul 01 2017 12:02:55 GMT+0300 (EEST)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>
