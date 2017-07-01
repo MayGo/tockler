@@ -434,7 +434,7 @@ export class StateManager {
         logger.info("Restoring state.");
         let logItem = await trackItemService.findRunningLogItem();
         this.logTrackItemMarkedAsRunning = logItem;
-        this.setRunningTrackItem(logItem);
+        this.setCurrentTrackItem(logItem);
 &nbsp;
         if (this.logTrackItemMarkedAsRunning) {
             logger.info("Restored running LogTrackItem:", logItem);
@@ -460,28 +460,28 @@ export class StateManager {
     }<span class="cstat-no" title="statement not covered" ></span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" ></span>
-    setRunningTrackItem(<span class="cstat-no" title="statement not covered" >item: TrackItemInstance) {</span>
+    setCurrentTrackItem(<span class="cstat-no" title="statement not covered" >item: TrackItemInstance) {</span>
         this.lastTrackIt<span class="cstat-no" title="statement not covered" >ems[item.taskName] = item;</span>
     }<span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" ></span>
-    getRunningTrackItem(type: TrackItemType): TrackItemInstance {
+    getCurrentTrackItem(type: TrackItemType): TrackItemInstance {
         return this.last<span class="cstat-no" title="statement not covered" >TrackItems[type];</span>
     }
 &nbsp;
     hasSameRunningTrackItem(rawItem: TrackItemAttributes): boolean {
-        return BackgroundUtils.isSameItems(rawItem, this.getRunningTrackItem(rawItem.taskName));
+        return BackgroundUtils.isSameItems(rawItem, this.getCurrentTrackItem(rawItem.taskName));
     }<span class="fstat-no" title="function not covered" ></span>
 <span class="cstat-no" title="statement not covered" ></span>
-    resetRunningTrackItem(type: TrackItemType) {
+    resetCurrentTrackItem(type: TrackItemType) {
         this.lastTrackItems[type] = null;
     }
 &nbsp;
     resetStatusTrackItem() {
-        this.resetRunningTrackItem(TrackItemType.StatusTrackItem);
+        this.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
     }<span class="fstat-no" title="function not covered" ></span>
 <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ></span></span>
     resetLogTrackItem() {
-        this<span class="cstat-no" title="statement not covered" >.resetRunningTrackItem(Tr<span class="fstat-no" title="function not covered" >ac</span>kItemType.LogTrackItem);</span>
+        this<span class="cstat-no" title="statement not covered" >.resetCurrentTrackItem(Tr<span class="fstat-no" title="function not covered" >ac</span>kItemType.LogTrackItem);</span>
     }<span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" ></span>
     resetAppTrackItem() {
@@ -489,17 +489,17 @@ export class StateManager {
     }<span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" ></span>
     isSystemIdling() {<span class="cstat-no" title="statement not covered" ></span>
-        let item = this.getRunningTrackItem(TrackItemType.StatusTrackItem);
+        let item = this.getCurrentTrackItem(TrackItemType.StatusTrackItem);
         return item !== null &amp;&amp; item.app === State.Idle;
     }
 &nbsp;
     isSystemOffline() {
-        let item = this.getRunningTrackItem(TrackItemType.StatusTrackItem);
+        let item = this.getCurrentTrackItem(TrackItemType.StatusTrackItem);
         return item !== null &amp;&amp; item.app === State.Offline;
     }
 &nbsp;
     isSystemOnline() {
-        let item = this.getRunningTrackItem(TrackItemType.StatusTrackItem);
+        let item = this.getCurrentTrackItem(TrackItemType.StatusTrackItem);
         return item !== null &amp;&amp; item.app === State.Online;
     }
 &nbsp;
@@ -521,13 +521,13 @@ export class StateManager {
 &nbsp;
 &nbsp;
     async endRunningTrackItem(rawItem: TrackItemAttributes) {
-        let runningItem = this.getRunningTrackItem(rawItem.taskName);
+        let runningItem = this.getCurrentTrackItem(rawItem.taskName);
 &nbsp;
         if (runningItem) {
             runningItem.endDate = rawItem.beginDate;
             logger.info("Ending trackItem:", runningItem.toJSON());
             await trackItemService.updateItem(runningItem, runningItem.id);
-            this.resetRunningTrackItem(rawItem.taskName);
+            this.resetCurrentTrackItem(rawItem.taskName);
         }
 &nbsp;
         return runningItem;
@@ -539,12 +539,12 @@ export class StateManager {
         let item = await trackItemService.createTrackItem(rawItem);
         logger.debug("Created track item to DB and set running item:", item.toJSON());
 &nbsp;
-        this.setRunningTrackItem(item);
+        this.setCurrentTrackItem(item);
         return item;
     }
 &nbsp;
     async updateRunningTrackItemEndDate(type: TrackItemType) {
-        let runningItem = this.getRunningTrackItem(type);
+        let runningItem = this.getCurrentTrackItem(type);
         runningItem.endDate = new Date();
         await trackItemService.updateItem(runningItem, runningItem.id);
         logger.info("Saved track item(endDate change) to DB:", runningItem.toJSON());

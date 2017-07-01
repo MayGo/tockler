@@ -111,7 +111,7 @@ export class TrackItemService {
   findLastOnlineItem() {
     //ONLINE item can be just inserted, we want old one.
     // 2 seconds should be enough
-    let currentStatusItem = stateManager.getRunningTrackItem(TrackItemType.StatusTrackItem);
+    let currentStatusItem = stateManager.getCurrentTrackItem(TrackItemType.StatusTrackItem);
 
     if (currentStatusItem && currentStatusItem.app != State.Online) {
       throw new Error("Not online.");
@@ -121,7 +121,7 @@ export class TrackItemService {
       app: State.Online,
       taskName: 'StatusTrackItem'
     };
-    
+
     if (currentStatusItem) {
       whereQuery.id = {
         $ne: currentStatusItem.id

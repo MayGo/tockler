@@ -42,7 +42,7 @@ export class LogTrackItemJob {
     async updateRunningLogItem() {
 
         let oldOnlineItem = this.onlineItemWhenLastSplit;
-        this.onlineItemWhenLastSplit = stateManager.getRunningTrackItem(TrackItemType.StatusTrackItem);
+        this.onlineItemWhenLastSplit = stateManager.getCurrentTrackItem(TrackItemType.StatusTrackItem);
 
         let logItemMarkedAsRunning = stateManager.getLogTrackItemMarkedAsRunning();
         if (!logItemMarkedAsRunning) {

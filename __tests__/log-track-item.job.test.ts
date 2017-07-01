@@ -25,16 +25,16 @@ describe('updateRunningLogItem not saving', () => {
 
     afterEach(async () => {
 
-        stateManager.resetRunningTrackItem(TrackItemType.AppTrackItem);
-        stateManager.resetRunningTrackItem(TrackItemType.LogTrackItem);
-        stateManager.resetRunningTrackItem(TrackItemType.StatusTrackItem);
+        stateManager.resetCurrentTrackItem(TrackItemType.AppTrackItem);
+        stateManager.resetCurrentTrackItem(TrackItemType.LogTrackItem);
+        stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
         stateManager.setAwakeFromSleep();
     });
 
     it('Does not save item when sleeping', async () => {
 
         let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
-        stateManager.setRunningTrackItem(item);
+        stateManager.setCurrentTrackItem(item);
 
         stateManager.setSystemToSleep();
 
@@ -49,7 +49,7 @@ describe('updateRunningLogItem not saving', () => {
 
         let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Offline }));
 
-        stateManager.setRunningTrackItem(item);
+        stateManager.setCurrentTrackItem(item);
 
         expect(() => {
             logTrackItemJob.checkIfIsInCorrectState();
@@ -71,7 +71,7 @@ describe('updateRunningLogItem saving', () => {
         stateManager.isSystemSleeping = jest.fn().mockReturnValueOnce(false);
 
         let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
-        stateManager.setRunningTrackItem(item);
+        stateManager.setCurrentTrackItem(item);
 
         getLogTrackItemMarkedAsRunningMock = jest.fn();
         stateManager.getLogTrackItemMarkedAsRunning = getLogTrackItemMarkedAsRunningMock;

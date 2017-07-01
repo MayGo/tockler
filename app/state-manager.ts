@@ -54,7 +54,7 @@ export class StateManager {
         logger.info("Restoring state.");
         let logItem = await trackItemService.findRunningLogItem();
         this.logTrackItemMarkedAsRunning = logItem;
-        this.setRunningTrackItem(logItem);
+        this.setCurrentTrackItem(logItem);
 
         if (this.logTrackItemMarkedAsRunning) {
             logger.info("Restored running LogTrackItem:", logItem.toJSON());
@@ -80,46 +80,46 @@ export class StateManager {
     }
 
 
-    setRunningTrackItem(item: TrackItemInstance) {
+    setCurrentTrackItem(item: TrackItemInstance) {
         this.lastTrackItems[item.taskName] = item;
     }
 
-    getRunningTrackItem(type: TrackItemType): TrackItemInstance {
+    getCurrentTrackItem(type: TrackItemType): TrackItemInstance {
         return this.lastTrackItems[type];
     }
 
     hasSameRunningTrackItem(rawItem: TrackItemAttributes): boolean {
-        return BackgroundUtils.isSameItems(rawItem, this.getRunningTrackItem(rawItem.taskName));
+        return BackgroundUtils.isSameItems(rawItem, this.getCurrentTrackItem(rawItem.taskName));
     }
 
-    resetRunningTrackItem(type: TrackItemType) {
+    resetCurrentTrackItem(type: TrackItemType) {
         this.lastTrackItems[type] = null;
     }
 
     resetStatusTrackItem() {
-        this.resetRunningTrackItem(TrackItemType.StatusTrackItem);
+        this.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
     }
 
     resetLogTrackItem() {
-        this.resetRunningTrackItem(TrackItemType.LogTrackItem);
+        this.resetCurrentTrackItem(TrackItemType.LogTrackItem);
     }
 
     resetAppTrackItem() {
-        this.resetRunningTrackItem(TrackItemType.AppTrackItem);
+        this.resetCurrentTrackItem(TrackItemType.AppTrackItem);
     }
 
     isSystemIdling() {
-        let item = this.getRunningTrackItem(TrackItemType.StatusTrackItem);
+        let item = this.getCurrentTrackItem(TrackItemType.StatusTrackItem);
         return item !== null && item.app === State.Idle;
     }
 
     isSystemOffline() {
-        let item = this.getRunningTrackItem(TrackItemType.StatusTrackItem);
+        let item = this.getCurrentTrackItem(TrackItemType.StatusTrackItem);
         return item !== null && item.app === State.Offline;
     }
 
     isSystemOnline() {
-        let item = this.getRunningTrackItem(TrackItemType.StatusTrackItem);
+        let item = this.getCurrentTrackItem(TrackItemType.StatusTrackItem);
         return item !== null && item.app === State.Online;
     }
 
@@ -141,13 +141,13 @@ export class StateManager {
 
 
     async endRunningTrackItem(rawItem: TrackItemAttributes) {
-        let runningItem = this.getRunningTrackItem(rawItem.taskName);
+        let runningItem = this.getCurrentTrackItem(rawItem.taskName);
 
         if (runningItem) {
             runningItem.endDate = rawItem.beginDate;
             logger.info("Ending trackItem:", runningItem.toJSON());
             await trackItemService.updateItem(runningItem, runningItem.id);
-            this.resetRunningTrackItem(rawItem.taskName);
+            this.resetCurrentTrackItem(rawItem.taskName);
         }
 
         return runningItem;
@@ -159,12 +159,12 @@ export class StateManager {
         let item = await trackItemService.createTrackItem(rawItem);
         logger.debug("Created track item to DB and set running item:", item.toJSON());
 
-        this.setRunningTrackItem(item);
+        this.setCurrentTrackItem(item);
         return item;
     }
 
     async updateRunningTrackItemEndDate(type: TrackItemType) {
-        let runningItem = this.getRunningTrackItem(type);
+        let runningItem = this.getCurrentTrackItem(type);
         runningItem.endDate = new Date();
         await trackItemService.updateItem(runningItem, runningItem.id);
         logger.info("Saved track item(endDate change) to DB:", runningItem.toJSON());

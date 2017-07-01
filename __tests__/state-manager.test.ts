@@ -13,14 +13,14 @@ import TrackItemTestData from './track-item-test-data';
 describe('isSystemOnline', () => {
 
     afterEach(async () => {
-        stateManager.resetRunningTrackItem(TrackItemType.StatusTrackItem);
+        stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
     });
 
     it('returns true if State.Online', async () => {
 
         let rawItem: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
 
-        stateManager.setRunningTrackItem(rawItem);
+        stateManager.setCurrentTrackItem(rawItem);
 
         let state = stateManager.isSystemOnline();
 
@@ -31,7 +31,7 @@ describe('isSystemOnline', () => {
 
         let rawItem: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Offline }));
 
-        stateManager.setRunningTrackItem(rawItem);
+        stateManager.setCurrentTrackItem(rawItem);
 
         let state = stateManager.isSystemOnline();
 
@@ -42,7 +42,7 @@ describe('isSystemOnline', () => {
 
         let rawItem: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem());
 
-        stateManager.setRunningTrackItem(rawItem);
+        stateManager.setCurrentTrackItem(rawItem);
 
         let state = stateManager.isSystemOnline();
 
@@ -51,7 +51,7 @@ describe('isSystemOnline', () => {
 
     it('returns false if StateTrackItem is not defined', async () => {
 
-        stateManager.resetRunningTrackItem(TrackItemType.StatusTrackItem);
+        stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
 
         let state = stateManager.isSystemOnline();
 
@@ -63,17 +63,17 @@ describe('isSystemOnline', () => {
 describe('endRunningTrackItem', () => {
 
     afterEach(async () => {
-        stateManager.resetRunningTrackItem(TrackItemType.StatusTrackItem);
+        stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
         models.TrackItem.$clearQueue();
     });
 
     it('returns item if has running item to end', async () => {
         models.TrackItem.$queueResult([]);
 
-        stateManager.resetRunningTrackItem(TrackItemType.StatusTrackItem);
+        stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
         let rawItemRunning = TrackItemTestData.getStatusTrackItem({ app: State.Online });
         let itemRunning: TrackItemInstance = models.TrackItem.build(rawItemRunning);
-        stateManager.setRunningTrackItem(itemRunning);
+        stateManager.setCurrentTrackItem(itemRunning);
 
         let rawItem: TrackItemAttributes = TrackItemTestData.getStatusTrackItem({ app: State.Online }, 1);
 
@@ -86,7 +86,7 @@ describe('endRunningTrackItem', () => {
 
     it('returns null if has no running item to end', async () => {
 
-        stateManager.resetRunningTrackItem(TrackItemType.StatusTrackItem);
+        stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
 
         let rawItem: TrackItemAttributes = TrackItemTestData.getStatusTrackItem({ app: State.Online });
 
@@ -137,7 +137,7 @@ describe('restoreState', () => {
         let restoredItem = await stateManager.restoreState();
 
         expect(findRunningLogItemMock.mock.calls.length).toBe(1);
-        expect(stateManager.getRunningTrackItem(TrackItemType.LogTrackItem)).toBe(itemRunning);
+        expect(stateManager.getCurrentTrackItem(TrackItemType.LogTrackItem)).toBe(itemRunning);
         expect(stateManager.getLogTrackItemMarkedAsRunning()).toBe(itemRunning);
         expect(restoredItem).toBe(itemRunning);
     });

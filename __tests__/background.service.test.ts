@@ -19,9 +19,9 @@ describe('createOrUpdate', () => {
         models.AppSetting.$clearQueue();
         models.TrackItem.$clearQueue();
         models.Settings.$clearQueue();
-        stateManager.resetRunningTrackItem(TrackItemType.AppTrackItem);
-        stateManager.resetRunningTrackItem(TrackItemType.LogTrackItem);
-        stateManager.resetRunningTrackItem(TrackItemType.StatusTrackItem);
+        stateManager.resetCurrentTrackItem(TrackItemType.AppTrackItem);
+        stateManager.resetCurrentTrackItem(TrackItemType.LogTrackItem);
+        stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
     });
 
     it('returns saved item', async () => {
@@ -80,13 +80,13 @@ describe('createOrUpdate', () => {
 
         const rawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({});
 
-        let runningItem = stateManager.getRunningTrackItem(rawItem.taskName);
+        let runningItem = stateManager.getCurrentTrackItem(rawItem.taskName);
 
         expect(runningItem).toBeNull();
 
         const item = await backgroundService.createOrUpdate(rawItem);
 
-        runningItem = stateManager.getRunningTrackItem(rawItem.taskName);
+        runningItem = stateManager.getCurrentTrackItem(rawItem.taskName);
 
         expect(runningItem).not.toBeNull();
         expect(runningItem.app).toEqual("Chrome");
@@ -104,19 +104,19 @@ describe('createOrUpdate', () => {
         const firstRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({});
         const secondRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({ app: 'Firefox' }, 1);
 
-        let runningItem = stateManager.getRunningTrackItem(firstRawItem.taskName);
+        let runningItem = stateManager.getCurrentTrackItem(firstRawItem.taskName);
 
         expect(runningItem).toBeNull();
 
         //Add First item
         const firstItem = await backgroundService.createOrUpdate(firstRawItem);
-        runningItem = stateManager.getRunningTrackItem(firstRawItem.taskName);
+        runningItem = stateManager.getCurrentTrackItem(firstRawItem.taskName);
         expect(runningItem).not.toBeNull();
         expect(runningItem.id).toEqual(firstItem.id);
 
         //Add Second item
         const secondItem = await backgroundService.createOrUpdate(secondRawItem);
-        runningItem = stateManager.getRunningTrackItem(secondRawItem.taskName);
+        runningItem = stateManager.getCurrentTrackItem(secondRawItem.taskName);
         expect(runningItem).not.toBeNull();
         expect(runningItem.id).toEqual(secondItem.id);
         expect(firstItem.id).not.toEqual(secondItem.id);
@@ -134,18 +134,18 @@ describe('createOrUpdate', () => {
         const firstRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({});
         const secondRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({}, 1);
 
-        let runningItem = stateManager.getRunningTrackItem(firstRawItem.taskName);
+        let runningItem = stateManager.getCurrentTrackItem(firstRawItem.taskName);
         expect(runningItem).toBeNull();
 
         //Add First item
         const firstItem = await backgroundService.createOrUpdate(firstRawItem);
-        runningItem = stateManager.getRunningTrackItem(firstRawItem.taskName);
+        runningItem = stateManager.getCurrentTrackItem(firstRawItem.taskName);
         expect(runningItem).not.toBeNull();
         expect(runningItem.id).toEqual(firstItem.id);
 
         //Add Second item
         const secondItem = await backgroundService.createOrUpdate(secondRawItem);
-        runningItem = stateManager.getRunningTrackItem(secondRawItem.taskName);
+        runningItem = stateManager.getCurrentTrackItem(secondRawItem.taskName);
         expect(runningItem).not.toBeNull();
         expect(runningItem.id).toEqual(firstItem.id);
         expect(firstItem.id).toEqual(secondItem.id);
@@ -167,7 +167,7 @@ describe('createOrUpdate', () => {
         const firstItem = await backgroundService.createOrUpdate(firstRawItem);
         //Add Second item
         const secondItem = await backgroundService.createOrUpdate(secondRawItem);
-        let runningItem = stateManager.getRunningTrackItem(secondRawItem.taskName);
+        let runningItem = stateManager.getCurrentTrackItem(secondRawItem.taskName);
         expect(runningItem.id).toEqual(firstItem.id);
         expect(runningItem.beginDate).toEqual(firstRawItem.beginDate);
         expect(runningItem.endDate).not.toEqual(firstRawItem.endDate);

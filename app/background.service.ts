@@ -80,7 +80,7 @@ export class BackgroundService {
 
             let lastItem = savedItems[savedItems.length - 1];
             item = lastItem;
-            stateManager.setRunningTrackItem(item);
+            stateManager.setCurrentTrackItem(item);
 
         } else {
 
@@ -104,7 +104,7 @@ export class BackgroundService {
     }
 
     async onResume() {
-        let statusTrackItem = stateManager.getRunningTrackItem(TrackItemType.StatusTrackItem);
+        let statusTrackItem = stateManager.getCurrentTrackItem(TrackItemType.StatusTrackItem);
         if (statusTrackItem != null) {
             let item = await this.addInactivePeriod(statusTrackItem.endDate, new Date());
             stateManager.setAwakeFromSleep();

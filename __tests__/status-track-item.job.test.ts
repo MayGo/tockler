@@ -19,9 +19,9 @@ describe('saveIdleTrackItem', () => {
 
     afterEach(async () => {
 
-        stateManager.resetRunningTrackItem(TrackItemType.AppTrackItem);
-        stateManager.resetRunningTrackItem(TrackItemType.LogTrackItem);
-        stateManager.resetRunningTrackItem(TrackItemType.StatusTrackItem);
+        stateManager.resetCurrentTrackItem(TrackItemType.AppTrackItem);
+        stateManager.resetCurrentTrackItem(TrackItemType.LogTrackItem);
+        stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
         stateManager.setAwakeFromSleep();
     });
 
@@ -46,7 +46,7 @@ describe('saveIdleTrackItem', () => {
 
         let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
 
-        stateManager.setRunningTrackItem(item);
+        stateManager.setCurrentTrackItem(item);
         statusTrackItemJob.saveIdleTrackItem(appConstants.IDLE_IN_SECONDS_TO_LOG - 1);
 
         expect(createOrUpdateMock.mock.calls.length).toBe(1);
@@ -76,7 +76,7 @@ describe('saveIdleTrackItem', () => {
 
         let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
 
-        stateManager.setRunningTrackItem(item);
+        stateManager.setCurrentTrackItem(item);
 
         let rawItem = TrackItemTestData.getAppTrackItem({});
         let error = statusTrackItemJob.saveIdleTrackItem(rawItem);
@@ -92,7 +92,7 @@ describe('saveIdleTrackItem', () => {
 
         let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Offline }));
 
-        stateManager.setRunningTrackItem(item);
+        stateManager.setCurrentTrackItem(item);
 
         let rawItem = TrackItemTestData.getAppTrackItem({});
         let error = statusTrackItemJob.saveIdleTrackItem(appConstants.IDLE_IN_SECONDS_TO_LOG + 1);
