@@ -15,7 +15,7 @@ export default {
     userDir: userDir,
 
     icon: path.join(root, 'shared/img/icon/tockler_icon.png'),
-    iconBig: path.join(root, 'shared/img/icon/tockler_icon@4x.png'),
+    iconBig: path.join(root, 'shared/img/icon/tockler_icon_big.png'),
 
     // plugins directory
     pluginsPath: root,

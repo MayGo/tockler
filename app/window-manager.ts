@@ -89,7 +89,7 @@ export default class WindowManager {
          */
         let icon = (os.platform() == 'darwin') ? config.icon : config.iconBig;
         this.menubar = menubar({
-            index: 'file://' + config.root + '/dist/index.html',
+            index: 'file://' + icon + '/dist/index.html',
             icon: config.icon,
             preloadWindow: true,
             width: 400,
