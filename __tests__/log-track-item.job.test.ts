@@ -61,11 +61,13 @@ describe('updateRunningLogItem not saving', () => {
 
 describe('updateRunningLogItem saving', () => {
     let createOrUpdateMock = null;
+    let _now;
     let nowMock = null;
     let getLogTrackItemMarkedAsRunningMock = null;
     let endRunningTrackItemMock = null;
     let setLogTrackItemMarkedAsRunningMock = null;
     let getTaskSplitDateMock = null;
+    let _getTaskSplitDate = null;
 
     beforeEach(async () => {
         stateManager.isSystemOnline = jest.fn().mockReturnValueOnce(true);
@@ -78,6 +80,7 @@ describe('updateRunningLogItem saving', () => {
         stateManager.getLogTrackItemMarkedAsRunning = getLogTrackItemMarkedAsRunningMock;
 
         getTaskSplitDateMock = jest.fn();
+        _getTaskSplitDate = logTrackItemJob.getTaskSplitDate;
         logTrackItemJob.getTaskSplitDate = getTaskSplitDateMock;
 
         endRunningTrackItemMock = jest.fn();
@@ -89,10 +92,13 @@ describe('updateRunningLogItem saving', () => {
         setLogTrackItemMarkedAsRunningMock = jest.fn();
         stateManager.setLogTrackItemMarkedAsRunning = setLogTrackItemMarkedAsRunningMock;
 
+        _now = Date.now;
         nowMock = jest.fn();
         Date.now = nowMock;
+    });
 
-
+    afterEach(async () => {
+        logTrackItemJob.getTaskSplitDate = _getTaskSplitDate;
     });
 
     it('Updates item with current date when not splitting', async () => {
@@ -179,7 +185,9 @@ describe('TaskAnalyser', () => {
 
     it('returns split date', async () => {
 
-        let lastOnlineItem: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
+        let rawItem = TrackItemTestData.getStatusTrackItem({ app: State.Online });
+
+        let lastOnlineItem: TrackItemInstance = models.TrackItem.build(rawItem);
 
         let findLastOnlineItemMock = jest.fn();
         trackItemService.findLastOnlineItem = findLastOnlineItemMock;
@@ -189,7 +197,7 @@ describe('TaskAnalyser', () => {
         settingsService.fetchWorkSettings = fetchWorkSettingsMock;
         fetchWorkSettingsMock.mockReturnValueOnce({ splitTaskAfterIdlingForMinutes: 1 });
 
-        let shouldReturnDate = moment(lastOnlineItem.endDate).add(1, 'minutes');
+        let shouldReturnDate = moment(rawItem.endDate).add(1, 'minutes').toDate();
 
         let splitDate = await logTrackItemJob.getTaskSplitDate();
         expect(shouldReturnDate).toEqual(splitDate);
