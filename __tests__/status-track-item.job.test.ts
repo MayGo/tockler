@@ -6,7 +6,6 @@ import { models } from '../app/models';
 import { TrackItemAttributes, TrackItemInstance } from '../app/models/interfaces/track-item-interface';
 import { stateManager } from '../app/state-manager';
 import { State } from '../app/state.enum';
-import TaskAnalyser from '../app/task-analyser';
 import { TrackItemType } from '../app/track-item-type.enum';
 import TrackItemTestData from './track-item-test-data';
 

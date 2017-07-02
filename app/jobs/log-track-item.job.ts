@@ -1,7 +1,6 @@
 
 import { logManager } from '../log-manager';
 import { stateManager } from '../state-manager';
-import TaskAnalyser from '../task-analyser';
 var logger = logManager.getLogger('LogTrackItemJob');
 
 import * as moment from 'moment';

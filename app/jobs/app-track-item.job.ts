@@ -1,7 +1,6 @@
 
 import { logManager } from '../log-manager';
 import { stateManager } from '../state-manager';
-import TaskAnalyser from '../task-analyser';
 var logger = logManager.getLogger('AppTrackItemJob');
 
 import * as moment from 'moment';
@@ -11,6 +10,7 @@ import BackgroundUtils from "../background.utils";
 import { backgroundService } from "../background.service";
 import { TrackItemType } from "../track-item-type.enum";
 
+import { taskAnalyser } from '../task-analyser';
 let shouldSplitLogItemFromDate = null;
 
 export class AppTrackItemJob {
@@ -24,6 +24,7 @@ export class AppTrackItemJob {
 
             if (!BackgroundUtils.isSameItems(updatedItem, this.lastUpdatedItem)) {
                 logger.debug("App and title changed. Analysing title");
+                taskAnalyser.analyseAndNotify(updatedItem);
             }
 
             this.lastUpdatedItem = updatedItem;

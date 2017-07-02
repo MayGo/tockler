@@ -7,7 +7,7 @@ import { settingsService } from '../app/services/settings-service';
 import { trackItemService } from '../app/services/track-item-service';
 import { stateManager } from '../app/state-manager';
 import { State } from '../app/state.enum';
-import TaskAnalyser from '../app/task-analyser';
+import {taskAnalyser} from '../app/task-analyser';
 import { TrackItemType } from '../app/track-item-type.enum';
 import TrackItemTestData from './track-item-test-data';
 

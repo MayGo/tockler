@@ -181,7 +181,7 @@ describe('updateRunningLogItem saving', () => {
 });
 
 
-describe('TaskAnalyser', () => {
+describe('getTaskSplitDate', () => {
 
     it('returns split date', async () => {
 

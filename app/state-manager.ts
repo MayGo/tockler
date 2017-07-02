@@ -9,6 +9,9 @@ import { trackItemService } from "./services/track-item-service";
 
 import { logManager } from "./log-manager";
 import { settingsService } from "./services/settings-service";
+
+import { appEmitter } from './app-event-emitter';
+
 var logger = logManager.getLogger('StateManager');
 
 interface TrackItems {
@@ -34,20 +37,27 @@ export class StateManager {
     }
 
     initIpc() {
-        ipcMain.on('start-new-log-item', (event, rawItem: TrackItemAttributes) => {
-            logger.info('start-new-log-item', rawItem);
-            this.createNewRunningTrackItem(rawItem)
-                .then((item: TrackItemInstance) => {
-                    logger.info('log-item-started', item.toJSON());
-                    this.setLogTrackItemMarkedAsRunning(item);
-                    event.sender.send('log-item-started', item.toJSON());
-                });
-        });
+        ipcMain.on('start-new-log-item', this.startNewLogItem.bind(this));
 
         ipcMain.on('end-running-log-item', (event) => {
             logger.info('end-running-log-item');
             this.stopRunningLogTrackItem();
         });
+
+        appEmitter.on('start-new-log-item', (rawItem) => {
+            logger.info('start-new-log-item event');
+            this.startNewLogItem(null, rawItem);
+        });
+    }
+
+    startNewLogItem(event, rawItem: TrackItemAttributes) {
+        logger.info('start-new-log-item', rawItem);
+        this.createNewRunningTrackItem(rawItem)
+            .then((item: TrackItemInstance) => {
+                logger.info('log-item-started', item.toJSON());
+                this.setLogTrackItemMarkedAsRunning(item);
+                event.sender.send('log-item-started', item.toJSON());
+            });
     }
 
     async restoreState() {
@@ -88,7 +98,7 @@ export class StateManager {
         return this.lastTrackItems[type];
     }
 
-    getCurrentStatusTrackItem(){
+    getCurrentStatusTrackItem() {
         return this.getCurrentTrackItem(TrackItemType.StatusTrackItem);
     }
 

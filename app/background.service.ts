@@ -1,5 +1,4 @@
 
-import TaskAnalyser from './task-analyser';
 import { settingsService } from './services/settings-service';
 import { trackItemService } from './services/track-item-service';
 import { appSettingService } from './services/app-setting-service';
@@ -91,8 +90,6 @@ export class BackgroundService {
             } else if (!stateManager.hasSameRunningTrackItem(rawItem)) {
 
                 item = await stateManager.createNewRunningTrackItem(rawItem);
-
-                TaskAnalyser.analyseAndNotify(item);
             }
         }
 

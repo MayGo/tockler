@@ -1,5 +1,4 @@
 
-import TaskAnalyser from './task-analyser';
 import { settingsService } from './services/settings-service';
 import { trackItemService } from './services/track-item-service';
 import { appSettingService } from './services/app-setting-service';
