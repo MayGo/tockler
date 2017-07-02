@@ -1,6 +1,6 @@
-import { app, BrowserWindow, dialog } from "electron"
-import { autoUpdater } from "electron-updater"
-import * as os from "os"
+import { app, BrowserWindow, dialog } from "electron";
+import { autoUpdater } from "electron-updater";
+import * as os from "os";
 import config from "./config";
 
 import {logManager} from "./log-manager";
@@ -12,15 +12,15 @@ export default class AppUpdater {
 
   static init() {
     if (config.isDev) {
-      return
+      return;
     }
 
-    const platform = os.platform()
+    const platform = os.platform();
     if (platform === "linux") {
-      return
+      return;
     }
 
-    autoUpdater.logger = logger
+    autoUpdater.logger = logger;
 
     autoUpdater.signals.updateDownloaded(versionInfo => {
       const dialogOptions = {

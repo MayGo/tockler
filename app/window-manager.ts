@@ -1,7 +1,8 @@
 import * as menubar from 'menubar';
-import { app, ipcMain, BrowserWindow } from "electron"
-import config from "./config"
-import * as path from "path"
+import { app, ipcMain, BrowserWindow } from "electron";
+import config from "./config";
+import * as path from "path";
+import * as os from "os";
 import { sequelize } from "./models/index";
 
 import { logManager } from "./log-manager";
@@ -10,6 +11,7 @@ var logger = logManager.getLogger('WindowManager');
 export default class WindowManager {
     static mainWindow;
     static menubar;
+
     constructor() {
 
     }
@@ -24,7 +26,7 @@ export default class WindowManager {
             height: 1000,
             show: true,
             title: 'Tockler',
-            icon: config.icon
+            icon: config.iconBig
         });
 
         this.mainWindow.maximize();
@@ -57,7 +59,7 @@ export default class WindowManager {
 
 
     static initMainWindowEvents() {
-        logger.info("Init main window events.")
+        logger.info("Init main window events.");
         ipcMain.on('toggle-main-window', (ev, name) => {
             if (!this.mainWindow) {
                 console.log("MainWindow closed, opening");
@@ -67,13 +69,13 @@ export default class WindowManager {
             console.log("Toggling main window");
             if (this.mainWindow.isVisible()) {
                 console.log("Show main window");
-                this.mainWindow.show()
+                this.mainWindow.show();
             } else if (this.mainWindow.isMinimized()) {
                 console.log("Restore main window");
                 this.mainWindow.restore();
             } else {
                 console.log("Hide main window");
-                this.mainWindow.hide()
+                this.mainWindow.hide();
             }
 
         });
@@ -85,6 +87,7 @@ export default class WindowManager {
          * Docs:
          * https://github.com/maxogden/menubar
          */
+        let icon = (os.platform() == 'darwin') ? config.icon : config.iconBig;
         this.menubar = menubar({
             index: 'file://' + config.root + '/dist/index.html',
             icon: config.icon,
@@ -104,9 +107,9 @@ export default class WindowManager {
                 console.log('Open menubar dev tools');
                 this.menubar.window.openDevTools();
             }
-        })
-    };
-};
+        });
+    }
+}
 
 export const windowManager = new WindowManager();
 
