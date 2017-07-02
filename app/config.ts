@@ -15,6 +15,7 @@ export default {
     userDir: userDir,
 
     icon: path.join(root, 'shared/img/icon/tockler_icon.png'),
+    iconBig: path.join(root, 'shared/img/icon/tockler_icon@4x.png'),
 
     // plugins directory
     pluginsPath: root,
@@ -25,7 +26,7 @@ export default {
 
     // enable tray icon for dev mode
 
-    trayEnabledInDev: false,
+    trayEnabledInDev: true,
 
     // name of the main window
     mainAppName: 'main-window',

@@ -1,5 +1,4 @@
 
-import TaskAnalyser from './task-analyser';
 import { settingsService } from './services/settings-service';
 import { trackItemService } from './services/track-item-service';
 import { appSettingService } from './services/app-setting-service';
@@ -12,10 +11,7 @@ import { logManager } from "./log-manager";
 import { stateManager } from "./state-manager";
 var logger = logManager.getLogger('BackgroundService');
 
-var $q = require('q');
-
 import * as moment from 'moment';
-import * as activeWin from 'active-win';
 import UserMessages from "./user-messages";
 import BackgroundUtils from "./background.utils";
 import * as path from 'path';
@@ -68,6 +64,7 @@ export class BackgroundService {
         if (!type) {
             throw new Error('TaskName not defined.');
         }
+    
 
         if (BackgroundUtils.shouldSplitInTwoOnMidnight(rawItem.beginDate, rawItem.endDate)) {
 
@@ -82,7 +79,7 @@ export class BackgroundService {
 
             let lastItem = savedItems[savedItems.length - 1];
             item = lastItem;
-            stateManager.setRunningTrackItem(item);
+            stateManager.setCurrentTrackItem(item);
 
         } else {
 
@@ -93,68 +90,10 @@ export class BackgroundService {
             } else if (!stateManager.hasSameRunningTrackItem(rawItem)) {
 
                 item = await stateManager.createNewRunningTrackItem(rawItem);
-
-                TaskAnalyser.analyseAndNotify(item);
-
-                let fromDate: Date = await TaskAnalyser.analyseAndSplit(item);
-                if (fromDate) {
-                    logger.info("Splitting LogTrackItem from date:", fromDate);
-                    shouldSplitLogItemFromDate = fromDate;
-                }
             }
         }
 
         return item;
-    }
-
-    saveActiveWindow(newAppTrackItem) {
-        if (stateManager.isSystemSleeping()) {
-            logger.info('Computer is sleeping, not running saveActiveWindow');
-            return 'SLEEPING'; //TODO: throw exception
-        }
-
-        if (stateManager.isSystemIdling()) {
-            logger.debug('Not saving, app is idling', newAppTrackItem);
-            stateManager.resetAppTrackItem();
-            return 'IDLING'; //TODO: throw exception
-        }
-
-        if (!newAppTrackItem.title && !newAppTrackItem.app) {
-            // Lock screen have no title, maybe something
-            newAppTrackItem.app = 'NATIVE';
-            newAppTrackItem.taskName = 'AppTrackItem';
-            newAppTrackItem.title = 'NO_TITLE';
-        } else {
-            newAppTrackItem.taskName = 'AppTrackItem';
-        }
-
-        this.createOrUpdate(newAppTrackItem);
-    }
-
-    saveIdleTrackItem(seconds) {
-
-        if (stateManager.isSystemSleeping()) {
-            logger.info('Computer is sleeping, not running saveIdleTrackItem');
-            return 'SLEEPING';
-        }
-
-        let state: State = (seconds > appConstants.IDLE_IN_SECONDS_TO_LOG) ? State.Idle : State.Online;
-        // Cannot go from OFFLINE to IDLE
-        if (stateManager.isSystemOffline() && state === State.Idle) {
-            logger.info('Not saving. Cannot go from OFFLINE to IDLE');
-            return 'BAD_STATE';
-        }
-
-        var rawItem: any = {
-            taskName: 'StatusTrackItem',
-            app: state,
-            title: state.toString().toLowerCase(),
-            beginDate: BackgroundUtils.currentTimeMinusJobInterval(),
-            endDate: new Date()
-        };
-
-        this.createOrUpdate(rawItem);
-
     }
 
     onSleep() {
@@ -162,7 +101,7 @@ export class BackgroundService {
     }
 
     async onResume() {
-        let statusTrackItem = stateManager.getRunningTrackItem(TrackItemType.StatusTrackItem);
+        let statusTrackItem = stateManager.getCurrentStatusTrackItem();
         if (statusTrackItem != null) {
             let item = await this.addInactivePeriod(statusTrackItem.endDate, new Date());
             stateManager.setAwakeFromSleep();

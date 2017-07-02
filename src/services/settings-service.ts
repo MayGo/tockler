@@ -1,15 +1,15 @@
 
 const remote = (<any>window).nodeRequire('electron').remote;
 
+
+let ipcRenderer: any = (<any>window).nodeRequire('electron').ipcRenderer;
+
+
 export class SettingsService {
     private service: any;
 
     constructor() {
         this.service = remote.getGlobal('SettingsService');
-    }
-
-    saveRunningLogItemReferemce(refId) {
-        return this.service.saveRunningLogItemReferemce(refId);
     }
 
     updateByName(name, jsonData)  {

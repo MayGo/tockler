@@ -1,6 +1,6 @@
 jest.autoMockOff();
 
-import BackgroundUtils  from '../app/background.utils';
+import BackgroundUtils from '../app/background.utils';
 import { models } from '../app/models';
 import { TrackItemAttributes } from '../app/models/interfaces/track-item-interface';
 import { TrackItemType } from '../app/track-item-type.enum';
@@ -95,7 +95,7 @@ describe('splitItemIntoDayChunks', () => {
             }
         ]);
     });
-    
+
 
     it('throws exception when begin and end is on same day.', async () => {
 
@@ -134,4 +134,26 @@ describe('splitItemIntoDayChunks', () => {
         expect(item.beginDate).not.toBeNull;
         expect(item.endDate).not.toBeNull;
     });
+});
+
+
+describe('shouldSplitInTwoOnMidnight', () => {
+
+    it('returns false if same day', async () => {
+
+        let shouldSplit = BackgroundUtils.shouldSplitInTwoOnMidnight(
+            moment("2017-06-20T10:15:00").toDate(), moment("2017-06-20T15:27:00").toDate()
+        );
+        expect(shouldSplit).toEqual(false);
+    });
+    it('returns true if not same day', async () => {
+
+        let shouldSplit = BackgroundUtils.shouldSplitInTwoOnMidnight(
+            moment("2017-06-19T10:15:00").toDate(), moment("2017-06-20T15:27:00").toDate()
+        );
+        expect(shouldSplit).toEqual(true);
+    });
+
+
+
 });

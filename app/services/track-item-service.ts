@@ -4,6 +4,10 @@ import { models, sequelize } from "../models/index";
 import { TrackItemAttributes, TrackItemInstance } from "../models/interfaces/track-item-interface";
 import { Transaction } from "sequelize";
 import * as moment from "moment";
+import { settingsService } from "./settings-service";
+import { State } from "../state.enum";
+import { stateManager } from "../state-manager";
+import { TrackItemType } from "../track-item-type.enum";
 
 export class TrackItemService {
 
@@ -11,7 +15,7 @@ export class TrackItemService {
 
   async createTrackItem(trackItemAttributes: TrackItemAttributes): Promise<TrackItemInstance> {
     let trackItem = await models.TrackItem.create(trackItemAttributes);
-    this.logger.info(`Created trackItem with title ${trackItemAttributes.title}.`);
+    this.logger.info(`Created trackItem :`, trackItem.toJSON());
     return trackItem;
   }
 
@@ -87,7 +91,7 @@ export class TrackItemService {
   findAllFromDay(day, taskName) {
 
     var to = moment(day).add(1, 'days');
-    console.log('findAllFromDay ' + taskName + ' from:' + day + ', to:' + to.toDate());
+    this.logger.info('findAllFromDay ' + taskName + ' from:' + day + ', to:' + to.toDate());
 
     return this.findAllDayItems(day, to.toDate(), taskName);
   }
@@ -107,16 +111,26 @@ export class TrackItemService {
   findLastOnlineItem() {
     //ONLINE item can be just inserted, we want old one.
     // 2 seconds should be enough
-    let beginDate = moment().subtract(5, 'seconds').toDate();
+    let currentStatusItem = stateManager.getCurrentStatusTrackItem();
+
+    if (currentStatusItem && currentStatusItem.app != State.Online) {
+      throw new Error("Not online.");
+    }
+
+    let whereQuery: any = {
+      app: State.Online,
+      taskName: 'StatusTrackItem'
+    };
+
+    if (currentStatusItem) {
+      whereQuery.id = {
+        $ne: currentStatusItem.id
+      };
+    }
+
 
     return models.TrackItem.findAll({
-      where: {
-        app: 'ONLINE',
-        beginDate: {
-          $lte: beginDate
-        },
-        taskName: 'StatusTrackItem'
-      },
+      where: whereQuery,
       limit: 1,
       order: [
         ['endDate', 'DESC']
@@ -141,7 +155,7 @@ export class TrackItemService {
 
   updateColorForApp(appName, color) {
 
-    console.log("Updating app color:", appName, color);
+    this.logger.info("Updating app color:", appName, color);
 
     return models.TrackItem.update({ color: color }, {
       fields: ['color'],
@@ -167,7 +181,7 @@ export class TrackItemService {
           fields: ['endDate'],
           where: { id: id }
         }).then(() => {
-          console.log("Saved track item to DB with now:", id);
+          this.logger.info("Saved track item to DB with now:", id);
           resolve(id);
         }).catch((error: Error) => {
           this.logger.error(error.message);
@@ -183,7 +197,7 @@ export class TrackItemService {
       models.TrackItem.destroy({
         where: { id: id }
       }).then(() => {
-        console.log("Deleted track item with ID:", id);
+        this.logger.info("Deleted track item with ID:", id);
         resolve(id);
       }).catch((error: Error) => {
         this.logger.error(error.message);
@@ -203,7 +217,7 @@ export class TrackItemService {
           }
         }
       }).then(() => {
-        console.log("Deleted track items with IDs:", ids);
+        this.logger.info("Deleted track items with IDs:", ids);
         resolve(ids);
       }).catch((error: Error) => {
         this.logger.error(error.message);
@@ -211,6 +225,30 @@ export class TrackItemService {
       });
     });
     return promise;
+  }
+
+  async findRunningLogItem() {
+    let item = await settingsService.findByName('RUNNING_LOG_ITEM');
+
+    if (!item) {
+      this.logger.debug("No RUNNING_LOG_ITEM.");
+      return null;
+    }
+
+    this.logger.debug("Found RUNNING_LOG_ITEM config: ", item.toJSON());
+
+    let logTrackItemId = item.jsonDataParsed.id;
+    if (!logTrackItemId) {
+      this.logger.debug("No RUNNING_LOG_ITEM ref id");
+      return null;
+    }
+
+    let logItem = await trackItemService.findById(logTrackItemId);
+    if (!logItem) {
+      this.logger.error("RUNNING_LOG_ITEM not found by id:", logTrackItemId);
+      return null;
+    }
+    return logItem;
   }
 }
 

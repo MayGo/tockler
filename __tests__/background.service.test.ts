@@ -8,6 +8,7 @@ import { TrackItemType } from '../app/track-item-type.enum';
 import TrackItemTestData from './track-item-test-data';
 
 import * as moment from 'moment';
+import BackgroundUtils from "../app/background.utils";
 
 const dateFormat = "YYYY-MM-DD HH:mm:ss";
 
@@ -17,9 +18,9 @@ describe('createOrUpdate', () => {
         models.AppSetting.$clearQueue();
         models.TrackItem.$clearQueue();
         models.Settings.$clearQueue();
-        stateManager.resetRunningTrackItem(TrackItemType.AppTrackItem);
-        stateManager.resetRunningTrackItem(TrackItemType.LogTrackItem);
-        stateManager.resetRunningTrackItem(TrackItemType.StatusTrackItem);
+        stateManager.resetCurrentTrackItem(TrackItemType.AppTrackItem);
+        stateManager.resetCurrentTrackItem(TrackItemType.LogTrackItem);
+        stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
     });
 
     it('returns saved item', async () => {
@@ -51,7 +52,6 @@ describe('createOrUpdate', () => {
 
         models.Settings.$queueResult(models.Settings.build({ jsonData: '{}' }));
 
-
         const rawItem: TrackItemAttributes = TrackItemTestData.getLogTrackItem({
             beginDate: moment().startOf('day').subtract(1, 'hours').toDate(),
             endDate: moment().startOf('day').add(1, 'hours').toDate()
@@ -79,13 +79,13 @@ describe('createOrUpdate', () => {
 
         const rawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({});
 
-        let runningItem = stateManager.getRunningTrackItem(rawItem.taskName);
+        let runningItem = stateManager.getCurrentTrackItem(rawItem.taskName);
 
         expect(runningItem).toBeNull();
 
         const item = await backgroundService.createOrUpdate(rawItem);
 
-        runningItem = stateManager.getRunningTrackItem(rawItem.taskName);
+        runningItem = stateManager.getCurrentTrackItem(rawItem.taskName);
 
         expect(runningItem).not.toBeNull();
         expect(runningItem.app).toEqual("Chrome");
@@ -103,19 +103,19 @@ describe('createOrUpdate', () => {
         const firstRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({});
         const secondRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({ app: 'Firefox' }, 1);
 
-        let runningItem = stateManager.getRunningTrackItem(firstRawItem.taskName);
+        let runningItem = stateManager.getCurrentTrackItem(firstRawItem.taskName);
 
         expect(runningItem).toBeNull();
 
         //Add First item
         const firstItem = await backgroundService.createOrUpdate(firstRawItem);
-        runningItem = stateManager.getRunningTrackItem(firstRawItem.taskName);
+        runningItem = stateManager.getCurrentTrackItem(firstRawItem.taskName);
         expect(runningItem).not.toBeNull();
         expect(runningItem.id).toEqual(firstItem.id);
 
         //Add Second item
         const secondItem = await backgroundService.createOrUpdate(secondRawItem);
-        runningItem = stateManager.getRunningTrackItem(secondRawItem.taskName);
+        runningItem = stateManager.getCurrentTrackItem(secondRawItem.taskName);
         expect(runningItem).not.toBeNull();
         expect(runningItem.id).toEqual(secondItem.id);
         expect(firstItem.id).not.toEqual(secondItem.id);
@@ -133,18 +133,18 @@ describe('createOrUpdate', () => {
         const firstRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({});
         const secondRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({}, 1);
 
-        let runningItem = stateManager.getRunningTrackItem(firstRawItem.taskName);
+        let runningItem = stateManager.getCurrentTrackItem(firstRawItem.taskName);
         expect(runningItem).toBeNull();
 
         //Add First item
         const firstItem = await backgroundService.createOrUpdate(firstRawItem);
-        runningItem = stateManager.getRunningTrackItem(firstRawItem.taskName);
+        runningItem = stateManager.getCurrentTrackItem(firstRawItem.taskName);
         expect(runningItem).not.toBeNull();
         expect(runningItem.id).toEqual(firstItem.id);
 
         //Add Second item
         const secondItem = await backgroundService.createOrUpdate(secondRawItem);
-        runningItem = stateManager.getRunningTrackItem(secondRawItem.taskName);
+        runningItem = stateManager.getCurrentTrackItem(secondRawItem.taskName);
         expect(runningItem).not.toBeNull();
         expect(runningItem.id).toEqual(firstItem.id);
         expect(firstItem.id).toEqual(secondItem.id);
@@ -166,7 +166,7 @@ describe('createOrUpdate', () => {
         const firstItem = await backgroundService.createOrUpdate(firstRawItem);
         //Add Second item
         const secondItem = await backgroundService.createOrUpdate(secondRawItem);
-        let runningItem = stateManager.getRunningTrackItem(secondRawItem.taskName);
+        let runningItem = stateManager.getCurrentTrackItem(secondRawItem.taskName);
         expect(runningItem.id).toEqual(firstItem.id);
         expect(runningItem.beginDate).toEqual(firstRawItem.beginDate);
         expect(runningItem.endDate).not.toEqual(firstRawItem.endDate);
@@ -202,168 +202,5 @@ describe('addInactivePeriod', () => {
         expect(item.id).not.toBeNull;
 
         expect(item.color).toEqual('#000');
-    });
-});
-
-
-
-describe('saveActiveWindow', () => {
-
-    afterEach(async () => {
-
-        stateManager.resetRunningTrackItem(TrackItemType.AppTrackItem);
-        stateManager.resetRunningTrackItem(TrackItemType.LogTrackItem);
-        stateManager.resetRunningTrackItem(TrackItemType.StatusTrackItem);
-        stateManager.setAwakeFromSleep();
-    });
-
-    it('Does not save item when sleeping', async () => {
-        //Create mock data
-        const createOrUpdateMock = jest.fn();
-        backgroundService.createOrUpdate = createOrUpdateMock;
-
-        stateManager.setSystemToSleep();
-
-        let rawItem = TrackItemTestData.getAppTrackItem({});
-        let error = backgroundService.saveActiveWindow(rawItem);
-
-        expect(error).toBe('SLEEPING');
-        expect(createOrUpdateMock.mock.calls.length).toBe(0);
-    });
-
-    it('Does not save item when idling', async () => {
-        //Create mock data
-        const createOrUpdateMock = jest.fn();
-        backgroundService.createOrUpdate = createOrUpdateMock;
-
-        let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Idle }));
-
-        stateManager.setRunningTrackItem(item);
-
-        let rawItem = TrackItemTestData.getAppTrackItem({});
-        let error = backgroundService.saveActiveWindow(rawItem);
-
-        expect(error).toEqual('IDLING');
-        expect(createOrUpdateMock.mock.calls.length).toBe(0);
-    });
-
-    it('Does save item when online', async () => {
-        //Create mock data
-        const createOrUpdateMock = jest.fn();
-        backgroundService.createOrUpdate = createOrUpdateMock;
-
-        let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
-
-        stateManager.setRunningTrackItem(item);
-
-        let rawItem = TrackItemTestData.getAppTrackItem({});
-        let error = backgroundService.saveActiveWindow(rawItem);
-
-        expect(error).not.toBeDefined();
-        expect(createOrUpdateMock.mock.calls.length).toBe(1);
-    });
-
-    it('Does save item when offline (should not happen in reality)', async () => {
-        //Create mock data
-        const createOrUpdateMock = jest.fn();
-        backgroundService.createOrUpdate = createOrUpdateMock;
-
-        let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Offline }));
-
-        stateManager.setRunningTrackItem(item);
-
-        let rawItem = TrackItemTestData.getAppTrackItem({});
-        let error = backgroundService.saveActiveWindow(rawItem);
-
-        expect(error).not.toBeDefined();
-        expect(createOrUpdateMock.mock.calls.length).toBe(1);
-    });
-});
-
-
-describe('saveIdleTrackItem', () => {
-
-    afterEach(async () => {
-
-        stateManager.resetRunningTrackItem(TrackItemType.AppTrackItem);
-        stateManager.resetRunningTrackItem(TrackItemType.LogTrackItem);
-        stateManager.resetRunningTrackItem(TrackItemType.StatusTrackItem);
-        stateManager.setAwakeFromSleep();
-    });
-
-    it('Does not save item when sleeping', async () => {
-        //Create mock data
-        const createOrUpdateMock = jest.fn();
-        backgroundService.createOrUpdate = createOrUpdateMock;
-
-        stateManager.setSystemToSleep();
-
-        let rawItem = TrackItemTestData.getAppTrackItem({});
-        let error = backgroundService.saveIdleTrackItem(rawItem);
-
-        expect(error).toBe('SLEEPING');
-        expect(createOrUpdateMock.mock.calls.length).toBe(0);
-    });
-
-    it('If havent idled enough, then creates Online item', async () => {
-        //Create mock data
-        const createOrUpdateMock = jest.fn();
-        backgroundService.createOrUpdate = createOrUpdateMock;
-
-        let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
-
-        stateManager.setRunningTrackItem(item);
-        backgroundService.saveIdleTrackItem(appConstants.IDLE_IN_SECONDS_TO_LOG - 1);
-
-        expect(createOrUpdateMock.mock.calls.length).toBe(1);
-        let calledObj = createOrUpdateMock.mock.calls[0][0];
-        expect(calledObj.app).toBe("ONLINE");
-        expect(calledObj.title).toBe("online");
-        expect(calledObj.taskName).toBe("StatusTrackItem");
-    });
-
-    it('BeginDate and endDate diff should be BACKGROUND_JOB_INTERVAL (3 sec)', async () => {
-        //Create mock data
-        const createOrUpdateMock = jest.fn();
-        backgroundService.createOrUpdate = createOrUpdateMock;
-
-        backgroundService.saveIdleTrackItem(appConstants.IDLE_IN_SECONDS_TO_LOG - 1);
-
-        expect(createOrUpdateMock.mock.calls.length).toBe(1);
-        let calledObj = createOrUpdateMock.mock.calls[0][0];
-        let diffInSeconds = moment(calledObj.endDate).diff(moment(calledObj.beginDate), 'milliseconds');
-        expect(diffInSeconds).toBe(appConstants.BACKGROUND_JOB_INTERVAL);
-    });
-
-    it('Does save item when online', async () => {
-        //Create mock data
-        const createOrUpdateMock = jest.fn();
-        backgroundService.createOrUpdate = createOrUpdateMock;
-
-        let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
-
-        stateManager.setRunningTrackItem(item);
-
-        let rawItem = TrackItemTestData.getAppTrackItem({});
-        let error = backgroundService.saveIdleTrackItem(rawItem);
-
-        expect(error).not.toBeDefined();
-        expect(createOrUpdateMock.mock.calls.length).toBe(1);
-    });
-
-    it('Cannot go from OFFLINE to IDLE ', async () => {
-        //Create mock data
-        const createOrUpdateMock = jest.fn();
-        backgroundService.createOrUpdate = createOrUpdateMock;
-
-        let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Offline }));
-
-        stateManager.setRunningTrackItem(item);
-
-        let rawItem = TrackItemTestData.getAppTrackItem({});
-        let error = backgroundService.saveIdleTrackItem(appConstants.IDLE_IN_SECONDS_TO_LOG + 1);
-
-        expect(error).toEqual("BAD_STATE");
-        expect(createOrUpdateMock.mock.calls.length).toBe(0);
     });
 });

@@ -39,34 +39,21 @@ export class SettingsService {
     return item.jsonDataParsed;
   }
 
-  getRunningLogItem() {
-    let promise = new Promise<TrackItemInstance>((resolve: Function, reject: Function) => {
-      this.findByName('RUNNING_LOG_ITEM').then((item: any) => {
-        //console.log("got RUNNING_LOG_ITEM: ", item);
-        if (item.jsonDataParsed.id) {
-          models.TrackItem.findById(item.jsonDataParsed.id).then((logItem) => {
-            //console.log("resolved log item RUNNING_LOG_ITEM: ", logItem);
-            resolve(logItem);
-          });
-        } else {
-          console.log("No RUNNING_LOG_ITEM ref id");
-          resolve();
-        }
-      });
-    });
-    return promise;
+  async getRunningLogItem() {
+    let settingsItem = await this.findByName('RUNNING_LOG_ITEM');
+    //console.log("got RUNNING_LOG_ITEM: ", item);
+    if (settingsItem.jsonDataParsed.id) {
+      let logItem = await models.TrackItem.findById(settingsItem.jsonDataParsed.id);
+      return logItem;
+    }
+    return null;
   }
 
-  saveRunningLogItemReferemce(logItemId) {
+  saveRunningLogItemReference(logItemId) {
     this.updateByName('RUNNING_LOG_ITEM', { id: logItemId }).then((item) => {
-      console.log("Updated RUNNING_LOG_ITEM!", item);
+      console.log("Updated RUNNING_LOG_ITEM!", logItemId);
     });
-    if (logItemId) {
-      //Lets update items end date
-      trackItemService.updateEndDateWithNow(logItemId).then((item) => {
-        console.log("Updated log item to DB:", item);
-      });
-    }
+
   }
 }
 

@@ -126,8 +126,8 @@ export class TimelineView {
         _.keys(this.loadedItems).forEach((taskName) => {
             logger.debug('TIMELINE_LOAD_DAY_REQUEST sent', startDate, taskName);
             ipcRenderer.send('TIMELINE_LOAD_DAY_REQUEST', startDate, taskName);
-        })
-    };
+        });
+    }
 
 
     parseReceivedTimelineData(event, startDate, taskName, items) {

@@ -9,10 +9,10 @@ const ipcRenderer = (<any>window).nodeRequire('electron').ipcRenderer;
 export class AppNavMenubar {
 
   toggleMainWindow() {
-    ipcRenderer.send('toggle-main-window')
-  };
+    ipcRenderer.send('toggle-main-window');
+  }
 
   exitApp() {
-    ipcRenderer.send('close-app')
+    ipcRenderer.send('close-app');
   }
 }
