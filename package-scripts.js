@@ -24,14 +24,14 @@ module.exports = {
       ),
       run: 'cross-env NODE_ENV=development electron ./dist',
       build: {
-        dev: 'webpack --config webpack.config.main.js --progress -d',
+        dev: 'webpack --config webpack.config.main.js  -d',
         prod: 'webpack --config webpack.config.main.js --progress --env.production'
       }
     },
     renderer: {
       default: 'nps renderer.build.dev',
       build: {
-        dev: 'webpack --watch --progress -d',
+        dev: 'webpack --watch  -d',
         prod: 'webpack --progress --env.production'
       }
     },

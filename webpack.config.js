@@ -5,6 +5,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const { AureliaPlugin, ModuleDependenciesPlugin } = require('aurelia-webpack-plugin');
 const { optimize: { CommonsChunkPlugin }, ProvidePlugin } = require('webpack')
 const { TsConfigPathsPlugin, CheckerPlugin } = require('awesome-typescript-loader');
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 // config helpers:
 const ensureArray = (config) => config && (Array.isArray(config) ? config : [config]) || []
@@ -34,7 +35,7 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
   },
   entry: {
     app: ['aurelia-bootstrapper'],
-    
+
     bootstrap: [
       'bootstrap'
     ]
@@ -50,6 +51,7 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
     contentBase: outDir,
     // serve index.html for all 404 (required for push-state)
     historyApiFallback: true,
+    quiet: true
   },
   /* node: {
     __dirname: false,
@@ -88,7 +90,7 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
       { test: /\.html$/i, loader: 'html-loader' },
       { test: /\.ts$/i, loader: 'awesome-typescript-loader', exclude: nodeModulesDir },
       { test: /\.json$/i, loader: 'json-loader' },
-    
+
       // exposes jQuery globally as $ and as jQuery:
       { test: require.resolve('jquery'), loader: 'expose-loader?$!expose-loader?jQuery' },
       // embed small images and fonts as Data Urls and larger ones as files:
@@ -105,13 +107,12 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
     ]
   },
   plugins: [
+    new FriendlyErrorsWebpackPlugin(),
     new AureliaPlugin({
       pal: "aurelia-pal-browser",
       dist: 'es2015'
-
-   
-   }),
-     new ModuleDependenciesPlugin({
+    }),
+    new ModuleDependenciesPlugin({
       'au-table': ['./au-table', './au-table-select', './au-table-sort', './au-table-pagination'],
     }),
     new ProvidePlugin({
@@ -134,7 +135,7 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
         title, server, baseUrl
       },
     }),
-   
+
 
     ...when(extractCss, new ExtractTextPlugin({
       filename: production ? '[contenthash].css' : '[id].css',

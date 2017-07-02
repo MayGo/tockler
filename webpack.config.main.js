@@ -3,6 +3,7 @@ const os = require('os');
 
 const { optimize: { CommonsChunkPlugin }, ProvidePlugin } = require('webpack')
 const { TsConfigPathsPlugin, CheckerPlugin } = require('awesome-typescript-loader');
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 const nodeExternals = require('webpack-node-externals');
 const tsConfigPath = path.resolve(__dirname, 'app', 'tsconfig.main.json');
@@ -46,6 +47,7 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
     ]
   },
   plugins: [
+    new FriendlyErrorsWebpackPlugin(),
     new TsConfigPathsPlugin(),
     new CheckerPlugin()
   ],
