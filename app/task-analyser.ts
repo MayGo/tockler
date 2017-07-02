@@ -1,4 +1,3 @@
-'use strict';
 import { TrackItemInstance } from './models/interfaces/track-item-interface';
 import { settingsService } from './services/settings-service';
 import { trackItemService } from './services/track-item-service';

@@ -5,79 +5,58 @@ import TaskAnalyser from '../task-analyser';
 var logger = logManager.getLogger('AppTrackItemJob');
 
 import * as moment from 'moment';
-import { TrackItemType } from "../track-item-type.enum";
-import { backgroundService } from '../background.service';
-import BackgroundUtils from "../background.utils";
-
 import * as activeWin from 'active-win';
+import { TrackItemInstance } from "../models/interfaces/track-item-interface";
+import BackgroundUtils from "../background.utils";
+import { backgroundService } from "../background.service";
+import { TrackItemType } from "../track-item-type.enum";
 
 let shouldSplitLogItemFromDate = null;
 
 export class AppTrackItemJob {
 
-    run() {
+    lastUpdatedItem: TrackItemInstance;
+    async run() {
         try {
             this.checkIfIsInCorrectState();
-            this.saveForegroundWindowTitle();
+            let result = await activeWin();
+            let updatedItem: TrackItemInstance = await this.saveActiveWindow(result);
+
+            if (!BackgroundUtils.isSameItems(updatedItem, this.lastUpdatedItem)) {
+                logger.debug("App and title changed. Analysing title");
+            }
+
+            this.lastUpdatedItem = updatedItem;
         } catch (error) {
-            logger.error(error);
+            logger.info(error.message);
         }
     }
 
     checkIfIsInCorrectState(): void {
-
-    }
-
-    saveForegroundWindowTitle() {
-
-        activeWin().then(result => {
-
-            /*
-            {
-                title: 'npm install',
-                id: 54,
-                app: 'Terminal',
-                pid: 368
-            }
-            */
-            let active: any = {};
-            // logger.info(result);
-
-            active.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
-            active.endDate = new Date();
-            active.app = result.app;
-            active.title = result.title.replace(/\n$/, "").replace(/^\s/, "");
-
-            logger.debug("Foreground window (parsed):", active);
-
-            this.saveActiveWindow(active);
-        });
-    }
-
-    saveActiveWindow(newAppTrackItem) {
         if (stateManager.isSystemSleeping()) {
-            logger.info('Computer is sleeping, not running saveActiveWindow');
-            return 'SLEEPING'; //TODO: throw exception
+            throw new Error('System is sleeping.');
         }
 
         if (stateManager.isSystemIdling()) {
-            logger.debug('Not saving, app is idling', newAppTrackItem);
-            stateManager.resetAppTrackItem();
-            return 'IDLING'; //TODO: throw exception
+            stateManager.resetAppTrackItem(); // TODO: Check if this is needed
+            throw new Error('App is idling.');
         }
-
-        if (!newAppTrackItem.title && !newAppTrackItem.app) {
-            // Lock screen have no title, maybe something
-            newAppTrackItem.app = 'NATIVE';
-            newAppTrackItem.taskName = 'AppTrackItem';
-            newAppTrackItem.title = 'NO_TITLE';
-        } else {
-            newAppTrackItem.taskName = 'AppTrackItem';
-        }
-
-        backgroundService.createOrUpdate(newAppTrackItem);
     }
 
+    async saveActiveWindow(result): Promise<TrackItemInstance> {
+
+        let rawItem: any = { taskName: TrackItemType.AppTrackItem };
+
+        rawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
+        rawItem.endDate = new Date();
+        rawItem.app = result.app || 'NATIVE';
+        rawItem.title = result.title.replace(/\n$/, "").replace(/^\s/, "") || 'NO_TITLE';
+
+        logger.debug("Active window (parsed):", rawItem);
+
+        let savedItem = await backgroundService.createOrUpdate(rawItem);
+        return savedItem;
+    }
 }
 
 export const appTrackItemJob = new AppTrackItemJob();

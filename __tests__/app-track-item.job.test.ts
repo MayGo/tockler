@@ -14,7 +14,7 @@ import * as moment from 'moment';
 
 const dateFormat = "YYYY-MM-DD HH:mm:ss";
 
-describe('saveActiveWindow', () => {
+describe('checkIfIsInCorrectState', () => {
 
     afterEach(async () => {
 
@@ -32,10 +32,10 @@ describe('saveActiveWindow', () => {
         stateManager.setSystemToSleep();
 
         let rawItem = TrackItemTestData.getAppTrackItem({});
-        let error = appTrackItemJob.saveActiveWindow(rawItem);
 
-        expect(error).toBe('SLEEPING');
-        expect(createOrUpdateMock.mock.calls.length).toBe(0);
+        expect(() => {
+            appTrackItemJob.checkIfIsInCorrectState();
+        }).toThrow();
     });
 
     it('Does not save item when idling', async () => {
@@ -47,11 +47,9 @@ describe('saveActiveWindow', () => {
 
         stateManager.setCurrentTrackItem(item);
 
-        let rawItem = TrackItemTestData.getAppTrackItem({});
-        let error = appTrackItemJob.saveActiveWindow(rawItem);
-
-        expect(error).toEqual('IDLING');
-        expect(createOrUpdateMock.mock.calls.length).toBe(0);
+        expect(() => {
+            appTrackItemJob.checkIfIsInCorrectState();
+        }).toThrow();
     });
 
     it('Does save item when online', async () => {
@@ -63,11 +61,10 @@ describe('saveActiveWindow', () => {
 
         stateManager.setCurrentTrackItem(item);
 
-        let rawItem = TrackItemTestData.getAppTrackItem({});
-        let error = appTrackItemJob.saveActiveWindow(rawItem);
+        expect(() => {
+            appTrackItemJob.checkIfIsInCorrectState();
+        }).not.toThrow();
 
-        expect(error).not.toBeDefined();
-        expect(createOrUpdateMock.mock.calls.length).toBe(1);
     });
 
     it('Does save item when offline (should not happen in reality)', async () => {
@@ -79,10 +76,8 @@ describe('saveActiveWindow', () => {
 
         stateManager.setCurrentTrackItem(item);
 
-        let rawItem = TrackItemTestData.getAppTrackItem({});
-        let error = appTrackItemJob.saveActiveWindow(rawItem);
-
-        expect(error).not.toBeDefined();
-        expect(createOrUpdateMock.mock.calls.length).toBe(1);
+        expect(() => {
+            appTrackItemJob.checkIfIsInCorrectState();
+        }).not.toThrow();
     });
 });
