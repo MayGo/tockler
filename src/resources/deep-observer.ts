@@ -10,7 +10,7 @@ export class DeepObserver {
   }
 
   public observe(target: Object, property: string, callback: (n: any, o: any, name: string) => void): () => void {
-    var subscriptions: { root: any, children: any[] } = { root: null, children: [] };
+    let subscriptions: { root: any, children: any[] } = { root: null, children: [] };
 
     subscriptions.root = (this._bindingEngine.propertyObserver(target, property)
       .subscribe((n, o) => {
@@ -32,7 +32,7 @@ export class DeepObserver {
   private recurse(target, property, subscriptions, callback, path) {
     let sub = target[property];
     if (typeof sub === "object") {
-      for (var p in sub)
+      for (let p in sub)
         if (sub.hasOwnProperty(p)) {
           this.recurse(sub, p, subscriptions, callback, `${path}${sub instanceof Array ? '[' + p + ']' : '.' + p}`);
         }

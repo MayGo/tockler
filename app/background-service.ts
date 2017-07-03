@@ -9,7 +9,7 @@ import config from "./config";
 
 import { logManager } from "./log-manager";
 import { stateManager } from "./state-manager";
-var logger = logManager.getLogger('BackgroundService');
+let logger = logManager.getLogger('BackgroundService');
 
 import * as moment from 'moment';
 import UserMessages from "./user-messages";
@@ -31,7 +31,7 @@ export class BackgroundService {
 
     async addInactivePeriod(beginDate, endDate) {
 
-        var rawItem: any = { app: State.Offline, title: State.Offline.toString().toLowerCase() };
+        let rawItem: any = { app: State.Offline, title: State.Offline.toString().toLowerCase() };
         rawItem.taskName = TrackItemType.StatusTrackItem;
         rawItem.beginDate = beginDate;
         rawItem.endDate = endDate;

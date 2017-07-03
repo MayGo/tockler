@@ -1,7 +1,7 @@
 
 import { logManager } from '../log-manager';
 import { stateManager } from '../state-manager';
-var logger = logManager.getLogger('LogTrackItemJob');
+let logger = logManager.getLogger('LogTrackItemJob');
 
 import * as moment from 'moment';
 import { TrackItemType } from "../enums/track-item-type";
@@ -48,15 +48,15 @@ export class StatusTrackItemJob {
 
         //logger.debug('Script saveUserIdleTime file: ' + script)
 
-        var handleSuccess = (stdout) => {
+        let handleSuccess = (stdout) => {
             logger.debug('Idle time: ' + stdout);
 
-            var seconds = stdout;
+            let seconds = stdout;
 
             this.saveIdleTrackItem(seconds);
         };
 
-        var handleError = (error) => {
+        let handleError = (error) => {
             logger.error('saveUserIdleTime error: ' + error);
 
             /* if (error.includes('UnauthorizedAccess') || error.includes('AuthorizationManager check failed')) {
@@ -68,7 +68,7 @@ export class StatusTrackItemJob {
 
         };
 
-        var callcack = (err, stdout, stderr) => {
+        let callcack = (err, stdout, stderr) => {
 
             if (stderr) {
                 handleError(stderr);
@@ -101,7 +101,7 @@ export class StatusTrackItemJob {
             return 'BAD_STATE';
         }
 
-        var rawItem: any = {
+        let rawItem: any = {
             taskName: 'StatusTrackItem',
             app: state,
             title: state.toString().toLowerCase(),

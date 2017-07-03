@@ -10,9 +10,9 @@ import config from "./config";
 import { logManager } from "./log-manager";
 import { stateManager } from "./state-manager";
 import { backgroundService } from "./background-service";
-var logger = logManager.getLogger('BackgroundJob');
+let logger = logManager.getLogger('BackgroundJob');
 
-var $q = require('q');
+let $q = require('q');
 
 import * as moment from 'moment';
 import * as activeWin from 'active-win';

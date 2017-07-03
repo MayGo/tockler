@@ -1,7 +1,7 @@
 
 import { logManager } from '../log-manager';
 import { stateManager } from '../state-manager';
-var logger = logManager.getLogger('AppTrackItemJob');
+let logger = logManager.getLogger('AppTrackItemJob');
 
 import * as moment from 'moment';
 import * as activeWin from 'active-win';

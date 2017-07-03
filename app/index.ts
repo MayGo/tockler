@@ -18,8 +18,8 @@ if (config.isDev) {
     require('electron-reload')(reloadFile);
 }
 
-var AutoLaunch = require('auto-launch');
-var appLauncher = new AutoLaunch({
+let AutoLaunch = require('auto-launch');
+let appLauncher = new AutoLaunch({
     name: 'Tockler'
 });
 
@@ -93,7 +93,7 @@ app.on('activate-with-no-open-windows', () => {
 
 /* Single Instance Check */
 
-var iShouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
+let iShouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
     console.log("Make single instance");
 
     if (windowManager && windowManager.mainWindow) {

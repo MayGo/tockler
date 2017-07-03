@@ -36,8 +36,8 @@ export class TaskAnalyser {
         if (!findRe) {
             return;
         }
-        var re = new RegExp(findRe, "g");
-        var result = re.exec(str);
+        let re = new RegExp(findRe, "g");
+        let result = re.exec(str);
 
         if (result != null) {
             let first = result[0];

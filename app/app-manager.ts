@@ -7,7 +7,7 @@ import { sequelize } from "./models/index";
 import { logManager } from "./log-manager";
 import { stateManager } from "./state-manager";
 import { settingsService } from "./services/settings-service";
-var logger = logManager.getLogger('AppManager');
+let logger = logManager.getLogger('AppManager');
 
 export default class AppManager {
 
@@ -21,7 +21,8 @@ export default class AppManager {
   static initIpc() {
     ipcMain.on('TIMELINE_LOAD_DAY_REQUEST', (event, startDate, taskName) => {
       console.log('TIMELINE_LOAD_DAY_REQUEST', startDate, taskName);
-      trackItemService.findAllFromDay(startDate, taskName).then((items) => event.sender.send('TIMELINE_LOAD_DAY_RESPONSE', startDate, taskName, items))
+      trackItemService.findAllFromDay(startDate, taskName)
+        .then((items) => event.sender.send('TIMELINE_LOAD_DAY_RESPONSE', startDate, taskName, items));
     });
   }
 

@@ -180,7 +180,7 @@ export class TimelineComponent {
             .tickSize(this.mainHeight)
             .tickPadding(4);
 
-        var yAxisMain = d3.axisLeft(this.yScaleMain)
+        let yAxisMain = d3.axisLeft(this.yScaleMain)
             .tickSize(0)
             .tickPadding(-90);
 
@@ -197,7 +197,7 @@ export class TimelineComponent {
     initMiniAxis() {
         // miniBrush is on top of items layer and  axis labels is on top of items
 
-        var xAxisMini = d3.axisBottom(this.xScaleMini)
+        let xAxisMini = d3.axisBottom(this.xScaleMini)
             .tickFormat(d3.timeFormat(this.tickFormat))
             .ticks(d3.timeMinute, 60)
             .tickSize(3)
@@ -247,11 +247,11 @@ export class TimelineComponent {
 
     drawMiniBrush(day) {
 
-        var start = moment(day).startOf('day').toDate();
-        var end = moment(day).startOf('day').add(1, 'day').toDate();
+        let start = moment(day).startOf('day').toDate();
+        let end = moment(day).startOf('day').add(1, 'day').toDate();
 
         // show about an hour if today else
-        var isToday = moment(day).isSame(moment(), 'day');
+        let isToday = moment(day).isSame(moment(), 'day');
         if (isToday) {
             start = moment().subtract(1, 'hours').toDate();
             end = moment().add(10, 'minutes').toDate();
@@ -267,9 +267,9 @@ export class TimelineComponent {
 
     updateDomain(day) {
         // Update time domain
-        var timeDomainStart = day;
+        let timeDomainStart = day;
         //console.log("Update time domain: ", timeDomainStart)
-        var timeDomainEnd = d3.utcDay.offset(timeDomainStart, 1);
+        let timeDomainEnd = d3.utcDay.offset(timeDomainStart, 1);
         this.xScaleMini.domain([timeDomainStart, timeDomainEnd]);
     }
 
@@ -278,7 +278,7 @@ export class TimelineComponent {
         this.allItems.push(...trackItems);
 
         //mini item rects
-        var rects = this.mini.select("#miniItemsId").selectAll(".miniItems")
+        let rects = this.mini.select("#miniItemsId").selectAll(".miniItems")
             .data(this.allItems);
 
 
@@ -346,7 +346,7 @@ export class TimelineComponent {
 
     displaySelectedInMain() {
 
-        var extent = d3.brushSelection(this.mini.select(".miniBrush").node());
+        let extent = d3.brushSelection(this.mini.select(".miniBrush").node());
 
         logger.debug("extent", extent)
         let minExtent = this.xScaleMini.invert(extent[0]);
@@ -361,7 +361,7 @@ export class TimelineComponent {
         //xAxisMain.scale(xScaleMain);
         this.main.select(".x.axis").call(this.xAxisMain);
 
-        var rects = this.main.select("#mainItemsId").selectAll(".mainItems")
+        let rects = this.main.select("#mainItemsId").selectAll(".mainItems")
             .data(visItems);
 
         //remove
@@ -416,12 +416,12 @@ export class TimelineComponent {
     onClickTrackItem(d, i, element) {
 
         logger.debug("Clicked track item", d, i);
-        var p = d3.select(element);
-        var data: any = p.data()[0];
+        let p = d3.select(element);
+        let data: any = p.data()[0];
 
-        var translate = p.attr('transform');
-        var x = new Number(p.attr('x'));
-        var y = new Number(p.attr('y'));
+        let translate = p.attr('transform');
+        let x = new Number(p.attr('x'));
+        let y = new Number(p.attr('y'));
 
         // Create object from TrackItem object, to prevent updating trackitem
         this.selectedTrackItem = {
@@ -447,11 +447,11 @@ export class TimelineComponent {
     initTooltips(addToSvg) {
         console.log("Init tooltip");
 
-        var format = d3.timeFormat("%H:%M:%S");
+        let format = d3.timeFormat("%H:%M:%S");
         // set up initial svg object
-        var d3tip = d3Tip().attr('class', 'd3-tip').html((d: any) => {
-            var duration = moment.duration(+new Date(d.endDate) - +new Date(d.beginDate))
-            var formattedDuration = moment.utc(duration.asMilliseconds()).format("HH[h] mm[m] ss[s]");
+        let d3tip = d3Tip().attr('class', 'd3-tip').html((d: any) => {
+            let duration = moment.duration(+new Date(d.endDate) - +new Date(d.beginDate))
+            let formattedDuration = moment.utc(duration.asMilliseconds()).format("HH[h] mm[m] ss[s]");
             // strip leading zeroes
             formattedDuration = formattedDuration.replace('00h 00m', '');
             formattedDuration = formattedDuration.replace('00h ', '');
@@ -483,7 +483,7 @@ export class TimelineComponent {
         if (!d3.event.sourceEvent) return; // Only transition after input.
         if (!d3.event.selection) return; // Ignore empty selections.
 
-        var selection = d3.event.selection;
+        let selection = d3.event.selection;
 
         let extent = selection.map(this.xScaleMain.invert, this.xScaleMain);
 
@@ -498,7 +498,7 @@ export class TimelineComponent {
 
 
 
-        var selection = d3.event.selection;
+        let selection = d3.event.selection;
 
         let extent = selection.map(this.xScaleMain.invert, this.xScaleMain);
 
@@ -539,8 +539,8 @@ export class TimelineComponent {
 
     snapDatesToMinute(extent) {
         // change data based on selection brush
-        var beginDate: Date = d3.timeMinute.floor(extent[0]);
-        var endDate: Date = d3.timeMinute.ceil(extent[1]);
+        let beginDate: Date = d3.timeMinute.floor(extent[0]);
+        let endDate: Date = d3.timeMinute.ceil(extent[1]);
         this.moveMainBrush;
         return [beginDate, endDate];
     }

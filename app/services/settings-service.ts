@@ -15,7 +15,7 @@ export class SettingsService {
         name: name
       }
     });
-    var item = items[0];
+    let item = items[0];
     item.jsonDataParsed = JSON.parse(item.jsonData);
     return item;
   }

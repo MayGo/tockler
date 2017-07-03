@@ -1,7 +1,7 @@
 
 import { logManager } from '../log-manager';
 import { stateManager } from '../state-manager';
-var logger = logManager.getLogger('LogTrackItemJob');
+let logger = logManager.getLogger('LogTrackItemJob');
 
 import * as moment from 'moment';
 import { TrackItemType } from "../enums/track-item-type";
@@ -85,8 +85,8 @@ export class LogTrackItemJob {
             let settings = await settingsService.fetchWorkSettings();
 
             let onlineItem: any = onlineItems[0];
-            var minutesAfterToSplit = settings.splitTaskAfterIdlingForMinutes || 3;
-            var minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
+            let minutesAfterToSplit = settings.splitTaskAfterIdlingForMinutes || 3;
+            let minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
 
             console.log(`Minutes from now:  ${minutesFromNow}, minutesAfterToSplit: ${minutesAfterToSplit}`);
 

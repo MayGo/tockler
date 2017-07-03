@@ -6,7 +6,7 @@ import * as os from "os";
 import { sequelize } from "./models/index";
 
 import { logManager } from "./log-manager";
-var logger = logManager.getLogger('WindowManager');
+let logger = logManager.getLogger('WindowManager');
 
 export default class WindowManager {
     static mainWindow;
@@ -38,7 +38,7 @@ export default class WindowManager {
         });
 
         this.mainWindow.on('focus', () => {
-            var sendEventName = 'main-window-focus';
+            let sendEventName = 'main-window-focus';
             console.log("Sending focus event: " + sendEventName);
             this.mainWindow.webContents.send(sendEventName, 'ping');
         });

@@ -4,7 +4,7 @@ import { appConstants } from './app-constants';
 import { TrackItemAttributes } from './models/interfaces/track-item-interface';
 import * as moment from 'moment';
 
-var logger = logManager.getLogger('BackgroundUtils');
+let logger = logManager.getLogger('BackgroundUtils');
 
 export default class BackgroundUtils {
 
@@ -44,7 +44,7 @@ export default class BackgroundUtils {
     }
 
     static getRawTrackItem(savedItem) {
-        var item = {
+        let item = {
             app: savedItem.app,
             title: savedItem.title,
             taskName: savedItem.taskName,
@@ -67,7 +67,7 @@ export default class BackgroundUtils {
         let lastDayIndex = daysBetween - 1;
         let items = [];
 
-        for (var i = 0; i < daysBetween; i++) {
+        for (let i = 0; i < daysBetween; i++) {
             let newItem = Object.assign({}, item);
 
             let currentDate = moment(item.beginDate).add(i, 'days').toDate();

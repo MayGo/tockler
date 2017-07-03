@@ -12,7 +12,7 @@ import { settingsService } from "./services/settings-service";
 
 import { appEmitter } from './app-event-emitter';
 
-var logger = logManager.getLogger('StateManager');
+let logger = logManager.getLogger('StateManager');
 
 interface TrackItems {
     StatusTrackItem: TrackItemInstance;

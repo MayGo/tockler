@@ -43,7 +43,7 @@ export class AppSettingService {
 
   getAppColor(appName) {
 
-    var params = {
+    let params = {
       where: {
         name: appName
       }
@@ -54,7 +54,7 @@ export class AppSettingService {
 
           resolve(appSettings[0].color);
         } else {
-          var color = randomcolor();
+          let color = randomcolor();
           this.createAppSetting({ name: appName, color: color }).then((item) => {
             this.logger.info("Created color item to DB:", item);
           });
@@ -69,7 +69,7 @@ export class AppSettingService {
   changeColorForApp(appName: string, color: string) {
 
 
-    var params = {
+    let params = {
       where: {
         name: appName
       }

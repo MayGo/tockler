@@ -33,20 +33,20 @@ export class TrackItemService {
 
   findAllItems(from, to, taskName, searchStr, paging) {
 
-    var order = paging.order || 'beginDate';
-    var orderSort = paging.orderSort || 'ASC';
+    let order = paging.order || 'beginDate';
+    let orderSort = paging.orderSort || 'ASC';
     if (order.startsWith('-')) {
       order = order.substring(1);
       orderSort = 'DESC';
     }
 
-    var limit = paging.limit || 10;
-    var offset = paging.offset || 0;
+    let limit = paging.limit || 10;
+    let offset = paging.offset || 0;
     if (paging.page) {
       offset = (paging.page - 1) * limit;
     }
 
-    var where: any = {
+    let where: any = {
       endDate: {
         $gte: from,
         $lt: to
@@ -90,7 +90,7 @@ export class TrackItemService {
 
   findAllFromDay(day, taskName) {
 
-    var to = moment(day).add(1, 'days');
+    let to = moment(day).add(1, 'days');
     this.logger.info('findAllFromDay ' + taskName + ' from:' + day + ', to:' + to.toDate());
 
     return this.findAllDayItems(day, to.toDate(), taskName);

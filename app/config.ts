@@ -5,8 +5,8 @@ import * as path from 'path';
 
 const isDevelopment = require('electron-is-dev');
 
-var root = path.join(__dirname, '..');
-var userDir = app.getPath('userData');
+let root = path.join(__dirname, '..');
+let userDir = app.getPath('userData');
 
 export default {
 
