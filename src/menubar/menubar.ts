@@ -48,10 +48,12 @@ export class Menubar {
 
     logItemStarted(event, item) {
         logger.info("log-item-started", item);
-        let parsedItem = item;
+        // Problem with binding to rt-signal
+        /*let parsedItem = item;
         parsedItem.beginDate = new Date(item.beginDate);
         parsedItem.endDate = new Date(item.endDate);
-        this.runningLogItem = parsedItem;
+        this.runningLogItem = parsedItem;*/
+        this.refresh(); 
     }
 
     loadItems() {
@@ -60,6 +62,7 @@ export class Menubar {
         this.loading = true;
         this.trackItemService.findFirstLogItems().then((items) => {
             logger.debug("Loaded items", items);
+
             items.forEach(function (item) {
                 item.timeDiffInMs = moment(item.endDate).diff(item.beginDate);
                 item.duration = moment.duration(item.endDate - item.beginDate);

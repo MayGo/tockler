@@ -50,7 +50,7 @@
             </div>
         </div>
         <div class="mt-1 pl-1" css="background: #fff; border-left: 5px solid ${item.color}" repeat.for="item of trackItems">
-            <div class="row ">
+            <div class="row " if.bind="runningLogItem.id != item.id">
                 <div class="col">
                     <div class="row">
                         <div class="col-4">
