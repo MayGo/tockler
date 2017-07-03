@@ -74,7 +74,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:/Users/maigoerit/_SOURCES/tockler/app/background.service.ts
+SF:/Users/maigoerit/_SOURCES/tockler/app/background-service.ts
 FN:2,(anonymous_0)
 FN:3,(anonymous_1)
 FN:4,fulfilled
@@ -454,7 +454,7 @@ BRF:123
 BRH:74
 end_of_record
 TN:
-SF:/Users/maigoerit/_SOURCES/tockler/app/background.utils.ts
+SF:/Users/maigoerit/_SOURCES/tockler/app/background-utils.ts
 FN:7,(anonymous_0)
 FN:8,BackgroundUtils
 FN:10,(anonymous_2)
@@ -918,7 +918,7 @@ BRF:81
 BRH:49
 end_of_record
 TN:
-SF:/Users/maigoerit/_SOURCES/tockler/app/state.enum.ts
+SF:/Users/maigoerit/_SOURCES/tockler/app/enums/state.ts
 FN:4,(anonymous_0)
 FNF:1
 FNH:1
@@ -1197,7 +1197,7 @@ BRF:95
 BRH:8
 end_of_record
 TN:
-SF:/Users/maigoerit/_SOURCES/tockler/app/track-item-type.enum.ts
+SF:/Users/maigoerit/_SOURCES/tockler/app/enums/track-item-type.ts
 FN:4,(anonymous_0)
 FNF:1
 FNH:1

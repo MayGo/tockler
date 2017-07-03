@@ -5,9 +5,9 @@ import { TrackItemAttributes, TrackItemInstance } from "../models/interfaces/tra
 import { Transaction } from "sequelize";
 import * as moment from "moment";
 import { settingsService } from "./settings-service";
-import { State } from "../state.enum";
+import { State } from "../enums/state";
 import { stateManager } from "../state-manager";
-import { TrackItemType } from "../track-item-type.enum";
+import { TrackItemType } from "../enums/track-item-type";
 
 export class TrackItemService {
 

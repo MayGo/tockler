@@ -3,7 +3,7 @@ import { TrackItemAttributes, TrackItemInstance } from './models/interfaces/trac
 import { appSettingService } from './services/app-setting-service';
 import * as notifier from 'node-notifier';
 import { settingsService } from "./services/settings-service";
-import { TrackItemType } from "./track-item-type.enum";
+import { TrackItemType } from "./enums/track-item-type";
 import config from "./config";
 
 notifier.on('click', function (notifierObject, options) {

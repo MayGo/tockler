@@ -4,9 +4,9 @@ import { stateManager } from '../state-manager';
 var logger = logManager.getLogger('LogTrackItemJob');
 
 import * as moment from 'moment';
-import { TrackItemType } from "../track-item-type.enum";
-import { backgroundService } from '../background.service';
-import BackgroundUtils from "../background.utils";
+import { TrackItemType } from "../enums/track-item-type";
+import { backgroundService } from '../background-service';
+import BackgroundUtils from "../background-utils";
 import { TrackItemInstance } from "../models/interfaces/track-item-interface";
 import { trackItemService } from "../services/track-item-service";
 import { settingsService } from "../services/settings-service";

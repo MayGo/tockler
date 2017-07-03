@@ -1,5 +1,5 @@
-import { backgroundJob } from './background.job';
-import { backgroundService } from './background.service';
+import { backgroundJob } from './background-job';
+import { backgroundService } from './background-service';
 import { app, ipcMain, powerMonitor } from "electron";
 import { logManager } from "./log-manager";
 
@@ -15,7 +15,7 @@ AppUpdater.init();
 
 if (config.isDev) {
     const reloadFile = path.join(config.root, 'dist');
-    require('electron-reload')(reloadFile)
+    require('electron-reload')(reloadFile);
 }
 
 var AutoLaunch = require('auto-launch');

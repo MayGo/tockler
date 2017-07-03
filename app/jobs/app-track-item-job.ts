@@ -6,9 +6,9 @@ var logger = logManager.getLogger('AppTrackItemJob');
 import * as moment from 'moment';
 import * as activeWin from 'active-win';
 import { TrackItemInstance } from "../models/interfaces/track-item-interface";
-import BackgroundUtils from "../background.utils";
-import { backgroundService } from "../background.service";
-import { TrackItemType } from "../track-item-type.enum";
+import BackgroundUtils from "../background-utils";
+import { backgroundService } from "../background-service";
+import { TrackItemType } from "../enums/track-item-type";
 
 import { taskAnalyser } from '../task-analyser';
 let shouldSplitLogItemFromDate = null;

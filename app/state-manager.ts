@@ -1,10 +1,10 @@
 import { TrackItemInstance, TrackItemAttributes } from './models/interfaces/track-item-interface';
-import { State } from './state.enum';
-import { TrackItemType } from './track-item-type.enum';
+import { State } from './enums/state';
+import { TrackItemType } from './enums/track-item-type';
 
 import { app, ipcMain } from "electron";
 import * as path from 'path';
-import BackgroundUtils from "./background.utils";
+import BackgroundUtils from "./background-utils";
 import { trackItemService } from "./services/track-item-service";
 
 import { logManager } from "./log-manager";

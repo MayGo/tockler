@@ -42,7 +42,7 @@
           <line num="10" count="3" type="stmt"/>
           <line num="11" count="3" type="stmt"/>
         </file>
-        <file name="background.service.ts" path="/Users/maigoerit/_SOURCES/tockler/app/background.service.ts">
+        <file name="background-service.ts" path="/Users/maigoerit/_SOURCES/tockler/app/background-service.ts">
           <metrics statements="180" coveredstatements="128" conditionals="123" coveredconditionals="74" methods="34" coveredmethods="23"/>
           <line num="2" count="1" type="cond" truecount="3" falsecount="0"/>
           <line num="3" count="16" type="cond" truecount="2" falsecount="0"/>
@@ -225,7 +225,7 @@
           <line num="264" count="1" type="stmt"/>
           <line num="265" count="1" type="stmt"/>
         </file>
-        <file name="background.utils.ts" path="/Users/maigoerit/_SOURCES/tockler/app/background.utils.ts">
+        <file name="background-utils.ts" path="/Users/maigoerit/_SOURCES/tockler/app/background-utils.ts">
           <metrics statements="49" coveredstatements="48" conditionals="12" coveredconditionals="12" methods="11" coveredmethods="9"/>
           <line num="2" count="3" type="stmt"/>
           <line num="3" count="3" type="stmt"/>
@@ -448,7 +448,7 @@
           <line num="212" count="2" type="stmt"/>
           <line num="213" count="2" type="stmt"/>
         </file>
-        <file name="state.enum.ts" path="/Users/maigoerit/_SOURCES/tockler/app/state.enum.ts">
+        <file name="enums/state.ts" path="/Users/maigoerit/_SOURCES/tockler/app/enums/state.ts">
           <metrics statements="5" coveredstatements="5" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
           <line num="2" count="2" type="stmt"/>
           <line num="4" count="2" type="stmt"/>
@@ -562,7 +562,7 @@
           <line num="164" count="1" type="stmt"/>
           <line num="166" count="1" type="stmt"/>
         </file>
-        <file name="track-item-type.enum.ts" path="/Users/maigoerit/_SOURCES/tockler/app/track-item-type.enum.ts">
+        <file name="enums/track-item-type.ts" path="/Users/maigoerit/_SOURCES/tockler/app/enums/track-item-type.ts">
           <metrics statements="5" coveredstatements="5" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
           <line num="2" count="3" type="stmt"/>
           <line num="4" count="3" type="stmt"/>

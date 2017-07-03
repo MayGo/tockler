@@ -1,14 +1,14 @@
 import { appConstants } from '../app/app-constants';
-import { backgroundService } from '../app/background.service';
+import { backgroundService } from '../app/background-service';
 import { models } from '../app/models';
 import { TrackItemAttributes, TrackItemInstance } from '../app/models/interfaces/track-item-interface';
 import { stateManager } from '../app/state-manager';
-import { State } from '../app/state.enum';
-import { TrackItemType } from '../app/track-item-type.enum';
+import { State } from '../app/enums/state';
+import { TrackItemType } from '../app/enums/track-item-type';
 import TrackItemTestData from './track-item-test-data';
 
 import * as moment from 'moment';
-import BackgroundUtils from "../app/background.utils";
+import BackgroundUtils from "../app/background-utils";
 
 const dateFormat = "YYYY-MM-DD HH:mm:ss";
 

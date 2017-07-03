@@ -1,4 +1,4 @@
-import { TrackItemType } from '../../track-item-type.enum';
+import { TrackItemType } from '../../enums/track-item-type';
 
 import { Instance } from "sequelize";
 

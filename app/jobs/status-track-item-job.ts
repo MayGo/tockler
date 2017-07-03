@@ -4,15 +4,15 @@ import { stateManager } from '../state-manager';
 var logger = logManager.getLogger('LogTrackItemJob');
 
 import * as moment from 'moment';
-import { TrackItemType } from "../track-item-type.enum";
-import { backgroundService } from '../background.service';
-import BackgroundUtils from "../background.utils";
+import { TrackItemType } from "../enums/track-item-type";
+import { backgroundService } from '../background-service';
+import BackgroundUtils from "../background-utils";
 import config from "../config";
 import * as path from 'path';
 import UserMessages from "../user-messages";
 
 import { exec, execSync, execFile } from "child_process";
-import { State } from "../state.enum";
+import { State } from "../enums/state";
 import { appConstants } from "../app-constants";
 
 export class StatusTrackItemJob {

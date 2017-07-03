@@ -1,9 +1,9 @@
 jest.autoMockOff();
 
-import BackgroundUtils from '../app/background.utils';
+import BackgroundUtils from '../app/background-utils';
 import { models } from '../app/models';
 import { TrackItemAttributes } from '../app/models/interfaces/track-item-interface';
-import { TrackItemType } from '../app/track-item-type.enum';
+import { TrackItemType } from '../app/enums/track-item-type';
 
 import * as moment from 'moment';
 
