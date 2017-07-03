@@ -1,5 +1,5 @@
 import { Router, RouterConfiguration } from "aurelia-router";
-import { autoinject, PLATFORM } from "aurelia-framework";
+import { autoinject, PLATFORM, LogManager } from "aurelia-framework";
 
 import { BindingSignaler } from 'aurelia-templating-resources';
 import * as toastr from "toastr";
@@ -7,6 +7,8 @@ import * as toastr from "toastr";
 const mainConfig = (<any>window).nodeRequire('electron').remote.getGlobal('shared');
 
 const ipcRenderer = (<any>window).nodeRequire('electron').ipcRenderer;
+
+let logger = LogManager.getLogger('App');
 
 @autoinject
 export class App {
@@ -37,11 +39,13 @@ export class App {
     }
 
     activate(params, config) {
+        logger.info("Add rt-update signal");
         this.rtUpdater = setInterval(() => this.bindingSignaler.signal('rt-update'), 1000);
     }
 
     deactivate() {
         if (this.rtUpdater) {
+            logger.info("Remove rt-update signal");
             clearInterval(this.rtUpdater);
             this.rtUpdater = null;
         }

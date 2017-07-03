@@ -1,4 +1,4 @@
-import { Aurelia, LogManager } from 'aurelia-framework'
+import { Aurelia, LogManager } from 'aurelia-framework';
 import environment from './environment';
 import * as Backend from 'i18next-xhr-backend';
 import { PLATFORM } from 'aurelia-pal';
@@ -11,7 +11,7 @@ import './style/app.scss';
 import 'material-design-iconic-font/dist/css/material-design-iconic-font.css';
 import 'font-awesome/css/font-awesome.css';
 import "aurelia-dialog/styles/output.css";
-import 'typeface-berkshire-swash'
+import 'typeface-berkshire-swash';
 import { Router } from "aurelia-router";
 import { EventAggregator } from "aurelia-event-aggregator";
 
@@ -42,7 +42,7 @@ export async function configure(aurelia: Aurelia) {
           let waitForLocale = require('bundle-loader!./locales/en/' + url + '.json');
           waitForLocale((locale) => {
             callback(locale, { status: '200' });
-          })
+          });
         } catch (e) {
           logger.error(e);
           callback(null, { status: '404' });
@@ -69,17 +69,17 @@ export async function configure(aurelia: Aurelia) {
         events.subscribe('i18n:locale:changed', () => {
           router.updateTitle();
         });
-      });;
+      });
     })
     .plugin(PLATFORM.moduleName('aurelia-validation'))
-    .plugin(PLATFORM.moduleName('au-table'))
+    .plugin(PLATFORM.moduleName('au-table'));
 
   //if (environment.debug) {
   aurelia.use.developmentLogging();
   // }
 
   const window = remote.getCurrentWindow();
-  const isMenubarWin = (window.id == 2)
+  const isMenubarWin = (window.id == 2);
 
   await aurelia.start();
   await aurelia.setRoot((isMenubarWin) ? PLATFORM.moduleName('app-menubar') : PLATFORM.moduleName('app'));
