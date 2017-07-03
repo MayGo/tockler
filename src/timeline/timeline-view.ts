@@ -74,6 +74,7 @@ export class TimelineView {
             logger.debug('DATA CHANGED:', p, ':', o, '===>', n); // Display the changes in the console log
         });*/
     }
+
     resetLoadedItems() {
         logger.debug("Resetting loaded items");
         // this.selectedTrackItem = null;
@@ -82,30 +83,28 @@ export class TimelineView {
             StatusTrackItem: [],
             LogTrackItem: []
         };
-    };
-
+    }
 
     refreshWindow(event, arg) {
         logger.debug("Main-Window gained focus, reloading");
         this.refresh();
-    };
-
+    }
 
     refresh() {
         let lastItem: any = (this.loadedItems['AppTrackItem'].length > 0) ? _(this.loadedItems['AppTrackItem']).last().valueOf() : null;
 
-        var searchFrom = (lastItem) ? lastItem.beginDate : moment().startOf('day').toDate();
+        let searchFrom = (lastItem) ? lastItem.beginDate : moment().startOf('day').toDate();
         logger.debug('Refreshing from:', searchFrom);
         this.list(searchFrom);
-    };
+    }
 
     dayBack() {
         this.searchDate = moment(this.searchDate).subtract(1, 'days').toDate();
-    };
+    }
 
     dayForward() {
         this.searchDate = moment(this.searchDate).add(1, 'days').toDate();
-    };
+    }
 
     changeDay(day) {
         this.resetLoadedItems();
@@ -123,7 +122,7 @@ export class TimelineView {
         this.zoomX = sessionStorage.getItem('zoomX') || 0;
         this.loading = true;
 
-        _.keys(this.loadedItems).forEach((taskName) => {
+        Object.keys(this.loadedItems).forEach((taskName) => {
             logger.debug('TIMELINE_LOAD_DAY_REQUEST sent', startDate, taskName);
             ipcRenderer.send('TIMELINE_LOAD_DAY_REQUEST', startDate, taskName);
         });
@@ -133,14 +132,14 @@ export class TimelineView {
     parseReceivedTimelineData(event, startDate, taskName, items) {
         logger.debug('TIMELINE_LOAD_DAY_RESPONSE received', taskName, items);
 
-        var nothingToUpdate = false;
-        var upsert = function (arr, id, newval) {
+        let nothingToUpdate = false;
+        let upsert = function (arr, id, newval) {
             if (nothingToUpdate === true) {
                 arr.push(newval);
                 //logger.debug('Nothing to update, inserting instead');
                 return;
             }
-            var index = _.indexOf(arr, _.find(arr, { id: id }));
+            let index = _.indexOf(arr, _.find(arr, { id: id }));
             if (index === -1) {
                 arr.push(newval);
                 nothingToUpdate = true;
@@ -168,7 +167,7 @@ export class TimelineView {
             this.setWorkStatsForDay(this.loadedItems[taskName]);
         }
 
-    };
+    }
 
     selectedTrackItemChanged(newValue, oldValue) {
         logger.debug("selectedTrackItemChanged, newValue, oldValue", newValue, oldValue);
@@ -176,18 +175,18 @@ export class TimelineView {
 
     setWorkStatsForDay(items) {
         logger.debug("WorkStatsForDay");
-        var firstItem: any = _.first(items);
+        let firstItem: any = _.first(items);
         this.settingsService.fetchWorkSettings().then((settingsData) => {
             if (firstItem && settingsData.workDayStartTime) {
                 logger.debug("Setting WorkStatsForDay:", firstItem);
-                var parts = settingsData.workDayStartTime.split(':')
-                var startDate = moment(firstItem.beginDate);
+                let parts = settingsData.workDayStartTime.split(':');
+                let startDate = moment(firstItem.beginDate);
                 startDate.startOf('day');
                 startDate.hour(parts[0]);
                 startDate.minute(parts[1]);
-                this.dayStats.lateForWork = moment(firstItem.beginDate).diff(startDate)
+                this.dayStats.lateForWork = moment(firstItem.beginDate).diff(startDate);
             } else {
-                logger.debug("No data for WorkStatsForDay")
+                logger.debug("No data for WorkStatsForDay");
             }
         });
 
@@ -200,29 +199,30 @@ export class TimelineView {
     }
 
     dateDiff(c) {
-        return moment(c.endDate).diff(c.beginDate)
+        return moment(c.endDate).diff(c.beginDate);
     }
 
     updatePieCharts(items, taskName) {
 
         logger.debug('Track Items changed. Updating pie charts:' + taskName);
 
-        var groupBy = (taskName === 'LogTrackItem') ? 'title' : 'app'
+        let groupBy = (taskName === 'LogTrackItem') ? 'title' : 'app';
+
         this.pieData[taskName] = _(items)
             .groupBy(groupBy)
             .map((b) => {
-                return b.reduce(this.sumApp, { app: b[0].app, title: b[0].title, timeDiffInMs: 0, color: b[0].color })
+                return b.reduce(this.sumApp, { app: b[0].app, title: b[0].title, timeDiffInMs: 0, color: b[0].color });
             })
             .valueOf();
 
         logger.debug('Updating pie charts ended.' + taskName);
 
-    };
+    }
 
     onZoomChanged(scale, x) {
         sessionStorage.setItem('zoomScale', scale);
         sessionStorage.setItem('zoomX', x);
-    };
+    }
 
     showAddLogDialog(trackItem) {
         logger.debug(trackItem);
@@ -238,7 +238,8 @@ export class TimelineView {
              logger.debug('TrackItem added.');
              this.saveTrackItem(trackItem)
          });*/
-    };
+    }
+
     showChangeColorDialog() {
 
         this.dialogService.open({
@@ -248,11 +249,11 @@ export class TimelineView {
             if (!response.wasCancelled) {
                 let trackItem = response.output;
                 if (trackItem) {
-                    logger.debug("Updating color for item:", trackItem)
+                    logger.debug("Updating color for item:", trackItem);
                     this.updateItem(trackItem);
                     this.selectedTrackItem = null;
                 } else {
-                    logger.debug("Reloading items")
+                    logger.debug("Reloading items");
                     this.resetLoadedItems();
                     this.list(this.searchDate);
                 }
@@ -295,8 +296,8 @@ export class TimelineView {
             logger.debug("Updated trackitem to DB:", item);
             this.selectedTrackItem = null;
 
-            var update = function (arr, id, newval) {
-                var index = _.indexOf(arr, _.find(arr, { id: id }));
+            let update = function (arr, id, newval) {
+                let index = _.indexOf(arr, _.find(arr, { id: id }));
                 arr.splice(index, 1, newval);
             };
 
@@ -305,7 +306,7 @@ export class TimelineView {
             this.eventAggregator.publish('cleanDataAndAddItemsToTimeline', _.flatten(_.values(this.loadedItems)));
             this.updatePieCharts(this.loadedItems[trackItem.taskName], trackItem.taskName);
         });
-    };
+    }
 
     deleteTrackItem(trackItem) {
         logger.debug("Deleting trackitem.", trackItem);
@@ -315,7 +316,7 @@ export class TimelineView {
                 logger.debug("Deleting trackitem from DB:", trackItem);
                 this.selectedTrackItem = null;
 
-                var index = this.loadedItems[trackItem.taskName].findIndex(item => item.id === trackItem.id);
+                let index = this.loadedItems[trackItem.taskName].findIndex(item => item.id === trackItem.id);
                 this.loadedItems[trackItem.taskName].splice(index, 1);
                 this.updatePieCharts(this.loadedItems[trackItem.taskName], trackItem.taskName);
                 this.eventAggregator.publish('cleanDataAndAddItemsToTimeline', _.flatten(_.values(this.loadedItems)));
@@ -325,12 +326,12 @@ export class TimelineView {
             logger.debug("No id, not deleting from DB");
         }
 
-    };
+    }
 
     closeMiniEdit() {
         logger.debug("Closing mini edit.");
         this.selectedTrackItem = null;
-    };
+    }
 
 
     attached() {

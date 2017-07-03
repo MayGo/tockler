@@ -35,7 +35,7 @@ export class Settings {
     }
 
     findTodaysTrackItems() {
-        var startDate = moment();
+        let startDate = moment();
         startDate.startOf('day');
 
         this.trackItemService.findAllFromDay(startDate.toDate(), 'AppTrackItem').then((items) => {
@@ -46,19 +46,19 @@ export class Settings {
 
     async activate(): Promise<void> {
         this.findTodaysTrackItems();
-      
+
         this.settingsService.fetchWorkSettings().then((workSettings) => {
-            if (!_.isEmpty(workSettings)) {
+            if (Object.keys(workSettings).length != 0) {
                 this.workSettings = workSettings;
             }
             logger.debug("Loaded workSettings:", workSettings);
         });
 
         this.settingsService.fetchAnalyserSettings().then((analyserSettings) => {
-            if (!_.isEmpty(analyserSettings)) {
+            if (Object.keys(analyserSettings).length != 0) {
                 this.analyserSettings = analyserSettings;
             }
-            
+
             logger.debug("Loaded analyserSettings:", analyserSettings);
         });
     }
@@ -67,8 +67,8 @@ export class Settings {
         if (!findRe) {
             return;
         }
-        var re = new RegExp(findRe, "g");
-        var result = re.exec(str);
+        let re = new RegExp(findRe, "g");
+        let result = re.exec(str);
 
         if (result != null) {
             let first = result[0];
@@ -78,14 +78,16 @@ export class Settings {
 
     saveSettings() {
         console.log("Saving:", this.workSettings, this.analyserSettings);
-        this.settingsService.updateByName('WORK_SETTINGS', this.workSettings).then((item) => {
-            console.log("Updated WORK_SETTINGS!", item);
-        });
+        this.settingsService.updateByName('WORK_SETTINGS', this.workSettings)
+            .then((item) => {
+                console.log("Updated WORK_SETTINGS!", item);
+            });
 
-        this.settingsService.updateByName('ANALYSER_SETTINGS', this.analyserSettings).then((item) => {
-            console.log("Updated ANALYSER_SETTINGS!", item);
-            toastr.info('Saved!');
-        })
+        this.settingsService.updateByName('ANALYSER_SETTINGS', this.analyserSettings)
+            .then((item) => {
+                console.log("Updated ANALYSER_SETTINGS!", item);
+                toastr.info('Saved!');
+            });
     }
 
     addNewAnalyserItem() {
@@ -102,11 +104,13 @@ export class Settings {
             alert('Track items not loaded, try again!');
             return;
         }
-        logger.debug("Analysing items:", analyseSetting, index)
-        var testItems = [];
-        _.each(this.todaysTrackItems, (item) => {
 
-            var str = item.title;
+        logger.debug("Analysing items:", analyseSetting, index);
+
+        let testItems = [];
+        this.todaysTrackItems.forEach((item) => {
+
+            let str = item.title;
 
             item.findRe = this.findFirst(str, analyseSetting.findRe);
             item.takeGroup = this.findFirst(str, analyseSetting.takeGroup) || item.findRe;
@@ -126,7 +130,7 @@ export class Settings {
             workDayStartTime: '08:30',
             workDayEndTime: '17:00',
             splitTaskAfterIdlingForMinutes: 3
-        }
+        };
     }
 
     addDefaultAnalyserSettings() {
