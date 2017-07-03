@@ -14,7 +14,7 @@ let logger = LogManager.getLogger('DonutChartCustomElement');
 @noView
 export class DonutChartCustomElement {
 
-    private msToDuration = new MsToDurationValueConverter()
+    private msToDuration = new MsToDurationValueConverter();
 
     @bindable({
         defaultBindingMode: bindingMode.twoWay
@@ -36,14 +36,18 @@ export class DonutChartCustomElement {
     }
 
     attached() {
-        logger.debug("Attached:", this.dataList)
-        let subscription = this.bindingEngine.collectionObserver(this.dataList).subscribe(this.listChanged);
+        logger.debug("Attached:", this.dataList);
+
+        let subscription = this.bindingEngine
+            .collectionObserver(this.dataList)
+            .subscribe(this.listChanged);
+
         this.subscriptions.push(subscription);
         this.createChart();
     }
 
 
-    createChart() {
+    createChart(donutColors) {
         this.chart = donutChart();
         let containerWidth = d3.select(this.element).node().getBoundingClientRect().width;
 
@@ -60,6 +64,7 @@ export class DonutChartCustomElement {
             })
             .externalRadius(containerWidth / 2.5)
             .internalRadius(containerWidth / 5)
+            .colorSchema(donutColors)
             .on('customMouseOver', function (data) {
                 //legendChart.highlight(data.data.id);
             })
@@ -79,22 +84,28 @@ export class DonutChartCustomElement {
         percentage	Number	Percentage of the total (optional)
         name	String	Name of the group (required)
         id*/
-        let donutData = this.dataList.map((item) => { return { quantity: item.timeDiffInMs, name: item.app } });
+        let donutData = this.dataList.map((item) => {
+            return { quantity: item.timeDiffInMs, name: item.app };
+        });
+        let donutColors = this.dataList.map((item) => {
+            return item.color;
+        });
+        logger.debug("Donut colors:", donutColors);
 
-
-        this.listChanged(donutData)
+        this.listChanged(donutData, donutColors);
 
     }
 
-    listChanged(data) {
+    listChanged(data, donutColors) {
         if (!this.chart) {
             logger.debug('Not refreshing chart.');
-            return
+            return;
         }
+
         logger.debug('Data changed refreshing chart.', data);
-        
+
         this.removeChart();
-        this.createChart();
+        this.createChart(donutColors);
 
         d3.select(this.element).datum(data)
 
