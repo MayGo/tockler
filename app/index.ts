@@ -87,7 +87,8 @@ ipcMain.on('close-app', function () {
  * and dock icon is clicked
  */
 
-app.on('activate-with-no-open-windows', () => {
+app.on('activate', () => {
+    console.log("Show menubar.");
     windowManager.menubar.window.show();
 });
 
