@@ -12,8 +12,6 @@ import { stateManager } from "./state-manager";
 import { backgroundService } from "./background-service";
 let logger = logManager.getLogger('BackgroundJob');
 
-let $q = require('q');
-
 import * as moment from 'moment';
 import * as activeWin from 'active-win';
 import UserMessages from "./user-messages";
