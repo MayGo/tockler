@@ -21,8 +21,6 @@ export class DonutChartCustomElement {
     })
     dataList: any;
 
-    subscriptions: any = [];
-
     private chart: any;
     private isInitialized: any;
     private isInitializedResolve: any;
@@ -38,16 +36,11 @@ export class DonutChartCustomElement {
     attached() {
         logger.debug("Attached:", this.dataList);
 
-        let subscription = this.bindingEngine
-            .collectionObserver(this.dataList)
-            .subscribe(this.listChanged);
-
-        this.subscriptions.push(subscription);
         this.createChart();
     }
 
 
-    createChart(donutColors) {
+    createChart(donutColors = null) {
         this.chart = donutChart();
         let containerWidth = d3.select(this.element).node().getBoundingClientRect().width;
 
@@ -90,7 +83,9 @@ export class DonutChartCustomElement {
         let donutColors = this.dataList.map((item) => {
             return item.color;
         });
+
         logger.debug("Donut colors:", donutColors);
+
 
         this.listChanged(donutData, donutColors);
 
@@ -104,25 +99,13 @@ export class DonutChartCustomElement {
 
         logger.debug('Data changed refreshing chart.', data);
 
+
+
         this.removeChart();
         this.createChart(donutColors);
 
         d3.select(this.element).datum(data)
-
             .call(this.chart);
 
-
     }
-
-    detached() {
-        this.disposeSubscriptions();
-    }
-
-    disposeSubscriptions() {
-        while (this.subscriptions.length) {
-            logger.debug("Dispose subscriptions");
-            this.subscriptions.pop().dispose();
-        }
-    }
-
 }
