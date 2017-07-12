@@ -40,21 +40,10 @@ module.exports = {
     extensions: ['.ts', '.js'],
     modules: [srcDir, 'node_modules']
   },
-   entry: [
-    //'react-hot-loader/patch',
-    // activate HMR for React
-
-    'webpack-dev-server/client?http://localhost:8080',
-    // bundle the client for webpack-dev-server
-    // and connect to the provided endpoint
-
-    'webpack/hot/only-dev-server',
-    // bundle the client for hot reloading
-    // only- means to only hot reload for successful updates
-
-    'aurelia-bootstrapper'
-    // the entry point of our app
-  ],
+  entry: {
+    app: ['aurelia-bootstrapper',
+      'webpack-dev-server/client?http://localhost:8080', 'webpack/hot/only-dev-server']
+  },
 
   devServer: {
     hot: true, // Tell the dev-server we're using HMR
@@ -64,7 +53,9 @@ module.exports = {
   output: {
     path: outDir,
     publicPath: 'http://localhost:8080/',
-    filename: 'bundle.js'
+    filename: production ? '[name].[chunkhash].bundle.js' : '[name].bundle.js',
+    chunkFilename: production ? '[name].[chunkhash].chunk.js' : '[name].chunk.js',
+
 
   },
 
