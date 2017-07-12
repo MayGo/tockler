@@ -1,4 +1,7 @@
 import * as menubar from 'menubar';
+
+import MenuBuilder from "./menu-builder";
+
 import { app, ipcMain, BrowserWindow } from "electron";
 import config from "./config";
 import * as path from "path";
@@ -15,8 +18,9 @@ export default class WindowManager {
     constructor() {
 
     }
-    static init() {
-
+    static initMenus() {
+        const menuBuilder = new MenuBuilder(this.mainWindow);
+        menuBuilder.buildMenu();
     }
 
     static setMainWindow() {
@@ -30,7 +34,7 @@ export default class WindowManager {
         });
 
         this.mainWindow.maximize();
-        this.mainWindow.loadURL('file://' + config.client + '/dist/index.html');
+        this.mainWindow.loadURL('file://' + config.client + '/index.html');
 
         this.mainWindow.on('closed', () => {
             this.mainWindow = null;
@@ -50,10 +54,6 @@ export default class WindowManager {
                 this.mainWindow = null;
             }
         });
-
-        if (config.isDev) {
-            this.mainWindow.openDevTools();
-        }
 
     }
 
@@ -89,7 +89,7 @@ export default class WindowManager {
          */
         let icon = (os.platform() == 'darwin') ? config.icon : config.iconBig;
         this.menubar = menubar({
-            index: 'file://' + config.root + '/dist/index.html',
+            index: 'file://' + config.client + '/index.html',
             icon: icon,
             preloadWindow: true,
             showDockIcon: true,

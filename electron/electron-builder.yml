@@ -5,17 +5,12 @@ npmRebuild: false
 directories:
   output: "packaged"
 files:
-- "!aurelia_project"
-- "!__tests__"
-- "!__e2e__"
-- "!__mocks__"
-- "!custom_typings"
-- "!client"
-- "!fonts"
-- "!tools"
-- "!test"
-- "!screenshots"
-- "!release"
+  - "!__tests__"
+  - "!__e2e__"
+  - "!__mocks__"
+  - "!custom_typings"
+  - "!test"
+  - "!release"
 
 publish: 
   - github

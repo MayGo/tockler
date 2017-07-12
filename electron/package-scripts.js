@@ -1,9 +1,13 @@
-const { series, crossEnv, concurrent, rimraf } = require('nps-utils')
+const { series, crossEnv, concurrent, rimraf, copy } = require('nps-utils')
 
 module.exports = {
   scripts: {
+    clean: rimraf('dist'),
 
-    release: 'build -c electron-builder.yml',
+    release: series(
+      copy("'../client/dist/*' './dist'"),
+      'build -c electron-builder.yml'
+    ),
     main: {
       default: series(
         'nps main.build.dev',
@@ -11,8 +15,14 @@ module.exports = {
       ),
       run: 'cross-env NODE_ENV=development electron ./dist',
       build: {
-        dev: 'webpack --config webpack.config.main.js  -d',
-        prod: 'webpack --config webpack.config.main.js --progress --env.production'
+        dev: series(
+          'nps clean',
+          'webpack --config webpack.config.main.js  -d'
+        ),
+        prod: series(
+          'nps clean',
+          'webpack --config webpack.config.main.js --progress --env.production'
+        ),
       }
     },
     test: {

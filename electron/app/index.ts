@@ -14,7 +14,7 @@ import * as path from 'path';
 AppUpdater.init();
 
 if (config.isDev) {
-    const reloadFile = path.join(config.root, 'dist');
+    const reloadFile = path.join(config.client);
     require('electron-reload')(reloadFile);
 }
 
@@ -50,6 +50,9 @@ app.on('ready', () => {
     if (!config.isDev || config.trayEnabledInDev) {
         windowManager.setTrayWindow();
     }
+
+    windowManager.initMenus();
+ 
 
     backgroundJob.init();
 
