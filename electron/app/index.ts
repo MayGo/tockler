@@ -15,8 +15,8 @@ import * as path from 'path';
 AppUpdater.init();
 
 if (config.isDev) {
-    const reloadFile = path.join(config.client);
-    require('electron-reload')(reloadFile);
+    //const reloadFile = path.join(config.client);
+   // require('electron-reload')(reloadFile);
 }
 
 let AutoLaunch = require('auto-launch');

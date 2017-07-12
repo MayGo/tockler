@@ -52,7 +52,7 @@ export class TimelineView {
     table = {
         searchTask: 'LogTrackItem',
         search: '',
-        order: '-beginDate'
+        order: 'beginDate'
     };
     @bindable({ defaultBindingMode: bindingMode.twoWay })
     tableSearchTask = 'AppTrackItem';

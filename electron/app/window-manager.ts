@@ -47,6 +47,11 @@ export default class WindowManager {
             this.mainWindow.webContents.send(sendEventName, 'ping');
         });
 
+        this.mainWindow.webContents.on('did-finish-load', () => {
+            console.log("did-finish-load'");
+            this.mainWindow.show();
+            this.mainWindow.focus();
+        });
 
         this.mainWindow.on('close', () => {
             if (this.mainWindow) {

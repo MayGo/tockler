@@ -92,15 +92,14 @@
   </div>
   <script>
     window.nodeRequire = require;
-    delete window.require;
-    delete window.exports;
-    delete window.module;
+  
   </script>
 
   <% if (htmlWebpackPlugin.options.metadata.server) { %>
     <!-- Webpack Dev Server reload -->
     <script src="/webpack-dev-server.js"></script>
     <% } %>
+    
 </body>
 
 </html>

@@ -1,4 +1,5 @@
-const path = require('path')
+const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -28,26 +29,43 @@ const cssRules = [
     options: { plugins: () => [require('autoprefixer')({ browsers: ['last 2 versions'] })] }
   }
 ]
-
-module.exports = ({ production, server, extractCss, coverage } = {}) => ({
+let production = process.env.production;
+let server = process.env.server;
+let extractCss = process.env.extractCss;
+let coverage = process.env.coverage;
+module.exports = {
   target: 'electron-renderer',
+  devtool: 'inline-source-map',
   resolve: {
     extensions: ['.ts', '.js'],
     modules: [srcDir, 'node_modules']
   },
-  entry: {
-    app: ['aurelia-bootstrapper', `webpack-hot-middleware/client?path=http://localhost:${port}/__webpack_hmr&reload=true`],
+   entry: [
+    //'react-hot-loader/patch',
+    // activate HMR for React
 
-    bootstrap: [
-      'bootstrap'
-    ]
+    'webpack-dev-server/client?http://localhost:8080',
+    // bundle the client for webpack-dev-server
+    // and connect to the provided endpoint
+
+    'webpack/hot/only-dev-server',
+    // bundle the client for hot reloading
+    // only- means to only hot reload for successful updates
+
+    'aurelia-bootstrapper'
+    // the entry point of our app
+  ],
+
+  devServer: {
+    hot: true, // Tell the dev-server we're using HMR
+    contentBase: path.resolve(__dirname, 'dist'),
+    publicPath: 'http://localhost:8080/'
   },
   output: {
     path: outDir,
-    publicPath: `http://localhost:${port}/dist/`,
-    filename: production ? '[name].[chunkhash].bundle.js' : '[name].[hash].bundle.js',
-    sourceMapFilename: production ? '[name].[chunkhash].bundle.map' : '[name].[hash].bundle.map',
-    chunkFilename: production ? '[name].[chunkhash].chunk.js' : '[name].[hash].chunk.js',
+    publicPath: 'http://localhost:8080/',
+    filename: 'bundle.js'
+
   },
 
   /* node: {
@@ -104,7 +122,8 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
     ]
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NamedModulesPlugin(),
+    // prints more readable module names in the browser console on HMR updates
     new FriendlyErrorsWebpackPlugin(),
     new AureliaPlugin({
       pal: "aurelia-pal-browser",
@@ -143,4 +162,4 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
       name: 'common'
     }))
   ],
-})
+}
