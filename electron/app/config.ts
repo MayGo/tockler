@@ -6,12 +6,14 @@ import * as path from 'path';
 const isDevelopment = require('electron-is-dev');
 
 let root = path.join(__dirname, '..');
+let client = path.join(__dirname, '..', '..', 'client');
 let userDir = app.getPath('userData');
 
 export default {
 
     // root directory
     root: root,
+    client: client,
     userDir: userDir,
 
     icon: path.join(root, 'shared/img/icon/tockler_icon.png'),
