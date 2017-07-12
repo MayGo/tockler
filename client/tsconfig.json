@@ -6,8 +6,8 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "allowJs": true,
-    "sourceRoot": "src",
-    "baseUrl": "src",
+    "sourceRoot": "./",
+    "baseUrl": "./",
     "skipLibCheck": true,
     "sourceMap": true,
     "lib": [

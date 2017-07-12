@@ -15,7 +15,7 @@ const when = (condition, config, negativeConfig) =>
 // primary config:
 const title = 'Tockler';
 const outDir = path.resolve(__dirname, 'dist');
-const srcDir = path.resolve(__dirname, 'src');
+const srcDir = path.resolve(__dirname, './');
 const nodeModulesDir = path.resolve(__dirname, 'node_modules');
 const baseUrl = '';
 
@@ -125,7 +125,7 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
     new TsConfigPathsPlugin(),
     new CheckerPlugin(),
     new HtmlWebpackPlugin({
-      template: 'src/index.ejs',
+      template: path.join(srcDir, 'index.ejs'),
       minify: production ? {
         removeComments: true,
         collapseWhitespace: true

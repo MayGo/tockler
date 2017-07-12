@@ -10,7 +10,7 @@ files:
 - "!__e2e__"
 - "!__mocks__"
 - "!custom_typings"
-- "!src"
+- "!client"
 - "!fonts"
 - "!tools"
 - "!test"
