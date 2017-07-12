@@ -7,6 +7,7 @@ import AppManager from "./app-manager";
 AppManager.init();
 
 import windowManager from "./window-manager";
+import {extensionsManager} from "./extensions-manager";
 import AppUpdater from "./app-updater";
 import config from './config';
 import * as path from 'path';
@@ -42,7 +43,10 @@ app.commandLine.appendSwitch('disable-renderer-backgrounding');
 /**
  * Emitted when app starts
  */
-app.on('ready', () => {
+app.on('ready', async () => {
+    if (config.isDev) {
+        await extensionsManager.init();
+    }
 
     windowManager.setMainWindow();
     windowManager.initMainWindowEvents();
@@ -52,7 +56,7 @@ app.on('ready', () => {
     }
 
     windowManager.initMenus();
- 
+
 
     backgroundJob.init();
 
