@@ -17,7 +17,9 @@ const title = 'Tockler';
 const outDir = path.resolve(__dirname, 'dist');
 const srcDir = path.resolve(__dirname, './');
 const nodeModulesDir = path.resolve(__dirname, 'node_modules');
-const baseUrl = '';
+const baseUrl = '/';
+
+const port = process.env.PORT || 3000;
 
 const cssRules = [
   { loader: 'css-loader' },
@@ -34,7 +36,7 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
     modules: [srcDir, 'node_modules']
   },
   entry: {
-    app: ['aurelia-bootstrapper'],
+    app: ['aurelia-bootstrapper', `webpack-hot-middleware/client?path=http://localhost:${port}/__webpack_hmr&reload=true`],
 
     bootstrap: [
       'bootstrap'
@@ -42,17 +44,12 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
   },
   output: {
     path: outDir,
-    publicPath: baseUrl,
+    publicPath: `http://localhost:${port}/dist/`,
     filename: production ? '[name].[chunkhash].bundle.js' : '[name].[hash].bundle.js',
     sourceMapFilename: production ? '[name].[chunkhash].bundle.map' : '[name].[hash].bundle.map',
     chunkFilename: production ? '[name].[chunkhash].chunk.js' : '[name].[hash].chunk.js',
   },
-  devServer: {
-    contentBase: outDir,
-    // serve index.html for all 404 (required for push-state)
-    historyApiFallback: true,
-    quiet: true
-  },
+
   /* node: {
     __dirname: false,
     __filename: false
@@ -107,6 +104,7 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
     ]
   },
   plugins: [
+    new webpack.HotModuleReplacementPlugin(),
     new FriendlyErrorsWebpackPlugin(),
     new AureliaPlugin({
       pal: "aurelia-pal-browser",

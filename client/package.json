@@ -13,6 +13,7 @@
   },
   "peerDependencies": {},
   "devDependencies": {
+    "cross-env": "^5.0.1",
     "@types/d3": "^4.9.0",
     "@types/i18next-xhr-backend": "1.2.2",
     "@types/jest": "20.0.2",
@@ -78,7 +79,8 @@
     "typeface-berkshire-swash": "0.0.22",
     "typescript": "2.4.1",
     "url-loader": "0.5.9",
-    "webpack": "^2.6.1"
+    "webpack": "^2.6.1",
+    "webpack-hot-middleware": "^2.18.2"
   },
   "jest": {
     "globals": {

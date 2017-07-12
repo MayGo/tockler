@@ -13,7 +13,7 @@ module.exports = {
         'nps main.build.dev',
         'nps main.run'
       ),
-      run: 'cross-env NODE_ENV=development electron ./dist',
+      run: 'cross-env HOT=1 NODE_ENV=development electron ./dist',
       build: {
         dev: series(
           'nps clean',
