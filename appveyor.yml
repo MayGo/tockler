@@ -17,8 +17,16 @@ version: "{build}"
 install:
   - ps: Install-Product node $env:nodejs_version $env:platform
   - npm install yarn -g nps
+  - cd electron
+  - yarn install
+  - cd ..
+  - cd client
   - yarn install
 
 build_script:
-  - nps build
+  - cd client
+  - nps build.prod
+  - cd ..
+  - cd electron
+  - nps build.prod
   - nps release
