@@ -24,7 +24,6 @@ install:
   - yarn install
 
 build_script:
-  - cd client
   - nps build.prod
   - cd ..
   - cd electron
