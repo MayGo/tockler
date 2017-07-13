@@ -29,34 +29,31 @@ const cssRules = [
     options: { plugins: () => [require('autoprefixer')({ browsers: ['last 2 versions'] })] }
   }
 ]
-let production = process.env.production;
-let server = process.env.server;
-let extractCss = process.env.extractCss;
-let coverage = process.env.coverage;
-module.exports = {
+
+const hotDeps = (process.env.server) ? [`webpack-dev-server/client?http://localhost:${port}`, 'webpack/hot/only-dev-server'] : [];
+
+
+module.exports = ({ production = false, server = false, extractCss = false, coverage = false } = {}) => ({
   target: 'electron-renderer',
-  devtool: 'inline-source-map',
   resolve: {
     extensions: ['.ts', '.js'],
     modules: [srcDir, 'node_modules']
   },
   entry: {
-    app: ['aurelia-bootstrapper',
-      'webpack-dev-server/client?http://localhost:8080', 'webpack/hot/only-dev-server']
+    app: ['aurelia-bootstrapper'].concat(hotDeps)
   },
 
   devServer: {
     hot: true, // Tell the dev-server we're using HMR
     contentBase: path.resolve(__dirname, 'dist'),
-    publicPath: 'http://localhost:8080/'
+    publicPath: `http://localhost:${port}/`,
+    port: port
   },
   output: {
     path: outDir,
-    publicPath: 'http://localhost:8080/',
+    publicPath: (server) ? `http://localhost:${port}/` : '',
     filename: production ? '[name].[chunkhash].bundle.js' : '[name].bundle.js',
     chunkFilename: production ? '[name].[chunkhash].chunk.js' : '[name].chunk.js',
-
-
   },
 
   /* node: {
@@ -153,4 +150,4 @@ module.exports = {
       name: 'common'
     }))
   ],
-}
+})

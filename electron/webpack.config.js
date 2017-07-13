@@ -16,7 +16,7 @@ if (os.platform() === 'win32') {
 }
 console.log("Using tsOptions:", tsOptions)
 
-module.exports = ({ production, server, extractCss, coverage } = {}) => ({
+module.exports = {
   target: 'electron-main',
 
   externals: [nodeExternals()],
@@ -51,4 +51,4 @@ module.exports = ({ production, server, extractCss, coverage } = {}) => ({
     new TsConfigPathsPlugin(),
     new CheckerPlugin()
   ],
-})
+}
