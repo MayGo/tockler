@@ -1,0 +1,90 @@
+{
+  "name": "Tockler",
+  "version": "3.0.8",
+  "description": "Automatically track applications usage and working time",
+  "author": "Maigo Erit <maigo.erit@gmail.com>",
+  "license": "GPL-2.0",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:MayGo/tockler.git"
+  },
+  "scripts": {
+    "start": "nps",
+    "test": "nps test",
+    "____pre____": "",
+    "postinstall": "electron-builder install-app-deps",
+    "build_mac": "build -c electron-builder.yml --mac",
+    "build_linux": "build -c electron-builder.yml --linux",
+    "build_windows": "build -c electron-builder.yml --win",
+    "release": "build -c electron-builder.yml"
+  },
+  "dependencies": {
+    "active-win": "^2.0.0",
+    "auto-launch": "^5.0.1",
+    "compare-versions": "^3.0.0",
+    "electron-context-menu": " 0.9.1",
+    "electron-devtools-installer": "^2.2.0",
+    "electron-is-dev": "0.2.0",
+    "electron-log": "2.2.6",
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-updater": "^2.3.1",
+    "lodash": "^4.17.4",
+    "menubar": "^5.2.3",
+    "moment": "2.18.1",
+    "multiline": "^1.0.2",
+    "node-notifier": "^5.0.2",
+    "os-locale": "2.0.0",
+    "randomcolor": "0.5.3",
+    "requirejs": "^2.3.3",
+    "sequelize": "3.30.4",
+    "sequelize-mock": "^0.8.1",
+    "sqlite3": "^3.1.8"
+  },
+  "peerDependencies": {},
+  "devDependencies": {
+    "@types/jest": "20.0.2",
+    "@types/lodash": "4.14.68",
+    "@types/node": "8.0.7",
+    "@types/sequelize": "^4.0.61",
+    "@types/webdriverio": "^4.7.1",
+    "@types/webpack": "2.2.16",
+    "awesome-typescript-loader": "3.2.1",
+    "cross-env": "^5.0.0",
+    "electron": "1.6.11",
+    "electron-builder": "19.12.0",
+    "electron-connect": "0.6.1",
+    "electron-rebuild": "1.5.11",
+    "electron-reload": "1.2.1",
+    "friendly-errors-webpack-plugin": "^1.6.1",
+    "jest": "20.0.4",
+    "jest-cli": "20.0.4",
+    "nps": "5.3.2",
+    "nps-utils": "1.2.0",
+    "ts-jest": "20.0.6",
+    "ts-node": "3.1.0",
+    "typescript": "2.4.1",
+    "wait-on": "2.0.2",
+    "webpack": "^2.6.1",
+    "webpack-node-externals": "^1.6.0"
+  },
+  "jest": {
+    "globals": {
+      "__TEST__": true
+    },
+    "unmockedModulePathPatterns": [
+      "babel",
+      "<rootDir>/node_modules/source-map-support"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "setupTestFrameworkScriptFile": "<rootDir>/util/jest-setup.js",
+    "transform": {
+      "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "/__tests__/.*\\.test\\.ts$",
+    "testEnvironment": "node"
+  }
+}

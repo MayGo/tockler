@@ -28,10 +28,17 @@ cache:
 
 install:
   - npm install yarn -g nps
+  - cd electron
+  - yarn install
+  - cd ..
+  - cd client
   - yarn install
 
 script:
-  - nps build
+  - nps build.prod
+  - cd ..
+  - cd electron
+  - nps build.prod
   - nps release
 
 branches:

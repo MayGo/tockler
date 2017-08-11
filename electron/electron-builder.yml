@@ -1,0 +1,32 @@
+appId: "ee.trimatech.tockler"
+productName: "Tockler"
+asar: false
+npmRebuild: false
+directories:
+  output: "packaged"
+files:
+  - "!__tests__"
+  - "!__e2e__"
+  - "!__mocks__"
+  - "!custom_typings"
+  - "!test"
+  - "!release"
+
+publish: 
+  - github
+
+mac:
+  category: public.app-category.productivity
+
+win:
+  target: 
+  - nsis
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+linux:
+  category: Utility,
+  target: 
+  - AppImage
+  - deb
+

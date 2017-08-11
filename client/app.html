@@ -1,0 +1,14 @@
+<template>
+  <require from="britecharts/dist/css/britecharts.css"></require>
+
+  <require from="./header/app-header"></require>
+
+  <div class="main-wrapper">
+    <div class="app">
+      <app-header router.bind="router"></app-header>
+      <article class="content">
+        <router-view></router-view>
+      </article>
+    </div>
+  </div>
+</template>

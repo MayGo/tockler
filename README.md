@@ -63,13 +63,19 @@ npm install yarn -g     # install yarn or binary from https://yarnpkg.com
 
 yarn install            # Install dependencies
 
-nps run # Start application
-
-# or in separate terminals:
-nps main
-npm renderer
-
 ```
+### Start application
+#### Aurelia client (renderer)
+```
+cd client/
+nps run
+```
+#### Electron (main)
+```
+cd electron/
+nps run
+```
+
 
 # Signing
 https://4sysops.com/archives/sign-your-powershell-scripts-to-increase-security/'
