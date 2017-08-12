@@ -3,15 +3,22 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const { AureliaPlugin, ModuleDependenciesPlugin } = require('aurelia-webpack-plugin');
-const { optimize: { CommonsChunkPlugin }, ProvidePlugin } = require('webpack')
-const { TsConfigPathsPlugin, CheckerPlugin } = require('awesome-typescript-loader');
+const {
+  AureliaPlugin,
+  ModuleDependenciesPlugin,
+} = require('aurelia-webpack-plugin');
+const { optimize: { CommonsChunkPlugin }, ProvidePlugin } = require('webpack');
+const {
+  TsConfigPathsPlugin,
+  CheckerPlugin,
+} = require('awesome-typescript-loader');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 // config helpers:
-const ensureArray = (config) => config && (Array.isArray(config) ? config : [config]) || []
+const ensureArray = config =>
+  (config && (Array.isArray(config) ? config : [config])) || [];
 const when = (condition, config, negativeConfig) =>
-  condition ? ensureArray(config) : ensureArray(negativeConfig)
+  condition ? ensureArray(config) : ensureArray(negativeConfig);
 
 // primary config:
 const title = 'Tockler';
@@ -26,13 +33,21 @@ const cssRules = [
   { loader: 'css-loader' },
   {
     loader: 'postcss-loader',
-    options: { plugins: () => [require('autoprefixer')({ browsers: ['last 2 versions'] })] }
-  }
-]
+    options: {
+      plugins: () => [
+        require('autoprefixer')({ browsers: ['last 2 versions'] }),
+      ],
+    },
+  },
+];
 
-const hotDeps = (process.env.server) ? [`webpack-dev-server/client?http://localhost:${port}`, 'webpack/hot/only-dev-server'] : [];
+const hotDeps = [
+  `webpack-dev-server/client?http://localhost:${port}`,
+  'webpack/hot/only-dev-server',
+];
+const deps = ['aurelia-bootstrapper'];
 
-
+// prettier-ignore
 module.exports = ({ production = false, server = false, extractCss = false, coverage = false } = {}) => ({
   target: 'electron-renderer',
   resolve: {
@@ -40,7 +55,10 @@ module.exports = ({ production = false, server = false, extractCss = false, cove
     modules: [srcDir, 'node_modules']
   },
   entry: {
-    app: ['aurelia-bootstrapper'].concat(hotDeps)
+     app: (server)?hotDeps.concat(deps):deps,
+     bootstrap: [
+      'bootstrap'
+     ]
   },
 
   devServer: {

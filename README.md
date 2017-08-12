@@ -65,6 +65,8 @@ yarn install            # Install dependencies
 
 ```
 ### Start application
+Renderer and main process builds have been separated. It's easier to boilerplate this project and switch client framework.
+
 #### Aurelia client (renderer)
 ```
 cd client/
@@ -75,6 +77,8 @@ nps run
 cd electron/
 nps run
 ```
+
+Build scripts samples are in travis/appveyor files.
 
 
 # Signing
