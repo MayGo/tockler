@@ -259,7 +259,7 @@ export class TrackItemService {
       return null;
     }
 
-    let logItem = await trackItemService.findById(logTrackItemId);
+    let logItem = await this.findById(logTrackItemId);
     if (!logItem) {
       this.logger.error('RUNNING_LOG_ITEM not found by id:', logTrackItemId);
       return null;

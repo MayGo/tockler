@@ -39,9 +39,6 @@ export default {
     database: 'bdgt',
     username: 'username',
     password: 'password',
-    outputPath: path.join(
-      '/Users/maigoerit/Library/Application Support/Tockler',
-      'tracker.db',
-    ),
+    outputPath: path.join(userDir, 'tracker.db'),
   },
 };
