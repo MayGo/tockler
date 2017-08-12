@@ -1,5 +1,6 @@
-const { series, crossEnv, concurrent, rimraf, copy } = require('nps-utils')
+const { series, crossEnv, concurrent, rimraf, copy } = require('nps-utils');
 
+// prettier-ignore
 module.exports = {
   scripts: {
     default: series(
@@ -32,9 +33,8 @@ module.exports = {
     },
     
     release: series(
-      copy("'../client/dist/*' './dist'"),
+      copy("../client/dist/* ./dist"),
       'build -c electron-builder.yml'
     )
-
   }
 }
