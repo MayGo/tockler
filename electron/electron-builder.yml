@@ -25,7 +25,7 @@ nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
 linux:
-  category: Utility,
+  category: Utility
   target: 
   - AppImage
   - deb
