@@ -44,6 +44,7 @@ export class DonutChartCustomElement {
 
   createChart(donutColors = null) {
     this.chart = donutChart();
+
     let containerWidth = d3
       .select(this.element)
       .node()
@@ -62,13 +63,7 @@ export class DonutChartCustomElement {
       })
       .externalRadius(containerWidth / 2.5)
       .internalRadius(containerWidth / 5)
-      .colorSchema(donutColors)
-      .on('customMouseOver', function(data) {
-        //legendChart.highlight(data.data.id);
-      })
-      .on('customMouseOut', function() {
-        //legendChart.clearHighlight();
-      });
+      .colorSchema(donutColors);
   }
   removeChart() {
     d3
@@ -85,7 +80,12 @@ export class DonutChartCustomElement {
         name	String	Name of the group (required)
         id*/
     let donutData = this.dataList.map(item => {
-      return { quantity: item.timeDiffInMs, name: item.app };
+      let durationFormatted = this.msToDuration.toView(item.timeDiffInMs);
+
+      return {
+        quantity: item.timeDiffInMs,
+        name: `${item.app} ${durationFormatted}`,
+      };
     });
     let donutColors = this.dataList.map(item => {
       return item.color;
