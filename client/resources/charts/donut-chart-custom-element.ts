@@ -84,7 +84,7 @@ export class DonutChartCustomElement {
 
       return {
         quantity: item.timeDiffInMs,
-        name: `${item.app} ${durationFormatted}`,
+        name: `${item.app} ${durationFormatted.replace(/\s/g, '.')}`,
       };
     });
     let donutColors = this.dataList.map(item => {
