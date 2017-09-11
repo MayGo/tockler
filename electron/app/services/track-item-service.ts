@@ -125,6 +125,10 @@ export class TrackItemService {
     };
 
     if (currentStatusItem) {
+      this.logger.debug(
+        'Find by excluding currentStatus item id:',
+        currentStatusItem.toJSON(),
+      );
       whereQuery.id = {
         $ne: currentStatusItem.id,
       };

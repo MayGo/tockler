@@ -112,6 +112,7 @@ export class StateManager {
   }
 
   resetCurrentTrackItem(type: TrackItemType) {
+    logger.debug(`Resetting current track item of type: ${type}`);
     this.lastTrackItems[type] = null;
   }
 
@@ -163,8 +164,8 @@ export class StateManager {
     if (runningItem) {
       runningItem.endDate = rawItem.beginDate;
       logger.info('Ending trackItem:', runningItem.toJSON());
-      await trackItemService.updateItem(runningItem, runningItem.id);
       this.resetCurrentTrackItem(rawItem.taskName);
+      await trackItemService.updateItem(runningItem, runningItem.id);
     }
 
     return runningItem;
