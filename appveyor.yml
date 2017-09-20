@@ -15,6 +15,7 @@ skip_tags: true
 version: "{build}"
 
 install:
+  - ps: .\appveyor.before-build.ps1
   - ps: Install-Product node $env:nodejs_version $env:platform
   - npm install yarn -g nps
   - cd electron
@@ -29,6 +30,3 @@ build_script:
   - cd electron
   - nps build.prod
   - nps release
-
-before_build:
-- ps: .\appveyor.before-build.ps1
