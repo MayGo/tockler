@@ -29,3 +29,6 @@ build_script:
   - cd electron
   - nps build.prod
   - nps release
+
+before_build:
+- ps: .\appveyor.before-build.ps1
