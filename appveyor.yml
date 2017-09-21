@@ -16,9 +16,7 @@ skip_tags: true
 version: "{build}"
 
 install:
-  - ps: $certSelfSigned = New-SelfSignedCertificate -DnsName trimatech.ee -CertStoreLocation Cert:\CurrentUser\My -KeyExportPolicy Exportable -Type CodeSigningCert -KeySpec Signature
-  - ps: Set-AuthenticodeSignature -FilePath "$path\electron\scripts\get-foreground-window-title.ps1" -Certificate $certSelfSigned
-  - ps: Set-AuthenticodeSignature -FilePath "$path\electron\scripts\get-user-idle-time.ps1" -Certificate $certSelfSigned 
+  - ps: .\appveyor.before-build.ps1
   - ps: Install-Product node $env:nodejs_version $env:platform
   - npm install yarn -g nps
   - cd electron
