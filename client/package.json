@@ -18,7 +18,7 @@
     "@types/jest": "^20.0.6",
     "@types/lodash": "^4.14.72",
     "@types/webpack": "^3.0.7",
-    "au-table": "^0.1.12",
+    "au-table": "^0.1.13",
     "aurelia-animator-css": "1.0.2",
     "aurelia-bootstrapper": "2.1.1",
     "aurelia-dialog": "^1.0.0-rc.1.0.3",
@@ -94,7 +94,10 @@
       "babel",
       "<rootDir>/node_modules/source-map-support"
     ],
-    "moduleFileExtensions": ["ts", "js"],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
     "setupTestFrameworkScriptFile": "<rootDir>/util/jest-setup.js",
     "transform": {
       "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"

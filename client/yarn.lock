@@ -475,7 +475,7 @@ atob@^2.0.0:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.0.3.tgz#19c7a760473774468f20b2d2d03372ad7d4cbf5d"
 
-au-table@^0.1.12:
+au-table@^0.1.13:
   version "0.1.13"
   resolved "https://registry.yarnpkg.com/au-table/-/au-table-0.1.13.tgz#c16dd11bf266a0fe855151990a59ba2fb491b903"
   dependencies:

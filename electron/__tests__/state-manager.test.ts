@@ -180,4 +180,50 @@ describe('createNewRunningTrackItem', () => {
       stateManager.getCurrentTrackItem(TrackItemType.StatusTrackItem),
     ).toBe(itemOnlineRunning);
   });
+
+  it('stopRunningLogTrackItem works properly', async () => {
+    let rawLogItemRunning = TrackItemTestData.getLogTrackItem();
+    let logItemRunning: TrackItemInstance = models.TrackItem.build(
+      rawLogItemRunning,
+    );
+    //Create mocks
+    let updateItemMock = jest.fn(() => delay(200).then(() => true));
+    trackItemService.updateItem = updateItemMock;
+    let saveRunningLogItemReferenceMock = jest.fn(() =>
+      delay(200).then(() => true),
+    );
+    settingsService.saveRunningLogItemReference = saveRunningLogItemReferenceMock;
+
+    // Run item
+    stateManager.setLogTrackItemMarkedAsRunning(logItemRunning);
+
+    // Saves RUNNING_LOG_ITEM to item.id
+    expect(saveRunningLogItemReferenceMock.mock.calls.length).toBe(1);
+    expect(saveRunningLogItemReferenceMock.mock.calls[0][0]).toBe(
+      logItemRunning.id,
+    );
+
+    expect(stateManager.getCurrentTrackItem(TrackItemType.LogTrackItem)).toBe(
+      logItemRunning,
+    );
+
+    //Should be running
+    expect(stateManager.getLogTrackItemMarkedAsRunning()).toBe(logItemRunning);
+
+    // Stopping
+    await stateManager.stopRunningLogTrackItem();
+
+    expect(stateManager.getCurrentTrackItem(TrackItemType.LogTrackItem)).toBe(
+      null,
+    );
+
+    //Should NOT be running
+    expect(stateManager.getLogTrackItemMarkedAsRunning()).toBe(null);
+
+    // Saves RUNNING_LOG_ITEM to null
+    expect(saveRunningLogItemReferenceMock.mock.calls.length).toBe(2);
+    expect(saveRunningLogItemReferenceMock.mock.calls[1][0]).toBe(null);
+
+    expect(updateItemMock.mock.calls.length).toBe(1);
+  });
 });
