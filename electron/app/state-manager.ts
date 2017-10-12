@@ -80,6 +80,7 @@ export class StateManager {
 
   setLogTrackItemMarkedAsRunning(item: TrackItemInstance) {
     settingsService.saveRunningLogItemReference(item.id);
+    this.setCurrentTrackItem(item);
     logger.info('Mark new LogTrackItem as running:', item.toJSON());
     this.logTrackItemMarkedAsRunning = item;
   }
@@ -89,6 +90,7 @@ export class StateManager {
       TrackItemType.LogTrackItem,
     );
     this.resetLogTrackItem();
+    this.logTrackItemMarkedAsRunning = null;
     settingsService.saveRunningLogItemReference(null);
   }
 
