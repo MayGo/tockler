@@ -2,19 +2,10 @@ import * as React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import 'typeface-roboto';
-import IStoreState from './store/IStoreState';
-import configureStore from './store/store';
 import './index.css';
 import AppWrapper from './containers/AppWrapper';
+import { store } from './store/store';
 
-const initialState: IStoreState = {
-    routing: null,
-    trackItem: {
-        all: []
-    }
-};
-
-const store = configureStore(initialState);
 const rootEl = document.getElementById('root');
 
 render(
@@ -25,10 +16,10 @@ render(
 );
 
 if (module.hot) {
-    module.hot.accept('./components/AppWrapper', () => {
+    module.hot.accept('./containers/AppWrapper', () => {
         const NextApp = require<{
             default: typeof AppWrapper;
-        }>('./components/AppWrapper').default;
+        }>('./containers/AppWrapper').default;
         render(
             <AppContainer>
                 <NextApp store={store} locale="en" />

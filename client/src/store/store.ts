@@ -4,9 +4,23 @@ import createSagaMiddleware from 'redux-saga';
 
 import { routerMiddleware } from 'react-router-redux'
 import sagas from './sagas/rootSaga';
-import { appHistory } from '../history';
+import createHistory from 'history/createBrowserHistory';
+import IStoreState from './IStoreState';
 
-export default function configureStore(initialState?: any) {
+
+console.log('Creating history');
+export const appHistory:any = createHistory()
+
+
+const initialState: IStoreState = {
+  routing: null,
+  trackItem: {
+      all: []
+  }
+};
+
+
+ function configureStore(initialState?: any) {
   console.log('Configuring store.');
 
  
@@ -46,3 +60,5 @@ export default function configureStore(initialState?: any) {
 
   return store;
 }
+
+export const store = configureStore(initialState)

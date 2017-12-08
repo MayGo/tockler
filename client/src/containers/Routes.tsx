@@ -5,8 +5,9 @@ import ListContainer from '../containers/ListContainer';
 
 const Routes = () => (
     <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/list" component={ListContainer} />
+        <Route exact={true} path="/" component={Home} />
+        <Route exact={true} path="/timeline" component={Home} />
+        <Route exact={true} path="/list" component={ListContainer} />
     </Switch>
 );
 

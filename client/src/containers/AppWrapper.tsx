@@ -6,18 +6,11 @@ import { ConnectedRouter } from 'react-router-redux';
 
 import { getMessages } from '../utils/localeUtils';
 import Theme from '../components/Theme/Theme';
-import { appHistory } from '../history';
 import AppLayout from './AppLayout';
 import Routes from './Routes';
+import { appHistory } from '../store/store';
 
 addLocaleData([...en]);
-
-const CustomProvider = ({ children, store }: { children: any; store?: any }) =>
-    store ? (
-        <Provider store={store}>{children}</Provider>
-    ) : (
-        <span>{children}</span>
-    );
 
 const AppWrapper = ({
     store,
@@ -27,7 +20,7 @@ const AppWrapper = ({
     locale: TSupportedLangs;
 }) => (
     <IntlProvider locale={locale} messages={getMessages(locale)}>
-        <CustomProvider store={store}>
+        <Provider store={store}>
             <Theme>
                 <ConnectedRouter history={appHistory}>
                     <AppLayout>
@@ -35,7 +28,7 @@ const AppWrapper = ({
                     </AppLayout>
                 </ConnectedRouter>
             </Theme>
-        </CustomProvider>
+        </Provider>
     </IntlProvider>
 );
 

@@ -2,9 +2,8 @@ import * as React from 'react';
 
 import Button from 'material-ui/Button';
 import AppBar from 'material-ui/AppBar';
-
+import { Link } from 'react-router-dom';
 import { Typography, Toolbar } from 'material-ui';
-
 import { withStyles } from 'material-ui/styles';
 import { StyleRulesCallback } from 'material-ui/styles/withStyles';
 import { connect } from 'react-redux';
@@ -53,9 +52,13 @@ const AppLayout = ({
                         Tockler
                     </Typography>
 
-                    <Button color="contrast" onClick={gotoList}>
-                        List
-                    </Button>
+                    <Link to="/timeline">
+                        <Button color="contrast">Timeline</Button>
+                    </Link>
+
+                    <Link to="list">
+                        <Button color="contrast">List</Button>
+                    </Link>
                 </Toolbar>
             </AppBar>
             {children}
