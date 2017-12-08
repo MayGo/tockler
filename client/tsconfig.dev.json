@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "awesomeTypescriptLoaderOptions": {
+    "useCache": true,
+    "transpileOnly": true
+  }
+}

@@ -32,7 +32,8 @@ export default class WindowManager {
     });
 
     this.mainWindow.maximize();
-    this.mainWindow.loadURL('file://' + config.client + '/index.html');
+    //this.mainWindow.loadURL('file://' + config.client + '/index.html');
+    this.mainWindow.loadURL('http://localhost:3000');
 
     this.mainWindow.on('closed', () => {
       this.mainWindow = null;

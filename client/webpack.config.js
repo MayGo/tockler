@@ -3,67 +3,61 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const {
-  AureliaPlugin,
-  ModuleDependenciesPlugin,
-} = require('aurelia-webpack-plugin');
 const { optimize: { CommonsChunkPlugin }, ProvidePlugin } = require('webpack');
 const {
-  TsConfigPathsPlugin,
-  CheckerPlugin,
+    TsConfigPathsPlugin,
+    CheckerPlugin
 } = require('awesome-typescript-loader');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 // config helpers:
 const ensureArray = config =>
-  (config && (Array.isArray(config) ? config : [config])) || [];
+    (config && (Array.isArray(config) ? config : [config])) || [];
 const when = (condition, config, negativeConfig) =>
-  condition ? ensureArray(config) : ensureArray(negativeConfig);
+    condition ? ensureArray(config) : ensureArray(negativeConfig);
 
 // primary config:
-const title = 'Tockler';
+const title = 'Clomfy';
 const outDir = path.resolve(__dirname, 'dist');
-const srcDir = path.resolve(__dirname, './');
+const srcDir = path.resolve(__dirname, './src');
 const nodeModulesDir = path.resolve(__dirname, 'node_modules');
 const baseUrl = '/';
 
 const port = process.env.PORT || 3000;
 
 const cssRules = [
-  { loader: 'css-loader' },
-  {
-    loader: 'postcss-loader',
-    options: {
-      plugins: () => [
-        require('autoprefixer')({ browsers: ['last 2 versions'] }),
-      ],
-    },
-  },
+    { loader: 'css-loader' },
+    {
+        loader: 'postcss-loader',
+        options: {
+            plugins: () => [
+                require('autoprefixer')({ browsers: ['last 2 versions'] })
+            ]
+        }
+    }
 ];
 
 const hotDeps = [
-  `webpack-dev-server/client?http://localhost:${port}`,
-  'webpack/hot/only-dev-server',
+    'react-hot-loader/patch',
+    `webpack-dev-server/client?http://localhost:${port}`,
+    'webpack/hot/only-dev-server'
 ];
-const deps = ['aurelia-bootstrapper'];
+const deps = [path.resolve('./src/index')];
 
 // prettier-ignore
 module.exports = ({ production = false, server = false, extractCss = false, coverage = false } = {}) => ({
   target: 'electron-renderer',
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
     modules: [srcDir, 'node_modules']
   },
   entry: {
-     app: (server)?hotDeps.concat(deps):deps,
-     bootstrap: [
-      'bootstrap'
-     ]
+    app: (server)?hotDeps.concat(deps):deps
   },
 
   devServer: {
     hot: true, // Tell the dev-server we're using HMR
-    contentBase: path.resolve(__dirname, 'dist'),
+    contentBase: outDir,
     publicPath: `http://localhost:${port}/`,
     port: port
   },
@@ -109,11 +103,11 @@ module.exports = ({ production = false, server = false, extractCss = false, cove
         }]
       },
       { test: /\.html$/i, loader: 'html-loader' },
-      { test: /\.ts$/i, loader: 'awesome-typescript-loader', exclude: nodeModulesDir },
+      { test: /\.tsx?$/i, loader: 'awesome-typescript-loader', exclude: nodeModulesDir },
+      //{ test: /\.tsx$/i, loader: 'react-hot-loader/webpack"', exclude: nodeModulesDir },
       { test: /\.json$/i, loader: 'json-loader' },
 
-      // exposes jQuery globally as $ and as jQuery:
-      { test: require.resolve('jquery'), loader: 'expose-loader?$!expose-loader?jQuery' },
+
       // embed small images and fonts as Data Urls and larger ones as files:
       { test: /\.(ico|png|gif|jpg|cur)$/i, loader: 'url-loader', options: { limit: 8192 } },
       { test: /\.woff2(\?v=[0-9]\.[0-9]\.[0-9])?$/i, loader: 'url-loader', options: { limit: 10000, mimetype: 'application/font-woff2' } },
@@ -131,20 +125,13 @@ module.exports = ({ production = false, server = false, extractCss = false, cove
     new webpack.NamedModulesPlugin(),
     // prints more readable module names in the browser console on HMR updates
     new FriendlyErrorsWebpackPlugin(),
-    new AureliaPlugin({
-      pal: "aurelia-pal-browser",
-      dist: 'es2015'
+    new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development')
+      }
     }),
-    new ModuleDependenciesPlugin({
-      'au-table': ['./au-table', './au-table-select', './au-table-sort', './au-table-pagination'],
-    }),
-    new ProvidePlugin({
-      'window.Tether': 'tether',
-      'Tether': 'tether',
-      '$': 'jquery',
-      'jQuery': 'jquery',
-      'window.jQuery': 'jquery',
-    }),
+    
     new TsConfigPathsPlugin(),
     new CheckerPlugin(),
     new HtmlWebpackPlugin({

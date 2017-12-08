@@ -1,26 +1,22 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "es2015",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "moduleResolution": "node",
-    "allowJs": true,
-    "sourceRoot": "./",
-    "baseUrl": "./",
-    "skipLibCheck": true,
+    "outDir": "./dist/",
     "sourceMap": true,
-    "lib": [
-      "es2017",
-      "dom"
-    ]
+    "strictNullChecks": true,
+    "strict": true,
+    "removeComments": true,
+    "allowJs": true,
+    "module": "commonjs",
+    "target": "es5",
+    "lib": ["es6", "dom"],
+    "jsx": "react",
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "typeRoots": ["./node_modules/@types", "../@types"]
   },
-  "exclude": [
-    "app",
-    "node_modules",
-    "node_modules/aurelia-validation/node_modules",
-    "dist",
-    "packaged",
-    "static"
-  ]
+  "exclude": ["./node_modules"]
 }
