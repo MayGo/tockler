@@ -12,7 +12,8 @@ export class ExtensionsManager {
         const installer = require('electron-devtools-installer');
         const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
         const extensions = [
-            'JQUERY_DEBUGGER'
+            'REACT_DEVELOPER_TOOLS',
+            'REDUX_DEVTOOLS'
         ];
 
         return Promise

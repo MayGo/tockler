@@ -1,15 +1,20 @@
 import { compose, createStore, applyMiddleware } from 'redux';
 import rootReducer from './reducers';
 import createSagaMiddleware from 'redux-saga';
+
+import { routerMiddleware } from 'react-router-redux'
 import sagas from './sagas/rootSaga';
+import { appHistory } from '../history';
 
 export default function configureStore(initialState?: any) {
   console.log('Configuring store.');
 
+ 
+  const historyMiddleware = routerMiddleware(appHistory)
   const sagaMiddleware = createSagaMiddleware();
-  const middlewares = [sagaMiddleware];
+  const middlewares = [historyMiddleware,sagaMiddleware];
 
-  const enhancers = [applyMiddleware(...middlewares)];
+  //const enhancers = [applyMiddleware(...middlewares)];
 
   // If Redux DevTools Extension is installed use it, otherwise use Redux compose
   const composeEnhancers =
@@ -24,10 +29,10 @@ export default function configureStore(initialState?: any) {
         })
       : compose;
 
-  const store = createStore(
-    rootReducer,
+  const store = createStore(rootReducer,
     initialState,
-    composeEnhancers(...enhancers),
+    
+    composeEnhancers(applyMiddleware(...middlewares)),
   );
 
   sagaMiddleware.run(sagas);

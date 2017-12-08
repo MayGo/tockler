@@ -1,13 +1,10 @@
 import * as React from 'react';
 
-import AppBar from 'material-ui/AppBar';
 import { withStyles } from 'material-ui/styles';
 import { StyleRulesCallback } from 'material-ui/styles/withStyles';
 import { injectIntl } from 'react-intl';
 import * as ReactIntl from 'react-intl';
 import { compose } from 'recompose';
-import { Typography, Toolbar } from 'material-ui';
-import TrackItemList from '../TrackItemList/TrackItemListContainer';
 
 const styles: StyleRulesCallback = theme => ({
     root: {
@@ -46,20 +43,7 @@ interface IHocProps {
 type IFullProps = IProps & IHocProps;
 
 const Home = ({ classes, intl }: IFullProps) => (
-    <div className={classes.root}>
-        <AppBar position="static">
-            <Toolbar className={classes.toolbar}>
-                <Typography
-                    type="title"
-                    color="inherit"
-                    className={classes.logo}
-                >
-                    Tockler
-                </Typography>
-            </Toolbar>
-        </AppBar>
-        <TrackItemList />
-    </div>
+    <div className={classes.root}>Homeasdasdsadsadsadsadsdss</div>
 );
 
 export default compose<IFullProps, IProps>(
