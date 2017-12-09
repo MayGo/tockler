@@ -18,7 +18,8 @@ const initialState: IStoreState = {
       all: []
   },
   timeline: {
-      all: []
+      series: null,
+      timerange: null,
   }
 };
 

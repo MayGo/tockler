@@ -12,7 +12,6 @@ import {
     EventChart,
     Resizable
 } from 'react-timeseries-charts';
-import { TimeSeries, TimeRangeEvent, TimeRange } from 'pondjs';
 
 const styles: StyleRulesCallback = theme => ({
     root: {
@@ -37,7 +36,9 @@ const styles: StyleRulesCallback = theme => ({
 });
 
 interface IProps {
+    series: any;
     timerange: any;
+    changeTimerange: (timerange: any) => void;
     tracker?: any;
 }
 
@@ -54,66 +55,31 @@ interface IHocProps {
 
 type IFullProps = IProps & IHocProps;
 
-const outageEvents = [
-    {
-        id: 472,
-        taskName: 'AppTrackItem',
-        beginDate: '2017-12-08T07:15:49.792Z',
-        endDate: '2017-12-08T07:15:52.792Z',
-        app: 'Code',
-        title: 'ITrackItem.ts — tockler',
-        color: '#000000'
-    },
-    {
-        id: 472,
-        taskName: 'AppTrackItem',
-        beginDate: '2017-12-08T07:25:52.792Z',
-        endDate: '2017-12-08T09:00:52.792Z',
-        app: 'Code',
-        title: 'ITrackItem.ts — tockler',
-        color: '#fcd1c7'
-    }
-];
-
-//
-// Turn data into TimeSeries
-//
-
-const events = outageEvents.map(
-    ({ beginDate, endDate, ...data }) =>
-        new TimeRangeEvent(
-            new TimeRange(new Date(beginDate), new Date(endDate)),
-            data
-        )
-);
-const series = new TimeSeries({ name: 'outages', events });
-
 class Timeline extends React.Component<IFullProps, IProps> {
     constructor(props: any) {
         super(props);
-        this.state = this.getInitialState();
+
         this.handleTrackerChanged = this.handleTrackerChanged.bind(this);
         this.handleTimeRangeChange = this.handleTimeRangeChange.bind(this);
     }
-    getInitialState() {
-        return {
-            tracker: null,
-            timerange: series.timerange()
-        };
-    }
+
     handleTrackerChanged(tracker: any) {
         this.setState({ tracker });
     }
     handleTimeRangeChange(timerange: any) {
-        this.setState({ timerange });
+        this.props.changeTimerange(timerange);
     }
     render() {
-        const { classes }: IFullProps = this.props;
+        const { classes, series, timerange }: IFullProps = this.props;
+
+        if (!series || !timerange) {
+            return <div>No data</div>;
+        }
         return (
             <div className={classes.root}>
                 <Resizable>
                     <ChartContainer
-                        timeRange={this.state.timerange}
+                        timeRange={timerange}
                         enablePanZoom={true}
                         onTimeRangeChanged={this.handleTimeRangeChange}
                     >

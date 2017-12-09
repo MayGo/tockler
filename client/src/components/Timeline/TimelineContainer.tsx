@@ -2,25 +2,47 @@ import * as React from 'react';
 import { connect, MapStateToProps } from 'react-redux';
 import Timeline from '../../components/Timeline/Timeline';
 import IStoreState from '../../store/IStoreState';
+import { Dispatch } from '../../store/reducers/index';
+import { changeTimerange } from '../../store/reducers/timeline/timelineActions';
 //import { ITrackItemState } from '../../store/reducers/trackItem/ITrackItemState';
 
 interface IProps {}
 interface IHocProps {
-    timelineItems: any;
+    series: any;
+    timerange: any;
+    changeTimerange: (timerange: any) => void;
 }
 
 type IFullProps = IProps & IHocProps;
 
-const TimelineContainer = ({ timelineItems }: IFullProps) => {
-    console.log('Loaded items', timelineItems);
-    return <Timeline timerange={timelineItems} />;
+const TimelineContainer = ({
+    series,
+    timerange,
+    changeTimerange
+}: IFullProps) => {
+    console.log('Loaded items', series);
+    return (
+        <Timeline
+            series={series}
+            timerange={timerange}
+            changeTimerange={changeTimerange}
+        />
+    );
 };
 
-const mapStateToProps: MapStateToProps<{ timelineItems: any[] }, IProps> = (
-    state: IStoreState,
-    ownProps?: IProps
-) => ({
-    timelineItems: state.timeline.all
+const mapStateToProps: MapStateToProps<
+    { series: any[]; timerange: any },
+    IProps
+> = (state: IStoreState, ownProps?: IProps) => ({
+    series: state.timeline.series,
+    timerange: state.timeline.timerange
 });
 
-export default connect(mapStateToProps, undefined)(TimelineContainer);
+const mapDispatchToProps = (dispatch: Dispatch, ownProps: IProps) => {
+    return {
+        changeTimerange: (timerange: any) =>
+            dispatch(changeTimerange(timerange))
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(TimelineContainer);
