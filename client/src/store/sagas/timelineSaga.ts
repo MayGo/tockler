@@ -1,21 +1,21 @@
 import { call, put, fork, cancelled } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
-import { loadTrackItems } from '../reducers/trackItem/trackItemActions';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { TrackItemService } from '../../services/TrackItemService';
 import * as moment from 'moment';
+import { loadTimelineItems } from '../reducers/timeline/timelineActions';
 
 function* bgSync() {
   const delayMs = 100000;
   try {
     while (true) {
-      console.log('TrackItems delay')
+      console.log('Timeline delay')
     
-      console.log('TrackItems loading')
+      console.log('Timeline loading')
         const trackItems:ITrackItem[]  = yield call(TrackItemService.findAllFromDay, moment().startOf('day').toDate(), 'AppTrackItem')
-      yield put(loadTrackItems(trackItems));
+      yield put(loadTimelineItems(trackItems));
    
-      console.log('Loaded trackItems:', trackItems);
+      console.log('Loaded timeline:', trackItems);
       yield call(delay, delayMs);
     }
   } catch (err) {

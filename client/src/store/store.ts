@@ -16,6 +16,9 @@ const initialState: IStoreState = {
   routing: null,
   trackItem: {
       all: []
+  },
+  timeline: {
+      all: []
   }
 };
 
