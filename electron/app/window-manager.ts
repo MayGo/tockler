@@ -93,7 +93,7 @@ export default class WindowManager {
       index: 'file://' + config.client + '/index.html',
       icon: icon,
       preloadWindow: true,
-      showDockIcon: false,
+      showDockIcon: true,
       width: 400,
       height: 500,
     });

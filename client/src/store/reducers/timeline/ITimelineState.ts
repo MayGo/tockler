@@ -1,6 +1,7 @@
 //import {ITrackItem} from '../../../@types/ITrackItem';
 
 export interface ITimelineState {
-    series: any[];
-    timerange: any[];
+    AppTrackItem: any | null;
+    StatusTrackItem: any | null;
+    timerange: any | null;
 }

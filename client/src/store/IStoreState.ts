@@ -2,7 +2,7 @@ import {ITrackItemState} from './reducers/trackItem/ITrackItemState';
 import { ITimelineState } from './reducers/timeline/ITimelineState';
 
 export default interface IStoreState {
-  routing:any,
+  router: any,
   trackItem: ITrackItemState;
   timeline: ITimelineState
 };

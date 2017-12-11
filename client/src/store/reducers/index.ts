@@ -1,8 +1,5 @@
 import { combineReducers,Dispatch as ReduxDispatch } from 'redux';
 
-
-import { routerReducer } from 'react-router-redux'
-
 import { routerReducer as router, RouterState } from 'react-router-redux'
 
 import trackItem from './trackItem/trackItemState';

@@ -5,38 +5,32 @@ import { StyleRulesCallback } from 'material-ui/styles/withStyles';
 import { injectIntl } from 'react-intl';
 import * as ReactIntl from 'react-intl';
 import { compose } from 'recompose';
-import {
-    Charts,
-    ChartContainer,
-    ChartRow,
-    EventChart,
-    Resizable
-} from 'react-timeseries-charts';
+import { ChartContainer, Resizable } from 'react-timeseries-charts';
+import { TimelineRowContainer } from './TimelineRowContainer';
+import { TrackItemType } from '../../enum/TrackItemType';
 
 const styles: StyleRulesCallback = theme => ({
     root: {
-        minHeight: '100vh',
         margin: 10,
-        backgroundColor: theme.palette.background.contentFrame
+        backgroundColor: theme.palette.background.contentFrame,
     },
     logo: {
         fontWeight: 200,
         letterSpacing: 1,
-        flex: 1
+        flex: 1,
     },
     summary: {
-        display: 'flex'
+        display: 'flex',
     },
     grid: {
-        padding: 10
+        padding: 10,
     },
     toolbar: {
-        minHeight: 48
-    }
+        minHeight: 48,
+    },
 });
 
 interface IProps {
-    series: any;
     timerange: any;
     changeTimerange: (timerange: any) => void;
     tracker?: any;
@@ -55,7 +49,7 @@ interface IHocProps {
 
 type IFullProps = IProps & IHocProps;
 
-class Timeline extends React.Component<IFullProps, IProps> {
+class TimelineComp extends React.Component<IFullProps, IProps> {
     constructor(props: any) {
         super(props);
 
@@ -70,11 +64,12 @@ class Timeline extends React.Component<IFullProps, IProps> {
         this.props.changeTimerange(timerange);
     }
     render() {
-        const { classes, series, timerange }: IFullProps = this.props;
+        const { classes, timerange }: IFullProps = this.props;
 
-        if (!series || !timerange) {
+        if (!timerange) {
             return <div>No data</div>;
         }
+        console.log('Have timerange');
         return (
             <div className={classes.root}>
                 <Resizable>
@@ -83,18 +78,7 @@ class Timeline extends React.Component<IFullProps, IProps> {
                         enablePanZoom={true}
                         onTimeRangeChanged={this.handleTimeRangeChange}
                     >
-                        <ChartRow height="30">
-                            <Charts>
-                                <EventChart
-                                    series={series}
-                                    size={45}
-                                    style={(event: any) => ({
-                                        fill: event.get('color')
-                                    })}
-                                    label={(e: any) => e.get('title')}
-                                />
-                            </Charts>
-                        </ChartRow>
+                        <TimelineRowContainer trackItemType={TrackItemType.AppTrackItem} />
                     </ChartContainer>
                 </Resizable>
             </div>
@@ -102,7 +86,7 @@ class Timeline extends React.Component<IFullProps, IProps> {
     }
 }
 
-export default compose<IFullProps, IProps>(
+export const Timeline = compose<IFullProps, IProps>(
     injectIntl,
     withStyles(styles, { name: 'Home' })
-)(Timeline);
+)(TimelineComp);

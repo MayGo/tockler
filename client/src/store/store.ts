@@ -7,24 +7,22 @@ import sagas from './sagas/rootSaga';
 import createHistory from 'history/createBrowserHistory';
 import IStoreState from './IStoreState';
 
-
 console.log('Creating history');
-export const appHistory:any = createHistory()
-
+export const appHistory: any = createHistory()
 
 const initialState: IStoreState = {
-  routing: null,
+  router: null,
   trackItem: {
-      all: []
+      all: [],
   },
   timeline: {
-      series: null,
-      timerange: null,
-  }
+    AppTrackItem: null,
+    StatusTrackItem: null,
+    timerange: null,
+  },
 };
 
-
- function configureStore(initialState?: any) {
+function configureStore() {
   console.log('Configuring store.');
 
  
@@ -32,7 +30,7 @@ const initialState: IStoreState = {
   const sagaMiddleware = createSagaMiddleware();
   const middlewares = [historyMiddleware,sagaMiddleware];
 
-  //const enhancers = [applyMiddleware(...middlewares)];
+  // const enhancers = [applyMiddleware(...middlewares)];
 
   // If Redux DevTools Extension is installed use it, otherwise use Redux compose
   const composeEnhancers =
@@ -47,9 +45,8 @@ const initialState: IStoreState = {
         })
       : compose;
 
-  const store = createStore(rootReducer,
+  const storeCreated = createStore(rootReducer,
     initialState,
-    
     composeEnhancers(applyMiddleware(...middlewares)),
   );
 
@@ -58,11 +55,11 @@ const initialState: IStoreState = {
   if (module.hot) {
     module.hot.accept('./reducers', () => {
       const reducers = require('./reducers').default;
-      store.replaceReducer(reducers);
+      storeCreated.replaceReducer(reducers);
     });
   }
 
-  return store;
+  return storeCreated;
 }
 
-export const store = configureStore(initialState)
+export const store = configureStore()

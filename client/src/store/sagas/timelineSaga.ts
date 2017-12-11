@@ -4,25 +4,20 @@ import { ITrackItem } from '../../@types/ITrackItem';
 import { TrackItemService } from '../../services/TrackItemService';
 import * as moment from 'moment';
 import { loadTimelineItems } from '../reducers/timeline/timelineActions';
-import { TimeSeries, TimeRangeEvent, TimeRange } from 'pondjs';
+import { TrackItemType } from '../../enum/TrackItemType';
 
 function* bgSync() {
   const delayMs = 100000;
   try {
     while (true) {
-      console.log('Timeline delay')
-    
       console.log('Timeline loading')
-        const trackItems:ITrackItem[]  = yield call(TrackItemService.findAllFromDay, moment().startOf('day').toDate(), 'AppTrackItem')
-        const events = trackItems.map(
-          ({ beginDate, endDate, ...data }) =>
-              new TimeRangeEvent(
-                  new TimeRange(new Date(beginDate), new Date(endDate)),
-                  data
-              )
-      );
-      const series = new TimeSeries({ name: 'outages', events });
-      yield put(loadTimelineItems(series, series.timerange()));
+      const day = moment().startOf('day').toDate();
+
+      let trackItems:ITrackItem[]  = yield call(TrackItemService.findAllFromDay, day, TrackItemType.AppTrackItem)
+      yield put(loadTimelineItems(trackItems, TrackItemType.AppTrackItem));
+
+      trackItems = yield call(TrackItemService.findAllFromDay, day, TrackItemType.StatusTrackItem)
+      yield put(loadTimelineItems(trackItems, TrackItemType.StatusTrackItem));
    
       console.log('Loaded timeline:', trackItems);
       yield call(delay, delayMs);
