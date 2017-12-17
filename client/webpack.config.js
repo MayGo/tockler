@@ -4,20 +4,16 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const { optimize: { CommonsChunkPlugin }, ProvidePlugin } = require('webpack');
-const {
-    TsConfigPathsPlugin,
-    CheckerPlugin
-} = require('awesome-typescript-loader');
+const { TsConfigPathsPlugin, CheckerPlugin } = require('awesome-typescript-loader');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 // config helpers:
-const ensureArray = config =>
-    (config && (Array.isArray(config) ? config : [config])) || [];
+const ensureArray = config => (config && (Array.isArray(config) ? config : [config])) || [];
 const when = (condition, config, negativeConfig) =>
     condition ? ensureArray(config) : ensureArray(negativeConfig);
 
 // primary config:
-const title = 'Clomfy';
+const title = 'Tockler';
 const outDir = path.resolve(__dirname, 'dist');
 const srcDir = path.resolve(__dirname, './src');
 const nodeModulesDir = path.resolve(__dirname, 'node_modules');
@@ -30,19 +26,17 @@ const cssRules = [
     {
         loader: 'postcss-loader',
         options: {
-            plugins: () => [
-                require('autoprefixer')({ browsers: ['last 2 versions'] })
-            ]
-        }
-    }
+            plugins: () => [require('autoprefixer')({ browsers: ['last 2 versions'] })],
+        },
+    },
 ];
 
 const hotDeps = [
     'react-hot-loader/patch',
     `webpack-dev-server/client?http://localhost:${port}`,
-    'webpack/hot/only-dev-server'
+    'webpack/hot/only-dev-server',
 ];
-const deps = [path.resolve('./src/index')];
+const deps = [path.resolve('./src/app.ts')];
 
 // prettier-ignore
 module.exports = ({ production = false, server = false, extractCss = false, coverage = false } = {}) => ({

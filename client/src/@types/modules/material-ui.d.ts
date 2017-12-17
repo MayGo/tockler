@@ -1,3 +1,5 @@
+declare module 'material-ui-pickers';
+
 // /**
 //  * Type definitions for "material-ui" v1.0.0-beta.2
 //  * Project: https://github.com/callemall/material-ui/
