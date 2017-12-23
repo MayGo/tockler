@@ -6,8 +6,8 @@ import { DatePicker, Button } from 'antd';
 import * as moment from 'moment';
 const { RangePicker } = DatePicker;
 
-import styles from './Search.less';
-console.log(styles);
+import * as styles from './Search.css';
+
 interface IProps {
     timerange: any;
     loadTimerange: (timerange: any) => void;
@@ -61,12 +61,16 @@ export class Search extends React.Component<IFullProps, IProps> {
         const range: [any, any] = [moment(timerange.begin()), moment(timerange.begin())];
         console.log('Have timerange in Search:', timerange);
         return (
-            <div>
-                <div className={styles.smPadding}>
+            <div className={styles.smPadding}>
+                <span className={styles.smPadding}>
                     <Button onClick={this.selectYesterday}>Yesterday</Button>
-                </div>
-                <RangePicker value={range} onChange={this.onChange} />
-                <Button onClick={this.selectToday}>Today</Button>
+                </span>
+                <span className={styles.smPadding}>
+                    <RangePicker value={range} onChange={this.onChange} />
+                </span>
+                <span className={styles.smPadding}>
+                    <Button onClick={this.selectToday}>Today</Button>
+                </span>
             </div>
         );
     }

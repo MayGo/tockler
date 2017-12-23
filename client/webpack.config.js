@@ -59,17 +59,50 @@ module.exports = ({ production = false, server = false, extractCss = false, cove
   module: {
     rules: [
       {
-        test: /\.less$/,
-        // use: ['style-loader', 'css-loader', 'less-loader'],    
-        use: ExtractTextPlugin.extract({
-            fallback: 'style-loader',
-            //resolve-url-loader may be chained before lesss-loader if necessary
-            use: [
-                'css-loader', 
-                'less-loader',
-            ]
+        test: /\.css$/,
+        include: /node_modules/,
+        loader: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: 'css-loader'
         })
-      },  
+      }, {
+        test: /\.scss$/,
+        loader: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [{
+            loader: 'css-loader',
+            query: {
+              modules: true,
+              localIdentName: '[name]__[local]___[hash:base64:5]'
+            }
+          }, {
+            loader: 'postcss-loader',
+            query: {
+              plugins: []
+            }
+          }, {
+            loader: 'sass-loader'
+          }]
+        })
+      }, {
+        test: /\.css$/,
+        exclude: /node_modules/,
+        loader: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [{
+            loader: 'css-loader',
+            query: {
+              modules: true,
+              localIdentName: '[name]__[local]___[hash:base64:5]'
+            }
+          }, {
+            loader: 'postcss-loader',
+            query: {
+              plugins: []
+            }
+          }]
+        })
+      },
       { test: /\.html$/i, loader: 'html-loader' },
       { test: /\.tsx?$/i, loader: 'awesome-typescript-loader', exclude: nodeModulesDir },
       //{ test: /\.tsx$/i, loader: 'react-hot-loader/webpack"', exclude: nodeModulesDir },

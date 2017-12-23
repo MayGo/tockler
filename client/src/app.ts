@@ -3,7 +3,7 @@ import router from './router';
 
 import { timelineModel } from './models/timeline';
 
-import 'antd/dist/antd.less';
+import 'antd/dist/antd.css';
 
 const app = dva();
 
