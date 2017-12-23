@@ -1,17 +1,12 @@
 import * as React from 'react';
 
 import { TimelineContainer } from './TimelineContainer';
-import { Search } from './Search';
+import { SearchContainer } from './SearchContainer';
 
-interface IProps {}
-interface IHocProps {}
-
-type IFullProps = IProps & IHocProps;
-
-export const TimelinePage = ({  }: IFullProps) => {
+export const TimelinePage = () => {
     return (
         <div>
-            <Search selectedDateTime={new Date()} />
+            <SearchContainer />
             <TimelineContainer />
         </div>
     );

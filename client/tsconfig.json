@@ -8,7 +8,10 @@
     "allowJs": true,
     "module": "commonjs",
     "target": "es5",
-    "lib": ["es6", "dom"],
+    "lib": [
+      "es6",
+      "dom"
+    ],
     "jsx": "react",
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
@@ -16,7 +19,13 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "suppressImplicitAnyIndexErrors": true,
-    "typeRoots": ["./node_modules/@types", "../@types"]
+    "allowSyntheticDefaultImports   ": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "../@types"
+    ]
   },
-  "exclude": ["./node_modules"]
+  "exclude": [
+    "./node_modules"
+  ]
 }

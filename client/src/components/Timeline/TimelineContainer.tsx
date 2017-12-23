@@ -1,32 +1,19 @@
-import * as React from 'react';
 import { connect } from 'dva';
 
-import IStoreState from '../../store/IStoreState';
-import { changeTimerange } from '../../store/reducers/timeline/timelineActions';
-import { Timeline } from './TimelineComponent';
+import { Timeline } from './Timeline';
 import { TrackItemType } from '../../enum/TrackItemType';
-
-interface IProps {}
-interface IHocProps {
-    timerange: any;
-    appTrackItems: any;
-    statusTrackItems: any;
-    changeTimerange?: (timerange: any) => void;
-}
-
-type IFullProps = IProps & IHocProps;
 
 const mapStateToProps = ({ timeline }: any) => ({
     timerange: timeline.timerange,
     appTrackItems: timeline[TrackItemType.AppTrackItem],
     statusTrackItems: timeline[TrackItemType.StatusTrackItem],
 });
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch: any) => ({
     changeTimerange: (timerange: any) =>
         dispatch({
-            type: 'timeline/changeTimerange',
+            type: 'timeline/changeVisibleTimerange',
             payload: { timerange },
         }),
 });
 
-export const TimelineContainer = connect(mapStateToProps, null)(Timeline);
+export const TimelineContainer = connect(mapStateToProps, mapDispatchToProps)(Timeline);

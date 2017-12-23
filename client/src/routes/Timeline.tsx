@@ -1,17 +1,13 @@
 import * as React from 'react';
 
-import { DatePicker, Layout, Breadcrumb } from 'antd';
+import { Layout } from 'antd';
 import { TimelineContainer } from '../components/Timeline/TimelineContainer';
+import { SearchContainer } from '../components/Timeline/SearchContainer';
 
 const { Content, Header, Footer } = Layout;
-const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
 
 interface IPortalProps {
     collapse: boolean;
-}
-
-function onChange(date, dateString) {
-    console.log(date, dateString);
 }
 
 class Portal extends React.Component<IPortalProps, any> {
@@ -26,7 +22,7 @@ class Portal extends React.Component<IPortalProps, any> {
                 <Content>
                     <Layout>
                         <Content>
-                            <RangePicker onChange={onChange} />
+                            <SearchContainer />
                             <TimelineContainer />
                         </Content>
                     </Layout>

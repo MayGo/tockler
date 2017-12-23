@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect, MapStateToProps } from 'react-redux';
-import IStoreState from '../../store/IStoreState';
+
 import { TrackItemType } from '../../enum/TrackItemType';
 import { TimelineRow } from './TimelineRow';
 
@@ -18,8 +18,8 @@ const TimelineRow2 = ({ series }: IHocProps) => {
 };
 
 const mapStateToProps: MapStateToProps<{ series: any }, IProps> = (
-    state: IStoreState,
-    ownProps: IProps
+    state: any,
+    ownProps: IProps,
 ) => ({
     series: state.timeline[ownProps.trackItemType],
 });

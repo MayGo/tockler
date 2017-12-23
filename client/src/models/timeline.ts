@@ -24,16 +24,6 @@ const handleTimelineItems = (
     };
 };
 
-const handleChangeTimerange = (
-    state: ITimelineState,
-    payload: { timerange: any },
-): ITimelineState => {
-    return {
-        ...state,
-        timerange: payload.timerange,
-    };
-};
-
 export const timelineModel: any = {
     namespace: 'timeline',
     state: {
@@ -49,18 +39,53 @@ export const timelineModel: any = {
     subscriptions: {
         setup({ dispatch }: any) {
             console.log('Timeline data setup');
-            dispatch({ type: 'bgSync' });
+            // dispatch({ type: 'bgSync' });
+
+            const beginDate = moment().startOf('day');
+            const endDate = moment().endOf('day');
+            dispatch({
+                type: 'loadTimerange',
+                payload: { timerange: new TimeRange(beginDate, endDate) },
+            });
         },
     },
     reducers: {
         loadTimelineItems(state: any, { payload }: any) {
             return handleTimelineItems(state, payload);
         },
-        changeTimerange(state: any, { payload }: any) {
-            return handleChangeTimerange(state, payload);
+        setTimerange(state: any, { payload: { timerange } }: any) {
+            return {
+                ...state,
+                timerange,
+            };
         },
     },
     effects: {
+        *changeVisibleTimerange({ payload: { timerange } }: any, { call, put }: any) {
+            console.log('Visible timerange changed:', timerange);
+            yield put({
+                type: 'setTimerange',
+                payload: { timerange },
+            });
+        },
+        *loadTimerange({ payload: { timerange } }: any, { call, put }: any) {
+            console.log('Change timerange:', timerange);
+
+            const trackItems: ITrackItem[] = yield call(
+                TrackItemService.findAllDayItems,
+                timerange.begin(),
+                timerange.end(),
+                TrackItemType.AppTrackItem,
+            );
+            yield put({
+                type: 'loadTimelineItems',
+                payload: { trackItems, trackItemType: TrackItemType.AppTrackItem },
+            });
+            yield put({
+                type: 'setTimerange',
+                payload: { timerange },
+            });
+        },
         *bgSync(action: any, { call, put }: any) {
             const delayMs = 10000;
             try {

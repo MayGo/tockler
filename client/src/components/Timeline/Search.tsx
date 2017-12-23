@@ -1,57 +1,73 @@
 import * as React from 'react';
 
-import { withStyles } from 'material-ui/styles';
-import { StyleRulesCallback } from 'material-ui/styles/withStyles';
-import { injectIntl } from 'react-intl';
-import { compose } from 'recompose';
-import { DateTimePicker } from 'material-ui-pickers';
+import { TimeRange } from 'pondjs';
+import { DatePicker, Button } from 'antd';
+// import moment, { Moment } from 'moment';
+import * as moment from 'moment';
+const { RangePicker } = DatePicker;
 
-const styles: StyleRulesCallback = theme => ({
-    root: {
-        margin: 10,
-        backgroundColor: theme.palette.background.contentFrame,
-    },
-});
-
+import styles from './Search.less';
+console.log(styles);
 interface IProps {
-    selectedDateTime: any;
-    handleDateTimeChange?: any;
+    timerange: any;
+    loadTimerange: (timerange: any) => void;
 }
 
-interface IHocProps {
-    classes: {
-        root: string;
-    };
-    intl: ReactIntl.InjectedIntl;
-}
+interface IHocProps {}
 
 type IFullProps = IProps & IHocProps;
 
-class SearchComp extends React.Component<IFullProps, IProps> {
-    state = {
-        selectedDateTime: new Date(),
-    };
+export class Search extends React.Component<IFullProps, IProps> {
     constructor(props: any) {
         super(props);
 
-        this.handleDateTimeChange = this.handleDateTimeChange.bind(this);
+        this.onChange = this.onChange.bind(this);
     }
 
-    handleDateTimeChange = (dateTime: any) => {
-        this.setState({ selectedDateTime: dateTime });
+    onChange = (dates: [any, any], dateStrings: [string, string]) => {
+        console.log(dates, this.props);
+        const beginDate = dates[0].toDate();
+        const endDate = dates[1].toDate();
+        const newTimerange = new TimeRange(beginDate, endDate);
+        this.props.loadTimerange(newTimerange);
     };
-    render() {
-        const { classes, selectedDateTime } = this.props;
+    selectToday = () => {
+        console.log('Select today');
+        const beginDate = moment()
+            .startOf('day')
+            .toDate();
+        const endDate = moment()
+            .endOf('day')
+            .toDate();
+        const newTimerange = new TimeRange(beginDate, endDate);
+        this.props.loadTimerange(newTimerange);
+    };
+    selectYesterday = () => {
+        console.log('Select today');
+        const beginDate = moment()
+            .startOf('day')
+            .subtract(1, 'days')
+            .toDate();
+        const endDate = moment()
+            .endOf('day')
+            .subtract(1, 'days')
+            .toDate();
+        const newTimerange = new TimeRange(beginDate, endDate);
+        this.props.loadTimerange(newTimerange);
+    };
 
-        console.log('Have timerange');
+    render() {
+        const { timerange } = this.props;
+        const range: [any, any] = [moment(timerange.begin()), moment(timerange.begin())];
+        console.log('Have timerange in Search:', timerange);
         return (
-            <div className={classes.root}>
-                <DateTimePicker value={selectedDateTime} onChange={this.handleDateTimeChange} />
+            <div>
+                <div className={styles.smPadding}>
+                    <Button onClick={this.selectYesterday}>Yesterday</Button>
+                </div>
+                <RangePicker value={range} onChange={this.onChange} />
+                <Button onClick={this.selectToday}>Today</Button>
             </div>
         );
     }
 }
-
-export const Search = compose<IFullProps, IProps>(injectIntl, withStyles(styles, { name: 'Home' }))(
-    SearchComp
-);

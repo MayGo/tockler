@@ -21,16 +21,6 @@ const baseUrl = '/';
 
 const port = process.env.PORT || 3000;
 
-const cssRules = [
-    { loader: 'css-loader' },
-    {
-        loader: 'postcss-loader',
-        options: {
-            plugins: () => [require('autoprefixer')({ browsers: ['last 2 versions'] })],
-        },
-    },
-];
-
 const hotDeps = [
     'react-hot-loader/patch',
     `webpack-dev-server/client?http://localhost:${port}`,
@@ -68,34 +58,18 @@ module.exports = ({ production = false, server = false, extractCss = false, cove
   },*/
   module: {
     rules: [
-
-      // CSS required in JS/TS files should use the style-loader that auto-injects it into the website
-      // only when the issuer is a .js/.ts file, so the loaders are not applied inside html templates
       {
-        test: /\.css$/i,
-        issuer: [{ not: [{ test: /\.html$/i }] }],
-        use: extractCss ? ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: cssRules,
-        }) : ['style-loader', ...cssRules],
-      },
-      {
-        test: /\.css$/i,
-        issuer: [{ test: /\.html$/i }],
-        // CSS required in templates cannot be extracted safely
-        // because Aurelia would try to require it again in runtime
-        use: cssRules,
-      },
-      {
-        test: /\.scss$/,
-        use: [{
-          loader: "style-loader" // creates style nodes from JS strings
-        }, {
-          loader: "css-loader" // translates CSS into CommonJS
-        }, {
-          loader: "sass-loader" // compiles Sass to CSS
-        }]
-      },
+        test: /\.less$/,
+        // use: ['style-loader', 'css-loader', 'less-loader'],    
+        use: ExtractTextPlugin.extract({
+            fallback: 'style-loader',
+            //resolve-url-loader may be chained before lesss-loader if necessary
+            use: [
+                'css-loader', 
+                'less-loader',
+            ]
+        })
+      },  
       { test: /\.html$/i, loader: 'html-loader' },
       { test: /\.tsx?$/i, loader: 'awesome-typescript-loader', exclude: nodeModulesDir },
       //{ test: /\.tsx$/i, loader: 'react-hot-loader/webpack"', exclude: nodeModulesDir },
@@ -141,10 +115,10 @@ module.exports = ({ production = false, server = false, extractCss = false, cove
     }),
 
 
-    ...when(extractCss, new ExtractTextPlugin({
-      filename: production ? '[contenthash].css' : '[id].css',
+    new ExtractTextPlugin({
+      filename: '[name].[contenthash:8].bundle.css',
       allChunks: true,
-    })),
+    }),
     ...when(production, new CommonsChunkPlugin({
       name: 'common'
     }))

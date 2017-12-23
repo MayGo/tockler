@@ -2,8 +2,7 @@ import * as React from 'react';
 
 import { withStyles } from 'material-ui/styles';
 import { StyleRulesCallback } from 'material-ui/styles/withStyles';
-import { injectIntl } from 'react-intl';
-import { compose } from 'recompose';
+
 import { ChartContainer, Resizable, Charts, ChartRow, EventChart } from 'react-timeseries-charts';
 
 const styles: StyleRulesCallback = theme => ({
