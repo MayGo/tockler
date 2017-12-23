@@ -1,0 +1,23 @@
+.operations {
+    margin-bottom: 16px;
+}
+
+.operations > button {
+    margin-right: 8px;
+}
+
+.customFilterDropdown {
+    padding: 8px;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+}
+
+.customFilterDropdown input {
+    width: 130px;
+    margin-right: 8px;
+}
+
+.highlight {
+    color: #f50;
+}

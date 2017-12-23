@@ -4,6 +4,8 @@ import { Layout } from 'antd';
 import { TimelineContainer } from '../components/Timeline/TimelineContainer';
 import { SearchContainer } from '../components/Timeline/SearchContainer';
 
+import { TrackItemTableContainer } from '../components/TrackItemTable/TrackItemTableContainer';
+
 const { Content, Header, Footer } = Layout;
 
 interface IPortalProps {
@@ -24,6 +26,8 @@ class Portal extends React.Component<IPortalProps, any> {
                         <Content>
                             <SearchContainer />
                             <TimelineContainer />
+
+                            <TrackItemTableContainer />
                         </Content>
                     </Layout>
                 </Content>
