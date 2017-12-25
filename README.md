@@ -3,9 +3,9 @@
 
 Automatically track applications usage and working time.
 
-- Windows [Download ver 3.1.12](https://github.com/MayGo/tockler/releases/download/v3.1.12/Tockler-Setup-3.1.12.exe)
-- OS X [Download ver 3.1.12](https://github.com/MayGo/tockler/releases/download/v3.1.12/Tockler-3.1.12.dmg) 
-- Linux [Download ver 3.1.12](https://github.com/MayGo/tockler/releases/download/v3.1.12/Tockler-3.1.12-x86_64.AppImage) 
+- Windows [Download ver 3.1.5](https://github.com/MayGo/tockler/releases/download/v3.1.5/Tockler-Setup-3.1.5.exe)
+- OS X [Download ver 3.1.5](https://github.com/MayGo/tockler/releases/download/v3.1.5/Tockler-3.1.5.dmg) 
+- Linux [Download ver 3.1.5](https://github.com/MayGo/tockler/releases/download/v3.1.5/Tockler-3.1.5-x86_64.AppImage) 
 
 # Features
 
