@@ -7,28 +7,45 @@ import { TrackItemType } from '../enum/TrackItemType';
 import { ITrackItem } from '../@types/ITrackItem';
 import { ITimelineState } from '../@types/ITimelineState';
 
-const handleTimelineItems = (
-    state: ITimelineState,
-    payload: { trackItems: ITrackItem[]; trackItemType: TrackItemType },
-): ITimelineState => {
-    const events = payload.trackItems.map(
+const createSeries = (name, items) => {
+    const events = items.map(
         ({ beginDate, endDate, ...data }) =>
             new TimeRangeEvent(new TimeRange(new Date(beginDate), new Date(endDate)), data),
     );
-    const trackItemSeries = new TimeSeries({ name: 'outages', events });
-    // const timerange = trackItemSeries.timerange();
-
+    const trackItemSeries = new TimeSeries({ name, events });
+    return trackItemSeries;
+};
+const handleTimelineItems = (
+    state: ITimelineState,
+    payload: {
+        appTrackItems: ITrackItem[];
+        logTrackItems: ITrackItem[];
+        statusTrackItems: ITrackItem[];
+    },
+): ITimelineState => {
     return {
         ...state,
-        [payload.trackItemType]: trackItemSeries,
+        [TrackItemType.AppTrackItem]: createSeries(
+            TrackItemType.AppTrackItem,
+            payload.appTrackItems,
+        ),
+        [TrackItemType.LogTrackItem]: createSeries(
+            TrackItemType.LogTrackItem,
+            payload.logTrackItems,
+        ),
+        [TrackItemType.StatusTrackItem]: createSeries(
+            TrackItemType.StatusTrackItem,
+            payload.statusTrackItems,
+        ),
     };
 };
 
 export const timelineModel: any = {
     namespace: 'timeline',
     state: {
-        AppTrackItem: new TimeSeries({ name: 'outages', events: [] }),
-        StatusTrackItem: new TimeSeries({ name: 'outages', events: [] }),
+        AppTrackItem: new TimeSeries({ name: 'AppTrackItem', events: [] }),
+        StatusTrackItem: new TimeSeries({ name: 'StatusTrackItem', events: [] }),
+        LogTrackItem: new TimeSeries({ name: 'LogTrackItem', events: [] }),
         timerange: new TimeRange(
             moment()
                 .subtract(1, 'days')
@@ -49,17 +66,7 @@ export const timelineModel: any = {
             });
         },
     },
-    reducers: {
-        loadTimelineItems(state: any, { payload }: any) {
-            return handleTimelineItems(state, payload);
-        },
-        setTimerange(state: any, { payload: { timerange } }: any) {
-            return {
-                ...state,
-                timerange,
-            };
-        },
-    },
+
     effects: {
         *changeVisibleTimerange({ payload: { timerange } }: any, { call, put }: any) {
             console.log('Visible timerange changed:', timerange);
@@ -71,15 +78,28 @@ export const timelineModel: any = {
         *loadTimerange({ payload: { timerange } }: any, { call, put }: any) {
             console.log('Change timerange:', timerange);
 
-            const trackItems: ITrackItem[] = yield call(
+            const appTrackItems: ITrackItem[] = yield call(
                 TrackItemService.findAllDayItems,
                 timerange.begin(),
                 timerange.end(),
                 TrackItemType.AppTrackItem,
             );
+            const statusTrackItems: ITrackItem[] = yield call(
+                TrackItemService.findAllDayItems,
+                timerange.begin(),
+                timerange.end(),
+                TrackItemType.StatusTrackItem,
+            );
+
+            const logTrackItems: ITrackItem[] = yield call(
+                TrackItemService.findAllDayItems,
+                timerange.begin(),
+                timerange.end(),
+                TrackItemType.LogTrackItem,
+            );
             yield put({
                 type: 'loadTimelineItems',
-                payload: { trackItems, trackItemType: TrackItemType.AppTrackItem },
+                payload: { logTrackItems, statusTrackItems, appTrackItems },
             });
             yield put({
                 type: 'setTimerange',
@@ -122,6 +142,17 @@ export const timelineModel: any = {
             } catch (err) {
                 console.log(err);
             }
+        },
+    },
+    reducers: {
+        loadTimelineItems(state: any, { payload }: any) {
+            return handleTimelineItems(state, payload);
+        },
+        setTimerange(state: any, { payload: { timerange } }: any) {
+            return {
+                ...state,
+                timerange,
+            };
         },
     },
 };
