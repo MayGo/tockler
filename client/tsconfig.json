@@ -1,31 +1,23 @@
 {
-  "compilerOptions": {
-    "outDir": "./dist/",
-    "sourceMap": true,
-    "strictNullChecks": true,
-    "strict": true,
-    "removeComments": true,
-    "allowJs": true,
-    "module": "commonjs",
-    "target": "es5",
-    "lib": [
-      "es6",
-      "dom"
-    ],
-    "jsx": "react",
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "allowSyntheticDefaultImports   ": true,
-    "typeRoots": [
-      "./node_modules/@types",
-      "../@types"
-    ]
-  },
-  "exclude": [
-    "./node_modules"
-  ]
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "sourceMap": true,
+        "strictNullChecks": true,
+        "strict": true,
+        "removeComments": true,
+        "allowJs": true,
+        "module": "commonjs",
+        "target": "es5",
+        "lib": ["es6", "dom"],
+        "jsx": "react",
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitAny": false,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": false,
+        "suppressImplicitAnyIndexErrors": true,
+        "allowSyntheticDefaultImports   ": true,
+        "typeRoots": ["./node_modules/@types", "../@types"]
+    },
+    "exclude": ["./node_modules"]
 }

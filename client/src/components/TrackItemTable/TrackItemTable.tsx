@@ -4,6 +4,7 @@ import * as styles from './TrackItemTable.css';
 import { ITrackItem } from '../../@types/ITrackItem';
 
 export class TrackItemTable extends React.Component {
+    searchInput: any;
     state: any = {
         filteredInfo: null,
         sortedInfo: null,
@@ -90,7 +91,7 @@ export class TrackItemTable extends React.Component {
     render() {
         let { sortedInfo, filteredInfo } = this.state;
         console.log('Render', this.state);
-        const sortedInfo = sortedInfo || {};
+        sortedInfo = sortedInfo || {};
         filteredInfo = filteredInfo || {};
 
         const columns = [
@@ -135,7 +136,7 @@ export class TrackItemTable extends React.Component {
                 ),
                 filterIcon: (
                     <Icon
-                        type="smile-o"
+                        type="search"
                         style={{ color: this.state.filtered ? '#108ee9' : '#aaa' }}
                     />
                 ),
