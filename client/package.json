@@ -42,6 +42,7 @@
         "classnames": "^2.2.5",
         "copy-webpack-plugin": "^4.2.3",
         "dva": "^2.1.0",
+        "dva-hot": "^0.2.0",
         "electron": "^1.7.8",
         "enzyme": "^2",
         "enzyme-adapter-react-16": "^1.0.1",

@@ -10,14 +10,14 @@ export function Header({ location }: any) {
                     <Icon type="bars" />Timeline
                 </Link>
             </Menu.Item>
+            <Menu.Item key="/summary">
+                <Link to="/summary">
+                    <Icon type="area-chart" />Summary
+                </Link>
+            </Menu.Item>
             <Menu.Item key="/settings">
                 <Link to="/settings">
                     <Icon type="setting" />Settings
-                </Link>
-            </Menu.Item>
-            <Menu.Item key="/404">
-                <Link to="/page-you-dont-know">
-                    <Icon type="frown-circle" />404
                 </Link>
             </Menu.Item>
         </Menu>
