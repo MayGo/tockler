@@ -1,0 +1,30 @@
+@graph-bg-color: #0b1d35;
+@graph-border-color: #325d7d;
+@graph-select-color: rgba(17, 83, 167, .48);
+@graph-primary-color: #ef8d22;
+@graph-font-color: #e5e5e5;
+// @primary-color: #084667;
+@code-family: Menlo, Monaco, 'Courier New', monospace;
+
+body {
+  font-family: @code-family;
+  color: @graph-font-color;
+  background: @graph-bg-color;
+
+  a {
+    color: @graph-primary-color;
+    &:hover {
+      color: #ffbb33;
+    }
+  }
+}
+
+.monaco-editor.vs-dark,
+.monaco-editor.vs-dark .monaco-editor-background {
+  background: @graph-bg-color;
+}
+
+.monaco-editor.vs-dark .current-line {
+  background: #0b304f;
+  border: none;
+}

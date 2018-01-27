@@ -8,7 +8,7 @@ import * as styles from './Header.css';
 export function Header({ location }: any) {
     return (
         <div>
-            <Menu selectedKeys={[location.pathname]} mode="horizontal" theme="dark">
+            <Menu selectedKeys={[location.pathname]} mode="horizontal">
                 <Menu.Item key="/timeline2">
                     <Link to="/timeline">
                         <div className={styles.brand}>

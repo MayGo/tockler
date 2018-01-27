@@ -4,7 +4,7 @@ import router from './router';
 
 import { timelineModel } from './models/timeline';
 import 'typeface-berkshire-swash';
-import 'antd/dist/antd.css';
+import './app.less';
 
 const app = dva();
 hot.patch(app);

@@ -59,32 +59,25 @@ module.exports = ({ production = false, server = false, extractCss = false, cove
   module: {
     rules: [
       {
-        test: /\.css$/,
+				test: /\.css$/,
         include: /node_modules/,
         loader: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: 'css-loader'
         })
-      }, {
-        test: /\.scss$/,
-        loader: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: [{
-            loader: 'css-loader',
-            query: {
-              modules: true,
-              localIdentName: '[name]__[local]___[hash:base64:5]'
-            }
-          }, {
-            loader: 'postcss-loader',
-            query: {
-              plugins: []
-            }
-          }, {
-            loader: 'sass-loader'
-          }]
-        })
-      }, {
+
+			},
+			{
+				test: /\.less$/,
+				use: [{
+					loader: "style-loader"
+				}, {
+					loader: "css-loader"
+				}, {
+					loader: "less-loader"
+				}]
+      },
+      {
         test: /\.css$/,
         exclude: /node_modules/,
         loader: ExtractTextPlugin.extract({
@@ -103,6 +96,7 @@ module.exports = ({ production = false, server = false, extractCss = false, cove
           }]
         })
       },
+  
       { test: /\.html$/i, loader: 'html-loader' },
       { test: /\.tsx?$/i, loader: 'awesome-typescript-loader', exclude: nodeModulesDir },
       //{ test: /\.tsx$/i, loader: 'react-hot-loader/webpack"', exclude: nodeModulesDir },
