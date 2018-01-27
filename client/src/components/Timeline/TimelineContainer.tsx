@@ -5,14 +5,16 @@ import { TrackItemType } from '../../enum/TrackItemType';
 
 const mapStateToProps = ({ timeline }: any) => ({
     timerange: timeline.timerange,
+    visibleTimerange: timeline.visibleTimerange,
     appTrackItems: timeline[TrackItemType.AppTrackItem],
     statusTrackItems: timeline[TrackItemType.StatusTrackItem],
+    logTrackItems: timeline[TrackItemType.LogTrackItem],
 });
 const mapDispatchToProps = (dispatch: any) => ({
-    changeTimerange: (timerange: any) =>
+    changeTimerange: (visibleTimerange: any) =>
         dispatch({
             type: 'timeline/changeVisibleTimerange',
-            payload: { timerange },
+            payload: { visibleTimerange },
         }),
 });
 

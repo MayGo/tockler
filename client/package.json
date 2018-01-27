@@ -5,7 +5,8 @@
     "author": "Maigo Erit <maigo.erit@gmail.com> (https://github.com/MayGo/)",
     "license": "MIT",
     "scripts": {
-        "start": "concurrently --kill-others --names \"WEBPACK,ELECTRON\" -s first \"yarn start-dev-server\" \"yarn start-electron\"",
+        "start":
+            "concurrently --kill-others --names \"WEBPACK,ELECTRON\" -s first \"yarn start-dev-server\" \"yarn start-electron\"",
         "start-electron": "cross-env NODE_ENV=development electron .",
         "start-dev-server": "webpack-dev-server --env.env=dev",
         "test-ci": "jest --coverage",
@@ -21,11 +22,7 @@
             ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
         },
         "testRegex": "\\.test\\.(ts|tsx)$",
-        "moduleFileExtensions": [
-            "ts",
-            "tsx",
-            "js"
-        ],
+        "moduleFileExtensions": ["ts", "tsx", "js"],
         "mapCoverage": true,
         "testURL": "http://localhost"
     },
@@ -71,6 +68,7 @@
         "redux": "^3.7.2",
         "redux-form": "^7.0.4",
         "redux-saga": "^0.15.6",
+        "typeface-berkshire-swash": "0.0.54",
         "typeface-roboto": "^0.0.35",
         "uuid": "^3.1.0",
         "with-query": "^1.0.2"

@@ -52,6 +52,12 @@ export const timelineModel: any = {
                 .toDate(),
             new Date(),
         ),
+        visibleTimerange: new TimeRange(
+            moment()
+                .subtract(1, 'days')
+                .toDate(),
+            new Date(),
+        ),
     },
     subscriptions: {
         setup({ dispatch }: any) {
@@ -68,11 +74,11 @@ export const timelineModel: any = {
     },
 
     effects: {
-        *changeVisibleTimerange({ payload: { timerange } }: any, { call, put }: any) {
-            console.log('Visible timerange changed:', timerange);
+        *changeVisibleTimerange({ payload: { visibleTimerange } }: any, { call, put }: any) {
+            console.log('Visible timerange changed:', visibleTimerange);
             yield put({
-                type: 'setTimerange',
-                payload: { timerange },
+                type: 'setVisibleTimerange',
+                payload: { visibleTimerange },
             });
         },
         *loadTimerange({ payload: { timerange } }: any, { call, put }: any) {
@@ -152,6 +158,12 @@ export const timelineModel: any = {
             return {
                 ...state,
                 timerange,
+            };
+        },
+        setVisibleTimerange(state: any, { payload: { visibleTimerange } }: any) {
+            return {
+                ...state,
+                visibleTimerange,
             };
         },
     },

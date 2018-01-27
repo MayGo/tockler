@@ -10197,6 +10197,10 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
+typeface-berkshire-swash@0.0.54:
+  version "0.0.54"
+  resolved "https://registry.yarnpkg.com/typeface-berkshire-swash/-/typeface-berkshire-swash-0.0.54.tgz#6ac360f87a3f0977b4ffd47c0cf5d7b677304d1a"
+
 typeface-roboto@^0.0.35:
   version "0.0.35"
   resolved "https://registry.yarnpkg.com/typeface-roboto/-/typeface-roboto-0.0.35.tgz#5965d3f6d4cd72b7b2833d6b7d42c9b59b8392ba"

@@ -1,47 +1,27 @@
 import * as React from 'react';
 
-import { withStyles } from 'material-ui/styles';
-import { StyleRulesCallback } from 'material-ui/styles/withStyles';
-
-import { ChartContainer, Resizable, Charts, ChartRow, EventChart } from 'react-timeseries-charts';
-
-const styles: StyleRulesCallback = theme => ({
-    root: {
-        margin: 10,
-        backgroundColor: theme.palette.background.contentFrame,
-    },
-    logo: {
-        fontWeight: 200,
-        letterSpacing: 1,
-        flex: 1,
-    },
-    summary: {
-        display: 'flex',
-    },
-    grid: {
-        padding: 10,
-    },
-    toolbar: {
-        minHeight: 48,
-    },
-});
+import {
+    ChartContainer,
+    Resizable,
+    Charts,
+    ChartRow,
+    EventChart,
+    Brush,
+    YAxis,
+    AreaChart,
+} from 'react-timeseries-charts';
 
 interface IProps {
     timerange: any;
+    visibleTimerange: any;
     appTrackItems: any;
     statusTrackItems: any;
+    logTrackItems: any;
     changeTimerange?: any;
     tracker?: any;
 }
 
 interface IHocProps {
-    classes: {
-        root: string;
-        logo: string;
-        grid: string;
-        summary: string;
-        toolbar: string;
-    };
     intl: ReactIntl.InjectedIntl;
 }
 
@@ -61,6 +41,28 @@ const createRow = (series: any) => (
         </Charts>
     </ChartRow>
 );
+const createBrushEventChart = (series: any) => (
+    <EventChart
+        series={series}
+        size={25}
+        style={(event: any) => ({
+            fill: event.get('color'),
+        })}
+        label={(e: any) => e.get('title')}
+    />
+);
+
+const axisStyle = {
+    labels: {
+        labelColor: 'grey',
+        labelWeight: 100,
+        labelSize: 11,
+    },
+    axis: {
+        axisColor: 'grey',
+        axisWidth: 1,
+    },
+};
 
 class TimelineComp extends React.Component<IFullProps, IProps> {
     constructor(props: any) {
@@ -73,31 +75,70 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
     handleTrackerChanged(tracker: any) {
         this.setState({ tracker });
     }
+
     handleTimeRangeChange(timerange: any) {
-        this.props.changeTimerange(timerange);
+        if (timerange) {
+            this.props.changeTimerange(timerange);
+        } else {
+            console.error('No Timerange to update');
+        }
     }
+
+    renderBrush(props) {
+        const {
+            timerange,
+            visibleTimerange,
+            appTrackItems,
+            statusTrackItems,
+            logTrackItems,
+        }: IFullProps = props;
+        console.error(visibleTimerange);
+        return (
+            <ChartContainer timeRange={timerange} timeAxisStyle={axisStyle}>
+                <ChartRow debug={false} height="30">
+                    <Brush
+                        timeRange={visibleTimerange}
+                        allowSelectionClear
+                        onTimeRangeChanged={this.handleTimeRangeChange}
+                    />
+                    <Charts>{createBrushEventChart(statusTrackItems)}</Charts>
+                </ChartRow>
+            </ChartContainer>
+        );
+    }
+
     render() {
-        const { classes, timerange, appTrackItems, statusTrackItems }: IFullProps = this.props;
+        const {
+            timerange,
+            visibleTimerange,
+            appTrackItems,
+            statusTrackItems,
+            logTrackItems,
+        }: IFullProps = this.props;
 
         if (!timerange) {
             return <div>No data</div>;
         }
-        console.log('Have timerange', appTrackItems, statusTrackItems);
+        console.log('Have timerange', visibleTimerange);
         return (
-            <div className={classes.root}>
+            <div>
                 <Resizable>
                     <ChartContainer
-                        timeRange={timerange}
+                        timeRange={visibleTimerange}
                         enablePanZoom={true}
                         onTimeRangeChanged={this.handleTimeRangeChange}
                     >
                         {createRow(appTrackItems)}
                         {createRow(statusTrackItems)}
+                        {createRow(logTrackItems)}
                     </ChartContainer>
                 </Resizable>
+                <div>
+                    <Resizable>{this.renderBrush(this.props)}</Resizable>
+                </div>
             </div>
         );
     }
 }
 
-export const Timeline = withStyles(styles, { name: 'Home' })(TimelineComp);
+export const Timeline = TimelineComp;

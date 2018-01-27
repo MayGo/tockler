@@ -56,6 +56,18 @@ export class Search extends React.Component<IFullProps, IProps> {
         this.props.loadTimerange(newTimerange);
     };
 
+    selectHour = () => {
+        console.log('Select hour');
+        const beginDate = moment()
+            .startOf('hour')
+            .toDate();
+        const endDate = moment()
+            .endOf('hour')
+            .toDate();
+        const newTimerange = new TimeRange(beginDate, endDate);
+        this.props.loadTimerange(newTimerange);
+    };
+
     render() {
         const { timerange } = this.props;
         const range: [any, any] = [moment(timerange.begin()), moment(timerange.begin())];
@@ -70,6 +82,9 @@ export class Search extends React.Component<IFullProps, IProps> {
                 </span>
                 <span className={styles.smPadding}>
                     <Button onClick={this.selectToday}>Today</Button>
+                </span>
+                <span className={styles.smPadding}>
+                    <Button onClick={this.selectHour}>Hour</Button>
                 </span>
             </div>
         );
