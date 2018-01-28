@@ -7,6 +7,7 @@ import * as moment from 'moment';
 const { RangePicker } = DatePicker;
 
 import * as styles from './Search.css';
+//import { RangePickerValue } from 'antd/lib/date-picker/interface';
 
 interface IProps {
     timerange: any;
@@ -24,12 +25,17 @@ export class Search extends React.Component<IFullProps, IProps> {
         this.onChange = this.onChange.bind(this);
     }
 
+    //onChange = (dates: RangePickerValue, dateStrings: [string, string]) => {
     onChange = (dates: [any, any], dateStrings: [string, string]) => {
-        console.log(dates, this.props);
-        const beginDate = dates[0].toDate();
-        const endDate = dates[1].toDate();
-        const newTimerange = new TimeRange(beginDate, endDate);
-        this.props.loadTimerange(newTimerange);
+        console.log('TIMERANGE:', dates, this.props);
+        if (dates != null) {
+            const beginDate = dates[0].toDate();
+            const endDate = dates[1].toDate();
+            const newTimerange = new TimeRange(beginDate, endDate);
+            this.props.loadTimerange(newTimerange);
+        } else {
+            console.error('No dates selected');
+        }
     };
     selectToday = () => {
         console.log('Select today');
