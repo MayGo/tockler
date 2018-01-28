@@ -58,6 +58,7 @@ export const timelineModel: any = {
                 .toDate(),
             new Date(),
         ),
+        selectedTimelineItem: null,
     },
     subscriptions: {
         setup({ dispatch }: any) {
@@ -164,6 +165,12 @@ export const timelineModel: any = {
             return {
                 ...state,
                 visibleTimerange,
+            };
+        },
+        selectTimelineItem(state: any, { payload: { item } }: any) {
+            return {
+                ...state,
+                selectedTimelineItem: item,
             };
         },
     },

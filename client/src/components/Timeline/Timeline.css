@@ -4,6 +4,7 @@
 .mainContainer {
     border-top: 1px solid lightgray;
     height: 110px;
+    background: white;
 }
 .brushContainer {
     border-top: 1px solid lightgray;

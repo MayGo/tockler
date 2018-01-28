@@ -16,6 +16,11 @@ const mapDispatchToProps = (dispatch: any) => ({
             type: 'timeline/changeVisibleTimerange',
             payload: { visibleTimerange },
         }),
+    selectTimelineItem: (item: any) =>
+        dispatch({
+            type: 'timeline/selectTimelineItem',
+            payload: { item },
+        }),
 });
 
 export const TimelineContainer = connect(mapStateToProps, mapDispatchToProps)(Timeline);

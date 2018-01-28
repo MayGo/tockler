@@ -11,7 +11,10 @@ import {
     AreaChart,
 } from 'react-timeseries-charts';
 
+import { Popover } from 'antd';
+
 import * as styles from './Timeline.css';
+import { TimelineItemEditContainer } from './TimelineItemEditContainer';
 
 interface IProps {
     timerange: any;
@@ -20,6 +23,7 @@ interface IProps {
     statusTrackItems: any;
     logTrackItems: any;
     changeTimerange?: any;
+    selectTimelineItem?: any;
     tracker?: any;
 }
 
@@ -29,20 +33,13 @@ interface IHocProps {
 
 type IFullProps = IProps & IHocProps;
 
-const createRow = (series: any) => (
-    <ChartRow height="30">
-        <Charts>
-            <EventChart
-                series={series}
-                size={65}
-                style={(event: any) => ({
-                    fill: event.get('color'),
-                })}
-                label={(e: any) => e.get('title')}
-            />
-        </Charts>
-    </ChartRow>
-);
+const perEventStyle = (event: any) => {
+    const color = event.get('color');
+    return {
+        fill: color,
+    };
+};
+
 const createBrushEventChart = (series: any) => (
     <EventChart
         series={series}
@@ -72,6 +69,7 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
 
         this.handleTrackerChanged = this.handleTrackerChanged.bind(this);
         this.handleTimeRangeChange = this.handleTimeRangeChange.bind(this);
+        this.handleTimeRangeChange = this.handleTimeRangeChange.bind(this);
     }
 
     handleTrackerChanged(tracker: any) {
@@ -85,6 +83,28 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
             console.error('No Timerange to update');
         }
     }
+    handleSelectionChanged = item => {
+        if (item) {
+            console.log(item);
+            console.log(item.data().get('title'));
+        }
+
+        this.props.selectTimelineItem(item);
+    };
+
+    createMainRow = (series: any) => (
+        <ChartRow height="30">
+            <Charts>
+                <EventChart
+                    series={series}
+                    size={65}
+                    style={perEventStyle}
+                    onSelectionChange={p => this.handleSelectionChanged(p)}
+                    label={(e: any) => e.get('title')}
+                />
+            </Charts>
+        </ChartRow>
+    );
 
     renderBrush(props) {
         const {
@@ -128,23 +148,27 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
             return <div>No data</div>;
         }
         console.log('Have timerange', visibleTimerange);
+
         return (
             <div className={styles.chartContainer}>
                 <div className={styles.mainContainer}>
-                    <Resizable>
-                        <ChartContainer
-                            timeRange={visibleTimerange}
-                            enablePanZoom={true}
-                            showGrid={true}
-                            showGridPosition="over"
-                            format="%H:%M %a"
-                            onTimeRangeChanged={this.handleTimeRangeChange}
-                        >
-                            {createRow(appTrackItems)}
-                            {createRow(statusTrackItems)}
-                            {createRow(logTrackItems)}
-                        </ChartContainer>
-                    </Resizable>
+                    <Popover content={<TimelineItemEditContainer />} visible={true} trigger="click">
+                        <Resizable>
+                            <ChartContainer
+                                onBackgroundClick={p => this.handleSelectionChanged(null)}
+                                timeRange={visibleTimerange}
+                                enablePanZoom={true}
+                                showGrid={true}
+                                showGridPosition="over"
+                                format="%H:%M %a"
+                                onTimeRangeChanged={this.handleTimeRangeChange}
+                            >
+                                {this.createMainRow(appTrackItems)}
+                                {this.createMainRow(statusTrackItems)}
+                                {this.createMainRow(logTrackItems)}
+                            </ChartContainer>
+                        </Resizable>
+                    </Popover>
                 </div>
                 <div className={styles.brushContainer}>
                     <Resizable>{this.renderBrush(this.props)}</Resizable>
