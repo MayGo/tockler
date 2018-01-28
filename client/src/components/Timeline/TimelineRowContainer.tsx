@@ -1,3 +1,5 @@
+// NOT USED
+
 import * as React from 'react';
 import { connect, MapStateToProps } from 'react-redux';
 

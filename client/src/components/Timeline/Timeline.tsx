@@ -11,6 +11,8 @@ import {
     AreaChart,
 } from 'react-timeseries-charts';
 
+import * as styles from './Timeline.css';
+
 interface IProps {
     timerange: any;
     visibleTimerange: any;
@@ -32,7 +34,7 @@ const createRow = (series: any) => (
         <Charts>
             <EventChart
                 series={series}
-                size={55}
+                size={65}
                 style={(event: any) => ({
                     fill: event.get('color'),
                 })}
@@ -92,10 +94,16 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
             statusTrackItems,
             logTrackItems,
         }: IFullProps = props;
-        console.error(visibleTimerange);
+
         return (
-            <ChartContainer timeRange={timerange} timeAxisStyle={axisStyle}>
-                <ChartRow debug={false} height="30">
+            <ChartContainer
+                timeRange={timerange}
+                timeAxisStyle={axisStyle}
+                showGrid={true}
+                showGridPosition="over"
+                format="%H:%M %a"
+            >
+                <ChartRow debug={false} height="50">
                     <Brush
                         timeRange={visibleTimerange}
                         allowSelectionClear
@@ -121,19 +129,24 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
         }
         console.log('Have timerange', visibleTimerange);
         return (
-            <div>
-                <Resizable>
-                    <ChartContainer
-                        timeRange={visibleTimerange}
-                        enablePanZoom={true}
-                        onTimeRangeChanged={this.handleTimeRangeChange}
-                    >
-                        {createRow(appTrackItems)}
-                        {createRow(statusTrackItems)}
-                        {createRow(logTrackItems)}
-                    </ChartContainer>
-                </Resizable>
-                <div>
+            <div className={styles.chartContainer}>
+                <div className={styles.mainContainer}>
+                    <Resizable>
+                        <ChartContainer
+                            timeRange={visibleTimerange}
+                            enablePanZoom={true}
+                            showGrid={true}
+                            showGridPosition="over"
+                            format="%H:%M %a"
+                            onTimeRangeChanged={this.handleTimeRangeChange}
+                        >
+                            {createRow(appTrackItems)}
+                            {createRow(statusTrackItems)}
+                            {createRow(logTrackItems)}
+                        </ChartContainer>
+                    </Resizable>
+                </div>
+                <div className={styles.brushContainer}>
                     <Resizable>{this.renderBrush(this.props)}</Resizable>
                 </div>
             </div>

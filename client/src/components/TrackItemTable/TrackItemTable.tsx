@@ -154,7 +154,7 @@ export class TrackItemTable extends React.Component {
             },
         ];
         return (
-            <div>
+            <div className={styles.table}>
                 <div className={styles.operations}>
                     <Button onClick={this.setAgeSort}>Sort age</Button>
                     <Button onClick={this.clearFilters}>Clear filters</Button>

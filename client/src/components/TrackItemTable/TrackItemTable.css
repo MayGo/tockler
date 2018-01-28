@@ -1,5 +1,7 @@
+.table {
+}
 .operations {
-    margin-bottom: 16px;
+    padding: 5px;
 }
 
 .operations > button {

@@ -1,0 +1,13 @@
+.chartContainer {
+    padding: 5px 5px 0px 5px;
+}
+.mainContainer {
+    border-top: 1px solid lightgray;
+    height: 110px;
+}
+.brushContainer {
+    border-top: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+    background: #f8f8f8;
+    height: 70px;
+}
