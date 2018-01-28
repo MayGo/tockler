@@ -1,24 +1,37 @@
 import * as React from 'react';
 import * as styles from './TimelineItemEdit.css';
 
-import { Input, Col } from 'antd';
+import { Input, Col, Button } from 'antd';
 import { ColorPicker } from './ColorPicker';
+import { ITrackItem } from '../../@types/ITrackItem';
 const InputGroup = Input.Group;
 
 interface IProps {
     selectedTimelineItem: any;
 }
 
+interface IState {
+    item: any;
+}
+
 interface IHocProps {}
 
 type IFullProps = IProps & IHocProps;
 
-export class TimelineItemEdit extends React.Component<IFullProps, IProps> {
-    constructor(props: any) {
+export class TimelineItemEdit extends React.Component<IProps, ITrackItem> {
+    constructor(props) {
         super(props);
+        console.log('ColorPicker', props);
+        this.state = props.selectedTimelineItem;
     }
-    changeHandler = colors => {
-        console.log(colors);
+    changeColorHandler = color => {
+        console.log('Changed color:', color);
+
+        this.setState({ color });
+    };
+
+    saveItemHandler = () => {
+        console.log('Saving  item:', this.state);
     };
 
     render() {
@@ -40,11 +53,19 @@ export class TimelineItemEdit extends React.Component<IFullProps, IProps> {
                     <Col span={6}>
                         <Input defaultValue={item.app} placeholder="App" />
                     </Col>
-                    <Col span={17}>
+                    <Col span={16}>
                         <Input defaultValue={item.title} placeholder="Title" />
                     </Col>
                     <Col span={1}>
-                        <ColorPicker color={item.color} onChange={this.changeHandler} />
+                        <ColorPicker color={item.color} onChange={this.changeColorHandler} />
+                    </Col>
+                    <Col span={1}>
+                        <Button
+                            type="primary"
+                            shape="circle"
+                            icon="save"
+                            onClick={this.saveItemHandler}
+                        />
                     </Col>
                 </InputGroup>
             </div>

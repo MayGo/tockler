@@ -25,6 +25,7 @@ interface IProps {
     changeTimerange?: any;
     selectTimelineItem?: any;
     tracker?: any;
+    selectedTimelineItem?: any;
 }
 
 interface IHocProps {
@@ -142,6 +143,7 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
             appTrackItems,
             statusTrackItems,
             logTrackItems,
+            selectedTimelineItem,
         }: IFullProps = this.props;
 
         if (!timerange) {
@@ -152,7 +154,11 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
         return (
             <div className={styles.chartContainer}>
                 <div className={styles.mainContainer}>
-                    <Popover content={<TimelineItemEditContainer />} visible={true} trigger="click">
+                    <Popover
+                        content={<TimelineItemEditContainer />}
+                        visible={selectedTimelineItem}
+                        trigger="click"
+                    >
                         <Resizable>
                             <ChartContainer
                                 onBackgroundClick={p => this.handleSelectionChanged(null)}
