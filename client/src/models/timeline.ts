@@ -82,6 +82,14 @@ export const timelineModel: any = {
                 payload: { visibleTimerange },
             });
         },
+        *saveTimelineItem({ payload: { item } }: any, { call, put }: any) {
+            console.log('Saving item:', item);
+            yield TrackItemService.saveTrackItem(item);
+            yield put({
+                type: 'selectTimelineItem',
+                payload: { item: null },
+            });
+        },
         *loadTimerange({ payload: { timerange } }: any, { call, put }: any) {
             console.log('Change timerange:', timerange);
 

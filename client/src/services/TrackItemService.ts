@@ -31,6 +31,32 @@ export class TrackItemService {
     static updateItem(trackItem: ITrackItem): Promise<any> {
         return TrackItemService.service.updateItem(trackItem);
     }
+    static async saveTrackItem(trackItem): Promise<any> {
+        console.debug('Saving trackitem.', trackItem);
+        if (!trackItem.taskName) {
+            trackItem.taskName = 'LogTrackItem';
+        }
+        if (trackItem.id) {
+            if (trackItem.originalColor === trackItem.color) {
+                //this.updateItem(trackItem);
+            } else {
+                //this.showChangeColorDialog();
+            }
+            const item = await TrackItemService.updateItem(trackItem);
+            console.debug('Updated trackitem to DB:', item);
+            return item;
+        } else {
+            if (!trackItem.app) {
+                trackItem.app = 'Default';
+            }
+            const item = TrackItemService.createItem(trackItem);
+            console.debug('Created trackitem to DB:', item);
+            return item;
+        }
+    }
+    static updateTrackItem(trackItem) {
+        TrackItemService.updateItem(trackItem);
+    }
 
     static deleteById(trackItemId: number) {
         return TrackItemService.service.deleteById(trackItemId);

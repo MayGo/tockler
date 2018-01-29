@@ -8,6 +8,7 @@ const InputGroup = Input.Group;
 
 interface IProps {
     selectedTimelineItem: any;
+    saveTimelineItem: any;
 }
 
 interface IState {
@@ -22,7 +23,7 @@ export class TimelineItemEdit extends React.Component<IProps, ITrackItem> {
     constructor(props) {
         super(props);
         console.log('ColorPicker', props);
-        this.state = props.selectedTimelineItem;
+        this.state = props.selectedTimelineItem.data().toJS();
     }
     changeColorHandler = color => {
         console.log('Changed color:', color);
@@ -32,6 +33,7 @@ export class TimelineItemEdit extends React.Component<IProps, ITrackItem> {
 
     saveItemHandler = () => {
         console.log('Saving  item:', this.state);
+        this.props.saveTimelineItem(this.state);
     };
 
     render() {
@@ -44,20 +46,17 @@ export class TimelineItemEdit extends React.Component<IProps, ITrackItem> {
 
         console.log('Have timerange', selectedTimelineItem);
 
-        const item = selectedTimelineItem.data().toJS();
-
-        console.log(item);
         return (
             <div className={styles.editForm}>
                 <InputGroup>
                     <Col span={6}>
-                        <Input defaultValue={item.app} placeholder="App" />
+                        <Input defaultValue={this.state.app} placeholder="App" />
                     </Col>
                     <Col span={16}>
-                        <Input defaultValue={item.title} placeholder="Title" />
+                        <Input defaultValue={this.state.title} placeholder="Title" />
                     </Col>
                     <Col span={1}>
-                        <ColorPicker color={item.color} onChange={this.changeColorHandler} />
+                        <ColorPicker color={this.state.color} onChange={this.changeColorHandler} />
                     </Col>
                     <Col span={1}>
                         <Button
