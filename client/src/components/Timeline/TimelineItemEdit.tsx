@@ -32,7 +32,6 @@ export class TimelineItemEdit extends React.Component<IProps, ITrackItem> {
     };
 
     saveItemHandler = () => {
-        console.log('Saving  item:', this.state);
         this.props.saveTimelineItem(this.state);
     };
 

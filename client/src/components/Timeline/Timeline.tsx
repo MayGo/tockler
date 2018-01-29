@@ -156,7 +156,7 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
                 <div className={styles.mainContainer}>
                     <Popover
                         content={<TimelineItemEditContainer />}
-                        visible={selectedTimelineItem}
+                        visible={!!selectedTimelineItem}
                         trigger="click"
                     >
                         <Resizable>

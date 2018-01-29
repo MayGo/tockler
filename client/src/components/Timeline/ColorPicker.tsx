@@ -35,7 +35,7 @@ export class ColorPicker extends React.Component<IProps, IState> {
 
     handleChange = color => {
         this.setState({ color: color.hex });
-        //this.props.onChange(color.hex);
+        this.props.onChange(color.hex);
     };
 
     render() {

@@ -29,7 +29,7 @@ export class TrackItemService {
     }
 
     static updateItem(trackItem: ITrackItem): Promise<any> {
-        return TrackItemService.service.updateItem(trackItem);
+        return TrackItemService.service.updateItem(trackItem, trackItem.id);
     }
     static async saveTrackItem(trackItem): Promise<any> {
         console.debug('Saving trackitem.', trackItem);
