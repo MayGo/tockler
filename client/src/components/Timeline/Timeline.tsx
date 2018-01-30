@@ -11,7 +11,7 @@ import {
     AreaChart,
 } from 'react-timeseries-charts';
 
-import { Popover } from 'antd';
+import { Popover, Spin } from 'antd';
 
 import * as styles from './Timeline.css';
 import { TimelineItemEditContainer } from './TimelineItemEditContainer';
@@ -26,6 +26,7 @@ interface IProps {
     selectTimelineItem?: any;
     tracker?: any;
     selectedTimelineItem?: any;
+    loading?: boolean;
 }
 
 interface IHocProps {
@@ -144,6 +145,7 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
             statusTrackItems,
             logTrackItems,
             selectedTimelineItem,
+            loading,
         }: IFullProps = this.props;
 
         if (!timerange) {
@@ -154,7 +156,13 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
         return (
             <div className={styles.chartContainer}>
                 <div className={styles.mainContainer}>
+                    {loading && (
+                        <div className={styles.spinner}>
+                            <Spin />
+                        </div>
+                    )}
                     <Popover
+                        style={{ zIndex: 930 }}
                         content={<TimelineItemEditContainer />}
                         visible={!!selectedTimelineItem}
                         trigger="click"

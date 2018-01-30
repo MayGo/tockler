@@ -5,10 +5,10 @@ const mapStateToProps = ({ timeline }: any) => ({
     selectedTimelineItem: timeline.selectedTimelineItem,
 });
 const mapDispatchToProps = (dispatch: any) => ({
-    saveTimelineItem: (item: any) =>
+    saveTimelineItem: (item: any, colorScope: string) =>
         dispatch({
             type: 'timeline/saveTimelineItem',
-            payload: { item },
+            payload: { item, colorScope },
         }),
 });
 

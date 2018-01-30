@@ -3,6 +3,7 @@ import { TimeSeries, TimeRangeEvent, TimeRange } from 'pondjs';
 import { delay } from 'dva/saga';
 
 import { TrackItemService } from '../services/TrackItemService';
+import { AppSettingService } from '../services/AppSettingService';
 import { TrackItemType } from '../enum/TrackItemType';
 import { ITrackItem } from '../@types/ITrackItem';
 import { ITimelineState } from '../@types/ITimelineState';
@@ -15,6 +16,16 @@ const createSeries = (name, items) => {
     const trackItemSeries = new TimeSeries({ name, events });
     return trackItemSeries;
 };
+
+const addToSeries = (name, items) => {
+    const events = items.map(
+        ({ beginDate, endDate, ...data }) =>
+            new TimeRangeEvent(new TimeRange(new Date(beginDate), new Date(endDate)), data),
+    );
+    const trackItemSeries = new TimeSeries({ name, events });
+    return trackItemSeries;
+};
+
 const handleTimelineItems = (
     state: ITimelineState,
     payload: {
@@ -36,6 +47,25 @@ const handleTimelineItems = (
         [TrackItemType.StatusTrackItem]: createSeries(
             TrackItemType.StatusTrackItem,
             payload.statusTrackItems,
+        ),
+    };
+};
+
+const addToTimelineItems = (
+    state: ITimelineState,
+    payload: {
+        appItems: ITrackItem[];
+        logItems: ITrackItem[];
+        statusItems: ITrackItem[];
+    },
+): ITimelineState => {
+    return {
+        ...state,
+        [TrackItemType.AppTrackItem]: createSeries(TrackItemType.AppTrackItem, payload.appItems),
+        [TrackItemType.LogTrackItem]: createSeries(TrackItemType.LogTrackItem, payload.logItems),
+        [TrackItemType.StatusTrackItem]: createSeries(
+            TrackItemType.StatusTrackItem,
+            payload.statusItems,
         ),
     };
 };
@@ -82,86 +112,60 @@ export const timelineModel: any = {
                 payload: { visibleTimerange },
             });
         },
-        *saveTimelineItem({ payload: { item } }: any, { call, put }: any) {
-            console.log('Saving item:', item);
-            yield TrackItemService.saveTrackItem(item);
+
+        *saveTimelineItem({ payload: { item, colorScope } }: any, { call, put, select }: any) {
+            console.log('Updating color for trackItem', item, colorScope);
+            if (colorScope === 'ALL_ITEMS') {
+                yield AppSettingService.changeColorForApp(item.app, item.color);
+                yield TrackItemService.updateColorForApp(item.app, item.color);
+            } else if (colorScope === 'NEW_ITEMS') {
+                yield AppSettingService.changeColorForApp(item.app, item.color);
+                yield TrackItemService.saveTrackItem(item);
+            } else {
+                yield TrackItemService.saveTrackItem(item);
+            }
+
             yield put({
                 type: 'selectTimelineItem',
                 payload: { item: null },
+            });
+            const timerange = yield select(state => state.timeline.timerange);
+            yield put({
+                type: 'loadTimerange',
+                payload: { timerange },
             });
         },
         *loadTimerange({ payload: { timerange } }: any, { call, put }: any) {
             console.log('Change timerange:', timerange);
 
-            const appTrackItems: ITrackItem[] = yield call(
-                TrackItemService.findAllDayItems,
+            const { appItems, statusItems, logItems } = yield call(
+                TrackItemService.findAllItems,
                 timerange.begin(),
                 timerange.end(),
-                TrackItemType.AppTrackItem,
-            );
-            const statusTrackItems: ITrackItem[] = yield call(
-                TrackItemService.findAllDayItems,
-                timerange.begin(),
-                timerange.end(),
-                TrackItemType.StatusTrackItem,
             );
 
-            const logTrackItems: ITrackItem[] = yield call(
-                TrackItemService.findAllDayItems,
-                timerange.begin(),
-                timerange.end(),
-                TrackItemType.LogTrackItem,
-            );
             yield put({
                 type: 'loadTimelineItems',
-                payload: { logTrackItems, statusTrackItems, appTrackItems },
+                payload: {
+                    logTrackItems: logItems,
+                    statusTrackItems: statusItems,
+                    appTrackItems: appItems,
+                },
             });
             yield put({
                 type: 'setTimerange',
                 payload: { timerange },
             });
         },
-        *bgSync(action: any, { call, put }: any) {
-            const delayMs = 10000;
-            try {
-                while (true) {
-                    console.log('Timeline loading');
-                    const day = moment()
-                        .startOf('day')
-                        .toDate();
-
-                    let trackItems: ITrackItem[] = yield call(
-                        TrackItemService.findAllFromDay,
-                        day,
-                        TrackItemType.AppTrackItem,
-                    );
-                    yield put({
-                        type: 'loadTimelineItems',
-                        payload: { trackItems, trackItemType: TrackItemType.AppTrackItem },
-                    });
-
-                    trackItems = yield call(
-                        TrackItemService.findAllFromDay,
-                        day,
-                        TrackItemType.StatusTrackItem,
-                    );
-
-                    yield put({
-                        type: 'loadTimelineItems',
-                        payload: { trackItems, trackItemType: TrackItemType.StatusTrackItem },
-                    });
-
-                    console.log('Loaded timeline:', trackItems);
-                    yield call(delay, delayMs);
-                }
-            } catch (err) {
-                console.log(err);
-            }
-        },
     },
     reducers: {
         loadTimelineItems(state: any, { payload }: any) {
             return handleTimelineItems(state, payload);
+        },
+
+        addToTimeline(state: any, { payload }: any) {
+            console.log('Add to timeline:', payload);
+            //return addToTimelineItems(state, payload);
         },
         setTimerange(state: any, { payload: { timerange } }: any) {
             return {
@@ -176,6 +180,12 @@ export const timelineModel: any = {
             };
         },
         selectTimelineItem(state: any, { payload: { item } }: any) {
+            if (item) {
+                console.log('Selected timeline item:', item.data().toJS());
+            } else {
+                console.log('Deselected timeline item');
+            }
+
             return {
                 ...state,
                 selectedTimelineItem: item,

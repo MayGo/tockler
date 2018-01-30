@@ -1,5 +1,6 @@
 import * as moment from 'moment';
 import { ITrackItem } from '../@types/ITrackItem';
+import { TrackItemType } from '../enum/TrackItemType';
 
 const remote = (<any>window).nodeRequire('electron').remote;
 let ipcRenderer: any = (<any>window).nodeRequire('electron').ipcRenderer;
@@ -13,6 +14,27 @@ export class TrackItemService {
 
     static findAllDayItems(from: Date, to: Date, taskName: string): Promise<any> {
         return TrackItemService.service.findAllDayItems(from, to, taskName);
+    }
+
+    static async findAllItems(from: Date, to: Date) {
+        const appItems: ITrackItem[] = await TrackItemService.findAllDayItems(
+            from,
+            to,
+            TrackItemType.AppTrackItem,
+        );
+
+        const statusItems: ITrackItem[] = await TrackItemService.findAllDayItems(
+            from,
+            to,
+            TrackItemType.StatusTrackItem,
+        );
+        const logItems: ITrackItem[] = await TrackItemService.findAllDayItems(
+            from,
+            to,
+            TrackItemType.LogTrackItem,
+        );
+
+        return { appItems, statusItems, logItems };
     }
 
     static findAllFromDay(from: Date, type: string): Promise<any> {

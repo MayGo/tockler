@@ -3608,6 +3608,12 @@ dva-hot@^0.2.0:
   dependencies:
     "@babel/runtime" "^7.0.0-beta.37"
 
+dva-loading@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/dva-loading/-/dva-loading-1.0.4.tgz#40dddfba2ddb6e047d42a42dc51d50fad642d02b"
+  dependencies:
+    babel-runtime "^6.26.0"
+
 dva@*, dva@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/dva/-/dva-2.1.0.tgz#5a2ffea411f86d3744e2e9aef3fa0a5db6961e3a"
