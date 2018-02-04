@@ -17,21 +17,30 @@ const createSeries = (name, items) => {
     return trackItemSeries;
 };
 
-const addToSeries = (name, items) => {
-    const events = items.map(
+const addToSeries = (store, name, items) => {
+    const ids = items.map(item => item.id);
+    console.log('IDS', ids);
+
+    const newEvents = items.map(
         ({ beginDate, endDate, ...data }) =>
             new TimeRangeEvent(new TimeRange(new Date(beginDate), new Date(endDate)), data),
     );
-    const trackItemSeries = new TimeSeries({ name, events });
+    const newSeries = new TimeSeries({ name, events: newEvents });
+    const series: TimeSeries = store[name];
+
+    const trackItemSeries = TimeSeries.timeSeriesListMerge({
+        name,
+        seriesList: [series, newSeries],
+    });
     return trackItemSeries;
 };
 
 const handleTimelineItems = (
     state: ITimelineState,
     payload: {
-        appTrackItems: ITrackItem[];
-        logTrackItems: ITrackItem[];
-        statusTrackItems: ITrackItem[];
+        appTrackItems: TimeSeries;
+        logTrackItems: TimeSeries;
+        statusTrackItems: TimeSeries;
     },
 ): ITimelineState => {
     return {
@@ -61,9 +70,18 @@ const addToTimelineItems = (
 ): ITimelineState => {
     return {
         ...state,
-        [TrackItemType.AppTrackItem]: createSeries(TrackItemType.AppTrackItem, payload.appItems),
-        [TrackItemType.LogTrackItem]: createSeries(TrackItemType.LogTrackItem, payload.logItems),
-        [TrackItemType.StatusTrackItem]: createSeries(
+        [TrackItemType.AppTrackItem]: addToSeries(
+            state,
+            TrackItemType.AppTrackItem,
+            payload.appItems,
+        ),
+        [TrackItemType.LogTrackItem]: addToSeries(
+            state,
+            TrackItemType.LogTrackItem,
+            payload.logItems,
+        ),
+        [TrackItemType.StatusTrackItem]: addToSeries(
+            state,
             TrackItemType.StatusTrackItem,
             payload.statusItems,
         ),
@@ -84,7 +102,7 @@ export const timelineModel: any = {
         ),
         visibleTimerange: new TimeRange(
             moment()
-                .subtract(1, 'days')
+                .subtract(1, 'hour')
                 .toDate(),
             new Date(),
         ),
@@ -165,7 +183,7 @@ export const timelineModel: any = {
 
         addToTimeline(state: any, { payload }: any) {
             console.log('Add to timeline:', payload);
-            //return addToTimelineItems(state, payload);
+            return addToTimelineItems(state, payload);
         },
         setTimerange(state: any, { payload: { timerange } }: any) {
             return {

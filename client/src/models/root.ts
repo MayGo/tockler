@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import { TimeSeries, TimeRangeEvent, TimeRange } from 'pondjs';
+import { TimeSeries, TimeRange } from 'pondjs';
 import { delay } from 'dva/saga';
 import { TrackItemService } from '../services/TrackItemService';
 
