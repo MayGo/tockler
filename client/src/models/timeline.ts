@@ -1,7 +1,5 @@
 import * as moment from 'moment';
 import { TimeSeries, TimeRangeEvent, TimeRange } from 'pondjs';
-import { delay } from 'dva/saga';
-
 import { TrackItemService } from '../services/TrackItemService';
 import { AppSettingService } from '../services/AppSettingService';
 import { TrackItemType } from '../enum/TrackItemType';
@@ -26,7 +24,7 @@ const addToSeries = (store, name, items) => {
             new TimeRangeEvent(new TimeRange(new Date(beginDate), new Date(endDate)), data),
     );
     const newSeries = new TimeSeries({ name, events: newEvents });
-    const series: TimeSeries = store[name];
+    const series = store[name];
 
     const trackItemSeries = TimeSeries.timeSeriesListMerge({
         name,
@@ -38,9 +36,9 @@ const addToSeries = (store, name, items) => {
 const handleTimelineItems = (
     state: ITimelineState,
     payload: {
-        appTrackItems: TimeSeries;
-        logTrackItems: TimeSeries;
-        statusTrackItems: TimeSeries;
+        appTrackItems: object;
+        logTrackItems: object;
+        statusTrackItems: object;
     },
 ): ITimelineState => {
     return {

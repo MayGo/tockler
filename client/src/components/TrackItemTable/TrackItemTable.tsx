@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Table, Input, Button, Icon } from 'antd';
 import * as styles from './TrackItemTable.css';
-import { ITrackItem } from '../../@types/ITrackItem';
 
 export class TrackItemTable extends React.Component {
     searchInput: any;
@@ -67,19 +66,17 @@ export class TrackItemTable extends React.Component {
                         ...record,
                         name: (
                             <span>
-                                {record.data.title
-                                    .split(reg)
-                                    .map(
-                                        (text, i) =>
-                                            i > 0
-                                                ? [
-                                                      <span className={styles.highlight}>
-                                                          {match[0]}
-                                                      </span>,
-                                                      text,
-                                                  ]
-                                                : text,
-                                    )}
+                                {record.data.title.split(reg).map(
+                                    (text, i) =>
+                                        i > 0
+                                            ? [
+                                                  <span className={styles.highlight} key={text}>
+                                                      {match[0]}
+                                                  </span>,
+                                                  text,
+                                              ]
+                                            : text,
+                                )}
                             </span>
                         ),
                     };

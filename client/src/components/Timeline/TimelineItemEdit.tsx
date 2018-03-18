@@ -4,7 +4,7 @@ import * as styles from './TimelineItemEdit.css';
 import { Input, Col, Button, Select, Tooltip } from 'antd';
 import { ColorPicker } from './ColorPicker';
 import { ITrackItem } from '../../@types/ITrackItem';
-import { ColorChangerModal } from './ColorChangerModal';
+
 const InputGroup = Input.Group;
 
 interface IProps {

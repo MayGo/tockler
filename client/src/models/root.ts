@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import { TimeSeries, TimeRange } from 'pondjs';
+import { TimeRange } from 'pondjs';
 import { delay } from 'dva/saga';
 import { TrackItemService } from '../services/TrackItemService';
 
@@ -38,7 +38,7 @@ export const rootModel: any = {
             while (true) {
                 try {
                     yield call(delay, delayMs);
-                    const isFocused = yield select(state => state.root.isFocused);
+                    // const isFocused = yield select(state => state.root.isFocused);
                     console.log('Watching track changes:', lastRequestTime);
                     const requestFrom = lastRequestTime.toDate();
                     lastRequestTime = moment();

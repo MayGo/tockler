@@ -6,7 +6,7 @@ import { SearchContainer } from '../components/Timeline/SearchContainer';
 import { connect } from 'dva';
 import { TrackItemTableContainer } from '../components/TrackItemTable/TrackItemTableContainer';
 import { MainLayout } from '../components/MainLayout/MainLayout';
-import { TimelineItemEditContainer } from '../components/Timeline/TimelineItemEditContainer';
+
 const { Content } = Layout;
 
 function Timeline({ location }: any) {

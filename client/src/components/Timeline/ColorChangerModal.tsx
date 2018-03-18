@@ -1,10 +1,6 @@
 import * as React from 'react';
-import * as styles from './TimelineItemEdit.css';
 
-import { Input, Col, Button, Modal } from 'antd';
-import { ColorPicker } from './ColorPicker';
-import { ITrackItem } from '../../@types/ITrackItem';
-const InputGroup = Input.Group;
+import { Button, Modal } from 'antd';
 
 interface IProps {
     modalVisible: boolean;
@@ -17,9 +13,9 @@ export class ColorChangerModal extends React.Component<IProps, {}> {
         super(props);
         console.log('ColorChangerModal', props);
     }
+
     changeColorHandler = color => {
         console.log('Changed color:', color);
-
         this.setState({ color });
     };
 

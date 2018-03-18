@@ -1,25 +1,17 @@
 import * as React from 'react';
 import { Menu, Icon } from 'antd';
 import { Link } from 'dva/router';
-import * as tocklerIcon from '../../assets/icons/tockler_icon.png';
-
-import * as styles from './Header.css';
-
+const tocklerIcon = require('../../assets/icons/tockler_icon.png');
 export function Header({ location }: any) {
     return (
         <div>
             <Menu selectedKeys={[location.pathname]} mode="horizontal">
                 <Menu.Item key="/timeline2">
                     <Link to="/timeline">
-                        <div className={styles.brand}>
-                            <div className={styles.brand_a}>
-                                <img
-                                    src={tocklerIcon}
-                                    className={styles.brand_img}
-                                    width="28"
-                                    height="28"
-                                />
-                                <span className={styles.brand_name}>Tockler</span>
+                        <div>
+                            <div>
+                                <img src={tocklerIcon} width="28" height="28" />
+                                <span>Tockler</span>
                             </div>
                         </div>
                     </Link>

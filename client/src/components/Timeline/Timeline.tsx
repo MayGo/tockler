@@ -7,8 +7,6 @@ import {
     ChartRow,
     EventChart,
     Brush,
-    YAxis,
-    AreaChart,
 } from 'react-timeseries-charts';
 
 import { Popover, Spin } from 'antd';
@@ -29,9 +27,7 @@ interface IProps {
     loading?: boolean;
 }
 
-interface IHocProps {
-    intl: ReactIntl.InjectedIntl;
-}
+interface IHocProps {}
 
 type IFullProps = IProps & IHocProps;
 
@@ -126,13 +122,7 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
     );
 
     renderBrush(props) {
-        const {
-            timerange,
-            visibleTimerange,
-            appTrackItems,
-            statusTrackItems,
-            logTrackItems,
-        }: IFullProps = props;
+        const { timerange, visibleTimerange, statusTrackItems }: IFullProps = props;
 
         return (
             <ChartContainer
@@ -145,7 +135,7 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
                 <ChartRow debug={false} height="50">
                     <Brush
                         timeRange={visibleTimerange}
-                        allowSelectionClear
+                        allowSelectionClear={true}
                         onTimeRangeChanged={this.handleTimeRangeChange}
                     />
                     <Charts>{createBrushEventChart(statusTrackItems)}</Charts>

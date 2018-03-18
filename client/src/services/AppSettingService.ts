@@ -1,8 +1,4 @@
-import * as moment from 'moment';
-import { ITrackItem } from '../@types/ITrackItem';
-
-const remote = (<any>window).nodeRequire('electron').remote;
-let ipcRenderer: any = (<any>window).nodeRequire('electron').ipcRenderer;
+const remote = (<any>window).require('electron').remote;
 
 export class AppSettingService {
     static service: any = remote.getGlobal('AppSettingService');

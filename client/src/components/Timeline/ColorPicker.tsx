@@ -1,7 +1,5 @@
-//NOT USED
-
 import * as React from 'react';
-import { Charts, ChartRow, EventChart } from 'react-timeseries-charts';
+
 import { SketchPicker } from 'react-color';
 
 import reactCSS from 'reactcss';

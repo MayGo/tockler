@@ -2,8 +2,8 @@ import * as moment from 'moment';
 import { ITrackItem } from '../@types/ITrackItem';
 import { TrackItemType } from '../enum/TrackItemType';
 
-const remote = (<any>window).nodeRequire('electron').remote;
-let ipcRenderer: any = (<any>window).nodeRequire('electron').ipcRenderer;
+const remote = (<any>window).require('electron').remote;
+let ipcRenderer: any = (<any>window).require('electron').ipcRenderer;
 
 export class TrackItemService {
     static service: any = remote.getGlobal('TrackItemService');
@@ -60,9 +60,9 @@ export class TrackItemService {
         }
         if (trackItem.id) {
             if (trackItem.originalColor === trackItem.color) {
-                //this.updateItem(trackItem);
+                // this.updateItem(trackItem);
             } else {
-                //this.showChangeColorDialog();
+                // this.showChangeColorDialog();
             }
             const item = await TrackItemService.updateItem(trackItem);
             console.debug('Updated trackitem to DB:', item);
