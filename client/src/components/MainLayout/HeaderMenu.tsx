@@ -30,5 +30,10 @@ export const HeaderMenu = ({ location }: any) => (
                 <Icon type="setting" />Settings
             </Link>
         </Menu.Item>
+        <Menu.Item key="/tray">
+            <Link to="/tray">
+                <Icon type="menu-unfold" />Tray
+            </Link>
+        </Menu.Item>
     </Menu>
 );

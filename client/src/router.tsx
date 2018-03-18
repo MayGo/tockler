@@ -6,6 +6,7 @@ import NotFound from './routes/404';
 import { SettingsPage } from './routes/SettingsPage';
 // import hot from 'dva-hot';
 import { SummaryPage } from './routes/SummaryPage';
+import { TrayPage } from './routes/TrayPage';
 
 function RouterConfig({ history }: any) {
     return (
@@ -15,6 +16,7 @@ function RouterConfig({ history }: any) {
                 <Route path="/timeline" component={TimelinePage} />
                 <Route path="/settings" component={SettingsPage} />
                 <Route path="/summary" component={SummaryPage} />
+                <Route path="/tray" component={TrayPage} />
                 <Route path="*" component={NotFound} />
             </Switch>
         </Router>
