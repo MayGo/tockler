@@ -1,22 +1,26 @@
 import styled from 'styled-components';
 
-export const MainChart = styled.div`
-    border-top: 1px solid lightgray;
-    height: 110px;
+import { Box } from 'grid-styled';
+
+export const MainChart = Box.extend.attrs({ mb: 2 })`
+    border-top: 1px solid white;
+    height: 118px;
     background: white;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
 `;
 
-export const BrushChart = styled.div`
-    border-top: 1px solid lightgray;
-    border-bottom: 1px solid lightgray;
+export const BrushChart = Box.extend`
+    border-top: 1px solid white;
+    border-bottom: 1px solid white;
     background: #f8f8f8;
     height: 70px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
 `;
 
 export const Spinner = styled.div`
     position: absolute;
     text-align: center;
-    background: rgba(0, 0, 0, 0.05);
+    background: rgba(255, 255, 255, 0.75);
     border-radius: 4px;
     padding: 50px;
     width: 100%;

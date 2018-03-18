@@ -33,7 +33,6 @@ interface IHocProps {}
 type IFullProps = IProps & IHocProps;
 
 const perEventStyle = (event: any, state: any) => {
-    console.log(state);
     const color = event.get('color');
     switch (state) {
         case 'normal':
@@ -59,25 +58,13 @@ const perEventStyle = (event: any, state: any) => {
 const createBrushEventChart = (series: any) => (
     <EventChart
         series={series}
-        size={25}
+        size={45}
         style={(event: any) => ({
             fill: event.get('color'),
         })}
         label={(e: any) => e.get('title')}
     />
 );
-
-const axisStyle = {
-    labels: {
-        labelColor: 'grey',
-        labelWeight: 100,
-        labelSize: 11,
-    },
-    axis: {
-        axisColor: 'grey',
-        axisWidth: 1,
-    },
-};
 
 class TimelineComp extends React.Component<IFullProps, IProps> {
     constructor(props: any) {
@@ -128,12 +115,11 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
         return (
             <ChartContainer
                 timeRange={timerange}
-                timeAxisStyle={axisStyle}
-                showGrid={true}
+                showGrid={false}
                 showGridPosition="over"
                 format="%H:%M %a"
             >
-                <ChartRow debug={false} height="50">
+                <ChartRow debug={false} height="45">
                     <Brush
                         timeRange={visibleTimerange}
                         allowSelectionClear={true}
@@ -162,7 +148,7 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
         console.log('Have timerange', visibleTimerange);
 
         return (
-            <Box px={1}>
+            <Box>
                 <MainChart>
                     {loading && (
                         <Spinner>
@@ -180,14 +166,14 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
                                 onBackgroundClick={p => this.handleSelectionChanged(null)}
                                 timeRange={visibleTimerange}
                                 enablePanZoom={true}
-                                showGrid={true}
+                                showGrid={false}
                                 showGridPosition="over"
                                 format="%H:%M %a"
                                 onTimeRangeChanged={this.handleTimeRangeChange}
                             >
-                                {this.createMainRow(appTrackItems)}
-                                {this.createMainRow(statusTrackItems)}
                                 {this.createMainRow(logTrackItems)}
+                                {this.createMainRow(statusTrackItems)}
+                                {this.createMainRow(appTrackItems)}
                             </ChartContainer>
                         </Resizable>
                     </Popover>
