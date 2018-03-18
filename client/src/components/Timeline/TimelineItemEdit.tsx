@@ -1,9 +1,8 @@
 import * as React from 'react';
-import * as styles from './TimelineItemEdit.css';
-
 import { Input, Col, Button, Select, Tooltip } from 'antd';
 import { ColorPicker } from './ColorPicker';
 import { ITrackItem } from '../../@types/ITrackItem';
+import { EditForm } from './TimelineItemEdit.styles';
 
 const InputGroup = Input.Group;
 
@@ -106,7 +105,7 @@ export class TimelineItemEdit extends React.Component<IProps, IState> {
         console.log('Have selectedTimelineItem', selectedTimelineItem.data().toJS());
 
         return (
-            <div className={styles.editForm}>
+            <EditForm>
                 <InputGroup>
                     <Col span={6}>
                         <Input
@@ -150,7 +149,7 @@ export class TimelineItemEdit extends React.Component<IProps, IState> {
                         />
                     </Col>
                 </InputGroup>
-            </div>
+            </EditForm>
         );
     }
 }

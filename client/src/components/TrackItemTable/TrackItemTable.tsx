@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Table, Input, Button, Icon } from 'antd';
-import * as styles from './TrackItemTable.css';
+import { Flex, Box } from 'grid-styled';
+import { FilterDropdown, Highlight, FilterInput } from './TrackItemTable.styles';
 
 export class TrackItemTable extends React.Component {
     searchInput: any;
@@ -66,17 +67,17 @@ export class TrackItemTable extends React.Component {
                         ...record,
                         name: (
                             <span>
-                                {record.data.title.split(reg).map(
-                                    (text, i) =>
-                                        i > 0
-                                            ? [
-                                                  <span className={styles.highlight} key={text}>
-                                                      {match[0]}
-                                                  </span>,
-                                                  text,
-                                              ]
-                                            : text,
-                                )}
+                                {record.data.title
+                                    .split(reg)
+                                    .map(
+                                        (text, i) =>
+                                            i > 0
+                                                ? [
+                                                      <Highlight key={text}>{match[0]}</Highlight>,
+                                                      text,
+                                                  ]
+                                                : text,
+                                    )}
                             </span>
                         ),
                     };
@@ -118,18 +119,20 @@ export class TrackItemTable extends React.Component {
                 dataIndex: 'data.title',
                 key: 'title',
                 filterDropdown: (
-                    <div className={styles.customFilterDropdown}>
-                        <Input
-                            ref={ele => (this.searchInput = ele)}
-                            placeholder="Search name"
-                            value={this.state.searchText}
-                            onChange={this.onInputChange}
-                            onPressEnter={this.onSearch}
-                        />
+                    <FilterDropdown>
+                        <FilterInput>
+                            <Input
+                                ref={ele => (this.searchInput = ele)}
+                                placeholder="Search name"
+                                value={this.state.searchText}
+                                onChange={this.onInputChange}
+                                onPressEnter={this.onSearch}
+                            />
+                        </FilterInput>
                         <Button type="primary" onClick={this.onSearch}>
                             Search
                         </Button>
-                    </div>
+                    </FilterDropdown>
                 ),
                 filterIcon: (
                     <Icon
@@ -151,12 +154,18 @@ export class TrackItemTable extends React.Component {
             },
         ];
         return (
-            <div className={styles.table}>
-                <div className={styles.operations}>
-                    <Button onClick={this.setAgeSort}>Sort age</Button>
-                    <Button onClick={this.clearFilters}>Clear filters</Button>
-                    <Button onClick={this.clearAll}>Clear filters and sorters</Button>
-                </div>
+            <div>
+                <Flex p={1}>
+                    <Box pr={1}>
+                        <Button onClick={this.setAgeSort}>Sort age</Button>
+                    </Box>
+                    <Box pr={1}>
+                        <Button onClick={this.clearFilters}>Clear filters</Button>
+                    </Box>
+                    <Box pr={1}>
+                        <Button onClick={this.clearAll}>Clear filters and sorters</Button>
+                    </Box>
+                </Flex>
                 <Table
                     rowKey={(record: any) => `${record.data.id}`}
                     columns={columns}

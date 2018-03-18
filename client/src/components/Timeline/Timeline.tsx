@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Box } from 'grid-styled';
 
 import {
     ChartContainer,
@@ -11,8 +12,8 @@ import {
 
 import { Popover, Spin } from 'antd';
 
-import * as styles from './Timeline.css';
 import { TimelineItemEditContainer } from './TimelineItemEditContainer';
+import { MainChart, BrushChart, Spinner } from './Timeline.styles';
 
 interface IProps {
     timerange: any;
@@ -161,12 +162,12 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
         console.log('Have timerange', visibleTimerange);
 
         return (
-            <div className={styles.chartContainer}>
-                <div className={styles.mainContainer}>
+            <Box px={1}>
+                <MainChart>
                     {loading && (
-                        <div className={styles.spinner}>
+                        <Spinner>
                             <Spin />
-                        </div>
+                        </Spinner>
                     )}
                     <Popover
                         style={{ zIndex: 930 }}
@@ -190,11 +191,11 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
                             </ChartContainer>
                         </Resizable>
                     </Popover>
-                </div>
-                <div className={styles.brushContainer}>
+                </MainChart>
+                <BrushChart>
                     <Resizable>{this.renderBrush(this.props)}</Resizable>
-                </div>
-            </div>
+                </BrushChart>
+            </Box>
         );
     }
 }

@@ -1,19 +1,19 @@
-.chartContainer {
-    padding: 5px 5px 0px 5px;
-}
-.mainContainer {
+import styled from 'styled-components';
+
+export const MainChart = styled.div`
     border-top: 1px solid lightgray;
     height: 110px;
     background: white;
-}
-.brushContainer {
+`;
+
+export const BrushChart = styled.div`
     border-top: 1px solid lightgray;
     border-bottom: 1px solid lightgray;
     background: #f8f8f8;
     height: 70px;
-}
+`;
 
-.spinner {
+export const Spinner = styled.div`
     position: absolute;
     text-align: center;
     background: rgba(0, 0, 0, 0.05);
@@ -23,4 +23,4 @@
     height: 100%;
     z-index: 10000;
     margin: auto auto;
-}
+`;

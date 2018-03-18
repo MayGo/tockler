@@ -1,15 +1,12 @@
-.brand {
+import styled from 'styled-components';
+
+export const Brand = styled.div`
     font-family: 'Berkshire Swash', cursive;
     text-align: left;
     font-size: 26px;
-}
+`;
 
-.brand_a {
-    text-decoration: none;
-    color: #4f5f6f;
-}
-
-.brand_img {
+export const Img = styled.img`
     margin-right: 15px;
     margin-bottom: 6px;
-}
+`;

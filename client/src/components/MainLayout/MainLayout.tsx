@@ -1,14 +1,16 @@
 import * as React from 'react';
-import * as styles from './MainLayout.css';
-import { Header } from './Header';
+import { Layout } from 'antd';
+const { Footer, Content } = Layout;
+import { HeaderMenu } from './HeaderMenu';
 
 export function MainLayout({ children, location }: any) {
     return (
-        <div className={styles.normal}>
-            <Header location={location} />
-            <div className={styles.content}>
-                <div className={styles.main}>{children}</div>
-            </div>
+        <div>
+            <Layout>
+                <HeaderMenu location={location} />
+                <Content>{children}</Content>
+                <Footer>Trimatech @ 2018</Footer>
+            </Layout>
         </div>
     );
 }

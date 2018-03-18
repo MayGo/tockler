@@ -2,11 +2,9 @@ import * as React from 'react';
 
 import { TimeRange } from 'pondjs';
 import { DatePicker, Button } from 'antd';
-// import moment, { Moment } from 'moment';
 import * as moment from 'moment';
 const { RangePicker } = DatePicker;
-
-import * as styles from './Search.css';
+import { Flex, Box } from 'grid-styled';
 
 interface IProps {
     timerange: any;
@@ -20,12 +18,10 @@ type IFullProps = IProps & IHocProps;
 export class Search extends React.Component<IFullProps, IProps> {
     constructor(props: any) {
         super(props);
-
         this.onChange = this.onChange.bind(this);
     }
 
     onChange = (dates: any, dateStrings: [string, string]) => {
-        // onChange = (dates: [any, any], dateStrings: [string, string]) => {
         console.log('TIMERANGE:', dates, this.props);
         if (dates != null) {
             const beginDate = dates[0].toDate();
@@ -78,20 +74,20 @@ export class Search extends React.Component<IFullProps, IProps> {
         const range: [any, any] = [moment(timerange.begin()), moment(timerange.begin())];
         console.log('Have timerange in Search:', timerange);
         return (
-            <div className={styles.smPadding}>
-                <span className={styles.smPadding}>
+            <Flex py={1}>
+                <Box px={1}>
                     <Button onClick={this.selectYesterday}>Yesterday</Button>
-                </span>
-                <span className={styles.smPadding}>
+                </Box>
+                <Box px={1}>
                     <RangePicker value={range} onChange={this.onChange} />
-                </span>
-                <span className={styles.smPadding}>
+                </Box>
+                <Box px={1}>
                     <Button onClick={this.selectToday}>Today</Button>
-                </span>
-                <span className={styles.smPadding}>
+                </Box>
+                <Box px={1}>
                     <Button onClick={this.selectHour}>Hour</Button>
-                </span>
-            </div>
+                </Box>
+            </Flex>
         );
     }
 }
