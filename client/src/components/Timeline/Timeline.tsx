@@ -35,11 +35,28 @@ interface IHocProps {
 
 type IFullProps = IProps & IHocProps;
 
-const perEventStyle = (event: any) => {
+const perEventStyle = (event: any, state: any) => {
+    console.log(state);
     const color = event.get('color');
-    return {
-        fill: color,
-    };
+    switch (state) {
+        case 'normal':
+            return {
+                fill: color,
+            };
+        case 'hover':
+            return {
+                fill: color,
+                opacity: 0.4,
+            };
+        case 'selected':
+            return {
+                fill: color,
+            };
+        default:
+            return {
+                fill: color,
+            };
+    }
 };
 
 const createBrushEventChart = (series: any) => (

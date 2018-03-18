@@ -19,7 +19,7 @@ const TimelineRow2 = ({ series }: IHocProps) => {
     return <TimelineRow series={series} />;
 };
 
-const mapStateToProps: MapStateToProps<{ series: any }, IProps> = (
+const mapStateToProps: MapStateToProps<{ series: any }, IProps, {}> = (
     state: any,
     ownProps: IProps,
 ) => ({

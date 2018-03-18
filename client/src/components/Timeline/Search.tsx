@@ -25,8 +25,8 @@ export class Search extends React.Component<IFullProps, IProps> {
         this.onChange = this.onChange.bind(this);
     }
 
-    //onChange = (dates: RangePickerValue, dateStrings: [string, string]) => {
-    onChange = (dates: [any, any], dateStrings: [string, string]) => {
+    onChange = (dates: any, dateStrings: [string, string]) => {
+        //onChange = (dates: [any, any], dateStrings: [string, string]) => {
         console.log('TIMERANGE:', dates, this.props);
         if (dates != null) {
             const beginDate = dates[0].toDate();
