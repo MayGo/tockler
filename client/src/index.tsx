@@ -6,7 +6,7 @@ import * as createLoading from 'dva-loading';
 
 import { timelineModel } from './models/timeline';
 import 'typeface-berkshire-swash';
-// import './app.less';
+import './index.less';
 import { rootModel } from './models/root';
 
 const app = dva(createLoading());
