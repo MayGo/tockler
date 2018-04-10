@@ -6,13 +6,15 @@ import * as createLoading from 'dva-loading';
 
 import { timelineModel } from './models/timeline';
 import 'typeface-berkshire-swash';
-import './index.less';
+
 import { rootModel } from './models/root';
+import { trayModel } from './models/tray';
 
 const app = dva(createLoading());
 // hot.patch(app);
 
 app.model(timelineModel);
+app.model(trayModel);
 app.model(rootModel);
 
 app.router(router);
@@ -29,3 +31,7 @@ ReactDOM.render(
   document.getElementById('root') as HTMLElement
 );
 registerServiceWorker();*/
+
+if (module.hot) {
+    console.error('Hot reloading');
+}

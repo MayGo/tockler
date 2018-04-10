@@ -11,6 +11,7 @@ interface IProps {
     saveTimelineItem: any;
     changeColorForApp: any;
     updateColorForApp: any;
+    colorScopeHidden?: boolean;
 }
 
 interface IState {
@@ -27,7 +28,7 @@ export class TimelineItemEdit extends React.Component<IProps, IState> {
         super(props);
 
         this.state = {
-            item: props.selectedTimelineItem.data().toJS(),
+            item: props.selectedTimelineItem,
             colorScope: 'ONLY_THIS',
         };
         console.log('TimelineItemEdit', this.state);
@@ -36,7 +37,7 @@ export class TimelineItemEdit extends React.Component<IProps, IState> {
         console.log('Props received', nextProps);
         if (nextProps.selectedTimelineItem) {
             this.setState({
-                item: nextProps.selectedTimelineItem.data().toJS(),
+                item: nextProps.selectedTimelineItem,
                 colorScope: 'ONLY_THIS',
             });
         }
@@ -95,14 +96,14 @@ export class TimelineItemEdit extends React.Component<IProps, IState> {
     };
 
     render() {
-        const { selectedTimelineItem }: IFullProps = this.props;
+        const { selectedTimelineItem, colorScopeHidden }: IFullProps = this.props;
         const trackItem = this.state.item;
         if (!selectedTimelineItem) {
             console.log('No item');
             return null;
         }
 
-        console.log('Have selectedTimelineItem', selectedTimelineItem.data().toJS());
+        console.log('Have selectedTimelineItem', selectedTimelineItem);
 
         return (
             <EditForm>
@@ -121,25 +122,29 @@ export class TimelineItemEdit extends React.Component<IProps, IState> {
                             onChange={this.changeAppTitle}
                         />
                     </Col>
+
                     <Col span={1}>
                         <ColorPicker color={trackItem.color} onChange={this.changeColorHandler} />
                     </Col>
-                    <Col span={4}>
-                        <Tooltip
-                            placement="left"
-                            title="Can also change color for all items or all future items"
-                        >
-                            <Select
-                                value={this.state.colorScope}
-                                style={{ width: 120 }}
-                                onChange={this.changeColorScopeHandler}
+
+                    {!colorScopeHidden && (
+                        <Col span={4}>
+                            <Tooltip
+                                placement="left"
+                                title="Can also change color for all items or all future items"
                             >
-                                <Select.Option value="ONLY_THIS">This item</Select.Option>
-                                <Select.Option value="NEW_ITEMS">Future items</Select.Option>
-                                <Select.Option value="ALL_ITEMS">All items</Select.Option>
-                            </Select>
-                        </Tooltip>
-                    </Col>
+                                <Select
+                                    value={this.state.colorScope}
+                                    style={{ width: 120 }}
+                                    onChange={this.changeColorScopeHandler}
+                                >
+                                    <Select.Option value="ONLY_THIS">This item</Select.Option>
+                                    <Select.Option value="NEW_ITEMS">Future items</Select.Option>
+                                    <Select.Option value="ALL_ITEMS">All items</Select.Option>
+                                </Select>
+                            </Tooltip>
+                        </Col>
+                    )}
                     <Col span={1}>
                         <Button
                             type="primary"

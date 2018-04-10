@@ -1,34 +1,46 @@
+const webpack = require('webpack');
 const path = require('path');
+const tsImportPluginFactory = require('ts-import-plugin');
+const { getLoader } = require('react-app-rewired');
+const rewireLess = require('react-app-rewire-less');
+const { injectBabelPlugin } = require('react-app-rewired');
+const rewireReactHotLoader = require('react-app-rewire-hot-loader');
 
-const ignorePath = function(exclude = [], config) {
-    const rule = config.module.rules[0];
-    if (!rule) {
-        console.log('js related rule not found');
-        return config;
-    }
-    rule.exclude = exclude.concat(rule.exclude || []);
-    return config;
-};
-
-module.exports = function override(webpackConfig, env) {
-    // Make it run in electron renderer process
-    // If we want electron start, we will set cross-env BROWSER=none
-    // if (process.env.BROWSER === 'none') {
-    //delete config.node;
-    //config.target = 'electron-renderer';
-    //    }
-
-    /* config = ignorePath(
-        [path.resolve(__dirname, 'src/node_modules'), path.resolve(__dirname, 'src/~')],
-        config,
-    );*/
-
+module.exports = function override(config, env) {
     if (env === 'production') {
         console.log('⚡ Production build with Optimization.');
+        // return config;
     }
 
-    delete webpackConfig.node;
-    return Object.assign({}, webpackConfig, {
-        target: 'electron-renderer',
-    });
+    const tsLoader = getLoader(
+        config.module.rules,
+        rule => rule.loader && typeof rule.loader === 'string' && rule.loader.includes('ts-loader'),
+    );
+
+    tsLoader.options = {
+        getCustomTransformers: () => ({
+            before: [
+                tsImportPluginFactory({
+                    libraryName: 'antd',
+                    libraryDirectory: 'es',
+                    style: true,
+                }),
+            ],
+        }),
+    };
+    config = rewireLess.withLoaderOptions({
+        modifyVars: {
+            '@normal-color': '#fff',
+            '@primary-color': '#8363ff',
+            '@body-background': '#d7dde4',
+            '@component-background': '#d7dde4',
+        },
+    })(config, env);
+
+    delete config.node;
+    config = Object.assign({}, config, { target: 'electron-renderer' });
+    config = rewireReactHotLoader(config, env);
+    config = injectBabelPlugin(['react-hot-loader/babel'], config);
+    config = injectBabelPlugin(['dva-hmr', { container: '#root' }], config);
+    return config;
 };

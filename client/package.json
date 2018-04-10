@@ -1,5 +1,5 @@
 {
-    "name": "tockler2",
+    "name": "tockler",
     "version": "0.1.0",
     "private": true,
     "dependencies": {
@@ -11,24 +11,37 @@
         "react": "^16.2.0",
         "react-color": "^2.14.0",
         "react-dom": "^16.2.0",
-        "react-scripts-ts-antd": "2.13.2",
+        "react-moment": "^0.7.0",
+        "react-timeago": "^3.4.3",
         "react-timeseries-charts": "^0.14.0",
         "redbox-react": "^1.5.0",
         "styled-components": "^3.2.3",
         "typeface-berkshire-swash": "^0.0.54"
     },
     "scripts": {
-        "start": "react-scripts-ts-antd start",
-        "build": "react-scripts-ts-antd build",
-        "test": "react-scripts-ts-antd test --env=jsdom",
-        "eject": "react-scripts-ts-antd eject"
+        "start": "react-app-rewired start --scripts-version react-scripts-ts",
+        "build": "react-app-rewired build --scripts-version react-scripts-ts",
+        "test": "react-app-rewired test --env=jsdom --scripts-version react-scripts-ts",
+        "eject": "react-app-rewired eject"
     },
     "devDependencies": {
         "@types/jest": "^22.2.0",
         "@types/node": "^9.4.7",
         "@types/react": "^16.0.40",
         "@types/react-dom": "^16.0.4",
+        "@types/webpack-env": "^1.13.5",
+        "babel-cli": "^6.26.0",
+        "babel-loader": "^7.1.4",
+        "babel-plugin-dva-hmr": "^0.4.1",
+        "babel-plugin-import": "^1.6.7",
+        "babel-preset-env": "^1.6.1",
+        "babel-preset-react-hmre": "^1.1.1",
+        "react-app-rewire-hot-loader": "^1.0.0",
         "react-app-rewire-less": "^2.1.1",
+        "react-app-rewired": "^1.5.0",
+        "react-hot-loader": "^4.0.0",
+        "react-scripts-ts": "^2.14.0",
+        "ts-import-plugin": "^1.4.4",
         "typescript": "^2.7.2"
     }
 }

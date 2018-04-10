@@ -3,6 +3,8 @@ import * as React from 'react';
 import { Layout } from 'antd';
 import { connect } from 'dva';
 import { MainLayout } from '../components/MainLayout/MainLayout';
+import { TrayListContainer } from '../components/TrayList/TrayListContainer';
+import { TimelineItemEditTrayContainer } from '../components/Timeline/TimelineItemEditTrayContainer';
 const { Content } = Layout;
 
 function Tray({ location }: any) {
@@ -10,7 +12,10 @@ function Tray({ location }: any) {
         <MainLayout location={location}>
             <Content>
                 <Layout>
-                    <Content>Tray</Content>
+                    <Content>
+                        <TimelineItemEditTrayContainer />
+                        <TrayListContainer />
+                    </Content>
                 </Layout>
             </Content>
         </MainLayout>
@@ -18,3 +23,7 @@ function Tray({ location }: any) {
 }
 
 export const TrayPage = connect()(Tray);
+
+if (module.hot) {
+    console.error('Hot reloading trays');
+}
