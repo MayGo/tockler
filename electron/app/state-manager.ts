@@ -49,13 +49,12 @@ export class StateManager {
         });
     }
 
-    startNewLogItem(event, rawItem: TrackItemAttributes) {
+    async startNewLogItem(event, rawItem: TrackItemAttributes) {
         logger.info('start-new-log-item', rawItem);
-        this.createNewRunningTrackItem(rawItem).then((item: TrackItemInstance) => {
-            logger.info('log-item-started', item.toJSON());
-            this.setLogTrackItemMarkedAsRunning(item);
-            event.sender.send('log-item-started', item.toJSON());
-        });
+        const item: TrackItemInstance = await this.createNewRunningTrackItem(rawItem);
+        logger.info('log-item-started', item.toJSON());
+        await this.setLogTrackItemMarkedAsRunning(item);
+        event.sender.send('log-item-started', item.toJSON());
     }
 
     async restoreState() {
@@ -75,8 +74,8 @@ export class StateManager {
         return this.logTrackItemMarkedAsRunning;
     }
 
-    setLogTrackItemMarkedAsRunning(item: TrackItemInstance) {
-        settingsService.saveRunningLogItemReference(item.id);
+    async setLogTrackItemMarkedAsRunning(item: TrackItemInstance) {
+        await settingsService.saveRunningLogItemReference(item.id);
         this.setCurrentTrackItem(item);
         logger.info('Mark new LogTrackItem as running:', item.toJSON());
         this.logTrackItemMarkedAsRunning = item;
@@ -86,7 +85,7 @@ export class StateManager {
         let item = await this.updateRunningTrackItemEndDate(TrackItemType.LogTrackItem);
         this.resetLogTrackItem();
         this.logTrackItemMarkedAsRunning = null;
-        settingsService.saveRunningLogItemReference(null);
+        await settingsService.saveRunningLogItemReference(null);
     }
 
     setCurrentTrackItem(item: TrackItemInstance) {
@@ -166,16 +165,13 @@ export class StateManager {
     }
 
     async createNewRunningTrackItem(rawItem: TrackItemAttributes) {
-        this.endRunningTrackItem(rawItem);
+        await this.endRunningTrackItem(rawItem);
 
-    let item = await trackItemService.createTrackItem(rawItem);
-    logger.debug(
-      'Created track item to DB and set running item:',
-      item.toJSON(),
-    );
+        let item = await trackItemService.createTrackItem(rawItem);
+        logger.debug('Created track item to DB and set running item:', item.toJSON());
 
-    this.setCurrentTrackItem(item);
-    return item;
+        this.setCurrentTrackItem(item);
+        return item;
     }
 
     async updateRunningTrackItemEndDate(type: TrackItemType) {

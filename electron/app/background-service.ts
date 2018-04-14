@@ -66,7 +66,7 @@ export class BackgroundService {
 
                 if (stateManager.hasSameRunningTrackItem(rawItem)) {
                     let firstItem = items.shift();
-                    stateManager.endRunningTrackItem(firstItem);
+                    await stateManager.endRunningTrackItem(firstItem);
                 }
                 try {
                     let savedItems = await this.createItems(items);

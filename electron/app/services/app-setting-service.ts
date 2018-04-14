@@ -48,9 +48,9 @@ export class AppSettingService {
             return appSettings[0].color;
         } else {
             let color = randomcolor();
-            this.createAppSetting({ name: appName, color: color }).then(item => {
-                this.logger.info('Created color item to DB:', item);
-            });
+            let item = await this.createAppSetting({ name: appName, color: color });
+            this.logger.info('Created color item to DB:', item);
+
             return color;
         }
     }
