@@ -1,12 +1,15 @@
 import { TrackItemService } from '../services/TrackItemService';
 import { SettingsService } from '../services/SettingsService';
 
+import * as Immutable from 'immutable';
+const ipcRenderer = (<any>window).require('electron').ipcRenderer;
+
 export const trayModel: any = {
     namespace: 'tray',
-    state: {
+    state: Immutable.fromJS({
         lastLogItems: [],
         runningLogItem: null,
-    },
+    }),
     subscriptions: {
         setup({ dispatch }: any) {
             console.log('Tray data setup');
@@ -17,6 +20,16 @@ export const trayModel: any = {
 
             dispatch({
                 type: 'getRunningLogItem',
+            });
+
+            ipcRenderer.on('log-item-started', (event, runningLogItem) => {
+                console.log('log-item-started:', runningLogItem);
+                dispatch({
+                    type: 'setRunningLogItem',
+                    payload: {
+                        runningLogItem,
+                    },
+                });
             });
         },
     },
@@ -62,7 +75,7 @@ export const trayModel: any = {
         *stopRunningLogItem({ payload }: any, { call, put, select }: any) {
             console.log('stopRunningLogItem');
 
-            const runningLogItem = yield select(state => state.tray.runningLogItem);
+            const runningLogItem = yield select(state => state.tray.get('runningLogItem'));
 
             if (runningLogItem) {
                 const createdItem = yield call(
@@ -87,16 +100,11 @@ export const trayModel: any = {
     },
     reducers: {
         lastLogItems(state: any, { payload: { lastLogItems } }: any) {
-            return {
-                ...state,
-                lastLogItems,
-            };
+            return state.set('lastLogItems', lastLogItems);
         },
         setRunningLogItem(state: any, { payload: { runningLogItem } }: any) {
-            return {
-                ...state,
-                runningLogItem,
-            };
+            console.log('Setting running log item:', runningLogItem);
+            return state.set('runningLogItem', runningLogItem);
         },
     },
 };

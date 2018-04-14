@@ -1,6 +1,8 @@
 import * as React from 'react';
 // import { Layout } from 'antd';
-import { Button, Row, Col } from 'antd';
+import { Button } from 'antd';
+
+import { Flex, Box } from 'grid-styled';
 
 import styled from 'styled-components';
 import * as moment from 'moment';
@@ -10,6 +12,7 @@ import TimeAgo from 'react-timeago';
 const CustomListItem = styled.div`
     background-color: white;
     padding-left: 5px;
+    margin-top: 5px;
     border-left: 5px solid ${(props: any) => props.color};
 `;
 
@@ -26,31 +29,39 @@ const FormattedTime = ({ item, isRunning }: any) => {
 export function TrayListItem({ item, startNewLogItemFromOld, stopRunningLogItem, isRunning }: any) {
     return (
         <CustomListItem color={item.color}>
-            <Row>
-                <Col span={22}>
-                    <Row>
-                        <Col span={6}>{item.app}</Col>
-                        <Col span={18}>{item.title}</Col>
-                    </Row>
-                    <Row>
-                        <Col span={18}>
+            <Flex alignItems="center">
+                <Box width={8 / 9}>
+                    <Flex>
+                        <Box width={1 / 4}>{item.app}</Box>
+                        <Box width={3 / 4}>{item.title}</Box>
+                    </Flex>
+                    <Flex>
+                        <Box width={8 / 10}>
                             <small>
                                 <FormattedTime item={item} isRunning={isRunning} />
+                                {'  '}
                                 <b>
-                                    <Moment from={item.beginDate} ago={true}>
-                                        {item.endDate}
-                                    </Moment>
+                                    {!isRunning && (
+                                        <Moment from={item.beginDate} ago={true}>
+                                            {item.endDate}
+                                        </Moment>
+                                    )}
+                                    {isRunning && (
+                                        <Moment fromNow={true} ago={true}>
+                                            {item.beginDate}
+                                        </Moment>
+                                    )}
                                 </b>
                             </small>
-                        </Col>
-                        <Col span={6}>
+                        </Box>
+                        <Flex width={3 / 10} justifyContent="flex-end">
                             <small>
                                 <TimeAgo date={item.beginDate} />
                             </small>
-                        </Col>
-                    </Row>
-                </Col>
-                <Col span={2}>
+                        </Flex>
+                    </Flex>
+                </Box>
+                <Flex width={1 / 9} justifyContent="flex-end" p={2}>
                     {isRunning && (
                         <Button
                             type="primary"
@@ -67,8 +78,8 @@ export function TrayListItem({ item, startNewLogItemFromOld, stopRunningLogItem,
                             onClick={() => startNewLogItemFromOld(item)}
                         />
                     )}
-                </Col>
-            </Row>
+                </Flex>
+            </Flex>
         </CustomListItem>
     );
 }
