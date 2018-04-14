@@ -49,42 +49,46 @@ export class BackgroundService {
     }
 
     async createOrUpdate(rawItem) {
-        let color = await appSettingService.getAppColor(rawItem.app);
-        rawItem.color = color;
+        try {
+            let color = await appSettingService.getAppColor(rawItem.app);
+            rawItem.color = color;
 
-        let item: any;
+            let item: any;
 
-        let type: TrackItemType = rawItem.taskName;
+            let type: TrackItemType = rawItem.taskName;
 
-        if (!type) {
-            throw new Error('TaskName not defined.');
+            if (!type) {
+                throw new Error('TaskName not defined.');
+            }
+
+            if (BackgroundUtils.shouldSplitInTwoOnMidnight(rawItem.beginDate, rawItem.endDate)) {
+                let items: TrackItemAttributes[] = BackgroundUtils.splitItemIntoDayChunks(rawItem);
+
+                if (stateManager.hasSameRunningTrackItem(rawItem)) {
+                    let firstItem = items.shift();
+                    stateManager.endRunningTrackItem(firstItem);
+                }
+                try {
+                    let savedItems = await this.createItems(items);
+
+                    let lastItem = savedItems[savedItems.length - 1];
+                    item = lastItem;
+                    stateManager.setCurrentTrackItem(item);
+                } catch (e) {
+                    logger.error('Error creating items');
+                }
+            } else {
+                if (stateManager.hasSameRunningTrackItem(rawItem)) {
+                    item = await stateManager.updateRunningTrackItemEndDate(type);
+                } else if (!stateManager.hasSameRunningTrackItem(rawItem)) {
+                    item = await stateManager.createNewRunningTrackItem(rawItem);
+                }
+            }
+
+            return item;
+        } catch (e) {
+            logger.error('Error createOrUpdate', e);
         }
-
-        if (BackgroundUtils.shouldSplitInTwoOnMidnight(rawItem.beginDate, rawItem.endDate)) {
-            let items: TrackItemAttributes[] = BackgroundUtils.splitItemIntoDayChunks(rawItem);
-
-            if (stateManager.hasSameRunningTrackItem(rawItem)) {
-                let firstItem = items.shift();
-                stateManager.endRunningTrackItem(firstItem);
-            }
-            try {
-                let savedItems = await this.createItems(items);
-
-                let lastItem = savedItems[savedItems.length - 1];
-                item = lastItem;
-                stateManager.setCurrentTrackItem(item);
-            } catch (e) {
-                logger.error('Error creating items');
-            }
-        } else {
-            if (stateManager.hasSameRunningTrackItem(rawItem)) {
-                item = await stateManager.updateRunningTrackItemEndDate(type);
-            } else if (!stateManager.hasSameRunningTrackItem(rawItem)) {
-                item = await stateManager.createNewRunningTrackItem(rawItem);
-            }
-        }
-
-        return item;
     }
 
     onSleep() {

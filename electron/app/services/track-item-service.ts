@@ -109,7 +109,7 @@ export class TrackItemService {
         let currentStatusItem = stateManager.getCurrentStatusTrackItem();
 
         if (currentStatusItem && currentStatusItem.app != State.Online) {
-            throw new Error('Not online.');
+            throw new Error('Not online 2.');
         }
 
         let whereQuery: any = {
@@ -174,65 +174,24 @@ export class TrackItemService {
         return models.TrackItem.findById(id);
     }
 
-    updateEndDateWithNow(id) {
-        let promise = new Promise<void>((resolve: Function, reject: Function) => {
-            models.TrackItem.update(
-                {
-                    endDate: new Date(),
-                },
-                {
-                    fields: ['endDate'],
-                    where: { id: id },
-                },
-            )
-                .then(() => {
-                    this.logger.debug('Saved track item to DB with now:', id);
-                    resolve(id);
-                })
-                .catch((error: Error) => {
-                    this.logger.error(error.message);
-                    reject(error);
-                });
+    async deleteById(id) {
+        await models.TrackItem.destroy({
+            where: { id: id },
         });
-        return promise;
+
+        this.logger.info('Deleted track item with ID:', id);
+        return id;
     }
 
-    deleteById(id) {
-        let promise = new Promise<void>((resolve: Function, reject: Function) => {
-            models.TrackItem.destroy({
-                where: { id: id },
-            })
-                .then(() => {
-                    this.logger.info('Deleted track item with ID:', id);
-                    resolve(id);
-                })
-                .catch((error: Error) => {
-                    this.logger.error(error.message);
-                    reject(error);
-                });
-        });
-        return promise;
-    }
-
-    deleteByIds(ids) {
-        let promise = new Promise<void>((resolve: Function, reject: Function) => {
-            models.TrackItem.destroy({
-                where: {
-                    id: {
-                        $in: ids,
-                    },
+    async deleteByIds(ids) {
+        await models.TrackItem.destroy({
+            where: {
+                id: {
+                    $in: ids,
                 },
-            })
-                .then(() => {
-                    this.logger.info('Deleted track items with IDs:', ids);
-                    resolve(ids);
-                })
-                .catch((error: Error) => {
-                    this.logger.error(error.message);
-                    reject(error);
-                });
+            },
         });
-        return promise;
+        return ids;
     }
 
     async findRunningLogItem() {

@@ -6,15 +6,15 @@ electronLog.transports.console.level = 'info';
 electronLog.transports.file.level = 'debug';
 
 export class LogManager {
-  logger;
+    logger;
 
-  constructor() {}
+    constructor() {}
 
-  init(settings) {}
+    init(settings) {}
 
-  getLogger(name) {
-    return electronLog;
-  }
+    getLogger(name) {
+        return electronLog;
+    }
 }
 
 export const logManager = new LogManager();

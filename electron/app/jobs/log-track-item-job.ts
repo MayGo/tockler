@@ -11,101 +11,99 @@ import { trackItemService } from '../services/track-item-service';
 import { settingsService } from '../services/settings-service';
 
 export class LogTrackItemJob {
-  onlineItemWhenLastSplit: TrackItemInstance = null;
+    onlineItemWhenLastSplit: TrackItemInstance = null;
 
-  run() {
-    try {
-      this.checkIfIsInCorrectState();
-      this.updateRunningLogItem();
-    } catch (error) {
-      logger.error(error.message);
-    }
-  }
-
-  checkIfIsInCorrectState(): void {
-    // saveRunningLogItem can be run before app comes back ONLINE and running log item have to be split.
-    if (!stateManager.isSystemOnline()) {
-      throw new Error('Not online');
+    run() {
+        try {
+            this.checkIfIsInCorrectState();
+            this.updateRunningLogItem();
+        } catch (error) {
+            logger.error('LogTrackItemJob:', error.message);
+        }
     }
 
-    if (stateManager.isSystemSleeping()) {
-      throw new Error('Computer is sleeping');
-    }
-  }
-
-  async updateRunningLogItem() {
-    let oldOnlineItem = this.onlineItemWhenLastSplit;
-    this.onlineItemWhenLastSplit = stateManager.getCurrentStatusTrackItem();
-
-    let logItemMarkedAsRunning = stateManager.getLogTrackItemMarkedAsRunning();
-    if (!logItemMarkedAsRunning) {
-      logger.debug('RUNNING_LOG_ITEM not found.');
-      return null;
-    }
-
-    let rawItem: any = BackgroundUtils.getRawTrackItem(logItemMarkedAsRunning);
-    rawItem.endDate = Date.now();
-
-    let shouldTrySplitting = oldOnlineItem != this.onlineItemWhenLastSplit;
-
-    if (shouldTrySplitting) {
-      let splitEndDate: Date = await this.getTaskSplitDate();
-      if (splitEndDate) {
-        logger.info('Splitting LogItem, new item has endDate: ', splitEndDate);
-
-        if (logItemMarkedAsRunning.beginDate > splitEndDate) {
-          logger.error(
-            'BeginDate is after endDate. Not saving RUNNING_LOG_ITEM',
-          );
-          return;
+    checkIfIsInCorrectState(): void {
+        // saveRunningLogItem can be run before app comes back ONLINE and running log item have to be split.
+        if (!stateManager.isSystemOnline()) {
+            throw new Error('Not online');
         }
 
-        stateManager.endRunningTrackItem({
-          endDate: splitEndDate,
-          taskName: TrackItemType.LogTrackItem,
-        });
-
-        rawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
-      } else {
-        logger.error('No splitEndDate for item:', rawItem);
-      }
+        if (stateManager.isSystemSleeping()) {
+            throw new Error('Computer is sleeping');
+        }
     }
 
-    let savedItem = await backgroundService.createOrUpdate(rawItem);
-    // at midnight track item is split and new items ID should be RUNNING_LOG_ITEM
-    if (savedItem.id !== logItemMarkedAsRunning.id) {
-      logger.info('RUNNING_LOG_ITEM changed.');
-      stateManager.setLogTrackItemMarkedAsRunning(savedItem);
+    async updateRunningLogItem() {
+        let oldOnlineItem = this.onlineItemWhenLastSplit;
+        this.onlineItemWhenLastSplit = stateManager.getCurrentStatusTrackItem();
+
+        let logItemMarkedAsRunning = stateManager.getLogTrackItemMarkedAsRunning();
+        if (!logItemMarkedAsRunning) {
+            logger.debug('RUNNING_LOG_ITEM not found.');
+            return null;
+        }
+
+        let rawItem: any = BackgroundUtils.getRawTrackItem(logItemMarkedAsRunning);
+        rawItem.endDate = Date.now();
+
+        let shouldTrySplitting = oldOnlineItem != this.onlineItemWhenLastSplit;
+
+        if (shouldTrySplitting) {
+            let splitEndDate: Date = await this.getTaskSplitDate();
+            if (splitEndDate) {
+                logger.info('Splitting LogItem, new item has endDate: ', splitEndDate);
+
+                if (logItemMarkedAsRunning.beginDate > splitEndDate) {
+                    logger.error('BeginDate is after endDate. Not saving RUNNING_LOG_ITEM');
+                    return;
+                }
+
+                stateManager.endRunningTrackItem({
+                    endDate: splitEndDate,
+                    taskName: TrackItemType.LogTrackItem,
+                });
+
+                rawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
+            } else {
+                logger.error('No splitEndDate for item:', rawItem);
+            }
+        }
+
+        let savedItem = await backgroundService.createOrUpdate(rawItem);
+        // at midnight track item is split and new items ID should be RUNNING_LOG_ITEM
+        if (savedItem.id !== logItemMarkedAsRunning.id) {
+            logger.info('RUNNING_LOG_ITEM changed.');
+            stateManager.setLogTrackItemMarkedAsRunning(savedItem);
+        }
+        return savedItem;
     }
-    return savedItem;
-  }
 
-  async getTaskSplitDate() {
-    let onlineItems = await trackItemService.findLastOnlineItem();
-    if (onlineItems && onlineItems.length > 0) {
-      let settings = await settingsService.fetchWorkSettings();
+    async getTaskSplitDate() {
+        let onlineItems = await trackItemService.findLastOnlineItem();
+        if (onlineItems && onlineItems.length > 0) {
+            let settings = await settingsService.fetchWorkSettings();
 
-      let onlineItem: any = onlineItems[0];
-      logger.debug('Online item found:', onlineItem.toJSON());
-      let minutesAfterToSplit = settings.splitTaskAfterIdlingForMinutes || 3;
-      let minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
+            let onlineItem: any = onlineItems[0];
+            logger.debug('Online item found:', onlineItem.toJSON());
+            let minutesAfterToSplit = settings.splitTaskAfterIdlingForMinutes || 3;
+            let minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
 
-      logger.debug(
-        `Minutes from now:  ${minutesFromNow}, minutesAfterToSplit: ${minutesAfterToSplit}`,
-      );
+            logger.debug(
+                `Minutes from now:  ${minutesFromNow}, minutesAfterToSplit: ${minutesAfterToSplit}`,
+            );
 
-      if (minutesFromNow >= minutesAfterToSplit) {
-        let endDate = moment(onlineItem.endDate)
-          .add(minutesAfterToSplit, 'minutes')
-          .toDate();
-        return endDate;
-      }
-    } else {
-      logger.error('No Online items found.');
+            if (minutesFromNow >= minutesAfterToSplit) {
+                let endDate = moment(onlineItem.endDate)
+                    .add(minutesAfterToSplit, 'minutes')
+                    .toDate();
+                return endDate;
+            }
+        } else {
+            logger.error('No Online items found.');
+        }
+
+        return null;
     }
-
-    return null;
-  }
 }
 
 export const logTrackItemJob = new LogTrackItemJob();

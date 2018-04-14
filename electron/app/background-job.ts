@@ -1,10 +1,7 @@
 import { settingsService } from './services/settings-service';
 import { trackItemService } from './services/track-item-service';
 import { appSettingService } from './services/app-setting-service';
-import {
-  TrackItemInstance,
-  TrackItemAttributes,
-} from './models/interfaces/track-item-interface';
+import { TrackItemInstance, TrackItemAttributes } from './models/interfaces/track-item-interface';
 import { State } from './enums/state';
 import { app, ipcMain, dialog } from 'electron';
 import config from './config';
@@ -31,18 +28,21 @@ const emptyItem = { title: 'EMPTY' };
 let shouldSplitLogItemFromDate = null;
 
 export class BackgroundJob {
-  init() {
-    logger.info('Environment:' + process.env.NODE_ENV);
+    init() {
+        logger.info('Environment:' + process.env.NODE_ENV);
 
-    logger.info('Running background service.');
+        logger.info('Running background service.');
 
         setInterval(() => {
-            appTrackItemJob.run();
-            statusTrackItemJob.run();
-            logTrackItemJob.run();
-
+            try {
+                appTrackItemJob.run();
+                statusTrackItemJob.run();
+                logTrackItemJob.run();
+            } catch (e) {
+                logger.error('BackgroundJob:', e);
+            }
         }, appConstants.BACKGROUND_JOB_INTERVAL);
-  }
+    }
 }
 
 export const backgroundJob = new BackgroundJob();
