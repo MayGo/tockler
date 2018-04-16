@@ -7,8 +7,6 @@ import { logManager } from './log-manager';
 const logger = logManager.getLogger('AppUpdater');
 
 export default class AppUpdater {
-    constructor() {}
-
     static init() {
         if (config.isDev) {
             return;
@@ -42,7 +40,12 @@ export default class AppUpdater {
                 });
             });
         });
-        autoUpdater.checkForUpdates();
+        autoUpdater
+            .checkForUpdates()
+            .then(
+                () => logger.info('checkForUpdates'),
+                e => logger.error('Error in checkForUpdates', e),
+            );
     }
 }
 

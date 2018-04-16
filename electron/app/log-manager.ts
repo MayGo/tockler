@@ -8,9 +8,9 @@ electronLog.transports.file.level = 'debug';
 export class LogManager {
     logger;
 
-    constructor() {}
-
-    init(settings) {}
+    init(settings) {
+        console.log('init LogManager');
+    }
 
     getLogger(name) {
         return electronLog;

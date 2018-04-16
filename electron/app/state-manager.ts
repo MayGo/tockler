@@ -40,12 +40,18 @@ export class StateManager {
 
         ipcMain.on('end-running-log-item', event => {
             logger.info('end-running-log-item');
-            this.stopRunningLogTrackItem();
+            this.stopRunningLogTrackItem().then(
+                () => logger.info('end-running-log-item'),
+                e => logger.error('end-running-log-item', e),
+            );
         });
 
         appEmitter.on('start-new-log-item', rawItem => {
             logger.info('start-new-log-item event');
-            this.startNewLogItem(null, rawItem);
+            this.startNewLogItem(null, rawItem).then(
+                () => logger.info('start-new-log-item'),
+                e => logger.error('start-new-log-item', e),
+            );
         });
     }
 
@@ -60,8 +66,12 @@ export class StateManager {
     async restoreState() {
         logger.info('Restoring state.');
         let logItem = await trackItemService.findRunningLogItem();
-        this.logTrackItemMarkedAsRunning = logItem;
-        this.setCurrentTrackItem(logItem);
+        if (logItem) {
+            this.logTrackItemMarkedAsRunning = logItem;
+            this.setCurrentTrackItem(logItem);
+        } else {
+            logger.info('No runnin log item');
+        }
 
         if (this.logTrackItemMarkedAsRunning) {
             logger.info('Restored running LogTrackItem:', logItem.toJSON());
@@ -153,7 +163,7 @@ export class StateManager {
 
     async endRunningTrackItem(rawItem: TrackItemAttributes) {
         let runningItem = this.getCurrentTrackItem(rawItem.taskName);
-
+        console.log('current item', runningItem);
         if (runningItem) {
             runningItem.endDate = rawItem.beginDate;
             logger.info('Ending trackItem:', runningItem.toJSON());

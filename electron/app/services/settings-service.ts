@@ -16,6 +16,7 @@ export class SettingsService {
             },
         });
         let item = items[0];
+
         item.jsonDataParsed = JSON.parse(item.jsonData);
         return item;
     }
@@ -36,14 +37,22 @@ export class SettingsService {
         return item.jsonDataParsed;
     }
 
+    isObject(val) {
+        return val instanceof Object;
+    }
+
     async fetchAnalyserSettings() {
         let item = await this.findByName('ANALYSER_SETTINGS');
+        if (this.isObject(item)) {
+            // db default is object but this is initialized with array (when is initialized)
+            return [];
+        }
         return item.jsonDataParsed;
     }
 
     async getRunningLogItem() {
         let settingsItem = await this.findByName('RUNNING_LOG_ITEM');
-        //console.log("got RUNNING_LOG_ITEM: ", item);
+        // console.log("got RUNNING_LOG_ITEM: ", item);
         if (settingsItem.jsonDataParsed.id) {
             let logItem = await models.TrackItem.findById(settingsItem.jsonDataParsed.id);
             return logItem;

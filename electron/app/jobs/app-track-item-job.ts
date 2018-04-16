@@ -22,7 +22,12 @@ export class AppTrackItemJob {
 
             if (!BackgroundUtils.isSameItems(updatedItem, this.lastUpdatedItem)) {
                 logger.debug('App and title changed. Analysing title');
-                taskAnalyser.analyseAndNotify(updatedItem);
+                taskAnalyser
+                    .analyseAndNotify(updatedItem)
+                    .then(
+                        () => logger.debug('Analysing has run.'),
+                        e => logger.error('Error in Analysing', e),
+                    );
             }
 
             this.lastUpdatedItem = updatedItem;
@@ -49,7 +54,18 @@ export class AppTrackItemJob {
         rawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
         rawItem.endDate = new Date();
         rawItem.app = result.app || 'NATIVE';
-        rawItem.title = result.title.replace(/\n$/, '').replace(/^\s/, '') || 'NO_TITLE';
+        if (!result.app) {
+            console.error('rawitem has no app', result);
+            rawItem.title = 'NATIVE';
+        } else {
+            rawItem.title = result.app;
+        }
+        if (!result.title) {
+            console.error('rawitem has no title', result);
+            rawItem.title = 'NO_TITLE';
+        } else {
+            rawItem.title = result.title.replace(/\n$/, '').replace(/^\s/, '');
+        }
 
         logger.debug('Active window (parsed):', rawItem);
 

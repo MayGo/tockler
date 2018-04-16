@@ -4,7 +4,11 @@ import { app, ipcMain, powerMonitor } from 'electron';
 import { logManager } from './log-manager';
 
 import AppManager from './app-manager';
-AppManager.init();
+
+AppManager.init().then(
+    () => console.info('AppManager.init'),
+    e => console.error('Error in AppManager.init', e),
+);
 
 import windowManager from './window-manager';
 import { extensionsManager } from './extensions-manager';
@@ -15,7 +19,7 @@ import * as path from 'path';
 AppUpdater.init();
 
 if (config.isDev) {
-    //const reloadFile = path.join(config.client);
+    // const reloadFile = path.join(config.client);
     // require('electron-reload')(reloadFile);
 }
 
@@ -68,7 +72,9 @@ app.on('ready', async () => {
 
     powerMonitor.on('resume', function() {
         console.log('The system is going to resume');
-        backgroundService.onResume();
+        backgroundService
+            .onResume()
+            .then(() => console.info('Resumed'), e => console.error('Error in onResume', e));
     });
 });
 
@@ -79,13 +85,13 @@ require('electron-context-menu')({});
  */
 app.on('window-all-closed', function() {
     console.log('window-all-closed');
-    //pluginMgr.removeAll();
-    //app.quit();
+    // pluginMgr.removeAll();
+    // app.quit();
 });
 
 ipcMain.on('close-app', function() {
     console.log('Closing app');
-    //pluginMgr.removeAll();
+    // pluginMgr.removeAll();
     app.quit();
 });
 
@@ -95,7 +101,7 @@ ipcMain.on('close-app', function() {
  */
 
 app.on('activate', () => {
-    //console.log("Show menubar.");
+    // console.log("Show menubar.");
     // windowManager.menubar.window.show();
 });
 
@@ -120,6 +126,6 @@ let iShouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
 
 if (iShouldQuit && !config.isDev) {
     console.log('Quiting instance.');
-    //pluginMgr.removeAll();
+    // pluginMgr.removeAll();
     app.quit();
 }

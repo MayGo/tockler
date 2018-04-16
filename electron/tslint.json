@@ -1,5 +1,6 @@
 {
     "rules": {
+        "no-floating-promises": true,
         "promise-function-async": true,
         "align": [true, "parameters", "arguments", "statements"],
         "ban": false,

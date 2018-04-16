@@ -1,15 +1,16 @@
 /* tslint:disable:variable-name */
 
-import * as SequelizeStatic from "sequelize";
-import { DataTypes, Sequelize } from "sequelize";
-import { SettingsAttributes, SettingsInstance } from "./interfaces/settings-interface";
+import * as SequelizeStatic from 'sequelize';
+import { DataTypes, Sequelize } from 'sequelize';
+import { SettingsAttributes, SettingsInstance } from './interfaces/settings-interface';
 
-export default function (sequelize: Sequelize):
-  SequelizeStatic.Model<SettingsInstance, SettingsAttributes> {
-  let Settings = sequelize.define<SettingsInstance, SettingsAttributes>('Settings', {
-    name: SequelizeStatic.STRING,
-    jsonData: { type: SequelizeStatic.STRING, defaultValue: '{}' }
-  });
+export default function(
+    sequelize: Sequelize,
+): SequelizeStatic.Model<SettingsInstance, SettingsAttributes> {
+    let Settings = sequelize.define<SettingsInstance, SettingsAttributes>('Settings', {
+        name: SequelizeStatic.STRING,
+        jsonData: { type: SequelizeStatic.STRING, defaultValue: '{}' },
+    });
 
-  return Settings;
+    return Settings;
 }

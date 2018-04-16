@@ -13,10 +13,10 @@ import { settingsService } from '../services/settings-service';
 export class LogTrackItemJob {
     onlineItemWhenLastSplit: TrackItemInstance = null;
 
-    run() {
+    async run() {
         try {
             this.checkIfIsInCorrectState();
-            this.updateRunningLogItem();
+            await this.updateRunningLogItem();
         } catch (error) {
             logger.error('LogTrackItemJob:', error.message);
         }
@@ -46,7 +46,7 @@ export class LogTrackItemJob {
         let rawItem: any = BackgroundUtils.getRawTrackItem(logItemMarkedAsRunning);
         rawItem.endDate = Date.now();
 
-        let shouldTrySplitting = oldOnlineItem != this.onlineItemWhenLastSplit;
+        let shouldTrySplitting = oldOnlineItem !== this.onlineItemWhenLastSplit;
 
         if (shouldTrySplitting) {
             let splitEndDate: Date = await this.getTaskSplitDate();
@@ -58,7 +58,7 @@ export class LogTrackItemJob {
                     return;
                 }
 
-                stateManager.endRunningTrackItem({
+                await stateManager.endRunningTrackItem({
                     endDate: splitEndDate,
                     taskName: TrackItemType.LogTrackItem,
                 });
@@ -73,7 +73,7 @@ export class LogTrackItemJob {
         // at midnight track item is split and new items ID should be RUNNING_LOG_ITEM
         if (savedItem.id !== logItemMarkedAsRunning.id) {
             logger.info('RUNNING_LOG_ITEM changed.');
-            stateManager.setLogTrackItemMarkedAsRunning(savedItem);
+            await stateManager.setLogTrackItemMarkedAsRunning(savedItem);
         }
         return savedItem;
     }

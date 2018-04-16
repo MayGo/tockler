@@ -104,11 +104,11 @@ export class TrackItemService {
     }
 
     findLastOnlineItem() {
-        //ONLINE item can be just inserted, we want old one.
+        // ONLINE item can be just inserted, we want old one.
         // 2 seconds should be enough
         let currentStatusItem = stateManager.getCurrentStatusTrackItem();
 
-        if (currentStatusItem && currentStatusItem.app != State.Online) {
+        if (currentStatusItem && currentStatusItem.app !== State.Online) {
             throw new Error('Not online 2.');
         }
 

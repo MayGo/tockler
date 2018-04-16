@@ -28,20 +28,19 @@ const emptyItem = { title: 'EMPTY' };
 let shouldSplitLogItemFromDate = null;
 
 export class BackgroundJob {
+    async runAll() {
+        try {
+            await appTrackItemJob.run();
+            await statusTrackItemJob.run();
+            await logTrackItemJob.run();
+        } catch (e) {
+            logger.error('BackgroundJob:', e);
+        }
+    }
     init() {
         logger.info('Environment:' + process.env.NODE_ENV);
-
         logger.info('Running background service.');
-
-        setInterval(() => {
-            try {
-                appTrackItemJob.run();
-                statusTrackItemJob.run();
-                logTrackItemJob.run();
-            } catch (e) {
-                logger.error('BackgroundJob:', e);
-            }
-        }, appConstants.BACKGROUND_JOB_INTERVAL);
+        setInterval(this.runAll, appConstants.BACKGROUND_JOB_INTERVAL);
     }
 }
 

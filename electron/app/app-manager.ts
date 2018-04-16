@@ -10,11 +10,11 @@ import { settingsService } from './services/settings-service';
 let logger = logManager.getLogger('AppManager');
 
 export default class AppManager {
-    static init() {
+    static async init() {
         AppManager.syncDb();
         AppManager.initGlobalClasses();
         AppManager.initIpc();
-        stateManager.restoreState();
+        await stateManager.restoreState();
     }
 
     static initIpc() {

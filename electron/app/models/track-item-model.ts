@@ -1,47 +1,44 @@
 import * as SequelizeStatic from 'sequelize';
 import { DataTypes, Sequelize } from 'sequelize';
-import {
-  TrackItemAttributes,
-  TrackItemInstance,
-} from './interfaces/track-item-interface';
+import { TrackItemAttributes, TrackItemInstance } from './interfaces/track-item-interface';
 
 export default function(
-  sequelize: Sequelize,
+    sequelize: Sequelize,
 ): SequelizeStatic.Model<TrackItemInstance, TrackItemAttributes> {
-  let TrackItem = sequelize.define<TrackItemInstance, TrackItemAttributes>(
-    'TrackItem',
-    {
-      app: SequelizeStatic.STRING,
-      taskName: SequelizeStatic.STRING,
-      title: SequelizeStatic.STRING,
-      color: SequelizeStatic.STRING,
-      beginDate: SequelizeStatic.DATE,
-      endDate: {
-        type: SequelizeStatic.DATE,
-        /* validate: {
+    let TrackItem = sequelize.define<TrackItemInstance, TrackItemAttributes>(
+        'TrackItem',
+        {
+            app: SequelizeStatic.STRING,
+            taskName: SequelizeStatic.STRING,
+            title: SequelizeStatic.STRING,
+            color: SequelizeStatic.STRING,
+            beginDate: SequelizeStatic.DATE,
+            endDate: {
+                type: SequelizeStatic.DATE,
+                /* validate: {
         isAfter: function (value) {
           if (this.beginDate > value) {
             throw new Error('BeginDate must be before endDate! ' + this.beginDate + ' - ' + value);
           }
         }
       }*/
-      },
-    },
-    {
-      timestamps: false,
-      indexes: [
-        {
-          fields: ['beginDate'],
+            },
         },
         {
-          fields: ['endDate'],
+            timestamps: false,
+            indexes: [
+                {
+                    fields: ['beginDate'],
+                },
+                {
+                    fields: ['endDate'],
+                },
+                {
+                    fields: ['taskName'],
+                },
+            ],
         },
-        {
-          fields: ['taskName'],
-        },
-      ],
-    },
-  );
+    );
 
-  return TrackItem;
+    return TrackItem;
 }
