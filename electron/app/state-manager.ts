@@ -163,7 +163,7 @@ export class StateManager {
 
     async endRunningTrackItem(rawItem: TrackItemAttributes) {
         let runningItem = this.getCurrentTrackItem(rawItem.taskName);
-        console.log('current item', runningItem);
+
         if (runningItem) {
             runningItem.endDate = rawItem.beginDate;
             logger.info('Ending trackItem:', runningItem.toJSON());

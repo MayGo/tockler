@@ -53,13 +53,18 @@ export class AppTrackItemJob {
 
         rawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
         rawItem.endDate = new Date();
-        rawItem.app = result.app || 'NATIVE';
+
         if (!result.app) {
             console.error('rawitem has no app', result);
-            rawItem.title = 'NATIVE';
+            if (result.owner && result.owner.name) {
+                rawItem.app = result.owner.name;
+            } else {
+                rawItem.app = 'NATIVE';
+            }
         } else {
             rawItem.title = result.app;
         }
+
         if (!result.title) {
             console.error('rawitem has no title', result);
             rawItem.title = 'NO_TITLE';
