@@ -71,7 +71,7 @@ export class Search extends React.Component<IFullProps, IProps> {
 
     render() {
         const { timerange } = this.props;
-        const range: [any, any] = [moment(timerange.begin()), moment(timerange.begin())];
+        const range: [any, any] = [moment(timerange[0]), moment(timerange[1])];
         console.log('Have timerange in Search:', timerange);
         return (
             <Flex py={1}>

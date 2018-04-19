@@ -40,14 +40,12 @@ export class TrackItemTable extends React.Component {
     onInputChange = e => {
         this.setState({ searchText: e.target.value });
     };
+
     componentWillReceiveProps(nextProps: any) {
         const { appTrackItems } = nextProps;
-        console.log('Props received');
+        console.log('Props received:');
         this.setState({
-            data: appTrackItems
-                .collection()
-                .eventList()
-                .toJS(),
+            data: appTrackItems,
         });
     }
 
@@ -59,7 +57,7 @@ export class TrackItemTable extends React.Component {
             filtered: !!searchText,
             data: this.state.data
                 .map((record: any) => {
-                    const match = record.data.title.match(reg);
+                    const match = record.title.match(reg);
                     if (!match) {
                         return null;
                     }
@@ -67,7 +65,7 @@ export class TrackItemTable extends React.Component {
                         ...record,
                         name: (
                             <span>
-                                {record.data.title
+                                {record.title
                                     .split(reg)
                                     .map(
                                         (text, i) =>
@@ -95,28 +93,28 @@ export class TrackItemTable extends React.Component {
         const columns = [
             {
                 title: 'Task',
-                dataIndex: 'data.taskName',
+                dataIndex: 'taskName',
                 key: 'taskName',
-                onFilter: (value: any, record: any) => record.data.taskName.includes(value),
-                sorter: (a: any, b: any) => a.data.taskName.length - b.data.taskName.length,
+                onFilter: (value: any, record: any) => record.taskName.includes(value),
+                sorter: (a: any, b: any) => a.taskName.length - b.taskName.length,
                 sortOrder: sortedInfo.columnKey === 'taskName' && sortedInfo.order,
             },
             {
                 title: 'App',
-                dataIndex: 'data.app',
+                dataIndex: 'app',
                 key: 'app',
                 filters: [
                     { text: 'loginwindow', value: 'loginwindow' },
                     { text: 'Google Chrome', value: 'Google Chrome' },
                 ],
                 filteredValue: filteredInfo.app || null,
-                onFilter: (value: any, record: any) => record.data.app.includes(value),
-                sorter: (a: any, b: any) => a.data.app - b.data.app,
+                onFilter: (value: any, record: any) => record.app.includes(value),
+                sorter: (a: any, b: any) => a.app - b.app,
                 sortOrder: sortedInfo.columnKey === 'app' && sortedInfo.order,
             },
             {
                 title: 'Title',
-                dataIndex: 'data.title',
+                dataIndex: 'title',
                 key: 'title',
                 filterDropdown: (
                     <FilterDropdown>
@@ -149,7 +147,7 @@ export class TrackItemTable extends React.Component {
                         () => this.searchInput && this.searchInput.focus(),
                     );
                 },
-                sorter: (a: any, b: any) => a.data.title.length - b.data.title.length,
+                sorter: (a: any, b: any) => a.title.length - b.title.length,
                 sortOrder: sortedInfo.columnKey === 'title' && sortedInfo.order,
             },
         ];
@@ -167,7 +165,7 @@ export class TrackItemTable extends React.Component {
                     </Box>
                 </Flex>
                 <Table
-                    rowKey={(record: any) => `${record.data.id}`}
+                    rowKey={(record: any) => `${record.id}`}
                     columns={columns}
                     dataSource={this.state.data}
                     onChange={this.handleChange}

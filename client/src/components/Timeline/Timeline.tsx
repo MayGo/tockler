@@ -1,19 +1,18 @@
 import * as React from 'react';
-import { Box } from 'grid-styled';
 
 import {
-    ChartContainer,
-    Resizable,
-    Charts,
-    ChartRow,
-    EventChart,
-    Brush,
-} from 'react-timeseries-charts';
+    VictoryChart,
+    VictoryTooltip,
+    VictoryBar,
+    VictoryAxis,
+    VictoryZoomContainer,
+} from 'victory';
 
-import { Popover, Spin } from 'antd';
+import moment from 'moment';
 
-import { TimelineItemEditContainer } from './TimelineItemEditContainer';
-import { MainChart, BrushChart, Spinner } from './Timeline.styles';
+import { chartTheme } from './ChartTheme';
+import { TrackItemType } from '../../enum/TrackItemType';
+import { MainChart } from './Timeline.styles';
 
 interface IProps {
     timerange: any;
@@ -25,6 +24,7 @@ interface IProps {
     selectTimelineItem?: any;
     tracker?: any;
     selectedTimelineItem?: any;
+    chartWidth?: number;
     loading?: boolean;
 }
 
@@ -32,43 +32,23 @@ interface IHocProps {}
 
 type IFullProps = IProps & IHocProps;
 
-const perEventStyle = (event: any, state: any) => {
-    const color = event.get('color');
-    switch (state) {
-        case 'normal':
-            return {
-                fill: color,
-            };
-        case 'hover':
-            return {
-                fill: color,
-                opacity: 0.4,
-            };
-        case 'selected':
-            return {
-                fill: color,
-            };
-        default:
-            return {
-                fill: color,
-            };
+const getTrackItemOrder = (type: string) => {
+    if (type === TrackItemType.AppTrackItem) {
+        return 1;
     }
+    if (type === TrackItemType.StatusTrackItem) {
+        return 2;
+    }
+    if (type === TrackItemType.LogTrackItem) {
+        return 3;
+    }
+    return 0;
 };
 
-const createBrushEventChart = (series: any) => (
-    <EventChart
-        series={series}
-        size={45}
-        style={(event: any) => ({
-            fill: event.get('color'),
-        })}
-        label={(e: any) => e.get('title')}
-    />
-);
-
-class TimelineComp extends React.Component<IFullProps, IProps> {
+class TimelineComp extends React.Component<IFullProps, {}> {
     constructor(props: any) {
         super(props);
+        this.state = {};
 
         this.handleTrackerChanged = this.handleTrackerChanged.bind(this);
         this.handleTimeRangeChange = this.handleTimeRangeChange.bind(this);
@@ -94,94 +74,84 @@ class TimelineComp extends React.Component<IFullProps, IProps> {
 
         this.props.selectTimelineItem(item);
     };
-
-    createMainRow = (series: any) => (
-        <ChartRow height="30">
-            <Charts>
-                <EventChart
-                    series={series}
-                    size={65}
-                    style={perEventStyle}
-                    onSelectionChange={p => this.handleSelectionChanged(p)}
-                    label={(e: any) => e.get('title')}
-                />
-            </Charts>
-        </ChartRow>
-    );
-
-    renderBrush(props) {
-        const { timerange, visibleTimerange, statusTrackItems }: IFullProps = props;
-
-        return (
-            <ChartContainer
-                timeRange={timerange}
-                showGrid={false}
-                showGridPosition="over"
-                format="%H:%M %a"
-            >
-                <ChartRow debug={false} height="45">
-                    <Brush
-                        timeRange={visibleTimerange}
-                        allowSelectionClear={true}
-                        onTimeRangeChanged={this.handleTimeRangeChange}
-                    />
-                    <Charts>{createBrushEventChart(statusTrackItems)}</Charts>
-                </ChartRow>
-            </ChartContainer>
-        );
+    handleZoom(domain) {
+        this.setState({ selectedDomain: domain });
     }
-
     render() {
         const {
+            appTrackItems,
+            logTrackItems,
+            statusTrackItems,
             timerange,
             visibleTimerange,
-            appTrackItems,
-            statusTrackItems,
-            logTrackItems,
-            selectedTimelineItem,
-            loading,
+            chartWidth,
         }: IFullProps = this.props;
 
-        if (!timerange) {
+        if (!timerange && !appTrackItems && appTrackItems.length === 0) {
             return <div>No data</div>;
         }
         console.log('Have timerange', visibleTimerange);
 
+        const timelineData = [...logTrackItems, ...statusTrackItems];
+
+        const barWidth = 25;
+
         return (
-            <Box>
-                <MainChart>
-                    {loading && (
-                        <Spinner>
-                            <Spin />
-                        </Spinner>
-                    )}
-                    <Popover
-                        style={{ zIndex: 930 }}
-                        content={<TimelineItemEditContainer />}
-                        visible={!!selectedTimelineItem}
-                        trigger="click"
-                    >
-                        <Resizable>
-                            <ChartContainer
-                                onBackgroundClick={p => this.handleSelectionChanged(null)}
-                                timeRange={visibleTimerange}
-                                enablePanZoom={true}
-                                showGrid={false}
-                                showGridPosition="over"
-                                format="%H:%M %a"
-                                onTimeRangeChanged={this.handleTimeRangeChange}
-                            >
-                                {this.createMainRow(logTrackItems)}
-                                {this.createMainRow(statusTrackItems)}
-                                {this.createMainRow(appTrackItems)}
-                            </ChartContainer>
-                        </Resizable>
-                    </Popover>
-                </MainChart>
-                <BrushChart>
-                    <Resizable>{this.renderBrush(this.props)}</Resizable>
-                </BrushChart>
-            </Box>
+            <MainChart>
+                <VictoryChart
+                    theme={chartTheme}
+                    height={100}
+                    width={chartWidth}
+                    domainPadding={{ x: 35, y: 10 }}
+                    padding={{ left: 50, top: 0, bottom: 20 }}
+                    scale={{ x: 'time' }}
+                    domain={{
+                        x: [moment(timerange[0]).toDate(), moment(timerange[1]).toDate()],
+                        y: [1, 3],
+                    }}
+                    containerComponent={
+                        <VictoryZoomContainer responsive={false} zoomDimension="x" />
+                    }
+                >
+                    <VictoryAxis
+                        dependentAxis={true}
+                        tickValues={[1, 2, 3]}
+                        tickFormat={['App', 'Status', 'Log']}
+                        style={{
+                            grid: { strokeWidth: 0 },
+                            ticks: { stroke: 'grey', size: 5 },
+                        }}
+                    />
+                    <VictoryAxis />
+
+                    <VictoryBar
+                        horizontal={true}
+                        style={{
+                            data: {
+                                width: barWidth,
+                                fill: d => d.color,
+                                stroke: d => d.color,
+                                strokeWidth: 0.5,
+                                fillOpacity: 0.75,
+                            },
+                        }}
+                        labels={d => d.title}
+                        labelComponent={
+                            <VictoryTooltip
+                                horizontal={false}
+                                style={chartTheme.tooltip.style}
+                                cornerRadius={chartTheme.tooltip.cornerRadius}
+                                pointerLength={chartTheme.tooltip.pointerLength}
+                                flyoutStyle={chartTheme.tooltip.flyoutStyle}
+                            />
+                        }
+                        x={d => getTrackItemOrder(d.taskName)}
+                        y={d => moment(d.beginDate).toDate()}
+                        y0={d => moment(d.endDate).toDate()}
+                        data={timelineData}
+                    />
+                </VictoryChart>
+            </MainChart>
         );
     }
 }

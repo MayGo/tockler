@@ -23,6 +23,10 @@ export class ColorChangerModal extends React.Component<IProps, {}> {
         this.props.selectColorOption(opts);
     };
 
+    saveOnlyThis = () => this.saveItemHandler('ONLY_THIS');
+    saveNew = () => this.saveItemHandler('NEW_ITEMS');
+    saveAll = () => this.saveItemHandler('ALL_ITEMS');
+
     render() {
         const { modalVisible }: IProps = this.props;
 
@@ -33,19 +37,15 @@ export class ColorChangerModal extends React.Component<IProps, {}> {
                 visible={modalVisible}
                 footer={null}
             >
-                <Button
-                    style={btnStyle}
-                    type="primary"
-                    onClick={() => this.saveItemHandler('ONLY_THIS')}
-                >
+                <Button style={btnStyle} type="primary" onClick={this.saveOnlyThis}>
                     Only this
                 </Button>
                 <br />
-                <Button style={btnStyle} onClick={() => this.saveItemHandler('NEW_ITEMS')}>
+                <Button style={btnStyle} onClick={this.saveNew}>
                     This and new items
                 </Button>
                 <br />
-                <Button style={btnStyle} onClick={() => this.saveItemHandler('ALL_ITEMS')}>
+                <Button style={btnStyle} onClick={this.saveAll}>
                     All items
                 </Button>
             </Modal>

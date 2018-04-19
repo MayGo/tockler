@@ -1,5 +1,6 @@
 import { connect } from 'dva';
 
+import componentQueries from 'react-component-queries';
 import { Timeline } from './Timeline';
 import { TrackItemType } from '../../enum/TrackItemType';
 
@@ -24,5 +25,6 @@ const mapDispatchToProps = (dispatch: any) => ({
             payload: { item },
         }),
 });
-
-export const TimelineContainer = connect(mapStateToProps, mapDispatchToProps)(Timeline);
+export const TimelineContainer = componentQueries(({ width }) => ({
+    chartWidth: width,
+}))(connect(mapStateToProps, mapDispatchToProps)(Timeline));

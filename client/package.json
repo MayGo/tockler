@@ -7,16 +7,21 @@
         "dva": "^2.1.0",
         "dva-loading": "^1.0.4",
         "grid-styled": "^3.2.1",
+        "lodash": "^4.17.5",
         "pondjs": "^0.8.8",
         "react": "^16.2.0",
         "react-color": "^2.14.0",
+        "react-component-queries": "^2.3.0",
         "react-dom": "^16.2.0",
         "react-moment": "^0.7.0",
+        "react-sizeme": "^2.4.2",
         "react-timeago": "^3.4.3",
         "react-timeseries-charts": "^0.14.0",
         "redbox-react": "^1.5.0",
         "styled-components": "^3.2.3",
-        "typeface-berkshire-swash": "^0.0.54"
+        "tslint": "^5.9.1",
+        "typeface-berkshire-swash": "^0.0.54",
+        "victory": "^0.25.7"
     },
     "scripts": {
         "start": "react-app-rewired start --scripts-version react-scripts-ts",
@@ -36,11 +41,11 @@
         "babel-plugin-import": "^1.6.7",
         "babel-preset-env": "^1.6.1",
         "babel-preset-react-hmre": "^1.1.1",
-        "react-app-rewire-hot-loader": "^1.0.0",
+        "react-app-rewire-hot-loader": "^1.0.1",
         "react-app-rewire-less": "^2.1.1",
         "react-app-rewired": "^1.5.0",
         "react-hot-loader": "^4.0.0",
-        "react-scripts-ts": "^2.14.0",
+        "react-scripts-ts": "^2.15.1",
         "ts-import-plugin": "^1.4.4",
         "typescript": "^2.7.2"
     }

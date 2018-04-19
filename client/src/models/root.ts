@@ -20,7 +20,7 @@ export const rootModel: any = {
                 console.log('blur');
                 dispatch({ type: 'setFocused', payload: { isFocused: false } });
             };
-            dispatch({ type: 'bgSync' });
+            // dispatch({ type: 'bgSync' });
 
             const beginDate = moment().startOf('day');
             const endDate = moment().endOf('day');

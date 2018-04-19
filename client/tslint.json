@@ -38,6 +38,7 @@
         "no-unused-expression": true,
         "no-use-before-declare": true,
         "one-line": [true, "check-catch", "check-else", "check-open-brace", "check-whitespace"],
+        "jsx-curly-spacing": [2, { "when": "never", "allowMultiline": false }],
         "quotemark": [true, "single", "jsx-double"],
         "radix": true,
         "semicolon": [true, "always", "ignore-bound-class-methods"],

@@ -1,37 +1,9 @@
 import * as moment from 'moment';
-import { TimeSeries, TimeRangeEvent, TimeRange } from 'pondjs';
 import { TrackItemService } from '../services/TrackItemService';
 import { AppSettingService } from '../services/AppSettingService';
 import { TrackItemType } from '../enum/TrackItemType';
 import { ITrackItem } from '../@types/ITrackItem';
 import { ITimelineState } from '../@types/ITimelineState';
-
-const createSeries = (name, items) => {
-    const events = items.map(
-        ({ beginDate, endDate, ...data }) =>
-            new TimeRangeEvent(new TimeRange(new Date(beginDate), new Date(endDate)), data),
-    );
-    const trackItemSeries = new TimeSeries({ name, events });
-    return trackItemSeries;
-};
-
-const addToSeries = (store, name, items) => {
-    const ids = items.map(item => item.id);
-    console.log('IDS', ids);
-
-    const newEvents = items.map(
-        ({ beginDate, endDate, ...data }) =>
-            new TimeRangeEvent(new TimeRange(new Date(beginDate), new Date(endDate)), data),
-    );
-    const newSeries = new TimeSeries({ name, events: newEvents });
-    const series = store[name];
-
-    const trackItemSeries = TimeSeries.timeSeriesListMerge({
-        name,
-        seriesList: [series, newSeries],
-    });
-    return trackItemSeries;
-};
 
 const handleTimelineItems = (
     state: ITimelineState,
@@ -43,18 +15,9 @@ const handleTimelineItems = (
 ): ITimelineState => {
     return {
         ...state,
-        [TrackItemType.AppTrackItem]: createSeries(
-            TrackItemType.AppTrackItem,
-            payload.appTrackItems,
-        ),
-        [TrackItemType.LogTrackItem]: createSeries(
-            TrackItemType.LogTrackItem,
-            payload.logTrackItems,
-        ),
-        [TrackItemType.StatusTrackItem]: createSeries(
-            TrackItemType.StatusTrackItem,
-            payload.statusTrackItems,
-        ),
+        [TrackItemType.AppTrackItem]: payload.appTrackItems,
+        [TrackItemType.LogTrackItem]: payload.logTrackItems,
+        [TrackItemType.StatusTrackItem]: payload.statusTrackItems,
     };
 };
 
@@ -68,54 +31,48 @@ const addToTimelineItems = (
 ): ITimelineState => {
     return {
         ...state,
-        [TrackItemType.AppTrackItem]: addToSeries(
-            state,
-            TrackItemType.AppTrackItem,
-            payload.appItems,
-        ),
-        [TrackItemType.LogTrackItem]: addToSeries(
-            state,
-            TrackItemType.LogTrackItem,
-            payload.logItems,
-        ),
-        [TrackItemType.StatusTrackItem]: addToSeries(
-            state,
-            TrackItemType.StatusTrackItem,
-            payload.statusItems,
-        ),
+        [TrackItemType.AppTrackItem]: [...state[TrackItemType.AppTrackItem], ...payload.appItems],
+        [TrackItemType.LogTrackItem]: [...state[TrackItemType.LogTrackItem], ...payload.logItems],
+        [TrackItemType.StatusTrackItem]: [
+            ...state[TrackItemType.StatusTrackItem],
+            ...payload.statusItems,
+        ],
     };
 };
 
 export const timelineModel: any = {
     namespace: 'timeline',
     state: {
-        AppTrackItem: new TimeSeries({ name: 'AppTrackItem', events: [] }),
-        StatusTrackItem: new TimeSeries({ name: 'StatusTrackItem', events: [] }),
-        LogTrackItem: new TimeSeries({ name: 'LogTrackItem', events: [] }),
-        timerange: new TimeRange(
+        AppTrackItem: [],
+        StatusTrackItem: [],
+        LogTrackItem: [],
+        timerange: [
             moment()
                 .subtract(1, 'days')
                 .toDate(),
             new Date(),
-        ),
-        visibleTimerange: new TimeRange(
+        ],
+        visibleTimerange: [
             moment()
                 .subtract(1, 'hour')
                 .toDate(),
             new Date(),
-        ),
+        ],
         selectedTimelineItem: null,
     },
     subscriptions: {
         setup({ dispatch }: any) {
             console.log('Timeline data setup');
-            // dispatch({ type: 'bgSync' });
 
-            const beginDate = moment().startOf('day');
-            const endDate = moment().endOf('day');
+            const beginDate = moment()
+                .startOf('day')
+                .toDate();
+            const endDate = moment()
+                .endOf('day')
+                .toDate();
             dispatch({
                 type: 'loadTimerange',
-                payload: { timerange: new TimeRange(beginDate, endDate) },
+                payload: { timerange: [beginDate, endDate] },
             });
         },
     },
@@ -156,9 +113,11 @@ export const timelineModel: any = {
 
             const { appItems, statusItems, logItems } = yield call(
                 TrackItemService.findAllItems,
-                timerange.begin(),
-                timerange.end(),
+                timerange[0],
+                timerange[1],
             );
+
+            console.error(appItems);
 
             yield put({
                 type: 'loadTimelineItems',

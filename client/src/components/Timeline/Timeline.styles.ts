@@ -2,9 +2,9 @@ import styled from 'styled-components';
 
 import { Box } from 'grid-styled';
 
-export const MainChart = Box.extend.attrs({ mb: 2 })`
+export const MainChart = Box.extend.attrs({ mb: 2, py: 2 })`
     border-top: 1px solid white;
-    height: 118px;
+
     background: white;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
 `;

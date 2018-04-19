@@ -31,7 +31,3 @@ ReactDOM.render(
   document.getElementById('root') as HTMLElement
 );
 registerServiceWorker();*/
-
-if (module.hot) {
-    console.error('Hot reloading');
-}

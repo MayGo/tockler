@@ -23,7 +23,3 @@ function Tray({ location }: any) {
 }
 
 export const TrayPage = connect()(Tray);
-
-if (module.hot) {
-    console.error('Hot reloading trays');
-}
