@@ -50,7 +50,10 @@ const getTrackItemOrder = (type: string) => {
 class TimelineComp extends React.Component<IFullProps, IState> {
     constructor(props: any) {
         super(props);
-        this.state = { zoomDomain: null, selectedDomain: null };
+        this.state = {
+            zoomDomain: null,
+            selectedDomain: null,
+        };
 
         // this.handleTrackerChanged = this.handleTrackerChanged.bind(this);
         this.handleTimeRangeChange = this.handleTimeRangeChange.bind(this);
@@ -76,10 +79,10 @@ class TimelineComp extends React.Component<IFullProps, IState> {
         this.props.selectTimelineItem(item);
     };
     handleZoom(domain) {
-        this.setState({ selectedDomain: domain });
+        this.setState({ selectedDomain: { x: domain.x } });
     }
     handleBrush(domain) {
-        this.setState({ zoomDomain: domain });
+        this.setState({ zoomDomain: { x: domain.x } });
     }
 
     render() {
@@ -158,7 +161,7 @@ class TimelineComp extends React.Component<IFullProps, IState> {
                         theme={chartTheme}
                         height={50}
                         width={chartWidth}
-                        domainPadding={{ x: 35, y: 10 }}
+                        domainPadding={{ x: 35, y: 5 }}
                         padding={{ left: 50, top: 0, bottom: 20 }}
                         scale={{ x: 'time' }}
                         domain={{
@@ -180,7 +183,7 @@ class TimelineComp extends React.Component<IFullProps, IState> {
                             horizontal={true}
                             style={{
                                 data: {
-                                    width: barWidth / 2,
+                                    width: 7,
                                     fill: d => d.color,
                                     stroke: d => d.color,
                                     strokeWidth: 0.5,
