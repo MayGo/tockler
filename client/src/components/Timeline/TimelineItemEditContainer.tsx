@@ -2,7 +2,7 @@ import { connect } from 'dva';
 import { TimelineItemEdit } from './TimelineItemEdit';
 
 const mapStateToProps = ({ timeline }: any) => ({
-    selectedTimelineItem: timeline.selectedTimelineItem.data().toJS(),
+    selectedTimelineItem: timeline.selectedTimelineItem,
 });
 const mapDispatchToProps = (dispatch: any) => ({
     saveTimelineItem: (item: any, colorScope: string) =>

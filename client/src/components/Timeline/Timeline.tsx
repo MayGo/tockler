@@ -8,10 +8,12 @@ import {
     VictoryZoomContainer,
     VictoryTooltip,
 } from 'victory';
+import { Popover, Spin } from 'antd';
 
 import { chartTheme } from './ChartTheme';
 import { TrackItemType } from '../../enum/TrackItemType';
-import { MainChart, BrushChart } from './Timeline.styles';
+import { MainChart, BrushChart, Spinner } from './Timeline.styles';
+import { TimelineItemEditContainer } from './TimelineItemEditContainer';
 
 interface IProps {
     timerange: any;
@@ -56,13 +58,8 @@ class TimelineComp extends React.Component<IFullProps, IState> {
             selectedDomain: null,
         };
 
-        // this.handleTrackerChanged = this.handleTrackerChanged.bind(this);
         this.handleTimeRangeChange = this.handleTimeRangeChange.bind(this);
     }
-
-    /* handleTrackerChanged(tracker: any) {
-        this.setState({ tracker });
-    }*/
 
     handleTimeRangeChange(timerange: any) {
         if (timerange) {
@@ -73,12 +70,13 @@ class TimelineComp extends React.Component<IFullProps, IState> {
     }
     handleSelectionChanged = item => {
         if (item) {
-            console.log(item);
-            console.log(item.data().get('title'));
+            console.log('Selected item:', item);
+            this.props.selectTimelineItem(item);
+        } else {
+            console.error('No item selected');
         }
-
-        this.props.selectTimelineItem(item);
     };
+
     handleZoom(domain) {
         this.setState({ selectedDomain: { x: domain.x } });
     }
@@ -92,8 +90,10 @@ class TimelineComp extends React.Component<IFullProps, IState> {
             logTrackItems,
             statusTrackItems,
             timerange,
+            selectedTimelineItem,
             visibleTimerange,
             chartWidth,
+            loading,
         }: IFullProps = this.props;
 
         if (!timerange && !appTrackItems && appTrackItems.length === 0) {
@@ -108,64 +108,86 @@ class TimelineComp extends React.Component<IFullProps, IState> {
         return (
             <div>
                 <MainChart>
-                    <VictoryChart
-                        theme={chartTheme}
-                        height={100}
-                        width={chartWidth}
-                        domainPadding={{ x: 35, y: 10 }}
-                        padding={{ left: 50, top: 0, bottom: 20 }}
-                        scale={{ x: 'time' }}
-                        domain={{
-                            x: [new Date(timerange[0]), new Date(timerange[1])],
-                            y: [1, 3],
-                        }}
-                        containerComponent={
-                            <VictoryZoomContainer
-                                responsive={false}
-                                zoomDimension="x"
-                                zoomDomain={this.state.zoomDomain}
-                                onZoomDomainChange={this.handleZoom.bind(this)}
-                            />
-                        }
+                    {loading && (
+                        <Spinner>
+                            <Spin />
+                        </Spinner>
+                    )}
+                    <Popover
+                        style={{ zIndex: 930 }}
+                        content={<TimelineItemEditContainer />}
+                        visible={!!selectedTimelineItem}
+                        trigger="click"
                     >
-                        <VictoryAxis
-                            dependentAxis={true}
-                            tickValues={[1, 2, 3]}
-                            tickFormat={['App', 'Status', 'Log']}
-                            style={{
-                                grid: { strokeWidth: 0 },
-                                ticks: { stroke: 'grey', size: 5 },
+                        <VictoryChart
+                            theme={chartTheme}
+                            height={100}
+                            width={chartWidth}
+                            domainPadding={{ x: 35, y: 10 }}
+                            padding={{ left: 50, top: 0, bottom: 20 }}
+                            scale={{ x: 'time' }}
+                            domain={{
+                                x: [new Date(timerange[0]), new Date(timerange[1])],
+                                y: [1, 3],
                             }}
-                        />
-                        <VictoryAxis />
-
-                        <VictoryBar
-                            horizontal={true}
-                            style={{
-                                data: {
-                                    width: barWidth,
-                                    fill: d => d.color,
-                                    stroke: d => d.color,
-                                    strokeWidth: 0.5,
-                                    fillOpacity: 0.75,
-                                },
-                            }}
-                            labels={d => d.title}
-                            labelComponent={
-                                <VictoryTooltip
-                                    horizontal={false}
-                                    style={chartTheme.tooltip.style}
-                                    cornerRadius={chartTheme.tooltip.cornerRadius}
-                                    pointerLength={chartTheme.tooltip.pointerLength}
-                                    flyoutStyle={chartTheme.tooltip.flyoutStyle}
+                            containerComponent={
+                                <VictoryZoomContainer
+                                    responsive={false}
+                                    zoomDimension="x"
+                                    zoomDomain={this.state.zoomDomain}
+                                    onZoomDomainChange={this.handleZoom.bind(this)}
                                 />
                             }
-                            x={d => getTrackItemOrder(d.taskName)}
-                            y={d => new Date(d.beginDate)}
-                            y0={d => new Date(d.endDate)}
-                            data={timelineData}
-                        />
-                    </VictoryChart>
+                        >
+                            <VictoryAxis
+                                dependentAxis={true}
+                                tickValues={[1, 2, 3]}
+                                tickFormat={['App', 'Status', 'Log']}
+                                style={{
+                                    grid: { strokeWidth: 0 },
+                                    ticks: { stroke: 'grey', size: 5 },
+                                }}
+                            />
+                            <VictoryAxis />
+
+                            <VictoryBar
+                                horizontal={true}
+                                events={[
+                                    {
+                                        target: 'data',
+                                        eventHandlers: {
+                                            onClick: (e, bubble) => {
+                                                this.handleSelectionChanged(bubble.datum);
+                                            },
+                                        },
+                                    },
+                                ]}
+                                style={{
+                                    data: {
+                                        width: barWidth,
+                                        fill: d => d.color,
+                                        stroke: d => d.color,
+                                        strokeWidth: 0.5,
+                                        fillOpacity: 0.75,
+                                    },
+                                }}
+                                labels={d => d.title}
+                                labelComponent={
+                                    <VictoryTooltip
+                                        horizontal={false}
+                                        style={chartTheme.tooltip.style}
+                                        cornerRadius={chartTheme.tooltip.cornerRadius}
+                                        pointerLength={chartTheme.tooltip.pointerLength}
+                                        flyoutStyle={chartTheme.tooltip.flyoutStyle}
+                                    />
+                                }
+                                x={d => getTrackItemOrder(d.taskName)}
+                                y={d => new Date(d.beginDate)}
+                                y0={d => new Date(d.endDate)}
+                                data={timelineData}
+                            />
+                        </VictoryChart>
+                    </Popover>
                 </MainChart>
                 <BrushChart>
                     <VictoryChart

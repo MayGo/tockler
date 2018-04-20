@@ -120,7 +120,7 @@ export const timelineModel: any = {
         },
         selectTimelineItem(state: any, { payload: { item } }: any) {
             if (item) {
-                console.log('Selected timeline item:', item.data().toJS());
+                console.log('Selected timeline item:', item);
             } else {
                 console.log('Deselected timeline item');
             }
