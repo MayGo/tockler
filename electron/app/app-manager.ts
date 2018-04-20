@@ -13,19 +13,8 @@ export default class AppManager {
     static async init() {
         AppManager.syncDb();
         AppManager.initGlobalClasses();
-        AppManager.initIpc();
-        await stateManager.restoreState();
-    }
 
-    static initIpc() {
-        ipcMain.on('TIMELINE_LOAD_DAY_REQUEST', (event, startDate, taskName) => {
-            logger.info('TIMELINE_LOAD_DAY_REQUEST', startDate, taskName);
-            trackItemService
-                .findAllFromDay(startDate, taskName)
-                .then(items =>
-                    event.sender.send('TIMELINE_LOAD_DAY_RESPONSE', startDate, taskName, items),
-                );
-        });
+        await stateManager.restoreState();
     }
 
     static syncDb() {
