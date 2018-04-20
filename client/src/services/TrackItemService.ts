@@ -12,8 +12,11 @@ export class TrackItemService {
           return TrackItemService.service.findAllFromDay(from, to, taskName, searchStr, paging);
       }*/
 
-    static findAllDayItems(from: Date, to: Date, taskName: string): Promise<any> {
-        return TrackItemService.service.findAllDayItems(from, to, taskName);
+    static async findAllDayItems(from: Date, to: Date, taskName: string): Promise<any> {
+        console.log('findAllDayItems', from, to, taskName);
+        const json = await TrackItemService.service.findAllDayItems(from, to, taskName);
+
+        return JSON.parse(json);
     }
 
     static async findAllItems(from: Date, to: Date) {
@@ -37,9 +40,11 @@ export class TrackItemService {
         return { appItems, statusItems, logItems };
     }
 
-    static findAllFromDay(from: Date, type: string): Promise<any> {
+    static async findAllFromDay(from: Date, type: string): Promise<any> {
         console.log('findAllFromDay', from, type);
-        return TrackItemService.service.findAllFromDay(from, type);
+        const json = await TrackItemService.service.findAllFromDay(from, type);
+        console.error(json);
+        return JSON.parse(json);
     }
 
     static findFirstLogItems(): Promise<any> {

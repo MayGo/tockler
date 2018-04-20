@@ -72,8 +72,8 @@ export class TrackItemService {
         });
     }
 
-    findAllDayItems(from, to, taskName) {
-        return models.TrackItem.findAll({
+    async findAllDayItems(from, to, taskName) {
+        const items = await models.TrackItem.findAll({
             where: {
                 endDate: {
                     $gte: from,
@@ -84,13 +84,8 @@ export class TrackItemService {
             raw: true,
             order: [['beginDate', 'ASC']],
         });
-    }
 
-    findAllFromDay(day, taskName) {
-        let to = moment(day).add(1, 'days');
-        this.logger.info('findAllFromDay ' + taskName + ' from:' + day + ', to:' + to.toDate());
-
-        return this.findAllDayItems(day, to.toDate(), taskName);
+        return JSON.stringify(items);
     }
 
     findFirstLogItems() {
