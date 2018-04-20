@@ -1,6 +1,4 @@
 import * as React from 'react';
-
-import { TimeRange } from 'pondjs';
 import { DatePicker, Button } from 'antd';
 import * as moment from 'moment';
 const { RangePicker } = DatePicker;
@@ -26,7 +24,7 @@ export class Search extends React.Component<IFullProps, IProps> {
         if (dates != null) {
             const beginDate = dates[0].toDate();
             const endDate = dates[1].toDate();
-            const newTimerange = new TimeRange(beginDate, endDate);
+            const newTimerange = [beginDate, endDate];
             this.props.loadTimerange(newTimerange);
         } else {
             console.error('No dates selected');
@@ -40,7 +38,7 @@ export class Search extends React.Component<IFullProps, IProps> {
         const endDate = moment()
             .endOf('day')
             .toDate();
-        const newTimerange = new TimeRange(beginDate, endDate);
+        const newTimerange = [beginDate, endDate];
         this.props.loadTimerange(newTimerange);
     };
     selectYesterday = () => {
@@ -53,7 +51,7 @@ export class Search extends React.Component<IFullProps, IProps> {
             .endOf('day')
             .subtract(1, 'days')
             .toDate();
-        const newTimerange = new TimeRange(beginDate, endDate);
+        const newTimerange = [beginDate, endDate];
         this.props.loadTimerange(newTimerange);
     };
 
@@ -65,7 +63,7 @@ export class Search extends React.Component<IFullProps, IProps> {
         const endDate = moment()
             .endOf('hour')
             .toDate();
-        const newTimerange = new TimeRange(beginDate, endDate);
+        const newTimerange = [beginDate, endDate];
         this.props.loadTimerange(newTimerange);
     };
 
