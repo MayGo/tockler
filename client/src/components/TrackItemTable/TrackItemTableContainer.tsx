@@ -4,7 +4,7 @@ import { TrackItemTable } from './TrackItemTable';
 import { TrackItemType } from '../../enum/TrackItemType';
 
 const mapStateToProps = ({ timeline }: any) => ({
-    timerange: timeline.timerange,
+    visibleTimerange: timeline.visibleTimerange,
     appTrackItems: timeline[TrackItemType.AppTrackItem],
     statusTrackItems: timeline[TrackItemType.StatusTrackItem],
 });

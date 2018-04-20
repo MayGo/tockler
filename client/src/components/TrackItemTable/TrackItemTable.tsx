@@ -150,6 +150,24 @@ export class TrackItemTable extends React.Component {
                 sorter: (a: any, b: any) => a.title.length - b.title.length,
                 sortOrder: sortedInfo.columnKey === 'title' && sortedInfo.order,
             },
+            {
+                title: 'Begin',
+                dataIndex: 'beginDate',
+                key: 'beginDate',
+                onFilter: (value: any, record: any) => new Date(record.beginDate) > value,
+                sorter: (a: any, b: any) =>
+                    new Date(a.beginDate).getTime() - new Date(b.beginDate).getTime(),
+                sortOrder: sortedInfo.columnKey === 'beginDate' && sortedInfo.order,
+            },
+            {
+                title: 'End',
+                dataIndex: 'endDate',
+                key: 'endDate',
+                onFilter: (value: any, record: any) => new Date(record.endDate) > value,
+                sorter: (a: any, b: any) =>
+                    new Date(a.endDate).getTime() - new Date(b.endDate).getTime(),
+                sortOrder: sortedInfo.columnKey === 'endDate' && sortedInfo.order,
+            },
         ];
         return (
             <div>
