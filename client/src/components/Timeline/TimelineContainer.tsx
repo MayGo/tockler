@@ -14,7 +14,7 @@ const mapStateToProps = ({ timeline, loading }: any) => ({
     loading: loading.models.timeline,
 });
 const mapDispatchToProps = (dispatch: any) => ({
-    changeTimerange: (visibleTimerange: any) =>
+    changeVisibleTimerange: (visibleTimerange: any) =>
         dispatch({
             type: 'timeline/changeVisibleTimerange',
             payload: { visibleTimerange },

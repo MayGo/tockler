@@ -21,17 +21,14 @@ interface IProps {
     appTrackItems: any;
     statusTrackItems: any;
     logTrackItems: any;
-    changeTimerange?: any;
+    changeVisibleTimerange?: any;
     selectTimelineItem?: any;
     tracker?: any;
     selectedTimelineItem?: any;
     chartWidth?: number;
     loading?: boolean;
 }
-interface IState {
-    zoomDomain: any;
-    selectedDomain: any;
-}
+interface IState {}
 
 interface IHocProps {}
 
@@ -51,23 +48,13 @@ const getTrackItemOrder = (type: string) => {
 };
 
 class TimelineComp extends React.Component<IFullProps, IState> {
-    constructor(props: any) {
-        super(props);
-        this.state = {
-            zoomDomain: null,
-            selectedDomain: null,
-        };
-
-        this.handleTimeRangeChange = this.handleTimeRangeChange.bind(this);
-    }
-
-    handleTimeRangeChange(timerange: any) {
+    handleTimeRangeChange = (timerange: any) => {
         if (timerange) {
-            this.props.changeTimerange(timerange);
+            this.props.changeVisibleTimerange(timerange);
         } else {
             console.error('No Timerange to update');
         }
-    }
+    };
     handleSelectionChanged = item => {
         if (item) {
             console.log('Selected item:', item);
@@ -78,10 +65,12 @@ class TimelineComp extends React.Component<IFullProps, IState> {
     };
 
     handleZoom(domain) {
-        this.setState({ selectedDomain: { x: domain.x } });
+        this.props.changeVisibleTimerange(domain.x);
     }
+
     handleBrush(domain) {
-        this.setState({ zoomDomain: { x: domain.x } });
+        console.log('Selected with brush:', domain.x);
+        this.props.changeVisibleTimerange(domain.x);
     }
 
     render() {
@@ -134,7 +123,7 @@ class TimelineComp extends React.Component<IFullProps, IState> {
                                 <VictoryZoomContainer
                                     responsive={false}
                                     zoomDimension="x"
-                                    zoomDomain={this.state.zoomDomain}
+                                    zoomDomain={{ x: visibleTimerange }}
                                     onZoomDomainChange={this.handleZoom.bind(this)}
                                 />
                             }
@@ -205,7 +194,7 @@ class TimelineComp extends React.Component<IFullProps, IState> {
                             <VictoryBrushContainer
                                 responsive={false}
                                 brushDimension="x"
-                                brushDomain={this.state.selectedDomain}
+                                brushDomain={{ x: visibleTimerange }}
                                 onBrushDomainChange={this.handleBrush.bind(this)}
                             />
                         }
