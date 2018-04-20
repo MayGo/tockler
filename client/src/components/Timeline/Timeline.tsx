@@ -6,6 +6,7 @@ import {
     VictoryBar,
     VictoryAxis,
     VictoryZoomContainer,
+    VictoryTooltip,
 } from 'victory';
 
 import { chartTheme } from './ChartTheme';
@@ -149,6 +150,16 @@ class TimelineComp extends React.Component<IFullProps, IState> {
                                     fillOpacity: 0.75,
                                 },
                             }}
+                            labels={d => d.title}
+                            labelComponent={
+                                <VictoryTooltip
+                                    horizontal={false}
+                                    style={chartTheme.tooltip.style}
+                                    cornerRadius={chartTheme.tooltip.cornerRadius}
+                                    pointerLength={chartTheme.tooltip.pointerLength}
+                                    flyoutStyle={chartTheme.tooltip.flyoutStyle}
+                                />
+                            }
                             x={d => getTrackItemOrder(d.taskName)}
                             y={d => new Date(d.beginDate)}
                             y0={d => new Date(d.endDate)}

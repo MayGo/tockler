@@ -23,6 +23,7 @@ export const timelineModel: any = {
         ],
         selectedTimelineItem: null,
     },
+
     subscriptions: {
         setup({ dispatch }: any) {
             console.log('Timeline data setup');
