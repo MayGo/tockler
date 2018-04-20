@@ -10,6 +10,12 @@ const mapDispatchToProps = (dispatch: any) => ({
             type: 'timeline/saveTimelineItem',
             payload: { item, colorScope },
         }),
+
+    clearTimelineItem: (item: any, colorScope: string) =>
+        dispatch({
+            type: 'timeline/selectTimelineItem',
+            payload: {},
+        }),
 });
 
 export const TimelineItemEditContainer = connect(mapStateToProps, mapDispatchToProps)(

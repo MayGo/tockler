@@ -12,6 +12,7 @@ interface IProps {
     changeColorForApp: any;
     updateColorForApp: any;
     colorScopeHidden?: boolean;
+    clearTimelineItem: any;
 }
 
 interface IState {
@@ -67,6 +68,7 @@ export class TimelineItemEdit extends React.Component<IProps, IState> {
             },
         }));
     };
+
     changeAppTitle = e => {
         const { value } = e.target;
         console.log('Changed app title:', value);
@@ -78,6 +80,11 @@ export class TimelineItemEdit extends React.Component<IProps, IState> {
                 title: value,
             },
         }));
+    };
+
+    closeEdit = () => {
+        console.log('Close TimelineItem');
+        this.props.clearTimelineItem();
     };
 
     changeColorScopeHandler = colorScope => {
@@ -115,7 +122,7 @@ export class TimelineItemEdit extends React.Component<IProps, IState> {
                             onChange={this.changeAppName}
                         />
                     </Col>
-                    <Col span={12}>
+                    <Col span={11}>
                         <Input
                             defaultValue={trackItem.title}
                             placeholder="Title"
@@ -151,6 +158,14 @@ export class TimelineItemEdit extends React.Component<IProps, IState> {
                             shape="circle"
                             icon="save"
                             onClick={this.saveBasedOnColorOptionHandler}
+                        />
+                    </Col>
+                    <Col span={1}>
+                        <Button
+                            type="primary"
+                            shape="circle"
+                            icon="close"
+                            onClick={this.closeEdit}
                         />
                     </Col>
                 </InputGroup>
