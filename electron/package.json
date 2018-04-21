@@ -1,6 +1,6 @@
 {
     "name": "tockler",
-    "version": "3.1.5",
+    "version": "3.2.0-react",
     "description": "Automatically track applications usage and working time",
     "author": "Maigo Erit <maigo.erit@gmail.com>",
     "license": "GPL-2.0",
@@ -76,14 +76,8 @@
         "globals": {
             "__TEST__": true
         },
-        "unmockedModulePathPatterns": [
-            "babel",
-            "<rootDir>/node_modules/source-map-support"
-        ],
-        "moduleFileExtensions": [
-            "ts",
-            "js"
-        ],
+        "unmockedModulePathPatterns": ["babel", "<rootDir>/node_modules/source-map-support"],
+        "moduleFileExtensions": ["ts", "js"],
         "setupTestFrameworkScriptFile": "<rootDir>/util/jest-setup.js",
         "transform": {
             "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
