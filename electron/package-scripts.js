@@ -33,7 +33,7 @@ module.exports = {
     },
     
     release: series(
-      copy("../client/dist/* ./dist"),
+      copy("../client/build/* ./dist"),
       'build -c electron-builder.yml'
     )
   }
