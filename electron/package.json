@@ -18,20 +18,21 @@
         "build_mac": "build -c electron-builder.yml --mac",
         "build_linux": "build -c electron-builder.yml --linux",
         "build_windows": "build -c electron-builder.yml --win",
-        "release": "build -c electron-builder.yml"
+        "build": "webpack --progress --env.production",
+        "release": "cpx \"../client/build/**/*\" dist && build -c electron-builder.yml"
     },
     "dependencies": {
         "active-win": "^3.0.0",
         "auto-launch": "5.0.1",
         "compare-versions": "^3.0.0",
+        "cpx": "^1.5.0",
         "delay": "^2.0.0",
         "electron-context-menu": " 0.9.1",
         "electron-devtools-installer": "^2.2.3",
         "electron-is-dev": "^0.3.0",
         "electron-log": "^2.2.7",
         "electron-squirrel-startup": "^1.0.0",
-        "electron-updater": "^2.3.1",
-
+        "electron-updater": "^2.16.1",
         "menubar": "^5.2.3",
         "moment": "2.18.1",
         "multiline": "^1.0.2",
@@ -56,7 +57,6 @@
         "electron": "1.8.4",
         "electron-builder": "^19.19.1",
         "electron-connect": "0.6.3",
-        "electron-rebuild": "1.7.3",
         "electron-reload": "1.2.1",
         "friendly-errors-webpack-plugin": "^1.6.1",
         "jest": "20.0.4",
@@ -76,8 +76,14 @@
         "globals": {
             "__TEST__": true
         },
-        "unmockedModulePathPatterns": ["babel", "<rootDir>/node_modules/source-map-support"],
-        "moduleFileExtensions": ["ts", "js"],
+        "unmockedModulePathPatterns": [
+            "babel",
+            "<rootDir>/node_modules/source-map-support"
+        ],
+        "moduleFileExtensions": [
+            "ts",
+            "js"
+        ],
         "setupTestFrameworkScriptFile": "<rootDir>/util/jest-setup.js",
         "transform": {
             "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"

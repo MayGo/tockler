@@ -30,4 +30,4 @@ build_script:
   - cd ..
   - cd electron
   - nps build.prod
-  - nps release
+  - npm run release
