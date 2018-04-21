@@ -1,26 +1,34 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "module": "es2015",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "moduleResolution": "node",
-    "allowJs": true,
-    "sourceRoot": "./",
-    "baseUrl": "./",
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "lib": [
-      "es2017",
-      "dom"
+    "compilerOptions": {
+        "outDir": "build/dist",
+        "module": "es2015",
+        "target": "es2017",
+        "lib": ["es2017", "dom"],
+        "sourceMap": true,
+        "allowJs": true,
+        "jsx": "react",
+        "moduleResolution": "node",
+        "rootDir": "src",
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noImplicitAny": false,
+        "strictNullChecks": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "noUnusedLocals": true,
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true,
+        "baseUrl": ".",
+
+        "typeRoots": ["./node_modules/@types", "../@types"]
+    },
+    "exclude": [
+        "node_modules",
+        "build",
+        "scripts",
+        "acceptance-tests",
+        "webpack",
+        "jest",
+        "src/setupTests.ts"
     ]
-  },
-  "exclude": [
-    "app",
-    "node_modules",
-    "node_modules/aurelia-validation/node_modules",
-    "dist",
-    "packaged",
-    "static"
-  ]
 }

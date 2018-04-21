@@ -2,29 +2,26 @@
 
 import * as SequelizeStatic from 'sequelize';
 import { DataTypes, Sequelize } from 'sequelize';
-import {
-  AppSettingAttributes,
-  AppSettingInstance,
-} from './interfaces/app-setting-interface';
+import { AppSettingAttributes, AppSettingInstance } from './interfaces/app-setting-interface';
 
 export default function(
-  sequelize: Sequelize,
+    sequelize: Sequelize,
 ): SequelizeStatic.Model<AppSettingInstance, AppSettingAttributes> {
-  let AppSetting = sequelize.define<AppSettingInstance, AppSettingAttributes>(
-    'AppSetting',
-    {
-      name: SequelizeStatic.STRING,
-      color: SequelizeStatic.STRING,
-    },
-    {
-      timestamps: false,
-      indexes: [
+    let AppSetting = sequelize.define<AppSettingInstance, AppSettingAttributes>(
+        'AppSetting',
         {
-          fields: ['name'],
+            name: SequelizeStatic.STRING,
+            color: SequelizeStatic.STRING,
         },
-      ],
-    },
-  );
+        {
+            timestamps: false,
+            indexes: [
+                {
+                    fields: ['name'],
+                },
+            ],
+        },
+    );
 
-  return AppSetting;
+    return AppSetting;
 }

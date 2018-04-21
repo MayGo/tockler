@@ -1,0 +1,32 @@
+{
+    "plugins": ["jest"],
+    "env": {
+        "jest": true
+    },
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true,
+            "modules": true,
+            "experimentalObjectRestSpread": false
+        }
+    },
+    "extends": "airbnb",
+    "rules": {
+        "indent": [2, 4],
+        "react/jsx-indent": 4,
+        "react/jsx-indent-props": 4,
+        "react/forbid-prop-types": false,
+        "react/require-default-props": false,
+        "arrow-parens": ["error", "as-needed"],
+        "import/extensions": ["never"],
+        "jsx-a11y/click-events-have-key-events": false,
+        "jsx-a11y/no-static-element-interactions": false,
+        "jsx-a11y/anchor-is-valid": false,
+        "function-paren-newline": ["error", "consistent"],
+        "comma-dangle": ["error", "always-multiline", { "functions": "never" }],
+        "import/prefer-default-export": false
+    }
+}

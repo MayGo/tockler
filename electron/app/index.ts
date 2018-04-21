@@ -1,42 +1,48 @@
 import { backgroundJob } from './background-job';
 import { backgroundService } from './background-service';
-import { app, ipcMain, powerMonitor } from "electron";
-import { logManager } from "./log-manager";
+import { app, ipcMain, powerMonitor } from 'electron';
+import { logManager } from './log-manager';
 
-import AppManager from "./app-manager";
-AppManager.init();
+import AppManager from './app-manager';
 
-import windowManager from "./window-manager";
-import {extensionsManager} from "./extensions-manager";
-import AppUpdater from "./app-updater";
+AppManager.init().then(
+    () => console.info('AppManager.init'),
+    e => console.error('Error in AppManager.init', e),
+);
+
+import windowManager from './window-manager';
+import { extensionsManager } from './extensions-manager';
+import AppUpdater from './app-updater';
 import config from './config';
 import * as path from 'path';
 
 AppUpdater.init();
 
 if (config.isDev) {
-    //const reloadFile = path.join(config.client);
-   // require('electron-reload')(reloadFile);
+    // const reloadFile = path.join(config.client);
+    // require('electron-reload')(reloadFile);
 }
 
 let AutoLaunch = require('auto-launch');
 let appLauncher = new AutoLaunch({
-    name: 'Tockler'
+    name: 'Tockler',
 });
 
-appLauncher.isEnabled().then((enabled) => {
-    if (enabled) {
-        console.log('AppLauncher is enabled');
-        return;
-    }
+appLauncher
+    .isEnabled()
+    .then(enabled => {
+        if (enabled) {
+            console.log('AppLauncher is enabled');
+            return;
+        }
 
-    console.log('Enabling app launcher');
+        console.log('Enabling app launcher');
 
-    return appLauncher.enable();
-
-}).then((err) => {
-    console.error("Error with appLauncher:", err);
-});
+        return appLauncher.enable();
+    })
+    .then(err => {
+        console.error('Error with appLauncher:', err);
+    });
 
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
 
@@ -57,35 +63,35 @@ app.on('ready', async () => {
 
     windowManager.initMenus();
 
-
     backgroundJob.init();
 
-    powerMonitor.on('suspend', function () {
+    powerMonitor.on('suspend', function() {
         console.log('The system is going to sleep');
         backgroundService.onSleep();
     });
 
-    powerMonitor.on('resume', function () {
+    powerMonitor.on('resume', function() {
         console.log('The system is going to resume');
-        backgroundService.onResume();
+        backgroundService
+            .onResume()
+            .then(() => console.info('Resumed'), e => console.error('Error in onResume', e));
     });
 });
-
 
 require('electron-context-menu')({});
 
 /**
  * Emitted when all windows are closed
  */
-app.on('window-all-closed', function () {
+app.on('window-all-closed', function() {
     console.log('window-all-closed');
-    //pluginMgr.removeAll();
-    //app.quit();
+    // pluginMgr.removeAll();
+    // app.quit();
 });
 
-ipcMain.on('close-app', function () {
+ipcMain.on('close-app', function() {
     console.log('Closing app');
-    //pluginMgr.removeAll();
+    // pluginMgr.removeAll();
     app.quit();
 });
 
@@ -95,14 +101,14 @@ ipcMain.on('close-app', function () {
  */
 
 app.on('activate', () => {
-    console.log("Show menubar.");
-    windowManager.menubar.window.show();
+    // console.log("Show menubar.");
+    // windowManager.menubar.window.show();
 });
 
 /* Single Instance Check */
 
 let iShouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
-    console.log("Make single instance");
+    console.log('Make single instance');
 
     if (windowManager && windowManager.mainWindow) {
         if (windowManager.mainWindow.isMinimized()) {
@@ -120,6 +126,6 @@ let iShouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
 
 if (iShouldQuit && !config.isDev) {
     console.log('Quiting instance.');
-    //pluginMgr.removeAll();
+    // pluginMgr.removeAll();
     app.quit();
 }

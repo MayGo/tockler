@@ -26,8 +26,8 @@ install:
   - yarn install
 
 build_script:
-  - nps build.prod
+  - npm run build
   - cd ..
   - cd electron
   - nps build.prod
-  - nps release
+  - npm run release

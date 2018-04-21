@@ -15,95 +15,91 @@ import { State } from '../enums/state';
 import { appConstants } from '../app-constants';
 
 export class StatusTrackItemJob {
-  run() {
-    try {
-      this.checkIfIsInCorrectState();
-      this.saveUserIdleTime();
-    } catch (error) {
-      logger.error(error);
-    }
-  }
-
-  checkIfIsInCorrectState(): void {}
-
-  saveUserIdleTime() {
-    //'darwin', 'freebsd', 'linux', 'sunos' or 'win32'
-    let runExec = '';
-    let args = [];
-    if (process.platform === 'darwin') {
-      runExec = 'sh';
-      args.push(path.join(config.root, 'scripts', 'get-user-idle-time.mac.sh'));
-    } else if (process.platform === 'win32') {
-      runExec = 'powershell.exe';
-      args.push(
-        '"& ""' +
-          path.join(config.root, 'scripts', 'get-user-idle-time.ps1') +
-          '"""',
-      );
-    } else if (process.platform === 'linux') {
-      runExec = 'sh';
-      args.push(
-        path.join(config.root, 'scripts', 'get-user-idle-time.linux.sh'),
-      );
+    run() {
+        try {
+            this.saveUserIdleTime();
+        } catch (error) {
+            logger.error(error);
+        }
     }
 
-    //logger.debug('Script saveUserIdleTime file: ' + script)
+    saveUserIdleTime() {
+        // 'darwin', 'freebsd', 'linux', 'sunos' or 'win32'
+        let runExec = '';
+        let args = [];
+        if (process.platform === 'darwin') {
+            runExec = 'sh';
+            args.push(path.join(config.root, 'scripts', 'get-user-idle-time.mac.sh'));
+        } else if (process.platform === 'win32') {
+            runExec = 'powershell.exe';
+            args.push(
+                '"& ""' + path.join(config.root, 'scripts', 'get-user-idle-time.ps1') + '"""',
+            );
+        } else if (process.platform === 'linux') {
+            runExec = 'sh';
+            args.push(path.join(config.root, 'scripts', 'get-user-idle-time.linux.sh'));
+        }
 
-    let handleSuccess = stdout => {
-      logger.debug('Idle time: ' + stdout);
+        // logger.debug('Script saveUserIdleTime file: ' + script)
 
-      let seconds = stdout;
+        let handleSuccess = stdout => {
+            logger.debug('Idle time: ' + stdout);
 
-      this.saveIdleTrackItem(seconds);
-    };
+            let seconds = stdout;
 
-    let handleError = (error: string) => {
-      logger.error('saveUserIdleTime error: ', error);
-      UserMessages.showError('Error getting user idle time', error);
-    };
+            this.saveIdleTrackItem(seconds).then(
+                () => logger.debug(`Idle saved ${seconds}`),
+                e => logger.error('Idle error', e),
+            );
+        };
 
-    let callcack = (err: Error, stdout: any, stderr: string) => {
-      if (stderr) {
-        handleError(stderr);
-        return;
-      }
+        let handleError = (error: string) => {
+            logger.error('saveUserIdleTime error: ', error);
+            UserMessages.showError('Error getting user idle time', error);
+        };
 
-      if (err) {
-        handleError(err.toString());
-        logger.error('saveUserIdleTime err', err);
-        return;
-      }
+        let callcack = (err: Error, stdout: any, stderr: string) => {
+            if (stderr) {
+                handleError(stderr);
+                return;
+            }
 
-      handleSuccess(stdout);
-    };
+            if (err) {
+                handleError(err.toString());
+                logger.error('saveUserIdleTime err', err);
+                return;
+            }
 
-    execFile(runExec, args, { timeout: 2000 }, callcack);
-  }
+            handleSuccess(stdout);
+        };
 
-  saveIdleTrackItem(seconds) {
-    if (stateManager.isSystemSleeping()) {
-      logger.info('Computer is sleeping, not running saveIdleTrackItem');
-      return 'SLEEPING';
+        execFile(runExec, args, { timeout: 2000 }, callcack);
     }
 
-    let state: State =
-      seconds > appConstants.IDLE_IN_SECONDS_TO_LOG ? State.Idle : State.Online;
-    // Cannot go from OFFLINE to IDLE
-    if (stateManager.isSystemOffline() && state === State.Idle) {
-      logger.info('Not saving. Cannot go from OFFLINE to IDLE');
-      return 'BAD_STATE';
+    async saveIdleTrackItem(seconds) {
+        if (stateManager.isSystemSleeping()) {
+            logger.info('Computer is sleeping, not running saveIdleTrackItem');
+            return 'SLEEPING';
+        }
+
+        let state: State =
+            seconds > appConstants.IDLE_IN_SECONDS_TO_LOG ? State.Idle : State.Online;
+        // Cannot go from OFFLINE to IDLE
+        if (stateManager.isSystemOffline() && state === State.Idle) {
+            logger.info('Not saving. Cannot go from OFFLINE to IDLE');
+            return 'BAD_STATE';
+        }
+
+        let rawItem: any = {
+            taskName: 'StatusTrackItem',
+            app: state,
+            title: state.toString().toLowerCase(),
+            beginDate: BackgroundUtils.currentTimeMinusJobInterval(),
+            endDate: new Date(),
+        };
+
+        await backgroundService.createOrUpdate(rawItem);
     }
-
-    let rawItem: any = {
-      taskName: 'StatusTrackItem',
-      app: state,
-      title: state.toString().toLowerCase(),
-      beginDate: BackgroundUtils.currentTimeMinusJobInterval(),
-      endDate: new Date(),
-    };
-
-    backgroundService.createOrUpdate(rawItem);
-  }
 }
 
 export const statusTrackItemJob = new StatusTrackItemJob();

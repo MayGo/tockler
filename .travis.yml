@@ -27,7 +27,7 @@ cache:
     - $HOME/.electron
 
 install:
-  - npm install yarn -g nps
+  - npm install yarn -g
   - cd electron
   - yarn install
   - cd ..
@@ -35,11 +35,11 @@ install:
   - yarn install
 
 script:
-  - nps build.prod
+  - npm run build
   - cd ..
   - cd electron
   - nps build.prod
-  - nps release
+  - npm run release
 
 branches:
   only:

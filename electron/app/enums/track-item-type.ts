@@ -1,5 +1,5 @@
 export enum TrackItemType {
-    LogTrackItem = "LogTrackItem",
-    AppTrackItem = "AppTrackItem",
-    StatusTrackItem = "StatusTrackItem"
+    LogTrackItem = 'LogTrackItem',
+    AppTrackItem = 'AppTrackItem',
+    StatusTrackItem = 'StatusTrackItem',
 }

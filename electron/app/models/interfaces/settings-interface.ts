@@ -1,13 +1,13 @@
-import { Instance } from "sequelize";
+import { Instance } from 'sequelize';
 
 export interface SettingsAttributes {
-  name?: string;
-  jsonData?: string;
+    name?: string;
+    jsonData?: string;
 }
 
 export interface SettingsInstance extends Instance<SettingsAttributes> {
-  dataValues: SettingsAttributes;
-  name?: string;
-  jsonData?: string;
-  jsonDataParsed?: any;
+    dataValues: SettingsAttributes;
+    name?: string;
+    jsonData?: string;
+    jsonDataParsed?: any;
 }
