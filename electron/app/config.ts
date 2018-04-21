@@ -28,7 +28,7 @@ export default {
 
     // enable tray icon for dev mode
 
-    trayEnabledInDev: false,
+    trayEnabledInDev: true,
 
     // name of the main window
     mainAppName: 'main-window',

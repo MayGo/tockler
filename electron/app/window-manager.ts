@@ -31,8 +31,10 @@ export default class WindowManager {
         });
 
         this.mainWindow.maximize();
-        // this.mainWindow.loadURL('file://' + config.client + '/index.html');
-        this.mainWindow.loadURL('http://localhost:3000');
+        const url = config.isDev
+            ? 'http://localhost:3000'
+            : 'file://' + config.client + '/index.html';
+        this.mainWindow.loadURL(url);
 
         this.mainWindow.on('closed', () => {
             this.mainWindow = null;
@@ -88,8 +90,12 @@ export default class WindowManager {
          * https://github.com/maxogden/menubar
          */
         let icon = os.platform() === 'darwin' ? config.icon : config.iconBig;
+        const url = config.isDev
+            ? 'http://localhost:3000/#/trayApp'
+            : 'file://' + config.client + '/index.html/#/trayApp';
+
         this.menubar = menubar({
-            index: 'file://' + config.client + '/index.html',
+            index: url,
             icon: icon,
             preloadWindow: true,
             showDockIcon: true,

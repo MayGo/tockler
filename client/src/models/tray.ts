@@ -2,6 +2,7 @@ import { TrackItemService } from '../services/TrackItemService';
 import { SettingsService } from '../services/SettingsService';
 
 import * as Immutable from 'immutable';
+
 const ipcRenderer = (<any>window).require('electron').ipcRenderer;
 
 export const trayModel: any = {
@@ -35,6 +36,15 @@ export const trayModel: any = {
     },
 
     effects: {
+        *closeApp({ payload }: any, { call, put }: any) {
+            console.log('close-app');
+            ipcRenderer.send('close-app');
+        },
+
+        *toggleMainWindow({ payload }: any, { call, put }: any) {
+            console.log('toggle-main-window');
+            ipcRenderer.send('toggle-main-window');
+        },
         *getRunningLogItem({ payload }: any, { call, put }: any) {
             console.log('getRunningLogItem');
 
