@@ -11,10 +11,10 @@ module.exports = function override(config, env) {
         console.log('⚡ Production build with Optimization.');
         // return config;
     }
-
+    // prettier-ignore
     const tsLoader = getLoader(
         config.module.rules,
-        rule => rule.loader && typeof rule.loader === 'string' && rule.loader.includes('ts-loader'),
+        rule => rule.loader && typeof rule.loader === 'string' && rule.loader.includes('ts-loader')
     );
 
     tsLoader.options = {
