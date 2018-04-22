@@ -99,7 +99,7 @@ export default class WindowManager {
             icon: icon,
             preloadWindow: true,
             showDockIcon: true,
-            width: 400,
+            width: 450,
             height: 500,
         });
 

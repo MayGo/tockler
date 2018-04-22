@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Menu, Icon } from 'antd';
 
-import { Brand, Img } from './TrayMenu.styles';
+import { Brand, Img, RightMenuItem } from './TrayMenu.styles';
 
 const tocklerIcon = require('../../assets/icons/tockler_icon.png');
 //  tslint:disable-next-line
@@ -26,16 +26,16 @@ export const TrayMenu = ({ dispatch }: any) => {
                 </a>
             </Menu.Item>
 
-            <Menu.Item key="/toggleMainWindow">
-                <a onClick={toggleMainWindow}>
-                    <Icon type="arrows-alt" />
-                </a>
-            </Menu.Item>
-            <Menu.Item key="/exitApp">
+            <RightMenuItem key="/exitApp">
                 <a onClick={exitApp}>
                     <Icon type="poweroff" />
                 </a>
-            </Menu.Item>
+            </RightMenuItem>
+            <RightMenuItem key="/toggleMainWindow">
+                <a onClick={toggleMainWindow}>
+                    <Icon type="arrows-alt" />
+                </a>
+            </RightMenuItem>
         </Menu>
     );
 };
