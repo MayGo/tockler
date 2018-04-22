@@ -92,7 +92,7 @@ export default class WindowManager {
         let icon = os.platform() === 'darwin' ? config.icon : config.iconBig;
         const url = config.isDev
             ? 'http://localhost:3000/#/trayApp'
-            : 'file://' + config.client + '/index.html/#/trayApp';
+            : 'file://' + config.client + '/index.html?/#/trayApp';
 
         this.menubar = menubar({
             index: url,
