@@ -138,7 +138,7 @@ class TimelineComp extends React.Component<IFullProps, IState> {
                                     ticks: { stroke: 'grey', size: 5 },
                                 }}
                             />
-                            <VictoryAxis />
+                            <VictoryAxis tickCount={20} />
 
                             <VictoryBar
                                 horizontal={true}
@@ -200,7 +200,7 @@ class TimelineComp extends React.Component<IFullProps, IState> {
                             />
                         }
                     >
-                        <VictoryAxis />
+                        <VictoryAxis tickCount={20} />
 
                         <VictoryBar
                             horizontal={true}
