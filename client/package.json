@@ -4,6 +4,7 @@
     "private": true,
     "dependencies": {
         "antd": "^3.3.0",
+        "cross-env": "^5.1.4",
         "dva": "^2.1.0",
         "dva-loading": "^1.0.4",
         "grid-styled": "^3.2.1",
@@ -25,7 +26,8 @@
     },
     "scripts": {
         "start": "react-app-rewired start --scripts-version react-scripts-ts",
-        "build": "PUBLIC_URL=./ react-app-rewired build --scripts-version react-scripts-ts",
+        "build":
+            "cross-env PUBLIC_URL=./ react-app-rewired build --scripts-version react-scripts-ts",
         "test": "react-app-rewired test --env=jsdom --scripts-version react-scripts-ts",
         "eject": "react-app-rewired eject"
     },
