@@ -5,7 +5,7 @@ import * as path from 'path';
 const isDevelopment = require('electron-is-dev');
 
 let root = path.join(__dirname, '..');
-let client = isDevelopment ? path.join(root, '..', 'client', 'dist') : path.join(root, 'dist');
+let client = isDevelopment ? path.join(root, '..', 'client', 'build') : path.join(root, 'dist');
 let userDir = app.getPath('userData');
 
 console.log('User dir is:' + userDir);
