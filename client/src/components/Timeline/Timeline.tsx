@@ -9,7 +9,7 @@ import {
     VictoryTooltip,
 } from 'victory';
 import { Popover, Spin } from 'antd';
-
+import debounce from 'lodash/debounce';
 import { chartTheme } from './ChartTheme';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { MainChart, BrushChart, Spinner } from './Timeline.styles';
@@ -64,14 +64,15 @@ class TimelineComp extends React.Component<IFullProps, IState> {
         }
     };
 
-    handleZoom(domain) {
+    handleZoom = domain => {
         this.props.changeVisibleTimerange(domain.x);
-    }
+    };
 
-    handleBrush(domain) {
+    handleBrush = domain => {
         console.log('Selected with brush:', domain.x);
+
         this.props.changeVisibleTimerange(domain.x);
-    }
+    };
 
     render() {
         const {
@@ -124,7 +125,7 @@ class TimelineComp extends React.Component<IFullProps, IState> {
                                     responsive={false}
                                     zoomDimension="x"
                                     zoomDomain={{ x: visibleTimerange }}
-                                    onZoomDomainChange={this.handleZoom.bind(this)}
+                                    onZoomDomainChange={debounce(this.handleZoom, 300)}
                                 />
                             }
                         >
@@ -195,7 +196,7 @@ class TimelineComp extends React.Component<IFullProps, IState> {
                                 responsive={false}
                                 brushDimension="x"
                                 brushDomain={{ x: visibleTimerange }}
-                                onBrushDomainChange={this.handleBrush.bind(this)}
+                                onBrushDomainChange={debounce(this.handleBrush, 300)}
                             />
                         }
                     >
