@@ -26,12 +26,22 @@ export const addToTimelineItems = (
         statusItems: ITrackItem[];
     },
 ): ITimelineState => {
+    const appIds = payload.appItems.map(item => item.id);
+    const logIds = payload.logItems.map(item => item.id);
+    const statusIds = payload.statusItems.map(item => item.id);
+
     return {
         ...state,
-        [TrackItemType.AppTrackItem]: [...state[TrackItemType.AppTrackItem], ...payload.appItems],
-        [TrackItemType.LogTrackItem]: [...state[TrackItemType.LogTrackItem], ...payload.logItems],
+        [TrackItemType.AppTrackItem]: [
+            ...state[TrackItemType.AppTrackItem].filter(item => !appIds.includes(item.id)),
+            ...payload.appItems,
+        ],
+        [TrackItemType.LogTrackItem]: [
+            ...state[TrackItemType.LogTrackItem].filter(item => !logIds.includes(item.id)),
+            ...payload.logItems,
+        ],
         [TrackItemType.StatusTrackItem]: [
-            ...state[TrackItemType.StatusTrackItem],
+            ...state[TrackItemType.StatusTrackItem].filter(item => !statusIds.includes(item.id)),
             ...payload.statusItems,
         ],
     };

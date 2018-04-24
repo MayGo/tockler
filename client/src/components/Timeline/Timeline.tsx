@@ -9,6 +9,10 @@ import {
     VictoryTooltip,
 } from 'victory';
 import { Popover, Spin } from 'antd';
+import moment from 'moment';
+
+import 'moment-duration-format';
+
 import debounce from 'lodash/debounce';
 import { chartTheme } from './ChartTheme';
 import { TrackItemType } from '../../enum/TrackItemType';
@@ -161,7 +165,19 @@ class TimelineComp extends React.Component<IFullProps, IState> {
                                         fillOpacity: 0.75,
                                     },
                                 }}
-                                labels={d => d.title}
+                                labels={d => {
+                                    const diff = moment(new Date(d.endDate)).diff(
+                                        moment(new Date(d.beginDate)),
+                                    );
+                                    const dur = moment.duration(diff);
+                                    let formattedDuration = dur.format();
+
+                                    return `${
+                                        d.taskName === TrackItemType.StatusTrackItem
+                                            ? 'STATUS'
+                                            : d.app
+                                    } - ${d.title} [${formattedDuration}]`;
+                                }}
                                 labelComponent={
                                     <VictoryTooltip
                                         horizontal={false}

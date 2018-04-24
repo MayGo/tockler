@@ -9,6 +9,7 @@
         "dva-loading": "^1.0.4",
         "grid-styled": "^3.2.1",
         "lodash": "^4.17.5",
+        "moment-duration-format": "^2.2.2",
         "pondjs": "^0.8.8",
         "react": "^16.2.0",
         "react-color": "^2.14.0",
@@ -26,8 +27,7 @@
     },
     "scripts": {
         "start": "react-app-rewired start --scripts-version react-scripts-ts",
-        "build":
-            "cross-env PUBLIC_URL=./ react-app-rewired build --scripts-version react-scripts-ts",
+        "build": "cross-env PUBLIC_URL=./ react-app-rewired build --scripts-version react-scripts-ts",
         "test": "react-app-rewired test --env=jsdom --scripts-version react-scripts-ts",
         "eject": "react-app-rewired eject"
     },

@@ -34,7 +34,7 @@ export const rootModel: any = {
 
     effects: {
         *bgSync(action: any, { call, put, select }: any) {
-            const delayMs = 10000;
+            const delayMs = 30000;
             let lastRequestTime = moment();
             while (true) {
                 try {
@@ -51,7 +51,7 @@ export const rootModel: any = {
                             .add(1, 'days')
                             .toDate(),
                     );
-                    console.log(appItems);
+                    console.log('Returned updated items:', appItems);
                     yield put({
                         type: 'timeline/addToTimeline',
                         payload: {
