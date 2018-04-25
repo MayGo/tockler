@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Flex, Box } from 'grid-styled';
 import { PieChart } from './PieChart';
+import { Heading } from './PieCharts.styles';
+import { WorkProgressChart } from './WorkProgressChart';
 
 interface IProps {
     appTrackItems: any;
@@ -16,14 +18,32 @@ export class PieCharts extends React.Component<IProps, {}> {
         return (
             <div>
                 <Flex p={1}>
-                    <Box pr={1}>
-                        <PieChart items={logTrackItems} taskName="LogTrackItem" />
+                    <Box p={1} px={5}>
+                        <Box>
+                            <PieChart items={logTrackItems} taskName="LogTrackItem" />
+                        </Box>
+                        <Heading>Tasks</Heading>
                     </Box>
-                    <Box pr={1}>
-                        <PieChart items={statusTrackItems} taskName="StatusTrackItem" />
+                    <Box p={1} px={5}>
+                        <Box>
+                            <PieChart items={statusTrackItems} taskName="StatusTrackItem" />
+                        </Box>
+                        <Heading>Status</Heading>
                     </Box>
-                    <Box pr={1}>
-                        <PieChart items={appTrackItems} taskName="AppTrackItem" />
+                    <Box p={1} px={5}>
+                        <Box>
+                            <WorkProgressChart
+                                items={statusTrackItems}
+                                taskName="StatusTrackItem"
+                            />
+                        </Box>
+                        <Heading>Progress</Heading>
+                    </Box>
+                    <Box p={1} px={5}>
+                        <Box>
+                            <PieChart items={appTrackItems} taskName="AppTrackItem" />
+                        </Box>
+                        <Heading>App usage</Heading>
                     </Box>
                 </Flex>
             </div>

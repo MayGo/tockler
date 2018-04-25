@@ -15,26 +15,53 @@ interface IProps {
     items: any;
     taskName: string;
 }
-export class PieChart extends React.Component<IProps, {}> {
+export class WorkProgressChart extends React.Component<IProps, {}> {
     render() {
         let { items, taskName } = this.props;
-        console.log('PieChart render:', taskName, items);
+        console.log('WorkProgressChart render:', taskName, items);
 
-        let groupByField = taskName === 'LogTrackItem' ? 'title' : 'app';
+        let groupByField = 'app';
 
-        const pieData = _(items)
+        const pieData: Array<any> = _(items)
+            .filter(item => item.app === 'ONLINE')
             .groupBy(groupByField)
             .map(b => {
                 return b.reduce(sumApp, {
-                    app: b[0].app,
-                    title: b[0].title,
+                    app: 'Worked',
                     timeDiffInMs: 0,
                     color: b[0].color,
                 });
             })
             .valueOf();
 
-        console.log('PieChar render pieData:', pieData);
+        if (pieData.length) {
+            const workDay = moment.duration(8, 'hours');
+            const workedMs = pieData[0].timeDiffInMs;
+
+            // pauses must be 10% of worked time
+            const pausesInHour = 0.1;
+            const worked = moment.duration(workedMs);
+            const pauses = moment.duration(workedMs * pausesInHour);
+
+            const undone = workDay.subtract(worked).subtract(pauses);
+
+            const undoneItem = {
+                app: 'Work to be done',
+                title: 'Work to be done',
+                timeDiffInMs: undone.asMilliseconds(),
+                color: 'lightgray',
+            };
+            pieData.push(undoneItem);
+
+            const pausesItem = {
+                app: 'Pauses',
+                title: 'Pauses',
+                timeDiffInMs: pauses.asMilliseconds(),
+                color: 'gray',
+            };
+            pieData.push(pausesItem);
+        }
+        console.log('WorkProgressChart render pieData:', pieData);
 
         return (
             <VictoryPie

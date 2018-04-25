@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { Input, Col, Button, Select, Tooltip } from 'antd';
+import { Input, Button, Select, Tooltip } from 'antd';
 import { ColorPicker } from './ColorPicker';
 import { ITrackItem } from '../../@types/ITrackItem';
-import { EditForm } from './TimelineItemEdit.styles';
-
-const InputGroup = Input.Group;
+import { Flex, Box } from 'grid-styled';
 
 interface IProps {
     selectedTimelineItem: any;
@@ -12,6 +10,7 @@ interface IProps {
     changeColorForApp: any;
     updateColorForApp: any;
     colorScopeHidden?: boolean;
+    showCloseBtn?: boolean;
     clearTimelineItem: any;
 }
 
@@ -103,7 +102,7 @@ export class TimelineItemEdit extends React.Component<IProps, IState> {
     };
 
     render() {
-        const { selectedTimelineItem, colorScopeHidden }: IFullProps = this.props;
+        const { selectedTimelineItem, colorScopeHidden, showCloseBtn }: IFullProps = this.props;
         const trackItem = this.state.item;
         if (!selectedTimelineItem) {
             console.log('No item');
@@ -113,63 +112,63 @@ export class TimelineItemEdit extends React.Component<IProps, IState> {
         console.log('Have selectedTimelineItem', selectedTimelineItem);
 
         return (
-            <EditForm>
-                <InputGroup>
-                    <Col span={6}>
-                        <Input
-                            defaultValue={trackItem.app}
-                            placeholder="App"
-                            onChange={this.changeAppName}
-                        />
-                    </Col>
-                    <Col span={11}>
-                        <Input
-                            defaultValue={trackItem.title}
-                            placeholder="Title"
-                            onChange={this.changeAppTitle}
-                        />
-                    </Col>
+            <Flex p={1} w={1}>
+                <Box px={1} w={1 / 3}>
+                    <Input
+                        defaultValue={trackItem.app}
+                        placeholder="App"
+                        onChange={this.changeAppName}
+                    />
+                </Box>
+                <Box px={1} w={2 / 3}>
+                    <Input
+                        defaultValue={trackItem.title}
+                        placeholder="Title"
+                        onChange={this.changeAppTitle}
+                    />
+                </Box>
 
-                    <Col span={1}>
-                        <ColorPicker color={trackItem.color} onChange={this.changeColorHandler} />
-                    </Col>
+                <Box px={1}>
+                    <ColorPicker color={trackItem.color} onChange={this.changeColorHandler} />
+                </Box>
 
-                    {!colorScopeHidden && (
-                        <Col span={4}>
-                            <Tooltip
-                                placement="left"
-                                title="Can also change color for all items or all future items"
+                {!colorScopeHidden && (
+                    <Box px={1}>
+                        <Tooltip
+                            placement="left"
+                            title="Can also change color for all items or all future items"
+                        >
+                            <Select
+                                value={this.state.colorScope}
+                                style={{ width: 120 }}
+                                onChange={this.changeColorScopeHandler}
                             >
-                                <Select
-                                    value={this.state.colorScope}
-                                    style={{ width: 120 }}
-                                    onChange={this.changeColorScopeHandler}
-                                >
-                                    <Select.Option value="ONLY_THIS">This item</Select.Option>
-                                    <Select.Option value="NEW_ITEMS">Future items</Select.Option>
-                                    <Select.Option value="ALL_ITEMS">All items</Select.Option>
-                                </Select>
-                            </Tooltip>
-                        </Col>
-                    )}
-                    <Col span={1}>
-                        <Button
-                            type="primary"
-                            shape="circle"
-                            icon="save"
-                            onClick={this.saveBasedOnColorOptionHandler}
-                        />
-                    </Col>
-                    <Col span={1}>
+                                <Select.Option value="ONLY_THIS">This item</Select.Option>
+                                <Select.Option value="NEW_ITEMS">Future items</Select.Option>
+                                <Select.Option value="ALL_ITEMS">All items</Select.Option>
+                            </Select>
+                        </Tooltip>
+                    </Box>
+                )}
+                <Box px={1}>
+                    <Button
+                        type="primary"
+                        shape="circle"
+                        icon="save"
+                        onClick={this.saveBasedOnColorOptionHandler}
+                    />
+                </Box>
+                {showCloseBtn && (
+                    <Box px={1}>
                         <Button
                             type="primary"
                             shape="circle"
                             icon="close"
                             onClick={this.closeEdit}
                         />
-                    </Col>
-                </InputGroup>
-            </EditForm>
+                    </Box>
+                )}
+            </Flex>
         );
     }
 }

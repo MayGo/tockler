@@ -109,7 +109,7 @@ class TimelineComp extends React.Component<IFullProps, IState> {
                     )}
                     <Popover
                         style={{ zIndex: 930 }}
-                        content={<TimelineItemEditContainer />}
+                        content={<TimelineItemEditContainer showCloseBtn={true} />}
                         visible={!!selectedTimelineItem}
                         trigger="click"
                     >

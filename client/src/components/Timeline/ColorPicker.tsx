@@ -19,7 +19,7 @@ export class ColorPicker extends React.Component<IProps, IState> {
         console.log('ColorPicker', props);
         this.state = {
             displayColorPicker: false,
-            color: props.color,
+            color: props.color || '#000000',
         };
     }
 
@@ -53,10 +53,12 @@ export class ColorPicker extends React.Component<IProps, IState> {
                     boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
                     display: 'inline-block',
                     cursor: 'pointer',
+                    position: 'relative',
                 },
                 popover: {
                     position: 'absolute',
                     zIndex: '2',
+                    right: '0',
                 },
                 cover: {
                     position: 'fixed',
@@ -72,13 +74,13 @@ export class ColorPicker extends React.Component<IProps, IState> {
             <div>
                 <div style={styles.swatch} onClick={this.handleClick}>
                     <div style={styles.color} />
+                    {this.state.displayColorPicker ? (
+                        <div style={styles.popover}>
+                            <div style={styles.cover} onClick={this.handleClose} />
+                            <SketchPicker color={this.state.color} onChange={this.handleChange} />
+                        </div>
+                    ) : null}
                 </div>
-                {this.state.displayColorPicker ? (
-                    <div style={styles.popover}>
-                        <div style={styles.cover} onClick={this.handleClose} />
-                        <SketchPicker color={this.state.color} onChange={this.handleChange} />
-                    </div>
-                ) : null}
             </div>
         );
     }

@@ -7,7 +7,7 @@
         "cross-env": "^5.1.4",
         "dva": "^2.1.0",
         "dva-loading": "^1.0.4",
-        "grid-styled": "^3.2.1",
+        "grid-styled": "^4.1.0",
         "lodash": "^4.17.5",
         "moment-duration-format": "^2.2.2",
         "pondjs": "^0.8.8",
