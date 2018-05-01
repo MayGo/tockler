@@ -39,8 +39,7 @@ script:
   - cd ..
   - cd electron
   - nps build.prod
-  - travis_wait
-  - npm run release
+  - travis_wait npm run release
 
 branches:
   only:
