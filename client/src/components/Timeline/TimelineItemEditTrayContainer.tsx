@@ -5,6 +5,7 @@ const DEFAULT = {};
 const mapStateToProps = ({ tray }: any) => ({
     selectedTimelineItem: DEFAULT,
     colorScopeHidden: true,
+    showPlayIcon: true,
 });
 const mapDispatchToProps = (dispatch: any) => ({
     saveTimelineItem: (item: any, colorScope: any) =>

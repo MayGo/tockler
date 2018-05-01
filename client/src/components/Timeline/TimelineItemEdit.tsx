@@ -11,6 +11,7 @@ interface IProps {
     updateColorForApp: any;
     colorScopeHidden?: boolean;
     showCloseBtn?: boolean;
+    showPlayIcon?: boolean;
     clearTimelineItem: any;
 }
 
@@ -102,13 +103,18 @@ export class TimelineItemEdit extends React.Component<IProps, IState> {
     };
 
     render() {
-        const { selectedTimelineItem, colorScopeHidden, showCloseBtn }: IFullProps = this.props;
+        const {
+            selectedTimelineItem,
+            colorScopeHidden,
+            showCloseBtn,
+            showPlayIcon,
+        }: IFullProps = this.props;
         const trackItem = this.state.item;
         if (!selectedTimelineItem) {
             console.log('No item');
             return null;
         }
-
+        const saveBtnIcon = showPlayIcon ? 'play-circle-o' : 'save';
         console.log('Have selectedTimelineItem', selectedTimelineItem);
 
         return (
@@ -154,7 +160,7 @@ export class TimelineItemEdit extends React.Component<IProps, IState> {
                     <Button
                         type="primary"
                         shape="circle"
-                        icon="save"
+                        icon={saveBtnIcon}
                         onClick={this.saveBasedOnColorOptionHandler}
                     />
                 </Box>

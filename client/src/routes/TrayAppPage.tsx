@@ -9,15 +9,17 @@ import { TrayLayout } from '../components/TrayLayout/TrayLayout';
 
 const { Content } = Layout;
 
-function TrayApp({ location }: any) {
+function TrayApp({ location, runningLogItem }: any) {
     return (
         <TrayLayout location={location}>
             <Content>
                 <Layout>
                     <Content>
-                        <Box pt={2}>
-                            <TimelineItemEditTrayContainer />
-                        </Box>
+                        {!runningLogItem && (
+                            <Box pt={2}>
+                                <TimelineItemEditTrayContainer />
+                            </Box>
+                        )}
                         <TrayListContainer />
                     </Content>
                 </Layout>
@@ -26,4 +28,8 @@ function TrayApp({ location }: any) {
     );
 }
 
-export const TrayAppPage = connect()(TrayApp);
+const mapStateToProps = ({ tray, loading }: any) => ({
+    runningLogItem: tray.get('runningLogItem'),
+    loading: loading.models.tray,
+});
+export const TrayAppPage = connect(mapStateToProps)(TrayApp);
