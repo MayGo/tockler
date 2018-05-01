@@ -16,7 +16,7 @@ export const TrayMenu = ({ dispatch }: any) => {
         dispatch({ type: 'tray/toggleMainWindow' });
     };
     return (
-        <Menu mode="horizontal">
+        <Menu mode="horizontal" style={{ position: 'fixed', width: '100%', zIndex: 9000 }}>
             <Menu.Item key="/timeline2">
                 <a onClick={toggleMainWindow}>
                     <Brand>

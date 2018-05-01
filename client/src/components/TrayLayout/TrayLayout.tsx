@@ -8,7 +8,7 @@ export function TrayLayout({ children }: any) {
         <div>
             <Layout>
                 <TrayMenuContainer />
-                <Content>{children}</Content>
+                <Content style={{ marginTop: 47 }}>{children}</Content>
                 <Footer>Trimatech @ 2018</Footer>
             </Layout>
         </div>

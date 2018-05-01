@@ -14,6 +14,7 @@ function Tray({ location }: any) {
                 <Layout>
                     <Content>
                         <TimelineItemEditTrayContainer />
+
                         <TrayListContainer />
                     </Content>
                 </Layout>
