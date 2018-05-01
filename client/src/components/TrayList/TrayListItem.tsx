@@ -1,9 +1,6 @@
 import * as React from 'react';
-// import { Layout } from 'antd';
-import { Button } from 'antd';
-
+import { Button, Icon } from 'antd';
 import { Flex, Box } from 'grid-styled';
-
 import styled from 'styled-components';
 import * as moment from 'moment';
 import Moment from 'react-moment';
@@ -14,6 +11,18 @@ const CustomListItem = styled.div`
     padding-left: 5px;
     margin-top: 5px;
     border-left: 5px solid ${(props: any) => props.color};
+`;
+
+const Small = Box.extend`
+    font-size: 10px;
+`;
+const ActionBtn = Flex.extend`
+    border-left: 1px solid #f0f2f5;
+    margin: 2px 0;
+`;
+
+const CustomBox = Box.extend`
+    overflow: hidden;
 `;
 
 const formatDate = date => moment(date).format('YYYY-MM-DD HH:mm:ss');
@@ -32,13 +41,17 @@ export function TrayListItem({ item, startNewLogItemFromOld, stopRunningLogItem,
             <Flex alignItems="center">
                 <Box width={8 / 9}>
                     <Flex>
-                        <Box width={1 / 4}>{item.app}</Box>
-                        <Box width={3 / 4}>{item.title}</Box>
+                        <CustomBox width={2 / 7} mr={2}>
+                            {item.app}
+                        </CustomBox>
+                        <CustomBox width={5 / 7}>{item.title}</CustomBox>
                     </Flex>
                     <Flex>
                         <Box width={8 / 10}>
-                            <small>
+                            <Small>
                                 <FormattedTime item={item} isRunning={isRunning} />
+                                {'  '}
+                                <Icon type="clock-circle-o" />
                                 {'  '}
                                 <b>
                                     {!isRunning && (
@@ -52,16 +65,16 @@ export function TrayListItem({ item, startNewLogItemFromOld, stopRunningLogItem,
                                         </Moment>
                                     )}
                                 </b>
-                            </small>
+                            </Small>
                         </Box>
                         <Flex width={3 / 10} justifyContent="flex-end">
-                            <small>
+                            <Small pr={2}>
                                 <TimeAgo date={item.beginDate} />
-                            </small>
+                            </Small>
                         </Flex>
                     </Flex>
                 </Box>
-                <Flex width={1 / 9} justifyContent="flex-end" p={2}>
+                <ActionBtn width={1 / 9} justifyContent="flex-end" p={2}>
                     {isRunning && (
                         <Button
                             type="primary"
@@ -78,7 +91,7 @@ export function TrayListItem({ item, startNewLogItemFromOld, stopRunningLogItem,
                             onClick={() => startNewLogItemFromOld(item)}
                         />
                     )}
-                </Flex>
+                </ActionBtn>
             </Flex>
         </CustomListItem>
     );
