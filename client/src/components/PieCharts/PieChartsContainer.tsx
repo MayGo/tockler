@@ -1,5 +1,5 @@
 import { connect } from 'dva';
-
+import componentQueries from 'react-component-queries';
 import { PieCharts } from './PieCharts';
 import { TrackItemType } from '../../enum/TrackItemType';
 import moment from 'moment';
@@ -30,4 +30,6 @@ const mapDispatchToProps = (dispatch: any) => ({
         }),
 });
 
-export const PieChartsContainer = connect(mapStateToProps, mapDispatchToProps)(PieCharts);
+export const PieChartsContainer = componentQueries(({ width }) => ({
+    screenWidth: width,
+}))(connect(mapStateToProps, mapDispatchToProps)(PieCharts));

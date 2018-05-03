@@ -8,40 +8,56 @@ interface IProps {
     appTrackItems: any;
     statusTrackItems: any;
     logTrackItems: any;
+    screenWidth: number;
 }
 
 export class PieCharts extends React.Component<IProps, {}> {
     render() {
-        let { appTrackItems, logTrackItems, statusTrackItems } = this.props;
+        let { appTrackItems, logTrackItems, statusTrackItems, screenWidth } = this.props;
+
+        const pieWidth = screenWidth / 4;
         console.log('PieChars render:', appTrackItems);
 
         return (
             <div>
-                <Flex p={1}>
-                    <Box p={1} px={5}>
+                <Flex>
+                    <Box>
                         <Box>
-                            <PieChart items={logTrackItems} taskName="LogTrackItem" />
+                            <PieChart
+                                items={logTrackItems}
+                                taskName="LogTrackItem"
+                                width={pieWidth}
+                            />
                         </Box>
                         <Heading>Tasks</Heading>
                     </Box>
-                    <Box p={1} px={5}>
+                    <Box>
                         <Box>
-                            <PieChart items={statusTrackItems} taskName="StatusTrackItem" />
+                            <PieChart
+                                items={statusTrackItems}
+                                taskName="StatusTrackItem"
+                                width={pieWidth}
+                            />
                         </Box>
                         <Heading>Status</Heading>
                     </Box>
-                    <Box p={1} px={5}>
+                    <Box>
                         <Box>
                             <WorkProgressChart
                                 items={statusTrackItems}
                                 taskName="StatusTrackItem"
+                                width={pieWidth}
                             />
                         </Box>
                         <Heading>Progress</Heading>
                     </Box>
-                    <Box p={1} px={5}>
+                    <Box>
                         <Box>
-                            <PieChart items={appTrackItems} taskName="AppTrackItem" />
+                            <PieChart
+                                items={appTrackItems}
+                                taskName="AppTrackItem"
+                                width={pieWidth}
+                            />
                         </Box>
                         <Heading>App usage</Heading>
                     </Box>

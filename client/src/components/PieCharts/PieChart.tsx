@@ -1,9 +1,10 @@
 import * as React from 'react';
 
-import { VictoryPie, VictoryTooltip } from 'victory';
+import { VictoryPie, VictoryContainer } from 'victory';
 import { chartTheme } from '../Timeline/ChartTheme';
 import _ from 'lodash';
 import moment from 'moment';
+import { PieLabel } from './PieLabel';
 
 const sumApp = (p, c) => {
     return _.extend(p, {
@@ -14,10 +15,11 @@ const sumApp = (p, c) => {
 interface IProps {
     items: any;
     taskName: string;
+    width: number;
 }
 export class PieChart extends React.Component<IProps, {}> {
     render() {
-        let { items, taskName } = this.props;
+        let { items, taskName, width } = this.props;
         console.log('PieChart render:', taskName, items);
 
         let groupByField = taskName === 'LogTrackItem' ? 'title' : 'app';
@@ -39,7 +41,10 @@ export class PieChart extends React.Component<IProps, {}> {
         return (
             <VictoryPie
                 theme={chartTheme}
-                padding={0}
+                padding={16}
+                width={width}
+                innerRadius={width / 4}
+                containerComponent={<VictoryContainer responsive={false} />}
                 style={{
                     data: {
                         fill: d => d.color,
@@ -54,15 +59,7 @@ export class PieChart extends React.Component<IProps, {}> {
 
                     return `${d[groupByField]} [${formattedDuration}]`;
                 }}
-                labelComponent={
-                    <VictoryTooltip
-                        horizontal={false}
-                        style={chartTheme.tooltip.style}
-                        cornerRadius={chartTheme.tooltip.cornerRadius}
-                        pointerLength={chartTheme.tooltip.pointerLength}
-                        flyoutStyle={chartTheme.tooltip.flyoutStyle}
-                    />
-                }
+                labelComponent={<PieLabel width={width} />}
                 x="app"
                 y="timeDiffInMs"
                 data={pieData}
