@@ -15,14 +15,13 @@ export class PieLabel extends React.Component<IProps> {
         const { width, datum } = this.props;
 
         const labelWidth = width / 2;
-        const someWierdPxOffset = 5;
 
         return (
             <g>
                 <VictoryTooltip
                     {...this.props}
                     x={width / 2}
-                    y={width / 2 + labelWidth / 2 - someWierdPxOffset}
+                    y={width / 2 + labelWidth / 2}
                     text={`${this.props.text}`}
                     orientation="top"
                     pointerLength={0}

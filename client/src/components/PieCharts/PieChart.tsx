@@ -43,6 +43,7 @@ export class PieChart extends React.Component<IProps, {}> {
                 theme={chartTheme}
                 padding={16}
                 width={width}
+                height={width}
                 innerRadius={width / 4}
                 containerComponent={<VictoryContainer responsive={false} />}
                 style={{
