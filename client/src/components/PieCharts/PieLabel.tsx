@@ -30,9 +30,9 @@ export class PieLabel extends React.Component<IProps> {
                     height={labelWidth}
                     flyoutStyle={{
                         fill: datum.color,
-                        stroke: datum.color,
+                        stroke: 'white',
                         strokeWidth: 1,
-                        fillOpacity: 0.75,
+                        fillOpacity: 0.35,
                     }}
                 />
             </g>

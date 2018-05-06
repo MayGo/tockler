@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Layout } from 'antd';
 import { connect } from 'dva';
 import { MainLayout } from '../components/MainLayout/MainLayout';
+import { SettingsFormContainer } from '../components/Settings/SettingsFormContainer';
 const { Content } = Layout;
 
 function Settings({ location }: any) {
@@ -10,7 +11,9 @@ function Settings({ location }: any) {
         <MainLayout location={location}>
             <Content>
                 <Layout>
-                    <Content>Settings</Content>
+                    <Content>
+                        <SettingsFormContainer />
+                    </Content>
                 </Layout>
             </Content>
         </MainLayout>

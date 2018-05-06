@@ -36,7 +36,7 @@ export class PieChart extends React.Component<IProps, {}> {
             })
             .valueOf();
 
-        console.log('PieChar render pieData:', pieData);
+        console.log('PieChart render pieData:', pieData);
 
         return (
             <VictoryPie

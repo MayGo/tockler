@@ -8,15 +8,22 @@ interface IProps {
     appTrackItems: any;
     statusTrackItems: any;
     logTrackItems: any;
+    workSettings: any;
     screenWidth: number;
 }
 
 export class PieCharts extends React.Component<IProps, {}> {
     render() {
-        let { appTrackItems, logTrackItems, statusTrackItems, screenWidth } = this.props;
+        let {
+            appTrackItems,
+            logTrackItems,
+            statusTrackItems,
+            screenWidth,
+            workSettings,
+        } = this.props;
 
         const pieWidth = screenWidth / 4;
-        console.log('PieChars render:', appTrackItems);
+        console.log('PieCharts render:', appTrackItems, workSettings);
 
         return (
             <div>
@@ -44,12 +51,13 @@ export class PieCharts extends React.Component<IProps, {}> {
                     <Box>
                         <Box>
                             <WorkProgressChart
+                                hoursToWork={workSettings.hoursToWork}
                                 items={statusTrackItems}
                                 taskName="StatusTrackItem"
                                 width={pieWidth}
                             />
                         </Box>
-                        <Heading>Progress</Heading>
+                        <Heading>Progress for {workSettings.hoursToWork}h</Heading>
                     </Box>
                     <Box>
                         <Box>

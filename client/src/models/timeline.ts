@@ -81,8 +81,6 @@ export const timelineModel: any = {
                 timerange[1],
             );
 
-            console.error(appItems);
-
             yield put({
                 type: 'loadTimelineItems',
                 payload: {

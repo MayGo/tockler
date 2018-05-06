@@ -16,11 +16,12 @@ const filterItems = (timeline, type) =>
         );
     });
 
-const mapStateToProps = ({ timeline }: any) => ({
+const mapStateToProps = ({ timeline, settings }: any) => ({
     visibleTimerange: timeline.visibleTimerange,
     appTrackItems: filterItems(timeline, TrackItemType.AppTrackItem),
     statusTrackItems: filterItems(timeline, TrackItemType.StatusTrackItem),
     logTrackItems: filterItems(timeline, TrackItemType.LogTrackItem),
+    workSettings: settings.work,
 });
 const mapDispatchToProps = (dispatch: any) => ({
     changeTimerange: (timerange: any) =>
