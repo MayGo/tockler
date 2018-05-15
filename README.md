@@ -6,7 +6,8 @@ Stable version:
 - Windows [Download ver 3.1.5](https://github.com/MayGo/tockler/releases/download/v3.1.5/Tockler-Setup-3.1.5.exe)
 - OS X [Download ver 3.1.5](https://github.com/MayGo/tockler/releases/download/v3.1.5/Tockler-3.1.5.dmg) 
 - Linux [Download ver 3.1.5](https://github.com/MayGo/tockler/releases/download/v3.1.5/Tockler-3.1.5-x86_64.AppImage) 
-New 'React' version: https://github.com/MayGo/tockler/releases
+
+New 'React' versions: https://github.com/MayGo/tockler/releases
 
 
 
