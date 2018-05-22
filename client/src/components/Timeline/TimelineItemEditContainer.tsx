@@ -10,7 +10,11 @@ const mapDispatchToProps = (dispatch: any) => ({
             type: 'timeline/saveTimelineItem',
             payload: { item, colorScope },
         }),
-
+    deleteTimelineItem: (item: any, colorScope: string) =>
+        dispatch({
+            type: 'timeline/deleteTimelineItem',
+            payload: { item },
+        }),
     clearTimelineItem: (item: any, colorScope: string) =>
         dispatch({
             type: 'timeline/selectTimelineItem',

@@ -2,10 +2,16 @@ import * as moment from 'moment';
 import { TrackItemService } from '../services/TrackItemService';
 import { AppSettingService } from '../services/AppSettingService';
 import { handleTimelineItems, addToTimelineItems } from './timeline.util';
+import { TimelineRowType } from '../enum/TimelineRowType';
 
 export const timelineModel: any = {
     namespace: 'timeline',
     state: {
+        isRowEnabled: {
+            [TimelineRowType.App]: false,
+            [TimelineRowType.Log]: true,
+            [TimelineRowType.Status]: true,
+        },
         AppTrackItem: [],
         StatusTrackItem: [],
         LogTrackItem: [],
@@ -72,6 +78,25 @@ export const timelineModel: any = {
                 payload: { timerange },
             });
         },
+
+        *deleteTimelineItem({ payload: { item } }: any, { call, put, select }: any) {
+            console.log('Delete timeline item', item);
+
+            if (item.id) {
+                yield TrackItemService.deleteById(item.id);
+                yield put({
+                    type: 'selectTimelineItem',
+                    payload: { item: null },
+                });
+                const timerange = yield select(state => state.timeline.timerange);
+                yield put({
+                    type: 'loadTimerange',
+                    payload: { timerange },
+                });
+            } else {
+                console.error('No id, not deleting from DB');
+            }
+        },
         *loadTimerange({ payload: { timerange } }: any, { call, put }: any) {
             console.log('Change timerange:', timerange);
 
@@ -126,6 +151,13 @@ export const timelineModel: any = {
             return {
                 ...state,
                 selectedTimelineItem: item,
+            };
+        },
+
+        toggleRow(state: any, { payload: { rowId } }: any) {
+            return {
+                ...state,
+                isRowEnabled: { ...state.isRowEnabled, [rowId]: !state.isRowEnabled[rowId] },
             };
         },
     },

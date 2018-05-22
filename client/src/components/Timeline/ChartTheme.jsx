@@ -12,8 +12,9 @@ const cyan900 = '#006064';
 const colors = [deepOrange600, yellow200, lime300, lightGreen500, teal700, cyan900];
 const blueGrey50 = '#ECEFF1';
 const blueGrey300 = '#90A4AE';
-const blueGrey700 = '#455A64';
-const grey900 = '#212121';
+export const blueGrey700 = '#455A64';
+export const grey900 = '#212121';
+export const disabledGrey = '#e6e6e6';
 // *
 // * Typography
 // *

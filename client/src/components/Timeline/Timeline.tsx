@@ -14,10 +14,11 @@ import moment from 'moment';
 import 'moment-duration-format';
 
 import debounce from 'lodash/debounce';
-import { chartTheme } from './ChartTheme';
+import { chartTheme, blueGrey700, disabledGrey } from './ChartTheme';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { MainChart, BrushChart, Spinner } from './Timeline.styles';
 import { TimelineItemEditContainer } from './TimelineItemEditContainer';
+import { TimelineRowType } from '../../enum/TimelineRowType';
 
 interface IProps {
     timerange: any;
@@ -27,10 +28,12 @@ interface IProps {
     logTrackItems: any;
     changeVisibleTimerange?: any;
     selectTimelineItem?: any;
+    toggleRow?: any;
     tracker?: any;
     selectedTimelineItem?: any;
     chartWidth?: number;
     loading?: boolean;
+    isRowEnabled?: any;
 }
 interface IState {}
 
@@ -77,6 +80,16 @@ class TimelineComp extends React.Component<IFullProps, IState> {
 
         this.props.changeVisibleTimerange(domain.x);
     };
+    calcRowEnabledColor = d => {
+        return this.props.isRowEnabled[d] ? blueGrey700 : disabledGrey;
+    };
+    calcRowEnabledColorFlipped = d => {
+        return !this.props.isRowEnabled[d] ? blueGrey700 : disabledGrey;
+    };
+
+    onTimelineTypeLabelClick = (item, props) => {
+        console.error(item, props);
+    };
 
     render() {
         const {
@@ -88,6 +101,8 @@ class TimelineComp extends React.Component<IFullProps, IState> {
             visibleTimerange,
             chartWidth,
             loading,
+            isRowEnabled,
+            toggleRow,
         }: IFullProps = this.props;
 
         if (!timerange && !appTrackItems && appTrackItems.length === 0) {
@@ -95,7 +110,19 @@ class TimelineComp extends React.Component<IFullProps, IState> {
         }
         console.log('Have timerange', visibleTimerange);
 
-        const timelineData = [...logTrackItems, ...statusTrackItems];
+        let timelineData = [];
+        if (isRowEnabled[TimelineRowType.Status]) {
+            // console.log('Adding statusTrackItems:', statusTrackItems);
+            timelineData = timelineData.concat(statusTrackItems);
+        }
+        if (isRowEnabled[TimelineRowType.Log]) {
+            // console.log('Adding logTrackItems:', logTrackItems);
+            timelineData = timelineData.concat(logTrackItems);
+        }
+        if (isRowEnabled[TimelineRowType.App]) {
+            // console.log('Adding apptrackItems:', appTrackItems);
+            timelineData = timelineData.concat(appTrackItems);
+        }
         console.log(`Rendering ${timelineData.length} items`);
         const barWidth = 25;
 
@@ -137,9 +164,38 @@ class TimelineComp extends React.Component<IFullProps, IState> {
                                 dependentAxis={true}
                                 tickValues={[1, 2, 3]}
                                 tickFormat={['App', 'Status', 'Log']}
+                                events={[
+                                    {
+                                        target: 'tickLabels',
+                                        eventHandlers: {
+                                            onClick: () => {
+                                                return [
+                                                    {
+                                                        target: 'tickLabels',
+                                                        mutation: props => {
+                                                            console.log('Toggling row', props);
+                                                            toggleRow(props.datum);
+                                                            return {
+                                                                style: {
+                                                                    ...props.style,
+                                                                    fill: this.calcRowEnabledColorFlipped(
+                                                                        props.datum,
+                                                                    ),
+                                                                },
+                                                            };
+                                                        },
+                                                    },
+                                                ];
+                                            },
+                                        },
+                                    },
+                                ]}
                                 style={{
                                     grid: { strokeWidth: 0 },
                                     ticks: { stroke: 'grey', size: 5 },
+                                    tickLabels: {
+                                        fill: this.calcRowEnabledColor,
+                                    },
                                 }}
                             />
                             <VictoryAxis tickCount={20} />

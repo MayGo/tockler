@@ -21,7 +21,7 @@ interface IProps {
 export class WorkProgressChart extends React.Component<IProps, {}> {
     render() {
         let { items, taskName, width, hoursToWork } = this.props;
-        console.log('WorkProgressChart render:', taskName, items, hoursToWork);
+        // console.log('WorkProgressChart render:', taskName, items, hoursToWork);
 
         let groupByField = 'app';
 
@@ -39,7 +39,7 @@ export class WorkProgressChart extends React.Component<IProps, {}> {
 
         if (pieData.length) {
             const workDay = moment.duration(Number(hoursToWork), 'hours');
-            console.error(hoursToWork, workDay);
+
             const workedMs = pieData[0].timeDiffInMs;
 
             // pauses must be 10% of worked time
@@ -65,7 +65,7 @@ export class WorkProgressChart extends React.Component<IProps, {}> {
             };
             pieData.push(pausesItem);
         }
-        console.log('WorkProgressChart render pieData:', pieData);
+        // console.log('WorkProgressChart render pieData:', pieData);
 
         return (
             <VictoryPie

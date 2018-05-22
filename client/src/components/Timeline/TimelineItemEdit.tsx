@@ -13,6 +13,7 @@ interface IProps {
     showCloseBtn?: boolean;
     showPlayIcon?: boolean;
     clearTimelineItem: any;
+    deleteTimelineItem: any;
 }
 
 interface IState {
@@ -102,6 +103,12 @@ export class TimelineItemEdit extends React.Component<IProps, IState> {
         this.props.saveTimelineItem(item, colorScope);
     };
 
+    deleteItem = () => {
+        const { item } = this.state;
+
+        this.props.deleteTimelineItem(item);
+    };
+
     render() {
         const {
             selectedTimelineItem,
@@ -163,6 +170,9 @@ export class TimelineItemEdit extends React.Component<IProps, IState> {
                         icon={saveBtnIcon}
                         onClick={this.saveBasedOnColorOptionHandler}
                     />
+                </Box>
+                <Box px={1}>
+                    <Button type="primary" shape="circle" icon="delete" onClick={this.deleteItem} />
                 </Box>
                 {showCloseBtn && (
                     <Box px={1}>

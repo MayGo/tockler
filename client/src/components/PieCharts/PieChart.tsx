@@ -20,7 +20,7 @@ interface IProps {
 export class PieChart extends React.Component<IProps, {}> {
     render() {
         let { items, taskName, width } = this.props;
-        console.log('PieChart render:', taskName, items);
+        // console.log('PieChart render:', taskName, items);
 
         let groupByField = taskName === 'LogTrackItem' ? 'title' : 'app';
 
@@ -36,7 +36,7 @@ export class PieChart extends React.Component<IProps, {}> {
             })
             .valueOf();
 
-        console.log('PieChart render pieData:', pieData);
+        // console.log('PieChart render pieData:', pieData);
 
         return (
             <VictoryPie

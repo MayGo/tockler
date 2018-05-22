@@ -6,6 +6,7 @@ import { TrackItemType } from '../../enum/TrackItemType';
 
 const mapStateToProps = ({ timeline, loading }: any) => ({
     timerange: timeline.timerange,
+    isRowEnabled: timeline.isRowEnabled,
     visibleTimerange: timeline.visibleTimerange,
     selectedTimelineItem: timeline.selectedTimelineItem,
     appTrackItems: timeline[TrackItemType.AppTrackItem],
@@ -23,6 +24,11 @@ const mapDispatchToProps = (dispatch: any) => ({
         dispatch({
             type: 'timeline/selectTimelineItem',
             payload: { item },
+        }),
+    toggleRow: (rowId: any) =>
+        dispatch({
+            type: 'timeline/toggleRow',
+            payload: { rowId },
         }),
 });
 export const TimelineContainer = componentQueries(({ width }) => ({
