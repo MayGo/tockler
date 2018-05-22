@@ -20,7 +20,7 @@ interface IProps {
 }
 export class WorkProgressChart extends React.Component<IProps, {}> {
     render() {
-        let { items, taskName, width, hoursToWork } = this.props;
+        let { items, width, hoursToWork } = this.props;
         // console.log('WorkProgressChart render:', taskName, items, hoursToWork);
 
         let groupByField = 'app';
