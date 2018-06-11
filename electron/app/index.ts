@@ -80,29 +80,9 @@ app.on('ready', async () => {
 
 require('electron-context-menu')({});
 
-/**
- * Emitted when all windows are closed
- */
-app.on('window-all-closed', function() {
-    console.log('window-all-closed');
-    // pluginMgr.removeAll();
-    // app.quit();
-});
-
 ipcMain.on('close-app', function() {
     console.log('Closing app');
-    // pluginMgr.removeAll();
     app.quit();
-});
-
-/**
- * Emitted when no opened windows
- * and dock icon is clicked
- */
-
-app.on('activate', () => {
-    // console.log("Show menubar.");
-    // windowManager.menubar.window.show();
 });
 
 /* Single Instance Check */
@@ -126,6 +106,5 @@ let iShouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
 
 if (iShouldQuit && !config.isDev) {
     console.log('Quiting instance.');
-    // pluginMgr.removeAll();
     app.quit();
 }
