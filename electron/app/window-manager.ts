@@ -30,6 +30,11 @@ export default class WindowManager {
             icon: config.iconBig,
         });
 
+        if (app.dock) {
+            logger.info('Show dock window.');
+            app.dock.show();
+        }
+
         this.mainWindow.maximize();
         const url = config.isDev
             ? 'http://localhost:3000'
@@ -57,6 +62,10 @@ export default class WindowManager {
             if (this.mainWindow) {
                 console.log('Closing window');
                 this.mainWindow = null;
+            }
+            if (app.dock) {
+                logger.info('Hide dock window.');
+                app.dock.hide();
             }
         });
     }
@@ -97,8 +106,8 @@ export default class WindowManager {
         this.menubar = menubar({
             index: url,
             icon: icon,
-            preloadWindow: true,
-            showDockIcon: true,
+            preloadWindow: false,
+            showDockIcon: false,
             width: 450,
             height: 500,
         });
