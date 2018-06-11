@@ -16,7 +16,7 @@ export default class WindowManager {
     static menubar;
 
     static initMenus() {
-        const menuBuilder = new MenuBuilder(this.mainWindow);
+        const menuBuilder = new MenuBuilder(this);
         menuBuilder.buildMenu();
     }
 
@@ -26,6 +26,10 @@ export default class WindowManager {
             width: 1200,
             height: 1000,
             show: true,
+            webPreferences: {
+                zoomFactor: 1.0,
+                blinkFeatures: 'OverlayScrollbars',
+            },
             title: 'Tockler',
             icon: config.iconBig,
         });

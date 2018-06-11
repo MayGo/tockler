@@ -3,10 +3,10 @@ import { app, Menu, shell, BrowserWindow } from 'electron';
 import config from './config';
 
 export default class MenuBuilder {
-    mainWindow;
+    windowManager;
 
-    constructor(mainWindow) {
-        this.mainWindow = mainWindow;
+    constructor(windowManager) {
+        this.windowManager = windowManager;
     }
 
     buildMenu() {
@@ -29,18 +29,18 @@ export default class MenuBuilder {
     }
 
     setupDevelopmentEnvironment() {
-        this.mainWindow.openDevTools();
-        this.mainWindow.webContents.on('context-menu', (e, props) => {
+        this.windowManager.mainWindow.openDevTools();
+        this.windowManager.mainWindow.webContents.on('context-menu', (e, props) => {
             const { x, y } = props;
 
             Menu.buildFromTemplate([
                 {
                     label: 'Inspect element',
                     click: () => {
-                        this.mainWindow.inspectElement(x, y);
+                        this.windowManager.mainWindow.inspectElement(x, y);
                     },
                 },
-            ]).popup(this.mainWindow);
+            ]).popup(this.windowManager.mainWindow);
         });
     }
 
@@ -92,21 +92,23 @@ export default class MenuBuilder {
                     label: 'Reload',
                     accelerator: 'Command+R',
                     click: () => {
-                        this.mainWindow.webContents.reload();
+                        this.windowManager.mainWindow.webContents.reload();
                     },
                 },
                 {
                     label: 'Toggle Full Screen',
                     accelerator: 'Ctrl+Command+F',
                     click: () => {
-                        this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+                        this.windowManager.mainWindow.setFullScreen(
+                            !this.windowManager.mainWindow.isFullScreen(),
+                        );
                     },
                 },
                 {
                     label: 'Toggle Developer Tools',
                     accelerator: 'Alt+Command+I',
                     click: () => {
-                        this.mainWindow.toggleDevTools();
+                        this.windowManager.mainWindow.toggleDevTools();
                     },
                 },
             ],
@@ -118,7 +120,9 @@ export default class MenuBuilder {
                     label: 'Toggle Full Screen',
                     accelerator: 'Ctrl+Command+F',
                     click: () => {
-                        this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+                        this.windowManager.mainWindow.setFullScreen(
+                            !this.windowManager.mainWindow.isFullScreen(),
+                        );
                     },
                 },
             ],
@@ -172,7 +176,7 @@ export default class MenuBuilder {
                         label: '&Close',
                         accelerator: 'Ctrl+W',
                         click: () => {
-                            this.mainWindow.close();
+                            this.windowManager.mainWindow.close();
                         },
                     },
                 ],
@@ -185,21 +189,23 @@ export default class MenuBuilder {
                               label: '&Reload',
                               accelerator: 'Ctrl+R',
                               click: () => {
-                                  this.mainWindow.webContents.reload();
+                                  this.windowManager.mainWindow.webContents.reload();
                               },
                           },
                           {
                               label: 'Toggle &Full Screen',
                               accelerator: 'F11',
                               click: () => {
-                                  this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+                                  this.windowManager.mainWindow.setFullScreen(
+                                      !this.windowManager.mainWindow.isFullScreen(),
+                                  );
                               },
                           },
                           {
                               label: 'Toggle &Developer Tools',
                               accelerator: 'Alt+Ctrl+I',
                               click: () => {
-                                  this.mainWindow.toggleDevTools();
+                                  this.windowManager.mainWindow.toggleDevTools();
                               },
                           },
                       ]
@@ -208,7 +214,9 @@ export default class MenuBuilder {
                               label: 'Toggle &Full Screen',
                               accelerator: 'F11',
                               click: () => {
-                                  this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+                                  this.windowManager.mainWindow.setFullScreen(
+                                      !this.windowManager.mainWindow.isFullScreen(),
+                                  );
                               },
                           },
                       ],
