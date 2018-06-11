@@ -23,26 +23,11 @@ if (config.isDev) {
     // require('electron-reload')(reloadFile);
 }
 
-let AutoLaunch = require('auto-launch');
-let appLauncher = new AutoLaunch({
-    name: 'Tockler',
+app.setLoginItemSettings({
+    openAtLogin: true,
+    openAsHidden: true,
+    args: ['--process-start-args', `"--hidden"`],
 });
-
-appLauncher
-    .isEnabled()
-    .then(enabled => {
-        if (enabled) {
-            console.log('AppLauncher is enabled');
-            return;
-        }
-
-        console.log('Enabling app launcher');
-
-        return appLauncher.enable();
-    })
-    .then(err => {
-        console.error('Error with appLauncher:', err);
-    });
 
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
 
