@@ -1,6 +1,6 @@
 import { backgroundJob } from './background-job';
 import { backgroundService } from './background-service';
-import { app, ipcMain, powerMonitor, globalShortcut } from 'electron';
+import { app, ipcMain, powerMonitor } from 'electron';
 import { logManager } from './log-manager';
 
 import AppManager from './app-manager';
@@ -39,12 +39,6 @@ app.on('ready', async () => {
         await extensionsManager.init();
     }
 
-    const ret = globalShortcut.register('Escape', function() {
-        console.log('Escape is pressed');
-
-        windowManager.mainWindow.setFullScreen(false);
-    });
-
     windowManager.setMainWindow();
     windowManager.initMainWindowEvents();
 
@@ -80,11 +74,6 @@ app.on('window-all-closed', function() {
     console.log('window-all-closed');
     // pluginMgr.removeAll();
     // app.quit();
-});
-
-app.on('will-quit', () => {
-    // Unregister all shortcuts.
-    globalShortcut.unregisterAll();
 });
 
 /* Single Instance Check */

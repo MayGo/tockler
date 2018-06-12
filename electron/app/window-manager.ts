@@ -2,7 +2,7 @@ import * as menubar from 'menubar';
 
 import MenuBuilder from './menu-builder';
 
-import { app, ipcMain, BrowserWindow } from 'electron';
+import { app, ipcMain, BrowserWindow, globalShortcut } from 'electron';
 import config from './config';
 import * as path from 'path';
 import * as os from 'os';
@@ -62,7 +62,18 @@ export default class WindowManager {
             this.mainWindow.focus();
         });
 
+        globalShortcut.register('Escape', function() {
+            console.log('Escape is pressed');
+
+            if (this.mainWindow) {
+                this.mainWindow.setFullScreen(false);
+            }
+        });
+
         this.mainWindow.on('close', () => {
+            // Unregister all shortcuts.
+            globalShortcut.unregisterAll();
+
             if (this.mainWindow) {
                 console.log('Closing window');
                 this.mainWindow = null;
@@ -76,6 +87,7 @@ export default class WindowManager {
 
     static initMainWindowEvents() {
         logger.info('Init main window events.');
+
         ipcMain.on('toggle-main-window', (ev, name) => {
             if (!this.mainWindow) {
                 console.log('MainWindow closed, opening');
