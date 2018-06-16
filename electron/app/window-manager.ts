@@ -25,7 +25,7 @@ export default class WindowManager {
         this.mainWindow = new BrowserWindow({
             width: 1200,
             height: 1000,
-            show: true,
+            show: false,
             webPreferences: {
                 zoomFactor: 1.0,
                 blinkFeatures: 'OverlayScrollbars',

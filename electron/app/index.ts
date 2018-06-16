@@ -39,7 +39,6 @@ app.on('ready', async () => {
         await extensionsManager.init();
     }
 
-    windowManager.setMainWindow();
     windowManager.initMainWindowEvents();
 
     if (!config.isDev || config.trayEnabledInDev) {
