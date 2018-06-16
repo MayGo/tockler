@@ -1,14 +1,21 @@
 import * as menubar from 'menubar';
 
 import MenuBuilder from './menu-builder';
-
+import { throttle } from 'lodash';
 import { app, ipcMain, BrowserWindow, globalShortcut } from 'electron';
 import config from './config';
+const Config = require('electron-config');
+
 import * as path from 'path';
 import * as os from 'os';
 import { sequelize } from './models/index';
 
 import { logManager } from './log-manager';
+
+const persistedConfig = new Config();
+
+const windowSize = persistedConfig.get('windowsize') || { width: 1080, height: 720 };
+
 let logger = logManager.getLogger('WindowManager');
 
 export default class WindowManager {
@@ -23,8 +30,8 @@ export default class WindowManager {
     static setMainWindow() {
         logger.info('Creating main window.');
         this.mainWindow = new BrowserWindow({
-            width: 1200,
-            height: 1000,
+            width: windowSize.width,
+            height: windowSize.height,
             show: false,
             webPreferences: {
                 zoomFactor: 1.0,
@@ -39,7 +46,6 @@ export default class WindowManager {
             app.dock.show();
         }
 
-        this.mainWindow.maximize();
         const url = config.isDev
             ? 'http://localhost:3000'
             : 'file://' + config.client + '/index.html';
@@ -83,6 +89,7 @@ export default class WindowManager {
                 app.dock.hide();
             }
         });
+        this.mainWindow.on('resize', throttle(WindowManager.storeWindowSize, 500));
     }
 
     static initMainWindowEvents() {
@@ -106,6 +113,14 @@ export default class WindowManager {
                 this.mainWindow.hide();
             }
         });
+    }
+
+    static storeWindowSize() {
+        try {
+            persistedConfig.set('windowsize', WindowManager.mainWindow.getBounds());
+        } catch (e) {
+            console.error('Error saving', e);
+        }
     }
 
     static setTrayWindow() {
