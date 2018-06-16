@@ -14,8 +14,6 @@ import { logManager } from './log-manager';
 
 const persistedConfig = new Config();
 
-const windowSize = persistedConfig.get('windowsize') || { width: 1080, height: 720 };
-
 let logger = logManager.getLogger('WindowManager');
 
 export default class WindowManager {
@@ -29,6 +27,9 @@ export default class WindowManager {
 
     static setMainWindow() {
         logger.info('Creating main window.');
+        const windowSize = persistedConfig.get('windowsize') || { width: 1080, height: 720 };
+        const openMaximized = persistedConfig.get('openMaximized') || false;
+
         this.mainWindow = new BrowserWindow({
             width: windowSize.width,
             height: windowSize.height,
@@ -44,6 +45,10 @@ export default class WindowManager {
         if (app.dock) {
             logger.info('Show dock window.');
             app.dock.show();
+        }
+
+        if (openMaximized) {
+            this.mainWindow.maximize();
         }
 
         const url = config.isDev
