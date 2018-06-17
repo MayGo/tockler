@@ -12,6 +12,7 @@ import { reducer as formReducer } from 'redux-form';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web and AsyncStorage for react-native
 import { settingsModel } from './models/settings';
+import { summaryModel } from './models/summary';
 
 const persistConfig = {
     key: 'root',
@@ -33,6 +34,7 @@ app.use(createLoading());
 app.model(timelineModel);
 app.model(settingsModel);
 app.model(trayModel);
+app.model(summaryModel);
 app.model(rootModel);
 
 app.router(router);
