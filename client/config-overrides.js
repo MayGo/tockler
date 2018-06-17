@@ -33,7 +33,7 @@ module.exports = function override(config, env) {
             '@normal-color': '#fff',
             '@primary-color': '#8363ff',
             '@body-background': '#d7dde4',
-            '@component-background': '#d7dde4',
+            '@component-background': '#f8f8f8',
         },
     })(config, env);
 

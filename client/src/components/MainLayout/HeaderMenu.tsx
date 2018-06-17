@@ -2,11 +2,16 @@ import * as React from 'react';
 import { Menu, Icon } from 'antd';
 import { Link } from 'dva/router';
 import { Brand, Img } from './HeaderMenu.styles';
+import styled from 'styled-components';
+
+const GrayMenu = styled(Menu)`
+    background: #d7dde4 !important;
+`;
 
 const tocklerIcon = require('../../assets/icons/tockler_icon.png');
 
 export const HeaderMenu = ({ location }: any) => (
-    <Menu selectedKeys={[location.pathname]} mode="horizontal">
+    <GrayMenu selectedKeys={[location.pathname]} mode="horizontal">
         <Menu.Item key="/timeline2">
             <Link to="/timeline">
                 <Brand>
@@ -35,5 +40,5 @@ export const HeaderMenu = ({ location }: any) => (
                 <Icon type="menu-unfold" />Tray
             </Link>
         </Menu.Item>
-    </Menu>
+    </GrayMenu>
 );
