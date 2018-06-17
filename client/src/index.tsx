@@ -1,7 +1,7 @@
 // import hot from 'dva-hot';
 import dva from 'dva';
 import router from './router';
-import * as createLoading from 'dva-loading';
+import createLoading from 'dva-loading';
 import { timelineModel } from './models/timeline';
 import 'typeface-berkshire-swash';
 

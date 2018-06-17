@@ -1,10 +1,7 @@
 import * as React from 'react';
 // import { Layout } from 'antd';
 import { List } from 'antd';
-import styled from 'styled-components';
 import { TrayListItem } from './TrayListItem';
-
-const CustomList = styled(List)``;
 
 export function TrayList({ children, lastLogItems, loading, dispatch, runningLogItem }: any) {
     function startNewLogItemFromOld(oldItem) {
@@ -20,7 +17,7 @@ export function TrayList({ children, lastLogItems, loading, dispatch, runningLog
     }
 
     return (
-        <CustomList
+        <List
             loading={loading}
             itemLayout="horizontal"
             dataSource={lastLogItems}
