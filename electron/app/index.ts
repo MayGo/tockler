@@ -37,9 +37,6 @@ app.on('ready', async () => {
     if (!config.isDev || config.trayEnabledInDev) {
         windowManager.setTrayWindow();
     }
-
-    windowManager.initMenus();
-
     backgroundJob.init();
 
     powerMonitor.on('suspend', function() {

@@ -88,6 +88,7 @@ export default class WindowManager {
             }
         });
         this.mainWindow.on('resize', throttle(WindowManager.storeWindowSize, 500));
+        WindowManager.initMenus();
     }
 
     static initMainWindowEvents() {
