@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import { TimeRange } from 'pondjs';
+
 import { delay } from 'dva/saga';
 import { TrackItemService } from '../services/TrackItemService';
 
@@ -25,9 +25,11 @@ export const rootModel: any = {
 
             const beginDate = moment().startOf('day');
             const endDate = moment().endOf('day');
+
+            const timerange = [beginDate, endDate];
             dispatch({
                 type: 'loadTimerange',
-                payload: { timerange: new TimeRange(beginDate, endDate) },
+                payload: { timerange },
             });
         },
     },
