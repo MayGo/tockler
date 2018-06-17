@@ -4,15 +4,8 @@ import MenuBuilder from './menu-builder';
 import { throttle } from 'lodash';
 import { app, ipcMain, BrowserWindow, globalShortcut } from 'electron';
 import config from './config';
-const Config = require('electron-config');
-
-import * as path from 'path';
 import * as os from 'os';
-import { sequelize } from './models/index';
-
 import { logManager } from './log-manager';
-
-const persistedConfig = new Config();
 
 let logger = logManager.getLogger('WindowManager');
 
@@ -27,8 +20,8 @@ export default class WindowManager {
 
     static setMainWindow() {
         logger.info('Creating main window.');
-        const windowSize = persistedConfig.get('windowsize') || { width: 1080, height: 720 };
-        const openMaximized = persistedConfig.get('openMaximized') || false;
+        const windowSize = config.persisted.get('windowsize') || { width: 1080, height: 720 };
+        const openMaximized = config.persisted.get('openMaximized') || false;
 
         this.mainWindow = new BrowserWindow({
             width: windowSize.width,
@@ -122,7 +115,7 @@ export default class WindowManager {
 
     static storeWindowSize() {
         try {
-            persistedConfig.set('windowsize', WindowManager.mainWindow.getBounds());
+            config.persisted.set('windowsize', WindowManager.mainWindow.getBounds());
         } catch (e) {
             console.error('Error saving', e);
         }

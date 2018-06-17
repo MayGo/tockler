@@ -14,7 +14,6 @@ import windowManager from './window-manager';
 import { extensionsManager } from './extensions-manager';
 import AppUpdater from './app-updater';
 import config from './config';
-import * as path from 'path';
 
 AppUpdater.init();
 
@@ -22,12 +21,6 @@ if (config.isDev) {
     // const reloadFile = path.join(config.client);
     // require('electron-reload')(reloadFile);
 }
-
-app.setLoginItemSettings({
-    openAtLogin: true,
-    openAsHidden: true,
-    args: ['--process-start-args', `"--hidden"`],
-});
 
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
 

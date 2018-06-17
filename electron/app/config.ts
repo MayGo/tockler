@@ -2,6 +2,7 @@ import { app } from 'electron';
 
 import * as path from 'path';
 
+const Config = require('electron-config');
 const isDevelopment = require('electron-is-dev');
 
 let root = path.join(__dirname, '..');
@@ -39,4 +40,5 @@ export default {
         password: 'password',
         outputPath: path.join(userDir, 'tracker.db'),
     },
+    persisted: new Config(),
 };
