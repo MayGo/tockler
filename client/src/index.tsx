@@ -16,7 +16,7 @@ import { settingsModel } from './models/settings';
 const persistConfig = {
     key: 'root',
     storage,
-    whitelist: ['settings'],
+    whitelist: ['settings.work'],
 };
 
 const app = dva({

@@ -4,20 +4,23 @@ import { SettingsForm } from './SettingsForm';
 
 import { compose } from 'recompose';
 const mapStateToProps = ({ settings }: any) => ({
-    initialValues: settings.work,
+    initialValues: settings,
 });
 const mapDispatchToProps = (dispatch: any) => ({
     handleSubmit: e => {
         e.preventDefault();
 
         dispatch({
-            type: 'settings/saveWorkSettings',
+            type: 'settings/saveSettings',
         });
     },
 });
 
 const enhance = compose(
-    connect(mapStateToProps, mapDispatchToProps),
+    connect(
+        mapStateToProps,
+        mapDispatchToProps,
+    ),
     reduxForm({
         form: 'settingsForm',
     }),

@@ -43,6 +43,7 @@ export default class AppManager {
     static setOpenAtLogin() {
         const openAtLogin = config.persisted.get('openAtLogin');
 
+        logger.info('Setting openAtLogin to:', openAtLogin);
         app.setLoginItemSettings({
             openAtLogin: typeof openAtLogin !== 'undefined' ? openAtLogin : true,
             openAsHidden: true,
