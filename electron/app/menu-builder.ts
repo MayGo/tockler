@@ -1,6 +1,7 @@
 import { app, Menu, shell, BrowserWindow } from 'electron';
 
 import config from './config';
+import WindowManager from './window-manager';
 
 export default class MenuBuilder {
     windowManager;
@@ -50,6 +51,13 @@ export default class MenuBuilder {
             submenu: [
                 { label: 'About Tockler', selector: 'orderFrontStandardAboutPanel:' },
                 { type: 'separator' },
+                {
+                    label: 'Preferences',
+                    accelerator: 'Command+,',
+                    click() {
+                        WindowManager.mainWindow.webContents.send('side:preferences');
+                    },
+                },
                 { label: 'Services', submenu: [] },
                 { type: 'separator' },
                 { label: 'Hide Tockler', accelerator: 'Command+H', selector: 'hide:' },

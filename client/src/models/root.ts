@@ -2,6 +2,17 @@ import * as moment from 'moment';
 
 import { delay } from 'dva/saga';
 import { TrackItemService } from '../services/TrackItemService';
+import { EventEmitter } from '../services/EventEmitter';
+import { routerRedux } from 'dva/router';
+
+const gotoSettingsPageFn = dispatch => () => {
+    console.log('Navigating to settings page');
+    dispatch(
+        routerRedux.push({
+            pathname: '/settings',
+        }),
+    );
+};
 
 export const rootModel: any = {
     namespace: 'root',
@@ -31,6 +42,13 @@ export const rootModel: any = {
                 type: 'loadTimerange',
                 payload: { timerange },
             });
+            const gotoSettingsPage = gotoSettingsPageFn(dispatch);
+            EventEmitter.on('side:preferences', gotoSettingsPage);
+
+            return () => {
+                console.info('Clearing eventEmitter');
+                EventEmitter.off('side:preferences', gotoSettingsPage);
+            };
         },
     },
 
