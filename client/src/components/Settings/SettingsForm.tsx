@@ -3,7 +3,7 @@ import { Field } from 'redux-form';
 import { TextField, SwitchField } from 'redux-form-antd';
 import { Flex, Box } from 'grid-styled';
 
-import { Form, Icon, Button, Row, Switch, Card } from 'antd';
+import { Form, Icon, Button, Card } from 'antd';
 
 interface IProps {
     handleSubmit: any;

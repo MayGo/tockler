@@ -1,5 +1,4 @@
 import { TrackItemType } from '../enum/TrackItemType';
-import { ITrackItem } from '../@types/ITrackItem';
 import { ITimelineState } from '../@types/ITimelineState';
 
 export const handleItems = (

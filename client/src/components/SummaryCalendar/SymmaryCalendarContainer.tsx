@@ -5,11 +5,6 @@ import moment from 'moment';
 import { SummaryCalendar } from './SymmaryCalendar';
 import _ from 'lodash';
 
-const sumApp = (p, c) => {
-    return _.extend(p, {
-        timeDiffInMs: p.timeDiffInMs + moment(c.endDate).diff(c.beginDate),
-    });
-};
 const groupByField = item => moment(item.beginDate).date();
 
 const summariseLog = items => {
