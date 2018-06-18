@@ -32,16 +32,17 @@ const summariseOnline = (items, mode) => {
     return data;
 };
 
-const mapStateToProps = ({ summary }: any) => ({
+const mapStateToProps = ({ summary, loading }: any) => ({
     selectedDate: summary.selectedDate,
     logSummary: summariseLog(summary[TrackItemType.LogTrackItem], summary.selectedMode),
     onlineSummary: summariseOnline(summary[TrackItemType.StatusTrackItem], summary.selectedMode),
+    loading: loading.models.summary,
 });
 const mapDispatchToProps = (dispatch: any) => ({
-    changeSelectedDate: (selectedDate: Moment, mode: 'month' | 'year') =>
+    changeSelectedDate: (selectedDate: Moment, selectedMode: 'month' | 'year') =>
         dispatch({
-            type: 'summary/changeSelectedDate',
-            payload: { selectedDate, mode },
+            type: 'summary/loadSummary',
+            payload: { selectedDate, selectedMode },
         }),
 });
 

@@ -24,21 +24,24 @@ export const summaryModel: any = {
     },
 
     effects: {
-        *changeSelectedDate({ payload: { selectedDate, selectedMode } }: any, { call, put }: any) {
-            console.log('selectedDate changed:', selectedDate, selectedMode);
+        *changeSelectedDate({ payload: { selectedDate } }: any, { call, put }: any) {
+            console.log('selectedDate changed:', selectedDate);
             yield put({
                 type: 'setSelectedDate',
                 payload: { selectedDate },
-            });
-
-            yield put({
-                type: 'setSelectedMode',
-                payload: { selectedMode },
             });
         },
 
         *loadSummary({ payload: { selectedDate, selectedMode } }: any, { call, put }: any) {
             console.log('Change selectedDate:', selectedDate, selectedMode);
+            yield put({
+                type: 'loadItems',
+                payload: {
+                    logTrackItems: [],
+                    statusTrackItems: [],
+                    appTrackItems: [],
+                },
+            });
 
             const beginDate = moment(selectedDate)
                 .startOf(selectedMode)
@@ -61,9 +64,15 @@ export const summaryModel: any = {
                     appTrackItems: appItems,
                 },
             });
+
             yield put({
                 type: 'setSelectedDate',
                 payload: { selectedDate },
+            });
+
+            yield put({
+                type: 'setSelectedMode',
+                payload: { selectedMode },
             });
         },
     },

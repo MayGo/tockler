@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { Calendar, Badge } from 'antd';
+import { Calendar, Badge, Spin } from 'antd';
 import { Flex } from 'grid-styled';
 
 import { TaskList, Item } from './SummaryCalendar.styles';
 import moment, { Moment } from 'moment';
+import { Spinner } from '../Timeline/Timeline.styles';
 
 interface IProps {
     appSummary: any;
@@ -12,6 +13,7 @@ interface IProps {
     selectedDate: Moment;
     selectedMode: 'month' | 'year';
     changeSelectedDate: any;
+    loading?: boolean;
 }
 export class SummaryCalendar extends React.Component<IProps, {}> {
     getListData(day) {
@@ -34,16 +36,19 @@ export class SummaryCalendar extends React.Component<IProps, {}> {
     }
 
     dateCellRender = value => {
-        const listData = this.getListData(value.date());
-        return (
-            <TaskList>
-                {listData.map(item => (
-                    <Item key={item.content}>
-                        <Badge status={item.type} text={item.content} />
-                    </Item>
-                ))}
-            </TaskList>
-        );
+        if (value.month() === this.props.selectedDate.month()) {
+            const listData = this.getListData(value.date());
+            return (
+                <TaskList>
+                    {listData.map(item => (
+                        <Item key={item.content}>
+                            <Badge status={item.type} text={item.content} />
+                        </Item>
+                    ))}
+                </TaskList>
+            );
+        }
+        return null;
     };
 
     monthCellRender = value => {
@@ -60,12 +65,17 @@ export class SummaryCalendar extends React.Component<IProps, {}> {
     };
 
     render() {
-        const { changeSelectedDate, selectedDate, selectedMode } = this.props;
+        const { changeSelectedDate, selectedDate, selectedMode, loading } = this.props;
         console.log('Render SummaryCalendar', this.state);
 
         return (
             <div>
                 <Flex p={1}>
+                    {loading && (
+                        <Spinner>
+                            <Spin />
+                        </Spinner>
+                    )}
                     <Calendar
                         value={selectedDate}
                         mode={selectedMode}
