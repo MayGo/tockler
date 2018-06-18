@@ -1,30 +1,31 @@
 import { connect } from 'dva';
 
 import { TrackItemType } from '../../enum/TrackItemType';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import { SummaryCalendar } from './SymmaryCalendar';
 import _ from 'lodash';
 
-const groupByField = item => moment(item.beginDate).date();
+const groupByField = mode => item =>
+    mode === 'month' ? moment(item.beginDate).date() : moment(item.beginDate).month();
 
-const summariseLog = items => {
+const summariseLog = (items, mode) => {
     let data = {};
 
     _(items)
-        .groupBy(groupByField)
-
+        .groupBy(groupByField(mode))
         .forEach((value, key) => {
             data[key] = _.sumBy(value, c => moment(c.endDate).diff(c.beginDate));
         });
+
     return data;
 };
 
-const summariseOnline = items => {
+const summariseOnline = (items, mode) => {
     let data = {};
 
     _(items)
         .filter(item => item.app === 'ONLINE')
-        .groupBy(groupByField)
+        .groupBy(groupByField(mode))
         .forEach((value, key) => {
             data[key] = _.sumBy(value, c => moment(c.endDate).diff(c.beginDate));
         });
@@ -33,14 +34,14 @@ const summariseOnline = items => {
 
 const mapStateToProps = ({ summary }: any) => ({
     selectedDate: summary.selectedDate,
-    logSummary: summariseLog(summary[TrackItemType.LogTrackItem]),
-    onlineSummary: summariseOnline(summary[TrackItemType.StatusTrackItem]),
+    logSummary: summariseLog(summary[TrackItemType.LogTrackItem], summary.selectedMode),
+    onlineSummary: summariseOnline(summary[TrackItemType.StatusTrackItem], summary.selectedMode),
 });
 const mapDispatchToProps = (dispatch: any) => ({
-    changeSelectedDate: (selectedDate: any) =>
+    changeSelectedDate: (selectedDate: Moment, mode: 'month' | 'year') =>
         dispatch({
             type: 'summary/changeSelectedDate',
-            payload: { selectedDate },
+            payload: { selectedDate, mode },
         }),
 });
 

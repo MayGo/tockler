@@ -9,6 +9,7 @@ export const summaryModel: any = {
         StatusTrackItem: [],
         LogTrackItem: [],
         selectedDate: moment(),
+        selectedMode: 'month',
     },
 
     subscriptions: {
@@ -17,27 +18,33 @@ export const summaryModel: any = {
 
             dispatch({
                 type: 'loadSummary',
-                payload: { selectedDate: moment() },
+                payload: { selectedDate: moment(), selectedMode: 'month' },
             });
         },
     },
 
     effects: {
-        *changeSelectedDate({ payload: { selectedDate } }: any, { call, put }: any) {
-            console.log('selectedDate changed:', selectedDate);
+        *changeSelectedDate({ payload: { selectedDate, selectedMode } }: any, { call, put }: any) {
+            console.log('selectedDate changed:', selectedDate, selectedMode);
             yield put({
                 type: 'setSelectedDate',
                 payload: { selectedDate },
             });
+
+            yield put({
+                type: 'setSelectedMode',
+                payload: { selectedMode },
+            });
         },
 
-        *loadSummary({ payload: { selectedDate } }: any, { call, put }: any) {
-            console.log('Change selectedDate:', selectedDate);
+        *loadSummary({ payload: { selectedDate, selectedMode } }: any, { call, put }: any) {
+            console.log('Change selectedDate:', selectedDate, selectedMode);
+
             const beginDate = moment(selectedDate)
-                .startOf('month')
+                .startOf(selectedMode)
                 .toDate();
             const endDate = moment(selectedDate)
-                .endOf('month')
+                .endOf(selectedMode)
                 .toDate();
 
             const { appItems, statusItems, logItems } = yield call(
@@ -69,6 +76,12 @@ export const summaryModel: any = {
             return {
                 ...state,
                 selectedDate,
+            };
+        },
+        setSelectedMode(state: any, { payload: { selectedMode } }: any) {
+            return {
+                ...state,
+                selectedMode,
             };
         },
     },
