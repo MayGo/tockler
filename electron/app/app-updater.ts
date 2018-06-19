@@ -33,10 +33,10 @@ export default class AppUpdater {
     static updateNotAvailable = updateInfo => {
         const currentVersionString = app.getVersion();
         showNotification(
-            `Up to date! Current version ${currentVersionString}
-            (latest version: ${updateInfo.version})`,
+            `Up to date! Current ${currentVersionString} (latest: ${updateInfo.version})`,
         );
     };
+
     static async checkForUpdates() {
         logger.info('Checking for updates');
 
