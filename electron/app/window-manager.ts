@@ -51,23 +51,23 @@ export default class WindowManager {
 
         this.mainWindow.on('closed', () => {
             this.mainWindow = null;
-            console.log('Main window closed');
+            logger.info('Main window closed');
         });
 
         this.mainWindow.on('focus', () => {
             let sendEventName = 'main-window-focus';
-            console.log('Sending focus event: ' + sendEventName);
+            logger.info('Sending focus event: ' + sendEventName);
             // this.mainWindow.webContents.send(sendEventName, 'ping');
         });
 
         this.mainWindow.webContents.on('did-finish-load', () => {
-            console.log('did-finish-load');
+            logger.info('did-finish-load');
             this.mainWindow.show();
             this.mainWindow.focus();
         });
 
-        globalShortcut.register('Escape', function() {
-            console.log('Escape is pressed');
+        globalShortcut.register('Escape', () => {
+            logger.info('Escape is pressed');
 
             if (this.mainWindow) {
                 this.mainWindow.setFullScreen(false);
@@ -79,7 +79,7 @@ export default class WindowManager {
             globalShortcut.unregisterAll();
 
             if (this.mainWindow) {
-                console.log('Closing window');
+                logger.info('Closing window');
                 this.mainWindow = null;
             }
             if (app.dock) {
@@ -96,19 +96,19 @@ export default class WindowManager {
 
         ipcMain.on('toggle-main-window', (ev, name) => {
             if (!this.mainWindow) {
-                console.log('MainWindow closed, opening');
+                logger.info('MainWindow closed, opening');
                 WindowManager.setMainWindow();
             }
 
-            console.log('Toggling main window');
+            logger.info('Toggling main window');
             if (this.mainWindow.isVisible()) {
-                console.log('Show main window');
+                logger.info('Show main window');
                 this.mainWindow.show();
             } else if (this.mainWindow.isMinimized()) {
-                console.log('Restore main window');
+                logger.info('Restore main window');
                 this.mainWindow.restore();
             } else {
-                console.log('Hide main window');
+                logger.info('Hide main window');
                 this.mainWindow.hide();
             }
         });
@@ -144,11 +144,11 @@ export default class WindowManager {
 
         // this.menubar.on('after-create-window', () => {});
         this.menubar.on('after-show', () => {
-            console.log('Show tray');
+            logger.info('Show tray');
             this.menubar.window.webContents.send('focus-tray', 'ping');
 
             if (config.isDev) {
-                console.log('Open menubar dev tools');
+                logger.info('Open menubar dev tools');
                 this.menubar.window.openDevTools();
             }
         });
