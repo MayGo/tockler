@@ -2,6 +2,7 @@ import { app, Menu, shell, BrowserWindow, MenuItemConstructorOptions } from 'ele
 
 import config from './config';
 import WindowManager from './window-manager';
+import AppUpdater from './app-updater';
 
 const macOS = process.platform === 'darwin';
 
@@ -69,19 +70,47 @@ export default class MenuBuilder {
             );
         }
 
+        const PREFERENCES_ITEM = {
+            label: 'Preferences',
+            accelerator: macOS ? 'Command+,' : 'Control+',
+            click() {
+                WindowManager.mainWindow.webContents.send('side:preferences');
+            },
+        };
+
+        const CHECK_UPDATES_ITEM = {
+            label: 'Check for Updates...',
+            click() {
+                AppUpdater.checkForUpdates();
+            },
+        };
+
         if (process.platform === 'darwin') {
+            // Edit menu
+            template[0].submenu.push(
+                { type: 'separator' },
+                {
+                    label: 'Speech',
+                    submenu: [{ role: 'startspeaking' }, { role: 'stopspeaking' }],
+                },
+            );
+
+            // Window menu
+            template[2].submenu = [
+                { role: 'close' },
+                { role: 'minimize' },
+                { role: 'zoom' },
+                { type: 'separator' },
+                { role: 'front' },
+            ];
             const about = {
                 label: app.getName(),
                 submenu: [
                     { role: 'about' },
                     { type: 'separator' },
-                    {
-                        label: 'Preferences',
-                        accelerator: macOS ? 'Command+,' : 'Control+',
-                        click() {
-                            WindowManager.mainWindow.webContents.send('side:preferences');
-                        },
-                    },
+                    PREFERENCES_ITEM,
+                    { type: 'separator' },
+                    CHECK_UPDATES_ITEM,
                     { type: 'separator' },
                     { role: 'services', submenu: [] },
                     { type: 'separator' },
@@ -93,25 +122,19 @@ export default class MenuBuilder {
                 ],
             };
             template.unshift(about);
-
-            // Edit menu
-            template[1].submenu.push(
-                { type: 'separator' },
-                {
-                    label: 'Speech',
-                    submenu: [{ role: 'startspeaking' }, { role: 'stopspeaking' }],
-                },
-            );
-
+        } else {
             // Window menu
-            template[3].submenu = [
+            template[2].submenu = [
+                PREFERENCES_ITEM,
+                { type: 'separator' },
+                CHECK_UPDATES_ITEM,
+                { type: 'separator' },
                 { role: 'close' },
                 { role: 'minimize' },
                 { role: 'zoom' },
-                { type: 'separator' },
-                { role: 'front' },
             ];
         }
+
         const menu = Menu.buildFromTemplate(template as MenuItemConstructorOptions[]);
         Menu.setApplicationMenu(menu);
 
