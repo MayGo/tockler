@@ -2,6 +2,7 @@ import { app, Menu, shell, BrowserWindow } from 'electron';
 
 import config from './config';
 import WindowManager from './window-manager';
+import AppUpdater from './app-updater';
 
 export default class MenuBuilder {
     windowManager;
@@ -50,6 +51,13 @@ export default class MenuBuilder {
             label: 'Electron',
             submenu: [
                 { label: 'About Tockler', selector: 'orderFrontStandardAboutPanel:' },
+                { type: 'separator' },
+                {
+                    label: 'Check for Updates...',
+                    click() {
+                        AppUpdater.checkForUpdates();
+                    },
+                },
                 { type: 'separator' },
                 {
                     label: 'Preferences',
