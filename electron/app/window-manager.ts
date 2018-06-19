@@ -14,7 +14,7 @@ export default class WindowManager {
     static menubar;
 
     static initMenus() {
-        const menuBuilder = new MenuBuilder(this);
+        const menuBuilder = new MenuBuilder();
         menuBuilder.buildMenu();
     }
 

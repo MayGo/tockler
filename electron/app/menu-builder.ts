@@ -1,275 +1,137 @@
-import { app, Menu, shell, BrowserWindow } from 'electron';
+import { app, Menu, shell, BrowserWindow, MenuItemConstructorOptions } from 'electron';
 
 import config from './config';
 import WindowManager from './window-manager';
-import AppUpdater from './app-updater';
+
+const macOS = process.platform === 'darwin';
 
 export default class MenuBuilder {
-    windowManager;
-
-    constructor(windowManager) {
-        this.windowManager = windowManager;
-    }
-
     buildMenu() {
         if (config.isDev) {
             this.setupDevelopmentEnvironment();
         }
 
-        let template;
-
-        if (process.platform === 'darwin') {
-            template = this.buildDarwinTemplate();
-        } else {
-            template = this.buildDefaultTemplate();
-        }
-
-        const menu = Menu.buildFromTemplate(template);
-        Menu.setApplicationMenu(menu);
-
-        return menu;
-    }
-
-    setupDevelopmentEnvironment() {
-        this.windowManager.mainWindow.openDevTools();
-        this.windowManager.mainWindow.webContents.on('context-menu', (e, props) => {
-            const { x, y } = props;
-
-            Menu.buildFromTemplate([
-                {
-                    label: 'Inspect element',
-                    click: () => {
-                        this.windowManager.mainWindow.inspectElement(x, y);
-                    },
-                },
-            ]).popup(this.windowManager.mainWindow);
-        });
-    }
-
-    buildDarwinTemplate() {
-        const subMenuAbout = {
-            label: 'Electron',
-            submenu: [
-                { label: 'About Tockler', selector: 'orderFrontStandardAboutPanel:' },
-                { type: 'separator' },
-                {
-                    label: 'Check for Updates...',
-                    click() {
-                        AppUpdater.checkForUpdates();
-                    },
-                },
-                { type: 'separator' },
-                {
-                    label: 'Preferences',
-                    accelerator: 'Command+,',
-                    click() {
-                        WindowManager.mainWindow.webContents.send('side:preferences');
-                    },
-                },
-                { label: 'Services', submenu: [] },
-                { type: 'separator' },
-                { label: 'Hide Tockler', accelerator: 'Command+H', selector: 'hide:' },
-                {
-                    label: 'Hide Others',
-                    accelerator: 'Command+Shift+H',
-                    selector: 'hideOtherApplications:',
-                },
-                { label: 'Show All', selector: 'unhideAllApplications:' },
-                { type: 'separator' },
-                {
-                    label: 'Quit',
-                    accelerator: 'Command+Q',
-                    click: () => {
-                        app.quit();
-                    },
-                },
-            ],
-        };
-        const subMenuEdit = {
-            label: 'Edit',
-            submenu: [
-                { label: 'Undo', accelerator: 'Command+Z', selector: 'undo:' },
-                { label: 'Redo', accelerator: 'Shift+Command+Z', selector: 'redo:' },
-                { type: 'separator' },
-                { label: 'Cut', accelerator: 'Command+X', selector: 'cut:' },
-                { label: 'Copy', accelerator: 'Command+C', selector: 'copy:' },
-                { label: 'Paste', accelerator: 'Command+V', selector: 'paste:' },
-                {
-                    label: 'Select All',
-                    accelerator: 'Command+A',
-                    selector: 'selectAll:',
-                },
-            ],
-        };
-        const subMenuViewDev = {
-            label: 'View',
-            submenu: [
-                {
-                    label: 'Reload',
-                    accelerator: 'Command+R',
-                    click: () => {
-                        this.windowManager.mainWindow.webContents.reload();
-                    },
-                },
-                {
-                    label: 'Toggle Full Screen',
-                    accelerator: 'Ctrl+Command+F',
-                    click: () => {
-                        this.windowManager.mainWindow.setFullScreen(
-                            !this.windowManager.mainWindow.isFullScreen(),
-                        );
-                    },
-                },
-                {
-                    label: 'Toggle Developer Tools',
-                    accelerator: 'Alt+Command+I',
-                    click: () => {
-                        this.windowManager.mainWindow.toggleDevTools();
-                    },
-                },
-            ],
-        };
-        const subMenuViewProd = {
-            label: 'View',
-            submenu: [
-                {
-                    label: 'Toggle Full Screen',
-                    accelerator: 'Ctrl+Command+F',
-                    click: () => {
-                        this.windowManager.mainWindow.setFullScreen(
-                            !this.windowManager.mainWindow.isFullScreen(),
-                        );
-                    },
-                },
-            ],
-        };
-        const subMenuWindow = {
-            label: 'Window',
-            submenu: [
-                {
-                    label: 'Minimize',
-                    accelerator: 'Command+M',
-                    selector: 'performMiniaturize:',
-                },
-                { label: 'Close', accelerator: 'Command+W', selector: 'performClose:' },
-                { type: 'separator' },
-                { label: 'Bring All to Front', selector: 'arrangeInFront:' },
-            ],
-        };
-        const subMenuHelp = {
-            label: 'Help',
-            submenu: [
-                {
-                    label: 'Learn More',
-                    click() {
-                        shell.openExternal('https://github.com/MayGo/tockler');
-                    },
-                },
-                {
-                    label: 'Search Issues',
-                    click() {
-                        shell.openExternal('https://github.com/MayGo/tockler/issues');
-                    },
-                },
-            ],
-        };
-
-        const subMenuView = config.isDev ? subMenuViewDev : subMenuViewProd;
-
-        return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
-    }
-
-    buildDefaultTemplate() {
-        const templateDefault = [
+        const template: any = [
             {
-                label: '&File',
+                label: 'Edit',
                 submenu: [
-                    {
-                        label: '&Open',
-                        accelerator: 'Ctrl+O',
-                    },
-                    {
-                        label: '&Close',
-                        accelerator: 'Ctrl+W',
-                        click: () => {
-                            this.windowManager.mainWindow.close();
-                        },
-                    },
+                    { role: 'undo' },
+                    { role: 'redo' },
+                    { type: 'separator' },
+                    { role: 'cut' },
+                    { role: 'copy' },
+                    { role: 'paste' },
+                    { role: 'pasteandmatchstyle' },
+                    { role: 'delete' },
+                    { role: 'selectall' },
                 ],
             },
             {
-                label: '&View',
-                submenu: true // config.isDev
-                    ? [
-                          {
-                              label: '&Reload',
-                              accelerator: 'Ctrl+R',
-                              click: () => {
-                                  this.windowManager.mainWindow.webContents.reload();
-                              },
-                          },
-                          {
-                              label: 'Toggle &Full Screen',
-                              accelerator: 'F11',
-                              click: () => {
-                                  this.windowManager.mainWindow.setFullScreen(
-                                      !this.windowManager.mainWindow.isFullScreen(),
-                                  );
-                              },
-                          },
-                          {
-                              label: 'Toggle &Developer Tools',
-                              accelerator: 'Alt+Ctrl+I',
-                              click: () => {
-                                  this.windowManager.mainWindow.toggleDevTools();
-                              },
-                          },
-                      ]
-                    : [
-                          {
-                              label: 'Toggle &Full Screen',
-                              accelerator: 'F11',
-                              click: () => {
-                                  this.windowManager.mainWindow.setFullScreen(
-                                      !this.windowManager.mainWindow.isFullScreen(),
-                                  );
-                              },
-                          },
-                      ],
+                label: 'View',
+                submenu: [
+                    { role: 'resetzoom' },
+                    { role: 'zoomin' },
+                    { role: 'zoomout' },
+                    { type: 'separator' },
+                    { role: 'togglefullscreen' },
+                ],
             },
             {
-                label: 'Help',
+                role: 'window',
+                submenu: [{ role: 'minimize' }, { role: 'close' }],
+            },
+            {
+                role: 'help',
                 submenu: [
                     {
                         label: 'Learn More',
                         click() {
-                            shell.openExternal('http://electron.atom.io');
-                        },
-                    },
-                    {
-                        label: 'Documentation',
-                        click() {
-                            shell.openExternal(
-                                'https://github.com/atom/electron/tree/master/docs#readme',
-                            );
-                        },
-                    },
-                    {
-                        label: 'Community Discussions',
-                        click() {
-                            shell.openExternal('https://discuss.atom.io/c/electron');
+                            shell.openExternal('https://github.com/MayGo/tockler');
                         },
                     },
                     {
                         label: 'Search Issues',
                         click() {
-                            shell.openExternal('https://github.com/atom/electron/issues');
+                            shell.openExternal('https://github.com/MayGo/tockler/issues');
                         },
                     },
                 ],
             },
         ];
 
-        return templateDefault;
+        if (config.isDev) {
+            // View menu
+            template[1].submenu.unshift(
+                { role: 'reload' },
+                { role: 'forcereload' },
+                { role: 'toggledevtools' },
+                { type: 'separator' },
+            );
+        }
+
+        if (process.platform === 'darwin') {
+            const about = {
+                label: app.getName(),
+                submenu: [
+                    { role: 'about' },
+                    { type: 'separator' },
+                    {
+                        label: 'Preferences',
+                        accelerator: macOS ? 'Command+,' : 'Control+',
+                        click() {
+                            WindowManager.mainWindow.webContents.send('side:preferences');
+                        },
+                    },
+                    { type: 'separator' },
+                    { role: 'services', submenu: [] },
+                    { type: 'separator' },
+                    { role: 'hide' },
+                    { role: 'hideothers' },
+                    { role: 'unhide' },
+                    { type: 'separator' },
+                    { role: 'quit' },
+                ],
+            };
+            template.unshift(about);
+
+            // Edit menu
+            template[1].submenu.push(
+                { type: 'separator' },
+                {
+                    label: 'Speech',
+                    submenu: [{ role: 'startspeaking' }, { role: 'stopspeaking' }],
+                },
+            );
+
+            // Window menu
+            template[3].submenu = [
+                { role: 'close' },
+                { role: 'minimize' },
+                { role: 'zoom' },
+                { type: 'separator' },
+                { role: 'front' },
+            ];
+        }
+        const menu = Menu.buildFromTemplate(template as MenuItemConstructorOptions[]);
+        Menu.setApplicationMenu(menu);
+
+        return menu;
+    }
+
+    setupDevelopmentEnvironment() {
+        WindowManager.mainWindow.openDevTools();
+
+        WindowManager.mainWindow.webContents.on('context-menu', (e, props) => {
+            const { x, y } = props;
+            const menu = Menu.buildFromTemplate([
+                {
+                    label: 'Inspect element',
+                    click: () => {
+                        WindowManager.mainWindow.inspectElement(x, y);
+                    },
+                },
+            ]);
+            menu.popup(WindowManager.mainWindow);
+        });
     }
 }
