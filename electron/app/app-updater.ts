@@ -22,6 +22,9 @@ export default class AppUpdater {
         }
 
         autoUpdater.logger = logger;
+        autoUpdater.on('download-progress', progressInfo => {
+            showNotification(`Downloaded: {progressInfo.percent}% `, 'Tockler downloading');
+        });
         autoUpdater.on('error', err => {
             showNotification(err ? err.stack || err : 'unknown', 'Tockler error');
         });
