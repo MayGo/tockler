@@ -1464,9 +1464,9 @@ ejs@^2.6.1:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/ejs/-/ejs-2.6.1.tgz#498ec0d495655abc6f23cd61868d926464071aa0"
 
-electron-builder-lib@20.15.0:
-  version "20.15.0"
-  resolved "https://registry.yarnpkg.com/electron-builder-lib/-/electron-builder-lib-20.15.0.tgz#0f0a534c98aa1f6cd527060111f463aed91f2063"
+electron-builder-lib@20.15.1:
+  version "20.15.1"
+  resolved "https://registry.yarnpkg.com/electron-builder-lib/-/electron-builder-lib-20.15.1.tgz#d2675e71918f62561cf5ecae633dfe5f4219d0e3"
   dependencies:
     "7zip-bin" "~4.0.2"
     app-builder-bin "1.9.7"
@@ -1524,16 +1524,16 @@ electron-builder-lib@~20.14.6:
     stream-json "^0.6.1"
     temp-file "^3.1.2"
 
-electron-builder@20.15.0:
-  version "20.15.0"
-  resolved "https://registry.yarnpkg.com/electron-builder/-/electron-builder-20.15.0.tgz#ded6e5b1d696897e9f7fc848942c33f1e88d5bc0"
+electron-builder@20.15.1:
+  version "20.15.1"
+  resolved "https://registry.yarnpkg.com/electron-builder/-/electron-builder-20.15.1.tgz#078cda29bdb7240244e9bccf30740b1ea42deb44"
   dependencies:
     bluebird-lst "^1.0.5"
     builder-util "5.11.2"
     builder-util-runtime "4.2.1"
     chalk "^2.4.1"
     dmg-builder "4.10.1"
-    electron-builder-lib "20.15.0"
+    electron-builder-lib "20.15.1"
     electron-download-tf "4.3.4"
     fs-extra-p "^4.6.0"
     is-ci "^1.1.0"
@@ -1661,9 +1661,9 @@ electron-publish@20.15.0:
     lazy-val "^1.0.3"
     mime "^2.3.1"
 
-electron-reload@1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/electron-reload/-/electron-reload-1.2.1.tgz#616e906e5dbd1cce97222ee4299751c3b285bf2b"
+electron-reload@1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/electron-reload/-/electron-reload-1.2.2.tgz#621ddb443b9fbba1c5e29a5fdd683322b5c42284"
   dependencies:
     chokidar "^1.5.1"
 
@@ -1687,9 +1687,9 @@ electron-updater@2.21.10:
     semver "^5.5.0"
     source-map-support "^0.5.5"
 
-electron@1.8.4:
-  version "1.8.4"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-1.8.4.tgz#cca8d0e6889f238f55b414ad224f03e03b226a38"
+electron@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-2.0.2.tgz#b77e05f83419cc5ec921a2d21f35b55e4bfc3d68"
   dependencies:
     "@types/node" "^8.0.24"
     electron-download "^3.0.1"
