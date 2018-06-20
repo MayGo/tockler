@@ -28,6 +28,7 @@ cache:
     - $HOME/.electron
 
 install:
+  - npm update
   - npm install yarn -g
   - cd electron
   - yarn install
