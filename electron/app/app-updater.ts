@@ -23,7 +23,7 @@ export default class AppUpdater {
 
         autoUpdater.logger = logger;
         autoUpdater.on('download-progress', progressInfo => {
-            showNotification(`Downloaded: {progressInfo.percent}% `, 'Tockler downloading');
+            showNotification(`Downloaded: ${progressInfo.percent}% `, 'Tockler update downloading');
         });
         autoUpdater.on('error', err => {
             showNotification(err ? err.stack || err : 'unknown', 'Tockler error');
@@ -44,7 +44,8 @@ export default class AppUpdater {
         logger.info('Checking for updates');
 
         autoUpdater.on('update-not-available', AppUpdater.updateNotAvailable);
-        await autoUpdater.checkForUpdatesAndNotify();
+        const result: UpdateCheckResult = await autoUpdater.checkForUpdatesAndNotify();
+        logger.info(`Update result ${result.updateInfo.version}`);
         autoUpdater.removeListener('update-not-available', AppUpdater.updateNotAvailable);
     }
 }
