@@ -2,12 +2,16 @@ import * as React from 'react';
 import { Field } from 'redux-form';
 import { TextField, SwitchField } from 'redux-form-antd';
 import { Flex, Box } from 'grid-styled';
-
-import { Form, Icon, Button, Card } from 'antd';
+import { Form, Icon, Button, Card, Switch } from 'antd';
 
 interface IProps {
     handleSubmit: any;
 }
+
+console.debug(
+    'Switch has to be imported, redux-form-antd Switch does not work without it.',
+    Switch,
+);
 
 const labelCol = { span: 6, offset: 0 };
 const wrapperCol = { span: 14, offset: 0 };
@@ -43,6 +47,17 @@ export class SettingsForm extends React.Component<IProps, IState> {
                                         name="app.openAtLogin"
                                         type="text"
                                         label="Run at login"
+                                        labelCol={labelCol}
+                                        wrapperCol={wrapperCol}
+                                        size="default"
+                                        component={SwitchField}
+                                    />
+                                </Form.Item>
+                                <Form.Item>
+                                    <Field
+                                        name="app.isAutoUpdateEnabled"
+                                        type="text"
+                                        label="Auto update"
                                         labelCol={labelCol}
                                         wrapperCol={wrapperCol}
                                         size="default"

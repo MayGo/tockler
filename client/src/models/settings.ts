@@ -3,12 +3,17 @@ const config = new Config();
 
 const ipcRenderer = (<any>window).require('electron').ipcRenderer;
 const openAtLogin = config.get('openAtLogin');
+const isAutoUpdateEnabled = config.get('isAutoUpdateEnabled');
 
 export const settingsModel: any = {
     namespace: 'settings',
     state: {
         work: { hoursToWork: 8 },
-        app: { openAtLogin: typeof openAtLogin !== 'undefined' ? openAtLogin : true },
+        app: {
+            openAtLogin: typeof openAtLogin !== 'undefined' ? openAtLogin : true,
+            isAutoUpdateEnabled:
+                typeof isAutoUpdateEnabled !== 'undefined' ? isAutoUpdateEnabled : true,
+        },
     },
 
     effects: {
@@ -22,6 +27,10 @@ export const settingsModel: any = {
                 config.set('openAtLogin', settings.app.openAtLogin);
 
                 ipcRenderer.send('openAtLoginChanged');
+            }
+            if (settings.app.isAutoUpdateEnabled !== currentSettings.app.isAutoUpdateEnabled) {
+                console.log('Setting isAutoUpdateEnabled', settings.app.isAutoUpdateEnabled);
+                config.set('isAutoUpdateEnabled', settings.app.isAutoUpdateEnabled);
             }
 
             yield put({

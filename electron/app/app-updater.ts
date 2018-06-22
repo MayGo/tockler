@@ -8,7 +8,7 @@ import { logManager } from './log-manager';
 const logger = logManager.getLogger('AppUpdater');
 
 const ONE_MINUTE_MS = 60 * 1000;
-export const CHECK_INTERVAL_MS = ONE_MINUTE_MS * 30;
+export const CHECK_INTERVAL_MS = ONE_MINUTE_MS * 60;
 
 export default class AppUpdater {
     static init() {
@@ -23,14 +23,31 @@ export default class AppUpdater {
 
         autoUpdater.logger = logger;
         autoUpdater.on('download-progress', progressInfo => {
-            showNotification(`Downloaded: ${progressInfo.percent}% `, 'Tockler update downloading');
+            showNotification(
+                `Downloaded: ${Math.round(progressInfo.percent)}% `,
+                'Tockler update downloading',
+            );
         });
+
         autoUpdater.on('error', err => {
             showNotification(err ? err.stack || err : 'unknown', 'Tockler error');
         });
 
-        autoUpdater.checkForUpdatesAndNotify();
-        setInterval(() => autoUpdater.checkForUpdatesAndNotify(), CHECK_INTERVAL_MS);
+        AppUpdater.checkIfEnabled();
+        setInterval(() => AppUpdater.checkIfEnabled(), CHECK_INTERVAL_MS);
+    }
+
+    static checkIfEnabled() {
+        let isAutoUpdateEnabled = config.persisted.get('isAutoUpdateEnabled');
+        isAutoUpdateEnabled =
+            typeof isAutoUpdateEnabled !== 'undefined' ? isAutoUpdateEnabled : true;
+
+        if (isAutoUpdateEnabled) {
+            logger.info('Checking for updates.');
+            autoUpdater.checkForUpdatesAndNotify();
+        } else {
+            logger.info('Auto update disabled.');
+        }
     }
 
     static updateNotAvailable = updateInfo => {
@@ -42,6 +59,7 @@ export default class AppUpdater {
 
     static async checkForUpdates() {
         logger.info('Checking for updates');
+        showNotification(`Checking for updates...`);
 
         autoUpdater.on('update-not-available', AppUpdater.updateNotAvailable);
         const result: UpdateCheckResult = await autoUpdater.checkForUpdatesAndNotify();
@@ -49,12 +67,3 @@ export default class AppUpdater {
         autoUpdater.removeListener('update-not-available', AppUpdater.updateNotAvailable);
     }
 }
-
-// function notify(title: string, message: string) {
-//   let windows = BrowserWindowElectron.getAllWindows()
-//   if (windows.length == 0) {
-//     return
-//   }
-//
-//   windows[0].webContents.send("notify", title, message)
-// }
