@@ -3,21 +3,21 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "antd": "3.6.2",
+        "antd": "3.6.4",
         "cross-env": "5.2.0",
         "dva": "2.3.1",
         "dva-loading": "2.0.3",
         "electron-config": "^1.0.0",
-        "grid-styled": "4.1.1",
+        "grid-styled": "4.2.0",
         "lodash": "4.17.10",
         "moment-duration-format": "2.2.2",
         "react": "16.4.1",
         "react-color": "2.14.1",
         "react-component-queries": "2.3.0",
         "react-dom": "16.4.1",
-        "react-moment": "0.7.6",
+        "react-moment": "0.7.7",
         "react-redux": "^5.0.7",
-        "react-sizeme": "2.4.4",
+        "react-sizeme": "2.5.2",
         "react-timeago": "4.1.9",
         "recompose": "0.27.1",
         "redbox-react": "1.6.0",
@@ -25,10 +25,10 @@
         "redux-form": "7.4.2",
         "redux-form-antd": "1.0.5",
         "redux-persist": "5.10.0",
-        "styled-components": "3.3.2",
+        "styled-components": "3.3.3",
         "tslint": "5.10.0",
         "typeface-berkshire-swash": "0.0.54",
-        "victory": "0.27.0"
+        "victory": "0.27.2"
     },
     "scripts": {
         "start": "react-app-rewired start --scripts-version react-scripts-ts",
@@ -37,9 +37,9 @@
         "eject": "react-app-rewired eject"
     },
     "devDependencies": {
-        "@types/jest": "23.1.0",
-        "@types/node": "10.3.3",
-        "@types/react": "16.3.18",
+        "@types/jest": "23.1.1",
+        "@types/node": "10.3.5",
+        "@types/react": "16.4.1",
         "@types/react-dom": "16.0.6",
         "@types/webpack-env": "1.13.6",
         "babel-cli": "6.26.0",
@@ -49,11 +49,11 @@
         "babel-preset-env": "1.7.0",
         "babel-preset-react-hmre": "1.1.1",
         "react-app-rewire-hot-loader": "1.0.1",
-        "react-app-rewire-less": "2.1.1",
+        "react-app-rewire-less": "2.1.2",
         "react-app-rewired": "1.5.2",
         "react-hot-loader": "4.3.3",
         "react-scripts-ts": "2.16.0",
-        "ts-import-plugin": "1.5.2",
+        "ts-import-plugin": "1.5.3",
         "typescript": "2.9.2"
     }
 }
