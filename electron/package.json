@@ -1,6 +1,6 @@
 {
     "name": "tockler",
-    "version": "3.3.17",
+    "version": "3.3.18",
     "description": "Automatically track applications usage and working time",
     "author": "Maigo Erit <maigo.erit@gmail.com>",
     "license": "GPL-2.0",
@@ -40,9 +40,9 @@
         "os-locale": "^2.1.0",
         "randomcolor": "0.5.3",
         "requirejs": "^2.3.3",
-        "sequelize": "4.4.2",
-        "sequelize-mock": "^0.9.0",
-        "sqlite3": "^3.1.9"
+        "sequelize": "4.38.0",
+        "sequelize-mock": "0.10.2",
+        "sqlite3": "4.0.1"
     },
     "peerDependencies": {},
     "devDependencies": {
