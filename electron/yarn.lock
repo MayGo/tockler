@@ -33,16 +33,16 @@
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.110.tgz#fb07498f84152947f30ea09d89207ca07123461e"
 
 "@types/node@*":
-  version "10.3.4"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.3.4.tgz#c74e8aec19e555df44609b8057311052a2c84d9e"
+  version "10.3.5"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.3.5.tgz#8423cdf6e6fb83433e489900d7600d3b61c8260c"
 
 "@types/node@^8.0.20", "@types/node@^8.0.24":
   version "8.10.20"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.10.20.tgz#fe674ea52e13950ab10954433a7824438aabbcac"
 
 "@types/sequelize@^4.0.61":
-  version "4.27.22"
-  resolved "https://registry.yarnpkg.com/@types/sequelize/-/sequelize-4.27.22.tgz#3399d12e119b27ba10b9d72bce5ca457a56879bf"
+  version "4.27.23"
+  resolved "https://registry.yarnpkg.com/@types/sequelize/-/sequelize-4.27.23.tgz#e84af6d22277e5386dbd07ba90606e9a8a1f04be"
   dependencies:
     "@types/bluebird" "*"
     "@types/continuation-local-storage" "*"
@@ -834,6 +834,10 @@ cache-base@^1.0.1:
     to-object-path "^0.3.0"
     union-value "^1.0.0"
     unset-value "^1.0.0"
+
+callsite@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/callsite/-/callsite-1.0.0.tgz#280398e5d664bd74038b6f0905153e6e8af1bc20"
 
 callsites@^2.0.0:
   version "2.0.0"
@@ -2451,6 +2455,12 @@ hawk@3.1.3, hawk@~3.1.3:
     hoek "2.x.x"
     sntp "1.x.x"
 
+hazardous@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/hazardous/-/hazardous-0.3.0.tgz#f72212ef349039de7f5b7a86589de7662a870222"
+  dependencies:
+    callsite "^1.0.0"
+
 hmac-drbg@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/hmac-drbg/-/hmac-drbg-1.0.1.tgz#d2745701025a6c775a6c545793ed502fc0c649a1"
@@ -3615,8 +3625,8 @@ modify-filename@^1.1.0:
   resolved "https://registry.yarnpkg.com/modify-filename/-/modify-filename-1.1.0.tgz#9a2dec83806fbb2d975f22beec859ca26b393aa1"
 
 moment-timezone@^0.5.4:
-  version "0.5.20"
-  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.20.tgz#fe66da425dd9f9bbf416f131bf17659680aabb99"
+  version "0.5.21"
+  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.21.tgz#3cba247d84492174dbf71de2a9848fa13207b845"
   dependencies:
     moment ">= 2.9.0"
 
@@ -3739,8 +3749,8 @@ node-notifier@^5.0.2:
     which "^1.3.0"
 
 node-pre-gyp@^0.10.0:
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.10.0.tgz#6e4ef5bb5c5203c6552448828c852c40111aac46"
+  version "0.10.2"
+  resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.10.2.tgz#e8945c20ef6795a20aac2b44f036eb13cf5146e3"
   dependencies:
     detect-libc "^1.0.2"
     mkdirp "^0.5.1"
@@ -3748,7 +3758,7 @@ node-pre-gyp@^0.10.0:
     nopt "^4.0.1"
     npm-packlist "^1.1.6"
     npmlog "^4.0.2"
-    rc "^1.1.7"
+    rc "^1.2.7"
     rimraf "^2.6.1"
     semver "^5.3.0"
     tar "^4"
@@ -3833,8 +3843,8 @@ nps-utils@^1.3.0:
     rimraf "^2.6.1"
 
 nps@^5.7.0:
-  version "5.9.0"
-  resolved "https://registry.yarnpkg.com/nps/-/nps-5.9.0.tgz#432d781b98d7ffc497b0cb4f478873dd958d89ff"
+  version "5.9.2"
+  resolved "https://registry.yarnpkg.com/nps/-/nps-5.9.2.tgz#3531ebd79b81bca648e9c751ccf24b937ff7bcb0"
   dependencies:
     arrify "^1.0.1"
     chalk "^2.0.1"
@@ -4346,7 +4356,7 @@ randomfill@^1.0.3:
     randombytes "^2.0.5"
     safe-buffer "^5.1.0"
 
-rc@^1.0.1, rc@^1.1.2, rc@^1.1.6, rc@^1.1.7, rc@^1.2.1:
+rc@^1.0.1, rc@^1.1.2, rc@^1.1.6, rc@^1.1.7, rc@^1.2.1, rc@^1.2.7:
   version "1.2.8"
   resolved "https://registry.yarnpkg.com/rc/-/rc-1.2.8.tgz#cd924bf5200a075b83c188cd6b9e211b7fc0d3ed"
   dependencies:
@@ -5350,8 +5360,8 @@ tsconfig@^6.0.0:
     strip-json-comments "^2.0.0"
 
 tslib@^1.8.0, tslib@^1.8.1:
-  version "1.9.2"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.9.2.tgz#8be0cc9a1f6dc7727c38deb16c2ebd1a2892988e"
+  version "1.9.3"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.9.3.tgz#d7e4dd79245d85428c4d7e4822a79917954ca286"
 
 tslint@^5.9.1:
   version "5.10.0"

@@ -1,3 +1,6 @@
+// override path, to fix asar.unpacked paths
+require('hazardous');
+
 import { backgroundJob } from './background-job';
 import { backgroundService } from './background-service';
 import { app, ipcMain, powerMonitor } from 'electron';
