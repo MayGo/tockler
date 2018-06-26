@@ -1,25 +1,39 @@
 import * as React from 'react';
-
+import dynamic from 'dva/dynamic';
 import { Router, Route, Switch } from 'dva/router';
+
 import { TimelinePage } from './routes/TimelinePage';
 import NotFound from './routes/404';
 import { SettingsPage } from './routes/SettingsPage';
-// import hot from 'dva-hot';
 import { SummaryPage } from './routes/SummaryPage';
-
 import { TrayAppPage } from './routes/TrayAppPage';
-import { TrayPage } from './routes/TrayPage';
 
-function RouterConfig({ history }: any) {
+import { timelineModel } from './models/timeline';
+import { rootModel } from './models/root';
+import { trayModel } from './models/tray';
+import { settingsModel } from './models/settings';
+import { summaryModel } from './models/summary';
+
+import MainAppPage from './routes/MainAppPage';
+
+function RouterConfig({ history, app }: any) {
+    const DynamicMainAppPage = (dynamic as any)({
+        app: app,
+        models: () => [timelineModel, rootModel, settingsModel, summaryModel],
+        component: () => MainAppPage,
+    });
+    const DynamicTrayAppPage = (dynamic as any)({
+        app: app,
+        models: () => [trayModel],
+        component: () => TrayAppPage,
+    });
+
     return (
         <Router history={history}>
             <Switch>
-                <Route path="/" exact={true} component={TimelinePage} />
-                <Route path="/timeline" component={TimelinePage} />
-                <Route path="/settings" component={SettingsPage} />
-                <Route path="/summary" component={SummaryPage} />
-                <Route path="/tray" component={TrayPage} />
-                <Route path="/trayApp" component={TrayAppPage} />
+                <Route path="/" exact={true} component={DynamicMainAppPage} />
+                <Route path="/app" component={DynamicMainAppPage} />
+                <Route path="/trayApp" component={DynamicTrayAppPage} />
                 <Route path="*" component={NotFound} />
             </Switch>
         </Router>
