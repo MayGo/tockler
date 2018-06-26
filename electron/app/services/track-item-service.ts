@@ -93,7 +93,7 @@ export class TrackItemService {
             where: {
                 taskName: 'LogTrackItem',
             },
-            limit: 10,
+            limit: 30,
             order: [['beginDate', 'DESC']],
         });
     }
