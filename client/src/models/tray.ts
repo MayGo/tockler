@@ -1,6 +1,6 @@
 import { TrackItemService } from '../services/TrackItemService';
 import { SettingsService } from '../services/SettingsService';
-
+import _ from 'lodash';
 import * as Immutable from 'immutable';
 
 const ipcRenderer = (<any>window).require('electron').ipcRenderer;
@@ -66,7 +66,7 @@ export const trayModel: any = {
             yield put({
                 type: 'lastLogItems',
                 payload: {
-                    lastLogItems,
+                    lastLogItems: _.uniqBy(lastLogItems, item => `${item.app}_${item.title}`),
                 },
             });
         },
