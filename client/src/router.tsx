@@ -1,11 +1,7 @@
 import * as React from 'react';
 import dynamic from 'dva/dynamic';
 import { Router, Route, Switch } from 'dva/router';
-
-import { TimelinePage } from './routes/TimelinePage';
 import NotFound from './routes/404';
-import { SettingsPage } from './routes/SettingsPage';
-import { SummaryPage } from './routes/SummaryPage';
 import { TrayAppPage } from './routes/TrayAppPage';
 
 import { timelineModel } from './models/timeline';
