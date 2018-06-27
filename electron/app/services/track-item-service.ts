@@ -2,12 +2,13 @@ import { logManager } from '../log-manager';
 
 import { models, sequelize } from '../models/index';
 import { TrackItemAttributes, TrackItemInstance } from '../models/interfaces/track-item-interface';
-import { Transaction } from 'sequelize';
-import * as moment from 'moment';
+
 import { settingsService } from './settings-service';
 import { State } from '../enums/state';
 import { stateManager } from '../state-manager';
-import { TrackItemType } from '../enums/track-item-type';
+import { Operators } from 'sequelize';
+
+const Op: Operators = sequelize.Op;
 
 export class TrackItemService {
     logger = logManager.getLogger('TrackItemService');
@@ -48,18 +49,17 @@ export class TrackItemService {
         if (paging.page) {
             offset = (paging.page - 1) * limit;
         }
-
         let where: any = {
             endDate: {
-                $gte: from,
-                $lt: to,
+                [Op.gte]: from,
+                [Op.lt]: to,
             },
             taskName: taskName,
         };
 
         if (searchStr) {
             where.title = {
-                $like: '%' + searchStr + '%',
+                [Op.like]: '%' + searchStr + '%',
             };
         }
 
@@ -76,8 +76,8 @@ export class TrackItemService {
         const items = await models.TrackItem.findAll({
             where: {
                 endDate: {
-                    $gte: from,
-                    $lte: to,
+                    [Op.gte]: from,
+                    [Op.lte]: to,
                 },
                 taskName: taskName,
             },
@@ -118,7 +118,7 @@ export class TrackItemService {
                 currentStatusItem.toJSON(),
             );
             whereQuery.id = {
-                $ne: currentStatusItem.id,
+                [Op.ne]: currentStatusItem.id,
             };
         }
 
@@ -182,7 +182,7 @@ export class TrackItemService {
         await models.TrackItem.destroy({
             where: {
                 id: {
-                    $in: ids,
+                    [Op.in]: ids,
                 },
             },
         });

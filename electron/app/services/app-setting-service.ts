@@ -4,7 +4,6 @@ import {
     AppSettingAttributes,
     AppSettingInstance,
 } from '../models/interfaces/app-setting-interface';
-import { Transaction } from 'sequelize';
 import * as randomcolor from 'randomcolor';
 
 export class AppSettingService {

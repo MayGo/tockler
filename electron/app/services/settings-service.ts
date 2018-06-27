@@ -1,10 +1,6 @@
-import { TrackItemInstance } from '../models/interfaces/track-item-interface';
-import { trackItemService } from './track-item-service';
 import { logManager } from '../log-manager';
 
-import { models, sequelize } from '../models/index';
-import { SettingsAttributes, SettingsInstance } from '../models/interfaces/settings-interface';
-import { Transaction } from 'sequelize';
+import { models } from '../models/index';
 
 export class SettingsService {
     logger = logManager.getLogger('SettingsService');
