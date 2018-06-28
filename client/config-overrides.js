@@ -32,7 +32,7 @@ module.exports = function override(config, env) {
         modifyVars: {
             '@normal-color': '#fff',
             '@primary-color': '#8363ff',
-            '@body-background': '#d7dde4',
+            '@body-background': '#f8f8f8',
             '@component-background': '#f8f8f8',
         },
     })(config, env);

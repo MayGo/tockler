@@ -12,18 +12,12 @@ const { Content } = Layout;
 function TrayApp({ location, runningLogItem }: any) {
     return (
         <TrayLayout location={location}>
-            <Content>
-                <Layout>
-                    <Content>
-                        {!runningLogItem && (
-                            <Box pt={2}>
-                                <TimelineItemEditTrayContainer />
-                            </Box>
-                        )}
-                        <TrayListContainer />
-                    </Content>
-                </Layout>
-            </Content>
+            {!runningLogItem && (
+                <Box pt={2}>
+                    <TimelineItemEditTrayContainer />
+                </Box>
+            )}
+            <TrayListContainer />
         </TrayLayout>
     );
 }

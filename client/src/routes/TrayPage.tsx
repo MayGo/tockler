@@ -10,15 +10,9 @@ const { Content } = Layout;
 function Tray({ location }: any) {
     return (
         <MainLayout location={location}>
-            <Content>
-                <Layout>
-                    <Content>
-                        <TimelineItemEditTrayContainer />
+            <TimelineItemEditTrayContainer />
 
-                        <TrayListContainer />
-                    </Content>
-                </Layout>
-            </Content>
+            <TrayListContainer />
         </MainLayout>
     );
 }

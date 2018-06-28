@@ -9,13 +9,7 @@ const { Content } = Layout;
 function Settings({ location }: any) {
     return (
         <MainLayout location={location}>
-            <Content>
-                <Layout>
-                    <Content>
-                        <SettingsFormContainer />
-                    </Content>
-                </Layout>
-            </Content>
+            <SettingsFormContainer />
         </MainLayout>
     );
 }

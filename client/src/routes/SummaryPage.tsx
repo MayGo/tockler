@@ -9,11 +9,7 @@ const { Content } = Layout;
 function Summary({ location }: any) {
     return (
         <MainLayout location={location}>
-            <Content>
-                <Layout>
-                    <SummaryCalendarContainer />
-                </Layout>
-            </Content>
+            <SummaryCalendarContainer />
         </MainLayout>
     );
 }

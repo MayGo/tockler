@@ -13,17 +13,11 @@ const { Content } = Layout;
 function Timeline({ location }: any) {
     return (
         <MainLayout location={location}>
-            <Content>
-                <Layout>
-                    <Content>
-                        <SearchContainer />
+            <SearchContainer />
 
-                        <TimelineContainer />
-                        <PieChartsContainer />
-                        <TrackItemTableContainer />
-                    </Content>
-                </Layout>
-            </Content>
+            <TimelineContainer />
+            <PieChartsContainer />
+            <TrackItemTableContainer />
         </MainLayout>
     );
 }
