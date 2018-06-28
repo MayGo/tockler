@@ -6,14 +6,27 @@ import Moment from 'react-moment';
 import moment from 'moment';
 import { DATE_TIME_FORMAT, TIME_FORMAT } from '../../constants';
 import { diffAndFormatShort } from '../../utils';
+import { TrackItemType } from '../../enum/TrackItemType';
 
-export class TrackItemTable extends React.Component {
+interface IProps {
+    visibleTimerange: any;
+    appTrackItems: any;
+    statusTrackItems: any;
+    logTrackItems: any;
+}
+interface IState {}
+
+const checkIfOneDay = visibleTimerange =>
+    moment(visibleTimerange[0]).isSame(moment(visibleTimerange[1]), 'day');
+
+export class TrackItemTable extends React.Component<IProps, IState> {
     searchInput: any;
 
     state: any = {
         filteredInfo: null,
         sortedInfo: null,
         filterDropdownVisible: false,
+        activeType: TrackItemType.AppTrackItem,
         data: [],
         searchText: '',
         filtered: false,
@@ -38,12 +51,20 @@ export class TrackItemTable extends React.Component {
         });
     };
 
-    setAgeSort = () => {
+    toggleTask = () => {
+        const { appTrackItems, logTrackItems, visibleTimerange } = this.props;
+        const { activeType } = this.state;
+
+        this.clearAll();
+
+        const newActiveType =
+            activeType === TrackItemType.AppTrackItem
+                ? TrackItemType.LogTrackItem
+                : TrackItemType.AppTrackItem;
         this.setState({
-            sortedInfo: {
-                order: 'descend',
-                columnKey: 'age',
-            },
+            data: newActiveType === TrackItemType.AppTrackItem ? appTrackItems : logTrackItems,
+            activeType: newActiveType,
+            isOneDay: checkIfOneDay(visibleTimerange),
         });
     };
 
@@ -52,12 +73,13 @@ export class TrackItemTable extends React.Component {
     };
 
     componentWillReceiveProps(nextProps: any) {
-        const { appTrackItems, visibleTimerange } = nextProps;
+        const { activeType } = this.state;
+        const { appTrackItems, logTrackItems, visibleTimerange } = nextProps;
         console.log('Props received:', appTrackItems, visibleTimerange);
 
         this.setState({
-            data: appTrackItems,
-            isOneDay: moment(visibleTimerange[0]).isSame(moment(visibleTimerange[1]), 'day'),
+            data: activeType === TrackItemType.AppTrackItem ? appTrackItems : logTrackItems,
+            isOneDay: checkIfOneDay(visibleTimerange),
         });
     }
 
@@ -98,21 +120,12 @@ export class TrackItemTable extends React.Component {
     };
 
     render() {
-        let { sortedInfo, filteredInfo, isOneDay } = this.state;
+        let { sortedInfo, filteredInfo, isOneDay, activeType } = this.state;
 
         sortedInfo = sortedInfo || {};
         filteredInfo = filteredInfo || {};
 
         const columns = [
-            {
-                title: 'Task',
-                dataIndex: 'taskName',
-                key: 'taskName',
-                width: 150,
-                onFilter: (value: any, record: any) => record.taskName.includes(value),
-                sorter: (a: any, b: any) => a.taskName.length - b.taskName.length,
-                sortOrder: sortedInfo.columnKey === 'taskName' && sortedInfo.order,
-            },
             {
                 title: 'App',
                 dataIndex: 'app',
@@ -216,7 +229,9 @@ export class TrackItemTable extends React.Component {
             <div>
                 <Flex p={1}>
                     <Box pr={1}>
-                        <Button onClick={this.setAgeSort}>Sort age</Button>
+                        <Button type="primary" onClick={this.toggleTask}>
+                            Showing {activeType === TrackItemType.AppTrackItem ? 'Apps' : 'Logs'}
+                        </Button>
                     </Box>
                     <Box pr={1}>
                         <Button onClick={this.clearFilters}>Clear filters</Button>

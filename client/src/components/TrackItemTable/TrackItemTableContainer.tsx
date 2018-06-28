@@ -4,8 +4,8 @@ import { TrackItemTable } from './TrackItemTable';
 import { TrackItemType } from '../../enum/TrackItemType';
 import moment from 'moment';
 
-const filterItems = timeline =>
-    timeline[TrackItemType.AppTrackItem].filter(item => {
+const filterItems = (timeline, type) =>
+    timeline[type].filter(item => {
         const itemBegin = new Date(item.beginDate);
         const itemEnd = new Date(item.endDate);
         const visBegin = new Date(timeline.visibleTimerange[0]);
@@ -18,8 +18,8 @@ const filterItems = timeline =>
 
 const mapStateToProps = ({ timeline }: any) => ({
     visibleTimerange: timeline.visibleTimerange,
-    appTrackItems: filterItems(timeline),
-    statusTrackItems: timeline[TrackItemType.StatusTrackItem],
+    appTrackItems: filterItems(timeline, TrackItemType.AppTrackItem),
+    logTrackItems: filterItems(timeline, TrackItemType.LogTrackItem),
 });
 const mapDispatchToProps = (dispatch: any) => ({
     changeTimerange: (timerange: any) =>
@@ -29,4 +29,7 @@ const mapDispatchToProps = (dispatch: any) => ({
         }),
 });
 
-export const TrackItemTableContainer = connect(mapStateToProps, mapDispatchToProps)(TrackItemTable);
+export const TrackItemTableContainer = connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(TrackItemTable);
