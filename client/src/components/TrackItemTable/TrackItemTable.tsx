@@ -2,9 +2,14 @@ import * as React from 'react';
 import { Table, Input, Button, Icon } from 'antd';
 import { Flex, Box } from 'grid-styled';
 import { FilterDropdown, Highlight, FilterInput } from './TrackItemTable.styles';
+import Moment from 'react-moment';
+import moment from 'moment';
+import { DATE_TIME_FORMAT, TIME_FORMAT } from '../../constants';
+import { diffAndFormatShort } from '../../utils';
 
 export class TrackItemTable extends React.Component {
     searchInput: any;
+
     state: any = {
         filteredInfo: null,
         sortedInfo: null,
@@ -13,6 +18,7 @@ export class TrackItemTable extends React.Component {
         searchText: '',
         filtered: false,
     };
+
     handleChange = (pagination: any, filters: any, sorter: any) => {
         console.log('Various parameters', pagination, filters, sorter);
         this.setState({
@@ -20,15 +26,18 @@ export class TrackItemTable extends React.Component {
             sortedInfo: sorter,
         });
     };
+
     clearFilters = () => {
         this.setState({ filteredInfo: null });
     };
+
     clearAll = () => {
         this.setState({
             filteredInfo: null,
             sortedInfo: null,
         });
     };
+
     setAgeSort = () => {
         this.setState({
             sortedInfo: {
@@ -37,21 +46,25 @@ export class TrackItemTable extends React.Component {
             },
         });
     };
+
     onInputChange = e => {
         this.setState({ searchText: e.target.value });
     };
 
     componentWillReceiveProps(nextProps: any) {
-        const { appTrackItems } = nextProps;
-        console.log('Props received:');
+        const { appTrackItems, visibleTimerange } = nextProps;
+        console.log('Props received:', appTrackItems, visibleTimerange);
+
         this.setState({
             data: appTrackItems,
+            isOneDay: moment(visibleTimerange[0]).isSame(moment(visibleTimerange[1]), 'day'),
         });
     }
 
     onSearch = () => {
         const { searchText } = this.state;
         const reg = new RegExp(searchText, 'gi');
+
         this.setState({
             filterDropdownVisible: false,
             filtered: !!searchText,
@@ -85,8 +98,8 @@ export class TrackItemTable extends React.Component {
     };
 
     render() {
-        let { sortedInfo, filteredInfo } = this.state;
-        console.log('Render', this.state);
+        let { sortedInfo, filteredInfo, isOneDay } = this.state;
+
         sortedInfo = sortedInfo || {};
         filteredInfo = filteredInfo || {};
 
@@ -95,6 +108,7 @@ export class TrackItemTable extends React.Component {
                 title: 'Task',
                 dataIndex: 'taskName',
                 key: 'taskName',
+                width: 150,
                 onFilter: (value: any, record: any) => record.taskName.includes(value),
                 sorter: (a: any, b: any) => a.taskName.length - b.taskName.length,
                 sortOrder: sortedInfo.columnKey === 'taskName' && sortedInfo.order,
@@ -103,6 +117,7 @@ export class TrackItemTable extends React.Component {
                 title: 'App',
                 dataIndex: 'app',
                 key: 'app',
+                width: 200,
                 filters: [
                     { text: 'loginwindow', value: 'loginwindow' },
                     { text: 'Google Chrome', value: 'Google Chrome' },
@@ -154,19 +169,47 @@ export class TrackItemTable extends React.Component {
                 title: 'Begin',
                 dataIndex: 'beginDate',
                 key: 'beginDate',
+                width: 170,
                 onFilter: (value: any, record: any) => new Date(record.beginDate) > value,
                 sorter: (a: any, b: any) =>
                     new Date(a.beginDate).getTime() - new Date(b.beginDate).getTime(),
                 sortOrder: sortedInfo.columnKey === 'beginDate' && sortedInfo.order,
+                render: (text, record) => (
+                    <Moment format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}>
+                        {record.beginDate}
+                    </Moment>
+                ),
             },
             {
                 title: 'End',
                 dataIndex: 'endDate',
                 key: 'endDate',
+                width: 170,
                 onFilter: (value: any, record: any) => new Date(record.endDate) > value,
                 sorter: (a: any, b: any) =>
                     new Date(a.endDate).getTime() - new Date(b.endDate).getTime(),
                 sortOrder: sortedInfo.columnKey === 'endDate' && sortedInfo.order,
+
+                render: (text, record) => (
+                    <Moment format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}>
+                        {record.endDate}
+                    </Moment>
+                ),
+            },
+
+            {
+                title: 'Dur',
+                dataIndex: '',
+                key: 'duration',
+                width: 80,
+                sorter: (a: any, b: any) =>
+                    moment(new Date(a.endDate)).diff(moment(new Date(a.beginDate))) -
+                    moment(new Date(b.endDate)).diff(moment(new Date(b.beginDate))),
+                sortOrder: sortedInfo.columnKey === 'duration' && sortedInfo.order,
+
+                render: (text, record) => (
+                    <span>{diffAndFormatShort(record.beginDate, record.endDate)}</span>
+                ),
             },
         ];
         return (
