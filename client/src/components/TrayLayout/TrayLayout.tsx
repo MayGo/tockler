@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Layout } from 'antd';
-const { Footer, Content } = Layout;
+const { Content } = Layout;
 import { TrayMenuContainer } from './TrayMenuContainer';
 
 export function TrayLayout({ children }: any) {
