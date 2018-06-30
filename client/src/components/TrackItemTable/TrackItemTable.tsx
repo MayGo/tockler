@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { Table, Input, Button, Icon } from 'antd';
 import { Flex, Box } from 'grid-styled';
-import { FilterDropdown, Highlight, FilterInput } from './TrackItemTable.styles';
+import { FilterDropdown, Highlight, FilterInput, TotalCount } from './TrackItemTable.styles';
 import Moment from 'react-moment';
 import moment from 'moment';
+import _ from 'lodash';
 import { DATE_TIME_FORMAT, TIME_FORMAT } from '../../constants';
 import { diffAndFormatShort } from '../../utils';
 import { TrackItemType } from '../../enum/TrackItemType';
+import { PaginationConfig } from 'antd/lib/table';
 
 interface IProps {
     visibleTimerange: any;
@@ -18,6 +20,11 @@ interface IState {}
 
 const checkIfOneDay = visibleTimerange =>
     moment(visibleTimerange[0]).isSame(moment(visibleTimerange[1]), 'day');
+
+const paginationConf: PaginationConfig = {
+    showSizeChanger: true,
+    pageSizeOptions: ['20', '50', '100', '300', '500'],
+};
 
 export class TrackItemTable extends React.Component<IProps, IState> {
     searchInput: any;
@@ -70,6 +77,13 @@ export class TrackItemTable extends React.Component<IProps, IState> {
 
     onInputChange = e => {
         this.setState({ searchText: e.target.value });
+    };
+
+    calculateTotal = filteredData => {
+        const totalMs = _.sumBy(filteredData, c => moment(c.endDate).diff(c.beginDate));
+        const dur = moment.duration(totalMs);
+
+        return <TotalCount>Total {dur.format()}</TotalCount>;
     };
 
     componentWillReceiveProps(nextProps: any) {
@@ -243,8 +257,10 @@ export class TrackItemTable extends React.Component<IProps, IState> {
                 <Table
                     rowKey={(record: any) => `${record.id}`}
                     columns={columns}
+                    pagination={paginationConf}
                     dataSource={this.state.data}
                     onChange={this.handleChange}
+                    footer={this.calculateTotal}
                 />
             </div>
         );
