@@ -1,11 +1,12 @@
 import { logManager } from './log-manager';
 import { appEmitter } from './app-event-emitter';
 import { TrackItemAttributes, TrackItemInstance } from './models/interfaces/track-item-interface';
-import { appSettingService } from './services/app-setting-service';
+
 import * as notifier from 'node-notifier';
 import { settingsService } from './services/settings-service';
 import { TrackItemType } from './enums/track-item-type';
 import config from './config';
+import { showNotification } from './notification';
 
 export class TaskAnalyser {
     logger = logManager.getLogger('TrackItemService');
@@ -15,6 +16,7 @@ export class TaskAnalyser {
         if (!findRe) {
             return;
         }
+
         let re = new RegExp(findRe, 'g');
         let result = re.exec(str);
 
@@ -24,12 +26,31 @@ export class TaskAnalyser {
         }
     }
 
+    onNotificationClick() {
+        if (taskAnalyser.newItem == null) {
+            console.log('Already clicked. Prevent from creating double item.');
+            return;
+        }
+
+        console.log('Clicked. Creating new task', taskAnalyser.newItem);
+
+        appEmitter.emit('start-new-log-item', taskAnalyser.newItem);
+
+        showNotification(
+            `Task "${taskAnalyser.newItem.title}" running.`,
+            'New task created!',
+            this.onNotificationClick,
+        );
+
+        taskAnalyser.newItem = null;
+    }
+
     async analyseAndNotify(item) {
         try {
             let analyserItems = await settingsService.fetchAnalyserSettings();
 
             for (let patObj of analyserItems) {
-                if (!patObj.findRe || !patObj.active) {
+                if (!patObj.findRe || !patObj.enabled) {
                     continue;
                 }
 
@@ -49,18 +70,10 @@ export class TaskAnalyser {
                     beginDate: new Date(),
                     endDate: new Date(),
                 };
-
-                notifier.notify(
-                    {
-                        title: 'Create new task?',
-                        message: `Click to create: "${app}"`,
-                        icon: config.iconBig,
-                        sound: true, // Only Notification Center or Windows Toasters
-                        wait: true, // Wait with callback, until user action is taken against notification
-                    },
-                    function(err, response) {
-                        // Response is response from notification
-                    },
+                showNotification(
+                    `Click to create: "${app}"`,
+                    'Create new task?',
+                    this.onNotificationClick,
                 );
             }
         } catch (e) {
@@ -70,24 +83,3 @@ export class TaskAnalyser {
 }
 
 export const taskAnalyser = new TaskAnalyser();
-
-notifier.on('click', function(notifierObject, options) {
-    if (taskAnalyser.newItem == null) {
-        console.log('Already clicked. Prevent from creating double item.');
-        return;
-    }
-
-    console.log('Clicked. Creating new task', taskAnalyser.newItem);
-
-    appEmitter.emit('start-new-log-item', taskAnalyser.newItem);
-
-    notifier.notify({
-        title: 'New task created!',
-        message: `Task "${taskAnalyser.newItem.title}" running.`,
-        icon: config.iconBig,
-        sound: true, // Only Notification Center or Windows Toasters
-        wait: false, // Wait with callback, until user action is taken against notification
-    });
-
-    taskAnalyser.newItem = null;
-});

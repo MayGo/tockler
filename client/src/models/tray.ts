@@ -24,12 +24,15 @@ export const trayModel: any = {
             });
 
             ipcRenderer.on('log-item-started', (event, runningLogItem) => {
-                console.log('log-item-started:', runningLogItem);
+                console.log('log-item-started:', JSON.parse(runningLogItem));
                 dispatch({
                     type: 'setRunningLogItem',
                     payload: {
-                        runningLogItem,
+                        runningLogItem: JSON.parse(runningLogItem),
                     },
+                });
+                dispatch({
+                    type: 'loadLastLogItems',
                 });
             });
         },

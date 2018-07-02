@@ -2,8 +2,7 @@ import { TrackItemInstance, TrackItemAttributes } from './models/interfaces/trac
 import { State } from './enums/state';
 import { TrackItemType } from './enums/track-item-type';
 
-import { app, ipcMain } from 'electron';
-import * as path from 'path';
+import { ipcMain } from 'electron';
 import BackgroundUtils from './background-utils';
 import { trackItemService } from './services/track-item-service';
 
@@ -11,6 +10,7 @@ import { logManager } from './log-manager';
 import { settingsService } from './services/settings-service';
 
 import { appEmitter } from './app-event-emitter';
+import WindowManager from './window-manager';
 
 let logger = logManager.getLogger('StateManager');
 
@@ -60,7 +60,11 @@ export class StateManager {
         const item: TrackItemInstance = await this.createNewRunningTrackItem(rawItem);
         logger.info('log-item-started', item.toJSON());
         await this.setLogTrackItemMarkedAsRunning(item);
-        event.sender.send('log-item-started', item.toJSON());
+        // event.sender.send('log-item-started', item.toJSON());
+        WindowManager.menubar.window.webContents.send(
+            'log-item-started',
+            JSON.stringify(item.toJSON()),
+        );
     }
 
     async restoreState() {

@@ -3,8 +3,9 @@ const remote = (<any>window).require('electron').remote;
 export class SettingsService {
     static service: any = remote.getGlobal('SettingsService');
 
-    static updateByName(name, jsonData) {
-        return SettingsService.service.updateByName(name, jsonData);
+    static async updateByName(name, jsonData) {
+        console.error(jsonData, JSON.stringify(jsonData), JSON.parse(JSON.stringify(jsonData)));
+        return await SettingsService.service.updateByName(name, JSON.stringify(jsonData));
     }
 
     static getRunningLogItem() {
@@ -15,7 +16,9 @@ export class SettingsService {
         return SettingsService.service.fetchWorkSettings();
     }
 
-    static fetchAnalyserSettings() {
-        return SettingsService.service.fetchAnalyserSettings();
+    static async fetchAnalyserSettings() {
+        const jsonStr = await SettingsService.service.fetchAnalyserSettingsJsonString();
+        console.log('fetchAnalyserSettings', jsonStr);
+        return JSON.parse(jsonStr);
     }
 }

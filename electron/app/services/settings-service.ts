@@ -17,9 +17,10 @@ export class SettingsService {
         return item;
     }
 
-    updateByName(name: string, jsonData: any) {
+    updateByName(name: string, jsonDataStr: any) {
+        this.logger.info('Updating Setting:', name, jsonDataStr);
         return models.Settings.update(
-            { jsonData: JSON.stringify(jsonData) },
+            { jsonData: jsonDataStr },
             {
                 where: {
                     name: name,
@@ -32,6 +33,10 @@ export class SettingsService {
         let item = await this.findByName('WORK_SETTINGS');
         return item.jsonDataParsed;
     }
+    async fetchWorkSettingsJsonString() {
+        let item = await this.findByName('WORK_SETTINGS');
+        return item.jsonData;
+    }
 
     isObject(val) {
         return val instanceof Object;
@@ -39,11 +44,22 @@ export class SettingsService {
 
     async fetchAnalyserSettings() {
         let item = await this.findByName('ANALYSER_SETTINGS');
-        if (this.isObject(item)) {
+        if (this.isObject(item.jsonData)) {
             // db default is object but this is initialized with array (when is initialized)
             return [];
         }
         return item.jsonDataParsed;
+    }
+
+    async fetchAnalyserSettingsJsonString() {
+        let item = await this.findByName('ANALYSER_SETTINGS');
+        this.logger.info('Fetching ANALYSER_SETTINGS:', item);
+        if (this.isObject(item.jsonData)) {
+            // db default is object but this is initialized with array (when is initialized)
+            return JSON.stringify([]);
+        }
+        this.logger.info('returning jsonData', item.jsonData);
+        return item.jsonData;
     }
 
     async getRunningLogItem() {
@@ -57,8 +73,8 @@ export class SettingsService {
     }
 
     async saveRunningLogItemReference(logItemId) {
-        const item = await this.updateByName('RUNNING_LOG_ITEM', { id: logItemId });
-        console.log('Updated RUNNING_LOG_ITEM!', logItemId);
+        const item = await this.updateByName('RUNNING_LOG_ITEM', JSON.stringify({ id: logItemId }));
+        this.logger.info('Updated RUNNING_LOG_ITEM!', logItemId);
         return logItemId;
     }
 }

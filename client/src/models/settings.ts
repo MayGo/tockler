@@ -1,9 +1,22 @@
 import * as Config from 'electron-config';
+import { SettingsService } from '../services/SettingsService';
 const config = new Config();
 
 const ipcRenderer = (<any>window).require('electron').ipcRenderer;
 const openAtLogin = config.get('openAtLogin');
 const isAutoUpdateEnabled = config.get('isAutoUpdateEnabled');
+
+const defaultWorkSettings = {
+    workDayStartTime: '08:30',
+    workDayEndTime: '17:00',
+    splitTaskAfterIdlingForMinutes: 3,
+};
+const defaultAnalyserSettings = [
+    { findRe: '\\w+-\\d+.*JIRA', takeTitle: '', takeGroup: '\\w+-\\d+', enabled: true },
+    { findRe: '9GAG', takeTitle: '', takeGroup: '9GAG', enabled: true },
+];
+
+console.log(defaultAnalyserSettings, defaultWorkSettings);
 
 export const settingsModel: any = {
     namespace: 'settings',
@@ -14,12 +27,36 @@ export const settingsModel: any = {
             isAutoUpdateEnabled:
                 typeof isAutoUpdateEnabled !== 'undefined' ? isAutoUpdateEnabled : true,
         },
+        analyser: [],
+    },
+
+    subscriptions: {
+        setup({ dispatch }: any) {
+            console.log('Settings data setup');
+
+            dispatch({
+                type: 'fetchAnalyserSettings',
+            });
+        },
     },
 
     effects: {
+        *fetchAnalyserSettings({ payload }: any, { call, put }: any) {
+            console.log('fetchAnalyserSettings');
+
+            const analyser = yield call(SettingsService.fetchAnalyserSettings);
+
+            yield put({
+                type: 'setAnalyserSettings',
+                payload: {
+                    analyser,
+                },
+            });
+        },
         *saveSettings({ payload }: any, { call, put, select }: any) {
-            console.log('Saving settings');
-            const settings = yield select(state => state.form.settingsForm.values);
+            const settingsForm = yield select(state => state.form.settingsForm);
+            console.log('Saving settings"', settingsForm);
+            const settings = settingsForm.values;
             const currentSettings = yield select(state => state.settings);
 
             if (settings.app.openAtLogin !== currentSettings.app.openAtLogin) {
@@ -32,6 +69,17 @@ export const settingsModel: any = {
                 console.log('Setting isAutoUpdateEnabled', settings.app.isAutoUpdateEnabled);
                 config.set('isAutoUpdateEnabled', settings.app.isAutoUpdateEnabled);
             }
+            console.log('Saving analyser settings:', settings.analyser);
+            yield call(
+                SettingsService.updateByName,
+                'ANALYSER_SETTINGS',
+                settings.analyser ? settings.analyser : [],
+            );
+
+            yield put({
+                type: 'setAnalyserSettings',
+                payload: { analyser: settings.analyser },
+            });
 
             yield put({
                 type: 'setWorkSettings',
@@ -45,6 +93,13 @@ export const settingsModel: any = {
     },
 
     reducers: {
+        setAnalyserSettings(state: any, { payload: { analyser } }: any) {
+            console.info('setAnalyserSettings:', analyser);
+            return {
+                ...state,
+                analyser,
+            };
+        },
         setWorkSettings(state: any, { payload: { work } }: any) {
             console.info('setWorkSettings:', work);
             return {
