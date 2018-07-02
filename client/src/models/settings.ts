@@ -97,7 +97,7 @@ export const settingsModel: any = {
             console.info('setAnalyserSettings:', analyser);
             return {
                 ...state,
-                analyser,
+                analyser: analyser || [],
             };
         },
         setWorkSettings(state: any, { payload: { work } }: any) {
