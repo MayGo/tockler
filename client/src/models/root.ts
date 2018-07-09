@@ -9,7 +9,7 @@ const gotoSettingsPageFn = dispatch => () => {
     console.log('Navigating to settings page');
     dispatch(
         routerRedux.push({
-            pathname: '/settings',
+            pathname: '/app/settings',
         }),
     );
 };
