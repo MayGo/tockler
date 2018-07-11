@@ -13,7 +13,7 @@ AppManager.init().then(
     e => console.error('Error in AppManager.init', e),
 );
 
-import windowManager from './window-manager';
+import WindowManager from './window-manager';
 import { extensionsManager } from './extensions-manager';
 import AppUpdater from './app-updater';
 import config from './config';
@@ -35,10 +35,10 @@ app.on('ready', async () => {
         await extensionsManager.init();
     }
 
-    windowManager.initMainWindowEvents();
+    WindowManager.initMainWindowEvents();
 
     if (!config.isDev || config.trayEnabledInDev) {
-        windowManager.setTrayWindow();
+        WindowManager.setTrayWindow();
     }
     backgroundJob.init();
 
@@ -73,21 +73,12 @@ app.on('window-all-closed', function() {
 let iShouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
     console.log('Make single instance');
 
-    if (windowManager && windowManager.mainWindow) {
-        if (windowManager.mainWindow.isMinimized()) {
-            windowManager.mainWindow.restore();
-        }
-
-        windowManager.mainWindow.show();
-        windowManager.mainWindow.focus();
-
-        console.log('Focusing main window');
-    }
+    WindowManager.openMainWindow();
 
     return true;
 });
 
-if (iShouldQuit && !config.isDev) {
+if (iShouldQuit) {
     console.log('Quiting instance.');
     app.quit();
 }

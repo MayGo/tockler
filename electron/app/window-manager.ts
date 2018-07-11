@@ -91,6 +91,21 @@ export default class WindowManager {
         WindowManager.initMenus();
     }
 
+    public static openMainWindow() {
+        if (!WindowManager.mainWindow) {
+            logger.info('Creating main window');
+            WindowManager.setMainWindow();
+        }
+
+        if (WindowManager.mainWindow.isMinimized()) {
+            WindowManager.mainWindow.restore();
+        }
+
+        logger.info('Focusing main window');
+        WindowManager.mainWindow.show();
+        WindowManager.mainWindow.focus();
+    }
+
     static initMainWindowEvents() {
         logger.info('Init main window events.');
 
