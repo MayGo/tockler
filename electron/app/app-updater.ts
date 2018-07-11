@@ -8,7 +8,7 @@ import { logManager } from './log-manager';
 const logger = logManager.getLogger('AppUpdater');
 
 const ONE_MINUTE_MS = 60 * 1000;
-export const CHECK_INTERVAL_MS = ONE_MINUTE_MS * 60;
+export const CHECK_INTERVAL_MS = ONE_MINUTE_MS * 30;
 
 export default class AppUpdater {
     static init() {
