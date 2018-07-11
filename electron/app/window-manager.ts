@@ -93,7 +93,6 @@ export default class WindowManager {
 
     public static openMainWindow() {
         if (!WindowManager.mainWindow) {
-            logger.info('Creating main window');
             WindowManager.setMainWindow();
         }
 
@@ -101,8 +100,8 @@ export default class WindowManager {
             WindowManager.mainWindow.restore();
         }
 
-        logger.info('Focusing main window');
         WindowManager.mainWindow.show();
+        logger.info('Focusing main window');
         WindowManager.mainWindow.focus();
     }
 

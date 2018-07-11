@@ -5,12 +5,13 @@ import { backgroundJob } from './background-job';
 import { backgroundService } from './background-service';
 import { app, ipcMain, powerMonitor } from 'electron';
 import { logManager } from './log-manager';
+let logger = logManager.getLogger('AppIndex');
 
 import AppManager from './app-manager';
 
 AppManager.init().then(
-    () => console.info('AppManager.init'),
-    e => console.error('Error in AppManager.init', e),
+    () => logger.info('AppManager.init'),
+    e => logger.error('Error in AppManager.init', e),
 );
 
 import WindowManager from './window-manager';
@@ -43,35 +44,44 @@ app.on('ready', async () => {
     backgroundJob.init();
 
     powerMonitor.on('suspend', function() {
-        console.log('The system is going to sleep');
+        logger.info('The system is going to sleep');
         backgroundService.onSleep();
     });
 
     powerMonitor.on('resume', function() {
-        console.log('The system is going to resume');
+        logger.info('The system is going to resume');
         backgroundService
             .onResume()
-            .then(() => console.info('Resumed'), e => console.error('Error in onResume', e));
+            .then(() => logger.info('Resumed'), e => logger.error('Error in onResume', e));
     });
 });
 
 require('electron-context-menu')({});
 
 ipcMain.on('close-app', function() {
-    console.log('Closing app');
+    logger.info('Closing app');
     app.quit();
 });
 
 app.on('window-all-closed', function() {
-    console.log('window-all-closed');
+    logger.info('window-all-closed');
     // pluginMgr.removeAll();
     // app.quit();
+});
+
+/*
+activate and makeSingleInstance.
+User want's to open main window when reopened app. (But not open main window on application launch)
+*/
+app.on('activate', function() {
+    logger.info('activate');
+    WindowManager.openMainWindow();
 });
 
 /* Single Instance Check */
 
 let iShouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
-    console.log('Make single instance');
+    logger.info('Make single instance');
 
     WindowManager.openMainWindow();
 
@@ -79,6 +89,6 @@ let iShouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
 });
 
 if (iShouldQuit) {
-    console.log('Quiting instance.');
+    logger.info('Quiting instance.');
     app.quit();
 }
