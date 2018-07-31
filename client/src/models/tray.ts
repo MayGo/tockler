@@ -1,6 +1,5 @@
 import { TrackItemService } from '../services/TrackItemService';
 import { SettingsService } from '../services/SettingsService';
-import _ from 'lodash';
 import * as Immutable from 'immutable';
 
 const ipcRenderer = (<any>window).require('electron').ipcRenderer;
@@ -48,6 +47,7 @@ export const trayModel: any = {
             console.log('toggle-main-window');
             ipcRenderer.send('toggle-main-window');
         },
+
         *getRunningLogItem({ payload }: any, { call, put }: any) {
             console.log('getRunningLogItem');
 
@@ -61,6 +61,7 @@ export const trayModel: any = {
                 },
             });
         },
+
         *loadLastLogItems({ payload }: any, { call, put }: any) {
             console.log('loadLastLogItems');
 
@@ -69,7 +70,7 @@ export const trayModel: any = {
             yield put({
                 type: 'lastLogItems',
                 payload: {
-                    lastLogItems: _.uniqBy(lastLogItems, item => `${item.app}_${item.title}`),
+                    lastLogItems,
                 },
             });
         },
