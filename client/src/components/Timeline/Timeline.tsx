@@ -19,6 +19,7 @@ import { TrackItemType } from '../../enum/TrackItemType';
 import { MainChart, BrushChart, Spinner } from './Timeline.styles';
 import { TimelineItemEditContainer } from './TimelineItemEditContainer';
 import { TimelineRowType } from '../../enum/TimelineRowType';
+import { TIME_FORMAT } from '../../constants';
 
 interface IProps {
     timerange: any;
@@ -227,12 +228,18 @@ class TimelineComp extends React.Component<IFullProps, IState> {
                                     );
                                     const dur = moment.duration(diff);
                                     let formattedDuration = dur.format();
-
-                                    return `${
+                                    const type =
                                         d.taskName === TrackItemType.StatusTrackItem
                                             ? 'STATUS'
-                                            : d.app
-                                    } - ${d.title} [${formattedDuration}]`;
+                                            : d.app;
+                                    const beginTime = moment(new Date(d.beginDate)).format(
+                                        TIME_FORMAT,
+                                    );
+                                    const endTime = moment(new Date(d.endDate)).format(TIME_FORMAT);
+
+                                    return `${type} - ${
+                                        d.title
+                                    } [${formattedDuration}] ${beginTime} - ${endTime}`;
                                 }}
                                 labelComponent={
                                     <VictoryTooltip
