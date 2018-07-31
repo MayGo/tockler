@@ -43,7 +43,7 @@ export class TrackItemService {
     static async findAllFromDay(from: Date, type: string): Promise<any> {
         console.log('findAllFromDay', from, type);
         const json = await TrackItemService.service.findAllFromDay(from, type);
-        console.error(json);
+
         return JSON.parse(json);
     }
 

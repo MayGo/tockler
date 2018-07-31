@@ -2,7 +2,6 @@ import { logManager } from '../log-manager';
 import { stateManager } from '../state-manager';
 let logger = logManager.getLogger('AppTrackItemJob');
 
-import * as moment from 'moment';
 import * as activeWin from 'active-win';
 import { TrackItemInstance } from '../models/interfaces/track-item-interface';
 import BackgroundUtils from '../background-utils';
@@ -55,7 +54,7 @@ export class AppTrackItemJob {
         rawItem.endDate = new Date();
 
         if (!result.app) {
-            console.error('rawitem has no app', result);
+            logger.debug('rawitem has no app', result);
             if (result.owner && result.owner.name) {
                 rawItem.app = result.owner.name;
             } else {
@@ -66,7 +65,7 @@ export class AppTrackItemJob {
         }
 
         if (!result.title) {
-            console.error('rawitem has no title', result);
+            logger.error('rawitem has no title', result);
             rawItem.title = 'NO_TITLE';
         } else {
             rawItem.title = result.title.replace(/\n$/, '').replace(/^\s/, '');

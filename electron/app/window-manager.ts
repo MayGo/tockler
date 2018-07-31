@@ -132,7 +132,7 @@ export default class WindowManager {
         try {
             config.persisted.set('windowsize', WindowManager.mainWindow.getBounds());
         } catch (e) {
-            console.error('Error saving', e);
+            logger.error('Error saving', e);
         }
     }
 

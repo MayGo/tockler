@@ -23,7 +23,6 @@ export class PieCharts extends React.Component<IProps, {}> {
         } = this.props;
 
         const pieWidth = screenWidth / 4;
-        // console.log('PieCharts render:', appTrackItems, workSettings);
 
         return (
             <div>

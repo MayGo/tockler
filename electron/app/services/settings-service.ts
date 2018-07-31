@@ -65,11 +65,12 @@ export class SettingsService {
 
     async getRunningLogItem() {
         let settingsItem = await this.findByName('RUNNING_LOG_ITEM');
-        // console.log("got RUNNING_LOG_ITEM: ", item);
+
         if (settingsItem.jsonDataParsed.id) {
             let logItem = await models.TrackItem.findById(settingsItem.jsonDataParsed.id);
             return logItem;
         }
+
         return null;
     }
 

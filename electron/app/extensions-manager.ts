@@ -10,7 +10,7 @@ export class ExtensionsManager {
 
         return Promise.all(
             extensions.map(name => installer.default(installer[name], forceDownload)),
-        ).catch(console.log);
+        ).catch(logger.error);
     }
 }
 

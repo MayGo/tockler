@@ -22,9 +22,8 @@ export const testAnalyserItem = (appTrackItems, analyseSetting) => {
         return;
     }
 
-    // console.info('Analysing items:', appTrackItems, analyseSetting);
-
     const testItems: any = [];
+
     appTrackItems.forEach(item => {
         const testItem = { ...item };
         let str = testItem.title;
@@ -32,13 +31,13 @@ export const testAnalyserItem = (appTrackItems, analyseSetting) => {
         testItem.findRe = findFirst(str, analyseSetting.findRe);
         testItem.takeGroup = findFirst(str, analyseSetting.takeGroup) || testItem.findRe;
         testItem.takeTitle = findFirst(str, analyseSetting.takeTitle) || testItem.title;
-        /// console.info('info', testItem);
+
         if (testItem.findRe) {
             testItems.push(testItem);
         }
     });
 
     const analyserTestItems = _.uniqBy(testItems, 'title');
-    // console.info('Found analyserTestItems', analyserTestItems);
+
     return analyserTestItems;
 };

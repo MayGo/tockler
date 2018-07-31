@@ -5,6 +5,7 @@ import config from './config';
 import { showNotification } from './notification';
 
 import { logManager } from './log-manager';
+
 const logger = logManager.getLogger('AppUpdater');
 
 const ONE_MINUTE_MS = 60 * 1000;

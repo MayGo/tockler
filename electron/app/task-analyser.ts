@@ -1,11 +1,8 @@
 import { logManager } from './log-manager';
 import { appEmitter } from './app-event-emitter';
-import { TrackItemAttributes, TrackItemInstance } from './models/interfaces/track-item-interface';
-
-import * as notifier from 'node-notifier';
+import { TrackItemAttributes } from './models/interfaces/track-item-interface';
 import { settingsService } from './services/settings-service';
 import { TrackItemType } from './enums/track-item-type';
-import config from './config';
 import { showNotification } from './notification';
 
 export class TaskAnalyser {
@@ -28,11 +25,11 @@ export class TaskAnalyser {
 
     onNotificationClick() {
         if (taskAnalyser.newItem == null) {
-            console.log('Already clicked. Prevent from creating double item.');
+            this.logger.info('Already clicked. Prevent from creating double item.');
             return;
         }
 
-        console.log('Clicked. Creating new task', taskAnalyser.newItem);
+        this.logger.info('Clicked. Creating new task', taskAnalyser.newItem);
 
         appEmitter.emit('start-new-log-item', taskAnalyser.newItem);
 

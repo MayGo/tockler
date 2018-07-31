@@ -21,7 +21,6 @@ interface IProps {
 export class WorkProgressChart extends React.Component<IProps, {}> {
     render() {
         let { items, width, hoursToWork } = this.props;
-        // console.log('WorkProgressChart render:', taskName, items, hoursToWork);
 
         let groupByField = 'app';
 
@@ -65,7 +64,6 @@ export class WorkProgressChart extends React.Component<IProps, {}> {
             };
             pieData.push(pausesItem);
         }
-        // console.log('WorkProgressChart render pieData:', pieData);
 
         return (
             <VictoryPie
