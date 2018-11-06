@@ -28,7 +28,7 @@
         "styled-components": "3.4.9",
         "tslint": "5.11.0",
         "typeface-berkshire-swash": "0.0.54",
-        "victory": "30.5.0",
+        "victory": "30.6.0",
         "webpack": "^4.20.2",
         "why-did-you-update": "^0.1.1"
     },
