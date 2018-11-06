@@ -1,8 +1,19 @@
 import { connect } from 'dva';
-
+import * as _ from 'lodash';
 import componentQueries from 'react-component-queries';
 import { Timeline } from './Timeline';
 import { TrackItemType } from '../../enum/TrackItemType';
+
+const aggregateAppTrackItems = items => {
+    _.reduce(
+        items,
+        function(result, value, key) {
+            let currVal = result; // result[value.id](result[value.id] || (result[value.id] = [])).push(key);
+            return currVal;
+        },
+        {},
+    );
+};
 
 const mapStateToProps = ({ timeline, loading }: any) => ({
     timerange: timeline.timerange,
@@ -10,6 +21,7 @@ const mapStateToProps = ({ timeline, loading }: any) => ({
     visibleTimerange: timeline.visibleTimerange,
     selectedTimelineItem: timeline.selectedTimelineItem,
     appTrackItems: timeline[TrackItemType.AppTrackItem],
+    aggregatedAppItems: aggregateAppTrackItems(timeline[TrackItemType.AppTrackItem]),
     statusTrackItems: timeline[TrackItemType.StatusTrackItem],
     logTrackItems: timeline[TrackItemType.LogTrackItem],
     loading: loading.models.timeline,
@@ -33,4 +45,9 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 export const TimelineContainer = componentQueries(({ width }) => ({
     chartWidth: width,
-}))(connect(mapStateToProps, mapDispatchToProps)(Timeline));
+}))(
+    connect(
+        mapStateToProps,
+        mapDispatchToProps,
+    )(Timeline),
+);

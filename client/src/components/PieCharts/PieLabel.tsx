@@ -8,7 +8,7 @@ interface IProps {
     datum?: any;
 }
 
-export class PieLabel extends React.Component<IProps> {
+export class PieLabel extends React.PureComponent<IProps> {
     static defaultEvents = VictoryTooltip.defaultEvents;
 
     render() {

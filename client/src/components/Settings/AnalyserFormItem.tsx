@@ -31,7 +31,7 @@ const AnalyserTestItem = ({ item }) => (
     </Box>
 );
 
-export class AnalyserFormItem extends React.Component<IProps, IState> {
+export class AnalyserFormItem extends React.PureComponent<IProps, IState> {
     state = { showTests: false };
 
     toggleShowTests = () => {

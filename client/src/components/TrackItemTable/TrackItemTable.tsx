@@ -26,7 +26,7 @@ const paginationConf: PaginationConfig = {
     pageSizeOptions: ['20', '50', '100', '300', '500'],
 };
 
-export class TrackItemTable extends React.Component<IProps, IState> {
+export class TrackItemTable extends React.PureComponent<IProps, IState> {
     searchInput: any;
 
     state: any = {

@@ -25,7 +25,7 @@ interface IHocProps {}
 
 type IFullProps = IProps & IHocProps;
 
-export class TimelineItemEdit extends React.Component<IProps, IState> {
+export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
     constructor(props) {
         super(props);
 

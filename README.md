@@ -104,3 +104,8 @@ Set-AuthenticodeSignature -FilePath '.\app\get-user-idle-time.ps1' -Certificate 
 
 GNU General Public License v2.0
 2017 MayGo @ [trimatech.ee](http://trimatech.ee)
+
+# Functionality
+
+-   On app launch only tray window runs. Main window does not open.
+-   Main window opens from tray windows arrow or by reopening application.

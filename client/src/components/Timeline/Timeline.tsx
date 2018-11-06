@@ -25,6 +25,7 @@ interface IProps {
     timerange: any;
     visibleTimerange: any;
     appTrackItems: any;
+    aggregatedAppItems: any;
     statusTrackItems: any;
     logTrackItems: any;
     changeVisibleTimerange?: any;
@@ -55,7 +56,7 @@ const getTrackItemOrder = (type: string) => {
     return 0;
 };
 
-class TimelineComp extends React.Component<IFullProps, IState> {
+class TimelineComp extends React.PureComponent<IFullProps, IState> {
     handleTimeRangeChange = (timerange: any) => {
         if (timerange) {
             this.props.changeVisibleTimerange(timerange);
@@ -97,6 +98,7 @@ class TimelineComp extends React.Component<IFullProps, IState> {
             appTrackItems,
             logTrackItems,
             statusTrackItems,
+            aggregatedAppItems,
             timerange,
             selectedTimelineItem,
             visibleTimerange,
@@ -124,6 +126,8 @@ class TimelineComp extends React.Component<IFullProps, IState> {
             // console.log('Adding apptrackItems:', appTrackItems);
             timelineData = timelineData.concat(appTrackItems);
         }
+        console.error(aggregatedAppItems);
+        //    timelineData = timelineData.concat(aggregatedAppItems);
         console.log(`Rendering ${timelineData.length} items`);
         const barWidth = 25;
 

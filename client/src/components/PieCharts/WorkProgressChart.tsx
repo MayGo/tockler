@@ -18,7 +18,7 @@ interface IProps {
     width: number;
     hoursToWork: number;
 }
-export class WorkProgressChart extends React.Component<IProps, {}> {
+export class WorkProgressChart extends React.PureComponent<IProps, {}> {
     render() {
         let { items, width, hoursToWork } = this.props;
 

@@ -17,7 +17,7 @@ interface IProps {
     taskName: string;
     width: number;
 }
-export class PieChart extends React.Component<IProps, {}> {
+export class PieChart extends React.PureComponent<IProps, {}> {
     render() {
         let { items, taskName, width } = this.props;
 

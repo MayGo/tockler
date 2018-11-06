@@ -13,7 +13,7 @@ interface IHocProps {}
 
 type IFullProps = IProps & IHocProps;
 
-export class Search extends React.Component<IFullProps, IProps> {
+export class Search extends React.PureComponent<IFullProps, IProps> {
     constructor(props: any) {
         super(props);
         this.onChange = this.onChange.bind(this);
