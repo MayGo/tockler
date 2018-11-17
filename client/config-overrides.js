@@ -40,8 +40,8 @@ module.exports = function override(config, env) {
 
     delete config.node;
     config = Object.assign({}, config, { target: 'electron-renderer' });
-    config = rewireReactHotLoader(config, env);
-    config = injectBabelPlugin(['react-hot-loader/babel'], config);
+    // config = rewireReactHotLoader(config, env);
+    //config = injectBabelPlugin('react-hot-loader/babel', config);
     config = injectBabelPlugin(['dva-hmr', { container: '#root' }], config);
     return config;
 };

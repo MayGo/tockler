@@ -10,10 +10,10 @@ import { reducer as formReducer } from 'redux-form';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web and AsyncStorage for react-native
 
-if (process.env.NODE_ENV !== 'production') {
-    const { whyDidYouUpdate } = require('why-did-you-update');
-    whyDidYouUpdate(React);
-}
+// if (process.env.NODE_ENV !== 'production') {
+// const { whyDidYouUpdate } = require('why-did-you-update');
+// whyDidYouUpdate(React);
+// }
 
 const persistConfig = {
     key: 'root',

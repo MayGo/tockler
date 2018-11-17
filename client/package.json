@@ -3,19 +3,19 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "antd": "3.10.0",
+        "antd": "3.10.7",
         "cross-env": "5.2.0",
-        "dva": "2.4.0",
-        "dva-loading": "2.0.5",
-        "electron-config": "^1.0.0",
+        "dva": "2.4.1",
+        "dva-loading": "2.0.6",
+        "electron-config": "^2.0.0",
         "grid-styled": "5.0.2",
         "lodash": "4.17.11",
         "moment-duration-format": "2.2.2",
-        "react": "16.5.2",
+        "react": "16.6.3",
         "react-color": "2.14.1",
         "react-component-queries": "2.3.0",
-        "react-dom": "16.5.2",
-        "react-moment": "0.8.1",
+        "react-dom": "16.6.3",
+        "react-moment": "0.8.3",
         "react-redux": "^5.0.7",
         "react-sizeme": "2.5.2",
         "react-timeago": "4.1.9",
@@ -25,12 +25,11 @@
         "redux-form": "7.4.2",
         "redux-form-antd": "3.0.3",
         "redux-persist": "5.10.0",
-        "styled-components": "3.4.9",
+        "styled-components": "4.1.1",
         "tslint": "5.11.0",
         "typeface-berkshire-swash": "0.0.54",
-        "victory": "30.6.0",
-        "webpack": "^4.20.2",
-        "why-did-you-update": "^0.1.1"
+        "victory": "31.0.0",
+        "why-did-you-update": "^1.0.6"
     },
     "scripts": {
         "start": "react-app-rewired start --scripts-version react-scripts-ts",
@@ -39,23 +38,26 @@
         "eject": "react-app-rewired eject"
     },
     "devDependencies": {
-        "@types/jest": "23.3.3",
-        "@types/node": "10.11.4",
+        "@types/jest": "23.3.9",
+        "@types/node": "^10.12.9",
         "@types/react": "^16.4.1",
         "@types/react-dom": "^16.0.6",
         "@types/webpack-env": "1.13.6",
         "babel-cli": "6.26.0",
         "babel-loader": "8.0.4",
         "babel-plugin-dva-hmr": "0.4.1",
-        "babel-plugin-import": "1.9.1",
+        "babel-plugin-import": "1.11.0",
         "babel-preset-env": "1.7.0",
         "babel-preset-react-hmre": "1.1.1",
         "react-app-rewire-hot-loader": "1.0.3",
         "react-app-rewire-less": "2.1.3",
         "react-app-rewired": "1.6.2",
-        "react-hot-loader": "4.3.11",
-        "react-scripts-ts": "3.1.0",
+        "react-hot-loader": "4.3.12",
+        "react-scripts-ts": "^4.0.8",
         "ts-import-plugin": "1.5.5",
-        "typescript": "3.1.1"
-    }
+        "typescript": "3.1.6"
+    },
+    "browserslist": [
+        "last 1 Chrome versions"
+    ]
 }

@@ -126,13 +126,16 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
         console.log('Have timerange', visibleTimerange);
 
         let timelineData = [];
+        let brushData = [];
         if (isRowEnabled[TimelineRowType.Status]) {
             // console.log('Adding statusTrackItems:', statusTrackItems);
             timelineData = timelineData.concat(statusTrackItems);
+            brushData = brushData.concat(statusTrackItems);
         }
         if (isRowEnabled[TimelineRowType.Log]) {
             // console.log('Adding logTrackItems:', logTrackItems);
             timelineData = timelineData.concat(logTrackItems);
+            brushData = brushData.concat(logTrackItems);
         }
         if (isRowEnabled[TimelineRowType.App]) {
             // console.log('Adding apptrackItems:', appTrackItems);
@@ -297,7 +300,7 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                             x={d => getTrackItemOrder(d.taskName)}
                             y={d => new Date(d.beginDate)}
                             y0={d => new Date(d.endDate)}
-                            data={timelineData}
+                            data={brushData}
                         />
                     </VictoryChart>
                 </BrushChart>

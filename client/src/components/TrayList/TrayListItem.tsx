@@ -13,15 +13,15 @@ const CustomListItem = styled.div`
     border-left: 5px solid ${(props: any) => props.color};
 `;
 
-const Small = Box.extend`
+const Small = styled(Box)`
     font-size: 10px;
 `;
-const ActionBtn = Flex.extend`
+const ActionBtn = styled(Flex)`
     border-left: 1px solid #f0f2f5;
     margin: 2px 0;
 `;
 
-const CustomBox = Box.extend`
+const CustomBox = styled(Box)`
     overflow: hidden;
 `;
 
