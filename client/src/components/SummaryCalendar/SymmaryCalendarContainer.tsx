@@ -4,9 +4,10 @@ import { TrackItemType } from '../../enum/TrackItemType';
 import moment, { Moment } from 'moment';
 import { SummaryCalendar } from './SymmaryCalendar';
 import _ from 'lodash';
+import { convertDate } from '../../constants';
 
 const groupByField = mode => item =>
-    mode === 'month' ? moment(item.beginDate).date() : moment(item.beginDate).month();
+    mode === 'month' ? convertDate(item.beginDate).date() : convertDate(item.beginDate).month();
 
 const summariseLog = (items, mode) => {
     let data = {};
@@ -14,7 +15,7 @@ const summariseLog = (items, mode) => {
     _(items)
         .groupBy(groupByField(mode))
         .forEach((value, key) => {
-            data[key] = _.sumBy(value, c => moment(c.endDate).diff(c.beginDate));
+            data[key] = _.sumBy(value, c => convertDate(c.endDate).diff(convertDate(c.beginDate)));
         });
 
     return data;
@@ -27,7 +28,7 @@ const summariseOnline = (items, mode) => {
         .filter(item => item.app === 'ONLINE')
         .groupBy(groupByField(mode))
         .forEach((value, key) => {
-            data[key] = _.sumBy(value, c => moment(c.endDate).diff(c.beginDate));
+            data[key] = _.sumBy(value, c => convertDate(c.endDate).diff(convertDate(c.beginDate)));
         });
     return data;
 };

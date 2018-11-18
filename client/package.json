@@ -29,7 +29,7 @@
         "tslint": "5.11.0",
         "typeface-berkshire-swash": "0.0.54",
         "victory": "31.0.0",
-        "why-did-you-update": "^1.0.6"
+        "why-did-you-update": "https://github.com/maicki/why-did-you-update#master"
     },
     "scripts": {
         "start": "react-app-rewired start --scripts-version react-scripts-ts",

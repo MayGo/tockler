@@ -62,15 +62,13 @@ export const rootModel: any = {
                     yield call(delay, delayMs);
                     // const isFocused = yield select(state => state.root.isFocused);
                     console.log('Watching track changes:', lastRequestTime);
-                    const requestFrom = lastRequestTime.toDate();
+                    const requestFrom = lastRequestTime;
                     lastRequestTime = moment();
                     console.log('Requesting from:', requestFrom);
                     const { appItems, statusItems, logItems } = yield call(
                         TrackItemService.findAllItems,
                         requestFrom,
-                        moment(lastRequestTime)
-                            .add(1, 'days')
-                            .toDate(),
+                        moment(lastRequestTime).add(1, 'days'),
                     );
                     console.log('Returned updated items:', appItems);
                     yield put({

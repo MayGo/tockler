@@ -59,13 +59,6 @@ const getTrackItemOrder = (type: string) => {
 };
 
 class TimelineComp extends React.PureComponent<IFullProps, IState> {
-    handleTimeRangeChange = (timerange: any) => {
-        if (timerange) {
-            this.props.changeVisibleTimerange(timerange);
-        } else {
-            console.error('No Timerange to update');
-        }
-    };
     handleSelectionChanged = item => {
         if (item) {
             console.log('Selected item:', item);
@@ -92,7 +85,7 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
     };
 
     onTimelineTypeLabelClick = (item, props) => {
-        console.error(item, props);
+        console.error('onTimelineTypeLabelClick', item, props);
     };
     getBarLabel = d => {
         const diff = convertDate(d.endDate).diff(convertDate(d.beginDate));
@@ -141,7 +134,7 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
             // console.log('Adding apptrackItems:', appTrackItems);
             timelineData = timelineData.concat(appTrackItems);
         }
-        console.error(aggregatedAppItems);
+        // console.error('aggregatedAppItems', aggregatedAppItems);
         //    timelineData = timelineData.concat(aggregatedAppItems);
         console.log(`Rendering ${timelineData.length} items`);
         const barWidth = 25;

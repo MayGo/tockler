@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import * as moment from 'moment';
 import Moment from 'react-moment';
 import TimeAgo from 'react-timeago';
+import { convertDate } from '../../constants';
 
 const CustomListItem = styled.div`
     background-color: white;
@@ -25,7 +26,7 @@ const CustomBox = styled(Box)`
     overflow: hidden;
 `;
 
-const formatDate = date => moment(date).format('YYYY-MM-DD HH:mm:ss');
+const formatDate = date => convertDate(date).format('YYYY-MM-DD HH:mm:ss');
 
 const FormattedTime = ({ item, isRunning }: any) => {
     const full = isRunning

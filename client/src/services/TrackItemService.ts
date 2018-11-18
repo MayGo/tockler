@@ -12,14 +12,22 @@ export class TrackItemService {
           return TrackItemService.service.findAllFromDay(from, to, taskName, searchStr, paging);
       }*/
 
-    static async findAllDayItems(from: Date, to: Date, taskName: string): Promise<any> {
+    static async findAllDayItems(
+        from: moment.Moment,
+        to: moment.Moment,
+        taskName: string,
+    ): Promise<any> {
         console.log('findAllDayItems', from, to, taskName);
-        const json = await TrackItemService.service.findAllDayItems(from, to, taskName);
+        const json = await TrackItemService.service.findAllDayItems(
+            from.toDate(),
+            to.toDate(),
+            taskName,
+        );
 
         return JSON.parse(json);
     }
 
-    static async findAllItems(from: Date, to: Date) {
+    static async findAllItems(from: moment.Moment, to: moment.Moment) {
         const appItems: ITrackItem[] = await TrackItemService.findAllDayItems(
             from,
             to,
@@ -40,9 +48,9 @@ export class TrackItemService {
         return { appItems, statusItems, logItems };
     }
 
-    static async findAllFromDay(from: Date, type: string): Promise<any> {
+    static async findAllFromDay(from: moment.Moment, type: string): Promise<any> {
         console.log('findAllFromDay', from, type);
-        const json = await TrackItemService.service.findAllFromDay(from, type);
+        const json = await TrackItemService.service.findAllFromDay(from.toDate(), type);
 
         return JSON.parse(json);
     }

@@ -9,8 +9,8 @@ const filterItems = (timeline, type) =>
     timeline[type].filter(item => {
         const itemBegin = convertDate(item.beginDate);
         const itemEnd = convertDate(item.endDate);
-        const visBegin = convertDate(timeline.visibleTimerange[0]);
-        const visEnd = convertDate(timeline.visibleTimerange[1]);
+        const visBegin = timeline.visibleTimerange[0];
+        const visEnd = timeline.visibleTimerange[1];
         return itemBegin.isBetween(visBegin, visEnd) && itemEnd.isBetween(visBegin, visEnd);
     });
 
@@ -21,19 +21,7 @@ const mapStateToProps = ({ timeline, settings }: any) => ({
     logTrackItems: filterItems(timeline, TrackItemType.LogTrackItem),
     workSettings: settings.work,
 });
-const mapDispatchToProps = (dispatch: any) => ({
-    changeTimerange: (timerange: any) =>
-        dispatch({
-            type: 'timeline/changeVisibleTimerange',
-            payload: { timerange },
-        }),
-});
 
 export const PieChartsContainer = componentQueries(({ width }) => ({
     screenWidth: width,
-}))(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps,
-    )(PieCharts),
-);
+}))(connect(mapStateToProps)(PieCharts));

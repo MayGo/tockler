@@ -43,12 +43,8 @@ export const summaryModel: any = {
                 },
             });
 
-            const beginDate = moment(selectedDate)
-                .startOf(selectedMode)
-                .toDate();
-            const endDate = moment(selectedDate)
-                .endOf(selectedMode)
-                .toDate();
+            const beginDate = moment(selectedDate).startOf(selectedMode);
+            const endDate = moment(selectedDate).endOf(selectedMode);
 
             const { appItems, statusItems, logItems } = yield call(
                 TrackItemService.findAllItems,
