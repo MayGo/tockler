@@ -19,7 +19,7 @@ import { TrackItemType } from '../../enum/TrackItemType';
 import { MainChart, BrushChart, Spinner } from './Timeline.styles';
 import { TimelineItemEditContainer } from './TimelineItemEditContainer';
 import { TimelineRowType } from '../../enum/TimelineRowType';
-import { TIME_FORMAT } from '../../constants';
+import { TIME_FORMAT, INPUT_DATE_FORMAT, convertDate } from '../../constants';
 import { ChartTooltip } from './ChartTooltip';
 import { CustomBar } from './CustomBar';
 
@@ -95,12 +95,12 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
         console.error(item, props);
     };
     getBarLabel = d => {
-        const diff = moment(new Date(d.endDate)).diff(moment(new Date(d.beginDate)));
+        const diff = convertDate(d.endDate).diff(convertDate(d.beginDate));
         const dur = moment.duration(diff);
         let formattedDuration = dur.format();
         const type = d.taskName === TrackItemType.StatusTrackItem ? 'STATUS' : d.app;
-        const beginTime = moment(new Date(d.beginDate)).format(TIME_FORMAT);
-        const endTime = moment(new Date(d.endDate)).format(TIME_FORMAT);
+        const beginTime = convertDate(d.beginDate).format(TIME_FORMAT);
+        const endTime = convertDate(d.endDate).format(TIME_FORMAT);
 
         return `${type} - ${d.title} [${formattedDuration}] ${beginTime} - ${endTime}`;
     };
@@ -221,7 +221,7 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                         padding={padding}
                         scale={scale}
                         domain={{
-                            x: [new Date(timerange[0]), new Date(timerange[1])],
+                            x: [convertDate(timerange[0]), convertDate(timerange[1])],
                             y: [1, 3],
                         }}
                         containerComponent={
@@ -248,8 +248,8 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                             style={barStyle}
                             labels={this.getBarLabel}
                             x={d => getTrackItemOrder(d.taskName)}
-                            y={d => new Date(d.beginDate)}
-                            y0={d => new Date(d.endDate)}
+                            y={d => convertDate(d.beginDate)}
+                            y0={d => convertDate(d.endDate)}
                             data={timelineData}
                             labelComponent={
                                 <VictoryTooltip
@@ -272,7 +272,7 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                         padding={padding}
                         scale={scale}
                         domain={{
-                            x: [new Date(timerange[0]), new Date(timerange[1])],
+                            x: [convertDate(timerange[0]), convertDate(timerange[1])],
                             y: [1, 3],
                         }}
                         containerComponent={
@@ -298,8 +298,8 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                                 },
                             }}
                             x={d => getTrackItemOrder(d.taskName)}
-                            y={d => new Date(d.beginDate)}
-                            y0={d => new Date(d.endDate)}
+                            y={d => convertDate(d.beginDate)}
+                            y0={d => convertDate(d.endDate)}
                             data={brushData}
                         />
                     </VictoryChart>
