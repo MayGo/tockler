@@ -69,13 +69,13 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
     };
 
     handleZoom = domain => {
-        this.props.changeVisibleTimerange(domain.x);
+        this.props.changeVisibleTimerange(domain.y);
     };
 
     handleBrush = domain => {
-        console.log('Selected with brush:', domain.x);
+        console.log('Selected with brush:', domain.y);
 
-        this.props.changeVisibleTimerange(domain.x);
+        this.props.changeVisibleTimerange(domain.y);
     };
     calcRowEnabledColor = d => {
         return this.props.isRowEnabled[d] ? blueGrey700 : disabledGrey;
@@ -139,10 +139,10 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
         console.log(`Rendering ${timelineData.length} items`);
         const barWidth = 25;
 
-        const scale = { x: 'time' };
+        const scale = { y: 'time', x: 'linear' };
         const padding = { left: 50, top: 0, bottom: 20 };
-        const domainPadding = { x: 35, y: 10 };
-        const domainPaddingBrush = { x: 35, y: 5 };
+        const domainPadding = { y: 35, x: 10 };
+        const domainPaddingBrush = { y: 35, x: 5 };
 
         const axisEvents = [
             {
@@ -213,30 +213,29 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                         domainPadding={domainPadding}
                         padding={padding}
                         scale={scale}
+                        horizontal={true}
                         domain={{
-                            x: [convertDate(timerange[0]), convertDate(timerange[1])],
-                            y: [1, 3],
+                            y: [convertDate(timerange[0]), convertDate(timerange[1])],
+                            x: [1, 3],
                         }}
                         containerComponent={
                             <VictoryZoomContainer
                                 responsive={false}
-                                zoomDimension="x"
-                                zoomDomain={{ x: visibleTimerange }}
+                                zoomDimension="y"
+                                zoomDomain={{ y: visibleTimerange }}
                                 onZoomDomainChange={debounce(this.handleZoom, 300)}
                             />
                         }
                     >
                         <VictoryAxis
-                            dependentAxis={true}
                             tickValues={[1, 2, 3]}
                             tickFormat={['App', 'Status', 'Log']}
                             events={axisEvents}
                             style={axisStyle}
                         />
-                        <VictoryAxis tickCount={20} />
+                        <VictoryAxis dependentAxis={true} tickCount={20} />
 
                         <VictoryBar
-                            horizontal={true}
                             events={barEvents}
                             style={barStyle}
                             labels={this.getBarLabel}
@@ -263,24 +262,24 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                         width={chartWidth}
                         domainPadding={domainPaddingBrush}
                         padding={padding}
+                        horizontal={true}
                         scale={scale}
                         domain={{
-                            x: [convertDate(timerange[0]), convertDate(timerange[1])],
-                            y: [1, 3],
+                            y: [convertDate(timerange[0]), convertDate(timerange[1])],
+                            x: [1, 3],
                         }}
                         containerComponent={
                             <VictoryBrushContainer
                                 responsive={false}
-                                brushDimension="x"
-                                brushDomain={{ x: visibleTimerange }}
+                                brushDimension="y"
+                                brushDomain={{ y: visibleTimerange }}
                                 onBrushDomainChange={handleBrushDebounced}
                             />
                         }
                     >
-                        <VictoryAxis tickCount={20} />
+                        <VictoryAxis dependentAxis={true} tickCount={20} />
 
                         <VictoryBar
-                            horizontal={true}
                             style={{
                                 data: {
                                     width: 7,

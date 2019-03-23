@@ -30,7 +30,7 @@ const mapStateToProps = ({ timeline, loading }: any) => ({
 });
 const mapDispatchToProps = (dispatch: any) => ({
     changeVisibleTimerange: (visibleTimerange: any) => {
-        console.error('changeVisibleTimerange visibleTimerange');
+        console.error('changeVisibleTimerange ', visibleTimerange);
         dispatch({
             type: 'timeline/changeVisibleTimerange',
             payload: {
