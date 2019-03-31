@@ -2,7 +2,7 @@ import { app } from 'electron';
 
 import * as path from 'path';
 
-const Config = require('electron-config');
+const Config = require('electron-store');
 const isDevelopment = require('electron-is-dev');
 
 let root = path.join(__dirname, '..');

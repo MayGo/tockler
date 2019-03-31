@@ -244,7 +244,7 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                             y0={d => convertDate(d.endDate)}
                             data={timelineData}
                             labelComponent={
-                                <VictoryTooltip
+                                <ChartTooltip
                                     horizontal={false}
                                     style={chartTheme.tooltip.style}
                                     cornerRadius={chartTheme.tooltip.cornerRadius}

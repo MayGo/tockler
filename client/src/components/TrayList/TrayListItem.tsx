@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Icon } from 'antd';
 import { Flex, Box } from 'grid-styled';
 import styled from 'styled-components';
-import * as moment from 'moment';
+import moment from 'moment';
 import Moment from 'react-moment';
 import TimeAgo from 'react-timeago';
 import { convertDate } from '../../constants';

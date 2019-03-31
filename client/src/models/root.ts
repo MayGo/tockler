@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 
 import { delay } from 'dva/saga';
 import { TrackItemService } from '../services/TrackItemService';

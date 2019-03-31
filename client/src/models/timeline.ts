@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 import { TrackItemService } from '../services/TrackItemService';
 import { AppSettingService } from '../services/AppSettingService';
 import { handleTimelineItems, addToTimelineItems } from './timeline.util';

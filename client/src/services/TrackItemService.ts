@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 import { ITrackItem } from '../@types/ITrackItem';
 import { TrackItemType } from '../enum/TrackItemType';
 

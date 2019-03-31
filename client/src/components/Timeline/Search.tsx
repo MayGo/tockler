@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DatePicker, Button } from 'antd';
-import * as moment from 'moment';
+import moment from 'moment';
 const { RangePicker } = DatePicker;
 import { Flex, Box } from 'grid-styled';
 

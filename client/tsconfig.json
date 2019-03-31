@@ -1,12 +1,12 @@
 {
     "compilerOptions": {
         "outDir": "build/dist",
-        "module": "es2015",
+        "module": "esnext",
         "target": "es2017",
         "lib": ["es2017", "dom"],
         "sourceMap": true,
         "allowJs": true,
-        "jsx": "react",
+        "jsx": "preserve",
         "moduleResolution": "node",
         "rootDir": "src",
         "forceConsistentCasingInFileNames": true,
@@ -18,9 +18,13 @@
         "noUnusedLocals": false,
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true,
-        "baseUrl": ".",
-
-        "typeRoots": ["./node_modules/@types", "../@types"]
+        "typeRoots": ["./node_modules/@types", "../@types"],
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "strict": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true
     },
     "exclude": [
         "node_modules",
@@ -31,5 +35,6 @@
         "jest",
         "src/setupTests.ts",
         "config-overrides.js"
-    ]
+    ],
+    "include": ["src"]
 }
