@@ -17,6 +17,7 @@
         "react-component-queries": "2.3.0",
         "react-dom": "16.8.5",
         "react-moment": "0.8.4",
+        "react-portal": "^4.2.0",
         "react-redux": "^6.0.1",
         "react-scripts": "^2.1.8",
         "react-sizeme": "2.5.2",

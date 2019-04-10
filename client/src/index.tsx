@@ -12,11 +12,10 @@ import storage from 'redux-persist/lib/storage'; // defaults to localStorage for
 import { whyDidYouUpdate } from 'why-did-you-update';
 if (process.env.NODE_ENV !== 'production') {
     const { whyDidYouUpdate } = require('why-did-you-update');
-    whyDidYouUpdate(React, {
+    /*  whyDidYouUpdate(React, {
         groupByComponent: true,
         collapseComponentGroups: true,
-        exclude: [/Search|TrackItemTable|TimelineComp|PieChart|WorkProgressChart|PieLabel/],
-    });
+    });*/
 }
 
 const persistConfig = {

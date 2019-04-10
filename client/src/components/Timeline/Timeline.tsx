@@ -10,18 +10,14 @@ import {
 } from 'victory';
 import { Spin } from 'antd';
 import moment from 'moment';
-
 import 'moment-duration-format';
-
 import debounce from 'lodash/debounce';
 import { chartTheme, blueGrey700, disabledGrey } from './ChartTheme';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { MainChart, BrushChart, Spinner } from './Timeline.styles';
-import { TimelineItemEditContainer } from './TimelineItemEditContainer';
 import { TimelineRowType } from '../../enum/TimelineRowType';
 import { TIME_FORMAT, INPUT_DATE_FORMAT, convertDate } from '../../constants';
-import { ChartTooltip } from './ChartTooltip';
-import { CustomBar } from './CustomBar';
+import { SimpleBar } from './SimpleBar';
 
 interface IProps {
     timerange: any;
@@ -58,6 +54,18 @@ const getTrackItemOrder = (type: string) => {
     return 0;
 };
 
+const getTrackItemOrderFn = d => getTrackItemOrder(d.taskName);
+const contertDateForY = d => convertDate(d.beginDate);
+const contertDateForY0 = d => convertDate(d.endDate);
+const brushStyle = {
+    data: {
+        width: 7,
+        fill: d => d.color,
+        stroke: d => d.color,
+        strokeWidth: 0.5,
+        fillOpacity: 0.75,
+    },
+};
 class TimelineComp extends React.PureComponent<IFullProps, IState> {
     handleSelectionChanged = item => {
         if (item) {
@@ -197,6 +205,12 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
         };
 
         const handleBrushDebounced = debounce(this.handleBrush, 300);
+
+        const domain = {
+            y: [convertDate(timerange[0]), convertDate(timerange[1])],
+            x: [1, 3],
+        };
+
         return (
             <div>
                 <MainChart>
@@ -214,10 +228,7 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                         padding={padding}
                         scale={scale}
                         horizontal={true}
-                        domain={{
-                            y: [convertDate(timerange[0]), convertDate(timerange[1])],
-                            x: [1, 3],
-                        }}
+                        domain={domain}
                         containerComponent={
                             <VictoryZoomContainer
                                 responsive={false}
@@ -238,20 +249,11 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                         <VictoryBar
                             events={barEvents}
                             style={barStyle}
-                            labels={this.getBarLabel}
-                            x={d => getTrackItemOrder(d.taskName)}
-                            y={d => convertDate(d.beginDate)}
-                            y0={d => convertDate(d.endDate)}
+                            x={getTrackItemOrderFn}
+                            y={contertDateForY}
+                            y0={contertDateForY0}
                             data={timelineData}
-                            labelComponent={
-                                <ChartTooltip
-                                    horizontal={false}
-                                    style={chartTheme.tooltip.style}
-                                    cornerRadius={chartTheme.tooltip.cornerRadius}
-                                    pointerLength={chartTheme.tooltip.pointerLength}
-                                    flyoutStyle={chartTheme.tooltip.flyoutStyle}
-                                />
-                            }
+                            dataComponent={<SimpleBar getBarLabel={this.getBarLabel} />}
                         />
                     </VictoryChart>
                 </MainChart>
@@ -264,10 +266,7 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                         padding={padding}
                         horizontal={true}
                         scale={scale}
-                        domain={{
-                            y: [convertDate(timerange[0]), convertDate(timerange[1])],
-                            x: [1, 3],
-                        }}
+                        domain={domain}
                         containerComponent={
                             <VictoryBrushContainer
                                 responsive={false}
@@ -280,18 +279,11 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                         <VictoryAxis dependentAxis={true} tickCount={20} />
 
                         <VictoryBar
-                            style={{
-                                data: {
-                                    width: 7,
-                                    fill: d => d.color,
-                                    stroke: d => d.color,
-                                    strokeWidth: 0.5,
-                                    fillOpacity: 0.75,
-                                },
-                            }}
-                            x={d => getTrackItemOrder(d.taskName)}
-                            y={d => convertDate(d.beginDate)}
-                            y0={d => convertDate(d.endDate)}
+                            animate={false}
+                            style={brushStyle}
+                            x={getTrackItemOrderFn}
+                            y={contertDateForY}
+                            y0={contertDateForY0}
                             data={brushData}
                         />
                     </VictoryChart>
