@@ -12,7 +12,7 @@ console.debug(
 interface IProps {}
 interface IState {}
 
-export class AppForm extends React.Component<IProps, IState> {
+export class AppForm extends React.PureComponent<IProps, IState> {
     render() {
         return (
             <Card title="App settings">

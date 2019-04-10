@@ -5,7 +5,7 @@ import { FilterDropdown, Highlight, FilterInput, TotalCount } from './TrackItemT
 import Moment from 'react-moment';
 import moment from 'moment';
 import _ from 'lodash';
-import { DATE_TIME_FORMAT, TIME_FORMAT } from '../../constants';
+import { DATE_TIME_FORMAT, TIME_FORMAT, convertDate, INPUT_DATE_FORMAT } from '../../constants';
 import { diffAndFormatShort } from '../../utils';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { PaginationConfig } from 'antd/lib/table';
@@ -18,15 +18,14 @@ interface IProps {
 }
 interface IState {}
 
-const checkIfOneDay = visibleTimerange =>
-    moment(visibleTimerange[0]).isSame(moment(visibleTimerange[1]), 'day');
+const checkIfOneDay = visibleTimerange => visibleTimerange[0].isSame(visibleTimerange[1], 'day');
 
 const paginationConf: PaginationConfig = {
     showSizeChanger: true,
     pageSizeOptions: ['20', '50', '100', '300', '500'],
 };
 
-export class TrackItemTable extends React.Component<IProps, IState> {
+export class TrackItemTable extends React.PureComponent<IProps, IState> {
     searchInput: any;
 
     state: any = {
@@ -80,7 +79,9 @@ export class TrackItemTable extends React.Component<IProps, IState> {
     };
 
     calculateTotal = filteredData => {
-        const totalMs = _.sumBy(filteredData, c => moment(c.endDate).diff(c.beginDate));
+        const totalMs = _.sumBy(filteredData, c =>
+            convertDate(c.endDate).diff(convertDate(c.beginDate)),
+        );
         const dur = moment.duration(totalMs);
 
         return <TotalCount>Total {dur.format()}</TotalCount>;
@@ -116,14 +117,10 @@ export class TrackItemTable extends React.Component<IProps, IState> {
                             <span>
                                 {record.title
                                     .split(reg)
-                                    .map(
-                                        (text, i) =>
-                                            i > 0
-                                                ? [
-                                                      <Highlight key={text}>{match[0]}</Highlight>,
-                                                      text,
-                                                  ]
-                                                : text,
+                                    .map((text, i) =>
+                                        i > 0
+                                            ? [<Highlight key={text}>{match[0]}</Highlight>, text]
+                                            : text,
                                     )}
                             </span>
                         ),
@@ -197,12 +194,15 @@ export class TrackItemTable extends React.Component<IProps, IState> {
                 dataIndex: 'beginDate',
                 key: 'beginDate',
                 width: 170,
-                onFilter: (value: any, record: any) => new Date(record.beginDate) > value,
+                onFilter: (value: any, record: any) => convertDate(record.beginDate) > value,
                 sorter: (a: any, b: any) =>
-                    new Date(a.beginDate).getTime() - new Date(b.beginDate).getTime(),
+                    convertDate(a.beginDate).valueOf() - convertDate(b.beginDate).valueOf(),
                 sortOrder: sortedInfo.columnKey === 'beginDate' && sortedInfo.order,
                 render: (text, record) => (
-                    <Moment format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}>
+                    <Moment
+                        format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}
+                        parse={INPUT_DATE_FORMAT}
+                    >
                         {record.beginDate}
                     </Moment>
                 ),
@@ -212,13 +212,16 @@ export class TrackItemTable extends React.Component<IProps, IState> {
                 dataIndex: 'endDate',
                 key: 'endDate',
                 width: 170,
-                onFilter: (value: any, record: any) => new Date(record.endDate) > value,
+                onFilter: (value: any, record: any) => convertDate(record.endDate) > value,
                 sorter: (a: any, b: any) =>
-                    new Date(a.endDate).getTime() - new Date(b.endDate).getTime(),
+                    convertDate(a.endDate).valueOf() - convertDate(b.endDate).valueOf(),
                 sortOrder: sortedInfo.columnKey === 'endDate' && sortedInfo.order,
 
                 render: (text, record) => (
-                    <Moment format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}>
+                    <Moment
+                        format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}
+                        parse={INPUT_DATE_FORMAT}
+                    >
                         {record.endDate}
                     </Moment>
                 ),
@@ -230,8 +233,8 @@ export class TrackItemTable extends React.Component<IProps, IState> {
                 key: 'duration',
                 width: 80,
                 sorter: (a: any, b: any) =>
-                    moment(new Date(a.endDate)).diff(moment(new Date(a.beginDate))) -
-                    moment(new Date(b.endDate)).diff(moment(new Date(b.beginDate))),
+                    convertDate(a.endDate).diff(convertDate(a.beginDate)) -
+                    convertDate(b.endDate).diff(convertDate(b.beginDate)),
                 sortOrder: sortedInfo.columnKey === 'duration' && sortedInfo.order,
 
                 render: (text, record) => (

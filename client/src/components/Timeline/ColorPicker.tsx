@@ -13,7 +13,7 @@ interface IState {
     displayColorPicker?: any;
 }
 
-export class ColorPicker extends React.Component<IProps, IState> {
+export class ColorPicker extends React.PureComponent<IProps, IState> {
     constructor(props) {
         super(props);
         console.log('ColorPicker', props);

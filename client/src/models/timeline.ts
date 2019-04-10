@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 import { TrackItemService } from '../services/TrackItemService';
 import { AppSettingService } from '../services/AppSettingService';
 import { handleTimelineItems, addToTimelineItems } from './timeline.util';
@@ -15,18 +15,8 @@ export const timelineModel: any = {
         AppTrackItem: [],
         StatusTrackItem: [],
         LogTrackItem: [],
-        timerange: [
-            moment()
-                .subtract(1, 'days')
-                .toDate(),
-            new Date(),
-        ],
-        visibleTimerange: [
-            moment()
-                .subtract(1, 'hour')
-                .toDate(),
-            new Date(),
-        ],
+        timerange: [moment().subtract(1, 'days'), moment()],
+        visibleTimerange: [moment().subtract(1, 'hour'), moment()],
         selectedTimelineItem: null,
     },
 
@@ -34,12 +24,10 @@ export const timelineModel: any = {
         setup({ dispatch }: any) {
             console.log('Timeline data setup');
 
-            const beginDate = moment()
-                .startOf('day')
-                .toDate();
-            const endDate = moment()
-                .endOf('day')
-                .toDate();
+            const beginDate = moment().startOf('day');
+
+            const endDate = moment().endOf('day');
+
             dispatch({
                 type: 'loadTimerange',
                 payload: { timerange: [beginDate, endDate] },

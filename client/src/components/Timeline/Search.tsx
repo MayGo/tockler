@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DatePicker, Button } from 'antd';
-import * as moment from 'moment';
+import moment from 'moment';
 const { RangePicker } = DatePicker;
 import { Flex, Box } from 'grid-styled';
 
@@ -13,7 +13,7 @@ interface IHocProps {}
 
 type IFullProps = IProps & IHocProps;
 
-export class Search extends React.Component<IFullProps, IProps> {
+export class Search extends React.PureComponent<IFullProps, IProps> {
     constructor(props: any) {
         super(props);
         this.onChange = this.onChange.bind(this);
@@ -22,8 +22,8 @@ export class Search extends React.Component<IFullProps, IProps> {
     onChange = (dates: any, dateStrings: [string, string]) => {
         console.log('TIMERANGE:', dates, this.props);
         if (dates != null) {
-            const beginDate = dates[0].toDate();
-            const endDate = dates[1].toDate();
+            const beginDate = dates[0];
+            const endDate = dates[1];
             const newTimerange = [beginDate, endDate];
             this.props.loadTimerange(newTimerange);
         } else {
@@ -32,12 +32,8 @@ export class Search extends React.Component<IFullProps, IProps> {
     };
     selectToday = () => {
         console.log('Select today');
-        const beginDate = moment()
-            .startOf('day')
-            .toDate();
-        const endDate = moment()
-            .endOf('day')
-            .toDate();
+        const beginDate = moment().startOf('day');
+        const endDate = moment().endOf('day');
         const newTimerange = [beginDate, endDate];
         this.props.loadTimerange(newTimerange);
     };
@@ -45,31 +41,29 @@ export class Search extends React.Component<IFullProps, IProps> {
         console.log('Select today');
         const beginDate = moment()
             .startOf('day')
-            .subtract(1, 'days')
-            .toDate();
+            .subtract(1, 'days');
+
         const endDate = moment()
             .endOf('day')
-            .subtract(1, 'days')
-            .toDate();
+            .subtract(1, 'days');
+
         const newTimerange = [beginDate, endDate];
         this.props.loadTimerange(newTimerange);
     };
 
     selectHour = () => {
         console.log('Select hour');
-        const beginDate = moment()
-            .startOf('hour')
-            .toDate();
-        const endDate = moment()
-            .endOf('hour')
-            .toDate();
+        const beginDate = moment().startOf('hour');
+
+        const endDate = moment().endOf('hour');
+
         const newTimerange = [beginDate, endDate];
         this.props.loadTimerange(newTimerange);
     };
 
     render() {
         const { timerange } = this.props;
-        const range: [any, any] = [moment(timerange[0]), moment(timerange[1])];
+
         console.log('Have timerange in Search:', timerange);
         return (
             <Flex py={1}>
@@ -77,7 +71,7 @@ export class Search extends React.Component<IFullProps, IProps> {
                     <Button onClick={this.selectYesterday}>Yesterday</Button>
                 </Box>
                 <Box px={1}>
-                    <RangePicker value={range} onChange={this.onChange} />
+                    <RangePicker value={timerange} onChange={this.onChange} />
                 </Box>
                 <Box px={1}>
                     <Button onClick={this.selectToday}>Today</Button>

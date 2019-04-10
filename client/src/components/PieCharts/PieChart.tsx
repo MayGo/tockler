@@ -5,10 +5,11 @@ import { chartTheme } from '../Timeline/ChartTheme';
 import _ from 'lodash';
 import moment from 'moment';
 import { PieLabel } from './PieLabel';
+import { convertDate } from '../../constants';
 
 const sumApp = (p, c) => {
     return _.extend(p, {
-        timeDiffInMs: p.timeDiffInMs + moment(c.endDate).diff(c.beginDate),
+        timeDiffInMs: p.timeDiffInMs + convertDate(c.endDate).diff(convertDate(c.beginDate)),
     });
 };
 
@@ -17,7 +18,7 @@ interface IProps {
     taskName: string;
     width: number;
 }
-export class PieChart extends React.Component<IProps, {}> {
+export class PieChart extends React.PureComponent<IProps, {}> {
     render() {
         let { items, taskName, width } = this.props;
 

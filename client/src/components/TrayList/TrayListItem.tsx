@@ -2,9 +2,10 @@ import * as React from 'react';
 import { Button, Icon } from 'antd';
 import { Flex, Box } from 'grid-styled';
 import styled from 'styled-components';
-import * as moment from 'moment';
+import moment from 'moment';
 import Moment from 'react-moment';
 import TimeAgo from 'react-timeago';
+import { convertDate } from '../../constants';
 
 const CustomListItem = styled.div`
     background-color: white;
@@ -13,19 +14,19 @@ const CustomListItem = styled.div`
     border-left: 5px solid ${(props: any) => props.color};
 `;
 
-const Small = Box.extend`
+const Small = styled(Box)`
     font-size: 10px;
 `;
-const ActionBtn = Flex.extend`
+const ActionBtn = styled(Flex)`
     border-left: 1px solid #f0f2f5;
     margin: 2px 0;
 `;
 
-const CustomBox = Box.extend`
+const CustomBox = styled(Box)`
     overflow: hidden;
 `;
 
-const formatDate = date => moment(date).format('YYYY-MM-DD HH:mm:ss');
+const formatDate = date => convertDate(date).format('YYYY-MM-DD HH:mm:ss');
 
 const FormattedTime = ({ item, isRunning }: any) => {
     const full = isRunning

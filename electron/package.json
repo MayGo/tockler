@@ -1,6 +1,6 @@
 {
     "name": "tockler",
-    "version": "3.4.2",
+    "version": "3.4.3",
     "description": "Automatically track applications usage and working time",
     "author": "Maigo Erit <maigo.erit@gmail.com>",
     "license": "GPL-2.0",
@@ -25,7 +25,7 @@
         "active-win": "^3.0.0",
         "compare-versions": "^3.0.0",
         "cpx": "^1.5.0",
-        "electron-config": "^1.0.0",
+        "electron-store": "^1.0.0",
         "electron-context-menu": "0.10.0",
         "electron-devtools-installer": "^2.2.4",
         "electron-is-dev": "^0.3.0",

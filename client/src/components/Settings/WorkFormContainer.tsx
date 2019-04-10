@@ -9,13 +9,13 @@ const mapStateToProps = ({ settings }: any) => ({
 const mapDispatchToProps = (dispatch: any) => ({});
 
 const enhance = compose(
+    reduxForm({
+        form: 'settingsForm',
+    }),
     connect(
         mapStateToProps,
         mapDispatchToProps,
     ),
-    reduxForm({
-        form: 'settingsForm',
-    }),
 );
 
 export const WorkFormContainer = enhance(WorkForm);

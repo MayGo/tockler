@@ -8,7 +8,7 @@ interface IProps {
 }
 
 const btnStyle = { width: '100%', marginBottom: 5 };
-export class ColorChangerModal extends React.Component<IProps, {}> {
+export class ColorChangerModal extends React.PureComponent<IProps, {}> {
     constructor(props) {
         super(props);
         console.log('ColorChangerModal', props);

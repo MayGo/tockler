@@ -4,7 +4,12 @@ export class SettingsService {
     static service: any = remote.getGlobal('SettingsService');
 
     static async updateByName(name, jsonData) {
-        console.error(jsonData, JSON.stringify(jsonData), JSON.parse(JSON.stringify(jsonData)));
+        console.info(
+            'updateByName',
+            jsonData,
+            JSON.stringify(jsonData),
+            JSON.parse(JSON.stringify(jsonData)),
+        );
         return await SettingsService.service.updateByName(name, JSON.stringify(jsonData));
     }
 

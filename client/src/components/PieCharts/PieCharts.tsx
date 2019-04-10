@@ -12,7 +12,7 @@ interface IProps {
     screenWidth: number;
 }
 
-export class PieCharts extends React.Component<IProps, {}> {
+export class PieCharts extends React.PureComponent<IProps, {}> {
     render() {
         let {
             appTrackItems,

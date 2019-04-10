@@ -1761,9 +1761,9 @@ electron-builder@20.15.1:
     update-notifier "^2.5.0"
     yargs "^11.0.0"
 
-electron-config@^1.0.0:
+electron-store@^1.0.0:
   version "1.0.0"
-  resolved "https://registry.yarnpkg.com/electron-config/-/electron-config-1.0.0.tgz#069d044cc794f04784ae72f12916725d3c8c39af"
+  resolved "https://registry.yarnpkg.com/electron-store/-/electron-store-1.0.0.tgz#069d044cc794f04784ae72f12916725d3c8c39af"
   dependencies:
     conf "^1.0.0"
 

@@ -8,23 +8,22 @@ import {
     VictoryZoomContainer,
     VictoryTooltip,
 } from 'victory';
-import { Popover, Spin } from 'antd';
+import { Spin } from 'antd';
 import moment from 'moment';
-
 import 'moment-duration-format';
-
 import debounce from 'lodash/debounce';
 import { chartTheme, blueGrey700, disabledGrey } from './ChartTheme';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { MainChart, BrushChart, Spinner } from './Timeline.styles';
-import { TimelineItemEditContainer } from './TimelineItemEditContainer';
 import { TimelineRowType } from '../../enum/TimelineRowType';
-import { TIME_FORMAT } from '../../constants';
+import { TIME_FORMAT, INPUT_DATE_FORMAT, convertDate } from '../../constants';
+import { SimpleBar } from './SimpleBar';
 
 interface IProps {
     timerange: any;
     visibleTimerange: any;
     appTrackItems: any;
+    aggregatedAppItems: any;
     statusTrackItems: any;
     logTrackItems: any;
     changeVisibleTimerange?: any;
@@ -55,14 +54,19 @@ const getTrackItemOrder = (type: string) => {
     return 0;
 };
 
-class TimelineComp extends React.Component<IFullProps, IState> {
-    handleTimeRangeChange = (timerange: any) => {
-        if (timerange) {
-            this.props.changeVisibleTimerange(timerange);
-        } else {
-            console.error('No Timerange to update');
-        }
-    };
+const getTrackItemOrderFn = d => getTrackItemOrder(d.taskName);
+const contertDateForY = d => convertDate(d.beginDate);
+const contertDateForY0 = d => convertDate(d.endDate);
+const brushStyle = {
+    data: {
+        width: 7,
+        fill: d => d.color,
+        stroke: d => d.color,
+        strokeWidth: 0.5,
+        fillOpacity: 0.75,
+    },
+};
+class TimelineComp extends React.PureComponent<IFullProps, IState> {
     handleSelectionChanged = item => {
         if (item) {
             console.log('Selected item:', item);
@@ -73,13 +77,13 @@ class TimelineComp extends React.Component<IFullProps, IState> {
     };
 
     handleZoom = domain => {
-        this.props.changeVisibleTimerange(domain.x);
+        this.props.changeVisibleTimerange(domain.y);
     };
 
     handleBrush = domain => {
-        console.log('Selected with brush:', domain.x);
+        console.log('Selected with brush:', domain.y);
 
-        this.props.changeVisibleTimerange(domain.x);
+        this.props.changeVisibleTimerange(domain.y);
     };
     calcRowEnabledColor = d => {
         return this.props.isRowEnabled[d] ? blueGrey700 : disabledGrey;
@@ -89,7 +93,17 @@ class TimelineComp extends React.Component<IFullProps, IState> {
     };
 
     onTimelineTypeLabelClick = (item, props) => {
-        console.error(item, props);
+        console.error('onTimelineTypeLabelClick', item, props);
+    };
+    getBarLabel = d => {
+        const diff = convertDate(d.endDate).diff(convertDate(d.beginDate));
+        const dur = moment.duration(diff);
+        let formattedDuration = dur.format();
+        const type = d.taskName === TrackItemType.StatusTrackItem ? 'STATUS' : d.app;
+        const beginTime = convertDate(d.beginDate).format(TIME_FORMAT);
+        const endTime = convertDate(d.endDate).format(TIME_FORMAT);
+
+        return `${type} - ${d.title} [${formattedDuration}] ${beginTime} - ${endTime}`;
     };
 
     render() {
@@ -97,6 +111,7 @@ class TimelineComp extends React.Component<IFullProps, IState> {
             appTrackItems,
             logTrackItems,
             statusTrackItems,
+            aggregatedAppItems,
             timerange,
             selectedTimelineItem,
             visibleTimerange,
@@ -112,20 +127,89 @@ class TimelineComp extends React.Component<IFullProps, IState> {
         console.log('Have timerange', visibleTimerange);
 
         let timelineData = [];
+        let brushData = [];
         if (isRowEnabled[TimelineRowType.Status]) {
             // console.log('Adding statusTrackItems:', statusTrackItems);
             timelineData = timelineData.concat(statusTrackItems);
+            brushData = brushData.concat(statusTrackItems);
         }
         if (isRowEnabled[TimelineRowType.Log]) {
             // console.log('Adding logTrackItems:', logTrackItems);
             timelineData = timelineData.concat(logTrackItems);
+            brushData = brushData.concat(logTrackItems);
         }
         if (isRowEnabled[TimelineRowType.App]) {
             // console.log('Adding apptrackItems:', appTrackItems);
             timelineData = timelineData.concat(appTrackItems);
         }
+        // console.error('aggregatedAppItems', aggregatedAppItems);
+        //    timelineData = timelineData.concat(aggregatedAppItems);
         console.log(`Rendering ${timelineData.length} items`);
         const barWidth = 25;
+
+        const scale = { y: 'time', x: 'linear' };
+        const padding = { left: 50, top: 0, bottom: 20 };
+        const domainPadding = { y: 35, x: 10 };
+        const domainPaddingBrush = { y: 35, x: 5 };
+
+        const axisEvents = [
+            {
+                target: 'tickLabels',
+                eventHandlers: {
+                    onClick: () => {
+                        return [
+                            {
+                                target: 'tickLabels',
+                                mutation: props => {
+                                    console.log('Toggling row', props);
+                                    toggleRow(props.datum);
+                                    return {
+                                        style: {
+                                            ...props.style,
+                                            fill: this.calcRowEnabledColorFlipped(props.datum),
+                                        },
+                                    };
+                                },
+                            },
+                        ];
+                    },
+                },
+            },
+        ];
+        const barEvents = [
+            {
+                target: 'data',
+                eventHandlers: {
+                    onClick: (e, bubble) => {
+                        this.handleSelectionChanged(bubble.datum);
+                    },
+                },
+            },
+        ];
+
+        const axisStyle = {
+            grid: { strokeWidth: 0 },
+            ticks: { stroke: 'grey', size: 5 },
+            tickLabels: {
+                fill: this.calcRowEnabledColor,
+            },
+        };
+        const barStyle = {
+            data: {
+                width: barWidth,
+                fill: d => d.color,
+                stroke: d => d.color,
+                strokeWidth: 0.5,
+                fillOpacity: 0.75,
+            },
+        };
+
+        const handleBrushDebounced = debounce(this.handleBrush, 300);
+
+        const domain = {
+            y: [convertDate(timerange[0]), convertDate(timerange[1])],
+            x: [1, 3],
+        };
 
         return (
             <div>
@@ -135,167 +219,72 @@ class TimelineComp extends React.Component<IFullProps, IState> {
                             <Spin />
                         </Spinner>
                     )}
-                    <Popover
-                        style={{ zIndex: 930 }}
-                        content={<TimelineItemEditContainer showCloseBtn={true} />}
-                        visible={!!selectedTimelineItem}
-                        trigger="click"
+
+                    <VictoryChart
+                        theme={chartTheme}
+                        height={100}
+                        width={chartWidth}
+                        domainPadding={domainPadding}
+                        padding={padding}
+                        scale={scale}
+                        horizontal={true}
+                        domain={domain}
+                        containerComponent={
+                            <VictoryZoomContainer
+                                responsive={false}
+                                zoomDimension="y"
+                                zoomDomain={{ y: visibleTimerange }}
+                                onZoomDomainChange={debounce(this.handleZoom, 300)}
+                            />
+                        }
                     >
-                        <VictoryChart
-                            theme={chartTheme}
-                            height={100}
-                            width={chartWidth}
-                            domainPadding={{ x: 35, y: 10 }}
-                            padding={{ left: 50, top: 0, bottom: 20 }}
-                            scale={{ x: 'time' }}
-                            domain={{
-                                x: [new Date(timerange[0]), new Date(timerange[1])],
-                                y: [1, 3],
-                            }}
-                            containerComponent={
-                                <VictoryZoomContainer
-                                    responsive={false}
-                                    zoomDimension="x"
-                                    zoomDomain={{ x: visibleTimerange }}
-                                    onZoomDomainChange={debounce(this.handleZoom, 300)}
-                                />
-                            }
-                        >
-                            <VictoryAxis
-                                dependentAxis={true}
-                                tickValues={[1, 2, 3]}
-                                tickFormat={['App', 'Status', 'Log']}
-                                events={[
-                                    {
-                                        target: 'tickLabels',
-                                        eventHandlers: {
-                                            onClick: () => {
-                                                return [
-                                                    {
-                                                        target: 'tickLabels',
-                                                        mutation: props => {
-                                                            console.log('Toggling row', props);
-                                                            toggleRow(props.datum);
-                                                            return {
-                                                                style: {
-                                                                    ...props.style,
-                                                                    fill: this.calcRowEnabledColorFlipped(
-                                                                        props.datum,
-                                                                    ),
-                                                                },
-                                                            };
-                                                        },
-                                                    },
-                                                ];
-                                            },
-                                        },
-                                    },
-                                ]}
-                                style={{
-                                    grid: { strokeWidth: 0 },
-                                    ticks: { stroke: 'grey', size: 5 },
-                                    tickLabels: {
-                                        fill: this.calcRowEnabledColor,
-                                    },
-                                }}
-                            />
-                            <VictoryAxis tickCount={20} />
+                        <VictoryAxis
+                            tickValues={[1, 2, 3]}
+                            tickFormat={['App', 'Status', 'Log']}
+                            events={axisEvents}
+                            style={axisStyle}
+                        />
+                        <VictoryAxis dependentAxis={true} tickCount={20} />
 
-                            <VictoryBar
-                                horizontal={true}
-                                events={[
-                                    {
-                                        target: 'data',
-                                        eventHandlers: {
-                                            onClick: (e, bubble) => {
-                                                this.handleSelectionChanged(bubble.datum);
-                                            },
-                                        },
-                                    },
-                                ]}
-                                style={{
-                                    data: {
-                                        width: barWidth,
-                                        fill: d => d.color,
-                                        stroke: d => d.color,
-                                        strokeWidth: 0.5,
-                                        fillOpacity: 0.75,
-                                    },
-                                }}
-                                labels={d => {
-                                    const diff = moment(new Date(d.endDate)).diff(
-                                        moment(new Date(d.beginDate)),
-                                    );
-                                    const dur = moment.duration(diff);
-                                    let formattedDuration = dur.format();
-                                    const type =
-                                        d.taskName === TrackItemType.StatusTrackItem
-                                            ? 'STATUS'
-                                            : d.app;
-                                    const beginTime = moment(new Date(d.beginDate)).format(
-                                        TIME_FORMAT,
-                                    );
-                                    const endTime = moment(new Date(d.endDate)).format(TIME_FORMAT);
-
-                                    return `${type} - ${
-                                        d.title
-                                    } [${formattedDuration}] ${beginTime} - ${endTime}`;
-                                }}
-                                labelComponent={
-                                    <VictoryTooltip
-                                        horizontal={false}
-                                        style={chartTheme.tooltip.style}
-                                        cornerRadius={chartTheme.tooltip.cornerRadius}
-                                        pointerLength={chartTheme.tooltip.pointerLength}
-                                        flyoutStyle={chartTheme.tooltip.flyoutStyle}
-                                    />
-                                }
-                                x={d => getTrackItemOrder(d.taskName)}
-                                y={d => new Date(d.beginDate)}
-                                y0={d => new Date(d.endDate)}
-                                data={timelineData}
-                            />
-                        </VictoryChart>
-                    </Popover>
+                        <VictoryBar
+                            events={barEvents}
+                            style={barStyle}
+                            x={getTrackItemOrderFn}
+                            y={contertDateForY}
+                            y0={contertDateForY0}
+                            data={timelineData}
+                            dataComponent={<SimpleBar getBarLabel={this.getBarLabel} />}
+                        />
+                    </VictoryChart>
                 </MainChart>
                 <BrushChart>
                     <VictoryChart
                         theme={chartTheme}
                         height={50}
                         width={chartWidth}
-                        domainPadding={{ x: 35, y: 5 }}
-                        padding={{ left: 50, top: 0, bottom: 20 }}
-                        scale={{ x: 'time' }}
-                        domain={{
-                            x: [new Date(timerange[0]), new Date(timerange[1])],
-                            y: [1, 3],
-                        }}
+                        domainPadding={domainPaddingBrush}
+                        padding={padding}
+                        horizontal={true}
+                        scale={scale}
+                        domain={domain}
                         containerComponent={
                             <VictoryBrushContainer
                                 responsive={false}
-                                brushDimension="x"
-                                brushDomain={{ x: visibleTimerange }}
-                                onBrushDomainChange={debounce(this.handleBrush, 300)}
+                                brushDimension="y"
+                                brushDomain={{ y: visibleTimerange }}
+                                onBrushDomainChange={handleBrushDebounced}
                             />
                         }
                     >
-                        <VictoryAxis tickCount={20} />
+                        <VictoryAxis dependentAxis={true} tickCount={20} />
 
                         <VictoryBar
-                            horizontal={true}
-                            style={{
-                                data: {
-                                    width: 7,
-                                    fill: d => d.color,
-                                    stroke: d => d.color,
-                                    strokeWidth: 0.5,
-                                    fillOpacity: 0.75,
-                                },
-                            }}
-                            x={d => getTrackItemOrder(d.taskName)}
-                            y={d => new Date(d.beginDate)}
-                            y0={d => new Date(d.endDate)}
-                            data={timelineData}
+                            animate={false}
+                            style={brushStyle}
+                            x={getTrackItemOrderFn}
+                            y={contertDateForY}
+                            y0={contertDateForY0}
+                            data={brushData}
                         />
                     </VictoryChart>
                 </BrushChart>

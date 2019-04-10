@@ -8,7 +8,7 @@ import { labelCol, wrapperCol } from './SettingsForm.styles';
 interface IProps {}
 interface IState {}
 
-export class WorkForm extends React.Component<IProps, IState> {
+export class WorkForm extends React.PureComponent<IProps, IState> {
     render() {
         return (
             <Card title="Work settings">

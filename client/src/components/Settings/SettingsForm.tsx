@@ -11,7 +11,7 @@ interface IProps {
 
 interface IState {}
 
-export class SettingsForm extends React.Component<IProps, IState> {
+export class SettingsForm extends React.PureComponent<IProps, IState> {
     render() {
         return (
             <Form onSubmit={this.props.handleSubmit}>

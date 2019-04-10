@@ -15,7 +15,7 @@ interface IProps {
     changeSelectedDate: any;
     loading?: boolean;
 }
-export class SummaryCalendar extends React.Component<IProps, {}> {
+export class SummaryCalendar extends React.PureComponent<IProps, {}> {
     getListData(day) {
         const { logSummary, onlineSummary } = this.props;
 

@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 
 import { delay } from 'dva/saga';
 import { TrackItemService } from '../services/TrackItemService';
@@ -32,7 +32,8 @@ export const rootModel: any = {
                 dispatch({ type: 'setFocused', payload: { isFocused: false } });
             };
 
-            dispatch({ type: 'bgSync' });
+            // dispatch({ type: 'bgSync' });
+            console.error('BG SYNC DISABLED');
 
             const beginDate = moment().startOf('day');
             const endDate = moment().endOf('day');
@@ -61,15 +62,13 @@ export const rootModel: any = {
                     yield call(delay, delayMs);
                     // const isFocused = yield select(state => state.root.isFocused);
                     console.log('Watching track changes:', lastRequestTime);
-                    const requestFrom = lastRequestTime.toDate();
+                    const requestFrom = lastRequestTime;
                     lastRequestTime = moment();
                     console.log('Requesting from:', requestFrom);
                     const { appItems, statusItems, logItems } = yield call(
                         TrackItemService.findAllItems,
                         requestFrom,
-                        moment(lastRequestTime)
-                            .add(1, 'days')
-                            .toDate(),
+                        moment(lastRequestTime).add(1, 'days'),
                     );
                     console.log('Returned updated items:', appItems);
                     yield put({

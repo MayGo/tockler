@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 
 moment();
 declare module 'moment' {
@@ -96,5 +96,5 @@ declare module 'moment' {
         durationPluralKey: (token: string, integerValue: number, decimalValue: number) => string;
     }
 
-    type TemplateFunction = ((this: DurationFormatSettings) => string);
+    type TemplateFunction = (this: DurationFormatSettings) => string;
 }

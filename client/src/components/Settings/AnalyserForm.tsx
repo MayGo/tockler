@@ -27,7 +27,7 @@ const renderRow = ({ fields, meta: { error, submitFailed } }) => {
     );
 };
 
-export class AnalyserForm extends React.Component<IProps, IState> {
+export class AnalyserForm extends React.PureComponent<IProps, IState> {
     render() {
         return (
             <Card

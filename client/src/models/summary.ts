@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 import { TrackItemService } from '../services/TrackItemService';
 import { handleItems } from './summary.util';
 
@@ -43,12 +43,8 @@ export const summaryModel: any = {
                 },
             });
 
-            const beginDate = moment(selectedDate)
-                .startOf(selectedMode)
-                .toDate();
-            const endDate = moment(selectedDate)
-                .endOf(selectedMode)
-                .toDate();
+            const beginDate = moment(selectedDate).startOf(selectedMode);
+            const endDate = moment(selectedDate).endOf(selectedMode);
 
             const { appItems, statusItems, logItems } = yield call(
                 TrackItemService.findAllItems,
