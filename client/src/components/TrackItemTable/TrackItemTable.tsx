@@ -92,7 +92,6 @@ export class TrackItemTable extends React.PureComponent<IProps, IState> {
     componentWillReceiveProps(nextProps: any) {
         const { activeType } = this.state;
         const { appTrackItems, logTrackItems, visibleTimerange } = nextProps;
-        console.log('Props received:', appTrackItems, visibleTimerange);
 
         this.setState({
             data: activeType === TrackItemType.AppTrackItem ? appTrackItems : logTrackItems,

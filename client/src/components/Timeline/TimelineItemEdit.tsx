@@ -36,7 +36,6 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
         console.log('TimelineItemEdit', this.state);
     }
     componentWillReceiveProps(nextProps: any) {
-        console.log('Props received', nextProps);
         if (nextProps.selectedTimelineItem) {
             this.setState({
                 item: nextProps.selectedTimelineItem,

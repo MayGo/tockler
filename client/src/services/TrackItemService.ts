@@ -17,7 +17,7 @@ export class TrackItemService {
         to: moment.Moment,
         taskName: string,
     ): Promise<any> {
-        console.log('findAllDayItems', from, to, taskName);
+        console.log('findAllDayItems from proxy', from.toDate(), to.toDate(), taskName);
         const json = await TrackItemService.service.findAllDayItems(
             from.toDate(),
             to.toDate(),

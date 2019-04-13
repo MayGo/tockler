@@ -8,7 +8,7 @@ export const timelineModel: any = {
     namespace: 'timeline',
     state: {
         isRowEnabled: {
-            [TimelineRowType.App]: false,
+            [TimelineRowType.App]: true,
             [TimelineRowType.Log]: true,
             [TimelineRowType.Status]: true,
         },

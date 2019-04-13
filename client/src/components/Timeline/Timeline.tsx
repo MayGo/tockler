@@ -66,6 +66,24 @@ const brushStyle = {
         fillOpacity: 0.75,
     },
 };
+
+const barWidth = 25;
+
+const scale = { y: 'time', x: 'linear' };
+const padding = { left: 50, top: 0, bottom: 20 };
+const domainPadding = { y: 35, x: 10 };
+const domainPaddingBrush = { y: 35, x: 5 };
+
+const barStyle = {
+    data: {
+        width: barWidth,
+        fill: d => d.color,
+        stroke: d => d.color,
+        strokeWidth: 0.5,
+        fillOpacity: 0.75,
+    },
+};
+
 class TimelineComp extends React.PureComponent<IFullProps, IState> {
     handleSelectionChanged = item => {
         if (item) {
@@ -124,7 +142,7 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
         if (!timerange && !appTrackItems && appTrackItems.length === 0) {
             return <div>No data</div>;
         }
-        console.log('Have timerange', visibleTimerange);
+        console.log('Have timerange and visibleTimerange', timerange, visibleTimerange);
 
         let timelineData = [];
         let brushData = [];
@@ -145,12 +163,6 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
         // console.error('aggregatedAppItems', aggregatedAppItems);
         //    timelineData = timelineData.concat(aggregatedAppItems);
         console.log(`Rendering ${timelineData.length} items`);
-        const barWidth = 25;
-
-        const scale = { y: 'time', x: 'linear' };
-        const padding = { left: 50, top: 0, bottom: 20 };
-        const domainPadding = { y: 35, x: 10 };
-        const domainPaddingBrush = { y: 35, x: 5 };
 
         const axisEvents = [
             {
@@ -192,15 +204,6 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
             ticks: { stroke: 'grey', size: 5 },
             tickLabels: {
                 fill: this.calcRowEnabledColor,
-            },
-        };
-        const barStyle = {
-            data: {
-                width: barWidth,
-                fill: d => d.color,
-                stroke: d => d.color,
-                strokeWidth: 0.5,
-                fillOpacity: 0.75,
             },
         };
 
