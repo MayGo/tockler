@@ -23,7 +23,7 @@ const checkIfOneDay = visibleTimerange => visibleTimerange[0].isSame(visibleTime
 
 const paginationConf: PaginationConfig = {
     showSizeChanger: true,
-    pageSizeOptions: ['20', '50', '100', '300', '500'],
+    pageSizeOptions: ['50', '100', '300', '500'],
 };
 
 export class TrackItemTable extends React.PureComponent<IProps, IState> {
@@ -137,6 +137,7 @@ export class TrackItemTable extends React.PureComponent<IProps, IState> {
     deleteSelectedItems = () => {
         const { selectedRowKeys } = this.state;
         this.props.deleteTimelineItems(selectedRowKeys);
+        this.setState({ selectedRowKeys: [] });
     };
     render() {
         let { sortedInfo, filteredInfo, isOneDay, activeType } = this.state;
