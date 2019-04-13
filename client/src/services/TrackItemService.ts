@@ -17,7 +17,7 @@ export class TrackItemService {
         to: moment.Moment,
         taskName: string,
     ): Promise<any> {
-        console.log('findAllDayItems', from, to, taskName);
+        console.log('findAllDayItems from proxy', from.toDate(), to.toDate(), taskName);
         const json = await TrackItemService.service.findAllDayItems(
             from.toDate(),
             to.toDate(),
@@ -96,8 +96,8 @@ export class TrackItemService {
     static deleteById(trackItemId: number) {
         return TrackItemService.service.deleteById(trackItemId);
     }
-    static deleteByIds(trackItemId: number) {
-        return TrackItemService.service.deleteByIds(trackItemId);
+    static deleteByIds(trackItemIds: number) {
+        return TrackItemService.service.deleteByIds(trackItemIds);
     }
 
     static startNewLogItem(oldItem: any) {

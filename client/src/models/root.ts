@@ -32,8 +32,7 @@ export const rootModel: any = {
                 dispatch({ type: 'setFocused', payload: { isFocused: false } });
             };
 
-            // dispatch({ type: 'bgSync' });
-            console.error('BG SYNC DISABLED');
+            dispatch({ type: 'bgSync' });
 
             const beginDate = moment().startOf('day');
             const endDate = moment().endOf('day');

@@ -20,4 +20,16 @@ const mapStateToProps = ({ timeline }: any) => ({
     logTrackItems: filterItems(timeline, TrackItemType.LogTrackItem),
 });
 
-export const TrackItemTableContainer = connect(mapStateToProps)(TrackItemTable);
+const mapDispatchToProps = (dispatch: any) => ({
+    deleteTimelineItems: (ids: any) => {
+        dispatch({
+            type: 'timeline/deleteTimelineItems',
+            payload: { ids },
+        });
+    },
+});
+
+export const TrackItemTableContainer = connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(TrackItemTable);

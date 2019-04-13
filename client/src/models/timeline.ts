@@ -8,7 +8,7 @@ export const timelineModel: any = {
     namespace: 'timeline',
     state: {
         isRowEnabled: {
-            [TimelineRowType.App]: false,
+            [TimelineRowType.App]: true,
             [TimelineRowType.Log]: true,
             [TimelineRowType.Status]: true,
         },
@@ -83,6 +83,21 @@ export const timelineModel: any = {
                 });
             } else {
                 console.error('No id, not deleting from DB');
+            }
+        },
+
+        *deleteTimelineItems({ payload: { ids } }: any, { call, put, select }: any) {
+            console.error('Delete timeline items', ids);
+
+            if (ids) {
+                yield TrackItemService.deleteByIds(ids);
+                const timerange = yield select(state => state.timeline.timerange);
+                yield put({
+                    type: 'loadTimerange',
+                    payload: { timerange },
+                });
+            } else {
+                console.error('No ids, not deleting from DB');
             }
         },
         *loadTimerange({ payload: { timerange } }: any, { call, put }: any) {
