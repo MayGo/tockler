@@ -15,6 +15,7 @@ interface IProps {
     appTrackItems: any;
     statusTrackItems: any;
     logTrackItems: any;
+    deleteTimelineItems: any;
 }
 interface IState {}
 
@@ -36,6 +37,7 @@ export class TrackItemTable extends React.PureComponent<IProps, IState> {
         data: [],
         searchText: '',
         filtered: false,
+        selectedRowKeys: [],
     };
 
     handleChange = (pagination: any, filters: any, sorter: any) => {
@@ -129,7 +131,14 @@ export class TrackItemTable extends React.PureComponent<IProps, IState> {
                 .filter(record => !!record),
         });
     };
-
+    onSelectChange = selectedRowKeys => {
+        console.log('selectedRowKeys changed: ', selectedRowKeys);
+        this.setState({ selectedRowKeys });
+    };
+    deleteSelectedItems = () => {
+        const { selectedRowKeys } = this.state;
+        this.props.deleteTimelineItems(selectedRowKeys);
+    };
     render() {
         let { sortedInfo, filteredInfo, isOneDay, activeType } = this.state;
 
@@ -242,13 +251,32 @@ export class TrackItemTable extends React.PureComponent<IProps, IState> {
                 ),
             },
         ];
+
+        const { selectedRowKeys } = this.state;
+        const rowSelection = {
+            selectedRowKeys,
+            onChange: this.onSelectChange,
+        };
+        const hasSelected = selectedRowKeys.length > 0;
         return (
             <div>
                 <Flex p={1}>
                     <Box pr={1}>
-                        <Button type="primary" onClick={this.toggleTask}>
-                            Showing {activeType === TrackItemType.AppTrackItem ? 'Apps' : 'Logs'}
-                        </Button>
+                        {!hasSelected && (
+                            <Button type="primary" onClick={this.toggleTask}>
+                                Showing{' '}
+                                {activeType === TrackItemType.AppTrackItem ? 'Apps' : 'Logs'}
+                            </Button>
+                        )}
+                        {hasSelected && (
+                            <Button
+                                type="primary"
+                                onClick={this.deleteSelectedItems}
+                                disabled={!hasSelected}
+                            >
+                                Delete <b> {selectedRowKeys.length} </b> items
+                            </Button>
+                        )}
                     </Box>
                     <Box pr={1}>
                         <Button onClick={this.clearFilters}>Clear filters</Button>
@@ -257,7 +285,11 @@ export class TrackItemTable extends React.PureComponent<IProps, IState> {
                         <Button onClick={this.clearAll}>Clear filters and sorters</Button>
                     </Box>
                 </Flex>
+                <Flex p={1}>
+                    <Box pr={1} />
+                </Flex>
                 <Table
+                    rowSelection={rowSelection}
                     rowKey={(record: any) => `${record.id}`}
                     columns={columns}
                     pagination={paginationConf}

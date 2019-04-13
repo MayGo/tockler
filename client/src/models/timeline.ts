@@ -85,6 +85,21 @@ export const timelineModel: any = {
                 console.error('No id, not deleting from DB');
             }
         },
+
+        *deleteTimelineItems({ payload: { ids } }: any, { call, put, select }: any) {
+            console.error('Delete timeline items', ids);
+
+            if (ids) {
+                yield TrackItemService.deleteByIds(ids);
+                const timerange = yield select(state => state.timeline.timerange);
+                yield put({
+                    type: 'loadTimerange',
+                    payload: { timerange },
+                });
+            } else {
+                console.error('No ids, not deleting from DB');
+            }
+        },
         *loadTimerange({ payload: { timerange } }: any, { call, put }: any) {
             console.log('Change timerange:', timerange);
 

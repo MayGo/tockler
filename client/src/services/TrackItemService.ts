@@ -96,8 +96,8 @@ export class TrackItemService {
     static deleteById(trackItemId: number) {
         return TrackItemService.service.deleteById(trackItemId);
     }
-    static deleteByIds(trackItemId: number) {
-        return TrackItemService.service.deleteByIds(trackItemId);
+    static deleteByIds(trackItemIds: number) {
+        return TrackItemService.service.deleteByIds(trackItemIds);
     }
 
     static startNewLogItem(oldItem: any) {
