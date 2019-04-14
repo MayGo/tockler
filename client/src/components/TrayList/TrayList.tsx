@@ -3,14 +3,14 @@ import * as React from 'react';
 import { List } from 'antd';
 import { TrayListItem } from './TrayListItem';
 
-export function TrayList({ children, lastLogItems, loading, dispatch, runningLogItem }: any) {
+export function TrayList({ lastLogItems, loading, dispatch, runningLogItem }: any) {
     function startNewLogItemFromOld(oldItem) {
         dispatch({
             type: 'tray/startNewLogItem',
             payload: { item: oldItem },
         });
     }
-    function stopRunningLogItem(oldItem) {
+    function stopRunningLogItem() {
         dispatch({
             type: 'tray/stopRunningLogItem',
         });
@@ -21,7 +21,7 @@ export function TrayList({ children, lastLogItems, loading, dispatch, runningLog
             loading={loading}
             itemLayout="horizontal"
             dataSource={lastLogItems}
-            renderItem={item => (
+            renderItem={(item: any) => (
                 <TrayListItem
                     item={item}
                     isRunning={runningLogItem && item.id === runningLogItem.id}

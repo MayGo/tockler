@@ -1,4 +1,4 @@
-import * as Config from 'electron-store';
+import Config from 'electron-store';
 import { SettingsService } from '../services/SettingsService';
 const config = new Config();
 
