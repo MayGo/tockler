@@ -1,11 +1,6 @@
-'use strict';
-
 import * as notifier from 'node-notifier';
-import * as path from 'path';
 import * as moment from 'moment';
-
 import config from './config';
-
 import { logManager } from './log-manager';
 
 const logger = logManager.getLogger('UserMessages');

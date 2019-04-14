@@ -2,7 +2,7 @@ import { appSettingService } from './services/app-setting-service';
 import { trackItemService } from './services/track-item-service';
 import { app, ipcMain } from 'electron';
 
-import { sequelize } from './models/index';
+import { sequelize } from './Database';
 
 import { logManager } from './log-manager';
 import { stateManager } from './state-manager';
@@ -13,7 +13,7 @@ let logger = logManager.getLogger('AppManager');
 
 export default class AppManager {
     static async init() {
-        AppManager.syncDb();
+        await AppManager.syncDb();
         AppManager.initGlobalClasses();
         AppManager.initAppEvents();
         AppManager.setOpenAtLogin();
@@ -21,15 +21,9 @@ export default class AppManager {
         await stateManager.restoreState();
     }
 
-    static syncDb() {
-        sequelize
-            .sync()
-            .then(() => {
-                logger.info('Database synced.');
-            })
-            .catch((error: Error) => {
-                logger.error(error.message);
-            });
+    static async syncDb() {
+        await sequelize.sync();
+        logger.info('Database synced.');
     }
 
     static initAppEvents() {

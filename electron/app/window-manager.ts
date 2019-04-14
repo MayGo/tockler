@@ -1,5 +1,4 @@
 import * as menubar from 'menubar';
-
 import MenuBuilder from './menu-builder';
 import { throttle } from 'lodash';
 import { app, ipcMain, BrowserWindow, globalShortcut } from 'electron';
@@ -29,7 +28,6 @@ export default class WindowManager {
             show: false,
             webPreferences: {
                 zoomFactor: 1.0,
-                blinkFeatures: 'OverlayScrollbars',
             },
             title: 'Tockler',
             icon: config.iconBig,

@@ -1,9 +1,5 @@
-import { appConstants } from '../app/app-constants';
 import { backgroundService } from '../app/background-service';
-import BackgroundUtils from '../app/background-utils';
 import { appTrackItemJob } from '../app/jobs/app-track-item-job';
-import { models } from '../app/models';
-import { TrackItemAttributes, TrackItemInstance } from '../app/models/interfaces/track-item-interface';
 import { stateManager } from '../app/state-manager';
 import { State } from '../app/enums/state';
 import { TrackItemType } from '../app/enums/track-item-type';
@@ -11,12 +7,10 @@ import TrackItemTestData from './track-item-test-data';
 
 import * as moment from 'moment';
 
-const dateFormat = "YYYY-MM-DD HH:mm:ss";
+const dateFormat = 'YYYY-MM-DD HH:mm:ss';
 
 describe('checkIfIsInCorrectState', () => {
-
     afterEach(async () => {
-
         stateManager.resetCurrentTrackItem(TrackItemType.AppTrackItem);
         stateManager.resetCurrentTrackItem(TrackItemType.LogTrackItem);
         stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
@@ -42,7 +36,9 @@ describe('checkIfIsInCorrectState', () => {
         const createOrUpdateMock = jest.fn();
         backgroundService.createOrUpdate = createOrUpdateMock;
 
-        let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Idle }));
+        let item: TrackItemInstance = TrackItem.build(
+            TrackItemTestData.getStatusTrackItem({ app: State.Idle }),
+        );
 
         stateManager.setCurrentTrackItem(item);
 
@@ -56,14 +52,15 @@ describe('checkIfIsInCorrectState', () => {
         const createOrUpdateMock = jest.fn();
         backgroundService.createOrUpdate = createOrUpdateMock;
 
-        let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
+        let item: TrackItemInstance = TrackItem.build(
+            TrackItemTestData.getStatusTrackItem({ app: State.Online }),
+        );
 
         stateManager.setCurrentTrackItem(item);
 
         expect(() => {
             appTrackItemJob.checkIfIsInCorrectState();
         }).not.toThrow();
-
     });
 
     it('Does save item when offline (should not happen in reality)', async () => {
@@ -71,7 +68,9 @@ describe('checkIfIsInCorrectState', () => {
         const createOrUpdateMock = jest.fn();
         backgroundService.createOrUpdate = createOrUpdateMock;
 
-        let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Offline }));
+        let item: TrackItemInstance = TrackItem.build(
+            TrackItemTestData.getStatusTrackItem({ app: State.Offline }),
+        );
 
         stateManager.setCurrentTrackItem(item);
 

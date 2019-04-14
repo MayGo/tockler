@@ -1,12 +1,12 @@
 import { logManager } from '../log-manager';
-
-import { models } from '../models/index';
+import { Settings } from '../models/Settings';
+import { TrackItem } from '../models/TrackItem';
 
 export class SettingsService {
     logger = logManager.getLogger('SettingsService');
 
     async findByName(name: string) {
-        let items = await models.Settings.findOrCreate({
+        let items = await Settings.findOrCreate({
             where: {
                 name: name,
             },
@@ -19,7 +19,7 @@ export class SettingsService {
 
     updateByName(name: string, jsonDataStr: any) {
         this.logger.info('Updating Setting:', name, jsonDataStr);
-        return models.Settings.update(
+        return Settings.update(
             { jsonData: jsonDataStr },
             {
                 where: {
@@ -54,7 +54,7 @@ export class SettingsService {
 
     async fetchAnalyserSettingsJsonString() {
         let item = await this.findByName('ANALYSER_SETTINGS');
-        this.logger.info('Fetching ANALYSER_SETTINGS:', item);
+        this.logger.info('Fetching ANALYSER_SETTINGS:');
         if (!item || this.isObject(item.jsonDataParsed)) {
             // db default is object but this is initialized with array (when is initialized)
             return JSON.stringify([]);
@@ -67,7 +67,7 @@ export class SettingsService {
         let settingsItem = await this.findByName('RUNNING_LOG_ITEM');
 
         if (settingsItem.jsonDataParsed.id) {
-            let logItem = await models.TrackItem.findById(settingsItem.jsonDataParsed.id);
+            let logItem = await TrackItem.findById(settingsItem.jsonDataParsed.id);
             return logItem;
         }
 

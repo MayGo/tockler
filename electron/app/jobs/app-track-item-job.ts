@@ -1,23 +1,23 @@
 import { logManager } from '../log-manager';
 import { stateManager } from '../state-manager';
-let logger = logManager.getLogger('AppTrackItemJob');
-
 import * as activeWin from 'active-win';
-import { TrackItemInstance } from '../models/interfaces/track-item-interface';
 import BackgroundUtils from '../background-utils';
 import { backgroundService } from '../background-service';
 import { TrackItemType } from '../enums/track-item-type';
-
 import { taskAnalyser } from '../task-analyser';
-let shouldSplitLogItemFromDate = null;
+import { TrackItem } from '../models/TrackItem';
+
+let logger = logManager.getLogger('AppTrackItemJob');
 
 export class AppTrackItemJob {
-    lastUpdatedItem: TrackItemInstance;
+    lastUpdatedItem: TrackItem;
     async run() {
         try {
             this.checkIfIsInCorrectState();
-            let result = await activeWin();
-            let updatedItem: TrackItemInstance = await this.saveActiveWindow(result);
+            let activeWindow = await activeWin();
+            let updatedItem: TrackItem = await this.saveActiveWindow(
+                activeWindow ? activeWindow : {},
+            );
 
             if (!BackgroundUtils.isSameItems(updatedItem, this.lastUpdatedItem)) {
                 logger.debug('App and title changed. Analysing title');
@@ -47,7 +47,7 @@ export class AppTrackItemJob {
         }
     }
 
-    async saveActiveWindow(result): Promise<TrackItemInstance> {
+    async saveActiveWindow(result): Promise<TrackItem> {
         let rawItem: any = { taskName: TrackItemType.AppTrackItem };
 
         rawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();

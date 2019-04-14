@@ -1,28 +1,13 @@
-import { settingsService } from './services/settings-service';
 import { trackItemService } from './services/track-item-service';
 import { appSettingService } from './services/app-setting-service';
-import { TrackItemInstance, TrackItemAttributes } from './models/interfaces/track-item-interface';
 import { State } from './enums/state';
-import { app, ipcMain, dialog } from 'electron';
-import config from './config';
-
 import { logManager } from './log-manager';
 import { stateManager } from './state-manager';
-let logger = logManager.getLogger('BackgroundService');
-
-import * as moment from 'moment';
-import UserMessages from './user-messages';
 import BackgroundUtils from './background-utils';
-import * as path from 'path';
-import { exec, execSync, execFile } from 'child_process';
 import { TrackItemType } from './enums/track-item-type';
-import { appConstants } from './app-constants';
+import { TrackItem } from './models/TrackItem';
 
-const emptyItem = { title: 'EMPTY' };
-
-let shouldSplitLogItemFromDate = null;
-
-let oneThreadRunning = false;
+let logger = logManager.getLogger('BackgroundService');
 
 export class BackgroundService {
     async addInactivePeriod(beginDate, endDate) {
@@ -38,7 +23,7 @@ export class BackgroundService {
         return item;
     }
 
-    async createItems(items) {
+    async createItems(items): Promise<any> {
         const promiseArray = items.map(async newItem => {
             const savedItem = await trackItemService.createTrackItem(newItem);
             return savedItem;
@@ -53,7 +38,7 @@ export class BackgroundService {
             let color = await appSettingService.getAppColor(rawItem.app);
             rawItem.color = color;
 
-            let item: any;
+            let item: TrackItem;
 
             let type: TrackItemType = rawItem.taskName;
 
@@ -62,7 +47,7 @@ export class BackgroundService {
             }
 
             if (BackgroundUtils.shouldSplitInTwoOnMidnight(rawItem.beginDate, rawItem.endDate)) {
-                let items: TrackItemAttributes[] = BackgroundUtils.splitItemIntoDayChunks(rawItem);
+                let items = BackgroundUtils.splitItemIntoDayChunks(rawItem);
 
                 if (stateManager.hasSameRunningTrackItem(rawItem)) {
                     let firstItem = items.shift();

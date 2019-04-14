@@ -1,13 +1,21 @@
 import { logManager } from './log-manager';
 import { appEmitter } from './app-event-emitter';
-import { TrackItemAttributes } from './models/interfaces/track-item-interface';
 import { settingsService } from './services/settings-service';
 import { TrackItemType } from './enums/track-item-type';
 import { showNotification } from './notification';
 
+export interface TrackItemRaw {
+    app?: string;
+    taskName?: TrackItemType;
+    title?: string;
+    color?: string;
+    beginDate?: Date;
+    endDate?: Date;
+}
+
 export class TaskAnalyser {
     logger = logManager.getLogger('TrackItemService');
-    newItem: TrackItemAttributes;
+    newItem: TrackItemRaw;
 
     findFirst(str, findRe) {
         if (!findRe) {

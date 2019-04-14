@@ -1,9 +1,6 @@
 import { appConstants } from '../app/app-constants';
 import { backgroundService } from '../app/background-service';
-import BackgroundUtils from '../app/background-utils';
 import { statusTrackItemJob } from '../app/jobs/status-track-item-job';
-import { models } from '../app/models';
-import { TrackItemAttributes, TrackItemInstance } from '../app/models/interfaces/track-item-interface';
 import { stateManager } from '../app/state-manager';
 import { State } from '../app/enums/state';
 import { TrackItemType } from '../app/enums/track-item-type';
@@ -11,13 +8,10 @@ import TrackItemTestData from './track-item-test-data';
 
 import * as moment from 'moment';
 
-const dateFormat = "YYYY-MM-DD HH:mm:ss";
-
+const dateFormat = 'YYYY-MM-DD HH:mm:ss';
 
 describe('saveIdleTrackItem', () => {
-
     afterEach(async () => {
-
         stateManager.resetCurrentTrackItem(TrackItemType.AppTrackItem);
         stateManager.resetCurrentTrackItem(TrackItemType.LogTrackItem);
         stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
@@ -43,16 +37,18 @@ describe('saveIdleTrackItem', () => {
         const createOrUpdateMock = jest.fn();
         backgroundService.createOrUpdate = createOrUpdateMock;
 
-        let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
+        let item: TrackItemInstance = TrackItem.build(
+            TrackItemTestData.getStatusTrackItem({ app: State.Online }),
+        );
 
         stateManager.setCurrentTrackItem(item);
         statusTrackItemJob.saveIdleTrackItem(appConstants.IDLE_IN_SECONDS_TO_LOG - 1);
 
         expect(createOrUpdateMock.mock.calls.length).toBe(1);
         let calledObj = createOrUpdateMock.mock.calls[0][0];
-        expect(calledObj.app).toBe("ONLINE");
-        expect(calledObj.title).toBe("online");
-        expect(calledObj.taskName).toBe("StatusTrackItem");
+        expect(calledObj.app).toBe('ONLINE');
+        expect(calledObj.title).toBe('online');
+        expect(calledObj.taskName).toBe('StatusTrackItem');
     });
 
     it('BeginDate and endDate diff should be BACKGROUND_JOB_INTERVAL (3 sec)', async () => {
@@ -64,7 +60,10 @@ describe('saveIdleTrackItem', () => {
 
         expect(createOrUpdateMock.mock.calls.length).toBe(1);
         let calledObj = createOrUpdateMock.mock.calls[0][0];
-        let diffInSeconds = moment(calledObj.endDate).diff(moment(calledObj.beginDate), 'milliseconds');
+        let diffInSeconds = moment(calledObj.endDate).diff(
+            moment(calledObj.beginDate),
+            'milliseconds',
+        );
         expect(diffInSeconds).toBe(appConstants.BACKGROUND_JOB_INTERVAL);
     });
 
@@ -73,7 +72,9 @@ describe('saveIdleTrackItem', () => {
         const createOrUpdateMock = jest.fn();
         backgroundService.createOrUpdate = createOrUpdateMock;
 
-        let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
+        let item: TrackItemInstance = TrackItem.build(
+            TrackItemTestData.getStatusTrackItem({ app: State.Online }),
+        );
 
         stateManager.setCurrentTrackItem(item);
 
@@ -89,15 +90,16 @@ describe('saveIdleTrackItem', () => {
         const createOrUpdateMock = jest.fn();
         backgroundService.createOrUpdate = createOrUpdateMock;
 
-        let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Offline }));
+        let item: TrackItemInstance = TrackItem.build(
+            TrackItemTestData.getStatusTrackItem({ app: State.Offline }),
+        );
 
         stateManager.setCurrentTrackItem(item);
 
         let rawItem = TrackItemTestData.getAppTrackItem({});
         let error = statusTrackItemJob.saveIdleTrackItem(appConstants.IDLE_IN_SECONDS_TO_LOG + 1);
 
-        expect(error).toEqual("BAD_STATE");
+        expect(error).toEqual('BAD_STATE');
         expect(createOrUpdateMock.mock.calls.length).toBe(0);
     });
 });
-

@@ -10,7 +10,8 @@
         "ecmaFeatures": {
             "jsx": true,
             "modules": true,
-            "experimentalObjectRestSpread": false
+            "experimentalObjectRestSpread": false,
+            "experimentalDecorators": true
         }
     },
     "extends": "airbnb",

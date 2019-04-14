@@ -1,11 +1,5 @@
 jest.autoMockOff();
 
-import BackgroundUtils from '../app/background-utils';
-import { models } from '../app/models';
-import {
-  TrackItemAttributes,
-  TrackItemInstance,
-} from '../app/models/interfaces/track-item-interface';
 import { settingsService } from '../app/services/settings-service';
 import { trackItemService } from '../app/services/track-item-service';
 import { stateManager } from '../app/state-manager';
@@ -16,214 +10,192 @@ import TrackItemTestData from './track-item-test-data';
 import * as delay from 'delay';
 
 describe('isSystemOnline', () => {
-  afterEach(async () => {
-    stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
-  });
+    afterEach(async () => {
+        stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
+    });
 
-  it('returns true if State.Online', async () => {
-    let rawItem: TrackItemInstance = models.TrackItem.build(
-      TrackItemTestData.getStatusTrackItem({ app: State.Online }),
-    );
+    it('returns true if State.Online', async () => {
+        let rawItem: TrackItemInstance = TrackItem.build(
+            TrackItemTestData.getStatusTrackItem({ app: State.Online }),
+        );
 
-    stateManager.setCurrentTrackItem(rawItem);
+        stateManager.setCurrentTrackItem(rawItem);
 
-    let state = stateManager.isSystemOnline();
+        let state = stateManager.isSystemOnline();
 
-    expect(state).toEqual(true);
-  });
+        expect(state).toEqual(true);
+    });
 
-  it('returns false if State.Offline', async () => {
-    let rawItem: TrackItemInstance = models.TrackItem.build(
-      TrackItemTestData.getStatusTrackItem({ app: State.Offline }),
-    );
+    it('returns false if State.Offline', async () => {
+        let rawItem: TrackItemInstance = TrackItem.build(
+            TrackItemTestData.getStatusTrackItem({ app: State.Offline }),
+        );
 
-    stateManager.setCurrentTrackItem(rawItem);
+        stateManager.setCurrentTrackItem(rawItem);
 
-    let state = stateManager.isSystemOnline();
+        let state = stateManager.isSystemOnline();
 
-    expect(state).toEqual(false);
-  });
+        expect(state).toEqual(false);
+    });
 
-  it('returns false if State.Idle', async () => {
-    let rawItem: TrackItemInstance = models.TrackItem.build(
-      TrackItemTestData.getStatusTrackItem(),
-    );
+    it('returns false if State.Idle', async () => {
+        let rawItem: TrackItemInstance = TrackItem.build(TrackItemTestData.getStatusTrackItem());
 
-    stateManager.setCurrentTrackItem(rawItem);
+        stateManager.setCurrentTrackItem(rawItem);
 
-    let state = stateManager.isSystemOnline();
+        let state = stateManager.isSystemOnline();
 
-    expect(state).toEqual(false);
-  });
+        expect(state).toEqual(false);
+    });
 
-  it('returns false if StateTrackItem is not defined', async () => {
-    stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
+    it('returns false if StateTrackItem is not defined', async () => {
+        stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
 
-    let state = stateManager.isSystemOnline();
+        let state = stateManager.isSystemOnline();
 
-    expect(state).toEqual(false);
-  });
+        expect(state).toEqual(false);
+    });
 });
 
 describe('endRunningTrackItem', () => {
-  afterEach(async () => {
-    stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
-    models.TrackItem.$clearQueue();
-  });
-
-  it('returns item if has running item to end', async () => {
-    models.TrackItem.$queueResult([]);
-
-    stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
-    let rawItemRunning = TrackItemTestData.getStatusTrackItem({
-      app: State.Online,
-    });
-    let itemRunning: TrackItemInstance = models.TrackItem.build(rawItemRunning);
-    stateManager.setCurrentTrackItem(itemRunning);
-
-    let rawItem: TrackItemAttributes = TrackItemTestData.getStatusTrackItem(
-      { app: State.Online },
-      1,
-    );
-
-    expect(rawItemRunning.endDate).not.toEqual(rawItem.beginDate);
-
-    let updatedItem = await stateManager.endRunningTrackItem(rawItem);
-    expect(updatedItem).not.toEqual(rawItemRunning);
-    expect(updatedItem.endDate).toEqual(rawItem.beginDate);
-  });
-
-  it('returns null if has no running item to end', async () => {
-    stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
-
-    let rawItem: TrackItemAttributes = TrackItemTestData.getStatusTrackItem({
-      app: State.Online,
+    afterEach(async () => {
+        stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
+        TrackItem.$clearQueue();
     });
 
-    let updatedItem = await stateManager.endRunningTrackItem(rawItem);
-    expect(updatedItem).toEqual(null);
-  });
+    it('returns item if has running item to end', async () => {
+        TrackItem.$queueResult([]);
+
+        stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
+        let rawItemRunning = TrackItemTestData.getStatusTrackItem({
+            app: State.Online,
+        });
+        let itemRunning: TrackItemInstance = TrackItem.build(rawItemRunning);
+        stateManager.setCurrentTrackItem(itemRunning);
+
+        let rawItem: TrackItemAttributes = TrackItemTestData.getStatusTrackItem(
+            { app: State.Online },
+            1,
+        );
+
+        expect(rawItemRunning.endDate).not.toEqual(rawItem.beginDate);
+
+        let updatedItem = await stateManager.endRunningTrackItem(rawItem);
+        expect(updatedItem).not.toEqual(rawItemRunning);
+        expect(updatedItem.endDate).toEqual(rawItem.beginDate);
+    });
+
+    it('returns null if has no running item to end', async () => {
+        stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
+
+        let rawItem: TrackItemAttributes = TrackItemTestData.getStatusTrackItem({
+            app: State.Online,
+        });
+
+        let updatedItem = await stateManager.endRunningTrackItem(rawItem);
+        expect(updatedItem).toEqual(null);
+    });
 });
 
 describe('setLogTrackItemMarkedAsRunning', () => {
-  afterEach(async () => {});
+    afterEach(async () => {});
 
-  it('saves running log item id', async () => {
-    let rawItemRunning = TrackItemTestData.getStatusTrackItem({
-      app: State.Online,
+    it('saves running log item id', async () => {
+        let rawItemRunning = TrackItemTestData.getStatusTrackItem({
+            app: State.Online,
+        });
+        let itemRunning: TrackItemInstance = TrackItem.build(rawItemRunning);
+
+        let saveRunningLogItemReferenceMock = jest.fn();
+        settingsService.saveRunningLogItemReference = saveRunningLogItemReferenceMock;
+        stateManager.setLogTrackItemMarkedAsRunning(itemRunning);
+
+        expect(saveRunningLogItemReferenceMock.mock.calls.length).toBe(1);
+        let saveRunningLogItemReferenceMockCalledWith =
+            saveRunningLogItemReferenceMock.mock.calls[0][0];
+        expect(saveRunningLogItemReferenceMockCalledWith).toBe(itemRunning.id);
     });
-    let itemRunning: TrackItemInstance = models.TrackItem.build(rawItemRunning);
-
-    let saveRunningLogItemReferenceMock = jest.fn();
-    settingsService.saveRunningLogItemReference = saveRunningLogItemReferenceMock;
-    stateManager.setLogTrackItemMarkedAsRunning(itemRunning);
-
-    expect(saveRunningLogItemReferenceMock.mock.calls.length).toBe(1);
-    let saveRunningLogItemReferenceMockCalledWith =
-      saveRunningLogItemReferenceMock.mock.calls[0][0];
-    expect(saveRunningLogItemReferenceMockCalledWith).toBe(itemRunning.id);
-  });
 });
 
 describe('restoreState', () => {
-  afterEach(async () => {});
+    afterEach(async () => {});
 
-  it('saves running log item id', async () => {
-    let rawItemRunning = TrackItemTestData.getLogTrackItem();
-    let itemRunning: TrackItemInstance = models.TrackItem.build(rawItemRunning);
+    it('saves running log item id', async () => {
+        let rawItemRunning = TrackItemTestData.getLogTrackItem();
+        let itemRunning: TrackItemInstance = TrackItem.build(rawItemRunning);
 
-    let findRunningLogItemMock = jest.fn();
-    trackItemService.findRunningLogItem = findRunningLogItemMock;
-    findRunningLogItemMock.mockReturnValueOnce(itemRunning);
+        let findRunningLogItemMock = jest.fn();
+        trackItemService.findRunningLogItem = findRunningLogItemMock;
+        findRunningLogItemMock.mockReturnValueOnce(itemRunning);
 
-    let restoredItem = await stateManager.restoreState();
+        let restoredItem = await stateManager.restoreState();
 
-    expect(findRunningLogItemMock.mock.calls.length).toBe(1);
-    expect(stateManager.getCurrentTrackItem(TrackItemType.LogTrackItem)).toBe(
-      itemRunning,
-    );
-    expect(stateManager.getLogTrackItemMarkedAsRunning()).toBe(itemRunning);
-    expect(restoredItem).toBe(itemRunning);
-  });
+        expect(findRunningLogItemMock.mock.calls.length).toBe(1);
+        expect(stateManager.getCurrentTrackItem(TrackItemType.LogTrackItem)).toBe(itemRunning);
+        expect(stateManager.getLogTrackItemMarkedAsRunning()).toBe(itemRunning);
+        expect(restoredItem).toBe(itemRunning);
+    });
 });
 
 describe('createNewRunningTrackItem', () => {
-  afterEach(async () => {});
+    afterEach(async () => {});
 
-  it('ends current and creates new item. And current item is new one.', async () => {
-    let rawOnlineItemRunning = TrackItemTestData.getStatusOnlineTrackItem();
-    let itemOnlineRunning: TrackItemInstance = models.TrackItem.build(
-      rawOnlineItemRunning,
-    );
+    it('ends current and creates new item. And current item is new one.', async () => {
+        let rawOnlineItemRunning = TrackItemTestData.getStatusOnlineTrackItem();
+        let itemOnlineRunning: TrackItemInstance = TrackItem.build(rawOnlineItemRunning);
 
-    let rawIdleItemRunning = TrackItemTestData.getStatusOnlineTrackItem();
-    let itemIdleRunning: TrackItemInstance = models.TrackItem.build(
-      rawIdleItemRunning,
-    );
-    stateManager.setCurrentTrackItem(itemIdleRunning);
+        let rawIdleItemRunning = TrackItemTestData.getStatusOnlineTrackItem();
+        let itemIdleRunning: TrackItemInstance = TrackItem.build(rawIdleItemRunning);
+        stateManager.setCurrentTrackItem(itemIdleRunning);
 
-    let updateItemMock = jest.fn(() => delay(200).then(() => true));
-    let createTrackItemMock = jest.fn();
-    trackItemService.createTrackItem = createTrackItemMock;
-    trackItemService.updateItem = updateItemMock;
-    createTrackItemMock.mockReturnValueOnce(
-      delay(200).then(() => itemOnlineRunning),
-    );
+        let updateItemMock = jest.fn(() => delay(200).then(() => true));
+        let createTrackItemMock = jest.fn();
+        trackItemService.createTrackItem = createTrackItemMock;
+        trackItemService.updateItem = updateItemMock;
+        createTrackItemMock.mockReturnValueOnce(delay(200).then(() => itemOnlineRunning));
 
-    let restoredItem = await stateManager.createNewRunningTrackItem(
-      rawOnlineItemRunning,
-    );
+        let restoredItem = await stateManager.createNewRunningTrackItem(rawOnlineItemRunning);
 
-    expect(updateItemMock.mock.calls.length).toBe(1);
-    expect(createTrackItemMock.mock.calls.length).toBe(1);
-    expect(
-      stateManager.getCurrentTrackItem(TrackItemType.StatusTrackItem),
-    ).toBe(itemOnlineRunning);
-  });
+        expect(updateItemMock.mock.calls.length).toBe(1);
+        expect(createTrackItemMock.mock.calls.length).toBe(1);
+        expect(stateManager.getCurrentTrackItem(TrackItemType.StatusTrackItem)).toBe(
+            itemOnlineRunning,
+        );
+    });
 
-  it('stopRunningLogTrackItem works properly', async () => {
-    let rawLogItemRunning = TrackItemTestData.getLogTrackItem();
-    let logItemRunning: TrackItemInstance = models.TrackItem.build(
-      rawLogItemRunning,
-    );
-    //Create mocks
-    let updateItemMock = jest.fn(() => delay(200).then(() => true));
-    trackItemService.updateItem = updateItemMock;
-    let saveRunningLogItemReferenceMock = jest.fn(() =>
-      delay(200).then(() => true),
-    );
-    settingsService.saveRunningLogItemReference = saveRunningLogItemReferenceMock;
+    it('stopRunningLogTrackItem works properly', async () => {
+        let rawLogItemRunning = TrackItemTestData.getLogTrackItem();
+        let logItemRunning: TrackItemInstance = TrackItem.build(rawLogItemRunning);
+        //Create mocks
+        let updateItemMock = jest.fn(() => delay(200).then(() => true));
+        trackItemService.updateItem = updateItemMock;
+        let saveRunningLogItemReferenceMock = jest.fn(() => delay(200).then(() => true));
+        settingsService.saveRunningLogItemReference = saveRunningLogItemReferenceMock;
 
-    // Run item
-    stateManager.setLogTrackItemMarkedAsRunning(logItemRunning);
+        // Run item
+        stateManager.setLogTrackItemMarkedAsRunning(logItemRunning);
 
-    // Saves RUNNING_LOG_ITEM to item.id
-    expect(saveRunningLogItemReferenceMock.mock.calls.length).toBe(1);
-    expect(saveRunningLogItemReferenceMock.mock.calls[0][0]).toBe(
-      logItemRunning.id,
-    );
+        // Saves RUNNING_LOG_ITEM to item.id
+        expect(saveRunningLogItemReferenceMock.mock.calls.length).toBe(1);
+        expect(saveRunningLogItemReferenceMock.mock.calls[0][0]).toBe(logItemRunning.id);
 
-    expect(stateManager.getCurrentTrackItem(TrackItemType.LogTrackItem)).toBe(
-      logItemRunning,
-    );
+        expect(stateManager.getCurrentTrackItem(TrackItemType.LogTrackItem)).toBe(logItemRunning);
 
-    //Should be running
-    expect(stateManager.getLogTrackItemMarkedAsRunning()).toBe(logItemRunning);
+        //Should be running
+        expect(stateManager.getLogTrackItemMarkedAsRunning()).toBe(logItemRunning);
 
-    // Stopping
-    await stateManager.stopRunningLogTrackItem();
+        // Stopping
+        await stateManager.stopRunningLogTrackItem();
 
-    expect(stateManager.getCurrentTrackItem(TrackItemType.LogTrackItem)).toBe(
-      null,
-    );
+        expect(stateManager.getCurrentTrackItem(TrackItemType.LogTrackItem)).toBe(null);
 
-    //Should NOT be running
-    expect(stateManager.getLogTrackItemMarkedAsRunning()).toBe(null);
+        //Should NOT be running
+        expect(stateManager.getLogTrackItemMarkedAsRunning()).toBe(null);
 
-    // Saves RUNNING_LOG_ITEM to null
-    expect(saveRunningLogItemReferenceMock.mock.calls.length).toBe(2);
-    expect(saveRunningLogItemReferenceMock.mock.calls[1][0]).toBe(null);
+        // Saves RUNNING_LOG_ITEM to null
+        expect(saveRunningLogItemReferenceMock.mock.calls.length).toBe(2);
+        expect(saveRunningLogItemReferenceMock.mock.calls[1][0]).toBe(null);
 
-    expect(updateItemMock.mock.calls.length).toBe(1);
-  });
+        expect(updateItemMock.mock.calls.length).toBe(1);
+    });
 });
