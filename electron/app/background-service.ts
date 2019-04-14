@@ -1,11 +1,11 @@
 import { trackItemService } from './services/track-item-service';
 import { appSettingService } from './services/app-setting-service';
-import { TrackItemAttributes } from './models/interfaces/track-item-interface';
 import { State } from './enums/state';
 import { logManager } from './log-manager';
 import { stateManager } from './state-manager';
 import BackgroundUtils from './background-utils';
 import { TrackItemType } from './enums/track-item-type';
+import { TrackItem } from './models/TrackItem';
 
 let logger = logManager.getLogger('BackgroundService');
 
@@ -23,7 +23,7 @@ export class BackgroundService {
         return item;
     }
 
-    async createItems(items) {
+    async createItems(items): Promise<any> {
         const promiseArray = items.map(async newItem => {
             const savedItem = await trackItemService.createTrackItem(newItem);
             return savedItem;
@@ -38,7 +38,7 @@ export class BackgroundService {
             let color = await appSettingService.getAppColor(rawItem.app);
             rawItem.color = color;
 
-            let item: any;
+            let item: TrackItem;
 
             let type: TrackItemType = rawItem.taskName;
 
@@ -47,7 +47,7 @@ export class BackgroundService {
             }
 
             if (BackgroundUtils.shouldSplitInTwoOnMidnight(rawItem.beginDate, rawItem.endDate)) {
-                let items: TrackItemAttributes[] = BackgroundUtils.splitItemIntoDayChunks(rawItem);
+                let items = BackgroundUtils.splitItemIntoDayChunks(rawItem);
 
                 if (stateManager.hasSameRunningTrackItem(rawItem)) {
                     let firstItem = items.shift();

@@ -1,22 +1,16 @@
-import { appConstants } from '../app/app-constants';
 import { backgroundService } from '../app/background-service';
 import BackgroundUtils from '../app/background-utils';
 import { logTrackItemJob } from '../app/jobs/log-track-item-job';
-import { models } from '../app/models';
-import { TrackItemAttributes, TrackItemInstance } from '../app/models/interfaces/track-item-interface';
 import { stateManager } from '../app/state-manager';
 import { State } from '../app/enums/state';
 import { TrackItemType } from '../app/enums/track-item-type';
 import TrackItemTestData from './track-item-test-data';
 
 import * as moment from 'moment';
-import { trackItemService } from "../app/services/track-item-service";
-import { settingsService } from "../app/services/settings-service";
-
-const dateFormat = "YYYY-MM-DD HH:mm:ss";
+import { trackItemService } from '../app/services/track-item-service';
+import { settingsService } from '../app/services/settings-service';
 
 describe('updateRunningLogItem not saving', () => {
-
     let createOrUpdateMock = null;
 
     beforeEach(async () => {
@@ -25,7 +19,6 @@ describe('updateRunningLogItem not saving', () => {
     });
 
     afterEach(async () => {
-
         stateManager.resetCurrentTrackItem(TrackItemType.AppTrackItem);
         stateManager.resetCurrentTrackItem(TrackItemType.LogTrackItem);
         stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
@@ -33,8 +26,9 @@ describe('updateRunningLogItem not saving', () => {
     });
 
     it('Does not save item when sleeping', async () => {
-
-        let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
+        let item: TrackItemInstance = TrackItem.build(
+            TrackItemTestData.getStatusTrackItem({ app: State.Online }),
+        );
         stateManager.setCurrentTrackItem(item);
 
         stateManager.setSystemToSleep();
@@ -47,8 +41,9 @@ describe('updateRunningLogItem not saving', () => {
     });
 
     it('Does not save item when not online', async () => {
-
-        let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Offline }));
+        let item: TrackItemInstance = TrackItem.build(
+            TrackItemTestData.getStatusTrackItem({ app: State.Offline }),
+        );
 
         stateManager.setCurrentTrackItem(item);
 
@@ -73,7 +68,9 @@ describe('updateRunningLogItem saving', () => {
         stateManager.isSystemOnline = jest.fn().mockReturnValueOnce(true);
         stateManager.isSystemSleeping = jest.fn().mockReturnValueOnce(false);
 
-        let item: TrackItemInstance = models.TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
+        let item: TrackItemInstance = TrackItem.build(
+            TrackItemTestData.getStatusTrackItem({ app: State.Online }),
+        );
         stateManager.setCurrentTrackItem(item);
 
         getLogTrackItemMarkedAsRunningMock = jest.fn();
@@ -102,7 +99,6 @@ describe('updateRunningLogItem saving', () => {
     });
 
     it('Updates item with current date when not splitting', async () => {
-
         let rawItem = TrackItemTestData.getLogTrackItem({});
 
         getLogTrackItemMarkedAsRunningMock.mockReturnValueOnce(rawItem);
@@ -123,11 +119,9 @@ describe('updateRunningLogItem saving', () => {
         expect(mockCalledWith.endDate).toBe(returnEndDate);
 
         expect(savedItem).toBeDefined();
-
     });
 
     it('Updates new item with current date and begin date with currentTimeMinusJobInterval when splitting', async () => {
-
         let itemDate = new Date();
         nowMock.mockReturnValue(itemDate);
         let rawItem = TrackItemTestData.getLogTrackItem({});
@@ -138,7 +132,9 @@ describe('updateRunningLogItem saving', () => {
 
         let minusJobIntervalDate = new Date();
 
-        BackgroundUtils.currentTimeMinusJobInterval = jest.fn().mockReturnValueOnce(minusJobIntervalDate);
+        BackgroundUtils.currentTimeMinusJobInterval = jest
+            .fn()
+            .mockReturnValueOnce(minusJobIntervalDate);
 
         createOrUpdateMock.mockReturnValueOnce(rawItem);
 
@@ -155,11 +151,9 @@ describe('updateRunningLogItem saving', () => {
         expect(createOrUpdateMockCalledWith.beginDate).toBe(minusJobIntervalDate);
 
         expect(savedItem).toBeDefined();
-
     });
 
     it('Updates old item with splitEndDate when splitting', async () => {
-
         let itemDate = new Date();
         nowMock.mockReturnValue(itemDate);
         let rawItem = TrackItemTestData.getLogTrackItem({});
@@ -180,14 +174,11 @@ describe('updateRunningLogItem saving', () => {
     });
 });
 
-
 describe('getTaskSplitDate', () => {
-
     it('returns split date', async () => {
-
         let rawItem = TrackItemTestData.getStatusTrackItem({ app: State.Online });
 
-        let lastOnlineItem: TrackItemInstance = models.TrackItem.build(rawItem);
+        let lastOnlineItem: TrackItemInstance = TrackItem.build(rawItem);
 
         let findLastOnlineItemMock = jest.fn();
         trackItemService.findLastOnlineItem = findLastOnlineItemMock;
@@ -197,11 +188,11 @@ describe('getTaskSplitDate', () => {
         settingsService.fetchWorkSettings = fetchWorkSettingsMock;
         fetchWorkSettingsMock.mockReturnValueOnce({ splitTaskAfterIdlingForMinutes: 1 });
 
-        let shouldReturnDate = moment(rawItem.endDate).add(1, 'minutes').toDate();
+        let shouldReturnDate = moment(rawItem.endDate)
+            .add(1, 'minutes')
+            .toDate();
 
         let splitDate = await logTrackItemJob.getTaskSplitDate();
         expect(shouldReturnDate).toEqual(splitDate);
-
     });
-
 });

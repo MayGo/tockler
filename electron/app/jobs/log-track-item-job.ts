@@ -1,17 +1,17 @@
 import { logManager } from '../log-manager';
 import { stateManager } from '../state-manager';
-let logger = logManager.getLogger('LogTrackItemJob');
-
 import * as moment from 'moment';
 import { TrackItemType } from '../enums/track-item-type';
 import { backgroundService } from '../background-service';
 import BackgroundUtils from '../background-utils';
-import { TrackItemInstance } from '../models/interfaces/track-item-interface';
 import { trackItemService } from '../services/track-item-service';
 import { settingsService } from '../services/settings-service';
+import { TrackItem } from '../models/TrackItem';
+
+let logger = logManager.getLogger('LogTrackItemJob');
 
 export class LogTrackItemJob {
-    onlineItemWhenLastSplit: TrackItemInstance = null;
+    onlineItemWhenLastSplit: TrackItem = null;
 
     async run() {
         try {

@@ -1,4 +1,3 @@
-import { TrackItemInstance, TrackItemAttributes } from './models/interfaces/track-item-interface';
 import { State } from './enums/state';
 import { TrackItemType } from './enums/track-item-type';
 import { ipcMain } from 'electron';
@@ -8,19 +7,20 @@ import { logManager } from './log-manager';
 import { settingsService } from './services/settings-service';
 import { appEmitter } from './app-event-emitter';
 import WindowManager from './window-manager';
+import { TrackItem } from './models/TrackItem';
 
 let logger = logManager.getLogger('StateManager');
 
 interface TrackItems {
-    StatusTrackItem: TrackItemInstance;
-    AppTrackItem: TrackItemInstance;
-    LogTrackItem: TrackItemInstance;
+    StatusTrackItem: TrackItem;
+    AppTrackItem: TrackItem;
+    LogTrackItem: TrackItem;
 }
 
 export class StateManager {
     private isSleeping = false;
 
-    private logTrackItemMarkedAsRunning: TrackItemInstance = null;
+    private logTrackItemMarkedAsRunning: TrackItem = null;
 
     lastTrackItems: TrackItems = {
         StatusTrackItem: null,
@@ -52,9 +52,9 @@ export class StateManager {
         });
     }
 
-    async startNewLogItem(event, rawItem: TrackItemAttributes) {
+    async startNewLogItem(event, rawItem) {
         logger.info('start-new-log-item', rawItem);
-        const item: TrackItemInstance = await this.createNewRunningTrackItem(rawItem);
+        const item: TrackItem = await this.createNewRunningTrackItem(rawItem);
         logger.info('log-item-started', item.toJSON());
         await this.setLogTrackItemMarkedAsRunning(item);
         // event.sender.send('log-item-started', item.toJSON());
@@ -85,7 +85,7 @@ export class StateManager {
         return this.logTrackItemMarkedAsRunning;
     }
 
-    async setLogTrackItemMarkedAsRunning(item: TrackItemInstance) {
+    async setLogTrackItemMarkedAsRunning(item: TrackItem) {
         await settingsService.saveRunningLogItemReference(item.id);
         this.setCurrentTrackItem(item);
         logger.info('Mark new LogTrackItem as running:', item.toJSON());
@@ -99,11 +99,11 @@ export class StateManager {
         await settingsService.saveRunningLogItemReference(null);
     }
 
-    setCurrentTrackItem(item: TrackItemInstance) {
+    setCurrentTrackItem(item: TrackItem) {
         this.lastTrackItems[item.taskName] = item;
     }
 
-    getCurrentTrackItem(type: TrackItemType): TrackItemInstance {
+    getCurrentTrackItem(type: TrackItemType): TrackItem {
         return this.lastTrackItems[type];
     }
 
@@ -111,7 +111,7 @@ export class StateManager {
         return this.getCurrentTrackItem(TrackItemType.StatusTrackItem);
     }
 
-    hasSameRunningTrackItem(rawItem: TrackItemAttributes): boolean {
+    hasSameRunningTrackItem(rawItem): boolean {
         return BackgroundUtils.isSameItems(rawItem, this.getCurrentTrackItem(rawItem.taskName));
     }
 
@@ -162,7 +162,7 @@ export class StateManager {
         logger.info('System is awakeing from sleep state.');
     }
 
-    async endRunningTrackItem(rawItem: TrackItemAttributes) {
+    async endRunningTrackItem(rawItem) {
         let runningItem = this.getCurrentTrackItem(rawItem.taskName);
 
         if (runningItem) {
@@ -175,7 +175,7 @@ export class StateManager {
         return runningItem;
     }
 
-    async createNewRunningTrackItem(rawItem: TrackItemAttributes) {
+    async createNewRunningTrackItem(rawItem) {
         await this.endRunningTrackItem(rawItem);
 
         let item = await trackItemService.createTrackItem(rawItem);

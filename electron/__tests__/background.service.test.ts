@@ -1,23 +1,18 @@
-import { appConstants } from '../app/app-constants';
 import { backgroundService } from '../app/background-service';
-import { models } from '../app/models';
-import { TrackItemAttributes, TrackItemInstance } from '../app/models/interfaces/track-item-interface';
 import { stateManager } from '../app/state-manager';
-import { State } from '../app/enums/state';
+
 import { TrackItemType } from '../app/enums/track-item-type';
 import TrackItemTestData from './track-item-test-data';
 
 import * as moment from 'moment';
-import BackgroundUtils from "../app/background-utils";
 
-const dateFormat = "YYYY-MM-DD HH:mm:ss";
+const dateFormat = 'YYYY-MM-DD HH:mm:ss';
 
 describe('createOrUpdate', () => {
-
     afterEach(async () => {
-        models.AppSetting.$clearQueue();
-        models.TrackItem.$clearQueue();
-        models.Settings.$clearQueue();
+        AppSetting.$clearQueue();
+        TrackItem.$clearQueue();
+        Settings.$clearQueue();
         stateManager.resetCurrentTrackItem(TrackItemType.AppTrackItem);
         stateManager.resetCurrentTrackItem(TrackItemType.LogTrackItem);
         stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
@@ -25,9 +20,9 @@ describe('createOrUpdate', () => {
 
     it('returns saved item', async () => {
         //Create mock data
-        models.AppSetting.$queueResult([]);
-        models.TrackItem.$queueResult([]);
-        models.Settings.$queueResult(models.Settings.build({ jsonData: '{}' }));
+        AppSetting.$queueResult([]);
+        TrackItem.$queueResult([]);
+        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
         const rawItem: TrackItemAttributes = TrackItemTestData.getLogTrackItem({});
 
         const item = await backgroundService.createOrUpdate(rawItem);
@@ -44,17 +39,23 @@ describe('createOrUpdate', () => {
 
     it('splits item at midnight', async () => {
         //Create mock data
-        models.AppSetting.$queueResult([]);
+        AppSetting.$queueResult([]);
 
-        models.TrackItem.$queueResult([]);
-        models.TrackItem.$queueResult([]);
-        models.TrackItem.$queueResult([]);
+        TrackItem.$queueResult([]);
+        TrackItem.$queueResult([]);
+        TrackItem.$queueResult([]);
 
-        models.Settings.$queueResult(models.Settings.build({ jsonData: '{}' }));
+        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
 
         const rawItem: TrackItemAttributes = TrackItemTestData.getLogTrackItem({
-            beginDate: moment().startOf('day').subtract(1, 'hours').toDate(),
-            endDate: moment().startOf('day').add(1, 'hours').toDate()
+            beginDate: moment()
+                .startOf('day')
+                .subtract(1, 'hours')
+                .toDate(),
+            endDate: moment()
+                .startOf('day')
+                .add(1, 'hours')
+                .toDate(),
         });
 
         const item = await backgroundService.createOrUpdate(rawItem);
@@ -64,18 +65,21 @@ describe('createOrUpdate', () => {
         expect(item.taskName).toEqual(TrackItemType.LogTrackItem);
 
         const dateAtMidnight = moment().startOf('day');
-        expect(moment(item.beginDate).format(dateFormat)).toEqual(dateAtMidnight.format(dateFormat));
-        expect(moment(item.endDate).format(dateFormat)).toEqual(moment(rawItem.endDate).format(dateFormat));
+        expect(moment(item.beginDate).format(dateFormat)).toEqual(
+            dateAtMidnight.format(dateFormat),
+        );
+        expect(moment(item.endDate).format(dateFormat)).toEqual(
+            moment(rawItem.endDate).format(dateFormat),
+        );
         expect(item.id).not.toBeNull;
 
         expect(item.color).toContain('#');
-
     });
 
     it('Creates new item if none and marks it as running', async () => {
         //Create mock data
-        models.AppSetting.$queueResult([models.AppSetting.build()]);
-        models.Settings.$queueResult(models.Settings.build({ jsonData: '{}' }));
+        AppSetting.$queueResult([AppSetting.build()]);
+        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
 
         const rawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({});
 
@@ -88,20 +92,22 @@ describe('createOrUpdate', () => {
         runningItem = stateManager.getCurrentTrackItem(rawItem.taskName);
 
         expect(runningItem).not.toBeNull();
-        expect(runningItem.app).toEqual("Chrome");
+        expect(runningItem.app).toEqual('Chrome');
         expect(runningItem.id).toEqual(item.id);
     });
 
-
     it('Creates new item if running is different and marks it as running', async () => {
         //Create mock data
-        models.AppSetting.$queueResult([models.AppSetting.build()]);
-        models.AppSetting.$queueResult([models.AppSetting.build()]);
-        models.Settings.$queueResult(models.Settings.build({ jsonData: '{}' }));
-        models.Settings.$queueResult(models.Settings.build({ jsonData: '{}' }));
+        AppSetting.$queueResult([AppSetting.build()]);
+        AppSetting.$queueResult([AppSetting.build()]);
+        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
+        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
 
         const firstRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({});
-        const secondRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({ app: 'Firefox' }, 1);
+        const secondRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem(
+            { app: 'Firefox' },
+            1,
+        );
 
         let runningItem = stateManager.getCurrentTrackItem(firstRawItem.taskName);
 
@@ -123,12 +129,12 @@ describe('createOrUpdate', () => {
 
     it('If new item is same as running item, then runningItem instance is not changed', async () => {
         //Create mock data
-        models.TrackItem.$queueResult([models.TrackItem.build()]);
+        TrackItem.$queueResult([models.TrackItem.build()]);
 
-        models.AppSetting.$queueResult([models.AppSetting.build()]);
-        models.AppSetting.$queueResult([models.AppSetting.build()]);
-        models.Settings.$queueResult(models.Settings.build({ jsonData: '{}' }));
-        models.Settings.$queueResult(models.Settings.build({ jsonData: '{}' }));
+        AppSetting.$queueResult([AppSetting.build()]);
+        AppSetting.$queueResult([AppSetting.build()]);
+        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
+        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
 
         const firstRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({});
         const secondRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({}, 1);
@@ -148,16 +154,15 @@ describe('createOrUpdate', () => {
         expect(runningItem).not.toBeNull();
         expect(runningItem.id).toEqual(firstItem.id);
         expect(firstItem.id).toEqual(secondItem.id);
-
     });
 
     it('If new item is same as running item, then endDate is updated', async () => {
         //Create mock data
-        models.TrackItem.$queueResult([models.TrackItem.build()]);
-        models.AppSetting.$queueResult([models.AppSetting.build()]);
-        models.AppSetting.$queueResult([models.AppSetting.build()]);
-        models.Settings.$queueResult(models.Settings.build({ jsonData: '{}' }));
-        models.Settings.$queueResult(models.Settings.build({ jsonData: '{}' }));
+        TrackItem.$queueResult([models.TrackItem.build()]);
+        AppSetting.$queueResult([AppSetting.build()]);
+        AppSetting.$queueResult([AppSetting.build()]);
+        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
+        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
 
         const firstRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({});
         const secondRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({}, 1);
@@ -173,26 +178,30 @@ describe('createOrUpdate', () => {
     });
 });
 
-
 describe('addInactivePeriod', () => {
     afterEach(async () => {
-        models.AppSetting.$clearQueue();
-        models.TrackItem.$clearQueue();
-        models.Settings.$clearQueue();
+        AppSetting.$clearQueue();
+        TrackItem.$clearQueue();
+        Settings.$clearQueue();
     });
 
     it('returns saved item', async () => {
         const appName = 'OFFLINE';
-        let appColor = "#000";
+        let appColor = '#000';
         //Create mock data
-        models.AppSetting.$queueResult([models.AppSetting.build({ name: appName, color: appColor })]);
-        models.TrackItem.$queueResult([]);
-        models.Settings.$queueResult(models.Settings.build({ jsonData: '{}' }));
+        AppSetting.$queueResult([AppSetting.build({ name: appName, color: appColor })]);
+        TrackItem.$queueResult([]);
+        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
 
-        const beginDate = moment().startOf('day').add(5, 'hours').toDate();
-        const endDate = moment().startOf('day').add(6, 'hours').toDate();
+        const beginDate = moment()
+            .startOf('day')
+            .add(5, 'hours')
+            .toDate();
+        const endDate = moment()
+            .startOf('day')
+            .add(6, 'hours')
+            .toDate();
         const item = await backgroundService.addInactivePeriod(beginDate, endDate);
-
 
         expect(item.title).toEqual('offline');
         expect(item.taskName).toEqual(TrackItemType.StatusTrackItem);

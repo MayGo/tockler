@@ -1,18 +1,14 @@
 import { logManager } from '../log-manager';
 import { stateManager } from '../state-manager';
-let logger = logManager.getLogger('LogTrackItemJob');
-
-import * as moment from 'moment';
-import { TrackItemType } from '../enums/track-item-type';
 import { backgroundService } from '../background-service';
 import BackgroundUtils from '../background-utils';
 import config from '../config';
 import * as path from 'path';
 import UserMessages from '../user-messages';
-
-import { exec, execSync, execFile } from 'child_process';
+import { execFile } from 'child_process';
 import { State } from '../enums/state';
 import { appConstants } from '../app-constants';
+let logger = logManager.getLogger('LogTrackItemJob');
 
 export class StatusTrackItemJob {
     run() {

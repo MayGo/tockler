@@ -1,18 +1,15 @@
 import { logManager } from '../log-manager';
-import { models, sequelize } from '../models/index';
-import { TrackItemAttributes, TrackItemInstance } from '../models/interfaces/track-item-interface';
 import { settingsService } from './settings-service';
 import { State } from '../enums/state';
 import { stateManager } from '../state-manager';
-import { Operators } from 'sequelize';
-
-const Op: Operators = sequelize.Op;
+import { Op } from 'sequelize';
+import { TrackItem } from '../models/TrackItem';
 
 export class TrackItemService {
     logger = logManager.getLogger('TrackItemService');
 
-    async createTrackItem(trackItemAttributes: TrackItemAttributes): Promise<TrackItemInstance> {
-        let trackItem = await models.TrackItem.create(trackItemAttributes);
+    async createTrackItem(trackItemAttributes: TrackItem): Promise<TrackItem> {
+        let trackItem = await TrackItem.create(trackItemAttributes);
         this.logger.info(`Created trackItem :`, trackItem.toJSON());
         return trackItem;
     }
@@ -20,8 +17,8 @@ export class TrackItemService {
     async updateTrackItem(
         name: string,
         trackItemAttributes: any,
-    ): Promise<[number, Array<TrackItemInstance>]> {
-        let results = await models.TrackItem.update(trackItemAttributes, {
+    ): Promise<[number, Array<TrackItem>]> {
+        let results = await TrackItem.update(trackItemAttributes, {
             where: { name: name },
         });
 
@@ -61,7 +58,7 @@ export class TrackItemService {
             };
         }
 
-        return models.TrackItem.findAndCountAll({
+        return TrackItem.findAndCountAll({
             where: where,
             raw: false,
             limit: limit,
@@ -71,14 +68,15 @@ export class TrackItemService {
     }
 
     async findAllDayItems(from, to, taskName) {
-        const items = await models.TrackItem.findAll({
-            where: {
-                endDate: {
-                    [Op.gte]: from,
-                    [Op.lte]: to,
-                },
-                taskName: taskName,
+        const where: any = {
+            endDate: {
+                [Op.gte]: from,
+                [Op.lte]: to,
             },
+            taskName: taskName,
+        };
+        const items = await TrackItem.findAll({
+            where: where,
             raw: true,
             order: [['beginDate', 'ASC']],
         });
@@ -87,7 +85,7 @@ export class TrackItemService {
     }
 
     findFirstLogItems() {
-        return models.TrackItem.findAll({
+        return TrackItem.findAll({
             where: {
                 taskName: 'LogTrackItem',
             },
@@ -121,18 +119,15 @@ export class TrackItemService {
             };
         }
 
-        return models.TrackItem.findAll({
+        return TrackItem.findAll({
             where: whereQuery,
             limit: 1,
             order: [['endDate', 'DESC']],
         });
     }
 
-    async updateItem(
-        itemData: TrackItemAttributes,
-        id: number,
-    ): Promise<[number, TrackItemInstance[]]> {
-        let item = await models.TrackItem.update(
+    async updateItem(itemData: TrackItem, id: number): Promise<[number, TrackItem[]]> {
+        let item = await TrackItem.update(
             {
                 app: itemData.app,
                 title: itemData.title,
@@ -151,7 +146,7 @@ export class TrackItemService {
     updateColorForApp(appName, color) {
         this.logger.info('Updating app color:', appName, color);
 
-        return models.TrackItem.update(
+        return TrackItem.update(
             { color: color },
             {
                 fields: ['color'],
@@ -165,11 +160,11 @@ export class TrackItemService {
     }
 
     findById(id) {
-        return models.TrackItem.findById(id);
+        return TrackItem.findById(id);
     }
 
     async deleteById(id) {
-        await models.TrackItem.destroy({
+        await TrackItem.destroy({
             where: { id: id },
         });
 
@@ -178,7 +173,7 @@ export class TrackItemService {
     }
 
     async deleteByIds(ids) {
-        await models.TrackItem.destroy({
+        await TrackItem.destroy({
             where: {
                 id: {
                     [Op.in]: ids,

@@ -1,24 +1,14 @@
 {
-  "compilerOptions": {
-    "target": "es2015",
-    "module": "commonjs",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "moduleResolution": "node",
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "outDir": "out"
-  },
-  "files": [
-    "app/index.ts",
-    "app/typings.d.ts"
-  ],
-  "exclude": [
-    "__tests__",
-    "node_modules",
-    "dist",
-    "packaged",
-    "static",
-    "src"
-  ]
+    "compilerOptions": {
+        "target": "es2015",
+        "module": "commonjs",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "moduleResolution": "node",
+        "skipLibCheck": true,
+        "sourceMap": true,
+        "outDir": "out"
+    },
+
+    "exclude": ["__e2e__", "__tests__", "node_modules", "dist", "packaged", "static"]
 }

@@ -1,6 +1,6 @@
 import { appConstants } from './app-constants';
-import { TrackItemAttributes } from './models/interfaces/track-item-interface';
 import * as moment from 'moment';
+import { TrackItem } from './models/TrackItem';
 
 export default class BackgroundUtils {
     static isSameItems(item1, item2) {
@@ -62,7 +62,7 @@ export default class BackgroundUtils {
         return item;
     }
 
-    static splitItemIntoDayChunks(item: TrackItemAttributes): TrackItemAttributes[] {
+    static splitItemIntoDayChunks(item) {
         let daysBetween: number = BackgroundUtils.daysBetween(item.beginDate, item.endDate) + 1;
         if (daysBetween < 2) {
             throw new Error('begin and end date is on same day');

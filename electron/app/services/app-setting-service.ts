@@ -1,25 +1,19 @@
 import { logManager } from '../log-manager';
-import { models } from '../models/index';
-import {
-    AppSettingAttributes,
-    AppSettingInstance,
-} from '../models/interfaces/app-setting-interface';
 import * as randomcolor from 'randomcolor';
+import { AppSetting } from '../models/AppSetting';
 
 export class AppSettingService {
     logger = logManager.getLogger('AppSettingService');
 
-    async createAppSetting(
-        appSettingAttributes: AppSettingAttributes,
-    ): Promise<AppSettingInstance> {
-        const appSetting: AppSettingInstance = await models.AppSetting.create(appSettingAttributes);
+    async createAppSetting(appSettingAttributes: any): Promise<AppSetting> {
+        const appSetting: AppSetting = await AppSetting.create(appSettingAttributes);
 
         this.logger.info(`Created appSetting with title ${appSettingAttributes.name}.`);
         return appSetting;
     }
 
-    async retrieveAppSetting(name: string): Promise<AppSettingInstance> {
-        let appSetting = await models.AppSetting.findOne({ where: { name: name } });
+    async retrieveAppSetting(name: string): Promise<AppSetting> {
+        let appSetting = await AppSetting.findOne({ where: { name: name } });
         if (appSetting) {
             this.logger.info(`Retrieved appSetting with name ${name}.`);
         } else {
@@ -29,8 +23,8 @@ export class AppSettingService {
         return appSetting;
     }
 
-    async retrieveAppSettings(params: any): Promise<Array<AppSettingInstance>> {
-        let appSettings = await models.AppSetting.findAll(params);
+    async retrieveAppSettings(params: any): Promise<Array<AppSetting>> {
+        let appSettings = await AppSetting.findAll(params);
         this.logger.debug('Retrieved all appSettings.');
         return appSettings;
     }
@@ -42,7 +36,7 @@ export class AppSettingService {
             },
         };
 
-        const appSettings: Array<AppSettingInstance> = await this.retrieveAppSettings(params);
+        const appSettings: Array<AppSetting> = await this.retrieveAppSettings(params);
         if (appSettings.length > 0) {
             return appSettings[0].color;
         } else {
@@ -63,7 +57,7 @@ export class AppSettingService {
 
         this.logger.debug('Quering color with params:', params);
 
-        const appSettings: Array<AppSettingInstance> = await this.retrieveAppSettings(params);
+        const appSettings: Array<AppSetting> = await this.retrieveAppSettings(params);
         if (appSettings.length > 0) {
             appSettings[0].color = color;
             appSettings[0].save();

@@ -28,7 +28,6 @@ export default class WindowManager {
             show: false,
             webPreferences: {
                 zoomFactor: 1.0,
-                blinkFeatures: 'OverlayScrollbars',
             },
             title: 'Tockler',
             icon: config.iconBig,
