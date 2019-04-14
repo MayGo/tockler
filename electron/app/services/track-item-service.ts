@@ -1,8 +1,6 @@
 import { logManager } from '../log-manager';
-
 import { models, sequelize } from '../models/index';
 import { TrackItemAttributes, TrackItemInstance } from '../models/interfaces/track-item-interface';
-
 import { settingsService } from './settings-service';
 import { State } from '../enums/state';
 import { stateManager } from '../state-manager';

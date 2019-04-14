@@ -1,15 +1,13 @@
 import { logManager } from '../log-manager';
 import { stateManager } from '../state-manager';
-let logger = logManager.getLogger('AppTrackItemJob');
-
 import * as activeWin from 'active-win';
 import { TrackItemInstance } from '../models/interfaces/track-item-interface';
 import BackgroundUtils from '../background-utils';
 import { backgroundService } from '../background-service';
 import { TrackItemType } from '../enums/track-item-type';
-
 import { taskAnalyser } from '../task-analyser';
-let shouldSplitLogItemFromDate = null;
+
+let logger = logManager.getLogger('AppTrackItemJob');
 
 export class AppTrackItemJob {
     lastUpdatedItem: TrackItemInstance;

@@ -1,4 +1,4 @@
-import { app, dialog } from 'electron';
+import { app } from 'electron';
 import { autoUpdater, UpdateCheckResult } from 'electron-updater';
 import * as os from 'os';
 import config from './config';

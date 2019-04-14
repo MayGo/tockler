@@ -4,13 +4,10 @@ import { SettingsAttributes, SettingsInstance } from './interfaces/settings-inte
 import AppSettingModel from './app-setting-model';
 import TrackItemModel from './track-item-model';
 import SettingsModel from './settings-model';
-import * as fs from 'fs';
-import * as path from 'path';
 import * as SequelizeStatic from 'sequelize';
 import * as SequelizeMock from 'sequelize-mock';
 import config from '../config';
-
-import { DataTypes, Sequelize } from 'sequelize';
+import { Sequelize } from 'sequelize';
 
 interface CustomModel<TInstance, TAttributes>
     extends SequelizeStatic.Model<TInstance, TAttributes> {

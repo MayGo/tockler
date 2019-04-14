@@ -1,28 +1,13 @@
-import { settingsService } from './services/settings-service';
 import { trackItemService } from './services/track-item-service';
 import { appSettingService } from './services/app-setting-service';
-import { TrackItemInstance, TrackItemAttributes } from './models/interfaces/track-item-interface';
+import { TrackItemAttributes } from './models/interfaces/track-item-interface';
 import { State } from './enums/state';
-import { app, ipcMain, dialog } from 'electron';
-import config from './config';
-
 import { logManager } from './log-manager';
 import { stateManager } from './state-manager';
-let logger = logManager.getLogger('BackgroundService');
-
-import * as moment from 'moment';
-import UserMessages from './user-messages';
 import BackgroundUtils from './background-utils';
-import * as path from 'path';
-import { exec, execSync, execFile } from 'child_process';
 import { TrackItemType } from './enums/track-item-type';
-import { appConstants } from './app-constants';
 
-const emptyItem = { title: 'EMPTY' };
-
-let shouldSplitLogItemFromDate = null;
-
-let oneThreadRunning = false;
+let logger = logManager.getLogger('BackgroundService');
 
 export class BackgroundService {
     async addInactivePeriod(beginDate, endDate) {

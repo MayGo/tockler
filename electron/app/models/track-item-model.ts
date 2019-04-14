@@ -1,5 +1,5 @@
 import * as SequelizeStatic from 'sequelize';
-import { DataTypes, Sequelize } from 'sequelize';
+import { Sequelize } from 'sequelize';
 import { TrackItemAttributes, TrackItemInstance } from './interfaces/track-item-interface';
 
 export default function(

@@ -1,5 +1,5 @@
 import { logManager } from '../log-manager';
-import { models, sequelize } from '../models/index';
+import { models } from '../models/index';
 import {
     AppSettingAttributes,
     AppSettingInstance,

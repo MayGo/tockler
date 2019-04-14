@@ -1,5 +1,4 @@
 import { logManager } from '../log-manager';
-
 import { models } from '../models/index';
 
 export class SettingsService {

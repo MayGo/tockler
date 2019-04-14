@@ -1,5 +1,4 @@
 import * as menubar from 'menubar';
-
 import MenuBuilder from './menu-builder';
 import { throttle } from 'lodash';
 import { app, ipcMain, BrowserWindow, globalShortcut } from 'electron';

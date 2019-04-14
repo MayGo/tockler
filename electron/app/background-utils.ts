@@ -1,9 +1,6 @@
-import { logManager } from './log-manager';
 import { appConstants } from './app-constants';
 import { TrackItemAttributes } from './models/interfaces/track-item-interface';
 import * as moment from 'moment';
-
-let logger = logManager.getLogger('BackgroundUtils');
 
 export default class BackgroundUtils {
     static isSameItems(item1, item2) {

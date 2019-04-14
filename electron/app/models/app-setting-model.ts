@@ -1,7 +1,7 @@
 /* tslint:disable:variable-name */
 
 import * as SequelizeStatic from 'sequelize';
-import { DataTypes, Sequelize } from 'sequelize';
+import { Sequelize } from 'sequelize';
 import { AppSettingAttributes, AppSettingInstance } from './interfaces/app-setting-interface';
 
 export default function(
