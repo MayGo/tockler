@@ -13,7 +13,7 @@ import { Table, Column, PrimaryKey, Model, AutoIncrement } from 'sequelize-types
             fields: ['taskName'],
         },
     ],
-    tableName: 'TrackItem',
+    tableName: 'TrackItems',
 })
 export class TrackItem extends Model<TrackItem> {
     @PrimaryKey

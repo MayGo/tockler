@@ -7,7 +7,7 @@ import { Table, Column, PrimaryKey, Model, AutoIncrement } from 'sequelize-types
             fields: ['name'],
         },
     ],
-    tableName: 'AppSetting',
+    tableName: 'AppSettings',
 })
 export class AppSetting extends Model<AppSetting> {
     @PrimaryKey
