@@ -1,32 +1,32 @@
 os: Visual Studio 2017
 
 platform:
-  - x64
+    - x64
 
 environment:
-  nodejs_version: "8"
-  SIGNTOOL: C:\Program Files (x86)\Windows Kits\8.1\bin\x64\signtool.exe
+    nodejs_version: '11'
+    SIGNTOOL: C:\Program Files (x86)\Windows Kits\8.1\bin\x64\signtool.exe
 
 branches:
-  only:
-    - master
+    only:
+        - master
 
 skip_tags: true
 
-version: "{build}"
+version: '{build}'
 
 install:
-  - ps: .\appveyor.before-build.ps1
-  - npm install yarn -g nps
-  - cd electron
-  - yarn install
-  - cd ..
-  - cd client
-  - yarn install
+    - ps: .\appveyor.before-build.ps1
+    - npm install yarn -g nps
+    - cd electron
+    - yarn install
+    - cd ..
+    - cd client
+    - yarn install
 
 build_script:
-  - npm run build
-  - cd ..
-  - cd electron
-  - nps build.prod
-  - npm run release
+    - npm run build
+    - cd ..
+    - cd electron
+    - nps build.prod
+    - npm run release

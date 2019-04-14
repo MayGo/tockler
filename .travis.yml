@@ -1,48 +1,47 @@
-
 matrix:
-  include:
-  - os: osx
-    osx_image: xcode9.4
-  - os: linux
-    env: CC=clang CXX=clang++ npm_config_clang=1
-    compiler: clang
+    include:
+        - os: osx
+          osx_image: xcode9.4
+        - os: linux
+          env: CC=clang CXX=clang++ npm_config_clang=1
+          compiler: clang
 
 addons:
-  apt:
-    packages:
-    - libgnome-keyring-dev
-    - icnsutils
-    - graphicsmagick
+    apt:
+        packages:
+            - libgnome-keyring-dev
+            - icnsutils
+            - graphicsmagick
 
 sudo: true
 
 language: node_js
 node_js:
-  - "8"
+    - '11'
 
 cache:
-  yarn: true
-  timeout: 600
-  directories:
-    - node_modules
-    - $HOME/.electron
+    yarn: true
+    timeout: 600
+    directories:
+        - node_modules
+        - $HOME/.electron
 
 install:
-  - npm install yarn -g
-  - cd electron
-  - yarn install
-  - cd ..
-  - cd client
-  - yarn install
+    - npm install yarn -g
+    - cd electron
+    - yarn install
+    - cd ..
+    - cd client
+    - yarn install
 
 script:
-  - npm run build
-  - cd ..
-  - cd electron
-  - nps build.prod
-  - cd ..
-  - travis_wait npm run release --prefix ./electron
+    - npm run build
+    - cd ..
+    - cd electron
+    - nps build.prod
+    - cd ..
+    - travis_wait npm run release --prefix ./electron
 
 branches:
-  only:
-    - master
+    only:
+        - master
