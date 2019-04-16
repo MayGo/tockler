@@ -11,6 +11,14 @@ const mapDispatchToProps = (dispatch: any) => ({
             type: 'timeline/loadTimerange',
             payload: { timerange },
         }),
+    changeVisibleTimerange: (visibleTimerange: any) =>
+        dispatch({
+            type: 'timeline/changeVisibleTimerange',
+            payload: { visibleTimerange },
+        }),
 });
 
-export const SearchContainer = connect(mapStateToProps, mapDispatchToProps)(Search);
+export const SearchContainer = connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(Search);
