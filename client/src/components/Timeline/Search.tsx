@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DatePicker, Button } from 'antd';
+import { DatePicker, Button, Icon } from 'antd';
 import moment from 'moment';
 const { RangePicker } = DatePicker;
 import { Flex, Box } from 'grid-styled';
@@ -62,37 +62,42 @@ export class Search extends React.PureComponent<IFullProps, IProps> {
     };
 
     showDay = () => {
-        const beginDate = moment().startOf('day');
-        const endDate = moment().endOf('day');
+        const { timerange } = this.props;
+        const beginDate = moment(timerange[0]).startOf('day');
+        const endDate = moment(timerange[0]).endOf('day');
         this.props.changeVisibleTimerange([beginDate, endDate]);
     };
 
     showHour = () => {
-        const beginDate = moment().startOf('hour');
-        const endDate = moment().endOf('hour');
+        const { timerange } = this.props;
+        const beginDate = moment(timerange[0]).startOf('hour');
+        const endDate = moment(timerange[0]).endOf('hour');
         this.props.changeVisibleTimerange([beginDate, endDate]);
     };
 
     showAM = () => {
-        const beginDate = moment().startOf('day');
-        const endDate = moment()
+        const { timerange } = this.props;
+        const beginDate = moment(timerange[0]).startOf('day');
+        const endDate = moment(timerange[0])
             .startOf('day')
             .hour(12);
         this.props.changeVisibleTimerange([beginDate, endDate]);
     };
 
     showPM = () => {
-        const beginDate = moment()
+        const { timerange } = this.props;
+        const beginDate = moment(timerange[0])
             .startOf('day')
             .hour(12);
-        const endDate = moment().endOf('day');
+        const endDate = moment(timerange[0]).endOf('day');
         this.props.changeVisibleTimerange([beginDate, endDate]);
     };
     showEvening = () => {
-        const beginDate = moment()
+        const { timerange } = this.props;
+        const beginDate = moment(timerange[0])
             .startOf('day')
             .hour(17);
-        const endDate = moment().endOf('day');
+        const endDate = moment(timerange[0]).endOf('day');
         this.props.changeVisibleTimerange([beginDate, endDate]);
     };
 
@@ -101,44 +106,48 @@ export class Search extends React.PureComponent<IFullProps, IProps> {
 
         console.log('Have timerange in Search:', timerange);
         return (
-            <Flex py={1}>
-                <Box px={1}>
+            <Flex>
+                <Box p={1}>
                     <Button onClick={this.selectYesterday}>Yesterday</Button>
                 </Box>
-                <Box px={1}>
-                    <Button onClick={this.goBackOneDay}>{'<'}</Button>
+                <Box p={1}>
+                    <Button onClick={this.goBackOneDay}>
+                        <Icon type="left" />
+                    </Button>
                 </Box>
-                <Box px={1}>
+                <Box p={1}>
                     <RangePicker value={timerange} onChange={this.onChange} />
                 </Box>
-                <Box px={1}>
-                    <Button onClick={this.goForwardOneDay}>{'>'}</Button>
+                <Box p={1}>
+                    <Button onClick={this.goForwardOneDay}>
+                        <Icon type="right" />
+                    </Button>
                 </Box>
-                <Box px={1}>
+                <Box p={1}>
                     <Button onClick={this.selectToday}>Today</Button>
                 </Box>
-                <Box width={1} />
-                <Box px={1}>
+                <Box flex={1} />
+                <Box p={1}>
                     <Button onClick={this.showDay} type="dashed">
                         All Day
                     </Button>
                 </Box>
-                <Box px={1}>
+                <Box p={1}>
                     <Button onClick={this.showAM} type="dashed">
                         AM
                     </Button>
                 </Box>
-                <Box px={1}>
+                <Box p={1}>
                     <Button onClick={this.showPM} type="dashed">
                         PM
                     </Button>
                 </Box>
-                <Box px={1}>
+                <Box p={1}>
                     <Button onClick={this.showEvening} type="dashed">
                         Evening
                     </Button>
                 </Box>
-                <Box px={1}>
+                <Box p={1}>
                     <Button onClick={this.showHour} type="dashed">
                         Hour
                     </Button>
