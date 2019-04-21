@@ -1,6 +1,9 @@
 const electron = require('electron');
 const { ipcRenderer, remote } = electron;
 
+function send(name) {
+    ipcRenderer.send(name);
+}
 function on(name, listener) {
     ipcRenderer.on(name, listener);
 }
@@ -19,6 +22,7 @@ function emit(name, ...args) {
 }
 
 export const EventEmitter = {
+    send,
     emit,
     on,
     off,

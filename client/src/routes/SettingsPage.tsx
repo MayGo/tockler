@@ -2,12 +2,12 @@ import * as React from 'react';
 
 import { connect } from 'dva';
 import { MainLayout } from '../components/MainLayout/MainLayout';
-import { SettingsFormContainer } from '../components/Settings/SettingsFormContainer';
+import { SettingsForm } from '../components/Settings/SettingsForm';
 
 function Settings({ location }: any) {
     return (
         <MainLayout location={location}>
-            <SettingsFormContainer />
+            <SettingsForm />
         </MainLayout>
     );
 }

@@ -22,6 +22,7 @@
         "react-scripts": "^2.1.8",
         "react-sizeme": "2.5.2",
         "react-timeago": "4.4.0",
+        "react-use-form-state": "^0.9.0",
         "recompose": "0.30.0",
         "redbox-react": "1.6.0",
         "redux": "^4.0.1",

@@ -11,6 +11,7 @@ import { settingsModel } from './models/settings';
 import { summaryModel } from './models/summary';
 
 import MainAppPage from './routes/MainAppPage';
+import { RootProvider } from './RootContext';
 
 function RouterConfig({ history, app }: any) {
     const DynamicMainAppPage = (dynamic as any)({
@@ -25,14 +26,16 @@ function RouterConfig({ history, app }: any) {
     });
 
     return (
-        <Router history={history}>
-            <Switch>
-                <Route path="/" exact={true} component={DynamicMainAppPage} />
-                <Route path="/app" component={DynamicMainAppPage} />
-                <Route path="/trayApp" component={DynamicTrayAppPage} />
-                <Route path="*" component={NotFound} />
-            </Switch>
-        </Router>
+        <RootProvider>
+            <Router history={history}>
+                <Switch>
+                    <Route path="/" exact={true} component={DynamicMainAppPage} />
+                    <Route path="/app" component={DynamicMainAppPage} />
+                    <Route path="/trayApp" component={DynamicTrayAppPage} />
+                    <Route path="*" component={NotFound} />
+                </Switch>
+            </Router>
+        </RootProvider>
     );
 }
 

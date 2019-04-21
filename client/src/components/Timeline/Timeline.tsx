@@ -70,8 +70,8 @@ const brushStyle = {
 const barWidth = 25;
 
 const scale = { y: 'time', x: 'linear' };
-const padding = { left: 50, top: 0, bottom: 20 };
-const domainPadding = { y: 0, x: 10 };
+const padding = { left: 50, top: 0, bottom: 20, right: 10 };
+const domainPadding = { y: 35, x: 10 };
 const domainPaddingBrush = { y: 35, x: 5 };
 
 const barStyle = {
