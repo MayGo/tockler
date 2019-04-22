@@ -31,12 +31,7 @@ export class SettingsService {
     }
 
     static async updateByName(name, jsonData) {
-        console.info(
-            'updateByName',
-            jsonData,
-            JSON.stringify(jsonData),
-            JSON.parse(JSON.stringify(jsonData)),
-        );
+        console.info('updateByName', JSON.stringify(jsonData));
         return await SettingsService.service.updateByName(name, JSON.stringify(jsonData));
     }
 
@@ -48,6 +43,9 @@ export class SettingsService {
         return SettingsService.service.fetchWorkSettings();
     }
 
+    static saveAnalyserSettings(data) {
+        SettingsService.updateByName('ANALYSER_SETTINGS', data);
+    }
     static async fetchAnalyserSettings() {
         const jsonStr = await SettingsService.service.fetchAnalyserSettingsJsonString();
         console.log('fetchAnalyserSettings', jsonStr);

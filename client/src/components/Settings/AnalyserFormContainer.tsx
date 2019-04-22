@@ -1,7 +1,7 @@
 import { connect } from 'dva';
 import { compose } from 'recompose';
 import { TrackItemType } from '../../enum/TrackItemType';
-import { AnalyserFormItem } from './AnalyserFormItem';
+import { AnalyserForm } from './AnalyserForm';
 
 const mapStateToProps = ({ timeline }: any) => ({
     appTrackItems: timeline[TrackItemType.AppTrackItem],
@@ -15,4 +15,4 @@ const enhance = compose(
     ),
 );
 
-export const AnalyserFormItemContainer = enhance(AnalyserFormItem);
+export const AnalyserFormContainer = enhance(AnalyserForm);

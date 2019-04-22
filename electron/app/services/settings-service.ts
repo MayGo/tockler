@@ -55,7 +55,7 @@ export class SettingsService {
     async fetchAnalyserSettingsJsonString() {
         let item = await this.findByName('ANALYSER_SETTINGS');
         this.logger.info('Fetching ANALYSER_SETTINGS:');
-        if (!item || this.isObject(item.jsonDataParsed)) {
+        if (!item) {
             // db default is object but this is initialized with array (when is initialized)
             return JSON.stringify([]);
         }

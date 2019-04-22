@@ -7,7 +7,6 @@ import { TrayAppPage } from './routes/TrayAppPage';
 import { timelineModel } from './models/timeline';
 import { rootModel } from './models/root';
 import { trayModel } from './models/tray';
-import { settingsModel } from './models/settings';
 import { summaryModel } from './models/summary';
 
 import MainAppPage from './routes/MainAppPage';
@@ -16,7 +15,7 @@ import { RootProvider } from './RootContext';
 function RouterConfig({ history, app }: any) {
     const DynamicMainAppPage = (dynamic as any)({
         app: app,
-        models: () => [timelineModel, rootModel, settingsModel, summaryModel],
+        models: () => [timelineModel, rootModel, summaryModel],
         component: () => MainAppPage,
     });
     const DynamicTrayAppPage = (dynamic as any)({

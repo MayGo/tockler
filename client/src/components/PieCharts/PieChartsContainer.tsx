@@ -2,7 +2,6 @@ import { connect } from 'dva';
 import componentQueries from 'react-component-queries';
 import { PieCharts } from './PieCharts';
 import { TrackItemType } from '../../enum/TrackItemType';
-import moment from 'moment';
 import { convertDate } from '../../constants';
 
 const filterItems = (timeline, type) =>
@@ -14,12 +13,11 @@ const filterItems = (timeline, type) =>
         return itemBegin.isBetween(visBegin, visEnd) && itemEnd.isBetween(visBegin, visEnd);
     });
 
-const mapStateToProps = ({ timeline, settings }: any) => ({
+const mapStateToProps = ({ timeline }: any) => ({
     visibleTimerange: timeline.visibleTimerange,
     appTrackItems: filterItems(timeline, TrackItemType.AppTrackItem),
     statusTrackItems: filterItems(timeline, TrackItemType.StatusTrackItem),
     logTrackItems: filterItems(timeline, TrackItemType.LogTrackItem),
-    workSettings: settings.work,
 });
 
 export const PieChartsContainer = componentQueries(({ width }) => ({

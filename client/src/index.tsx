@@ -18,18 +18,9 @@ if (process.env.NODE_ENV !== 'production') {
     });*/
 }
 
-const persistConfig = {
-    key: 'root',
-    storage,
-    whitelist: ['settings.work'],
-};
-
 const app = dva({
     extraReducers: {
         form: formReducer,
-    },
-    onReducer: reducer => {
-        return persistReducer(persistConfig, reducer);
     },
 });
 app.use(createLoading());

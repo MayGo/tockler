@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Field } from 'redux-form';
-import { TextField, SwitchField } from 'redux-form-antd';
+
 import { Flex, Box } from 'grid-styled';
-import { Form, Switch, Button, Divider } from 'antd';
+import { Form, Switch, Button, Divider, Input, Icon } from 'antd';
 import { labelCol, wrapperCol } from './SettingsForm.styles';
 import { testAnalyserItem } from './AnalyserForm.util';
+import { useFormState } from 'react-use-form-state';
 
 interface IProps {
     removeItem: any;
@@ -31,74 +31,52 @@ const AnalyserTestItem = ({ item }) => (
     </Box>
 );
 
-export class AnalyserFormItem extends React.PureComponent<IProps, IState> {
-    state = { showTests: false };
-
-    toggleShowTests = () => {
-        this.setState({ showTests: !this.state.showTests });
+export const AnalyserFormItem = ({ analyserItem, removeItem, appTrackItems, saveItem }) => {
+    const [showTests, setShowTests] = React.useState(false);
+    const toggleShowTests = () => {
+        setShowTests(!showTests);
     };
 
-    render() {
-        const { analyserItem, index, row, removeItem, appTrackItems } = this.props;
-        const { showTests } = this.state;
+    const [formState, { text, checkbox }] = useFormState(analyserItem, {
+        onChange: (e, stateValues, nextStateValues) => {
+            saveItem(nextStateValues);
+        },
+    });
 
-        return (
-            <div key={index}>
-                <Flex w={1}>
-                    <Field
-                        name={`${row}.findRe`}
-                        type="text"
-                        label="Task"
-                        labelCol={labelCol}
-                        wrapperCol={wrapperCol}
-                        component={TextField}
-                    />
-
-                    <Field
-                        name={`${row}.takeGroup`}
-                        type="text"
-                        label="Group"
-                        labelCol={labelCol}
-                        wrapperCol={wrapperCol}
-                        component={TextField}
-                    />
-
-                    <Field
-                        name={`${row}.takeTitle`}
-                        type="text"
-                        label="Title"
-                        labelCol={labelCol}
-                        wrapperCol={wrapperCol}
-                        component={TextField}
-                    />
-
-                    <Field
-                        name={`${row}.enabled`}
-                        type="text"
-                        label="Active"
-                        labelCol={labelCol}
-                        wrapperCol={wrapperCol}
-                        size="default"
-                        component={SwitchField}
-                    />
-
-                    <Form.Item>
-                        Test
-                        <Switch onChange={this.toggleShowTests} />
-                    </Form.Item>
-
-                    <Button type="primary" shape="circle" icon="delete" onClick={removeItem} />
+    return (
+        <div>
+            <Flex justifyContent="space-between">
+                <Flex>
+                    <Box p={1}>
+                        <Input placeholder="Task" {...text({ name: 'findRe' })} />
+                    </Box>
+                    <Box p={1}>
+                        <Input placeholder="Group" {...text({ name: 'takeGroup' })} />
+                    </Box>
+                    <Box p={1}>
+                        <Input placeholder="Title" {...text({ name: 'takeTitle' })} />
+                    </Box>
                 </Flex>
 
-                {showTests && (
-                    <Box>
-                        <Divider />
-                        {testAnalyserItem(appTrackItems, analyserItem).map(item => (
-                            <AnalyserTestItem item={item} key={item.title} />
-                        ))}
-                    </Box>
-                )}
-            </div>
-        );
-    }
-}
+                <Form.Item>
+                    Active
+                    <Switch {...checkbox('active')} />
+                </Form.Item>
+                <Form.Item>
+                    Test
+                    <Switch onChange={toggleShowTests} />
+                </Form.Item>
+                <Button type="primary" shape="circle" icon="delete" onClick={removeItem} />
+            </Flex>
+
+            {showTests && (
+                <Box>
+                    <Divider />
+                    {testAnalyserItem(appTrackItems, analyserItem).map(item => (
+                        <AnalyserTestItem item={item} key={item.title} />
+                    ))}
+                </Box>
+            )}
+        </div>
+    );
+};

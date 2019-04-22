@@ -1,19 +1,9 @@
 import * as React from 'react';
 import { Flex, Box } from 'grid-styled';
 import { Form, Button } from 'antd';
-
-import Config from 'electron-store';
-
-import { useFormState } from 'react-use-form-state';
-import { WorkForm } from './WorkForm'; //TODO rename
+import { WorkForm } from './WorkForm';
 import { AppForm } from './AppForm';
-const config = new Config();
-
-interface IProps {
-    handleSubmit: any;
-}
-
-interface IState {}
+import { AnalyserFormContainer } from './AnalyserFormContainer';
 
 export const SettingsForm = () => {
     return (
@@ -27,13 +17,9 @@ export const SettingsForm = () => {
                     <Box p={1} w={1 / 3}>
                         <AppForm />
                     </Box>
-                    <Box p={1} />
-
-                    <Flex p={1} justifyContent="flex-end">
-                        <Button type="primary" htmlType="submit">
-                            Save
-                        </Button>
-                    </Flex>
+                    <Box p={1}>
+                        <AnalyserFormContainer />
+                    </Box>
                 </Box>
             </Flex>
         </Form>

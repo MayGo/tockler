@@ -1,45 +1,73 @@
 import * as React from 'react';
-import { FieldArray } from 'redux-form';
 import { Card, Button, Icon, Tooltip } from 'antd';
-import { AnalyserFormItemContainer } from './AnalyserFormItemContainer';
+import { SettingsService } from '../../services/SettingsService';
+import { AnalyserFormItem } from './AnalyserFormItem';
 
-interface IProps {}
+import { Flex, Box } from 'grid-styled';
 
-interface IState {}
+const defaultAnalyserSettings = [
+    { findRe: '\\w+-\\d+.*JIRA', takeTitle: '', takeGroup: '\\w+-\\d+', enabled: true },
+    { findRe: '9GAG', takeTitle: '', takeGroup: '9GAG', enabled: true },
+];
 
-const renderRow = ({ fields, meta: { error, submitFailed } }) => {
+const emptyItem = { findRe: '', takeTitle: '', takeGroup: '', enabled: false };
+
+export const AnalyserForm = ({ appTrackItems }) => {
+    const [analyserItems, setAnalyserItems] = React.useState<any>([]);
+
+    React.useEffect(() => {
+        async function fetchSettings() {
+            const items = await SettingsService.fetchAnalyserSettings();
+            setAnalyserItems(items || []);
+        }
+
+        fetchSettings();
+    }, []);
+
+    const removeItem = index => () => {
+        analyserItems.splice(index, 1);
+        setAnalyserItems([...analyserItems]);
+        SettingsService.saveAnalyserSettings([...analyserItems]);
+    };
+    const saveItem = index => data => {
+        analyserItems[index] = data;
+        setAnalyserItems([...analyserItems]);
+        SettingsService.saveAnalyserSettings([...analyserItems]);
+    };
+
+    const addItem = () => {
+        setAnalyserItems([...analyserItems, emptyItem]);
+    };
+
+    const setDefaults = () => {
+        setAnalyserItems([...analyserItems, ...defaultAnalyserSettings]);
+    };
+
     return (
-        <div>
-            <div>{submitFailed && error && <span>{error}</span>}</div>
-            {fields.map((row, index) => (
-                <AnalyserFormItemContainer
+        <Card
+            title="Analyser settings"
+            extra={
+                <Tooltip placement="left" title="Notify if title equals these analyser items.">
+                    <Icon type="info-circle" style={{ fontSize: 20, color: 'primary' }} />
+                </Tooltip>
+            }
+        >
+            {analyserItems.map((item, index) => (
+                <AnalyserFormItem
                     key={index}
-                    row={row}
-                    index={index}
-                    removeItem={() => fields.remove(index)}
-                    analyserItem={fields.get(index)}
+                    appTrackItems={appTrackItems}
+                    removeItem={removeItem(index)}
+                    saveItem={saveItem(index)}
+                    analyserItem={item}
                 />
             ))}
-            <div>
-                <Button type="primary" shape="circle" icon="plus" onClick={() => fields.push({})} />
-            </div>
-        </div>
+            <Flex p={1} justifyContent="flex-end">
+                <Button type="primary" shape="circle" icon="plus" onClick={addItem} />
+            </Flex>
+
+            <Flex p={1} justifyContent="flex-start">
+                <Button onClick={setDefaults}>Add sample values</Button>
+            </Flex>
+        </Card>
     );
 };
-
-export class AnalyserForm extends React.PureComponent<IProps, IState> {
-    render() {
-        return (
-            <Card
-                title="Analyser settings"
-                extra={
-                    <Tooltip placement="left" title="Notify if title equals these analyser items.">
-                        <Icon type="info-circle" style={{ fontSize: 20, color: 'primary' }} />
-                    </Tooltip>
-                }
-            >
-                <FieldArray name="analyser" component={renderRow} rerenderOnEveryChange={true} />
-            </Card>
-        );
-    }
-}

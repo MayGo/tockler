@@ -19,7 +19,7 @@ export class Settings extends Model<Settings> {
     name: string;
 
     @Column
-    jsonData: string = '{}';
+    jsonData: string;
 
     jsonDataParsed;
 }

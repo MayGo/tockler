@@ -6,9 +6,9 @@ const isDevelopment = require('electron-is-dev');
 
 let root = path.join(__dirname, '..');
 let client = isDevelopment ? path.join(root, '..', 'client', 'build') : path.join(root, 'dist');
-let userDir = app.getPath('userData');
+//let userDir = app.getPath('userData');
 // Set manually for debugging
-//let userDir = '/Users/USERNAME/Library/Application Support/Tockler';
+let userDir = '/Users/merit/Library/Application Support/Tockler';
 
 // console.log('User dir is:' + userDir);
 
