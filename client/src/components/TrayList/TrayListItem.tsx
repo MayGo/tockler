@@ -39,7 +39,7 @@ export function TrayListItem({ item, startNewLogItemFromOld, stopRunningLogItem,
     return (
         <CustomListItem color={item.color}>
             <Flex alignItems="center">
-                <Box width={8 / 9}>
+                <Box width={8 / 9} py={2}>
                     <Flex>
                         <CustomBox width={2 / 7} mr={2}>
                             {item.app}
@@ -74,7 +74,7 @@ export function TrayListItem({ item, startNewLogItemFromOld, stopRunningLogItem,
                         </Flex>
                     </Flex>
                 </Box>
-                <ActionBtn width={1 / 9} justifyContent="flex-end" p={2}>
+                <ActionBtn width={1 / 9} justifyContent="flex-end">
                     {isRunning && (
                         <Button
                             type="primary"

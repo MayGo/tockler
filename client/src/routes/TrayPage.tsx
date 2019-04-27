@@ -4,7 +4,9 @@ import { connect } from 'dva';
 import { MainLayout } from '../components/MainLayout/MainLayout';
 import { TrayListContainer } from '../components/TrayList/TrayListContainer';
 import { TimelineItemEditTrayContainer } from '../components/Timeline/TimelineItemEditTrayContainer';
-
+/*
+ * This Page is for testing purposes only
+ */
 function Tray({ location }: any) {
     return (
         <MainLayout location={location}>
