@@ -8,7 +8,7 @@ import {
     VictoryZoomContainer,
     VictoryTooltip,
 } from 'victory';
-import { Spin } from 'antd';
+import { Spin, Popover } from 'antd';
 import moment from 'moment';
 import 'moment-duration-format';
 import debounce from 'lodash/debounce';
@@ -18,6 +18,7 @@ import { MainChart, BrushChart, Spinner } from './Timeline.styles';
 import { TimelineRowType } from '../../enum/TimelineRowType';
 import { TIME_FORMAT, INPUT_DATE_FORMAT, convertDate } from '../../constants';
 import { SimpleBar } from './SimpleBar';
+import { TimelineItemEditContainer } from './TimelineItemEditContainer';
 
 interface IProps {
     timerange: any;
@@ -188,16 +189,6 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                 },
             },
         ];
-        const barEvents = [
-            {
-                target: 'data',
-                eventHandlers: {
-                    onClick: (e, bubble) => {
-                        this.handleSelectionChanged(bubble.datum);
-                    },
-                },
-            },
-        ];
 
         const axisStyle = {
             grid: { strokeWidth: 0 },
@@ -222,43 +213,53 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                             <Spin />
                         </Spinner>
                     )}
-
-                    <VictoryChart
-                        theme={chartTheme}
-                        height={100}
-                        width={chartWidth}
-                        domainPadding={domainPadding}
-                        padding={padding}
-                        scale={scale}
-                        horizontal={true}
-                        domain={domain}
-                        containerComponent={
-                            <VictoryZoomContainer
-                                responsive={false}
-                                zoomDimension="y"
-                                zoomDomain={{ y: visibleTimerange }}
-                                onZoomDomainChange={debounce(this.handleZoom, 300)}
-                            />
-                        }
+                    <Popover
+                        style={{ zIndex: 930 }}
+                        content={<TimelineItemEditContainer showDeleteBtn showCloseBtn />}
+                        visible={!!selectedTimelineItem}
+                        trigger="click"
                     >
-                        <VictoryAxis
-                            tickValues={[1, 2, 3]}
-                            tickFormat={['App', 'Status', 'Log']}
-                            events={axisEvents}
-                            style={axisStyle}
-                        />
-                        <VictoryAxis dependentAxis={true} tickCount={20} />
+                        <VictoryChart
+                            theme={chartTheme}
+                            height={100}
+                            width={chartWidth}
+                            domainPadding={domainPadding}
+                            padding={padding}
+                            scale={scale}
+                            horizontal={true}
+                            domain={domain}
+                            containerComponent={
+                                <VictoryZoomContainer
+                                    responsive={false}
+                                    zoomDimension="y"
+                                    zoomDomain={{ y: visibleTimerange }}
+                                    onZoomDomainChange={debounce(this.handleZoom, 300)}
+                                />
+                            }
+                        >
+                            <VictoryAxis
+                                tickValues={[1, 2, 3]}
+                                tickFormat={['App', 'Status', 'Log']}
+                                events={axisEvents}
+                                style={axisStyle}
+                            />
+                            <VictoryAxis dependentAxis={true} tickCount={20} />
 
-                        <VictoryBar
-                            events={barEvents}
-                            style={barStyle}
-                            x={getTrackItemOrderFn}
-                            y={contertDateForY}
-                            y0={contertDateForY0}
-                            data={timelineData}
-                            dataComponent={<SimpleBar getBarLabel={this.getBarLabel} />}
-                        />
-                    </VictoryChart>
+                            <VictoryBar
+                                style={barStyle}
+                                x={getTrackItemOrderFn}
+                                y={contertDateForY}
+                                y0={contertDateForY0}
+                                data={timelineData}
+                                dataComponent={
+                                    <SimpleBar
+                                        getBarLabel={this.getBarLabel}
+                                        onClickBarItem={this.handleSelectionChanged}
+                                    />
+                                }
+                            />
+                        </VictoryChart>
+                    </Popover>
                 </MainChart>
                 <BrushChart>
                     <VictoryChart

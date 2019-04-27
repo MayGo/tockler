@@ -156,10 +156,10 @@ export class SimpleBar extends React.Component<any, any> {
             polar && origin ? `translate(${origin.x}, ${origin.y})` : undefined;
         const transform = this.props.transform || defaultTransform;
 
-
         const events = {
             onMouseEnter: this.onMouseEnterHandler,
             onMouseLeave: this.onMouseLeaveHandler,
+            onClick: () => this.props.onClickBarItem(datum),
         };
         const comp = React.cloneElement(pathComponent, {
             d: path,

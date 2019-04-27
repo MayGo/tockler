@@ -34,7 +34,6 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
             item: props.selectedTimelineItem,
             colorScope: 'ONLY_THIS',
         };
-        console.log('TimelineItemEdit', this.state);
     }
     componentWillReceiveProps(nextProps: any) {
         if (nextProps.selectedTimelineItem) {
@@ -117,26 +116,25 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
             showDeleteBtn,
             showPlayIcon,
         }: IFullProps = this.props;
+
         const trackItem = this.state.item;
+
         if (!selectedTimelineItem) {
             console.log('No item');
             return null;
         }
+
         const saveBtnIcon = showPlayIcon ? 'play-circle-o' : 'save';
         console.log('Have selectedTimelineItem', selectedTimelineItem);
 
         return (
             <Flex p={1} w={1}>
                 <Box px={1} w={1 / 3}>
-                    <Input
-                        defaultValue={trackItem.app}
-                        placeholder="App"
-                        onChange={this.changeAppName}
-                    />
+                    <Input value={trackItem.app} placeholder="App" onChange={this.changeAppName} />
                 </Box>
                 <Box px={1} flex="1">
                     <Input
-                        defaultValue={trackItem.title}
+                        value={trackItem.title}
                         placeholder="Title"
                         onChange={this.changeAppTitle}
                     />

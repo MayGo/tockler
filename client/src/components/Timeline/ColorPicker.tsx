@@ -16,11 +16,17 @@ interface IState {
 export class ColorPicker extends React.PureComponent<IProps, IState> {
     constructor(props) {
         super(props);
-        console.log('ColorPicker', props);
         this.state = {
             displayColorPicker: false,
             color: props.color || '#000000',
         };
+    }
+    componentWillReceiveProps(nextProps: any) {
+        if (nextProps.color) {
+            this.setState({
+                color: nextProps.color,
+            });
+        }
     }
 
     handleClick = () => {
