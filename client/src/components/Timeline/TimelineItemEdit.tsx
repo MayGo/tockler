@@ -11,6 +11,7 @@ interface IProps {
     updateColorForApp: any;
     colorScopeHidden?: boolean;
     showCloseBtn?: boolean;
+    showDeleteBtn?: boolean;
     showPlayIcon?: boolean;
     clearTimelineItem: any;
     deleteTimelineItem: any;
@@ -113,6 +114,7 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
             selectedTimelineItem,
             colorScopeHidden,
             showCloseBtn,
+            showDeleteBtn,
             showPlayIcon,
         }: IFullProps = this.props;
         const trackItem = this.state.item;
@@ -132,7 +134,7 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
                         onChange={this.changeAppName}
                     />
                 </Box>
-                <Box px={1} w={2 / 3}>
+                <Box px={1} flex="1">
                     <Input
                         defaultValue={trackItem.title}
                         placeholder="Title"
@@ -170,9 +172,16 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
                         onClick={this.saveBasedOnColorOptionHandler}
                     />
                 </Box>
-                <Box px={1}>
-                    <Button type="primary" shape="circle" icon="delete" onClick={this.deleteItem} />
-                </Box>
+                {showDeleteBtn && (
+                    <Box px={1}>
+                        <Button
+                            type="primary"
+                            shape="circle"
+                            icon="delete"
+                            onClick={this.deleteItem}
+                        />
+                    </Box>
+                )}
                 {showCloseBtn && (
                     <Box px={1}>
                         <Button

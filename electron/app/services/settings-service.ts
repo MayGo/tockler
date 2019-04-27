@@ -63,12 +63,12 @@ export class SettingsService {
         return item.jsonData;
     }
 
-    async getRunningLogItem() {
+    async getRunningLogItemAsJson() {
         let settingsItem = await this.findByName('RUNNING_LOG_ITEM');
 
         if (settingsItem.jsonDataParsed.id) {
-            let logItem = await TrackItem.findById(settingsItem.jsonDataParsed.id);
-            return logItem;
+            let logItem = await TrackItem.findByPk(settingsItem.jsonDataParsed.id);
+            return logItem.toJSON();
         }
 
         return null;

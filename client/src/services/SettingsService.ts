@@ -35,8 +35,9 @@ export class SettingsService {
         return await SettingsService.service.updateByName(name, JSON.stringify(jsonData));
     }
 
-    static getRunningLogItem() {
-        return SettingsService.service.getRunningLogItem();
+    static async getRunningLogItem() {
+        const runningLogItem = await SettingsService.service.getRunningLogItemAsJson();
+        return runningLogItem;
     }
 
     static fetchWorkSettings() {

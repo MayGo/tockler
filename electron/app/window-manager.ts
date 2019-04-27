@@ -150,8 +150,8 @@ export default class WindowManager {
             icon: icon,
             preloadWindow: false,
             showDockIcon: false,
-            width: 450,
-            height: 500,
+            width: 500,
+            height: 600,
         });
 
         // this.menubar.on('after-create-window', () => {});

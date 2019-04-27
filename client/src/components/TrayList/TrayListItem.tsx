@@ -18,7 +18,6 @@ const Small = styled(Box)`
     font-size: 10px;
 `;
 const ActionBtn = styled(Flex)`
-    border-left: 1px solid #f0f2f5;
     margin: 2px 0;
 `;
 
@@ -80,15 +79,15 @@ export function TrayListItem({ item, startNewLogItemFromOld, stopRunningLogItem,
                         <Button
                             type="primary"
                             shape="circle"
-                            icon="pause-circle"
+                            icon="pause"
                             onClick={() => stopRunningLogItem()}
                         />
                     )}
                     {!isRunning && (
                         <Button
-                            type="primary"
+                            type="default"
                             shape="circle"
-                            icon="play-circle-o"
+                            icon="right"
                             onClick={() => startNewLogItemFromOld(item)}
                         />
                     )}

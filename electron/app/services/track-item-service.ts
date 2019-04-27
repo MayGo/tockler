@@ -89,8 +89,8 @@ export class TrackItemService {
             where: {
                 taskName: 'LogTrackItem',
             },
-            group: ['app', 'title'],
-            limit: 10,
+            // group: ['app', 'title'],
+            limit: 40,
             order: [['beginDate', 'DESC']],
         });
     }
@@ -160,7 +160,7 @@ export class TrackItemService {
     }
 
     findById(id) {
-        return TrackItem.findById(id);
+        return TrackItem.findByPk(id);
     }
 
     async deleteById(id) {
