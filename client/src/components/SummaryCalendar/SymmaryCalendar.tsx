@@ -13,6 +13,7 @@ interface IProps {
     selectedDate: Moment;
     selectedMode: 'month' | 'year';
     changeSelectedDate: any;
+    onDateSelect: any;
     loading?: boolean;
 }
 export class SummaryCalendar extends React.PureComponent<IProps, {}> {
@@ -65,7 +66,13 @@ export class SummaryCalendar extends React.PureComponent<IProps, {}> {
     };
 
     render() {
-        const { changeSelectedDate, selectedDate, selectedMode, loading } = this.props;
+        const {
+            changeSelectedDate,
+            onDateSelect,
+            selectedDate,
+            selectedMode,
+            loading,
+        } = this.props;
         console.log('Render SummaryCalendar', this.state);
 
         return (
@@ -79,6 +86,7 @@ export class SummaryCalendar extends React.PureComponent<IProps, {}> {
                     <Calendar
                         value={selectedDate}
                         mode={selectedMode}
+                        onSelect={onDateSelect}
                         dateCellRender={this.dateCellRender}
                         monthCellRender={this.monthCellRender}
                         onPanelChange={changeSelectedDate}

@@ -1,5 +1,5 @@
 import { connect } from 'dva';
-
+import { routerRedux } from 'dva/router';
 import { TrackItemType } from '../../enum/TrackItemType';
 import moment, { Moment } from 'moment';
 import { SummaryCalendar } from './SymmaryCalendar';
@@ -45,6 +45,18 @@ const mapDispatchToProps = (dispatch: any) => ({
             type: 'summary/loadSummary',
             payload: { selectedDate, selectedMode },
         }),
+    onDateSelect: (selectedDate: Moment) => {
+        const pathname = '/app/timeline';
+        dispatch({
+            type: 'timeline/setTimerange',
+            payload: { timerange: [selectedDate.startOf('day'), selectedDate.endOf('day')] },
+        });
+        dispatch(
+            routerRedux.push({
+                pathname,
+            }),
+        );
+    },
 });
 
 export const SummaryCalendarContainer = connect(
