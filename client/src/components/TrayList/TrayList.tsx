@@ -37,12 +37,13 @@ export function TrayList({ lastLogItems, loading, dispatch, runningLogItem }: an
     }
 
     // Remove runningLogItem from aggregated values and show it as running Item
-    const items = aggregateSameAppAndName(
-        lastLogItems.filter(item => runningLogItem && item.id !== runningLogItem.id),
-    );
 
+    let items;
     if (runningLogItem) {
+        items = aggregateSameAppAndName(lastLogItems.filter(item => item.id !== runningLogItem.id));
         items.unshift(runningLogItem);
+    } else {
+        items = aggregateSameAppAndName(lastLogItems);
     }
 
     return (
