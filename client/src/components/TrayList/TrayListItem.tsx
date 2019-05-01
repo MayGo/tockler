@@ -77,7 +77,7 @@ export function TrayListItem({ item, startNewLogItemFromOld, stopRunningLogItem,
                         </Box>
                         <Flex width={3 / 11} justifyContent="flex-end">
                             <Small pr={2}>
-                                <TimeAgo date={item.endDate} />
+                                <TimeAgo date={item.startDate} />
                             </Small>
                         </Flex>
                     </Flex>

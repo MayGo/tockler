@@ -5,21 +5,36 @@ import { Flex } from 'grid-styled';
 import { TaskList, Item } from './SummaryCalendar.styles';
 import moment, { Moment } from 'moment';
 import { Spinner } from '../Timeline/Timeline.styles';
+import { TrackItemService } from '../../services/TrackItemService';
+import { summariseLog, summariseOnline } from './SymmaryCalendar.util';
 
-interface IProps {
-    appSummary: any;
-    onlineSummary: any;
-    logSummary: any;
-    selectedDate: Moment;
-    selectedMode: 'month' | 'year';
-    changeSelectedDate: any;
-    onDateSelect: any;
-    loading?: boolean;
-}
-export class SummaryCalendar extends React.PureComponent<IProps, {}> {
-    getListData(day) {
-        const { logSummary, onlineSummary } = this.props;
+export const SummaryCalendar = ({ onDateSelect }) => {
+    const [isLoading, setIsLoading] = React.useState<any>(false);
+    const [selectedDate, setSelectedDate] = React.useState<any>(moment());
+    const [selectedMode, setSelectedMode] = React.useState<any>('month');
+    const [logSummary, setLogSummary] = React.useState<any>([]);
+    const [onlineSummary, setOnlineSummary] = React.useState<any>([]);
 
+    React.useEffect(() => {
+        setIsLoading(true);
+        const beginDate = moment(selectedDate).startOf(selectedMode);
+        const endDate = moment(selectedDate).endOf(selectedMode);
+
+        TrackItemService.findAllItems(beginDate, endDate).then(
+            ({ appItems, statusItems, logItems }) => {
+                setLogSummary(summariseLog(logItems, selectedMode));
+                setOnlineSummary(summariseOnline(statusItems, selectedMode));
+                setIsLoading(false);
+            },
+        );
+    }, [selectedDate, setSelectedMode]);
+
+    const changeSelectedDate = (date?: Moment, mode?: 'month' | 'year') => {
+        setSelectedDate(date);
+        setSelectedMode(mode);
+    };
+
+    const getListData = day => {
         let listData: Array<any> = [];
         const worked = logSummary[day];
         if (worked) {
@@ -34,11 +49,11 @@ export class SummaryCalendar extends React.PureComponent<IProps, {}> {
         }
 
         return listData || [];
-    }
+    };
 
-    dateCellRender = value => {
-        if (value.month() === this.props.selectedDate.month()) {
-            const listData = this.getListData(value.date());
+    const dateCellRender = value => {
+        if (value.month() === selectedDate.month()) {
+            const listData = getListData(value.date());
             return (
                 <TaskList>
                     {listData.map(item => (
@@ -52,8 +67,8 @@ export class SummaryCalendar extends React.PureComponent<IProps, {}> {
         return null;
     };
 
-    monthCellRender = value => {
-        const listData = this.getListData(value.month());
+    const monthCellRender = value => {
+        const listData = getListData(value.month());
         return (
             <TaskList>
                 {listData.map(item => (
@@ -65,34 +80,21 @@ export class SummaryCalendar extends React.PureComponent<IProps, {}> {
         );
     };
 
-    render() {
-        const {
-            changeSelectedDate,
-            onDateSelect,
-            selectedDate,
-            selectedMode,
-            loading,
-        } = this.props;
-        console.log('Render SummaryCalendar', this.state);
-
-        return (
-            <div>
-                <Flex p={1}>
-                    {loading && (
-                        <Spinner>
-                            <Spin />
-                        </Spinner>
-                    )}
-                    <Calendar
-                        value={selectedDate}
-                        mode={selectedMode}
-                        onSelect={onDateSelect}
-                        dateCellRender={this.dateCellRender}
-                        monthCellRender={this.monthCellRender}
-                        onPanelChange={changeSelectedDate}
-                    />
-                </Flex>
-            </div>
-        );
-    }
-}
+    return (
+        <Flex p={1}>
+            {isLoading && (
+                <Spinner>
+                    <Spin />
+                </Spinner>
+            )}
+            <Calendar
+                value={selectedDate}
+                mode={selectedMode}
+                onSelect={onDateSelect}
+                dateCellRender={dateCellRender}
+                monthCellRender={monthCellRender}
+                onPanelChange={changeSelectedDate}
+            />
+        </Flex>
+    );
+};
