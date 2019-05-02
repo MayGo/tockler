@@ -17,7 +17,7 @@ import { TrackItemType } from '../../enum/TrackItemType';
 import { MainChart, BrushChart, Spinner } from './Timeline.styles';
 import { TimelineRowType } from '../../enum/TimelineRowType';
 import { TIME_FORMAT, INPUT_DATE_FORMAT, convertDate } from '../../constants';
-import { SimpleBar } from './SimpleBar';
+import { BarWithTooltip } from './BarWithTooltip';
 import { TimelineItemEditContainer } from './TimelineItemEditContainer';
 
 interface IProps {
@@ -114,7 +114,7 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
     onTimelineTypeLabelClick = (item, props) => {
         console.error('onTimelineTypeLabelClick', item, props);
     };
-    getBarLabel = d => {
+    getTooltipLabel = d => {
         const diff = convertDate(d.endDate).diff(convertDate(d.beginDate));
         const dur = moment.duration(diff);
         let formattedDuration = dur.format();
@@ -252,8 +252,8 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                                 y0={contertDateForY0}
                                 data={timelineData}
                                 dataComponent={
-                                    <SimpleBar
-                                        getBarLabel={this.getBarLabel}
+                                    <BarWithTooltip
+                                        getTooltipLabel={this.getTooltipLabel}
                                         onClickBarItem={this.handleSelectionChanged}
                                     />
                                 }
