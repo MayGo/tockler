@@ -1,15 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Helpers, Path, CommonProps } from 'victory-core';
 import { VictoryTooltip, Bar } from 'victory';
-import { assign, isPlainObject, isFunction, isNil } from 'lodash';
 import { Portal } from 'react-portal';
-import {
-    getVerticalBarPath,
-    getHorizontalBarPath,
-    getVerticalPolarBarPath,
-    getCustomBarPath,
-} from './path-helper-methods';
 import { chartTheme } from './ChartTheme';
 
 export class BarWithTooltip extends React.Component<any, any> {
