@@ -27,7 +27,7 @@ export const SummaryCalendar = ({ onDateSelect }) => {
                 setIsLoading(false);
             },
         );
-    }, [selectedDate, setSelectedMode]);
+    }, [selectedDate, selectedMode]);
 
     const changeSelectedDate = (date?: Moment, mode?: 'month' | 'year') => {
         setSelectedDate(date);

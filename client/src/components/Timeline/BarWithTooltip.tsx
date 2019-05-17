@@ -13,7 +13,6 @@ export class BarWithTooltip extends React.Component<any, any> {
         this.setState({
             hover: true,
         });
-        console.error('enter');
     };
     onMouseLeaveHandler = () => {
         this.setState({
