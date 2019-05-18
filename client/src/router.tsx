@@ -1,6 +1,6 @@
 import * as React from 'react';
 import dynamic from 'dva/dynamic';
-import { Router, Route, Switch } from 'dva/router';
+import { Router, Route, Switch } from 'react-router-dom';
 import NotFound from './routes/404';
 import { TrayAppPage } from './routes/TrayAppPage';
 

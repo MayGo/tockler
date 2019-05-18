@@ -1,5 +1,4 @@
 import * as React from 'react';
-// import { Layout } from 'antd';
 import { List } from 'antd';
 import { TrayListItem } from './TrayListItem';
 import { groupBy, map, sumBy, sortBy } from 'lodash';
@@ -23,21 +22,14 @@ const aggregateSameAppAndName = lastLogItems => {
     return mapped;
 };
 
-export function TrayList({ lastLogItems, loading, dispatch, runningLogItem }: any) {
-    function startNewLogItemFromOld(oldItem) {
-        dispatch({
-            type: 'tray/startNewLogItem',
-            payload: { item: oldItem },
-        });
-    }
-    function stopRunningLogItem() {
-        dispatch({
-            type: 'tray/stopRunningLogItem',
-        });
-    }
-
+export function TrayList({
+    lastLogItems,
+    loading,
+    runningLogItem,
+    stopRunningLogItem,
+    startNewLogItem,
+}: any) {
     // Remove runningLogItem from aggregated values and show it as running Item
-
     let items;
     if (runningLogItem) {
         items = aggregateSameAppAndName(lastLogItems.filter(item => item.id !== runningLogItem.id));
@@ -55,7 +47,7 @@ export function TrayList({ lastLogItems, loading, dispatch, runningLogItem }: an
                 <TrayListItem
                     item={item}
                     isRunning={runningLogItem && item.id === runningLogItem.id}
-                    startNewLogItemFromOld={startNewLogItemFromOld}
+                    startNewLogItemFromOld={startNewLogItem}
                     stopRunningLogItem={stopRunningLogItem}
                 />
             )}

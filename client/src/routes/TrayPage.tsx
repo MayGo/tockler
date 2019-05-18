@@ -1,20 +1,14 @@
 import * as React from 'react';
 
-import { connect } from 'dva';
 import { MainLayout } from '../components/MainLayout/MainLayout';
-import { TrayListContainer } from '../components/TrayList/TrayListContainer';
-import { TimelineItemEditTrayContainer } from '../components/Timeline/TimelineItemEditTrayContainer';
+import { TrayAppPage } from './TrayAppPage';
 /*
  * This Page is for testing purposes only
  */
-function Tray({ location }: any) {
+export function TrayPage({ location }: any) {
     return (
         <MainLayout location={location}>
-            <TimelineItemEditTrayContainer />
-
-            <TrayListContainer />
+            <TrayAppPage />
         </MainLayout>
     );
 }
-
-export const TrayPage = connect()(Tray);

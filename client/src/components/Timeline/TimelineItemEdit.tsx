@@ -7,14 +7,14 @@ import { Flex, Box } from 'grid-styled';
 interface IProps {
     selectedTimelineItem: any;
     saveTimelineItem: any;
-    changeColorForApp: any;
-    updateColorForApp: any;
+    changeColorForApp?: any;
+    updateColorForApp?: any;
     colorScopeHidden?: boolean;
     showCloseBtn?: boolean;
     showDeleteBtn?: boolean;
     showPlayIcon?: boolean;
-    clearTimelineItem: any;
-    deleteTimelineItem: any;
+    clearTimelineItem?: any;
+    deleteTimelineItem?: any;
 }
 
 interface IState {

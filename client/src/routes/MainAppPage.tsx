@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Router, Route, Switch } from 'dva/router';
+import { Router, Route, Switch } from 'react-router-dom';
 import { TimelinePage } from './TimelinePage';
 import { SettingsPage } from './SettingsPage';
 import { SummaryPage } from './SummaryPage';

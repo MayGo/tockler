@@ -2,6 +2,7 @@ const electron = require('electron');
 const { ipcRenderer, remote } = electron;
 
 function send(name) {
+    console.debug(`Send event: ${name}`);
     ipcRenderer.send(name);
 }
 function on(name, listener) {

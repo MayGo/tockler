@@ -2,18 +2,16 @@ import * as React from 'react';
 import { Menu, Icon } from 'antd';
 
 import { Brand, Img, RightMenuItem } from './TrayMenu.styles';
+import { EventEmitter } from '../../services/EventEmitter';
 
 const tocklerIcon = require('../../assets/icons/tockler_icon.png');
-//  tslint:disable-next-line
 
 export const TrayMenu = ({ dispatch }: any) => {
     const exitApp = () => {
-        console.log('exit');
-        dispatch({ type: 'tray/closeApp' });
+        EventEmitter.send('close-app');
     };
     const toggleMainWindow = () => {
-        console.log('toggleMainWindow');
-        dispatch({ type: 'tray/toggleMainWindow' });
+        EventEmitter.send('toggle-main-window');
     };
     return (
         <Menu mode="horizontal" style={{ position: 'fixed', width: '100%', zIndex: 9000 }}>

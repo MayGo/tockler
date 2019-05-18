@@ -1,8 +1,6 @@
 import { connect } from 'dva';
-
 import { TrackItemTable } from './TrackItemTable';
 import { TrackItemType } from '../../enum/TrackItemType';
-import moment from 'moment';
 import { convertDate } from '../../constants';
 
 const filterItems = (timeline, type) =>
