@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TimelineContainer } from '../components/Timeline/TimelineContainer';
+import { Timeline } from '../components/Timeline/Timeline';
 import { Search } from '../components/Timeline/Search';
 import { TrackItemTableContainer } from '../components/TrackItemTable/TrackItemTableContainer';
 import { MainLayout } from '../components/MainLayout/MainLayout';
@@ -8,12 +8,6 @@ import moment from 'moment';
 import { TimelineRowType } from '../enum/TimelineRowType';
 import { TrackItemService } from '../services/TrackItemService';
 import { TimelineContext } from '../TimelineContext';
-
-const rowEnabledDefaults = {
-    [TimelineRowType.App]: true,
-    [TimelineRowType.Log]: true,
-    [TimelineRowType.Status]: true,
-};
 
 export function TimelinePage({ location }: any) {
     const {
@@ -24,14 +18,10 @@ export function TimelinePage({ location }: any) {
         loadTimerange,
     } = React.useContext(TimelineContext);
 
-    const [isRowEnabled, setIsRowEnabled] = React.useState<any>(rowEnabledDefaults);
-
     const timelineProps = {
         timerange,
         visibleTimerange,
         setVisibleTimerange,
-        isRowEnabled,
-        setIsRowEnabled,
         timeItems,
     };
     return (
@@ -42,7 +32,7 @@ export function TimelinePage({ location }: any) {
                 timerange={timerange}
             />
 
-            <TimelineContainer {...timelineProps} />
+            <Timeline {...timelineProps} />
             <PieCharts visibleTimerange={visibleTimerange} timeItems={timeItems} />
             <TrackItemTableContainer visibleTimerange={visibleTimerange} timeItems={timeItems} />
         </MainLayout>
