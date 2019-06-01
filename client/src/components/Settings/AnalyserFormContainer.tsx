@@ -4,7 +4,7 @@ import { TrackItemType } from '../../enum/TrackItemType';
 import { AnalyserForm } from './AnalyserForm';
 
 const mapStateToProps = ({ timeline }: any) => ({
-    appTrackItems: timeline[TrackItemType.AppTrackItem],
+    appItems: timeline[TrackItemType.AppTrackItem],
 });
 const mapDispatchToProps = (dispatch: any) => ({});
 

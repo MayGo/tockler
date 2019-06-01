@@ -1,59 +1,28 @@
-import { connect } from 'dva';
-import * as _ from 'lodash';
-import componentQueries from 'react-component-queries';
+import * as React from 'react';
 import { Timeline } from './Timeline';
-import { TrackItemType } from '../../enum/TrackItemType';
-import moment from 'moment';
-import { convertDate } from '../../constants';
+import useWindowSize from '@rehooks/window-size';
 
-const aggregateAppTrackItems = items => {
-    _.reduce(
-        items,
-        function(result, value, key) {
-            let currVal = result; // result[value.id](result[value.id] || (result[value.id] = [])).push(key);
-            return currVal;
-        },
-        {},
-    );
+const TimelineInt = props => {
+    const [selectedTimelineItem, setSelectedTimelineItem] = React.useState<any>();
+    const { innerWidth } = useWindowSize();
+    const toggleRow = (rowId: any) => {
+        /*
+dispatch({
+        type: 'timeline/toggleRow',
+        payload: { rowId },
+    }),
+*/
+    };
+    const selectTimelineItem = item => {};
+    const changeVisibleTimerange = visibleTimerange => {
+        //visibleTimerange: [moment(visibleTimerange[0]), moment(visibleTimerange[1])],
+    };
+    const moreProps = {
+        toggleRow,
+        selectTimelineItem,
+        changeVisibleTimerange,
+        chartWidth: innerWidth,
+    };
+    return <Timeline {...props} {...moreProps} />;
 };
-
-const mapStateToProps = ({ timeline, loading }: any) => ({
-    timerange: timeline.timerange,
-    isRowEnabled: timeline.isRowEnabled,
-    visibleTimerange: timeline.visibleTimerange,
-    selectedTimelineItem: timeline.selectedTimelineItem,
-    appTrackItems: timeline[TrackItemType.AppTrackItem],
-    aggregatedAppItems: aggregateAppTrackItems(timeline[TrackItemType.AppTrackItem]),
-    statusTrackItems: timeline[TrackItemType.StatusTrackItem],
-    logTrackItems: timeline[TrackItemType.LogTrackItem],
-    loading: loading.models.timeline,
-});
-const mapDispatchToProps = (dispatch: any) => ({
-    changeVisibleTimerange: (visibleTimerange: any) => {
-        console.error('changeVisibleTimerange ', visibleTimerange);
-        dispatch({
-            type: 'timeline/changeVisibleTimerange',
-            payload: {
-                visibleTimerange: [moment(visibleTimerange[0]), moment(visibleTimerange[1])],
-            },
-        });
-    },
-    selectTimelineItem: (item: any) =>
-        dispatch({
-            type: 'timeline/selectTimelineItem',
-            payload: { item },
-        }),
-    toggleRow: (rowId: any) =>
-        dispatch({
-            type: 'timeline/toggleRow',
-            payload: { rowId },
-        }),
-});
-export const TimelineContainer = componentQueries(({ width }) => ({
-    chartWidth: width,
-}))(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps,
-    )(Timeline),
-);
+export const TimelineContainer = TimelineInt;

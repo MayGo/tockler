@@ -37,9 +37,9 @@ export const summaryModel: any = {
             yield put({
                 type: 'loadItems',
                 payload: {
-                    logTrackItems: [],
-                    statusTrackItems: [],
-                    appTrackItems: [],
+                    logItems: [],
+                    statusItems: [],
+                    appItems: [],
                 },
             });
 
@@ -55,9 +55,9 @@ export const summaryModel: any = {
             yield put({
                 type: 'loadItems',
                 payload: {
-                    logTrackItems: logItems,
-                    statusTrackItems: statusItems,
-                    appTrackItems: appItems,
+                    logItems: logItems,
+                    statusItems: statusItems,
+                    appItems: appItems,
                 },
             });
 

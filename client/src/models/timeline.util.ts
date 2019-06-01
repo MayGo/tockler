@@ -5,16 +5,16 @@ import { ITimelineState } from '../@types/ITimelineState';
 export const handleTimelineItems = (
     state: ITimelineState,
     payload: {
-        appTrackItems: object;
-        logTrackItems: object;
-        statusTrackItems: object;
+        appItems: object;
+        logItems: object;
+        statusItems: object;
     },
 ): ITimelineState => {
     return {
         ...state,
-        [TrackItemType.AppTrackItem]: payload.appTrackItems,
-        [TrackItemType.LogTrackItem]: payload.logTrackItems,
-        [TrackItemType.StatusTrackItem]: payload.statusTrackItems,
+        [TrackItemType.AppTrackItem]: payload.appItems,
+        [TrackItemType.LogTrackItem]: payload.logItems,
+        [TrackItemType.StatusTrackItem]: payload.statusItems,
     };
 };
 

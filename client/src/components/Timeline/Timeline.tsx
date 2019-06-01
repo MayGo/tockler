@@ -23,14 +23,10 @@ import { TimelineItemEditContainer } from './TimelineItemEditContainer';
 interface IProps {
     timerange: any;
     visibleTimerange: any;
-    appTrackItems: any;
-    aggregatedAppItems: any;
-    statusTrackItems: any;
-    logTrackItems: any;
+    timeItems: any;
     changeVisibleTimerange?: any;
     selectTimelineItem?: any;
     toggleRow?: any;
-    tracker?: any;
     selectedTimelineItem?: any;
     chartWidth?: number;
     loading?: boolean;
@@ -127,10 +123,6 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
 
     render() {
         const {
-            appTrackItems,
-            logTrackItems,
-            statusTrackItems,
-            aggregatedAppItems,
             timerange,
             selectedTimelineItem,
             visibleTimerange,
@@ -138,9 +130,13 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
             loading,
             isRowEnabled,
             toggleRow,
+            timeItems,
         }: IFullProps = this.props;
 
-        if (!timerange && !appTrackItems && appTrackItems.length === 0) {
+        const { appItems, logItems, statusItems } = timeItems;
+        console.error(timeItems);
+
+        if (!timerange && !appItems && appItems.length === 0) {
             return <div>No data</div>;
         }
         console.log('Have timerange and visibleTimerange', timerange, visibleTimerange);
@@ -148,21 +144,20 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
         let timelineData = [];
         let brushData = [];
         if (isRowEnabled[TimelineRowType.Status]) {
-            // console.log('Adding statusTrackItems:', statusTrackItems);
-            timelineData = timelineData.concat(statusTrackItems);
-            brushData = brushData.concat(statusTrackItems);
+            // console.log('Adding statusItems:', statusItems);
+            timelineData = timelineData.concat(statusItems);
+            brushData = brushData.concat(statusItems);
         }
         if (isRowEnabled[TimelineRowType.Log]) {
-            // console.log('Adding logTrackItems:', logTrackItems);
-            timelineData = timelineData.concat(logTrackItems);
-            brushData = brushData.concat(logTrackItems);
+            // console.log('Adding logItems:', logItems);
+            timelineData = timelineData.concat(logItems);
+            brushData = brushData.concat(logItems);
         }
         if (isRowEnabled[TimelineRowType.App]) {
-            // console.log('Adding apptrackItems:', appTrackItems);
-            timelineData = timelineData.concat(appTrackItems);
+            // console.log('Adding appItems:', appItems);
+            timelineData = timelineData.concat(appItems);
         }
-        // console.error('aggregatedAppItems', aggregatedAppItems);
-        //    timelineData = timelineData.concat(aggregatedAppItems);
+
         console.log(`Rendering ${timelineData.length} items`);
 
         const axisEvents = [

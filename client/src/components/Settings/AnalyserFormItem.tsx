@@ -8,7 +8,7 @@ import { useFormState } from 'react-use-form-state';
 
 interface IProps {
     removeItem: any;
-    appTrackItems: any;
+    appItems: any;
     analyserItem: any;
     index: any;
     row: any;
@@ -31,7 +31,7 @@ const AnalyserTestItem = ({ item }) => (
     </Box>
 );
 
-export const AnalyserFormItem = ({ analyserItem, removeItem, appTrackItems, saveItem }) => {
+export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem }) => {
     const [showTests, setShowTests] = React.useState(false);
     const toggleShowTests = () => {
         setShowTests(!showTests);
@@ -72,7 +72,7 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appTrackItems, save
             {showTests && (
                 <Box>
                     <Divider />
-                    {testAnalyserItem(appTrackItems, analyserItem).map(item => (
+                    {testAnalyserItem(appItems, analyserItem).map(item => (
                         <AnalyserTestItem item={item} key={item.title} />
                     ))}
                 </Box>

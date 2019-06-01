@@ -1,27 +1,48 @@
-import { connect } from 'dva';
+import * as React from 'react';
 import { TimelineItemEdit } from './TimelineItemEdit';
+import { TrackItemService } from '../../services/TrackItemService';
+import { AppSettingService } from '../../services/AppSettingService';
 
-const mapStateToProps = ({ timeline }: any) => ({
-    selectedTimelineItem: timeline.selectedTimelineItem,
-});
-const mapDispatchToProps = (dispatch: any) => ({
-    saveTimelineItem: (item: any, colorScope: string) =>
-        dispatch({
-            type: 'timeline/saveTimelineItem',
-            payload: { item, colorScope },
-        }),
-    deleteTimelineItem: (item: any, colorScope: string) =>
-        dispatch({
-            type: 'timeline/deleteTimelineItem',
-            payload: { item },
-        }),
-    clearTimelineItem: (item: any, colorScope: string) =>
-        dispatch({
-            type: 'timeline/selectTimelineItem',
-            payload: {},
-        }),
-});
+export const TimelineItemEditContainer = props => {
+    const { setSelectedTimelineItem } = props;
+    const deleteTimelineItem = id => {
+        console.debug('Delete timeline item', id);
 
-export const TimelineItemEditContainer = connect(mapStateToProps, mapDispatchToProps)(
-    TimelineItemEdit,
-);
+        if (id) {
+            TrackItemService.deleteByIds(id).then(() => {
+                console.debug('Deleted timeline items', id);
+                // TODO: reload timerange or remove from timeline
+            });
+            setSelectedTimelineItem(null);
+        } else {
+            console.error('No ids, not deleting from DB');
+        }
+    };
+
+    const saveTimelineItem = async ({ item, colorScope }) => {
+        console.log('Updating color for trackItem', item, colorScope);
+        if (colorScope === 'ALL_ITEMS') {
+            await AppSettingService.changeColorForApp(item.app, item.color);
+            await TrackItemService.updateColorForApp(item.app, item.color);
+        } else if (colorScope === 'NEW_ITEMS') {
+            await AppSettingService.changeColorForApp(item.app, item.color);
+            await TrackItemService.saveTrackItem(item);
+        } else {
+            await TrackItemService.saveTrackItem(item);
+        }
+
+        setSelectedTimelineItem(null);
+        // TODO: reload items
+    };
+
+    const clearTimelineItem = () => setSelectedTimelineItem(null);
+
+    React.useEffect(() => {});
+
+    const moreProps = {
+        deleteTimelineItem,
+        clearTimelineItem,
+        saveTimelineItem,
+    };
+    return <TimelineItemEdit {...props} {...moreProps} />;
+};

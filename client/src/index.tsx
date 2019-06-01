@@ -1,4 +1,3 @@
-// import hot from 'dva-hot';
 import * as React from 'react';
 import dva from 'dva';
 import router from './router';

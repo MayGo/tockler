@@ -12,7 +12,7 @@ const defaultAnalyserSettings = [
 
 const emptyItem = { findRe: '', takeTitle: '', takeGroup: '', enabled: false };
 
-export const AnalyserForm = ({ appTrackItems }) => {
+export const AnalyserForm = ({ appItems }) => {
     const [analyserItems, setAnalyserItems] = React.useState<any>([]);
 
     React.useEffect(() => {
@@ -55,7 +55,7 @@ export const AnalyserForm = ({ appTrackItems }) => {
             {analyserItems.map((item, index) => (
                 <AnalyserFormItem
                     key={index}
-                    appTrackItems={appTrackItems}
+                    appItems={appItems}
                     removeItem={removeItem(index)}
                     saveItem={saveItem(index)}
                     analyserItem={item}
