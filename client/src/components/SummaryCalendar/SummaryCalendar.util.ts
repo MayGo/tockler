@@ -1,5 +1,3 @@
-import moment, { Moment } from 'moment';
-import { SummaryCalendar } from './SymmaryCalendar';
 import _ from 'lodash';
 import { convertDate } from '../../constants';
 

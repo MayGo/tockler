@@ -1,10 +1,8 @@
 import moment from 'moment';
 
-import { delay } from 'dva/saga';
 import { TrackItemService } from '../services/TrackItemService';
 import { EventEmitter } from '../services/EventEmitter';
-import { routerRedux } from 'dva/router';
-
+/*
 const gotoSettingsPageFn = dispatch => () => {
     console.log('Navigating to settings page');
     dispatch(
@@ -93,3 +91,4 @@ export const rootModel: any = {
         },
     },
 };
+*/

@@ -1,14 +1,30 @@
 import * as React from 'react';
 import { Calendar, Badge, Spin } from 'antd';
 import { Flex } from 'grid-styled';
-
 import { TaskList, Item } from './SummaryCalendar.styles';
 import moment, { Moment } from 'moment';
 import { Spinner } from '../Timeline/Timeline.styles';
 import { TrackItemService } from '../../services/TrackItemService';
-import { summariseLog, summariseOnline } from './SymmaryCalendar.util';
+import { TimelineContext } from '../../TimelineContext';
+import { summariseLog, summariseOnline } from './SummaryCalendar.util';
+import useReactRouter from 'use-react-router';
 
-export const SummaryCalendar = ({ onDateSelect }) => {
+export const SummaryCalendar = () => {
+    const { setTimerange } = React.useContext(TimelineContext);
+
+    const { history, location, match } = useReactRouter();
+
+    const onDateSelect = (selectedDate: Moment | undefined) => {
+        const pathname = '/app/timeline';
+        if (selectedDate) {
+            setTimerange([selectedDate.startOf('day'), selectedDate.endOf('day')]);
+            history.push(pathname);
+        } else {
+            console.error('No date');
+        }
+
+        // setPath
+    };
     const [isLoading, setIsLoading] = React.useState<any>(false);
     const [selectedDate, setSelectedDate] = React.useState<any>(moment());
     const [selectedMode, setSelectedMode] = React.useState<any>('month');

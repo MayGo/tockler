@@ -1,14 +1,9 @@
 import * as React from 'react';
-import dva from 'dva';
-import router from './router';
-import createLoading from 'dva-loading';
+import ReactDOM from 'react-dom';
 
 import 'typeface-berkshire-swash';
+import { MainRouter } from './router';
 
-import { reducer as formReducer } from 'redux-form';
-import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web and AsyncStorage for react-native
-import { whyDidYouUpdate } from 'why-did-you-update';
 if (process.env.NODE_ENV !== 'production') {
     const { whyDidYouUpdate } = require('why-did-you-update');
     /*  whyDidYouUpdate(React, {
@@ -17,27 +12,4 @@ if (process.env.NODE_ENV !== 'production') {
     });*/
 }
 
-const app = dva({
-    extraReducers: {
-        form: formReducer,
-    },
-});
-app.use(createLoading());
-// hot.patch(app);
-
-app.router(router);
-app.start('#root');
-
-persistStore(app._store);
-
-/*import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
-import './index.scss';
-
-ReactDOM.render(
-  <App />,
-  document.getElementById('root') as HTMLElement
-);
-registerServiceWorker();*/
+ReactDOM.render(<MainRouter />, document.getElementById('root') as HTMLElement);
