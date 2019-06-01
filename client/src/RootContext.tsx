@@ -7,10 +7,10 @@ const defaultWorkSettings = {
     hoursToWork: 8,
 };
 
-export const RootContext = React.createContext();
+export const RootContext = React.createContext<any>({});
 
 export const RootProvider = ({ children }) => {
-    const prevWorkSettings = JSON.parse(window.localStorage.getItem('workSettings')) || {
+    const prevWorkSettings = JSON.parse((window as any).localStorage.getItem('workSettings')) || {
         defaultWorkSettings,
     };
 

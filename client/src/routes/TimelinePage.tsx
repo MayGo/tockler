@@ -1,20 +1,13 @@
 import * as React from 'react';
-
 import { TimelineContainer } from '../components/Timeline/TimelineContainer';
 import { Search } from '../components/Timeline/Search';
-
 import { TrackItemTableContainer } from '../components/TrackItemTable/TrackItemTableContainer';
 import { MainLayout } from '../components/MainLayout/MainLayout';
 import { PieCharts } from '../components/PieCharts/PieCharts';
 import moment from 'moment';
 import { TimelineRowType } from '../enum/TimelineRowType';
 import { TrackItemService } from '../services/TrackItemService';
-
-const emptyTimeItems = {
-    appItems: [],
-    logItems: [],
-    statusItems: [],
-};
+import { TimelineContext } from '../TimelineContext';
 
 const rowEnabledDefaults = {
     [TimelineRowType.App]: true,
@@ -23,29 +16,15 @@ const rowEnabledDefaults = {
 };
 
 export function TimelinePage({ location }: any) {
-    const [timerange, setTimerange] = React.useState<any>([moment().subtract(1, 'days'), moment()]);
-    const [visibleTimerange, setVisibleTimerange] = React.useState<any>([
-        moment().subtract(1, 'hour'),
-        moment(),
-    ]);
-    const [timeItems, setTimeItems] = React.useState<any>(emptyTimeItems);
+    const {
+        timerange,
+        visibleTimerange,
+        setVisibleTimerange,
+        timeItems,
+        loadTimerange,
+    } = React.useContext(TimelineContext);
+
     const [isRowEnabled, setIsRowEnabled] = React.useState<any>(rowEnabledDefaults);
-
-    const loadTimerange = async timerange => {
-        console.log('loadTimerange:', timerange);
-
-        const { appItems, statusItems, logItems } = await TrackItemService.findAllItems(
-            timerange[0],
-            timerange[1],
-        );
-
-        setTimeItems({ appItems, statusItems, logItems });
-        setTimerange(timerange);
-    };
-
-    React.useEffect(() => {
-        loadTimerange(timerange);
-    }, [timerange]);
 
     const timelineProps = {
         timerange,
@@ -59,7 +38,7 @@ export function TimelinePage({ location }: any) {
         <MainLayout location={location}>
             <Search
                 changeVisibleTimerange={setVisibleTimerange}
-                loadTimerange={setTimerange}
+                loadTimerange={loadTimerange}
                 timerange={timerange}
             />
 

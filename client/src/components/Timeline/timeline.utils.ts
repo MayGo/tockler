@@ -1,5 +1,6 @@
 import { convertDate } from '../../constants';
 import * as _ from 'lodash';
+import moment from 'moment';
 
 export const filterItems = (timeItems, visibleTimerange) =>
     timeItems.filter(item => {
@@ -20,3 +21,8 @@ export const aggregateappItems = items => {
         {},
     );
 };
+
+export const setDayFromTimerange = (visibleTimerange, timerange) => [
+    moment(visibleTimerange[0]).date(moment(timerange[0]).date()),
+    moment(visibleTimerange[1]).date(moment(timerange[0]).date()),
+];
