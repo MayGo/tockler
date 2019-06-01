@@ -22,7 +22,15 @@ export const aggregateappItems = items => {
     );
 };
 
+export const copyTime = (from, to) =>
+    moment(from).set({
+        hour: to.hour(),
+        minute: to.minute(),
+    });
+
 export const setDayFromTimerange = (visibleTimerange, timerange) => [
-    moment(visibleTimerange[0]).date(moment(timerange[0]).date()),
-    moment(visibleTimerange[1]).date(moment(timerange[0]).date()),
+    copyTime(timerange[0], visibleTimerange[0]),
+    copyTime(timerange[1], visibleTimerange[1]),
 ];
+
+export const getTodayTimerange = () => [moment().startOf('day'), moment().endOf('day')];

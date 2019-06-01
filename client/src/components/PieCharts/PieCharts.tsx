@@ -12,7 +12,7 @@ interface IProps {
     visibleTimerange: any;
 }
 
-export const PieCharts = ({ timeItems, visibleTimerange }) => {
+export const PieCharts = React.memo<IProps>(({ timeItems, visibleTimerange }) => {
     const { workSettings } = React.useContext(RootContext);
     const { innerWidth } = useWindowSize();
 
@@ -57,4 +57,4 @@ export const PieCharts = ({ timeItems, visibleTimerange }) => {
             </Flex>
         </div>
     );
-};
+});

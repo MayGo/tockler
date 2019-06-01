@@ -3,6 +3,7 @@ import { DatePicker, Button, Icon } from 'antd';
 import moment from 'moment';
 const { RangePicker } = DatePicker;
 import { Flex, Box } from 'grid-styled';
+import { getTodayTimerange } from './timeline.utils';
 
 interface IProps {
     timerange: any;
@@ -36,9 +37,7 @@ export class Search extends React.PureComponent<IFullProps, IProps> {
     };
 
     selectToday = () => {
-        const beginDate = moment().startOf('day');
-        const endDate = moment().endOf('day');
-        this.props.loadTimerange([beginDate, endDate]);
+        this.props.loadTimerange(getTodayTimerange());
     };
 
     selectYesterday = () => {
