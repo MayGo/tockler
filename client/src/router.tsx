@@ -9,17 +9,17 @@ import { TimelineProvider } from './TimelineContext';
 
 export function MainRouter() {
     return (
-        <RootProvider>
-            <TimelineProvider>
-                <Router>
+        <Router>
+            <RootProvider>
+                <TimelineProvider>
                     <Switch>
                         <Route path="/" exact={true} component={MainAppPage} />
                         <Route path="/app" component={MainAppPage} />
                         <Route path="/trayApp" component={TrayAppPage} />
                         <Route path="*" component={NotFound} />
                     </Switch>
-                </Router>
-            </TimelineProvider>
-        </RootProvider>
+                </TimelineProvider>
+            </RootProvider>
+        </Router>
     );
 }

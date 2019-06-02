@@ -21,7 +21,6 @@ export const PieCharts = React.memo<IProps>(({ timeItems, visibleTimerange }) =>
     const logItems = filterItems(timeItems.logItems, visibleTimerange);
 
     const pieWidth = innerWidth / 4;
-    console.error('Rendering PieCharts');
 
     return (
         <div>
