@@ -4,7 +4,7 @@ import { TrackItemService } from './services/TrackItemService';
 import { setDayFromTimerange, getTodayTimerange } from './components/Timeline/timeline.utils';
 import { useWindowFocused } from './hooks/windowFocusedHook';
 import { useInterval } from './hooks/intervalHook';
-import { addToTimelineItems } from './models/timeline.util';
+import { addToTimelineItems } from './timeline.util';
 
 export const TimelineContext = React.createContext<any>({});
 
