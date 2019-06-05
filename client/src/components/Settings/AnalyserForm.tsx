@@ -4,6 +4,7 @@ import { SettingsService } from '../../services/SettingsService';
 import { AnalyserFormItem } from './AnalyserFormItem';
 
 import { Flex, Box } from 'grid-styled';
+import { TimelineContext } from '../../TimelineContext';
 
 const defaultAnalyserSettings = [
     { findRe: '\\w+-\\d+.*JIRA', takeTitle: '', takeGroup: '\\w+-\\d+', enabled: true },
@@ -12,7 +13,9 @@ const defaultAnalyserSettings = [
 
 const emptyItem = { findRe: '', takeTitle: '', takeGroup: '', enabled: false };
 
-export const AnalyserForm = ({ appTrackItems }) => {
+export const AnalyserForm = () => {
+    const { timeItems } = React.useContext(TimelineContext);
+    const { appItems } = timeItems;
     const [analyserItems, setAnalyserItems] = React.useState<any>([]);
 
     React.useEffect(() => {
@@ -55,7 +58,7 @@ export const AnalyserForm = ({ appTrackItems }) => {
             {analyserItems.map((item, index) => (
                 <AnalyserFormItem
                     key={index}
-                    appTrackItems={appTrackItems}
+                    appItems={appItems}
                     removeItem={removeItem(index)}
                     saveItem={saveItem(index)}
                     analyserItem={item}

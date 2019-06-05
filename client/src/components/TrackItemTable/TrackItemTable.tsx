@@ -9,12 +9,11 @@ import { DATE_TIME_FORMAT, TIME_FORMAT, convertDate, INPUT_DATE_FORMAT } from '.
 import { diffAndFormatShort } from '../../utils';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { PaginationConfig } from 'antd/lib/table';
+import { filterItems } from '../Timeline/timeline.utils';
 
 interface IProps {
     visibleTimerange: any;
-    appTrackItems: any;
-    statusTrackItems: any;
-    logTrackItems: any;
+    timeItems: any;
     deleteTimelineItems: any;
 }
 interface IState {}
@@ -60,7 +59,7 @@ export class TrackItemTable extends React.PureComponent<IProps, IState> {
     };
 
     toggleTask = () => {
-        const { appTrackItems, logTrackItems, visibleTimerange } = this.props;
+        const { timeItems, visibleTimerange } = this.props;
         const { activeType } = this.state;
 
         this.clearAll();
@@ -70,7 +69,10 @@ export class TrackItemTable extends React.PureComponent<IProps, IState> {
                 ? TrackItemType.LogTrackItem
                 : TrackItemType.AppTrackItem;
         this.setState({
-            data: newActiveType === TrackItemType.AppTrackItem ? appTrackItems : logTrackItems,
+            data:
+                newActiveType === TrackItemType.AppTrackItem
+                    ? filterItems(timeItems.appItems, visibleTimerange)
+                    : filterItems(timeItems.logItems, visibleTimerange),
             activeType: newActiveType,
             isOneDay: checkIfOneDay(visibleTimerange),
         });
@@ -91,10 +93,13 @@ export class TrackItemTable extends React.PureComponent<IProps, IState> {
 
     componentWillReceiveProps(nextProps: any) {
         const { activeType } = this.state;
-        const { appTrackItems, logTrackItems, visibleTimerange } = nextProps;
+        const { timeItems, logItems, visibleTimerange } = nextProps;
 
         this.setState({
-            data: activeType === TrackItemType.AppTrackItem ? appTrackItems : logTrackItems,
+            data:
+                activeType === TrackItemType.AppTrackItem
+                    ? filterItems(timeItems.appItems, visibleTimerange)
+                    : filterItems(timeItems.logItems, visibleTimerange),
             isOneDay: checkIfOneDay(visibleTimerange),
         });
     }

@@ -1,15 +1,11 @@
 import * as React from 'react';
-
-import { connect } from 'dva';
 import { MainLayout } from '../components/MainLayout/MainLayout';
-import { SummaryCalendarContainer } from '../components/SummaryCalendar/SymmaryCalendarContainer';
+import { SummaryCalendar } from '../components/SummaryCalendar/SummaryCalendar';
 
-function Summary({ location }: any) {
+export function SummaryPage({ location }: any) {
     return (
         <MainLayout location={location}>
-            <SummaryCalendarContainer />
+            <SummaryCalendar />
         </MainLayout>
     );
 }
-
-export const SummaryPage = connect()(Summary);

@@ -1,33 +1,22 @@
-import { connect } from 'dva';
+import * as React from 'react';
 import { TrackItemTable } from './TrackItemTable';
-import { TrackItemType } from '../../enum/TrackItemType';
-import { convertDate } from '../../constants';
+import { TrackItemService } from '../../services/TrackItemService';
 
-const filterItems = (timeline, type) =>
-    timeline[type].filter(item => {
-        const itemBegin = convertDate(item.beginDate);
-        const itemEnd = convertDate(item.endDate);
-        const visBegin = timeline.visibleTimerange[0];
-        const visEnd = timeline.visibleTimerange[1];
-        return itemBegin.isBetween(visBegin, visEnd) && itemEnd.isBetween(visBegin, visEnd);
-    });
+export const TrackItemTableContainer = props => {
+    const deleteTimelineItems = ids => {
+        console.debug('Delete timeline items', ids);
 
-const mapStateToProps = ({ timeline }: any) => ({
-    visibleTimerange: timeline.visibleTimerange,
-    appTrackItems: filterItems(timeline, TrackItemType.AppTrackItem),
-    logTrackItems: filterItems(timeline, TrackItemType.LogTrackItem),
-});
+        if (ids) {
+            TrackItemService.deleteByIds(ids).then(() => {
+                console.debug('Deleted timeline items', ids);
+                // TODO: reload timerange or remove from timeline
+            });
+        } else {
+            console.error('No ids, not deleting from DB');
+        }
+    };
 
-const mapDispatchToProps = (dispatch: any) => ({
-    deleteTimelineItems: (ids: any) => {
-        dispatch({
-            type: 'timeline/deleteTimelineItems',
-            payload: { ids },
-        });
-    },
-});
+    const moreProps = { deleteTimelineItems };
 
-export const TrackItemTableContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(TrackItemTable);
+    return <TrackItemTable {...props} {...moreProps} />;
+};

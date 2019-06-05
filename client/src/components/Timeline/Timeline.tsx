@@ -1,12 +1,12 @@
 import * as React from 'react';
 
+import useWindowSize from '@rehooks/window-size';
 import {
     VictoryChart,
     VictoryBrushContainer,
     VictoryBar,
     VictoryAxis,
     VictoryZoomContainer,
-    VictoryTooltip,
 } from 'victory';
 import { Spin, Popover } from 'antd';
 import moment from 'moment';
@@ -16,22 +16,21 @@ import { chartTheme, blueGrey700, disabledGrey } from './ChartTheme';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { MainChart, BrushChart, Spinner } from './Timeline.styles';
 import { TimelineRowType } from '../../enum/TimelineRowType';
-import { TIME_FORMAT, INPUT_DATE_FORMAT, convertDate } from '../../constants';
+import { TIME_FORMAT, convertDate } from '../../constants';
 import { BarWithTooltip } from './BarWithTooltip';
 import { TimelineItemEditContainer } from './TimelineItemEditContainer';
 
 interface IProps {
     timerange: any;
     visibleTimerange: any;
-    appTrackItems: any;
-    aggregatedAppItems: any;
-    statusTrackItems: any;
-    logTrackItems: any;
-    changeVisibleTimerange?: any;
-    selectTimelineItem?: any;
-    toggleRow?: any;
-    tracker?: any;
+    setVisibleTimerange?: any;
+
+    timeItems: any;
+
     selectedTimelineItem?: any;
+    setSelectedTimelineItem?: any;
+    toggleRow?: any;
+
     chartWidth?: number;
     loading?: boolean;
     isRowEnabled?: any;
@@ -85,84 +84,84 @@ const barStyle = {
     },
 };
 
-class TimelineComp extends React.PureComponent<IFullProps, IState> {
-    handleSelectionChanged = item => {
-        if (item) {
-            console.log('Selected item:', item);
-            this.props.selectTimelineItem(item);
-        } else {
-            console.error('No item selected');
-        }
-    };
+const rowEnabledDefaults = {
+    [TimelineRowType.App]: true,
+    [TimelineRowType.Log]: true,
+    [TimelineRowType.Status]: true,
+};
 
-    handleZoom = domain => {
-        this.props.changeVisibleTimerange(domain.y);
-    };
+export const Timeline = React.memo<IFullProps>(
+    ({ timerange, visibleTimerange, setVisibleTimerange, loading, timeItems }) => {
+        const [selectedTimelineItem, setSelectedTimelineItem] = React.useState<any>();
+        const [isRowEnabled, setIsRowEnabled] = React.useState<any>(rowEnabledDefaults);
 
-    handleBrush = domain => {
-        console.log('Selected with brush:', domain.y);
+        const { innerWidth: chartWidth } = useWindowSize();
+        const toggleRow = (rowId: any) => {
+            setIsRowEnabled({ ...isRowEnabled, [rowId]: !isRowEnabled[rowId] });
+        };
 
-        this.props.changeVisibleTimerange(domain.y);
-    };
-    calcRowEnabledColor = d => {
-        return this.props.isRowEnabled[d] ? blueGrey700 : disabledGrey;
-    };
-    calcRowEnabledColorFlipped = d => {
-        return !this.props.isRowEnabled[d] ? blueGrey700 : disabledGrey;
-    };
+        const handleSelectionChanged = item => {
+            if (item) {
+                console.log('Selected item:', item);
+                setSelectedTimelineItem(item);
+            } else {
+                console.error('No item selected');
+            }
+        };
+        const changeVisibleTimerange = range => {
+            setVisibleTimerange([moment(range[0]), moment(range[1])]);
+        };
 
-    onTimelineTypeLabelClick = (item, props) => {
-        console.error('onTimelineTypeLabelClick', item, props);
-    };
-    getTooltipLabel = d => {
-        const diff = convertDate(d.endDate).diff(convertDate(d.beginDate));
-        const dur = moment.duration(diff);
-        let formattedDuration = dur.format();
-        const type = d.taskName === TrackItemType.StatusTrackItem ? 'STATUS' : d.app;
-        const beginTime = convertDate(d.beginDate).format(TIME_FORMAT);
-        const endTime = convertDate(d.endDate).format(TIME_FORMAT);
+        const handleZoom = domain => {
+            changeVisibleTimerange(domain.y);
+        };
 
-        return `${type} - ${d.title} [${formattedDuration}] ${beginTime} - ${endTime}`;
-    };
+        const handleBrush = domain => {
+            console.log('Selected with brush:', domain.y);
 
-    render() {
-        const {
-            appTrackItems,
-            logTrackItems,
-            statusTrackItems,
-            aggregatedAppItems,
-            timerange,
-            selectedTimelineItem,
-            visibleTimerange,
-            chartWidth,
-            loading,
-            isRowEnabled,
-            toggleRow,
-        }: IFullProps = this.props;
+            changeVisibleTimerange(domain.y);
+        };
+        const calcRowEnabledColor = d => {
+            return isRowEnabled[d] ? blueGrey700 : disabledGrey;
+        };
+        const calcRowEnabledColorFlipped = d => {
+            return !isRowEnabled[d] ? blueGrey700 : disabledGrey;
+        };
 
-        if (!timerange && !appTrackItems && appTrackItems.length === 0) {
+        const getTooltipLabel = d => {
+            const diff = convertDate(d.endDate).diff(convertDate(d.beginDate));
+            const dur = moment.duration(diff);
+            let formattedDuration = dur.format();
+            const type = d.taskName === TrackItemType.StatusTrackItem ? 'STATUS' : d.app;
+            const beginTime = convertDate(d.beginDate).format(TIME_FORMAT);
+            const endTime = convertDate(d.endDate).format(TIME_FORMAT);
+
+            return `${type} - ${d.title} [${formattedDuration}] ${beginTime} - ${endTime}`;
+        };
+
+        const { appItems, logItems, statusItems } = timeItems;
+
+        if (!timerange && !appItems && appItems.length === 0) {
             return <div>No data</div>;
         }
-        console.log('Have timerange and visibleTimerange', timerange, visibleTimerange);
 
         let timelineData = [];
         let brushData = [];
         if (isRowEnabled[TimelineRowType.Status]) {
-            // console.log('Adding statusTrackItems:', statusTrackItems);
-            timelineData = timelineData.concat(statusTrackItems);
-            brushData = brushData.concat(statusTrackItems);
+            // console.log('Adding statusItems:', statusItems);
+            timelineData = timelineData.concat(statusItems);
+            brushData = brushData.concat(statusItems);
         }
         if (isRowEnabled[TimelineRowType.Log]) {
-            // console.log('Adding logTrackItems:', logTrackItems);
-            timelineData = timelineData.concat(logTrackItems);
-            brushData = brushData.concat(logTrackItems);
+            // console.log('Adding logItems:', logItems);
+            timelineData = timelineData.concat(logItems);
+            brushData = brushData.concat(logItems);
         }
         if (isRowEnabled[TimelineRowType.App]) {
-            // console.log('Adding apptrackItems:', appTrackItems);
-            timelineData = timelineData.concat(appTrackItems);
+            // console.log('Adding appItems:', appItems);
+            timelineData = timelineData.concat(appItems);
         }
-        // console.error('aggregatedAppItems', aggregatedAppItems);
-        //    timelineData = timelineData.concat(aggregatedAppItems);
+
         console.log(`Rendering ${timelineData.length} items`);
 
         const axisEvents = [
@@ -179,7 +178,7 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                                     return {
                                         style: {
                                             ...props.style,
-                                            fill: this.calcRowEnabledColorFlipped(props.datum),
+                                            fill: calcRowEnabledColorFlipped(props.datum),
                                         },
                                     };
                                 },
@@ -194,11 +193,11 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
             grid: { strokeWidth: 0 },
             ticks: { stroke: 'grey', size: 5 },
             tickLabels: {
-                fill: this.calcRowEnabledColor,
+                fill: calcRowEnabledColor,
             },
         };
 
-        const handleBrushDebounced = debounce(this.handleBrush, 300);
+        const handleBrushDebounced = debounce(handleBrush, 300);
 
         const domain = {
             y: [convertDate(timerange[0]), convertDate(timerange[1])],
@@ -215,7 +214,14 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                     )}
                     <Popover
                         style={{ zIndex: 930 }}
-                        content={<TimelineItemEditContainer showDeleteBtn showCloseBtn />}
+                        content={
+                            <TimelineItemEditContainer
+                                selectedTimelineItem={selectedTimelineItem}
+                                setSelectedTimelineItem={setSelectedTimelineItem}
+                                showDeleteBtn
+                                showCloseBtn
+                            />
+                        }
                         visible={!!selectedTimelineItem}
                         trigger="click"
                     >
@@ -233,7 +239,7 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                                     responsive={false}
                                     zoomDimension="y"
                                     zoomDomain={{ y: visibleTimerange }}
-                                    onZoomDomainChange={debounce(this.handleZoom, 300)}
+                                    onZoomDomainChange={debounce(handleZoom, 300)}
                                 />
                             }
                         >
@@ -253,8 +259,8 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                                 data={timelineData}
                                 dataComponent={
                                     <BarWithTooltip
-                                        getTooltipLabel={this.getTooltipLabel}
-                                        onClickBarItem={this.handleSelectionChanged}
+                                        getTooltipLabel={getTooltipLabel}
+                                        onClickBarItem={handleSelectionChanged}
                                     />
                                 }
                             />
@@ -294,7 +300,5 @@ class TimelineComp extends React.PureComponent<IFullProps, IState> {
                 </BrushChart>
             </div>
         );
-    }
-}
-
-export const Timeline = TimelineComp;
+    },
+);

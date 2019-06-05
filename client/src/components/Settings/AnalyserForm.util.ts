@@ -16,15 +16,15 @@ export const findFirst = (str, findRe) => {
     return;
 };
 
-export const testAnalyserItem = (appTrackItems, analyseSetting) => {
-    if (!appTrackItems) {
-        console.error('appTrackItems not loaded');
+export const testAnalyserItem = (appItems, analyseSetting) => {
+    if (!appItems) {
+        console.error('appItems not loaded');
         return;
     }
 
     const testItems: any = [];
 
-    appTrackItems.forEach(item => {
+    appItems.forEach(item => {
         const testItem = { ...item };
         let str = testItem.title;
 

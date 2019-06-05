@@ -3,7 +3,7 @@ import { Flex, Box } from 'grid-styled';
 import { Form, Button } from 'antd';
 import { WorkForm } from './WorkForm';
 import { AppForm } from './AppForm';
-import { AnalyserFormContainer } from './AnalyserFormContainer';
+import { AnalyserForm } from './AnalyserForm';
 
 export const SettingsForm = () => {
     return (
@@ -18,7 +18,7 @@ export const SettingsForm = () => {
                         <AppForm />
                     </Box>
                     <Box p={1}>
-                        <AnalyserFormContainer />
+                        <AnalyserForm />
                     </Box>
                 </Box>
             </Flex>
