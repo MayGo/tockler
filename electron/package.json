@@ -1,6 +1,6 @@
 {
     "name": "tockler",
-    "version": "3.4.9",
+    "version": "3.4.10",
     "description": "Automatically track applications usage and working time",
     "author": "Maigo Erit <maigo.erit@gmail.com>",
     "license": "GPL-2.0",
@@ -13,6 +13,7 @@
         "tslint": "tslint --project .",
         "start": "nps",
         "test": "nps test",
+        "test:e2e": "npm run build && mkdir -p ./test-results/e2e && NO_DEV_TOOLS=true NODE_ENV=test cucumber-js --require-module @babel/register __e2e__ -r ' __e2e__/**/*.{ts,js}' --format node_modules/cucumber-pretty --format usage:./test-results/e2e/usage.txt --format json:./test-results/e2e/result.json ",
         "____pre____": "",
         "postinstall": "electron-builder install-app-deps",
         "build_mac": "build -c electron-builder.yml --mac",
@@ -22,9 +23,12 @@
         "release": "cpx \"../client/build/**/*\" dist && build -c electron-builder.yml"
     },
     "dependencies": {
+        "@babel/register": "^7.4.4",
         "active-win": "^5.0.0",
         "compare-versions": "^3.4.0",
         "cpx": "^1.5.0",
+        "cucumber": "^5.1.0",
+        "cucumber-pretty": "^1.5.0",
         "electron-context-menu": "0.12.0",
         "electron-devtools-installer": "^2.2.4",
         "electron-is-dev": "^1.1.0",
@@ -44,6 +48,7 @@
         "sequelize": "5.3.5",
         "sequelize-mock": "0.10.2",
         "sequelize-typescript": "^0.6.9",
+        "spectron": "^5.0.0",
         "sqlite3": "4.0.6"
     },
     "peerDependencies": {},
