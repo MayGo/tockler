@@ -12,9 +12,7 @@ interface IProps {
     changeVisibleTimerange: (timerange: any) => void;
 }
 
-interface IHocProps {}
-
-type IFullProps = IProps & IHocProps;
+type IFullProps = IProps;
 
 const getDayBefore = d => moment(d).subtract(1, 'days');
 const getDayAfter = d => moment(d).add(1, 'days');
@@ -22,7 +20,6 @@ const getDayAfter = d => moment(d).add(1, 'days');
 export class Search extends React.PureComponent<IFullProps, IProps> {
     constructor(props: any) {
         super(props);
-        this.onChange = this.onChange.bind(this);
     }
 
     public onChange = (dates: any) => {

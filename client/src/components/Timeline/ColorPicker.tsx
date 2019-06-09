@@ -1,7 +1,5 @@
 import * as React from 'react';
-
 import { SketchPicker } from 'react-color';
-
 import reactCSS from 'reactcss';
 
 interface IProps {

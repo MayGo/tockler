@@ -24,6 +24,7 @@
         "react-sizeme": "2.6.7",
         "react-timeago": "4.4.0",
         "react-use-form-state": "^0.10.4",
+        "reactcss": "^1.2.3",
         "styled-components": "4.3.1",
         "tslint": "5.17.0",
         "tslint-react": "^4.0.0",

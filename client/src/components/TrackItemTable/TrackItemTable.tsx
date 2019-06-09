@@ -1,5 +1,6 @@
 import { Box, Flex } from '@rebass/grid';
 import { Button, Icon, Input, Table } from 'antd';
+// tslint:disable-next-line: no-submodule-imports
 import { PaginationConfig } from 'antd/lib/table';
 import _ from 'lodash';
 import moment from 'moment';
@@ -16,7 +17,6 @@ interface IProps {
     timeItems: any;
     deleteTimelineItems: any;
 }
-interface IState {}
 
 const checkIfOneDay = visibleTimerange => visibleTimerange[0].isSame(visibleTimerange[1], 'day');
 
@@ -25,7 +25,7 @@ const paginationConf: PaginationConfig = {
     pageSizeOptions: ['50', '100', '300', '500'],
 };
 
-export class TrackItemTable extends React.PureComponent<IProps, IState> {
+export class TrackItemTable extends React.PureComponent<IProps, {}> {
     public searchInput: any;
 
     public state: any = {
@@ -145,10 +145,7 @@ export class TrackItemTable extends React.PureComponent<IProps, IState> {
         this.setState({ selectedRowKeys: [] });
     };
     public render() {
-        let { sortedInfo, filteredInfo, isOneDay, activeType } = this.state;
-
-        sortedInfo = sortedInfo || {};
-        filteredInfo = filteredInfo || {};
+        const { isOneDay, activeType, sortedInfo = {}, filteredInfo = {} } = this.state;
 
         const columns = [
             {

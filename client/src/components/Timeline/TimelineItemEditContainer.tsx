@@ -37,8 +37,6 @@ export const TimelineItemEditContainer = props => {
 
     const clearTimelineItem = () => setSelectedTimelineItem(null);
 
-    React.useEffect(() => {});
-
     const moreProps = {
         deleteTimelineItem,
         clearTimelineItem,

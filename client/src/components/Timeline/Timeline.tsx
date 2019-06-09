@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import useWindowSize from '@rehooks/window-size';
 import { Popover, Spin } from 'antd';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash';
 import moment from 'moment';
 import 'moment-duration-format';
 import {
@@ -35,11 +35,8 @@ interface IProps {
     isLoading?: boolean;
     isRowEnabled?: any;
 }
-interface IState {}
 
-interface IHocProps {}
-
-type IFullProps = IProps & IHocProps;
+type IFullProps = IProps;
 
 const getTrackItemOrder = (type: string) => {
     if (type === TrackItemType.AppTrackItem) {

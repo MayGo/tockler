@@ -15,6 +15,7 @@
         "jsx-no-multiline-js": false,
         "label-position": true,
         "max-line-length": [true, 120],
+        "object-literal-sort-keys": false,
         "member-ordering": [
             true,
             "public-before-private",

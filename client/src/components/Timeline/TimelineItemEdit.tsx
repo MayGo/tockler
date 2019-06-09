@@ -22,9 +22,7 @@ interface IState {
     colorScope: string;
 }
 
-interface IHocProps {}
-
-type IFullProps = IProps & IHocProps;
+type IFullProps = IProps;
 
 export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
     constructor(props) {

@@ -1,4 +1,6 @@
+// tslint:disable-next-line: no-implicit-dependencies no-var-requires
 const electron = require('electron');
+
 const { ipcRenderer, remote } = electron;
 
 function send(name) {

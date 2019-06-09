@@ -14,7 +14,7 @@ export const filterItems = (timeItems, visibleTimerange) =>
 export const aggregateappItems = items => {
     _.reduce(
         items,
-        function(result, value, key) {
+        result => {
             const currVal = result; // result[value.id](result[value.id] || (result[value.id] = [])).push(key);
             return currVal;
         },
