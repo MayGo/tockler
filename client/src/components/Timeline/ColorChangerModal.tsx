@@ -14,20 +14,20 @@ export class ColorChangerModal extends React.PureComponent<IProps, {}> {
         console.log('ColorChangerModal', props);
     }
 
-    changeColorHandler = color => {
+    public changeColorHandler = color => {
         console.log('Changed color:', color);
         this.setState({ color });
     };
 
-    saveItemHandler = opts => {
+    public saveItemHandler = opts => {
         this.props.selectColorOption(opts);
     };
 
-    saveOnlyThis = () => this.saveItemHandler('ONLY_THIS');
-    saveNew = () => this.saveItemHandler('NEW_ITEMS');
-    saveAll = () => this.saveItemHandler('ALL_ITEMS');
+    public saveOnlyThis = () => this.saveItemHandler('ONLY_THIS');
+    public saveNew = () => this.saveItemHandler('NEW_ITEMS');
+    public saveAll = () => this.saveItemHandler('ALL_ITEMS');
 
-    render() {
+    public render() {
         const { modalVisible }: IProps = this.props;
 
         return (

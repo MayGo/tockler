@@ -1,8 +1,8 @@
 {
-    "extends": ["tslint-react"],
+    "extends": ["tslint:latest", "tslint-react"],
     "rules": {
-        "align": [true, "parameters", "arguments", "statements"],
         "ban": false,
+        "arrow-parens": [true, "ban-single-arg-parens"],
         "class-name": true,
         "comment-format": [true, "check-space"],
         "curly": true,

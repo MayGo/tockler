@@ -1,8 +1,8 @@
+import { Box, Flex } from '@rebass/grid';
+import { Button, Input, Select, Tooltip } from 'antd';
 import * as React from 'react';
-import { Input, Button, Select, Tooltip } from 'antd';
-import { ColorPicker } from './ColorPicker';
 import { ITrackItem } from '../../@types/ITrackItem';
-import { Flex, Box } from '@rebass/grid';
+import { ColorPicker } from './ColorPicker';
 
 interface IProps {
     selectedTimelineItem: any;
@@ -35,7 +35,7 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
             colorScope: 'ONLY_THIS',
         };
     }
-    componentWillReceiveProps(nextProps: any) {
+    public componentWillReceiveProps(nextProps: any) {
         if (nextProps.selectedTimelineItem) {
             this.setState({
                 item: nextProps.selectedTimelineItem,
@@ -44,7 +44,7 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
         }
     }
 
-    changeColorHandler = color => {
+    public changeColorHandler = color => {
         console.log('Changed color:', color);
 
         this.setState(prevState => ({
@@ -56,7 +56,7 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
         }));
     };
 
-    changeAppName = e => {
+    public changeAppName = e => {
         const { value } = e.target;
         console.log('Changed app name:', value);
 
@@ -69,7 +69,7 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
         }));
     };
 
-    changeAppTitle = e => {
+    public changeAppTitle = e => {
         const { value } = e.target;
         console.log('Changed app title:', value);
 
@@ -82,33 +82,33 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
         }));
     };
 
-    closeEdit = () => {
+    public closeEdit = () => {
         console.log('Close TimelineItem');
         this.props.clearTimelineItem();
     };
 
-    changeColorScopeHandler = colorScope => {
+    public changeColorScopeHandler = colorScope => {
         console.log('Changed color scope:', colorScope);
 
         this.setState(prevState => ({
             ...prevState,
-            colorScope: colorScope,
+            colorScope,
         }));
     };
 
-    saveBasedOnColorOptionHandler = () => {
+    public saveBasedOnColorOptionHandler = () => {
         const { item, colorScope } = this.state;
 
         this.props.saveTimelineItem(item, colorScope);
     };
 
-    deleteItem = () => {
+    public deleteItem = () => {
         const { item } = this.state;
 
         this.props.deleteTimelineItem(item);
     };
 
-    render() {
+    public render() {
         const {
             selectedTimelineItem,
             colorScopeHidden,

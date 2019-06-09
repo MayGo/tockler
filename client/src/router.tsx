@@ -1,10 +1,10 @@
 import * as React from 'react';
 
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import NotFound from './routes/404';
-import { TrayAppPage } from './routes/TrayAppPage';
-import MainAppPage from './routes/MainAppPage';
 import { RootProvider } from './RootContext';
+import NotFound from './routes/404';
+import MainAppPage from './routes/MainAppPage';
+import { TrayAppPage } from './routes/TrayAppPage';
 import { TimelineProvider } from './TimelineContext';
 
 export function MainRouter() {

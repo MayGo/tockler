@@ -1,22 +1,8 @@
+import { Box, Flex } from '@rebass/grid';
+import { Button, Divider, Form, Input, Switch } from 'antd';
 import * as React from 'react';
-
-import { Flex, Box } from '@rebass/grid';
-import { Form, Switch, Button, Divider, Input, Icon } from 'antd';
-import { labelCol, wrapperCol } from './SettingsForm.styles';
-import { testAnalyserItem } from './AnalyserForm.util';
 import { useFormState } from 'react-use-form-state';
-
-interface IProps {
-    removeItem: any;
-    appItems: any;
-    analyserItem: any;
-    index: any;
-    row: any;
-}
-
-interface IState {
-    showTests: boolean;
-}
+import { testAnalyserItem } from './AnalyserForm.util';
 
 const AnalyserTestItem = ({ item }) => (
     <Box>
@@ -72,6 +58,7 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
             {showTests && (
                 <Box>
                     <Divider />
+
                     {testAnalyserItem(appItems, analyserItem).map(item => (
                         <AnalyserTestItem item={item} key={item.title} />
                     ))}

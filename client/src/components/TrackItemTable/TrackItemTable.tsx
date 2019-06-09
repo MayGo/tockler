@@ -1,15 +1,15 @@
-import * as React from 'react';
-import { Table, Input, Button, Icon } from 'antd';
-import { Flex, Box } from '@rebass/grid';
-import { FilterDropdown, Highlight, FilterInput, TotalCount } from './TrackItemTable.styles';
-import Moment from 'react-moment';
-import moment from 'moment';
-import _ from 'lodash';
-import { DATE_TIME_FORMAT, TIME_FORMAT, convertDate, INPUT_DATE_FORMAT } from '../../constants';
-import { diffAndFormatShort } from '../../utils';
-import { TrackItemType } from '../../enum/TrackItemType';
+import { Box, Flex } from '@rebass/grid';
+import { Button, Icon, Input, Table } from 'antd';
 import { PaginationConfig } from 'antd/lib/table';
+import _ from 'lodash';
+import moment from 'moment';
+import * as React from 'react';
+import Moment from 'react-moment';
+import { convertDate, DATE_TIME_FORMAT, INPUT_DATE_FORMAT, TIME_FORMAT } from '../../constants';
+import { TrackItemType } from '../../enum/TrackItemType';
+import { diffAndFormatShort } from '../../utils';
 import { filterItems } from '../Timeline/timeline.utils';
+import { FilterDropdown, FilterInput, Highlight, TotalCount } from './TrackItemTable.styles';
 
 interface IProps {
     visibleTimerange: any;
@@ -26,9 +26,9 @@ const paginationConf: PaginationConfig = {
 };
 
 export class TrackItemTable extends React.PureComponent<IProps, IState> {
-    searchInput: any;
+    public searchInput: any;
 
-    state: any = {
+    public state: any = {
         filteredInfo: null,
         sortedInfo: null,
         filterDropdownVisible: false,
@@ -39,7 +39,7 @@ export class TrackItemTable extends React.PureComponent<IProps, IState> {
         selectedRowKeys: [],
     };
 
-    handleChange = (pagination: any, filters: any, sorter: any) => {
+    public handleChange = (pagination: any, filters: any, sorter: any) => {
         console.log('Various parameters', pagination, filters, sorter);
         this.setState({
             filteredInfo: filters,
@@ -47,18 +47,18 @@ export class TrackItemTable extends React.PureComponent<IProps, IState> {
         });
     };
 
-    clearFilters = () => {
+    public clearFilters = () => {
         this.setState({ filteredInfo: null });
     };
 
-    clearAll = () => {
+    public clearAll = () => {
         this.setState({
             filteredInfo: null,
             sortedInfo: null,
         });
     };
 
-    toggleTask = () => {
+    public toggleTask = () => {
         const { timeItems, visibleTimerange } = this.props;
         const { activeType } = this.state;
 
@@ -78,11 +78,11 @@ export class TrackItemTable extends React.PureComponent<IProps, IState> {
         });
     };
 
-    onInputChange = e => {
+    public onInputChange = e => {
         this.setState({ searchText: e.target.value });
     };
 
-    calculateTotal = filteredData => {
+    public calculateTotal = filteredData => {
         const totalMs = _.sumBy(filteredData, c =>
             convertDate(c.endDate).diff(convertDate(c.beginDate)),
         );
@@ -91,7 +91,7 @@ export class TrackItemTable extends React.PureComponent<IProps, IState> {
         return <TotalCount>Total {dur.format()}</TotalCount>;
     };
 
-    componentWillReceiveProps(nextProps: any) {
+    public componentWillReceiveProps(nextProps: any) {
         const { activeType } = this.state;
         const { timeItems, logItems, visibleTimerange } = nextProps;
 
@@ -104,7 +104,7 @@ export class TrackItemTable extends React.PureComponent<IProps, IState> {
         });
     }
 
-    onSearch = () => {
+    public onSearch = () => {
         const { searchText } = this.state;
         const reg = new RegExp(searchText, 'gi');
 
@@ -135,16 +135,16 @@ export class TrackItemTable extends React.PureComponent<IProps, IState> {
                 .filter(record => !!record),
         });
     };
-    onSelectChange = selectedRowKeys => {
+    public onSelectChange = selectedRowKeys => {
         console.log('selectedRowKeys changed: ', selectedRowKeys);
         this.setState({ selectedRowKeys });
     };
-    deleteSelectedItems = () => {
+    public deleteSelectedItems = () => {
         const { selectedRowKeys } = this.state;
         this.props.deleteTimelineItems(selectedRowKeys);
         this.setState({ selectedRowKeys: [] });
     };
-    render() {
+    public render() {
         let { sortedInfo, filteredInfo, isOneDay, activeType } = this.state;
 
         sortedInfo = sortedInfo || {};

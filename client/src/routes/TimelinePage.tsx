@@ -1,12 +1,9 @@
 import * as React from 'react';
-import { Timeline } from '../components/Timeline/Timeline';
-import { Search } from '../components/Timeline/Search';
-import { TrackItemTableContainer } from '../components/TrackItemTable/TrackItemTableContainer';
 import { MainLayout } from '../components/MainLayout/MainLayout';
 import { PieCharts } from '../components/PieCharts/PieCharts';
-import moment from 'moment';
-import { TimelineRowType } from '../enum/TimelineRowType';
-import { TrackItemService } from '../services/TrackItemService';
+import { Search } from '../components/Timeline/Search';
+import { Timeline } from '../components/Timeline/Timeline';
+import { TrackItemTableContainer } from '../components/TrackItemTable/TrackItemTableContainer';
 import { TimelineContext } from '../TimelineContext';
 
 export function TimelinePage({ location }: any) {

@@ -5,7 +5,7 @@ export const groupByField = mode => item =>
     mode === 'month' ? convertDate(item.beginDate).date() : convertDate(item.beginDate).month();
 
 export const summariseLog = (items, mode) => {
-    let data = {};
+    const data = {};
 
     _(items)
         .groupBy(groupByField(mode))
@@ -17,7 +17,7 @@ export const summariseLog = (items, mode) => {
 };
 
 export const summariseOnline = (items, mode) => {
-    let data = {};
+    const data = {};
 
     _(items)
         .filter(item => item.app === 'ONLINE')

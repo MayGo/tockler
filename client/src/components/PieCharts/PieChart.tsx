@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-import { VictoryPie, VictoryContainer } from 'victory';
-import { chartTheme } from '../Timeline/ChartTheme';
 import _ from 'lodash';
 import moment from 'moment';
-import { PieLabel } from './PieLabel';
+import { VictoryContainer, VictoryPie } from 'victory';
 import { convertDate } from '../../constants';
+import { chartTheme } from '../Timeline/ChartTheme';
+import { PieLabel } from './PieLabel';
 
 const sumApp = (p, c) => {
     return _.extend(p, {
@@ -19,10 +19,10 @@ interface IProps {
     width: number;
 }
 export class PieChart extends React.PureComponent<IProps, {}> {
-    render() {
-        let { items, taskName, width } = this.props;
+    public render() {
+        const { items, taskName, width } = this.props;
 
-        let groupByField = taskName === 'LogTrackItem' ? 'title' : 'app';
+        const groupByField = taskName === 'LogTrackItem' ? 'title' : 'app';
 
         const pieData = _(items)
             .groupBy(groupByField)
@@ -54,7 +54,7 @@ export class PieChart extends React.PureComponent<IProps, {}> {
                 }}
                 labels={d => {
                     const dur = moment.duration(d.timeDiffInMs);
-                    let formattedDuration = dur.format();
+                    const formattedDuration = dur.format();
 
                     return `${d[groupByField]} [${formattedDuration}]`;
                 }}

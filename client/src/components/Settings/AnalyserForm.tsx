@@ -1,10 +1,9 @@
+import { Flex } from '@rebass/grid';
+import { Button, Card, Icon, Tooltip } from 'antd';
 import * as React from 'react';
-import { Card, Button, Icon, Tooltip } from 'antd';
 import { SettingsService } from '../../services/SettingsService';
-import { AnalyserFormItem } from './AnalyserFormItem';
-
-import { Flex, Box } from '@rebass/grid';
 import { TimelineContext } from '../../TimelineContext';
+import { AnalyserFormItem } from './AnalyserFormItem';
 
 const defaultAnalyserSettings = [
     { findRe: '\\w+-\\d+.*JIRA', takeTitle: '', takeGroup: '\\w+-\\d+', enabled: true },

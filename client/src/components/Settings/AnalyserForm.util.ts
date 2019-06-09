@@ -5,11 +5,11 @@ export const findFirst = (str, findRe) => {
         return;
     }
 
-    let re = new RegExp(findRe, 'g');
-    let result = re.exec(str);
+    const re = new RegExp(findRe, 'g');
+    const result = re.exec(str);
 
     if (result != null) {
-        let first = result[0];
+        const first = result[0];
 
         return first;
     }
@@ -26,7 +26,7 @@ export const testAnalyserItem = (appItems, analyseSetting) => {
 
     appItems.forEach(item => {
         const testItem = { ...item };
-        let str = testItem.title;
+        const str = testItem.title;
 
         testItem.findRe = findFirst(str, analyseSetting.findRe);
         testItem.takeGroup = findFirst(str, analyseSetting.takeGroup) || testItem.findRe;

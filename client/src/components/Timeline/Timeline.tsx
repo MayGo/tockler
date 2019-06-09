@@ -1,23 +1,23 @@
 import * as React from 'react';
 
 import useWindowSize from '@rehooks/window-size';
-import {
-    VictoryChart,
-    VictoryBrushContainer,
-    VictoryBar,
-    VictoryAxis,
-    VictoryZoomContainer,
-} from 'victory';
-import { Spin, Popover } from 'antd';
+import { Popover, Spin } from 'antd';
+import debounce from 'lodash/debounce';
 import moment from 'moment';
 import 'moment-duration-format';
-import debounce from 'lodash/debounce';
-import { chartTheme, blueGrey700, disabledGrey } from './ChartTheme';
-import { TrackItemType } from '../../enum/TrackItemType';
-import { MainChart, BrushChart, Spinner } from './Timeline.styles';
+import {
+    VictoryAxis,
+    VictoryBar,
+    VictoryBrushContainer,
+    VictoryChart,
+    VictoryZoomContainer,
+} from 'victory';
+import { convertDate, TIME_FORMAT } from '../../constants';
 import { TimelineRowType } from '../../enum/TimelineRowType';
-import { TIME_FORMAT, convertDate } from '../../constants';
+import { TrackItemType } from '../../enum/TrackItemType';
 import { BarWithTooltip } from './BarWithTooltip';
+import { blueGrey700, chartTheme, disabledGrey } from './ChartTheme';
+import { BrushChart, MainChart, Spinner } from './Timeline.styles';
 import { TimelineItemEditContainer } from './TimelineItemEditContainer';
 
 interface IProps {
@@ -131,7 +131,7 @@ export const Timeline = React.memo<IFullProps>(
         const getTooltipLabel = d => {
             const diff = convertDate(d.endDate).diff(convertDate(d.beginDate));
             const dur = moment.duration(diff);
-            let formattedDuration = dur.format();
+            const formattedDuration = dur.format();
             const type = d.taskName === TrackItemType.StatusTrackItem ? 'STATUS' : d.app;
             const beginTime = convertDate(d.beginDate).format(TIME_FORMAT);
             const endTime = convertDate(d.endDate).format(TIME_FORMAT);
@@ -218,8 +218,8 @@ export const Timeline = React.memo<IFullProps>(
                             <TimelineItemEditContainer
                                 selectedTimelineItem={selectedTimelineItem}
                                 setSelectedTimelineItem={setSelectedTimelineItem}
-                                showDeleteBtn
-                                showCloseBtn
+                                showDeleteBtn={true}
+                                showCloseBtn={true}
                             />
                         }
                         visible={!!selectedTimelineItem}

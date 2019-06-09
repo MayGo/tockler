@@ -1,1 +1,1 @@
-declare module "clean-webpack-plugin"
+declare module 'clean-webpack-plugin';

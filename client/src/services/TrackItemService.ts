@@ -3,16 +3,16 @@ import { ITrackItem } from '../@types/ITrackItem';
 import { TrackItemType } from '../enum/TrackItemType';
 
 const remote = (window as any).require('electron').remote;
-let ipcRenderer: any = (window as any).require('electron').ipcRenderer;
+const ipcRenderer: any = (window as any).require('electron').ipcRenderer;
 
 export class TrackItemService {
-    static service: any = remote.getGlobal('TrackItemService');
+    public static service: any = remote.getGlobal('TrackItemService');
 
     /*  findAllItems(from, to, taskName, searchStr, paging) {
           return TrackItemService.service.findAllFromDay(from, to, taskName, searchStr, paging);
       }*/
 
-    static async findAllDayItems(
+    public static async findAllDayItems(
         from: moment.Moment,
         to: moment.Moment,
         taskName: string,
@@ -27,7 +27,7 @@ export class TrackItemService {
         return JSON.parse(json);
     }
 
-    static async findAllItems(from: moment.Moment, to: moment.Moment) {
+    public static async findAllItems(from: moment.Moment, to: moment.Moment) {
         const appItems: ITrackItem[] = await TrackItemService.findAllDayItems(
             from,
             to,
@@ -48,25 +48,25 @@ export class TrackItemService {
         return { appItems, statusItems, logItems };
     }
 
-    static async findAllFromDay(from: moment.Moment, type: string): Promise<any> {
+    public static async findAllFromDay(from: moment.Moment, type: string): Promise<any> {
         console.log('findAllFromDay', from, type);
         const json = await TrackItemService.service.findAllFromDay(from.toDate(), type);
 
         return JSON.parse(json);
     }
 
-    static findFirstLogItems(): Promise<any> {
+    public static findFirstLogItems(): Promise<any> {
         return TrackItemService.service.findFirstLogItems();
     }
 
-    static createItem(trackItem: ITrackItem): Promise<any> {
+    public static createItem(trackItem: ITrackItem): Promise<any> {
         return TrackItemService.service.createTrackItem(trackItem);
     }
 
-    static updateItem(trackItem: ITrackItem): Promise<any> {
+    public static updateItem(trackItem: ITrackItem): Promise<any> {
         return TrackItemService.service.updateItem(trackItem, trackItem.id);
     }
-    static async saveTrackItem(trackItem): Promise<any> {
+    public static async saveTrackItem(trackItem): Promise<any> {
         console.debug('Saving trackitem.', trackItem);
         if (!trackItem.taskName) {
             trackItem.taskName = 'LogTrackItem';
@@ -89,21 +89,21 @@ export class TrackItemService {
             return item;
         }
     }
-    static updateTrackItem(trackItem) {
+    public static updateTrackItem(trackItem) {
         TrackItemService.updateItem(trackItem);
     }
 
-    static deleteById(trackItemId: number) {
+    public static deleteById(trackItemId: number) {
         return TrackItemService.service.deleteById(trackItemId);
     }
-    static deleteByIds(trackItemIds: number) {
+    public static deleteByIds(trackItemIds: number) {
         return TrackItemService.service.deleteByIds(trackItemIds);
     }
 
-    static startNewLogItem(oldItem: any) {
+    public static startNewLogItem(oldItem: any) {
         console.log('startNewLogItem');
 
-        let newItem: any = {};
+        const newItem: any = {};
         newItem.app = oldItem.app || 'WORK';
         newItem.taskName = 'LogTrackItem';
         newItem.color = oldItem.color;
@@ -116,12 +116,12 @@ export class TrackItemService {
         ipcRenderer.send('start-new-log-item', newItem);
     }
 
-    static stopRunningLogItem(runningLogItemId: number) {
+    public static stopRunningLogItem(runningLogItemId: number) {
         console.log('stopRunningLogItem', runningLogItemId);
         ipcRenderer.send('end-running-log-item');
     }
 
-    static updateColorForApp(appName: string, color: string) {
+    public static updateColorForApp(appName: string, color: string) {
         return TrackItemService.service.updateColorForApp(appName, color);
     }
 }

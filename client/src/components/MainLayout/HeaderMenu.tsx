@@ -1,9 +1,9 @@
+import { Icon, Menu } from 'antd';
 import * as React from 'react';
-import { Menu, Icon } from 'antd';
 import { Link } from 'react-router-dom';
-import { Brand, Img } from './HeaderMenu.styles';
 import styled from 'styled-components';
 import tocklerIcon from '../../assets/icons/tockler_icon.png';
+import { Brand, Img } from './HeaderMenu.styles';
 
 const GrayMenu = styled(Menu)``;
 

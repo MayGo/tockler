@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { TimelineItemEdit } from './TimelineItemEdit';
-import { TrackItemService } from '../../services/TrackItemService';
 import { AppSettingService } from '../../services/AppSettingService';
+import { TrackItemService } from '../../services/TrackItemService';
+import { TimelineItemEdit } from './TimelineItemEdit';
 
 export const TimelineItemEditContainer = props => {
     const { setSelectedTimelineItem } = props;

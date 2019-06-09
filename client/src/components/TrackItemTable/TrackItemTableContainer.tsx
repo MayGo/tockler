@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { TrackItemTable } from './TrackItemTable';
 import { TrackItemService } from '../../services/TrackItemService';
+import { TrackItemTable } from './TrackItemTable';
 
 export const TrackItemTableContainer = props => {
     const deleteTimelineItems = ids => {

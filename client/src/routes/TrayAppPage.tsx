@@ -1,12 +1,12 @@
-import * as React from 'react';
 import { Box } from '@rebass/grid';
+import * as React from 'react';
 
-import { TrayLayout } from '../components/TrayLayout/TrayLayout';
-import { SettingsService } from '../services/SettingsService';
-import { EventEmitter } from '../services/EventEmitter';
-import { TrackItemService } from '../services/TrackItemService';
-import { TrayList } from '../components/TrayList/TrayList';
 import { TimelineItemEdit } from '../components/Timeline/TimelineItemEdit';
+import { TrayLayout } from '../components/TrayLayout/TrayLayout';
+import { TrayList } from '../components/TrayList/TrayList';
+import { EventEmitter } from '../services/EventEmitter';
+import { SettingsService } from '../services/SettingsService';
+import { TrackItemService } from '../services/TrackItemService';
 
 const EMPTY_SELECTED_ITEM = {};
 
@@ -64,8 +64,8 @@ export function TrayAppPage({ location }: any) {
                 <Box pt={2}>
                     <TimelineItemEdit
                         selectedTimelineItem={EMPTY_SELECTED_ITEM}
-                        colorScopeHidden
-                        showPlayIcon
+                        colorScopeHidden={true}
+                        showPlayIcon={true}
                         saveTimelineItem={startNewLogItem}
                     />
                 </Box>

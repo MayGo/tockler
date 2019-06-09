@@ -1,6 +1,6 @@
-import { convertDate } from '../../constants';
 import * as _ from 'lodash';
 import moment from 'moment';
+import { convertDate } from '../../constants';
 
 export const filterItems = (timeItems, visibleTimerange) =>
     timeItems.filter(item => {
@@ -15,7 +15,7 @@ export const aggregateappItems = items => {
     _.reduce(
         items,
         function(result, value, key) {
-            let currVal = result; // result[value.id](result[value.id] || (result[value.id] = [])).push(key);
+            const currVal = result; // result[value.id](result[value.id] || (result[value.id] = [])).push(key);
             return currVal;
         },
         {},

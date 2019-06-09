@@ -5,16 +5,16 @@ const remote = (window as any).require('electron').remote;
 const config = new Config();
 
 export class SettingsService {
-    static service: any = remote.getGlobal('SettingsService');
+    public static service: any = remote.getGlobal('SettingsService');
 
-    static getOpenAtLogin() {
-        return <boolean>config.get('openAtLogin');
+    public static getOpenAtLogin() {
+        return config.get('openAtLogin') as boolean;
     }
-    static getIsAutoUpdateEnabled() {
-        return <boolean>config.get('isAutoUpdateEnabled');
+    public static getIsAutoUpdateEnabled() {
+        return config.get('isAutoUpdateEnabled') as boolean;
     }
 
-    static saveOpenAtLogin(openAtLogin) {
+    public static saveOpenAtLogin(openAtLogin) {
         if (openAtLogin !== config.get('openAtLogin')) {
             console.log('Setting openAtLogin', openAtLogin);
             config.set('openAtLogin', openAtLogin);
@@ -23,31 +23,31 @@ export class SettingsService {
         }
     }
 
-    static saveIsAutoUpdateEnabled(isAutoUpdateEnabled) {
+    public static saveIsAutoUpdateEnabled(isAutoUpdateEnabled) {
         if (isAutoUpdateEnabled !== config.get('isAutoUpdateEnabled')) {
             console.log('Setting isAutoUpdateEnabled', isAutoUpdateEnabled);
             config.set('isAutoUpdateEnabled', isAutoUpdateEnabled);
         }
     }
 
-    static async updateByName(name, jsonData) {
+    public static async updateByName(name, jsonData) {
         console.info('updateByName', JSON.stringify(jsonData));
-        return await SettingsService.service.updateByName(name, JSON.stringify(jsonData));
+        return SettingsService.service.updateByName(name, JSON.stringify(jsonData));
     }
 
-    static async getRunningLogItem() {
+    public static async getRunningLogItem() {
         const runningLogItem = await SettingsService.service.getRunningLogItemAsJson();
         return runningLogItem;
     }
 
-    static fetchWorkSettings() {
+    public static fetchWorkSettings() {
         return SettingsService.service.fetchWorkSettings();
     }
 
-    static saveAnalyserSettings(data) {
+    public static saveAnalyserSettings(data) {
         SettingsService.updateByName('ANALYSER_SETTINGS', data);
     }
-    static async fetchAnalyserSettings() {
+    public static async fetchAnalyserSettings() {
         const jsonStr = await SettingsService.service.fetchAnalyserSettingsJsonString();
         console.log('fetchAnalyserSettings', jsonStr);
         return JSON.parse(jsonStr);

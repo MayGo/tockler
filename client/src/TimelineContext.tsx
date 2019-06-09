@@ -1,9 +1,9 @@
-import * as React from 'react';
 import moment from 'moment';
-import { TrackItemService } from './services/TrackItemService';
-import { setDayFromTimerange, getTodayTimerange } from './components/Timeline/timeline.utils';
-import { useWindowFocused } from './hooks/windowFocusedHook';
+import * as React from 'react';
+import { getTodayTimerange, setDayFromTimerange } from './components/Timeline/timeline.utils';
 import { useInterval } from './hooks/intervalHook';
+import { useWindowFocused } from './hooks/windowFocusedHook';
+import { TrackItemService } from './services/TrackItemService';
 import { addToTimelineItems } from './timeline.util';
 
 export const TimelineContext = React.createContext<any>({});

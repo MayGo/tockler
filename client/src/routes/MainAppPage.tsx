@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Router, Route, Switch } from 'react-router-dom';
-import { TimelinePage } from './TimelinePage';
+import { Route, Router, Switch } from 'react-router-dom';
 import { SettingsPage } from './SettingsPage';
 import { SummaryPage } from './SummaryPage';
+import { TimelinePage } from './TimelinePage';
 import { TrayAppPage } from './TrayAppPage';
 
 export default function MainRouterConfig({ history }: any) {
