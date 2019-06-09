@@ -2,13 +2,15 @@ import { app } from 'electron';
 import * as path from 'path';
 
 const Config = require('electron-store');
+const OS = require('os');
 const isDevelopment = require('electron-is-dev');
 
 let root = path.join(__dirname, '..');
 let client = isDevelopment ? path.join(root, '..', 'client', 'build') : path.join(root, 'dist');
-let userDir = app.getPath('userData');
-// Set manually for debugging
-// let userDir = '/Users/merit/Library/Application Support/Tockler';
+// Load real data even when in development
+let userDir = isDevelopment
+    ? `/Users/${OS.userInfo().username}/Library/Application Support/Tockler`
+    : app.getPath('userData');
 
 // console.log('User dir is:' + userDir);
 
