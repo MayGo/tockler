@@ -2,8 +2,8 @@ import moment from 'moment';
 import { ITrackItem } from '../@types/ITrackItem';
 import { TrackItemType } from '../enum/TrackItemType';
 
-const remote = (<any>window).require('electron').remote;
-let ipcRenderer: any = (<any>window).require('electron').ipcRenderer;
+const remote = (window as any).require('electron').remote;
+let ipcRenderer: any = (window as any).require('electron').ipcRenderer;
 
 export class TrackItemService {
     static service: any = remote.getGlobal('TrackItemService');

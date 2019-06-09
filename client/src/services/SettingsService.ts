@@ -1,7 +1,7 @@
 import Config from 'electron-store';
 import { EventEmitter } from './EventEmitter';
 
-const remote = (<any>window).require('electron').remote;
+const remote = (window as any).require('electron').remote;
 const config = new Config();
 
 export class SettingsService {

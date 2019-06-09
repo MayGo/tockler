@@ -12,7 +12,7 @@ import useReactRouter from 'use-react-router';
 export const SummaryCalendar = () => {
     const { setTimerange } = React.useContext(TimelineContext);
 
-    const { history, location, match } = useReactRouter();
+    const { history } = useReactRouter();
 
     const onDateSelect = (selectedDate: Moment | undefined) => {
         const pathname = '/app/timeline';

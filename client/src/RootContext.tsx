@@ -12,7 +12,7 @@ const defaultWorkSettings = {
 export const RootContext = React.createContext<any>({});
 
 export const RootProvider = ({ children }) => {
-    const { history, location, match } = useReactRouter();
+    const { history } = useReactRouter();
 
     const prevWorkSettings = JSON.parse((window as any).localStorage.getItem('workSettings')) || {
         defaultWorkSettings,
@@ -35,7 +35,7 @@ export const RootProvider = ({ children }) => {
             console.info('Clearing eventEmitter');
             EventEmitter.off('side:preferences', gotoSettingsPage);
         };
-    }, []);
+    }, [gotoSettingsPage]);
 
     const defaultContext = {
         workSettings,
