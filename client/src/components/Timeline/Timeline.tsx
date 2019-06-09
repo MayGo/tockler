@@ -32,7 +32,7 @@ interface IProps {
     toggleRow?: any;
 
     chartWidth?: number;
-    loading?: boolean;
+    isLoading?: boolean;
     isRowEnabled?: any;
 }
 interface IState {}
@@ -91,7 +91,7 @@ const rowEnabledDefaults = {
 };
 
 export const Timeline = React.memo<IFullProps>(
-    ({ timerange, visibleTimerange, setVisibleTimerange, loading, timeItems }) => {
+    ({ timerange, visibleTimerange, setVisibleTimerange, isLoading, timeItems }) => {
         const [selectedTimelineItem, setSelectedTimelineItem] = React.useState<any>();
         const [isRowEnabled, setIsRowEnabled] = React.useState<any>(rowEnabledDefaults);
 
@@ -207,7 +207,7 @@ export const Timeline = React.memo<IFullProps>(
         return (
             <div>
                 <MainChart>
-                    {loading && (
+                    {isLoading && (
                         <Spinner>
                             <Spin />
                         </Spinner>

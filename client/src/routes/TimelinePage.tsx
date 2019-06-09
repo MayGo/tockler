@@ -16,6 +16,7 @@ export function TimelinePage({ location }: any) {
         setVisibleTimerange,
         timeItems,
         loadTimerange,
+        isLoading,
     } = React.useContext(TimelineContext);
 
     const timelineProps = {
@@ -23,6 +24,7 @@ export function TimelinePage({ location }: any) {
         visibleTimerange,
         setVisibleTimerange,
         timeItems,
+        isLoading,
     };
     return (
         <MainLayout location={location}>

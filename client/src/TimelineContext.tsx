@@ -15,6 +15,7 @@ const emptyTimeItems = {
 };
 
 export const TimelineProvider = ({ children }) => {
+    const [isLoading, setIsLoading] = React.useState<any>(true);
     const [timerange, setTimerange] = React.useState<any>(getTodayTimerange());
     const [lastRequestTime, setLastRequestTime] = React.useState<any>(moment());
     const [visibleTimerange, setVisibleTimerange] = React.useState<any>([
@@ -27,7 +28,7 @@ export const TimelineProvider = ({ children }) => {
 
     const loadTimerange = async timerange => {
         console.info('Loading timerange:', JSON.stringify(timerange));
-
+        setIsLoading(true);
         const { appItems, statusItems, logItems } = await TrackItemService.findAllItems(
             timerange[0],
             timerange[1],
@@ -36,6 +37,7 @@ export const TimelineProvider = ({ children }) => {
         setTimeItems({ appItems, statusItems, logItems });
         setTimerange(timerange);
         setVisibleTimerange(setDayFromTimerange(visibleTimerange, timerange));
+        setIsLoading(false);
     };
 
     const defaultContext = {
@@ -46,6 +48,7 @@ export const TimelineProvider = ({ children }) => {
         loadTimerange,
         visibleTimerange,
         setVisibleTimerange,
+        isLoading,
     };
 
     React.useEffect(() => {
