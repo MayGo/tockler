@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Layout } from 'antd';
-const { Footer, Content } = Layout;
 import { HeaderMenu } from './HeaderMenu';
+
+const { Footer, Content } = Layout;
 
 export function MainLayout({ children, location }: any) {
     return (

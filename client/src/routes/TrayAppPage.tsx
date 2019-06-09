@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box } from 'grid-styled';
+import { Box } from '@rebass/grid';
 
 import { TrayLayout } from '../components/TrayLayout/TrayLayout';
 import { SettingsService } from '../services/SettingsService';

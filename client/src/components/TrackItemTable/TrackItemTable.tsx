@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Table, Input, Button, Icon } from 'antd';
-import { Flex, Box } from 'grid-styled';
+import { Flex, Box } from '@rebass/grid';
 import { FilterDropdown, Highlight, FilterInput, TotalCount } from './TrackItemTable.styles';
 import Moment from 'react-moment';
 import moment from 'moment';

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Box } from 'grid-styled';
+import { Box } from '@rebass/grid';
 
 export const MainChart = styled(Box).attrs({ mb: 2, py: 2 })`
     border-top: 1px solid white;

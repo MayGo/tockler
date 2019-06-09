@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Input, Button, Select, Tooltip } from 'antd';
 import { ColorPicker } from './ColorPicker';
 import { ITrackItem } from '../../@types/ITrackItem';
-import { Flex, Box } from 'grid-styled';
+import { Flex, Box } from '@rebass/grid';
 
 interface IProps {
     selectedTimelineItem: any;

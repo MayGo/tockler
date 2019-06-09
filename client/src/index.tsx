@@ -5,8 +5,9 @@ import 'typeface-berkshire-swash';
 import { MainRouter } from './router';
 
 if (process.env.NODE_ENV !== 'production') {
+    /*  
     const { whyDidYouUpdate } = require('why-did-you-update');
-    /*  whyDidYouUpdate(React, {
+    whyDidYouUpdate(React, {
         groupByComponent: true,
         collapseComponentGroups: true,
     });*/

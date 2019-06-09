@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Icon } from 'antd';
-import { Flex, Box } from 'grid-styled';
+import { Flex, Box } from '@rebass/grid';
 import styled from 'styled-components';
 import moment from 'moment';
 import Moment from 'react-moment';

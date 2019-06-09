@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Flex, Box } from 'grid-styled';
+import { Flex, Box } from '@rebass/grid';
 import { Form, Switch, Button, Divider, Input, Icon } from 'antd';
 import { labelCol, wrapperCol } from './SettingsForm.styles';
 import { testAnalyserItem } from './AnalyserForm.util';

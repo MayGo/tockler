@@ -3,10 +3,9 @@ import { Menu, Icon } from 'antd';
 import { Link } from 'react-router-dom';
 import { Brand, Img } from './HeaderMenu.styles';
 import styled from 'styled-components';
+import tocklerIcon from '../../assets/icons/tockler_icon.png';
 
 const GrayMenu = styled(Menu)``;
-
-const tocklerIcon = require('../../assets/icons/tockler_icon.png');
 
 export const HeaderMenu = ({ location }: any) => (
     <GrayMenu selectedKeys={[location.pathname]} mode="horizontal">

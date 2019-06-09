@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Flex, Box } from 'grid-styled';
+import { Flex, Box } from '@rebass/grid';
 import { PieChart } from './PieChart';
 import { Heading } from './PieCharts.styles';
 import { WorkProgressChart } from './WorkProgressChart';
