@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DatePicker, Button, Icon } from 'antd';
 import moment from 'moment';
-import { Flex, Box } from 'grid-styled';
+import { Flex, Box } from '@rebass/grid';
 import { getTodayTimerange } from './timeline.utils';
 
 const { RangePicker } = DatePicker;

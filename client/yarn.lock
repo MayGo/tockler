@@ -1162,6 +1162,13 @@
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
   integrity sha512-shAmDyaQC4H92APFoIaVDHCx5bStIocgvbwQyxPRrbUY20V1EYTbSDchWbuwlMG3V17cprZhA6+78JfB+3DTPw==
 
+"@rebass/grid@6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@rebass/grid/-/grid-6.0.0.tgz#79ad5ae7951bba41a62db5caf1ee2006a201b3b1"
+  integrity sha512-2pbkfObgbfbPUL+spk5JaYt+L4zXAayBLfdDuqnDUxBcBRe2SMqDBTOkEcq1tQvsuhmtfkZ9rB51FyjBkO92vw==
+  dependencies:
+    styled-system "^4.0.6"
+
 "@rehooks/window-size@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@rehooks/window-size/-/window-size-1.0.2.tgz#24583dda021969e7b7166b923b055a47cca4e4b5"
@@ -5193,13 +5200,6 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6
   version "4.1.15"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.15.tgz#ffb703e1066e8a0eeaa4c8b80ba9253eeefbfb00"
   integrity sha512-6uHUhOPEBgQ24HM+r6b/QwWfZq+yiFcipKFrOFiBEnWdy5sdzYoi+pJeQaPI5qOLRFqWmAXUPQNsielzdLoecA==
-
-grid-styled@5.0.2:
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/grid-styled/-/grid-styled-5.0.2.tgz#1e81d7d5bde50a9b43d81cf111b81399126fe595"
-  integrity sha512-kM3kewM77sBifQLZUZD9meoMSXOZE9ArxxM9XZ6qtwb4B2ylHYHH9Ylkt96hDMHA32J+LoEeYoHAvn6+j4fn9Q==
-  dependencies:
-    system-components "^3.0.0"
 
 growly@^1.3.0:
   version "1.3.0"
@@ -9535,7 +9535,7 @@ promzard@^0.3.0:
   dependencies:
     read "1"
 
-prop-types@15.x, prop-types@^15.5.0, prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.5.9, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2:
+prop-types@15.x, prop-types@^15.5.0, prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.5.9, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -11755,13 +11755,13 @@ styled-components@4.3.1:
     stylis-rule-sheet "^0.0.10"
     supports-color "^5.5.0"
 
-styled-system@^3.2.1:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/styled-system/-/styled-system-3.2.1.tgz#491e1e6f88d7ee021f6f49376f12852cde8007cb"
-  integrity sha512-ag0Yp7UeVHHc3t+1uM3jvlljaZYzwqpbJ8hMrFvpaKfUd8xsB9JeQXLwMpEsz8iLx8Lz/+9j0coWFZjmw8MogQ==
+styled-system@^4.0.6:
+  version "4.2.4"
+  resolved "https://registry.yarnpkg.com/styled-system/-/styled-system-4.2.4.tgz#8909f91396c30b92295b4eddec5f7b89f8c8d767"
+  integrity sha512-44X7n09gDvwx7yjquEXsjiNALK0dxGgAJdpO5cb/PdL+D4mhSLKWig4/EhH4vHJLbwu/kumURHyvKxygaBfg0A==
   dependencies:
-    "@babel/runtime" "^7.1.2"
-    prop-types "^15.6.2"
+    "@babel/runtime" "^7.4.2"
+    prop-types "^15.7.2"
 
 stylehacks@^4.0.0:
   version "4.0.3"
@@ -11825,13 +11825,6 @@ symbol-tree@^3.2.2:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.2.tgz#ae27db38f660a7ae2e1c3b7d1bc290819b8519e6"
   integrity sha1-rifbOPZgp64uHDt9G8KQgZuFGeY=
-
-system-components@^3.0.0:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/system-components/-/system-components-3.0.3.tgz#068449867de23b5365d88f9fb21a9460039a25bf"
-  integrity sha512-AqxDTwE+nizKW5aiNz4CdvMK9SDY681p2JIQM10jppCF/j6OWFc5fRvloWZyD7k+BSmDHH/sDsdCO6+f3s7FtQ==
-  dependencies:
-    styled-system "^3.2.1"
 
 table@^5.2.3:
   version "5.4.0"

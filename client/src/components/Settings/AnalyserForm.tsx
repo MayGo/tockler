@@ -3,7 +3,7 @@ import { Card, Button, Icon, Tooltip } from 'antd';
 import { SettingsService } from '../../services/SettingsService';
 import { AnalyserFormItem } from './AnalyserFormItem';
 
-import { Flex, Box } from 'grid-styled';
+import { Flex, Box } from '@rebass/grid';
 import { TimelineContext } from '../../TimelineContext';
 
 const defaultAnalyserSettings = [

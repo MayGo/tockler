@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Calendar, Badge, Spin } from 'antd';
-import { Flex } from 'grid-styled';
+import { Flex } from '@rebass/grid';
 import { TaskList, Item } from './SummaryCalendar.styles';
 import moment, { Moment } from 'moment';
 import { Spinner } from '../Timeline/Timeline.styles';

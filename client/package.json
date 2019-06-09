@@ -8,7 +8,7 @@
         "cross-env": "5.2.0",
         "customize-cra": "^0.2.13",
         "electron-store": "3.2.0",
-        "grid-styled": "5.0.2",
+        "@rebass/grid": "6.0.0",
         "lodash": "4.17.11",
         "moment-duration-format": "2.3.2",
         "react": "16.8.6",

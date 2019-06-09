@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Flex, Box } from 'grid-styled';
+import { Flex, Box } from '@rebass/grid';
 import { Form, Button } from 'antd';
 import { WorkForm } from './WorkForm';
 import { AppForm } from './AppForm';
