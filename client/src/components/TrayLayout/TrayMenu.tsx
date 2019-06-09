@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { Menu, Icon } from 'antd';
-
 import { Brand, Img, RightMenuItem } from './TrayMenu.styles';
 import { EventEmitter } from '../../services/EventEmitter';
-
-const tocklerIcon = require('../../assets/icons/tockler_icon.png');
+import tocklerIcon from '../../assets/icons/tockler_icon.png';
 
 export const TrayMenu = ({ dispatch }: any) => {
     const exitApp = () => {

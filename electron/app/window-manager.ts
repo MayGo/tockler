@@ -1,4 +1,4 @@
-import * as menubar from 'menubar';
+import { menubar } from 'menubar';
 import MenuBuilder from './menu-builder';
 import { throttle } from 'lodash';
 import { app, ipcMain, BrowserWindow, globalShortcut } from 'electron';
@@ -25,9 +25,11 @@ export default class WindowManager {
         this.mainWindow = new BrowserWindow({
             width: windowSize.width,
             height: windowSize.height,
+
             show: false,
             webPreferences: {
                 zoomFactor: 1.0,
+                nodeIntegration: true,
             },
             title: 'Tockler',
             icon: config.iconBig,
@@ -142,16 +144,23 @@ export default class WindowManager {
          */
         let icon = os.platform() === 'darwin' ? config.icon : config.iconBig;
         const url = config.isDev
-            ? 'http://localhost:3000/#/trayApp'
-            : 'file://' + config.client + '/index.html?/#/trayApp';
+            ? 'http://localhost:3000/trayApp'
+            : 'file://' + config.client + '/index.html?/trayApp';
 
         this.menubar = menubar({
             index: url,
             icon: icon,
             preloadWindow: false,
             showDockIcon: false,
-            width: 500,
-            height: 600,
+
+            browserWindow: {
+                webPreferences: {
+                    zoomFactor: 1.0,
+                    nodeIntegration: true,
+                },
+                width: 500,
+                height: 600,
+            },
         });
 
         // this.menubar.on('after-create-window', () => {});
@@ -161,7 +170,7 @@ export default class WindowManager {
 
             if (config.isDev) {
                 logger.info('Open menubar dev tools');
-                this.menubar.window.openDevTools();
+                this.menubar.window.openDevTools({ mode: 'bottom' });
             }
         });
     }

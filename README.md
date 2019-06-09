@@ -109,3 +109,9 @@ GNU General Public License v2.0
 
 -   On app launch only tray window runs. Main window does not open.
 -   Main window opens from tray windows arrow or by reopening application.
+
+# Errors
+
+## while installing electron deps: electron-builder Error: Unresolved node modules: ref
+
+Quick fix: ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true yarn
