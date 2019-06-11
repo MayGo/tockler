@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import useReactRouter from 'use-react-router';
 import { EventEmitter } from './services/EventEmitter';
+import { Logger } from './logger';
 
 const defaultWorkSettings = {
     workDayStartTime: '08:30', // not used
@@ -18,10 +19,10 @@ export const RootProvider = ({ children }) => {
         defaultWorkSettings,
     };
 
-    const gotoSettingsPage = () => {
-        console.log('Navigating to settings page');
+    const gotoSettingsPage = React.useCallback(() => {
+        Logger.debug('Navigating to settings page');
         history.push('/app/settings');
-    };
+    }, [history]);
 
     const [workSettings, setWorkSettings] = useState(prevWorkSettings);
 
@@ -32,7 +33,7 @@ export const RootProvider = ({ children }) => {
     useEffect(() => {
         EventEmitter.on('side:preferences', gotoSettingsPage);
         return () => {
-            console.info('Clearing eventEmitter');
+            Logger.info('Clearing eventEmitter');
             EventEmitter.off('side:preferences', gotoSettingsPage);
         };
     }, [gotoSettingsPage]);

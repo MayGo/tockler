@@ -3,6 +3,7 @@ import { Button, Input, Select, Tooltip } from 'antd';
 import * as React from 'react';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { ColorPicker } from './ColorPicker';
+import { Logger } from '../../logger';
 
 interface IProps {
     selectedTimelineItem: any;
@@ -33,6 +34,7 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
             colorScope: 'ONLY_THIS',
         };
     }
+
     public componentWillReceiveProps(nextProps: any) {
         if (nextProps.selectedTimelineItem) {
             this.setState({
@@ -43,7 +45,7 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
     }
 
     public changeColorHandler = color => {
-        console.log('Changed color:', color);
+        Logger.debug('Changed color:', color);
 
         this.setState(prevState => ({
             ...prevState,
@@ -56,7 +58,7 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
 
     public changeAppName = e => {
         const { value } = e.target;
-        console.log('Changed app name:', value);
+        Logger.debug('Changed app name:', value);
 
         this.setState(prevState => ({
             ...prevState,
@@ -69,7 +71,7 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
 
     public changeAppTitle = e => {
         const { value } = e.target;
-        console.log('Changed app title:', value);
+        Logger.debug('Changed app title:', value);
 
         this.setState(prevState => ({
             ...prevState,
@@ -81,12 +83,12 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
     };
 
     public closeEdit = () => {
-        console.log('Close TimelineItem');
+        Logger.debug('Close TimelineItem');
         this.props.clearTimelineItem();
     };
 
     public changeColorScopeHandler = colorScope => {
-        console.log('Changed color scope:', colorScope);
+        Logger.debug('Changed color scope:', colorScope);
 
         this.setState(prevState => ({
             ...prevState,
@@ -118,12 +120,12 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
         const trackItem = this.state.item;
 
         if (!selectedTimelineItem) {
-            console.log('No item');
+            Logger.debug('No item');
             return null;
         }
 
         const saveBtnIcon = showPlayIcon ? 'play-circle-o' : 'save';
-        console.log('Have selectedTimelineItem', selectedTimelineItem);
+        Logger.debug('Have selectedTimelineItem', selectedTimelineItem);
 
         return (
             <Flex p={1} w={1}>

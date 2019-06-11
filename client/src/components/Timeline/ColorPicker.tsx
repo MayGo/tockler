@@ -19,6 +19,7 @@ export class ColorPicker extends React.PureComponent<IProps, IState> {
             color: props.color || '#000000',
         };
     }
+
     public componentWillReceiveProps(nextProps: any) {
         if (nextProps.color) {
             this.setState({

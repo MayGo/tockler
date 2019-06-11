@@ -1,4 +1,4 @@
-import { Button, Icon, Menu } from 'antd';
+import { Icon, Menu } from 'antd';
 import * as React from 'react';
 import tocklerIcon from '../../assets/icons/tockler_icon.png';
 import { EventEmitter } from '../../services/EventEmitter';

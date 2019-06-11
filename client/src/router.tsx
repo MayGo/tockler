@@ -13,7 +13,7 @@ export function MainRouter() {
             <RootProvider>
                 <TimelineProvider>
                     <Switch>
-                        <Route path="/" exact={true} component={MainAppPage} />
+                        <Route path="/" exact component={MainAppPage} />
                         <Route path="/app" component={MainAppPage} />
                         <Route path="/trayApp" component={TrayAppPage} />
                         <Route path="*" component={NotFound} />

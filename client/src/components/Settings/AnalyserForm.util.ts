@@ -1,6 +1,7 @@
 import _ from 'lodash';
+import { Logger } from '../../logger';
 
-export const findFirst = (str, findRe) => {
+export const findFirst = (str, findRe): any => {
     if (!findRe) {
         return;
     }
@@ -18,7 +19,7 @@ export const findFirst = (str, findRe) => {
 
 export const testAnalyserItem = (appItems, analyseSetting) => {
     if (!appItems) {
-        console.error('appItems not loaded');
+        Logger.error('appItems not loaded');
         return;
     }
 

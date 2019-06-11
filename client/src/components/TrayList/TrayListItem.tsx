@@ -63,12 +63,12 @@ export function TrayListItem({ item, startNewLogItemFromOld, stopRunningLogItem,
                                 {'  '}
                                 <b>
                                     {!isRunning && (
-                                        <Moment from={item.beginDate} ago={true}>
+                                        <Moment from={item.beginDate} ago>
                                             {item.endDate}
                                         </Moment>
                                     )}
                                     {isRunning && (
-                                        <Moment fromNow={true} ago={true}>
+                                        <Moment fromNow ago>
                                             {item.beginDate}
                                         </Moment>
                                     )}

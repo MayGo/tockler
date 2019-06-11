@@ -7,6 +7,7 @@ import { TrayList } from '../components/TrayList/TrayList';
 import { EventEmitter } from '../services/EventEmitter';
 import { SettingsService } from '../services/SettingsService';
 import { TrackItemService } from '../services/TrackItemService';
+import { Logger } from '../logger';
 
 const EMPTY_SELECTED_ITEM = {};
 
@@ -25,7 +26,7 @@ export function TrayAppPage({ location }: any) {
 
     React.useEffect(() => {
         const eventLogItemStarted = (_, logItem) => {
-            console.log('log-item-started:', JSON.parse(logItem));
+            Logger.debug('log-item-started:', JSON.parse(logItem));
             setRunningLogItem(JSON.parse(logItem));
             loadLastLogItems();
         };
@@ -54,7 +55,7 @@ export function TrayAppPage({ location }: any) {
             loadLastLogItems();
             setRunningLogItem(null);
         } else {
-            console.error('No running log item to stop');
+            Logger.error('No running log item to stop');
         }
     };
 
@@ -64,8 +65,8 @@ export function TrayAppPage({ location }: any) {
                 <Box pt={2}>
                     <TimelineItemEdit
                         selectedTimelineItem={EMPTY_SELECTED_ITEM}
-                        colorScopeHidden={true}
-                        showPlayIcon={true}
+                        colorScopeHidden
+                        showPlayIcon
                         saveTimelineItem={startNewLogItem}
                     />
                 </Box>

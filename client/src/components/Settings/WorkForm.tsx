@@ -6,8 +6,8 @@ import { RootContext } from '../../RootContext';
 export const WorkForm = () => {
     const { workSettings, setWorkSettings } = React.useContext(RootContext);
     // tslint:disable-next-line: variable-name
-    const [_, { number }] = useFormState(workSettings, {
-        onChange: (_, __, nextStateValues) => {
+    const [_ignore, { number }] = useFormState(workSettings, {
+        onChange: (__ignore, ___ignore, nextStateValues) => {
             setWorkSettings(nextStateValues);
         },
     });

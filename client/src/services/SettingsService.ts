@@ -1,7 +1,8 @@
 import Config from 'electron-store';
 import { EventEmitter } from './EventEmitter';
+import { Logger } from '../logger';
 
-const remote = (window as any).require('electron').remote;
+const { remote } = (window as any).require('electron');
 const config = new Config();
 
 export class SettingsService {
@@ -10,13 +11,14 @@ export class SettingsService {
     public static getOpenAtLogin() {
         return config.get('openAtLogin') as boolean;
     }
+
     public static getIsAutoUpdateEnabled() {
         return config.get('isAutoUpdateEnabled') as boolean;
     }
 
     public static saveOpenAtLogin(openAtLogin) {
         if (openAtLogin !== config.get('openAtLogin')) {
-            console.log('Setting openAtLogin', openAtLogin);
+            Logger.debug('Setting openAtLogin', openAtLogin);
             config.set('openAtLogin', openAtLogin);
 
             EventEmitter.send('openAtLoginChanged');
@@ -25,13 +27,13 @@ export class SettingsService {
 
     public static saveIsAutoUpdateEnabled(isAutoUpdateEnabled) {
         if (isAutoUpdateEnabled !== config.get('isAutoUpdateEnabled')) {
-            console.log('Setting isAutoUpdateEnabled', isAutoUpdateEnabled);
+            Logger.debug('Setting isAutoUpdateEnabled', isAutoUpdateEnabled);
             config.set('isAutoUpdateEnabled', isAutoUpdateEnabled);
         }
     }
 
     public static async updateByName(name, jsonData) {
-        console.info('updateByName', JSON.stringify(jsonData));
+        Logger.info('updateByName', JSON.stringify(jsonData));
         return SettingsService.service.updateByName(name, JSON.stringify(jsonData));
     }
 
@@ -47,9 +49,10 @@ export class SettingsService {
     public static saveAnalyserSettings(data) {
         SettingsService.updateByName('ANALYSER_SETTINGS', data);
     }
+
     public static async fetchAnalyserSettings() {
         const jsonStr = await SettingsService.service.fetchAnalyserSettingsJsonString();
-        console.log('fetchAnalyserSettings', jsonStr);
+        Logger.debug('fetchAnalyserSettings', jsonStr);
         return JSON.parse(jsonStr);
     }
 }

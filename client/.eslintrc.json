@@ -1,0 +1,42 @@
+{
+    "extends": ["react-app", "airbnb", "plugin:prettier/recommended", "prettier/react"],
+
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es6": true,
+        "jest": true,
+        "node": true
+    },
+    "rules": {
+        "jsx-a11y/href-no-hash": ["off"],
+        "react/jsx-filename-extension": ["warn", { "extensions": [".ts", ".tsx"] }],
+        "react/prop-types": 0,
+        "no-underscore-dangle": 0,
+        "import/newline-after-import": "error",
+        "import/prefer-default-export": 0,
+        "import/no-extraneous-dependencies": 0,
+        "import/no-unresolved": 0,
+        "import/order": 0,
+        "import/imports-first": 0,
+        "no-console": [1, { "allow": ["error"] }],
+        "no-unused-expressions": [1, { "allowShortCircuit": true }],
+        "react/forbid-prop-types": 0,
+        "react/require-default-props": 0,
+        "jsx-a11y/label-has-for": 0,
+        "max-len": [
+            "warn",
+            {
+                "code": 120,
+                "tabWidth": 2,
+                "comments": 120,
+                "ignoreComments": false,
+                "ignoreTrailingComments": true,
+                "ignoreUrls": true,
+                "ignoreStrings": true,
+                "ignoreTemplateLiterals": true,
+                "ignoreRegExpLiterals": true
+            }
+        ]
+    }
+}

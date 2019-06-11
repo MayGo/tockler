@@ -19,6 +19,7 @@ import { BarWithTooltip } from './BarWithTooltip';
 import { blueGrey700, chartTheme, disabledGrey } from './ChartTheme';
 import { BrushChart, MainChart, Spinner } from './Timeline.styles';
 import { TimelineItemEditContainer } from './TimelineItemEditContainer';
+import { Logger } from '../../logger';
 
 interface IProps {
     timerange: any;
@@ -99,10 +100,10 @@ export const Timeline = React.memo<IFullProps>(
 
         const handleSelectionChanged = item => {
             if (item) {
-                console.log('Selected item:', item);
+                Logger.debug('Selected item:', item);
                 setSelectedTimelineItem(item);
             } else {
-                console.error('No item selected');
+                Logger.error('No item selected');
             }
         };
         const changeVisibleTimerange = range => {
@@ -114,7 +115,7 @@ export const Timeline = React.memo<IFullProps>(
         };
 
         const handleBrush = domain => {
-            console.log('Selected with brush:', domain.y);
+            Logger.debug('Selected with brush:', domain.y);
 
             changeVisibleTimerange(domain.y);
         };
@@ -145,21 +146,21 @@ export const Timeline = React.memo<IFullProps>(
         let timelineData = [];
         let brushData = [];
         if (isRowEnabled[TimelineRowType.Status]) {
-            // console.log('Adding statusItems:', statusItems);
+            // Logger.log('Adding statusItems:', statusItems);
             timelineData = timelineData.concat(statusItems);
             brushData = brushData.concat(statusItems);
         }
         if (isRowEnabled[TimelineRowType.Log]) {
-            // console.log('Adding logItems:', logItems);
+            // Logger.log('Adding logItems:', logItems);
             timelineData = timelineData.concat(logItems);
             brushData = brushData.concat(logItems);
         }
         if (isRowEnabled[TimelineRowType.App]) {
-            // console.log('Adding appItems:', appItems);
+            // Logger.log('Adding appItems:', appItems);
             timelineData = timelineData.concat(appItems);
         }
 
-        console.log(`Rendering ${timelineData.length} items`);
+        Logger.debug(`Rendering ${timelineData.length} items`);
 
         const axisEvents = [
             {
@@ -170,7 +171,7 @@ export const Timeline = React.memo<IFullProps>(
                             {
                                 target: 'tickLabels',
                                 mutation: props => {
-                                    console.log('Toggling row', props);
+                                    Logger.debug('Toggling row', props);
                                     toggleRow(props.datum);
                                     return {
                                         style: {
@@ -215,8 +216,8 @@ export const Timeline = React.memo<IFullProps>(
                             <TimelineItemEditContainer
                                 selectedTimelineItem={selectedTimelineItem}
                                 setSelectedTimelineItem={setSelectedTimelineItem}
-                                showDeleteBtn={true}
-                                showCloseBtn={true}
+                                showDeleteBtn
+                                showCloseBtn
                             />
                         }
                         visible={!!selectedTimelineItem}
@@ -229,7 +230,7 @@ export const Timeline = React.memo<IFullProps>(
                             domainPadding={domainPadding}
                             padding={padding}
                             scale={scale}
-                            horizontal={true}
+                            horizontal
                             domain={domain}
                             containerComponent={
                                 <VictoryZoomContainer
@@ -246,7 +247,7 @@ export const Timeline = React.memo<IFullProps>(
                                 events={axisEvents}
                                 style={axisStyle}
                             />
-                            <VictoryAxis dependentAxis={true} tickCount={20} />
+                            <VictoryAxis dependentAxis tickCount={20} />
 
                             <VictoryBar
                                 style={barStyle}
@@ -271,7 +272,7 @@ export const Timeline = React.memo<IFullProps>(
                         width={chartWidth}
                         domainPadding={domainPaddingBrush}
                         padding={padding}
-                        horizontal={true}
+                        horizontal
                         scale={scale}
                         domain={domain}
                         containerComponent={
@@ -283,7 +284,7 @@ export const Timeline = React.memo<IFullProps>(
                             />
                         }
                     >
-                        <VictoryAxis dependentAxis={true} tickCount={20} />
+                        <VictoryAxis dependentAxis tickCount={20} />
 
                         <VictoryBar
                             animate={false}

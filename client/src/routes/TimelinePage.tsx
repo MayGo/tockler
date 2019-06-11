@@ -3,7 +3,7 @@ import { MainLayout } from '../components/MainLayout/MainLayout';
 import { PieCharts } from '../components/PieCharts/PieCharts';
 import { Search } from '../components/Timeline/Search';
 import { Timeline } from '../components/Timeline/Timeline';
-import { TrackItemTableContainer } from '../components/TrackItemTable/TrackItemTableContainer';
+import { TrackItemTable } from '../components/TrackItemTable/TrackItemTable';
 import { TimelineContext } from '../TimelineContext';
 
 export function TimelinePage({ location }: any) {
@@ -23,6 +23,7 @@ export function TimelinePage({ location }: any) {
         timeItems,
         isLoading,
     };
+    console.error('Changed');
     return (
         <MainLayout location={location}>
             <Search
@@ -33,7 +34,7 @@ export function TimelinePage({ location }: any) {
 
             <Timeline {...timelineProps} />
             <PieCharts visibleTimerange={visibleTimerange} timeItems={timeItems} />
-            <TrackItemTableContainer visibleTimerange={visibleTimerange} timeItems={timeItems} />
+            <TrackItemTable visibleTimerange={visibleTimerange} timeItems={timeItems} />
         </MainLayout>
     );
 }

@@ -3,6 +3,7 @@ import { Button, DatePicker, Icon } from 'antd';
 import moment from 'moment';
 import * as React from 'react';
 import { getTodayTimerange } from './timeline.utils';
+import { Logger } from '../../logger';
 
 const { RangePicker } = DatePicker;
 
@@ -18,19 +19,15 @@ const getDayBefore = d => moment(d).subtract(1, 'days');
 const getDayAfter = d => moment(d).add(1, 'days');
 
 export class Search extends React.PureComponent<IFullProps, IProps> {
-    constructor(props: any) {
-        super(props);
-    }
-
     public onChange = (dates: any) => {
-        console.log('TIMERANGE:', dates, this.props);
+        Logger.debug('TIMERANGE:', dates, this.props);
         if (dates != null) {
             const beginDate = dates[0];
             const endDate = dates[1];
             const newTimerange = [beginDate, endDate];
             this.props.loadTimerange(newTimerange);
         } else {
-            console.error('No dates selected');
+            Logger.error('No dates selected');
         }
     };
 
@@ -89,6 +86,7 @@ export class Search extends React.PureComponent<IFullProps, IProps> {
         const endDate = moment(timerange[0]).endOf('day');
         this.props.changeVisibleTimerange([beginDate, endDate]);
     };
+
     public showEvening = () => {
         const { timerange } = this.props;
         const beginDate = moment(timerange[0])
@@ -101,7 +99,7 @@ export class Search extends React.PureComponent<IFullProps, IProps> {
     public render() {
         const { timerange } = this.props;
 
-        console.log('Have timerange in Search:', timerange);
+        Logger.debug('Have timerange in Search:', timerange);
         return (
             <Flex>
                 <Box p={1}>

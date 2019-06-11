@@ -14,6 +14,7 @@ export class BarWithTooltip extends React.Component<any, any> {
             hover: true,
         });
     };
+
     public onMouseLeaveHandler = () => {
         this.setState({
             hover: false,
@@ -33,7 +34,7 @@ export class BarWithTooltip extends React.Component<any, any> {
             <>
                 {<Bar {...this.props} events={events} />}
                 {this.state.hover && (
-                    <Portal closeOnEsc={true} closeOnOutsideClick={true}>
+                    <Portal closeOnEsc closeOnOutsideClick>
                         <VictoryTooltip
                             horizontal={false}
                             x={this.props.x}
@@ -42,7 +43,7 @@ export class BarWithTooltip extends React.Component<any, any> {
                             cornerRadius={chartTheme.tooltip.cornerRadius}
                             pointerLength={chartTheme.tooltip.pointerLength}
                             flyoutStyle={chartTheme.tooltip.flyoutStyle}
-                            active={true}
+                            active
                             events={null}
                             text={this.props.getTooltipLabel(this.props.datum)}
                         />

@@ -8,6 +8,7 @@ import { TimelineContext } from '../../TimelineContext';
 import { Spinner } from '../Timeline/Timeline.styles';
 import { Item, TaskList } from './SummaryCalendar.styles';
 import { summariseLog, summariseOnline } from './SummaryCalendar.util';
+import { Logger } from '../../logger';
 
 export const SummaryCalendar = () => {
     const { setTimerange } = React.useContext(TimelineContext);
@@ -20,7 +21,7 @@ export const SummaryCalendar = () => {
             setTimerange([selectedDate.startOf('day'), selectedDate.endOf('day')]);
             history.push(pathname);
         } else {
-            console.error('No date');
+            Logger.error('No date');
         }
 
         // setPath

@@ -1,4 +1,4 @@
-const remote = (window as any).require('electron').remote;
+const { remote } = (window as any).require('electron');
 
 export class AppSettingService {
     public static service: any = remote.getGlobal('AppSettingService');
