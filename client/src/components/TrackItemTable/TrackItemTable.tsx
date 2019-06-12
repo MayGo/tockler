@@ -57,21 +57,20 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
 
     const searchInput = React.useRef<any>();
 
-    console.error('timeItems', data, timeItems);
-
     const filterByAppType = type =>
         type === TrackItemType.AppTrackItem
             ? filterItems(timeItems.appItems, visibleTimerange)
             : filterItems(timeItems.logItems, visibleTimerange);
+
     React.useEffect(() => {
         const { activeType } = state;
-        console.error('set data', filterItems(timeItems.appItems, visibleTimerange));
+
         setData(filterByAppType(activeType));
         setState({
             ...state,
             isOneDay: checkIfOneDay(visibleTimerange),
         });
-    }, [timeItems, visibleTimerange]);
+    }, [timeItems, visibleTimerange]); // eslint-disable-line react-hooks/exhaustive-deps
 
     React.useEffect(() => {
         if (searchInput.current) {
@@ -101,7 +100,7 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
             activeType === TrackItemType.AppTrackItem
                 ? TrackItemType.LogTrackItem
                 : TrackItemType.AppTrackItem;
-        console.error('togglint to', filterByAppType(newActiveType));
+
         setData(filterByAppType(newActiveType));
         setState({
             ...state,

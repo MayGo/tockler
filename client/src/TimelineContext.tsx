@@ -53,7 +53,7 @@ export const TimelineProvider = ({ children }) => {
 
     React.useEffect(() => {
         loadTimerange();
-    }, [timerange]);
+    }, [timerange]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const bgSync = async requestFrom => {
         Logger.debug('Requesting from:', JSON.stringify(requestFrom));

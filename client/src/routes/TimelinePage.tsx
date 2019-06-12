@@ -23,7 +23,7 @@ export function TimelinePage({ location }: any) {
         timeItems,
         isLoading,
     };
-    console.error('Changed');
+
     return (
         <MainLayout location={location}>
             <Search
