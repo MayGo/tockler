@@ -1,26 +1,27 @@
 import * as React from 'react';
-import { TimelineItemEdit } from './TimelineItemEdit';
-import { TrackItemService } from '../../services/TrackItemService';
 import { AppSettingService } from '../../services/AppSettingService';
+import { TrackItemService } from '../../services/TrackItemService';
+import { TimelineItemEdit } from './TimelineItemEdit';
+import { Logger } from '../../logger';
 
 export const TimelineItemEditContainer = props => {
     const { setSelectedTimelineItem } = props;
     const deleteTimelineItem = id => {
-        console.debug('Delete timeline item', id);
+        Logger.debug('Delete timeline item', id);
 
         if (id) {
             TrackItemService.deleteByIds(id).then(() => {
-                console.debug('Deleted timeline items', id);
+                Logger.debug('Deleted timeline items', id);
                 // TODO: reload timerange or remove from timeline
             });
             setSelectedTimelineItem(null);
         } else {
-            console.error('No ids, not deleting from DB');
+            Logger.error('No ids, not deleting from DB');
         }
     };
 
     const saveTimelineItem = async ({ item, colorScope }) => {
-        console.log('Updating color for trackItem', item, colorScope);
+        Logger.debug('Updating color for trackItem', item, colorScope);
         if (colorScope === 'ALL_ITEMS') {
             await AppSettingService.changeColorForApp(item.app, item.color);
             await TrackItemService.updateColorForApp(item.app, item.color);
@@ -36,8 +37,6 @@ export const TimelineItemEditContainer = props => {
     };
 
     const clearTimelineItem = () => setSelectedTimelineItem(null);
-
-    React.useEffect(() => {});
 
     const moreProps = {
         deleteTimelineItem,

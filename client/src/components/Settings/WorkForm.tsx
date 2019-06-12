@@ -1,12 +1,13 @@
+import { Card, Icon, Input } from 'antd';
 import * as React from 'react';
-import { Icon, Card, Input } from 'antd';
 import { useFormState } from 'react-use-form-state';
 import { RootContext } from '../../RootContext';
 
 export const WorkForm = () => {
     const { workSettings, setWorkSettings } = React.useContext(RootContext);
-    const [formState, { number }] = useFormState(workSettings, {
-        onChange: (e, stateValues, nextStateValues) => {
+    // tslint:disable-next-line: variable-name
+    const [_ignore, { number }] = useFormState(workSettings, {
+        onChange: (__ignore, ___ignore, nextStateValues) => {
             setWorkSettings(nextStateValues);
         },
     });

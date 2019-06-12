@@ -1,10 +1,10 @@
-import * as React from 'react';
+import { Box, Flex } from '@rebass/grid';
 import { Button, Icon } from 'antd';
-import { Flex, Box } from '@rebass/grid';
-import styled from 'styled-components';
 import moment from 'moment';
+import * as React from 'react';
 import Moment from 'react-moment';
 import TimeAgo from 'react-timeago';
+import styled from 'styled-components';
 import { convertDate } from '../../constants';
 
 const CustomListItem = styled.div`
@@ -63,12 +63,12 @@ export function TrayListItem({ item, startNewLogItemFromOld, stopRunningLogItem,
                                 {'  '}
                                 <b>
                                     {!isRunning && (
-                                        <Moment from={item.beginDate} ago={true}>
+                                        <Moment from={item.beginDate} ago>
                                             {item.endDate}
                                         </Moment>
                                     )}
                                     {isRunning && (
-                                        <Moment fromNow={true} ago={true}>
+                                        <Moment fromNow ago>
                                             {item.beginDate}
                                         </Moment>
                                     )}

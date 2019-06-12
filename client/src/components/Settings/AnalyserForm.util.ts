@@ -1,15 +1,16 @@
 import _ from 'lodash';
+import { Logger } from '../../logger';
 
-export const findFirst = (str, findRe) => {
+export const findFirst = (str, findRe): any => {
     if (!findRe) {
         return;
     }
 
-    let re = new RegExp(findRe, 'g');
-    let result = re.exec(str);
+    const re = new RegExp(findRe, 'g');
+    const result = re.exec(str);
 
     if (result != null) {
-        let first = result[0];
+        const first = result[0];
 
         return first;
     }
@@ -18,7 +19,7 @@ export const findFirst = (str, findRe) => {
 
 export const testAnalyserItem = (appItems, analyseSetting) => {
     if (!appItems) {
-        console.error('appItems not loaded');
+        Logger.error('appItems not loaded');
         return;
     }
 
@@ -26,7 +27,7 @@ export const testAnalyserItem = (appItems, analyseSetting) => {
 
     appItems.forEach(item => {
         const testItem = { ...item };
-        let str = testItem.title;
+        const str = testItem.title;
 
         testItem.findRe = findFirst(str, analyseSetting.findRe);
         testItem.takeGroup = findFirst(str, analyseSetting.takeGroup) || testItem.findRe;

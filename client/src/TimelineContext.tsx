@@ -1,10 +1,11 @@
-import * as React from 'react';
 import moment from 'moment';
-import { TrackItemService } from './services/TrackItemService';
-import { setDayFromTimerange, getTodayTimerange } from './components/Timeline/timeline.utils';
-import { useWindowFocused } from './hooks/windowFocusedHook';
+import * as React from 'react';
+import { getTodayTimerange, setDayFromTimerange } from './components/Timeline/timeline.utils';
 import { useInterval } from './hooks/intervalHook';
+import { useWindowFocused } from './hooks/windowFocusedHook';
+import { TrackItemService } from './services/TrackItemService';
 import { addToTimelineItems } from './timeline.util';
+import { Logger } from './logger';
 
 export const TimelineContext = React.createContext<any>({});
 
@@ -26,8 +27,8 @@ export const TimelineProvider = ({ children }) => {
     const [timeItems, setTimeItems] = React.useState<any>(emptyTimeItems);
     const { windowIsActive } = useWindowFocused();
 
-    const loadTimerange = async timerange => {
-        console.info('Loading timerange:', JSON.stringify(timerange));
+    const loadTimerange = React.useCallback(async () => {
+        Logger.info('Loading timerange:', JSON.stringify(timerange));
         setIsLoading(true);
         const { appItems, statusItems, logItems } = await TrackItemService.findAllItems(
             timerange[0],
@@ -35,48 +36,47 @@ export const TimelineProvider = ({ children }) => {
         );
 
         setTimeItems({ appItems, statusItems, logItems });
-        setTimerange(timerange);
         setVisibleTimerange(setDayFromTimerange(visibleTimerange, timerange));
         setIsLoading(false);
-    };
+    }, [visibleTimerange, timerange]);
 
     const defaultContext = {
         timerange,
         setTimerange,
         timeItems,
         setTimeItems,
-        loadTimerange,
+        loadTimerange: setTimerange,
         visibleTimerange,
         setVisibleTimerange,
         isLoading,
     };
 
     React.useEffect(() => {
-        loadTimerange(timerange);
-    }, []);
+        loadTimerange();
+    }, [timerange]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const bgSync = async requestFrom => {
-        console.debug('Requesting from:', JSON.stringify(requestFrom));
+        Logger.debug('Requesting from:', JSON.stringify(requestFrom));
         const { appItems, statusItems, logItems } = await TrackItemService.findAllItems(
             requestFrom,
             moment(requestFrom).add(1, 'days'),
         );
-        console.debug('Returned updated items:', appItems);
+        Logger.debug('Returned updated items:', appItems);
 
         setTimeItems(addToTimelineItems(timeItems, { appItems, statusItems, logItems }));
     };
 
-    const delayMs = 3000;
+    const delayMs = 300000;
     useInterval(() => {
         if (windowIsActive) {
             if (moment(lastRequestTime).isBetween(timerange[0], timerange[1])) {
                 bgSync(lastRequestTime);
                 setLastRequestTime(moment());
             } else {
-                console.debug('Current day not selected in UI, not requesting data');
+                Logger.debug('Current day not selected in UI, not requesting data');
             }
         } else {
-            console.debug('Window not active, not running query');
+            Logger.debug('Window not active, not running query');
         }
     }, [delayMs]);
 

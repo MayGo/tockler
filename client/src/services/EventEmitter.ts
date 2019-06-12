@@ -1,8 +1,12 @@
+import { Logger } from '../logger';
+
+// tslint:disable-next-line: no-implicit-dependencies no-var-requires
 const electron = require('electron');
+
 const { ipcRenderer, remote } = electron;
 
 function send(name) {
-    console.debug(`Send event: ${name}`);
+    Logger.info(`Send event: ${name}`);
     ipcRenderer.send(name);
 }
 function on(name, listener) {
@@ -18,7 +22,7 @@ function once(name, listener) {
 }
 
 function emit(name, ...args) {
-    console.log(name);
+    Logger.info(`Emit event: ${name}`);
     remote.getCurrentWindow().webContents.send(name, ...args);
 }
 

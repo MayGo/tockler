@@ -1,9 +1,9 @@
+import { Box, Flex } from '@rebass/grid';
+import { Form } from 'antd';
 import * as React from 'react';
-import { Flex, Box } from '@rebass/grid';
-import { Form, Button } from 'antd';
-import { WorkForm } from './WorkForm';
-import { AppForm } from './AppForm';
 import { AnalyserForm } from './AnalyserForm';
+import { AppForm } from './AppForm';
+import { WorkForm } from './WorkForm';
 
 export const SettingsForm = () => {
     return (

@@ -4,6 +4,9 @@ import { Sequelize } from 'sequelize-typescript';
 import { AppSetting } from './models/AppSetting';
 import { Settings } from './models/Settings';
 import { TrackItem } from './models/TrackItem';
+import { logManager } from './log-manager';
+
+let logger = logManager.getLogger('Database');
 
 class Database {
     private _sequelize: Sequelize;
@@ -25,7 +28,7 @@ class Database {
                 logging: false,
             });
             this._sequelize.addModels([AppSetting, Settings, TrackItem]);
-            console.info(`Models path ${__dirname + '/models'}`);
+            logger.info(`Models path ${__dirname + '/models'}`);
         }
     }
 

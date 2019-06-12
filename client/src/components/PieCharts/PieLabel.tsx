@@ -9,9 +9,9 @@ interface IProps {
 }
 
 export class PieLabel extends React.PureComponent<IProps> {
-    static defaultEvents = VictoryTooltip.defaultEvents;
+    public static defaultEvents = VictoryTooltip.defaultEvents;
 
-    render() {
+    public render() {
         const { width, datum } = this.props;
 
         const labelWidth = width / 2;

@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { Layout } from 'antd';
+import * as React from 'react';
 import { HeaderMenu } from './HeaderMenu';
 
 const { Footer, Content } = Layout;

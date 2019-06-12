@@ -1,11 +1,11 @@
+import { Box, Flex } from '@rebass/grid';
+import useWindowSize from '@rehooks/window-size';
 import * as React from 'react';
-import { Flex, Box } from '@rebass/grid';
+import { RootContext } from '../../RootContext';
+import { filterItems } from '../Timeline/timeline.utils';
 import { PieChart } from './PieChart';
 import { Heading } from './PieCharts.styles';
 import { WorkProgressChart } from './WorkProgressChart';
-import { RootContext } from '../../RootContext';
-import { filterItems } from '../Timeline/timeline.utils';
-import useWindowSize from '@rehooks/window-size';
 
 interface IProps {
     timeItems: any;

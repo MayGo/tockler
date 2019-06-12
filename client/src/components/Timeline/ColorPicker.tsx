@@ -1,7 +1,5 @@
 import * as React from 'react';
-
 import { SketchPicker } from 'react-color';
-
 import reactCSS from 'reactcss';
 
 interface IProps {
@@ -21,7 +19,8 @@ export class ColorPicker extends React.PureComponent<IProps, IState> {
             color: props.color || '#000000',
         };
     }
-    componentWillReceiveProps(nextProps: any) {
+
+    public componentWillReceiveProps(nextProps: any) {
         if (nextProps.color) {
             this.setState({
                 color: nextProps.color,
@@ -29,20 +28,20 @@ export class ColorPicker extends React.PureComponent<IProps, IState> {
         }
     }
 
-    handleClick = () => {
+    public handleClick = () => {
         this.setState({ displayColorPicker: !this.state.displayColorPicker });
     };
 
-    handleClose = () => {
+    public handleClose = () => {
         this.setState({ displayColorPicker: false });
     };
 
-    handleChange = color => {
+    public handleChange = color => {
         this.setState({ color: color.hex });
         this.props.onChange(color.hex);
     };
 
-    render() {
+    public render() {
         const styles = reactCSS({
             default: {
                 color: {

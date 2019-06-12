@@ -1,8 +1,8 @@
-import * as React from 'react';
 import { List } from 'antd';
-import { TrayListItem } from './TrayListItem';
-import { groupBy, map, sumBy, sortBy } from 'lodash';
+import { groupBy, map, sortBy, sumBy } from 'lodash';
+import * as React from 'react';
 import { convertDate } from '../../constants';
+import { TrayListItem } from './TrayListItem';
 
 const sumDiff = data => sumBy(data, c => convertDate(c.endDate).diff(convertDate(c.beginDate)));
 

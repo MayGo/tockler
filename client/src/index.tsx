@@ -10,7 +10,7 @@ if (process.env.NODE_ENV !== 'production') {
     whyDidYouUpdate(React, {
         groupByComponent: true,
         collapseComponentGroups: true,
-    });*/
+    }); */
 }
 
 ReactDOM.render(<MainRouter />, document.getElementById('root') as HTMLElement);

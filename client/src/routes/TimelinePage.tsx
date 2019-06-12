@@ -1,12 +1,9 @@
 import * as React from 'react';
-import { Timeline } from '../components/Timeline/Timeline';
-import { Search } from '../components/Timeline/Search';
-import { TrackItemTableContainer } from '../components/TrackItemTable/TrackItemTableContainer';
 import { MainLayout } from '../components/MainLayout/MainLayout';
 import { PieCharts } from '../components/PieCharts/PieCharts';
-import moment from 'moment';
-import { TimelineRowType } from '../enum/TimelineRowType';
-import { TrackItemService } from '../services/TrackItemService';
+import { Search } from '../components/Timeline/Search';
+import { Timeline } from '../components/Timeline/Timeline';
+import { TrackItemTable } from '../components/TrackItemTable/TrackItemTable';
 import { TimelineContext } from '../TimelineContext';
 
 export function TimelinePage({ location }: any) {
@@ -26,6 +23,7 @@ export function TimelinePage({ location }: any) {
         timeItems,
         isLoading,
     };
+
     return (
         <MainLayout location={location}>
             <Search
@@ -36,7 +34,7 @@ export function TimelinePage({ location }: any) {
 
             <Timeline {...timelineProps} />
             <PieCharts visibleTimerange={visibleTimerange} timeItems={timeItems} />
-            <TrackItemTableContainer visibleTimerange={visibleTimerange} timeItems={timeItems} />
+            <TrackItemTable visibleTimerange={visibleTimerange} timeItems={timeItems} />
         </MainLayout>
     );
 }

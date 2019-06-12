@@ -1,18 +1,19 @@
-import * as React from 'react';
-import { Calendar, Badge, Spin } from 'antd';
 import { Flex } from '@rebass/grid';
-import { TaskList, Item } from './SummaryCalendar.styles';
+import { Badge, Calendar, Spin } from 'antd';
 import moment, { Moment } from 'moment';
-import { Spinner } from '../Timeline/Timeline.styles';
+import * as React from 'react';
+import useReactRouter from 'use-react-router';
 import { TrackItemService } from '../../services/TrackItemService';
 import { TimelineContext } from '../../TimelineContext';
+import { Spinner } from '../Timeline/Timeline.styles';
+import { Item, TaskList } from './SummaryCalendar.styles';
 import { summariseLog, summariseOnline } from './SummaryCalendar.util';
-import useReactRouter from 'use-react-router';
+import { Logger } from '../../logger';
 
 export const SummaryCalendar = () => {
     const { setTimerange } = React.useContext(TimelineContext);
 
-    const { history, location, match } = useReactRouter();
+    const { history } = useReactRouter();
 
     const onDateSelect = (selectedDate: Moment | undefined) => {
         const pathname = '/app/timeline';
@@ -20,7 +21,7 @@ export const SummaryCalendar = () => {
             setTimerange([selectedDate.startOf('day'), selectedDate.endOf('day')]);
             history.push(pathname);
         } else {
-            console.error('No date');
+            Logger.error('No date');
         }
 
         // setPath
@@ -51,16 +52,16 @@ export const SummaryCalendar = () => {
     };
 
     const getListData = day => {
-        let listData: Array<any> = [];
+        const listData: any[] = [];
         const worked = logSummary[day];
         if (worked) {
-            let formattedDuration = moment.duration(worked).format();
+            const formattedDuration = moment.duration(worked).format();
             listData.push({ type: 'warning', content: `Worked: ${formattedDuration}` });
         }
 
         const online = onlineSummary[day];
         if (online) {
-            let formattedDuration = moment.duration(online).format();
+            const formattedDuration = moment.duration(online).format();
             listData.push({ type: 'success', content: `Online: ${formattedDuration}` });
         }
 

@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { Button, Modal } from 'antd';
+import { Logger } from '../../logger';
 
 interface IProps {
     modalVisible: boolean;
@@ -11,23 +12,25 @@ const btnStyle = { width: '100%', marginBottom: 5 };
 export class ColorChangerModal extends React.PureComponent<IProps, {}> {
     constructor(props) {
         super(props);
-        console.log('ColorChangerModal', props);
+        Logger.debug('ColorChangerModal', props);
     }
 
-    changeColorHandler = color => {
-        console.log('Changed color:', color);
+    public changeColorHandler = color => {
+        Logger.debug('Changed color:', color);
         this.setState({ color });
     };
 
-    saveItemHandler = opts => {
+    public saveItemHandler = opts => {
         this.props.selectColorOption(opts);
     };
 
-    saveOnlyThis = () => this.saveItemHandler('ONLY_THIS');
-    saveNew = () => this.saveItemHandler('NEW_ITEMS');
-    saveAll = () => this.saveItemHandler('ALL_ITEMS');
+    public saveOnlyThis = () => this.saveItemHandler('ONLY_THIS');
 
-    render() {
+    public saveNew = () => this.saveItemHandler('NEW_ITEMS');
+
+    public saveAll = () => this.saveItemHandler('ALL_ITEMS');
+
+    public render() {
         const { modalVisible }: IProps = this.props;
 
         return (

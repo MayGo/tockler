@@ -1,5 +1,5 @@
-import styled from 'styled-components';
 import { Box, Flex } from '@rebass/grid';
+import styled from 'styled-components';
 
 export const FilterDropdown = styled(Flex).attrs({ p: 2 })`
     border-radius: 6px;

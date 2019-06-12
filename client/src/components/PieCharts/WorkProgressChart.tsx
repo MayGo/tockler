@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-import { VictoryPie, VictoryContainer } from 'victory';
-import { chartTheme } from '../Timeline/ChartTheme';
 import _ from 'lodash';
 import moment from 'moment';
-import { PieLabel } from './PieLabel';
+import { VictoryContainer, VictoryPie } from 'victory';
 import { convertDate } from '../../constants';
+import { chartTheme } from '../Timeline/ChartTheme';
+import { PieLabel } from './PieLabel';
 
 const sumApp = (p, c) => {
     return _.extend(p, {
@@ -14,9 +14,9 @@ const sumApp = (p, c) => {
 };
 
 export const WorkProgressChart = ({ items, width, hoursToWork }) => {
-    let groupByField = 'app';
+    const groupByField = 'app';
 
-    const pieData: Array<any> = _(items)
+    const pieData: any[] = _(items)
         .filter(item => item.app === 'ONLINE')
         .groupBy(groupByField)
         .map(b => {
@@ -75,7 +75,7 @@ export const WorkProgressChart = ({ items, width, hoursToWork }) => {
             }}
             labels={d => {
                 const dur = moment.duration(d.timeDiffInMs);
-                let formattedDuration = dur.format();
+                const formattedDuration = dur.format();
 
                 return `${d[groupByField]} [${formattedDuration}]`;
             }}

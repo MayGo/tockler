@@ -1,12 +1,13 @@
-import * as React from 'react';
 import { Box } from '@rebass/grid';
+import * as React from 'react';
 
-import { TrayLayout } from '../components/TrayLayout/TrayLayout';
-import { SettingsService } from '../services/SettingsService';
-import { EventEmitter } from '../services/EventEmitter';
-import { TrackItemService } from '../services/TrackItemService';
-import { TrayList } from '../components/TrayList/TrayList';
 import { TimelineItemEdit } from '../components/Timeline/TimelineItemEdit';
+import { TrayLayout } from '../components/TrayLayout/TrayLayout';
+import { TrayList } from '../components/TrayList/TrayList';
+import { EventEmitter } from '../services/EventEmitter';
+import { SettingsService } from '../services/SettingsService';
+import { TrackItemService } from '../services/TrackItemService';
+import { Logger } from '../logger';
 
 const EMPTY_SELECTED_ITEM = {};
 
@@ -25,7 +26,7 @@ export function TrayAppPage({ location }: any) {
 
     React.useEffect(() => {
         const eventLogItemStarted = (_, logItem) => {
-            console.log('log-item-started:', JSON.parse(logItem));
+            Logger.debug('log-item-started:', JSON.parse(logItem));
             setRunningLogItem(JSON.parse(logItem));
             loadLastLogItems();
         };
@@ -54,7 +55,7 @@ export function TrayAppPage({ location }: any) {
             loadLastLogItems();
             setRunningLogItem(null);
         } else {
-            console.error('No running log item to stop');
+            Logger.error('No running log item to stop');
         }
     };
 

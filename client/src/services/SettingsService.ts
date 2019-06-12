@@ -1,55 +1,58 @@
 import Config from 'electron-store';
 import { EventEmitter } from './EventEmitter';
+import { Logger } from '../logger';
 
-const remote = (<any>window).require('electron').remote;
+const { remote } = (window as any).require('electron');
 const config = new Config();
 
 export class SettingsService {
-    static service: any = remote.getGlobal('SettingsService');
+    public static service: any = remote.getGlobal('SettingsService');
 
-    static getOpenAtLogin() {
-        return <boolean>config.get('openAtLogin');
-    }
-    static getIsAutoUpdateEnabled() {
-        return <boolean>config.get('isAutoUpdateEnabled');
+    public static getOpenAtLogin() {
+        return config.get('openAtLogin') as boolean;
     }
 
-    static saveOpenAtLogin(openAtLogin) {
+    public static getIsAutoUpdateEnabled() {
+        return config.get('isAutoUpdateEnabled') as boolean;
+    }
+
+    public static saveOpenAtLogin(openAtLogin) {
         if (openAtLogin !== config.get('openAtLogin')) {
-            console.log('Setting openAtLogin', openAtLogin);
+            Logger.debug('Setting openAtLogin', openAtLogin);
             config.set('openAtLogin', openAtLogin);
 
             EventEmitter.send('openAtLoginChanged');
         }
     }
 
-    static saveIsAutoUpdateEnabled(isAutoUpdateEnabled) {
+    public static saveIsAutoUpdateEnabled(isAutoUpdateEnabled) {
         if (isAutoUpdateEnabled !== config.get('isAutoUpdateEnabled')) {
-            console.log('Setting isAutoUpdateEnabled', isAutoUpdateEnabled);
+            Logger.debug('Setting isAutoUpdateEnabled', isAutoUpdateEnabled);
             config.set('isAutoUpdateEnabled', isAutoUpdateEnabled);
         }
     }
 
-    static async updateByName(name, jsonData) {
-        console.info('updateByName', JSON.stringify(jsonData));
-        return await SettingsService.service.updateByName(name, JSON.stringify(jsonData));
+    public static async updateByName(name, jsonData) {
+        Logger.info('updateByName', JSON.stringify(jsonData));
+        return SettingsService.service.updateByName(name, JSON.stringify(jsonData));
     }
 
-    static async getRunningLogItem() {
+    public static async getRunningLogItem() {
         const runningLogItem = await SettingsService.service.getRunningLogItemAsJson();
         return runningLogItem;
     }
 
-    static fetchWorkSettings() {
+    public static fetchWorkSettings() {
         return SettingsService.service.fetchWorkSettings();
     }
 
-    static saveAnalyserSettings(data) {
+    public static saveAnalyserSettings(data) {
         SettingsService.updateByName('ANALYSER_SETTINGS', data);
     }
-    static async fetchAnalyserSettings() {
+
+    public static async fetchAnalyserSettings() {
         const jsonStr = await SettingsService.service.fetchAnalyserSettingsJsonString();
-        console.log('fetchAnalyserSettings', jsonStr);
+        Logger.debug('fetchAnalyserSettings', jsonStr);
         return JSON.parse(jsonStr);
     }
 }

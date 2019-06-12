@@ -1,8 +1,9 @@
+import { Box, Flex } from '@rebass/grid';
+import { Button, Input, Select, Tooltip } from 'antd';
 import * as React from 'react';
-import { Input, Button, Select, Tooltip } from 'antd';
-import { ColorPicker } from './ColorPicker';
 import { ITrackItem } from '../../@types/ITrackItem';
-import { Flex, Box } from '@rebass/grid';
+import { ColorPicker } from './ColorPicker';
+import { Logger } from '../../logger';
 
 interface IProps {
     selectedTimelineItem: any;
@@ -22,9 +23,7 @@ interface IState {
     colorScope: string;
 }
 
-interface IHocProps {}
-
-type IFullProps = IProps & IHocProps;
+type IFullProps = IProps;
 
 export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
     constructor(props) {
@@ -35,7 +34,8 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
             colorScope: 'ONLY_THIS',
         };
     }
-    componentWillReceiveProps(nextProps: any) {
+
+    public componentWillReceiveProps(nextProps: any) {
         if (nextProps.selectedTimelineItem) {
             this.setState({
                 item: nextProps.selectedTimelineItem,
@@ -44,8 +44,8 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
         }
     }
 
-    changeColorHandler = color => {
-        console.log('Changed color:', color);
+    public changeColorHandler = color => {
+        Logger.debug('Changed color:', color);
 
         this.setState(prevState => ({
             ...prevState,
@@ -56,9 +56,9 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
         }));
     };
 
-    changeAppName = e => {
+    public changeAppName = e => {
         const { value } = e.target;
-        console.log('Changed app name:', value);
+        Logger.debug('Changed app name:', value);
 
         this.setState(prevState => ({
             ...prevState,
@@ -69,9 +69,9 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
         }));
     };
 
-    changeAppTitle = e => {
+    public changeAppTitle = e => {
         const { value } = e.target;
-        console.log('Changed app title:', value);
+        Logger.debug('Changed app title:', value);
 
         this.setState(prevState => ({
             ...prevState,
@@ -82,33 +82,33 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
         }));
     };
 
-    closeEdit = () => {
-        console.log('Close TimelineItem');
+    public closeEdit = () => {
+        Logger.debug('Close TimelineItem');
         this.props.clearTimelineItem();
     };
 
-    changeColorScopeHandler = colorScope => {
-        console.log('Changed color scope:', colorScope);
+    public changeColorScopeHandler = colorScope => {
+        Logger.debug('Changed color scope:', colorScope);
 
         this.setState(prevState => ({
             ...prevState,
-            colorScope: colorScope,
+            colorScope,
         }));
     };
 
-    saveBasedOnColorOptionHandler = () => {
+    public saveBasedOnColorOptionHandler = () => {
         const { item, colorScope } = this.state;
 
         this.props.saveTimelineItem(item, colorScope);
     };
 
-    deleteItem = () => {
+    public deleteItem = () => {
         const { item } = this.state;
 
         this.props.deleteTimelineItem(item);
     };
 
-    render() {
+    public render() {
         const {
             selectedTimelineItem,
             colorScopeHidden,
@@ -120,12 +120,12 @@ export class TimelineItemEdit extends React.PureComponent<IProps, IState> {
         const trackItem = this.state.item;
 
         if (!selectedTimelineItem) {
-            console.log('No item');
+            Logger.debug('No item');
             return null;
         }
 
         const saveBtnIcon = showPlayIcon ? 'play-circle-o' : 'save';
-        console.log('Have selectedTimelineItem', selectedTimelineItem);
+        Logger.debug('Have selectedTimelineItem', selectedTimelineItem);
 
         return (
             <Flex p={1} w={1}>

@@ -1,6 +1,6 @@
 import React from 'react';
-import { VictoryTooltip, Bar } from 'victory';
 import { Portal } from 'react-portal';
+import { Bar, VictoryTooltip } from 'victory';
 import { chartTheme } from './ChartTheme';
 
 export class BarWithTooltip extends React.Component<any, any> {
@@ -9,18 +9,19 @@ export class BarWithTooltip extends React.Component<any, any> {
         this.state = { position: true, hover: false };
     }
 
-    onMouseEnterHandler = () => {
+    public onMouseEnterHandler = () => {
         this.setState({
             hover: true,
         });
     };
-    onMouseLeaveHandler = () => {
+
+    public onMouseLeaveHandler = () => {
         this.setState({
             hover: false,
         });
     };
 
-    render() {
+    public render() {
         const { datum } = this.props;
 
         const events = {
@@ -42,7 +43,7 @@ export class BarWithTooltip extends React.Component<any, any> {
                             cornerRadius={chartTheme.tooltip.cornerRadius}
                             pointerLength={chartTheme.tooltip.pointerLength}
                             flyoutStyle={chartTheme.tooltip.flyoutStyle}
-                            active={true}
+                            active
                             events={null}
                             text={this.props.getTooltipLabel(this.props.datum)}
                         />

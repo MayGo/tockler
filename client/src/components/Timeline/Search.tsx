@@ -1,8 +1,9 @@
-import * as React from 'react';
-import { DatePicker, Button, Icon } from 'antd';
+import { Box, Flex } from '@rebass/grid';
+import { Button, DatePicker, Icon } from 'antd';
 import moment from 'moment';
-import { Flex, Box } from '@rebass/grid';
+import * as React from 'react';
 import { getTodayTimerange } from './timeline.utils';
+import { Logger } from '../../logger';
 
 const { RangePicker } = DatePicker;
 
@@ -12,70 +13,63 @@ interface IProps {
     changeVisibleTimerange: (timerange: any) => void;
 }
 
-interface IHocProps {}
-
-type IFullProps = IProps & IHocProps;
+type IFullProps = IProps;
 
 const getDayBefore = d => moment(d).subtract(1, 'days');
 const getDayAfter = d => moment(d).add(1, 'days');
 
 export class Search extends React.PureComponent<IFullProps, IProps> {
-    constructor(props: any) {
-        super(props);
-        this.onChange = this.onChange.bind(this);
-    }
-
-    onChange = (dates: any) => {
-        console.log('TIMERANGE:', dates, this.props);
+    public onChange = (dates: any) => {
+        Logger.debug('TIMERANGE:', dates, this.props);
         if (dates != null) {
             const beginDate = dates[0];
             const endDate = dates[1];
             const newTimerange = [beginDate, endDate];
             this.props.loadTimerange(newTimerange);
         } else {
-            console.error('No dates selected');
+            Logger.error('No dates selected');
         }
     };
 
-    selectToday = () => {
+    public selectToday = () => {
         this.props.loadTimerange(getTodayTimerange());
     };
 
-    selectYesterday = () => {
+    public selectYesterday = () => {
         const beginDate = getDayBefore(moment().startOf('day'));
         const endDate = getDayBefore(moment().endOf('day'));
         this.props.loadTimerange([beginDate, endDate]);
     };
 
-    goBackOneDay = () => {
+    public goBackOneDay = () => {
         const { timerange } = this.props;
         const beginDate = getDayBefore(moment(timerange[0]));
         const endDate = getDayBefore(moment(timerange[1]));
         this.props.loadTimerange([beginDate, endDate]);
     };
 
-    goForwardOneDay = () => {
+    public goForwardOneDay = () => {
         const { timerange } = this.props;
         const beginDate = getDayAfter(moment(timerange[0]));
         const endDate = getDayAfter(moment(timerange[1]));
         this.props.loadTimerange([beginDate, endDate]);
     };
 
-    showDay = () => {
+    public showDay = () => {
         const { timerange } = this.props;
         const beginDate = moment(timerange[0]).startOf('day');
         const endDate = moment(timerange[0]).endOf('day');
         this.props.changeVisibleTimerange([beginDate, endDate]);
     };
 
-    showHour = () => {
+    public showHour = () => {
         const { timerange } = this.props;
         const beginDate = moment(timerange[0]).startOf('hour');
         const endDate = moment(timerange[0]).endOf('hour');
         this.props.changeVisibleTimerange([beginDate, endDate]);
     };
 
-    showAM = () => {
+    public showAM = () => {
         const { timerange } = this.props;
         const beginDate = moment(timerange[0]).startOf('day');
         const endDate = moment(timerange[0])
@@ -84,7 +78,7 @@ export class Search extends React.PureComponent<IFullProps, IProps> {
         this.props.changeVisibleTimerange([beginDate, endDate]);
     };
 
-    showPM = () => {
+    public showPM = () => {
         const { timerange } = this.props;
         const beginDate = moment(timerange[0])
             .startOf('day')
@@ -92,7 +86,8 @@ export class Search extends React.PureComponent<IFullProps, IProps> {
         const endDate = moment(timerange[0]).endOf('day');
         this.props.changeVisibleTimerange([beginDate, endDate]);
     };
-    showEvening = () => {
+
+    public showEvening = () => {
         const { timerange } = this.props;
         const beginDate = moment(timerange[0])
             .startOf('day')
@@ -101,10 +96,10 @@ export class Search extends React.PureComponent<IFullProps, IProps> {
         this.props.changeVisibleTimerange([beginDate, endDate]);
     };
 
-    render() {
+    public render() {
         const { timerange } = this.props;
 
-        console.log('Have timerange in Search:', timerange);
+        Logger.debug('Have timerange in Search:', timerange);
         return (
             <Flex>
                 <Box p={1}>

@@ -1,8 +1,8 @@
+import { Icon, Menu } from 'antd';
 import * as React from 'react';
-import { Menu, Icon } from 'antd';
-import { Brand, Img, RightMenuItem } from './TrayMenu.styles';
-import { EventEmitter } from '../../services/EventEmitter';
 import tocklerIcon from '../../assets/icons/tockler_icon.png';
+import { EventEmitter } from '../../services/EventEmitter';
+import { Brand, Img, MenuItem, RightMenuItem } from './TrayMenu.styles';
 
 export const TrayMenu = ({ dispatch }: any) => {
     const exitApp = () => {
@@ -13,24 +13,18 @@ export const TrayMenu = ({ dispatch }: any) => {
     };
     return (
         <Menu mode="horizontal" style={{ position: 'fixed', width: '100%', zIndex: 9000 }}>
-            <Menu.Item key="/timeline2">
-                <a onClick={toggleMainWindow}>
-                    <Brand>
-                        <Img src={tocklerIcon} width="28" height="28" />
-                        <span>Tockler</span>
-                    </Brand>
-                </a>
-            </Menu.Item>
+            <MenuItem key="/timeline2" onClick={toggleMainWindow}>
+                <Brand>
+                    <Img src={tocklerIcon} width="28" height="28" />
+                    <span>Tockler</span>
+                </Brand>
+            </MenuItem>
 
-            <RightMenuItem key="/exitApp">
-                <a onClick={exitApp}>
-                    <Icon type="poweroff" />
-                </a>
+            <RightMenuItem key="/exitApp" onClick={exitApp}>
+                <Icon type="poweroff" />
             </RightMenuItem>
-            <RightMenuItem key="/toggleMainWindow">
-                <a onClick={toggleMainWindow}>
-                    <Icon type="arrows-alt" />
-                </a>
+            <RightMenuItem key="/toggleMainWindow" onClick={toggleMainWindow}>
+                <Icon type="arrows-alt" />
             </RightMenuItem>
         </Menu>
     );

@@ -1,5 +1,5 @@
+import { Card, Form, Switch } from 'antd';
 import * as React from 'react';
-import { Card, Switch, Form } from 'antd';
 import { SettingsService } from '../../services/SettingsService';
 
 const openAtLogin = SettingsService.getOpenAtLogin();
