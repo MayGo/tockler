@@ -4,7 +4,7 @@ platform:
     - x64
 
 environment:
-    nodejs_version: '10'
+    nodejs_version: '12'
     SIGNTOOL: C:\Program Files (x86)\Windows Kits\8.1\bin\x64\signtool.exe
 
 branches:
