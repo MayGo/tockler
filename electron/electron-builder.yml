@@ -1,34 +1,33 @@
-appId: "ee.trimatech.tockler"
-productName: "Tockler"
-asar: true
+appId: 'ee.trimatech.tockler'
+productName: 'Tockler'
+asar: false
 asarUnpack:
-  - scripts
+    - scripts
 npmRebuild: false
 directories:
-  output: "packaged"
+    output: 'packaged'
 files:
-  - "!__tests__"
-  - "!__e2e__"
-  - "!__mocks__"
-  - "!custom_typings"
-  - "!test"
-  - "!release"
+    - '!__tests__'
+    - '!__e2e__'
+    - '!__mocks__'
+    - '!custom_typings'
+    - '!test'
+    - '!release'
 
-publish: 
-  - github
+publish:
+    - github
 
 mac:
-  category: public.app-category.productivity
+    category: public.app-category.productivity
 
 win:
-  target: 
-  - nsis
+    target:
+        - nsis
 nsis:
-  oneClick: false
-  allowToChangeInstallationDirectory: true
+    oneClick: false
+    allowToChangeInstallationDirectory: true
 linux:
-  category: Utility
-  target: 
-  - AppImage
-  - deb
-
+    category: Utility
+    target:
+        - AppImage
+        - deb
