@@ -44,9 +44,7 @@ export default class WindowManager {
             this.mainWindow.maximize();
         }
 
-        const url = config.isDev
-            ? 'http://localhost:3000'
-            : 'file://' + config.client + '/index.html';
+        const url = config.isDev ? 'http://localhost:3000' : `file://${__dirname}/index.html`;
         this.mainWindow.loadURL(url);
 
         this.mainWindow.on('closed', () => {
@@ -145,7 +143,7 @@ export default class WindowManager {
         let icon = os.platform() === 'darwin' ? config.icon : config.iconBig;
         const url = config.isDev
             ? 'http://localhost:3000/trayApp'
-            : 'file://' + config.client + '/index.html?/trayApp';
+            : `file://${__dirname}/index.html#/trayApp`;
 
         this.menubar = menubar({
             index: url,
@@ -169,8 +167,8 @@ export default class WindowManager {
             this.menubar.window.webContents.send('focus-tray', 'ping');
 
             if (config.isDev) {
-                logger.info('Open menubar dev tools');
-                this.menubar.window.openDevTools({ mode: 'bottom' });
+            logger.info('Open menubar dev tools');
+            this.menubar.window.openDevTools({ mode: 'bottom' });
             }
         });
     }

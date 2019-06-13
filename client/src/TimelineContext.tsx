@@ -66,7 +66,7 @@ export const TimelineProvider = ({ children }) => {
         setTimeItems(addToTimelineItems(timeItems, { appItems, statusItems, logItems }));
     };
 
-    const delayMs = 300000;
+    const delayMs = 3000;
     useInterval(() => {
         if (windowIsActive) {
             if (moment(lastRequestTime).isBetween(timerange[0], timerange[1])) {
