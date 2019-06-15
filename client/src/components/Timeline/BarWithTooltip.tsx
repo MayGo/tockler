@@ -6,7 +6,7 @@ import { chartTheme } from './ChartTheme';
 export class BarWithTooltip extends React.Component<any, any> {
     constructor(props) {
         super(props);
-        this.state = { position: true, hover: false };
+        this.state = { hover: false };
     }
 
     public onMouseEnterHandler = () => {

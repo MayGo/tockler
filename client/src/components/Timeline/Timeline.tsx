@@ -20,6 +20,7 @@ import { blueGrey700, chartTheme, disabledGrey } from './ChartTheme';
 import { BrushChart, MainChart, Spinner } from './Timeline.styles';
 import { TimelineItemEditContainer } from './TimelineItemEditContainer';
 import { Logger } from '../../logger';
+import { formatDuration } from '../SummaryCalendar/SummaryCalendar.util';
 
 interface IProps {
     timerange: any;
@@ -128,13 +129,14 @@ export const Timeline = React.memo<IFullProps>(
 
         const getTooltipLabel = d => {
             const diff = convertDate(d.endDate).diff(convertDate(d.beginDate));
-            const dur = moment.duration(diff);
-            const formattedDuration = dur.format();
+
             const type = d.taskName === TrackItemType.StatusTrackItem ? 'STATUS' : d.app;
             const beginTime = convertDate(d.beginDate).format(TIME_FORMAT);
             const endTime = convertDate(d.endDate).format(TIME_FORMAT);
 
-            return `${type} - ${d.title} [${formattedDuration}] ${beginTime} - ${endTime}`;
+            return `${type}\r\n${d.title}\r\n${beginTime} - ${endTime}\r\n${formatDuration(
+                moment.duration(diff),
+            )}`;
         };
 
         const { appItems, logItems, statusItems } = timeItems;

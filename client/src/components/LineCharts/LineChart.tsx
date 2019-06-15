@@ -55,9 +55,11 @@ export const LineChart = () => {
                 data={onlineTimesSummary}
                 labelComponent={labelComponent()}
                 labels={d =>
-                    `Start time: ${convertDate(d.beginDate).format(TIME_FORMAT)}
-                    End time: ${convertDate(d.endDate).format(TIME_FORMAT)}
-                    Duration: ${diffAndFormatShort(d.beginDate, d.endDate)}`
+                    `Start time: ${convertDate(d.beginDate).format(
+                        TIME_FORMAT,
+                    )}\r\nEnd time: ${convertDate(d.endDate).format(
+                        TIME_FORMAT,
+                    )}\r\nDuration: ${diffAndFormatShort(d.beginDate, d.endDate)}`
                 }
             />
             <VictoryBar
