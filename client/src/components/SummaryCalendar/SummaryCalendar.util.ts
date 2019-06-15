@@ -49,6 +49,9 @@ export const summariseOnline = (items, mode) => {
 };
 
 export const summariseTimeOnline = (items, mode) => {
+    if (mode === 'year') {
+        return [];
+    }
     const data = _(items)
         .filter(item => item.app === 'ONLINE')
         .groupBy(groupByActualDay)

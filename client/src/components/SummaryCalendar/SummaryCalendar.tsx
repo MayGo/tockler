@@ -1,5 +1,5 @@
 import { Flex } from '@rebass/grid';
-import { Badge, Calendar, Spin, Icon } from 'antd';
+import { Calendar, Spin, Icon } from 'antd';
 import { Moment } from 'moment';
 import * as React from 'react';
 import useReactRouter from 'use-react-router';
@@ -92,7 +92,9 @@ export const SummaryCalendar = () => {
             <TaskList>
                 {listData.map(item => (
                     <Item key={item.content}>
-                        <Badge status={item.type} text={item.content} />
+                        <Icon type={item.type} theme="outlined" />
+                        {'  '}
+                        {item.content}
                     </Item>
                 ))}
             </TaskList>
