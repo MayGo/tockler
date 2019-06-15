@@ -1,24 +1,42 @@
 import { Flex } from '@rebass/grid';
-import { Badge, Calendar, Spin } from 'antd';
+import { Badge, Calendar, Spin, Icon } from 'antd';
 import moment, { Moment } from 'moment';
 import * as React from 'react';
 import useReactRouter from 'use-react-router';
-import { TrackItemService } from '../../services/TrackItemService';
 import { TimelineContext } from '../../TimelineContext';
+import { SummaryContext } from '../../SummaryContext';
 import { Spinner } from '../Timeline/Timeline.styles';
 import { Item, TaskList } from './SummaryCalendar.styles';
-import { summariseLog, summariseOnline } from './SummaryCalendar.util';
+
 import { Logger } from '../../logger';
+import {
+    TIME_FORMAT,
+    convertDate,
+    TIME_FORMAT_SHORT,
+    DURATION_FORMAT,
+    DURATION_SETTINGS,
+} from '../../constants';
+import { formatDuration } from './SummaryCalendar.util';
 
 export const SummaryCalendar = () => {
     const { setTimerange } = React.useContext(TimelineContext);
+    const {
+        selectedDate,
+        setSelectedDate,
+        selectedMode,
+        setSelectedMode,
+        logSummary,
+        onlineSummary,
+        onlineTimesSummary,
+        isLoading,
+    } = React.useContext(SummaryContext);
 
     const { history } = useReactRouter();
 
-    const onDateSelect = (selectedDate: Moment | undefined) => {
+    const onDateSelect = (date: Moment | undefined) => {
         const pathname = '/app/timeline';
-        if (selectedDate) {
-            setTimerange([selectedDate.startOf('day'), selectedDate.endOf('day')]);
+        if (date) {
+            setTimerange([date.startOf('day'), date.endOf('day')]);
             history.push(pathname);
         } else {
             Logger.error('No date');
@@ -26,25 +44,6 @@ export const SummaryCalendar = () => {
 
         // setPath
     };
-    const [isLoading, setIsLoading] = React.useState<any>(false);
-    const [selectedDate, setSelectedDate] = React.useState<any>(moment());
-    const [selectedMode, setSelectedMode] = React.useState<any>('month');
-    const [logSummary, setLogSummary] = React.useState<any>([]);
-    const [onlineSummary, setOnlineSummary] = React.useState<any>([]);
-
-    React.useEffect(() => {
-        setIsLoading(true);
-        const beginDate = moment(selectedDate).startOf(selectedMode);
-        const endDate = moment(selectedDate).endOf(selectedMode);
-
-        TrackItemService.findAllItems(beginDate, endDate).then(
-            ({ appItems, statusItems, logItems }) => {
-                setLogSummary(summariseLog(logItems, selectedMode));
-                setOnlineSummary(summariseOnline(statusItems, selectedMode));
-                setIsLoading(false);
-            },
-        );
-    }, [selectedDate, selectedMode]);
 
     const changeSelectedDate = (date?: Moment, mode?: 'month' | 'year') => {
         setSelectedDate(date);
@@ -53,18 +52,28 @@ export const SummaryCalendar = () => {
 
     const getListData = day => {
         const listData: any[] = [];
-        const worked = logSummary[day];
-        if (worked) {
-            const formattedDuration = moment.duration(worked).format();
-            listData.push({ type: 'warning', content: `Worked: ${formattedDuration}` });
+
+        const times = onlineTimesSummary[day];
+        if (times) {
+            listData.push({
+                type: 'coffee',
+                content: `Wake time ${convertDate(times.beginDate).format(TIME_FORMAT_SHORT)}`,
+            });
+            listData.push({
+                type: 'eye-invisible',
+                content: `Sleep time ${convertDate(times.endDate).format(TIME_FORMAT_SHORT)}`,
+            });
         }
 
         const online = onlineSummary[day];
         if (online) {
-            const formattedDuration = moment.duration(online).format();
-            listData.push({ type: 'success', content: `Online: ${formattedDuration}` });
+            listData.push({ type: 'laptop', content: `Worked  ${formatDuration(online)}` });
         }
 
+        const worked = logSummary[day];
+        if (worked) {
+            listData.push({ type: 'tool', content: `Tasks  ${formatDuration(worked)}` });
+        }
         return listData || [];
     };
 
@@ -75,7 +84,9 @@ export const SummaryCalendar = () => {
                 <TaskList>
                     {listData.map(item => (
                         <Item key={item.content}>
-                            <Badge status={item.type} text={item.content} />
+                            <Icon type={item.type} theme="outlined" />
+                            {'  '}
+                            {item.content}
                         </Item>
                     ))}
                 </TaskList>
