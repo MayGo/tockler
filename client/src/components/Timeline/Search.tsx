@@ -18,136 +18,125 @@ type IFullProps = IProps;
 const getDayBefore = d => moment(d).subtract(1, 'days');
 const getDayAfter = d => moment(d).add(1, 'days');
 
-export class Search extends React.PureComponent<IFullProps, IProps> {
-    public onChange = (dates: any) => {
-        Logger.debug('TIMERANGE:', dates, this.props);
+export const Search = ({ loadTimerange, timerange, changeVisibleTimerange }) => {
+    const onChange = (dates: any) => {
+        Logger.debug('TIMERANGE:', dates);
         if (dates != null) {
             const beginDate = dates[0];
             const endDate = dates[1];
             const newTimerange = [beginDate, endDate];
-            this.props.loadTimerange(newTimerange);
+            loadTimerange(newTimerange);
         } else {
             Logger.error('No dates selected');
         }
     };
 
-    public selectToday = () => {
-        this.props.loadTimerange(getTodayTimerange());
+    const selectToday = () => {
+        loadTimerange(getTodayTimerange());
     };
 
-    public selectYesterday = () => {
+    const selectYesterday = () => {
         const beginDate = getDayBefore(moment().startOf('day'));
         const endDate = getDayBefore(moment().endOf('day'));
-        this.props.loadTimerange([beginDate, endDate]);
+        loadTimerange([beginDate, endDate]);
     };
 
-    public goBackOneDay = () => {
-        const { timerange } = this.props;
+    const goBackOneDay = () => {
         const beginDate = getDayBefore(moment(timerange[0]));
         const endDate = getDayBefore(moment(timerange[1]));
-        this.props.loadTimerange([beginDate, endDate]);
+        loadTimerange([beginDate, endDate]);
     };
 
-    public goForwardOneDay = () => {
-        const { timerange } = this.props;
+    const goForwardOneDay = () => {
         const beginDate = getDayAfter(moment(timerange[0]));
         const endDate = getDayAfter(moment(timerange[1]));
-        this.props.loadTimerange([beginDate, endDate]);
+        loadTimerange([beginDate, endDate]);
     };
 
-    public showDay = () => {
-        const { timerange } = this.props;
+    const showDay = () => {
         const beginDate = moment(timerange[0]).startOf('day');
         const endDate = moment(timerange[0]).endOf('day');
-        this.props.changeVisibleTimerange([beginDate, endDate]);
+        changeVisibleTimerange([beginDate, endDate]);
     };
 
-    public showHour = () => {
-        const { timerange } = this.props;
+    const showHour = () => {
         const beginDate = moment(timerange[0]).startOf('hour');
         const endDate = moment(timerange[0]).endOf('hour');
-        this.props.changeVisibleTimerange([beginDate, endDate]);
+        changeVisibleTimerange([beginDate, endDate]);
     };
 
-    public showAM = () => {
-        const { timerange } = this.props;
+    const showAM = () => {
         const beginDate = moment(timerange[0]).startOf('day');
         const endDate = moment(timerange[0])
             .startOf('day')
             .hour(12);
-        this.props.changeVisibleTimerange([beginDate, endDate]);
+        changeVisibleTimerange([beginDate, endDate]);
     };
 
-    public showPM = () => {
-        const { timerange } = this.props;
+    const showPM = () => {
         const beginDate = moment(timerange[0])
             .startOf('day')
             .hour(12);
         const endDate = moment(timerange[0]).endOf('day');
-        this.props.changeVisibleTimerange([beginDate, endDate]);
+        changeVisibleTimerange([beginDate, endDate]);
     };
 
-    public showEvening = () => {
-        const { timerange } = this.props;
+    const showEvening = () => {
         const beginDate = moment(timerange[0])
             .startOf('day')
             .hour(17);
         const endDate = moment(timerange[0]).endOf('day');
-        this.props.changeVisibleTimerange([beginDate, endDate]);
+        changeVisibleTimerange([beginDate, endDate]);
     };
 
-    public render() {
-        const { timerange } = this.props;
-
-        Logger.debug('Have timerange in Search:', timerange);
-        return (
-            <Flex>
-                <Box p={1}>
-                    <Button onClick={this.selectYesterday}>Yesterday</Button>
-                </Box>
-                <Box p={1}>
-                    <Button onClick={this.goBackOneDay}>
-                        <Icon type="left" />
-                    </Button>
-                </Box>
-                <Box p={1}>
-                    <RangePicker value={timerange} onChange={this.onChange} />
-                </Box>
-                <Box p={1}>
-                    <Button onClick={this.goForwardOneDay}>
-                        <Icon type="right" />
-                    </Button>
-                </Box>
-                <Box p={1}>
-                    <Button onClick={this.selectToday}>Today</Button>
-                </Box>
-                <Box flex={1} />
-                <Box p={1}>
-                    <Button onClick={this.showDay} type="dashed">
-                        All Day
-                    </Button>
-                </Box>
-                <Box p={1}>
-                    <Button onClick={this.showAM} type="dashed">
-                        AM
-                    </Button>
-                </Box>
-                <Box p={1}>
-                    <Button onClick={this.showPM} type="dashed">
-                        PM
-                    </Button>
-                </Box>
-                <Box p={1}>
-                    <Button onClick={this.showEvening} type="dashed">
-                        Evening
-                    </Button>
-                </Box>
-                <Box p={1}>
-                    <Button onClick={this.showHour} type="dashed">
-                        Hour
-                    </Button>
-                </Box>
-            </Flex>
-        );
-    }
-}
+    Logger.debug('Have timerange in Search:', timerange);
+    return (
+        <Flex>
+            <Box p={1}>
+                <Button onClick={selectYesterday}>Yesterday</Button>
+            </Box>
+            <Box p={1}>
+                <Button onClick={goBackOneDay}>
+                    <Icon type="left" />
+                </Button>
+            </Box>
+            <Box p={1}>
+                <RangePicker value={timerange} onChange={onChange} />
+            </Box>
+            <Box p={1}>
+                <Button onClick={goForwardOneDay}>
+                    <Icon type="right" />
+                </Button>
+            </Box>
+            <Box p={1}>
+                <Button onClick={selectToday}>Today</Button>
+            </Box>
+            <Box flex={1} />
+            <Box p={1}>
+                <Button onClick={showDay} type="dashed">
+                    All Day
+                </Button>
+            </Box>
+            <Box p={1}>
+                <Button onClick={showAM} type="dashed">
+                    AM
+                </Button>
+            </Box>
+            <Box p={1}>
+                <Button onClick={showPM} type="dashed">
+                    PM
+                </Button>
+            </Box>
+            <Box p={1}>
+                <Button onClick={showEvening} type="dashed">
+                    Evening
+                </Button>
+            </Box>
+            <Box p={1}>
+                <Button onClick={showHour} type="dashed">
+                    Hour
+                </Button>
+            </Box>
+        </Flex>
+    );
+};

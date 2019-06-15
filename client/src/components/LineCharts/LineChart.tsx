@@ -1,20 +1,13 @@
 import * as React from 'react';
 import moment from 'moment';
-import {
-    VictoryBar,
-    VictoryChart,
-    VictoryAxis,
-    VictoryTooltip,
-    VictoryVoronoiContainer,
-} from 'victory';
-import { convertDate, DATE_TIME_FORMAT, TIME_FORMAT, COLORS } from '../../constants';
+import { VictoryBar, VictoryChart, VictoryAxis, VictoryTooltip } from 'victory';
+import { convertDate, TIME_FORMAT, COLORS } from '../../constants';
 import { chartTheme } from '../Timeline/ChartTheme';
 import useWindowSize from '@rehooks/window-size';
 import { SummaryContext } from '../../SummaryContext';
 import {
     addToTimeDuration,
     formatToTimeEveryOther,
-    dayTickValues,
     formatToDay,
     toTimeDuration,
 } from './LineChart.util';
@@ -35,9 +28,7 @@ const labelComponent = () => (
 );
 export const LineChart = () => {
     const { innerWidth: chartWidth } = useWindowSize();
-    const { selectedDate, onlineTimesSummary } = React.useContext(SummaryContext);
-
-    console.error('onlineTimesSummary', onlineTimesSummary);
+    const { onlineTimesSummary } = React.useContext(SummaryContext);
 
     return (
         <VictoryChart

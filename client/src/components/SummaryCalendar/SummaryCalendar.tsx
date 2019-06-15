@@ -1,25 +1,18 @@
 import { Flex } from '@rebass/grid';
 import { Badge, Calendar, Spin, Icon } from 'antd';
-import moment, { Moment } from 'moment';
+import { Moment } from 'moment';
 import * as React from 'react';
 import useReactRouter from 'use-react-router';
 import { TimelineContext } from '../../TimelineContext';
 import { SummaryContext } from '../../SummaryContext';
 import { Spinner } from '../Timeline/Timeline.styles';
 import { Item, TaskList } from './SummaryCalendar.styles';
-
 import { Logger } from '../../logger';
-import {
-    TIME_FORMAT,
-    convertDate,
-    TIME_FORMAT_SHORT,
-    DURATION_FORMAT,
-    DURATION_SETTINGS,
-} from '../../constants';
+import { convertDate, TIME_FORMAT_SHORT } from '../../constants';
 import { formatDuration } from './SummaryCalendar.util';
 
 export const SummaryCalendar = () => {
-    const { setTimerange } = React.useContext(TimelineContext);
+    const { loadTimerange } = React.useContext(TimelineContext);
     const {
         selectedDate,
         setSelectedDate,
@@ -36,13 +29,11 @@ export const SummaryCalendar = () => {
     const onDateSelect = (date: Moment | undefined) => {
         const pathname = '/app/timeline';
         if (date) {
-            setTimerange([date.startOf('day'), date.endOf('day')]);
+            loadTimerange([date.startOf('day'), date.endOf('day')]);
             history.push(pathname);
         } else {
             Logger.error('No date');
         }
-
-        // setPath
     };
 
     const changeSelectedDate = (date?: Moment, mode?: 'month' | 'year') => {
