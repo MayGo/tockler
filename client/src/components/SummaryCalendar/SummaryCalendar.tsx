@@ -29,7 +29,7 @@ export const SummaryCalendar = () => {
     const onDateSelect = (date: Moment | undefined) => {
         const pathname = '/app/timeline';
         if (date) {
-            loadTimerange([date.startOf('day'), date.endOf('day')]);
+            loadTimerange([date.clone().startOf('day'), date.clone().endOf('day')]);
             history.push(pathname);
         } else {
             Logger.error('No date');
