@@ -70,7 +70,7 @@ export const LineChart = () => {
                 style={{ data: { fill: COLORS.green } }}
                 data={onlineTimesSummary}
                 labelComponent={labelComponent()}
-                labels={d => `Online: ${moment.duration(d.online).format()}`}
+                labels={d => `Worked: ${moment.duration(d.online).format()}`}
             />
         </VictoryChart>
     );

@@ -1,55 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Portal } from 'react-portal';
 import { Bar, VictoryTooltip } from 'victory';
 import { chartTheme } from './ChartTheme';
 
-export class BarWithTooltip extends React.Component<any, any> {
-    constructor(props) {
-        super(props);
-        this.state = { hover: false };
-    }
+export const BarWithTooltip = ({
+    datum = {},
+    onClickBarItem,
+    getTooltipLabel,
+    x = 0,
+    y = 0,
+    ...rest
+}) => {
+    const [hover, setHover] = useState(false);
 
-    public onMouseEnterHandler = () => {
-        this.setState({
-            hover: true,
-        });
+    const onMouseEnter = () => {
+        setHover(true);
     };
 
-    public onMouseLeaveHandler = () => {
-        this.setState({
-            hover: false,
-        });
+    const onMouseLeave = () => {
+        setHover(false);
     };
 
-    public render() {
-        const { datum } = this.props;
+    const events = {
+        onMouseEnter,
+        onMouseLeave,
+        onClick: () => onClickBarItem(datum),
+    };
 
-        const events = {
-            onMouseEnter: this.onMouseEnterHandler,
-            onMouseLeave: this.onMouseLeaveHandler,
-            onClick: () => this.props.onClickBarItem(datum),
-        };
-
-        return (
-            <>
-                {<Bar {...this.props} events={events} />}
-                {this.state.hover && (
-                    <Portal closeOnEsc closeOnOutsideClick>
-                        <VictoryTooltip
-                            horizontal={false}
-                            x={this.props.x}
-                            y={this.props.y}
-                            style={chartTheme.tooltip.style}
-                            cornerRadius={chartTheme.tooltip.cornerRadius}
-                            pointerLength={chartTheme.tooltip.pointerLength}
-                            flyoutStyle={chartTheme.tooltip.flyoutStyle}
-                            active
-                            events={null}
-                            text={this.props.getTooltipLabel(this.props.datum)}
-                        />
-                    </Portal>
-                )}
-            </>
-        );
-    }
-}
+    return (
+        <>
+            {<Bar datum={datum} x={x} y={y} {...rest} events={events} />}
+            {hover && (
+                <Portal closeOnEsc closeOnOutsideClick>
+                    <VictoryTooltip
+                        horizontal={false}
+                        x={x}
+                        y={y}
+                        style={chartTheme.tooltip.style}
+                        cornerRadius={chartTheme.tooltip.cornerRadius}
+                        pointerLength={chartTheme.tooltip.pointerLength}
+                        flyoutStyle={chartTheme.tooltip.flyoutStyle}
+                        active
+                        events={null}
+                        text={getTooltipLabel(datum)}
+                    />
+                </Portal>
+            )}
+        </>
+    );
+};
