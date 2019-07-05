@@ -2,15 +2,12 @@ import { app } from 'electron';
 import * as path from 'path';
 
 const Config = require('electron-store');
-const OS = require('os');
 const isDevelopment = require('electron-is-dev');
 
 let root = path.join(__dirname, '..');
 let client = isDevelopment ? path.join(root, '..', 'client', 'build') : path.join(root, 'dist');
 // Load real data even when in development
-let userDir = isDevelopment
-    ? `/Users/${OS.userInfo().username}/Library/Application Support/Tockler`
-    : app.getPath('userData');
+let userDir = app.getPath('userData');
 
 // console.log('User dir is:' + userDir);
 
@@ -19,9 +16,6 @@ export default {
     root: root,
     client: client,
     userDir: userDir,
-
-    icon: path.join(root, 'shared/img/icon/tockler_icon.png'),
-    iconBig: path.join(root, 'shared/img/icon/tockler_icon_big_w_bg.png'),
 
     // plugins directory
     pluginsPath: root,

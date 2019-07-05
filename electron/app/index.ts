@@ -9,11 +9,6 @@ let logger = logManager.getLogger('AppIndex');
 
 import AppManager from './app-manager';
 
-import WindowManager from './window-manager';
-import { extensionsManager } from './extensions-manager';
-import AppUpdater from './app-updater';
-import config from './config';
-
 /* Single Instance Check */
 
 const gotTheLock = app.requestSingleInstanceLock();
@@ -23,20 +18,10 @@ if (!gotTheLock) {
     app.quit();
 } else {
     app.on('second-instance', (event, commandLine, workingDirectory) => {
-        // Someone tried to run a second instance, we should focus our window.
         logger.info('Make single instance');
-        WindowManager.openMainWindow();
     });
-    AppUpdater.init();
-
-    if (config.isDev) {
-        // const reloadFile = path.join(config.client);
-        // require('electron-reload')(reloadFile);
-    }
 
     app.commandLine.appendSwitch('disable-renderer-backgrounding');
-
-    require('electron-context-menu')({});
 
     ipcMain.on('close-app', function() {
         logger.info('Closing app');
@@ -49,24 +34,7 @@ if (!gotTheLock) {
         // app.quit();
     });
 
-    // User want's to open main window when reopened app. (But not open main window on application launch)
-
-    app.on('activate', function() {
-        logger.info('activate');
-        WindowManager.openMainWindow();
-    });
-
     app.on('ready', async () => {
-        if (config.isDev) {
-            await extensionsManager.init();
-        }
-
-        WindowManager.initMainWindowEvents();
-
-        if (!config.isDev || config.trayEnabledInDev) {
-            WindowManager.setTrayWindow();
-        }
-
         await AppManager.init();
         backgroundJob.init();
 

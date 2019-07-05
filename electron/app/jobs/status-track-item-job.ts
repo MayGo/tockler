@@ -4,7 +4,6 @@ import { backgroundService } from '../background-service';
 import BackgroundUtils from '../background-utils';
 import config from '../config';
 import * as path from 'path';
-import UserMessages from '../user-messages';
 import { execFile } from 'child_process';
 import { State } from '../enums/state';
 import { appConstants } from '../app-constants';
@@ -51,7 +50,6 @@ export class StatusTrackItemJob {
 
         let handleError = (error: string) => {
             logger.error('saveUserIdleTime error: ', error);
-            UserMessages.showError('Error getting user idle time', error);
         };
 
         let callcack = (err: Error, stdout: any, stderr: string) => {

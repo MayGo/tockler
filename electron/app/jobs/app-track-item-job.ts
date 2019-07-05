@@ -4,7 +4,6 @@ import * as activeWin from 'active-win';
 import BackgroundUtils from '../background-utils';
 import { backgroundService } from '../background-service';
 import { TrackItemType } from '../enums/track-item-type';
-import { taskAnalyser } from '../task-analyser';
 import { TrackItem } from '../models/TrackItem';
 
 let logger = logManager.getLogger('AppTrackItemJob');
@@ -18,16 +17,6 @@ export class AppTrackItemJob {
             let updatedItem: TrackItem = await this.saveActiveWindow(
                 activeWindow ? activeWindow : {},
             );
-
-            if (!BackgroundUtils.isSameItems(updatedItem, this.lastUpdatedItem)) {
-                logger.debug('App and title changed. Analysing title');
-                taskAnalyser
-                    .analyseAndNotify(updatedItem)
-                    .then(
-                        () => logger.debug('Analysing has run.'),
-                        e => logger.error('Error in Analysing', e),
-                    );
-            }
 
             this.lastUpdatedItem = updatedItem;
         } catch (error) {
