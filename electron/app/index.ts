@@ -3,7 +3,7 @@ require('hazardous');
 
 import { backgroundJob } from './background-job';
 import { backgroundService } from './background-service';
-import { app, ipcMain, powerMonitor } from 'electron';
+import { app, powerMonitor } from 'electron';
 import { logManager } from './log-manager';
 let logger = logManager.getLogger('AppIndex');
 
@@ -22,11 +22,6 @@ if (!gotTheLock) {
     });
 
     app.commandLine.appendSwitch('disable-renderer-backgrounding');
-
-    ipcMain.on('close-app', function() {
-        logger.info('Closing app');
-        app.quit();
-    });
 
     app.on('window-all-closed', function() {
         logger.info('window-all-closed');

@@ -1,6 +1,5 @@
 import { State } from './enums/state';
 import { TrackItemType } from './enums/track-item-type';
-import { ipcMain } from 'electron';
 import BackgroundUtils from './background-utils';
 import { trackItemService } from './services/track-item-service';
 import { logManager } from './log-manager';
@@ -33,16 +32,6 @@ export class StateManager {
     }
 
     initIpc() {
-        ipcMain.on('start-new-log-item', this.startNewLogItem.bind(this));
-
-        ipcMain.on('end-running-log-item', event => {
-            logger.info('end-running-log-item');
-            this.stopRunningLogTrackItem().then(
-                () => logger.info('end-running-log-item'),
-                e => logger.error('end-running-log-item', e),
-            );
-        });
-
         appEmitter.on('start-new-log-item', rawItem => {
             logger.info('start-new-log-item event');
             this.startNewLogItem(null, rawItem).then(

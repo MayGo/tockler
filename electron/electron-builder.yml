@@ -3,7 +3,7 @@ productName: 'Denisk'
 asar: false
 asarUnpack:
     - scripts
-npmRebuild: false
+npmRebuild: true
 directories:
     output: 'packaged'
 files:
@@ -21,8 +21,12 @@ mac:
     category: public.app-category.productivity
 
 win:
+    artifactName: ${name}-${version}-windows-${arch}.${ext}
     target:
-        - nsis
+        - target: nsis
+          arch:
+              - x64
+              - ia32
 nsis:
     oneClick: false
     allowToChangeInstallationDirectory: true

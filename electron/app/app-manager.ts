@@ -1,6 +1,6 @@
 import { appSettingService } from './services/app-setting-service';
 import { trackItemService } from './services/track-item-service';
-import { app, ipcMain } from 'electron';
+import { app } from 'electron';
 
 import { sequelize } from './Database';
 
@@ -28,10 +28,6 @@ export default class AppManager {
 
     static initAppEvents() {
         logger.info('Init app events.');
-
-        ipcMain.on('openAtLoginChanged', (ev, name) => {
-            AppManager.setOpenAtLogin();
-        });
     }
 
     static setOpenAtLogin() {

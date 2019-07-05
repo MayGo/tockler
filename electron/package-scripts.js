@@ -11,7 +11,7 @@ module.exports = {
     clean: rimraf('dist'),
 
     run: {
-      default: 'cross-env NODE_ENV=development electron ./dist',
+      default: 'cross-env ELECTRON_RUN_AS_NODE=true NODE_ENV=development electron ./dist',
       hot: 'cross-env HOT=1 NODE_ENV=development electron ./dist'
     }, 
 
@@ -33,7 +33,6 @@ module.exports = {
     },
     
     release: series(
-      copy("../client/build/* ./dist"),
       'build -c electron-builder.yml'
     )
   }
