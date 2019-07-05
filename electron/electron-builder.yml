@@ -1,5 +1,5 @@
-appId: 'ee.trimatech.tockler'
-productName: 'Tockler'
+appId: 'com.denisk.denisk'
+productName: 'Denisk'
 asar: false
 asarUnpack:
     - scripts

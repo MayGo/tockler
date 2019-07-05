@@ -1,13 +1,12 @@
 {
-    "name": "tockler",
+    "name": "denisk",
     "version": "3.4.12",
     "description": "Automatically track applications usage and working time",
-    "author": "Maigo Erit <maigo.erit@gmail.com>",
     "license": "GPL-2.0",
     "main": "dist/index.js",
     "repository": {
         "type": "git",
-        "url": "git@github.com:MayGo/tockler.git"
+        "url": "git@github.com:denisk/denisk.git"
     },
     "scripts": {
         "tslint": "tslint --project .",
