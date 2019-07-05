@@ -3,11 +3,10 @@ import { ITrackItem } from '../@types/ITrackItem';
 import { TrackItemType } from '../enum/TrackItemType';
 import { Logger } from '../logger';
 
-const { remote } = (window as any).require('electron');
 const { ipcRenderer } = (window as any).require('electron');
 
 export class TrackItemService {
-    public static service: any = remote.getGlobal('TrackItemService');
+    public static service: any = (window as any).App.TrackItemService;
 
     /*  findAllItems(from, to, taskName, searchStr, paging) {
           return TrackItemService.service.findAllFromDay(from, to, taskName, searchStr, paging);

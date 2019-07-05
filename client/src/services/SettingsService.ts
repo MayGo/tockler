@@ -2,11 +2,10 @@ import Config from 'electron-store';
 import { EventEmitter } from './EventEmitter';
 import { Logger } from '../logger';
 
-const { remote } = (window as any).require('electron');
 const config = new Config();
 
 export class SettingsService {
-    public static service: any = remote.getGlobal('SettingsService');
+    public static service: any = (window as any).App.SettingsService;
 
     public static getOpenAtLogin() {
         return config.get('openAtLogin') as boolean;

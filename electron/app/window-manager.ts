@@ -8,6 +8,10 @@ import { logManager } from './log-manager';
 
 let logger = logManager.getLogger('WindowManager');
 
+const preloadScript = config.isDev
+    ? 'http://localhost:3000/preload.js'
+    : `file://${__dirname}/preload.js`;
+
 export default class WindowManager {
     static mainWindow;
     static menubar;
@@ -30,6 +34,7 @@ export default class WindowManager {
             webPreferences: {
                 zoomFactor: 1.0,
                 nodeIntegration: true,
+                preload: preloadScript,
             },
             title: 'Tockler',
             icon: config.iconBig,
@@ -45,6 +50,7 @@ export default class WindowManager {
         }
 
         const url = config.isDev ? 'http://localhost:3000' : `file://${__dirname}/index.html`;
+
         this.mainWindow.loadURL(url);
 
         this.mainWindow.on('closed', () => {
@@ -155,6 +161,7 @@ export default class WindowManager {
                 webPreferences: {
                     zoomFactor: 1.0,
                     nodeIntegration: true,
+                    preload: preloadScript,
                 },
                 width: 500,
                 height: 600,
