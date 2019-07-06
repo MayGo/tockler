@@ -57,29 +57,33 @@ if (!gotTheLock) {
     });
 
     app.on('ready', async () => {
-        if (config.isDev) {
-            await extensionsManager.init();
+        try {
+            if (config.isDev) {
+                await extensionsManager.init();
+            }
+
+            WindowManager.initMainWindowEvents();
+
+            if (!config.isDev || config.trayEnabledInDev) {
+                WindowManager.setTrayWindow();
+            }
+
+            await AppManager.init();
+            backgroundJob.init();
+
+            powerMonitor.on('suspend', function() {
+                logger.info('The system is going to sleep');
+                backgroundService.onSleep();
+            });
+
+            powerMonitor.on('resume', function() {
+                logger.info('The system is going to resume');
+                backgroundService
+                    .onResume()
+                    .then(() => logger.info('Resumed'), e => logger.error('Error in onResume', e));
+            });
+        } catch (error) {
+            logger.error('App errored in ready event:', error);
         }
-
-        WindowManager.initMainWindowEvents();
-
-        if (!config.isDev || config.trayEnabledInDev) {
-            WindowManager.setTrayWindow();
-        }
-
-        await AppManager.init();
-        backgroundJob.init();
-
-        powerMonitor.on('suspend', function() {
-            logger.info('The system is going to sleep');
-            backgroundService.onSleep();
-        });
-
-        powerMonitor.on('resume', function() {
-            logger.info('The system is going to resume');
-            backgroundService
-                .onResume()
-                .then(() => logger.info('Resumed'), e => logger.error('Error in onResume', e));
-        });
     });
 }
