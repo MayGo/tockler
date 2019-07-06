@@ -194,7 +194,7 @@ export class TrackItemService {
 
         this.logger.debug('Found RUNNING_LOG_ITEM config: ', item.toJSON());
 
-        let logTrackItemId = item.jsonDataParsed.id;
+        let logTrackItemId = item.jsonData.id;
         if (!logTrackItemId) {
             this.logger.debug('No RUNNING_LOG_ITEM ref id');
             return null;

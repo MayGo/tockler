@@ -1,4 +1,4 @@
-import { Table, Column, PrimaryKey, Model, AutoIncrement } from 'sequelize-typescript';
+import { Table, Column, PrimaryKey, Model, AutoIncrement, DataType } from 'sequelize-typescript';
 
 @Table({
     timestamps: false,
@@ -18,8 +18,24 @@ export class Settings extends Model<Settings> {
     @Column
     name: string;
 
-    @Column
-    jsonData: string;
+    @Column(DataType.STRING)
+    get jsonData(): any {
+        const val = this.getDataValue('jsonData');
+        if (!val) {
+            return {};
+        }
+        try {
+            return JSON.parse(val);
+        } catch (error) {
+            return {};
+        }
+    }
 
-    jsonDataParsed;
+    set jsonData(value: any) {
+        try {
+            this.setDataValue('name', JSON.stringify(value));
+        } catch (error) {
+            this.setDataValue('name', '{}');
+        }
+    }
 }
