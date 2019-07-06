@@ -1,4 +1,3 @@
-import * as SequelizeMock from 'sequelize-mock';
 import config from './config';
 import { Sequelize } from 'sequelize-typescript';
 import { AppSetting } from './models/AppSetting';
@@ -15,9 +14,6 @@ class Database {
         let dbConfig = config.databaseConfig;
 
         if (config.isTest === true) {
-            this._sequelize = new SequelizeMock('', '', '', {
-                autoQueryFallback: false,
-            });
         } else {
             this._sequelize = new Sequelize({
                 database: dbConfig.database,
@@ -25,10 +21,13 @@ class Database {
                 username: dbConfig.username,
                 password: dbConfig.password,
                 storage: dbConfig.outputPath,
-                logging: false,
+                logging: log => logger.info(log),
             });
             this._sequelize.addModels([AppSetting, Settings, TrackItem]);
-            logger.info(`Models path ${__dirname + '/models'}`);
+
+            logger.info('Models AppSetting', AppSetting);
+            logger.info('Models Settings', Settings);
+            logger.info('Models TrackItem', TrackItem);
         }
     }
 
