@@ -13,14 +13,13 @@ export class SettingsService {
         });
         let item = items[0];
 
-        item.jsonDataParsed = JSON.parse(item.jsonData);
         return item;
     }
 
     updateByName(name: string, jsonDataStr: any) {
         this.logger.info('Updating Setting:', name, jsonDataStr);
         return Settings.update(
-            { jsonData: jsonDataStr },
+            { jsonData: JSON.parse(jsonDataStr) },
             {
                 where: {
                     name: name,
@@ -31,7 +30,7 @@ export class SettingsService {
 
     async fetchWorkSettings() {
         let item = await this.findByName('WORK_SETTINGS');
-        return item.jsonDataParsed;
+        return item.jsonData;
     }
     async fetchWorkSettingsJsonString() {
         let item = await this.findByName('WORK_SETTINGS');
@@ -44,12 +43,12 @@ export class SettingsService {
 
     async fetchAnalyserSettings() {
         let item = await this.findByName('ANALYSER_SETTINGS');
-
-        if (!item || this.isObject(item.jsonDataParsed)) {
+        this.logger.info(item.jsonData);
+        if (!item || this.isObject(item.jsonData)) {
             // db default is object but this is initialized with array (when is initialized)
             return [];
         }
-        return item.jsonDataParsed;
+        return item.jsonData;
     }
 
     async fetchAnalyserSettingsJsonString() {
@@ -66,8 +65,8 @@ export class SettingsService {
     async getRunningLogItemAsJson() {
         let settingsItem = await this.findByName('RUNNING_LOG_ITEM');
 
-        if (settingsItem.jsonDataParsed.id) {
-            let logItem = await TrackItem.findByPk(settingsItem.jsonDataParsed.id);
+        if (settingsItem.jsonData.id) {
+            let logItem = await TrackItem.findByPk(settingsItem.jsonData.id);
             return logItem.toJSON();
         }
 
