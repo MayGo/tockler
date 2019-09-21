@@ -1,8 +1,8 @@
-import Config from 'electron-store';
 import { EventEmitter } from './EventEmitter';
 import { Logger } from '../logger';
 
-const config = new Config();
+const { Store } = window as any;
+const config = new Store();
 
 export class SettingsService {
     public static service: any = (window as any).App.SettingsService;

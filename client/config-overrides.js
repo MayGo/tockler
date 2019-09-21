@@ -8,7 +8,6 @@ const addWebpackTarget = target => config => {
 module.exports = {
     target: 'electron-renderer',
     webpack: override(
-        addWebpackTarget('electron-renderer'),
         fixBabelImports('import', {
             libraryName: 'antd',
             libraryDirectory: 'es',

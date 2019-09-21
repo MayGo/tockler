@@ -32,7 +32,6 @@ export default class WindowManager {
             show: false,
             webPreferences: {
                 zoomFactor: 1.0,
-                nodeIntegration: true,
                 preload: preloadScript,
             },
             title: 'Tockler',
@@ -159,7 +158,6 @@ export default class WindowManager {
             browserWindow: {
                 webPreferences: {
                     zoomFactor: 1.0,
-                    nodeIntegration: true,
                     preload: preloadScript,
                 },
                 width: 500,
