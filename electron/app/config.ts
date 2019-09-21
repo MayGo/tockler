@@ -8,11 +8,14 @@ const isDevelopment = require('electron-is-dev');
 let root = path.join(__dirname, '..');
 let client = isDevelopment ? path.join(root, '..', 'client', 'build') : path.join(root, 'dist');
 // Load real data even when in development
-let userDir = isDevelopment
-    ? `/Users/${OS.userInfo().username}/Library/Application Support/Tockler`
-    : app.getPath('userData');
 
-// console.log('User dir is:' + userDir);
+let useRealDataInDev = false;
+let userDir =
+    isDevelopment && useRealDataInDev
+        ? `/Users/${OS.userInfo().username}/Library/Application Support/Tockler`
+        : app.getPath('userData');
+
+console.log('User dir is:' + userDir);
 
 export default {
     // root directory
@@ -32,7 +35,7 @@ export default {
 
     // enable tray icon for dev mode
 
-    trayEnabledInDev: true,
+    trayEnabledInDev: false,
 
     // name of the main window
     mainAppName: 'main-window',

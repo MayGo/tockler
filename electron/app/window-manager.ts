@@ -5,12 +5,11 @@ import { app, ipcMain, BrowserWindow, globalShortcut } from 'electron';
 import config from './config';
 import * as os from 'os';
 import { logManager } from './log-manager';
+import { join } from 'path';
 
 let logger = logManager.getLogger('WindowManager');
 
-const preloadScript = config.isDev
-    ? 'http://localhost:3000/preload.js'
-    : `file://${__dirname}/preload.js`;
+const preloadScript = join(__dirname, 'preloadStuff.js');
 
 export default class WindowManager {
     static mainWindow;
