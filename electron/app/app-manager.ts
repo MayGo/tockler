@@ -7,6 +7,7 @@ import { sequelize } from './Database';
 import { logManager } from './log-manager';
 import { stateManager } from './state-manager';
 import { settingsService } from './services/settings-service';
+import { initIpcActions } from './API';
 import config from './config';
 
 let logger = logManager.getLogger('AppManager');
@@ -15,6 +16,7 @@ export default class AppManager {
     static async init() {
         await AppManager.syncDb();
         AppManager.initGlobalClasses();
+        initIpcActions();
         AppManager.initAppEvents();
         AppManager.setOpenAtLogin();
 

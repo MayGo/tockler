@@ -1,9 +1,10 @@
 import { Flex } from '@rebass/grid';
 import { Button, Card, Icon, Tooltip } from 'antd';
 import * as React from 'react';
-import { SettingsService } from '../../services/SettingsService';
+
 import { TimelineContext } from '../../TimelineContext';
 import { AnalyserFormItem } from './AnalyserFormItem';
+import { fetchAnalyserSettings, saveAnalyserSettings } from '../../services/settings.api';
 
 const defaultAnalyserSettings = [
     { findRe: '\\w+-\\d+.*JIRA', takeTitle: '', takeGroup: '\\w+-\\d+', enabled: true },
@@ -19,7 +20,7 @@ export const AnalyserForm = () => {
 
     React.useEffect(() => {
         async function fetchSettings() {
-            const items = await SettingsService.fetchAnalyserSettings();
+            const items = await fetchAnalyserSettings();
             setAnalyserItems(items || []);
         }
 
@@ -29,12 +30,12 @@ export const AnalyserForm = () => {
     const removeItem = index => () => {
         analyserItems.splice(index, 1);
         setAnalyserItems([...analyserItems]);
-        SettingsService.saveAnalyserSettings([...analyserItems]);
+        saveAnalyserSettings([...analyserItems]);
     };
     const saveItem = index => data => {
         analyserItems[index] = data;
         setAnalyserItems([...analyserItems]);
-        SettingsService.saveAnalyserSettings([...analyserItems]);
+        saveAnalyserSettings([...analyserItems]);
     };
 
     const addItem = () => {

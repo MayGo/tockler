@@ -2564,6 +2564,11 @@ ecc-jsbn@~0.1.1:
     jsbn "~0.1.0"
     safer-buffer "^2.1.0"
 
+eiphop@^1.0.11:
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/eiphop/-/eiphop-1.0.11.tgz#da5d3097620ac7a40fe02410eb901f17d0e66bf1"
+  integrity sha512-/v0fHAyqHH5arf/PX3ZykMr58VNdpaWyHV2UfW5IN0n4l1dGHTTIKak51Rz0UWWfT789+WDHCFK72cJqTgcCig==
+
 ejs@^2.6.2:
   version "2.7.1"
   resolved "https://registry.yarnpkg.com/ejs/-/ejs-2.7.1.tgz#5b5ab57f718b79d4aca9254457afecd36fa80228"

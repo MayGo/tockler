@@ -5,7 +5,7 @@ import { TimelineItemEdit } from '../components/Timeline/TimelineItemEdit';
 import { TrayLayout } from '../components/TrayLayout/TrayLayout';
 import { TrayList } from '../components/TrayList/TrayList';
 import { EventEmitter } from '../services/EventEmitter';
-import { SettingsService } from '../services/SettingsService';
+import { getRunningLogItem } from '../services/settings.api';
 import { TrackItemService } from '../services/TrackItemService';
 import { Logger } from '../logger';
 
@@ -39,7 +39,7 @@ export function TrayAppPage({ location }: any) {
 
     React.useEffect(() => {
         loadLastLogItems();
-        SettingsService.getRunningLogItem().then(logItem => {
+        getRunningLogItem().then(logItem => {
             setRunningLogItem(logItem);
         });
     }, []);

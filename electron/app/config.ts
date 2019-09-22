@@ -9,7 +9,7 @@ let root = path.join(__dirname, '..');
 let client = isDevelopment ? path.join(root, '..', 'client', 'build') : path.join(root, 'dist');
 // Load real data even when in development
 
-let useRealDataInDev = false;
+let useRealDataInDev = true;
 let userDir =
     isDevelopment && useRealDataInDev
         ? `/Users/${OS.userInfo().username}/Library/Application Support/Tockler`
