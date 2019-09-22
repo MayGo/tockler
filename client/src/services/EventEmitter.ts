@@ -4,7 +4,7 @@ const { ipcRenderer } = window as any;
 
 function send(name, ...args) {
     Logger.info(`Send event: ${name}`);
-    ipcRenderer.send(name);
+    ipcRenderer.send(name, ...args);
 }
 function on(name, listener) {
     ipcRenderer.on(name, listener);

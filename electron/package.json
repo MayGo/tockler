@@ -20,7 +20,7 @@
         "build_linux": "electron-builder -c electron-builder.yml --linux",
         "build_windows": "electron-builder -c electron-builder.yml --win",
         "build": "webpack --progress --env.production",
-        "release": "cpx \"../client/build/**/*\" dist && build -c electron-builder.yml"
+        "release": "cpx \"../client/build/**/*\" dist && electron-builder -c electron-builder.yml"
     },
     "dependencies": {
         "@babel/register": "^7.6.0",
