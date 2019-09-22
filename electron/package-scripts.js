@@ -34,7 +34,7 @@ module.exports = {
     
     release: series(
       copy("../client/build/* ./dist"),
-      'build -c electron-builder.yml'
+      'electron-builder -c electron-builder.yml'
     )
   }
 }
