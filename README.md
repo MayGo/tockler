@@ -81,7 +81,7 @@ npm start
 ```
 cd electron/
 yarn install            # Install dependencies
-nps run
+yarn start
 ```
 
 Build scripts samples are in travis/appveyor files.

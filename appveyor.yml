@@ -18,7 +18,6 @@ version: '{build}'
 install:
     - ps: Install-Product node $env:nodejs_version x64
     - ps: .\appveyor.before-build.ps1
-    - npm install yarn -g nps
     - cd electron
     - yarn install
     - cd ..
@@ -29,5 +28,5 @@ build_script:
     - npm run build
     - cd ..
     - cd electron
-    - nps build.prod
+    - npm run build
     - npm run release

@@ -38,7 +38,7 @@ script:
     - npm run build
     - cd ..
     - cd electron
-    - nps build.prod
+    - npm run build
     - cd ..
     - travis_wait npm run release --prefix ./electron
 
