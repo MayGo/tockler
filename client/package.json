@@ -10,7 +10,7 @@
         "customize-cra": "^0.2.13",
         "eiphop": "^1.0.11",
         "electron-store": "3.2.0",
-        "lodash": "4.17.11",
+        "lodash": "4.17.13",
         "loglevel": "^1.6.2",
         "moment": "^2.24.0",
         "moment-duration-format": "2.3.2",
