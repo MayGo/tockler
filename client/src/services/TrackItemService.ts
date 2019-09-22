@@ -2,12 +2,10 @@ import moment from 'moment';
 import { ITrackItem } from '../@types/ITrackItem';
 import { TrackItemType } from '../enum/TrackItemType';
 import { Logger } from '../logger';
-
-const { remote } = (window as any).require('electron');
-const { ipcRenderer } = (window as any).require('electron');
+import { EventEmitter } from './EventEmitter';
 
 export class TrackItemService {
-    public static service: any = remote.getGlobal('TrackItemService');
+    public static service: any = (window as any).App.TrackItemService;
 
     /*  findAllItems(from, to, taskName, searchStr, paging) {
           return TrackItemService.service.findAllFromDay(from, to, taskName, searchStr, paging);
@@ -116,12 +114,12 @@ export class TrackItemService {
             .add(60, 'seconds')
             .toDate();
 
-        ipcRenderer.send('start-new-log-item', newItem);
+        EventEmitter.send('start-new-log-item', newItem);
     }
 
     public static stopRunningLogItem(runningLogItemId: number) {
         Logger.debug('stopRunningLogItem', runningLogItemId);
-        ipcRenderer.send('end-running-log-item');
+        EventEmitter.send('end-running-log-item');
     }
 
     public static updateColorForApp(appName: string, color: string) {

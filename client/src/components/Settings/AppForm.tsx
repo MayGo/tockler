@@ -1,18 +1,23 @@
 import { Card, Form, Switch } from 'antd';
 import * as React from 'react';
-import { SettingsService } from '../../services/SettingsService';
-
-const openAtLogin = SettingsService.getOpenAtLogin();
-const isAutoUpdateEnabled = SettingsService.getIsAutoUpdateEnabled();
+import {
+    getOpenAtLogin,
+    getIsAutoUpdateEnabled,
+    saveOpenAtLogin,
+    saveIsAutoUpdateEnabled,
+} from '../../services/settings.api';
 
 export const AppForm = () => {
+    const openAtLogin = getOpenAtLogin();
+    const isAutoUpdateEnabled = getIsAutoUpdateEnabled();
     const onChangeOpenAtLogin = value => {
-        SettingsService.saveOpenAtLogin(value);
+        saveOpenAtLogin(value);
     };
 
     const onChangeAutoUpdate = value => {
-        SettingsService.saveOpenAtLogin(value);
+        saveIsAutoUpdateEnabled(value);
     };
+
     return (
         <Card title="App settings">
             <Form.Item>

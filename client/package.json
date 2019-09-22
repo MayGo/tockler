@@ -8,6 +8,7 @@
         "antd": "3.19.2",
         "cross-env": "5.2.0",
         "customize-cra": "^0.2.13",
+        "eiphop": "^1.0.11",
         "electron-store": "3.2.0",
         "lodash": "4.17.11",
         "loglevel": "^1.6.2",
@@ -33,7 +34,7 @@
         "why-did-you-update": "https://github.com/maicki/why-did-you-update#master"
     },
     "scripts": {
-        "start": "LOG_LEVEL=debug react-app-rewired start",
+        "start": " LOG_LEVEL=debug react-app-rewired start",
         "build": "cross-env PUBLIC_URL=./ react-app-rewired build ",
         "test": "react-app-rewired test --env=jsdom ",
         "eject": "react-app-rewired eject",
@@ -50,6 +51,7 @@
         "@types/webpack-env": "1.13.9",
         "babel-eslint": "^10.0.1",
         "babel-plugin-import": "1.12.0",
+        "devtron": "^1.4.0",
         "eslint": "^5.16.0",
         "eslint-config-airbnb": "^17.1.0",
         "eslint-config-prettier": "^4.3.0",
