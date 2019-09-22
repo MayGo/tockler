@@ -4,6 +4,8 @@ import { TrackItemType } from '../enum/TrackItemType';
 import { Logger } from '../logger';
 import { EventEmitter } from './EventEmitter';
 
+console.error('asd(window as any).App.', (window as any).App);
+
 export class TrackItemService {
     public static service: any = (window as any).App.TrackItemService;
 

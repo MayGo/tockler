@@ -1,6 +1,6 @@
 import { Box } from '@rebass/grid';
-import * as React from 'react';
-
+import React, { useEffect } from 'react';
+import randomcolor from 'randomcolor';
 import { TimelineItemEdit } from '../components/Timeline/TimelineItemEdit';
 import { TrayLayout } from '../components/TrayLayout/TrayLayout';
 import { TrayList } from '../components/TrayList/TrayList';
@@ -8,13 +8,22 @@ import { EventEmitter } from '../services/EventEmitter';
 import { getRunningLogItem } from '../services/settings.api';
 import { TrackItemService } from '../services/TrackItemService';
 import { Logger } from '../logger';
+import { useWindowFocused } from '../hooks/windowFocusedHook';
 
 const EMPTY_SELECTED_ITEM = {};
 
 export function TrayAppPage({ location }: any) {
     const [loading, setLoading] = React.useState(true);
+    const [selectedItem, setSelectedItem] = React.useState(EMPTY_SELECTED_ITEM);
     const [runningLogItem, setRunningLogItem] = React.useState();
     const [lastLogItems, setLastLogItems] = React.useState([]);
+
+    const { windowIsActive } = useWindowFocused();
+
+    useEffect(() => {
+        console.debug('Window active', windowIsActive);
+        setSelectedItem({ ...selectedItem, color: randomcolor() });
+    }, [windowIsActive]);
 
     const loadLastLogItems = () => {
         setLoading(true);
@@ -64,7 +73,7 @@ export function TrayAppPage({ location }: any) {
             {!runningLogItem && (
                 <Box pt={2}>
                     <TimelineItemEdit
-                        selectedTimelineItem={EMPTY_SELECTED_ITEM}
+                        selectedTimelineItem={selectedItem}
                         colorScopeHidden
                         showPlayIcon
                         saveTimelineItem={startNewLogItem}

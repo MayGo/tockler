@@ -152,13 +152,13 @@ export default class WindowManager {
         this.menubar = menubar({
             index: url,
             icon: icon,
-            preloadWindow: false,
+            preloadWindow: true,
             showDockIcon: false,
 
             browserWindow: {
                 webPreferences: {
                     zoomFactor: 1.0,
-                    preload: preloadScript,
+                    // preload: preloadScript,
                 },
                 width: 500,
                 height: 600,
