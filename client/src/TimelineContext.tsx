@@ -1,5 +1,5 @@
 import moment from 'moment';
-import * as React from 'react';
+import React from 'react';
 import { getTodayTimerange, setDayFromTimerange } from './components/Timeline/timeline.utils';
 import { useInterval } from './hooks/intervalHook';
 import { useWindowFocused } from './hooks/windowFocusedHook';

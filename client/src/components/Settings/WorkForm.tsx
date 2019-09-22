@@ -1,5 +1,5 @@
 import { Card, Icon, Input } from 'antd';
-import * as React from 'react';
+import React from 'react';
 import { useFormState } from 'react-use-form-state';
 import { RootContext } from '../../RootContext';
 

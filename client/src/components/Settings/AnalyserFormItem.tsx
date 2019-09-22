@@ -1,6 +1,6 @@
 import { Box, Flex } from '@rebass/grid';
 import { Button, Divider, Form, Input, Switch } from 'antd';
-import * as React from 'react';
+import React from 'react';
 import { useFormState } from 'react-use-form-state';
 import { testAnalyserItem } from './AnalyserForm.util';
 

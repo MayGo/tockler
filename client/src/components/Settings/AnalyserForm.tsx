@@ -1,6 +1,6 @@
 import { Flex } from '@rebass/grid';
 import { Button, Card, Icon, Tooltip } from 'antd';
-import * as React from 'react';
+import React from 'react';
 
 import { TimelineContext } from '../../TimelineContext';
 import { AnalyserFormItem } from './AnalyserFormItem';

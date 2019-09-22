@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { MainLayout } from '../components/MainLayout/MainLayout';
 import { PieCharts } from '../components/PieCharts/PieCharts';
 import { Search } from '../components/Timeline/Search';

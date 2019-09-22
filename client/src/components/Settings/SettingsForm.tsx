@@ -1,6 +1,6 @@
 import { Box, Flex } from '@rebass/grid';
 import { Form } from 'antd';
-import * as React from 'react';
+import React from 'react';
 import { AnalyserForm } from './AnalyserForm';
 import { AppForm } from './AppForm';
 import { WorkForm } from './WorkForm';

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { VictoryTooltip } from 'victory';
 
 interface IProps {
@@ -26,8 +26,8 @@ export class PieLabel extends React.PureComponent<IProps> {
                     orientation="top"
                     pointerLength={0}
                     cornerRadius={labelWidth / 2}
-                    width={labelWidth}
-                    height={labelWidth}
+                    flyoutWidth={labelWidth}
+                    flyoutHeight={labelWidth}
                     flyoutStyle={{
                         fill: datum.color,
                         stroke: 'white',

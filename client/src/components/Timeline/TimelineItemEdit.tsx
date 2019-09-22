@@ -1,6 +1,6 @@
 import { Box, Flex } from '@rebass/grid';
 import { Button, Input, Select, Tooltip } from 'antd';
-import * as React from 'react';
+import React from 'react';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { ColorPicker } from './ColorPicker';
 import { Logger } from '../../logger';

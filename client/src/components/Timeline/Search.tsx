@@ -1,7 +1,7 @@
 import { Box, Flex } from '@rebass/grid';
 import { Button, DatePicker, Icon } from 'antd';
 import moment from 'moment';
-import * as React from 'react';
+import React from 'react';
 import { getTodayTimerange } from './timeline.utils';
 import { Logger } from '../../logger';
 

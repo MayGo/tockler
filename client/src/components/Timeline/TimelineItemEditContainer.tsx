@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { AppSettingService } from '../../services/AppSettingService';
 import { TrackItemService } from '../../services/TrackItemService';
 import { TimelineItemEdit } from './TimelineItemEdit';

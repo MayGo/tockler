@@ -1,7 +1,7 @@
 import { Box, Flex } from '@rebass/grid';
 import { Button, Icon } from 'antd';
 import moment from 'moment';
-import * as React from 'react';
+import React from 'react';
 import Moment from 'react-moment';
 import TimeAgo from 'react-timeago';
 import styled from 'styled-components';

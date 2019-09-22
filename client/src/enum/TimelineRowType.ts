@@ -1,5 +1,5 @@
 export enum TimelineRowType {
-    App = 1,
-    Status = 2,
-    Log = 3,
+    App = 0,
+    Status = 1,
+    Log = 2,
 }

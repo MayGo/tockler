@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import { RootProvider } from './RootContext';
@@ -7,8 +7,8 @@ import { MainAppPage } from './routes/MainAppPage';
 import { TrayAppPage } from './routes/TrayAppPage';
 import { TimelineProvider } from './TimelineContext';
 
-import { LocaleProvider } from 'antd';
-import en_GB from 'antd/lib/locale-provider/en_GB';
+import { ConfigProvider } from 'antd';
+import enUS from 'antd/es/locale/en_US';
 import moment from 'moment';
 import 'moment/locale/en-gb';
 
@@ -16,7 +16,7 @@ moment.locale('en-gb');
 export function MainRouter() {
     return (
         <Router>
-            <LocaleProvider locale={en_GB}>
+            <ConfigProvider locale={enUS}>
                 <RootProvider>
                     <TimelineProvider>
                         <Switch>
@@ -27,7 +27,7 @@ export function MainRouter() {
                         </Switch>
                     </TimelineProvider>
                 </RootProvider>
-            </LocaleProvider>
+            </ConfigProvider>
         </Router>
     );
 }

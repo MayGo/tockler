@@ -4,7 +4,7 @@ import { Button, Icon, Input, Table } from 'antd';
 import { PaginationConfig } from 'antd/lib/table';
 import _ from 'lodash';
 import moment from 'moment';
-import * as React from 'react';
+import React from 'react';
 import Moment from 'react-moment';
 import { convertDate, DATE_TIME_FORMAT, INPUT_DATE_FORMAT, TIME_FORMAT } from '../../constants';
 import { TrackItemType } from '../../enum/TrackItemType';

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import _ from 'lodash';
 import moment from 'moment';
@@ -6,6 +6,7 @@ import { VictoryContainer, VictoryPie } from 'victory';
 import { convertDate } from '../../constants';
 import { chartTheme } from '../Timeline/ChartTheme';
 import { PieLabel } from './PieLabel';
+import { colorProp } from '../charts.utils';
 
 const sumApp = (p, c) => {
     return _.extend(p, {
@@ -46,17 +47,17 @@ export class PieChart extends React.PureComponent<IProps, {}> {
                 containerComponent={<VictoryContainer responsive={false} />}
                 style={{
                     data: {
-                        fill: d => d.color,
-                        stroke: d => d.color,
+                        fill: colorProp,
+                        stroke: colorProp,
                         strokeWidth: 0.5,
                         fillOpacity: 0.75,
                     },
                 }}
-                labels={d => {
-                    const dur = moment.duration(d.timeDiffInMs);
+                labels={({ datum }) => {
+                    const dur = moment.duration(datum.timeDiffInMs);
                     const formattedDuration = dur.format();
 
-                    return `${d[groupByField]} [${formattedDuration}]`;
+                    return `${datum[groupByField]} [${formattedDuration}]`;
                 }}
                 labelComponent={<PieLabel width={width} />}
                 x="app"

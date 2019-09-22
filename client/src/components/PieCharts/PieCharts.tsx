@@ -1,6 +1,6 @@
 import { Box, Flex } from '@rebass/grid';
 import useWindowSize from '@rehooks/window-size';
-import * as React from 'react';
+import React, { memo, useContext } from 'react';
 import { RootContext } from '../../RootContext';
 import { filterItems } from '../Timeline/timeline.utils';
 import { PieChart } from './PieChart';
@@ -12,8 +12,8 @@ interface IProps {
     visibleTimerange: any;
 }
 
-export const PieCharts = React.memo<IProps>(({ timeItems, visibleTimerange }) => {
-    const { workSettings } = React.useContext(RootContext);
+export const PieCharts = memo<IProps>(({ timeItems, visibleTimerange }) => {
+    const { workSettings } = useContext(RootContext);
     const { innerWidth } = useWindowSize();
 
     const appItems = filterItems(timeItems.appItems, visibleTimerange);

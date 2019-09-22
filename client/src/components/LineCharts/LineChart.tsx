@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import moment from 'moment';
 import { VictoryBar, VictoryChart, VictoryAxis, VictoryTooltip } from 'victory';
 import { convertDate, TIME_FORMAT, COLORS } from '../../constants';
@@ -54,12 +54,12 @@ export const LineChart = () => {
                 barWidth={10}
                 data={onlineTimesSummary}
                 labelComponent={labelComponent()}
-                labels={d =>
-                    `Start time: ${convertDate(d.beginDate).format(
+                labels={({ datum }) =>
+                    `Start time: ${convertDate(datum.beginDate).format(
                         TIME_FORMAT,
-                    )}\r\nEnd time: ${convertDate(d.endDate).format(
+                    )}\r\nEnd time: ${convertDate(datum.endDate).format(
                         TIME_FORMAT,
-                    )}\r\nDuration: ${diffAndFormatShort(d.beginDate, d.endDate)}`
+                    )}\r\nDuration: ${diffAndFormatShort(datum.beginDate, datum.endDate)}`
                 }
             />
             <VictoryBar
@@ -70,7 +70,7 @@ export const LineChart = () => {
                 style={{ data: { fill: COLORS.green } }}
                 data={onlineTimesSummary}
                 labelComponent={labelComponent()}
-                labels={d => `Worked: ${moment.duration(d.online).format()}`}
+                labels={({ datum }) => `Worked: ${moment.duration(datum.online).format()}`}
             />
         </VictoryChart>
     );

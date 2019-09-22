@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import useWindowSize from '@rehooks/window-size';
 import { Popover, Spin } from 'antd';
@@ -21,6 +21,7 @@ import { BrushChart, MainChart, Spinner } from './Timeline.styles';
 import { TimelineItemEditContainer } from './TimelineItemEditContainer';
 import { Logger } from '../../logger';
 import { formatDuration } from '../SummaryCalendar/SummaryCalendar.util';
+import { colorProp } from '../charts.utils';
 
 interface IProps {
     timerange: any;
@@ -59,8 +60,8 @@ const contertDateForY0 = d => convertDate(d.endDate);
 const brushStyle = {
     data: {
         width: 7,
-        fill: d => d.color,
-        stroke: d => d.color,
+        fill: colorProp,
+        stroke: colorProp,
         strokeWidth: 0.5,
         fillOpacity: 0.75,
     },
@@ -76,8 +77,8 @@ const domainPaddingBrush = { y: 35, x: 5 };
 const barStyle = {
     data: {
         width: barWidth,
-        fill: d => d.color,
-        stroke: d => d.color,
+        fill: colorProp,
+        stroke: colorProp,
         strokeWidth: 0.5,
         fillOpacity: 0.75,
     },
@@ -120,11 +121,11 @@ export const Timeline = React.memo<IFullProps>(
 
             changeVisibleTimerange(domain.y);
         };
-        const calcRowEnabledColor = d => {
-            return isRowEnabled[d] ? blueGrey700 : disabledGrey;
+        const calcRowEnabledColor = ({ index }) => {
+            return isRowEnabled[index] ? blueGrey700 : disabledGrey;
         };
-        const calcRowEnabledColorFlipped = d => {
-            return !isRowEnabled[d] ? blueGrey700 : disabledGrey;
+        const calcRowEnabledColorFlipped = index => {
+            return !isRowEnabled[index] ? blueGrey700 : disabledGrey;
         };
 
         const getTooltipLabel = d => {
@@ -173,7 +174,6 @@ export const Timeline = React.memo<IFullProps>(
                             {
                                 target: 'tickLabels',
                                 mutation: props => {
-                                    Logger.debug('Toggling row', props);
                                     toggleRow(props.datum);
                                     return {
                                         style: {

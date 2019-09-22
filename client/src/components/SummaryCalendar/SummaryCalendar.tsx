@@ -1,7 +1,7 @@
 import { Flex } from '@rebass/grid';
 import { Calendar, Spin, Icon } from 'antd';
 import { Moment } from 'moment';
-import * as React from 'react';
+import React from 'react';
 import useReactRouter from 'use-react-router';
 import { TimelineContext } from '../../TimelineContext';
 import { SummaryContext } from '../../SummaryContext';

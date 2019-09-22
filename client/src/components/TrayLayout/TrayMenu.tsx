@@ -1,5 +1,5 @@
 import { Icon, Menu } from 'antd';
-import * as React from 'react';
+import React from 'react';
 import tocklerIcon from '../../assets/icons/tockler_icon.png';
 import { EventEmitter } from '../../services/EventEmitter';
 import { Brand, Img, MenuItem, RightMenuItem } from './TrayMenu.styles';

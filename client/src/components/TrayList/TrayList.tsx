@@ -1,6 +1,6 @@
 import { List } from 'antd';
 import { groupBy, map, sortBy, sumBy } from 'lodash';
-import * as React from 'react';
+import React from 'react';
 import { convertDate } from '../../constants';
 import { TrayListItem } from './TrayListItem';
 
