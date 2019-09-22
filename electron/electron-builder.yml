@@ -1,6 +1,6 @@
 appId: 'ee.trimatech.tockler'
 productName: 'Tockler'
-asar: false
+asar: true
 asarUnpack:
     - scripts
 npmRebuild: true
