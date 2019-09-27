@@ -14,10 +14,11 @@ export class TrackItemService {
         return trackItem;
     }
 
-    async updateTrackItem(
+    async updateTrackItemByName(
         name: string,
         trackItemAttributes: any,
     ): Promise<[number, Array<TrackItem>]> {
+        // TODO: not used
         let results = await TrackItem.update(trackItemAttributes, {
             where: { name: name },
         });
@@ -29,6 +30,23 @@ export class TrackItemService {
         }
 
         return results;
+    }
+
+    async updateTrackItem(itemData: TrackItem, id: number): Promise<[number, TrackItem[]]> {
+        let item = await TrackItem.update(
+            {
+                app: itemData.app,
+                title: itemData.title,
+                color: itemData.color,
+                beginDate: itemData.beginDate,
+                endDate: itemData.endDate,
+            },
+            {
+                fields: ['beginDate', 'endDate', 'app', 'title', 'color'],
+                where: { id: id },
+            },
+        );
+        return item;
     }
 
     findAllItems(from, to, taskName, searchStr, paging) {
@@ -75,13 +93,16 @@ export class TrackItemService {
             },
             taskName: taskName,
         };
+
+        this.logger.error('findAllDayItems  33>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+
         const items = await TrackItem.findAll({
             where: where,
             raw: true,
             order: [['beginDate', 'ASC']],
         });
-
-        return JSON.stringify(items);
+        this.logger.error('findAllDayItems  44>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', items);
+        return items;
     }
 
     findFirstLogItems() {
@@ -127,24 +148,7 @@ export class TrackItemService {
         });
     }
 
-    async updateItem(itemData: TrackItem, id: number): Promise<[number, TrackItem[]]> {
-        let item = await TrackItem.update(
-            {
-                app: itemData.app,
-                title: itemData.title,
-                color: itemData.color,
-                beginDate: itemData.beginDate,
-                endDate: itemData.endDate,
-            },
-            {
-                fields: ['beginDate', 'endDate', 'app', 'title', 'color'],
-                where: { id: id },
-            },
-        );
-        return item;
-    }
-
-    updateColorForApp(appName, color) {
+    updateTrackItemColor(appName, color) {
         this.logger.info('Updating app color:', appName, color);
 
         return TrackItem.update(
@@ -165,6 +169,7 @@ export class TrackItemService {
     }
 
     async deleteById(id) {
+        // TODO: not used
         await TrackItem.destroy({
             where: { id: id },
         });

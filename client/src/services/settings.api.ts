@@ -3,6 +3,7 @@ import { Logger } from '../logger';
 import { emit } from 'eiphop';
 
 const { Store } = window as any;
+
 const config = new Store();
 
 export function getOpenAtLogin() {

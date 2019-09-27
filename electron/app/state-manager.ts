@@ -169,7 +169,7 @@ export class StateManager {
             runningItem.endDate = rawItem.beginDate;
             logger.info('Ending trackItem:', runningItem.toJSON());
             this.resetCurrentTrackItem(rawItem.taskName);
-            await trackItemService.updateItem(runningItem, runningItem.id);
+            await trackItemService.updateTrackItem(runningItem, runningItem.id);
         }
 
         return runningItem;
@@ -188,7 +188,7 @@ export class StateManager {
     async updateRunningTrackItemEndDate(type: TrackItemType) {
         let runningItem = this.getCurrentTrackItem(type);
         runningItem.endDate = new Date();
-        await trackItemService.updateItem(runningItem, runningItem.id);
+        await trackItemService.updateTrackItem(runningItem, runningItem.id);
         logger.debug('Saved track item(endDate change) to DB:', runningItem.toJSON());
         return runningItem;
     }

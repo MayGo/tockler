@@ -21,9 +21,11 @@ const CustomListItem = styled.div`
 const Small = styled(Box)`
     font-size: 10px;
 `;
+
 const Medium = styled(Box)`
     font-size: 12px;
 `;
+
 const ActionBtn = styled(Flex)`
     margin: 2px 0;
 `;
@@ -43,6 +45,7 @@ const FormattedTime = ({ item, isRunning }: any) => {
 };
 
 export function TrayListItem({ item, startNewLogItemFromOld, stopRunningLogItem, isRunning }: any) {
+    console.error('item.totalMs', item.totalMs);
     return (
         <CustomListItem color={item.color}>
             <Flex alignItems="center">
@@ -77,12 +80,12 @@ export function TrayListItem({ item, startNewLogItemFromOld, stopRunningLogItem,
                         </Box>
                         <Flex width={3 / 11} justifyContent="flex-end">
                             <Small pr={2}>
-                                <TimeAgo date={item.startDate} />
+                                {item.startDate && <TimeAgo date={item.startDate} />}
                             </Small>
                         </Flex>
                     </Flex>
                     <Flex>
-                        {item.totalMs && (
+                        {item.totalMs && item.totalMs > 0 && (
                             <Box width={2 / 7}>
                                 <Medium>
                                     Duration: <b>{moment.duration(item.totalMs).format()}</b>

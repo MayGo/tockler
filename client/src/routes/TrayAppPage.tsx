@@ -6,7 +6,7 @@ import { TrayLayout } from '../components/TrayLayout/TrayLayout';
 import { TrayList } from '../components/TrayList/TrayList';
 import { EventEmitter } from '../services/EventEmitter';
 import { getRunningLogItem } from '../services/settings.api';
-import { TrackItemService } from '../services/TrackItemService';
+import { startNewLogItem, findFirstLogItems, stopRunningLogItem } from '../services/trackItem.api';
 import { Logger } from '../logger';
 import { useWindowFocused } from '../hooks/windowFocusedHook';
 
@@ -21,16 +21,23 @@ export function TrayAppPage({ location }: any) {
     const { windowIsActive } = useWindowFocused();
 
     useEffect(() => {
-        console.debug('Window active', windowIsActive);
-        setSelectedItem({ ...selectedItem, color: randomcolor() });
+        if (windowIsActive) {
+            console.debug('Window active', windowIsActive);
+            setSelectedItem(s => ({ ...s, color: randomcolor() }));
+            loadLastLogItems();
+        }
     }, [windowIsActive]);
 
-    const loadLastLogItems = () => {
+    const loadLastLogItems = async () => {
         setLoading(true);
-        TrackItemService.findFirstLogItems().then(items => {
+        try {
+            console.error('findFirstLogItems');
+            const items = await findFirstLogItems();
             setLastLogItems(items);
-            setLoading(false);
-        });
+        } catch (e) {
+            console.error('Error  loading first last items', e);
+        }
+        setLoading(false);
     };
 
     React.useEffect(() => {
@@ -46,6 +53,7 @@ export function TrayAppPage({ location }: any) {
         };
     }, []);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     React.useEffect(() => {
         loadLastLogItems();
         getRunningLogItem().then(logItem => {
@@ -53,14 +61,14 @@ export function TrayAppPage({ location }: any) {
         });
     }, []);
 
-    const startNewLogItem = (item: any, colorScope: any) => {
-        TrackItemService.startNewLogItem(item);
+    const startNewLogItemEvent = (item: any, colorScope: any) => {
+        startNewLogItem(item);
         loadLastLogItems();
     };
 
-    const stopRunningLogItem = (item: any, colorScope: any) => {
+    const stopRunningLogItemEvent = (item: any, colorScope: any) => {
         if (runningLogItem) {
-            TrackItemService.stopRunningLogItem(runningLogItem.id);
+            stopRunningLogItem(runningLogItem.id);
             loadLastLogItems();
             setRunningLogItem(null);
         } else {
@@ -83,8 +91,8 @@ export function TrayAppPage({ location }: any) {
             <TrayList
                 lastLogItems={lastLogItems}
                 runningLogItem={runningLogItem}
-                stopRunningLogItem={stopRunningLogItem}
-                startNewLogItem={startNewLogItem}
+                stopRunningLogItem={stopRunningLogItemEvent}
+                startNewLogItem={startNewLogItemEvent}
                 loading={loading}
             />
         </TrayLayout>

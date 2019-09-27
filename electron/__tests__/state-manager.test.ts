@@ -151,7 +151,7 @@ describe('createNewRunningTrackItem', () => {
         let updateItemMock = jest.fn(() => delay(200).then(() => true));
         let createTrackItemMock = jest.fn();
         trackItemService.createTrackItem = createTrackItemMock;
-        trackItemService.updateItem = updateItemMock;
+        trackItemService.updateTrackItem = updateItemMock;
         createTrackItemMock.mockReturnValueOnce(delay(200).then(() => itemOnlineRunning));
 
         let restoredItem = await stateManager.createNewRunningTrackItem(rawOnlineItemRunning);
@@ -168,7 +168,7 @@ describe('createNewRunningTrackItem', () => {
         let logItemRunning: TrackItemInstance = TrackItem.build(rawLogItemRunning);
         //Create mocks
         let updateItemMock = jest.fn(() => delay(200).then(() => true));
-        trackItemService.updateItem = updateItemMock;
+        trackItemService.updateTrackItem = updateItemMock;
         let saveRunningLogItemReferenceMock = jest.fn(() => delay(200).then(() => true));
         settingsService.saveRunningLogItemReference = saveRunningLogItemReferenceMock;
 

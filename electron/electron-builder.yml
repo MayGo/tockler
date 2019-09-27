@@ -1,9 +1,9 @@
 appId: 'ee.trimatech.tockler'
 productName: 'Tockler'
-asar: true
+asar: false
 asarUnpack:
     - scripts
-npmRebuild: true
+npmRebuild: false
 directories:
     output: 'packaged'
 files:

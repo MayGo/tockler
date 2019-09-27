@@ -7,6 +7,8 @@ import { MainRouter } from './router';
 import { setupFrontendListener } from 'eiphop';
 
 const { ipcRenderer } = window as any;
+console.error('ipcRenderer:', ipcRenderer);
+
 setupFrontendListener({ ipcRenderer } as any);
 
 if (process.env.NODE_ENV !== 'production') {

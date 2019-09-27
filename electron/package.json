@@ -1,6 +1,6 @@
 {
     "name": "tockler",
-    "version": "3.5.1",
+    "version": "3.5.5",
     "description": "Automatically track applications usage and working time",
     "author": "Maigo Erit <maigo.erit@gmail.com>",
     "license": "GPL-2.0",
@@ -11,7 +11,7 @@
     },
     "scripts": {
         "tslint": "tslint --project .",
-        "start": "cross-env NODE_ENV=development electron ./dist",
+        "start": "cross-env NODE_ENV=development webpack -d && electron ./dist",
         "test": "jest -c jest-e2e.json",
         "test:e2e": "npm run build && mkdir -p ./test-results/e2e && NO_DEV_TOOLS=true NODE_ENV=test cucumber-js --require-module @babel/register __e2e__ -r ' __e2e__/**/*.{ts,js}' --format node_modules/cucumber-pretty --format usage:./test-results/e2e/usage.txt --format json:./test-results/e2e/result.json ",
         "____pre____": "",
@@ -19,8 +19,9 @@
         "build_mac": "electron-builder -c electron-builder.yml --mac",
         "build_linux": "electron-builder -c electron-builder.yml --linux",
         "build_windows": "electron-builder -c electron-builder.yml --win",
-        "build": "webpack --progress --env.production",
-        "release": "cpx \"../client/build/**/*\" dist && electron-builder -c electron-builder.yml"
+        "build": "webpack --progress --env.production --mode=production",
+        "prepare_client": "cpx \"../client/build/**/*\" dist",
+        "release": "npm run prepare_client && electron-builder -c electron-builder.yml"
     },
     "dependencies": {
         "@babel/register": "^7.6.0",
@@ -65,6 +66,7 @@
         "electron": "6.0.10",
         "electron-builder": "21.2.0",
         "electron-connect": "0.6.3",
+        "electron-rebuild": "^1.8.6",
         "electron-reload": "1.5.0",
         "friendly-errors-webpack-plugin": "^1.7.0",
         "jest": "24.9.0",

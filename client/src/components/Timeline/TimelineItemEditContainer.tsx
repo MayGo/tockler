@@ -1,6 +1,6 @@
 import React from 'react';
-import { AppSettingService } from '../../services/AppSettingService';
-import { TrackItemService } from '../../services/TrackItemService';
+import { changeColorForApp } from '../../services/appSettings.api';
+import { saveTrackItem, deleteByIds, updateTrackItemColor } from '../../services/trackItem.api';
 import { TimelineItemEdit } from './TimelineItemEdit';
 import { Logger } from '../../logger';
 
@@ -10,7 +10,7 @@ export const TimelineItemEditContainer = props => {
         Logger.debug('Delete timeline item', id);
 
         if (id) {
-            TrackItemService.deleteByIds(id).then(() => {
+            deleteByIds(id).then(() => {
                 Logger.debug('Deleted timeline items', id);
                 // TODO: reload timerange or remove from timeline
             });
@@ -23,13 +23,13 @@ export const TimelineItemEditContainer = props => {
     const saveTimelineItem = async ({ item, colorScope }) => {
         Logger.debug('Updating color for trackItem', item, colorScope);
         if (colorScope === 'ALL_ITEMS') {
-            await AppSettingService.changeColorForApp(item.app, item.color);
-            await TrackItemService.updateColorForApp(item.app, item.color);
+            await changeColorForApp(item.app, item.color);
+            await updateTrackItemColor(item.app, item.color);
         } else if (colorScope === 'NEW_ITEMS') {
-            await AppSettingService.changeColorForApp(item.app, item.color);
-            await TrackItemService.saveTrackItem(item);
+            await changeColorForApp(item.app, item.color);
+            await saveTrackItem(item);
         } else {
-            await TrackItemService.saveTrackItem(item);
+            await saveTrackItem(item);
         }
 
         setSelectedTimelineItem(null);

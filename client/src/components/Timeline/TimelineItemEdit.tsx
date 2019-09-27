@@ -9,7 +9,6 @@ interface IProps {
     selectedTimelineItem: any;
     saveTimelineItem: any;
     changeColorForApp?: any;
-    updateColorForApp?: any;
     colorScopeHidden?: boolean;
     showCloseBtn?: boolean;
     showDeleteBtn?: boolean;

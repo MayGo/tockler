@@ -1,6 +1,6 @@
 import moment from 'moment';
 import React from 'react';
-import { TrackItemService } from './services/TrackItemService';
+import { findAllItems } from './services/trackItem.api';
 import {
     summariseLog,
     summariseOnline,
@@ -23,14 +23,12 @@ export const SummaryProvider = ({ children }) => {
         const beginDate = moment(selectedDate).startOf(selectedMode);
         const endDate = moment(selectedDate).endOf(selectedMode);
 
-        TrackItemService.findAllItems(beginDate, endDate).then(
-            ({ appItems, statusItems, logItems }) => {
-                setLogSummary(summariseLog(logItems, selectedMode));
-                setOnlineSummary(summariseOnline(statusItems, selectedMode));
-                setOnlineTimesSummary(summariseTimeOnline(statusItems, selectedMode));
-                setIsLoading(false);
-            },
-        );
+        findAllItems(beginDate, endDate).then(({ appItems, statusItems, logItems }) => {
+            setLogSummary(summariseLog(logItems, selectedMode));
+            setOnlineSummary(summariseOnline(statusItems, selectedMode));
+            setOnlineTimesSummary(summariseTimeOnline(statusItems, selectedMode));
+            setIsLoading(false);
+        });
     }, [selectedDate, selectedMode]);
 
     const defaultContext = {

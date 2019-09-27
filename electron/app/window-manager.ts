@@ -152,13 +152,14 @@ export default class WindowManager {
         this.menubar = menubar({
             index: url,
             icon: icon,
-            preloadWindow: true,
+            preloadWindow: false,
             showDockIcon: false,
 
             browserWindow: {
                 webPreferences: {
                     zoomFactor: 1.0,
-                    // preload: preloadScript,
+
+                    preload: preloadScript,
                 },
                 width: 500,
                 height: 600,
@@ -169,7 +170,6 @@ export default class WindowManager {
         this.menubar.on('after-show', () => {
             logger.info('Show tray');
             this.menubar.window.webContents.send('focus-tray', 'ping');
-
             if (config.isDev) {
                 logger.info('Open menubar dev tools');
                 this.menubar.window.openDevTools({ mode: 'bottom' });

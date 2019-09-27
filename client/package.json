@@ -35,7 +35,7 @@
         "why-did-you-update": "https://github.com/maicki/why-did-you-update#master"
     },
     "scripts": {
-        "start": " LOG_LEVEL=debug react-app-rewired start",
+        "start": " cross-env ELECTRON_ENABLE_SECURITY_WARNINGS=false LOG_LEVEL=debug react-app-rewired start",
         "build": "cross-env PUBLIC_URL=./ react-app-rewired build ",
         "test": "react-app-rewired test --env=jsdom ",
         "eject": "react-app-rewired eject",

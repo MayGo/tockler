@@ -12,7 +12,7 @@ import { diffAndFormatShort } from '../../utils';
 import { filterItems } from '../Timeline/timeline.utils';
 import { FilterDropdown, FilterInput, Highlight, TotalCount } from './TrackItemTable.styles';
 import { Logger } from '../../logger';
-import { TrackItemService } from '../../services/TrackItemService';
+import { deleteByIds } from '../../services/trackItem.api';
 
 const checkIfOneDay = visibleTimerange => visibleTimerange[0].isSame(visibleTimerange[1], 'day');
 
@@ -34,7 +34,7 @@ const deleteTimelineItems = ids => {
     Logger.debug('Delete timeline items', ids);
 
     if (ids) {
-        TrackItemService.deleteByIds(ids).then(() => {
+        deleteByIds(ids).then(() => {
             Logger.debug('Deleted timeline items', ids);
             // TODO: reload timerange or remove from timeline
         });

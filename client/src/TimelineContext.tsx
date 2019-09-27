@@ -3,7 +3,7 @@ import React from 'react';
 import { getTodayTimerange, setDayFromTimerange } from './components/Timeline/timeline.utils';
 import { useInterval } from './hooks/intervalHook';
 import { useWindowFocused } from './hooks/windowFocusedHook';
-import { TrackItemService } from './services/TrackItemService';
+import { findAllItems } from './services/trackItem.api';
 import { addToTimelineItems } from './timeline.util';
 import { Logger } from './logger';
 
@@ -30,10 +30,7 @@ export const TimelineProvider = ({ children }) => {
     const loadTimerange = React.useCallback(async () => {
         Logger.info('Loading timerange:', JSON.stringify(timerange));
         setIsLoading(true);
-        const { appItems, statusItems, logItems } = await TrackItemService.findAllItems(
-            timerange[0],
-            timerange[1],
-        );
+        const { appItems, statusItems, logItems } = await findAllItems(timerange[0], timerange[1]);
 
         setTimeItems({ appItems, statusItems, logItems });
         setVisibleTimerange(setDayFromTimerange(visibleTimerange, timerange));
@@ -57,7 +54,7 @@ export const TimelineProvider = ({ children }) => {
 
     const bgSync = async requestFrom => {
         Logger.debug('Requesting from:', JSON.stringify(requestFrom));
-        const { appItems, statusItems, logItems } = await TrackItemService.findAllItems(
+        const { appItems, statusItems, logItems } = await findAllItems(
             requestFrom,
             moment(requestFrom).add(1, 'days'),
         );
