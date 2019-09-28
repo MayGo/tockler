@@ -21,7 +21,7 @@
         "build_windows": "electron-builder -c electron-builder.yml --win",
         "build": "webpack --progress --env.production --mode=production",
         "prepare_client": "cpx \"../client/build/**/*\" dist",
-        "release": "npm run prepare_client && electron-builder -c electron-builder.yml"
+        "release": "electron-builder -c electron-builder.yml"
     },
     "dependencies": {
         "@babel/register": "^7.6.0",

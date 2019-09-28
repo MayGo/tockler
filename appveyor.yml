@@ -29,4 +29,5 @@ build_script:
     - cd ..
     - cd electron
     - npm run build
+    - npm run prepare_client
     - npm run release
