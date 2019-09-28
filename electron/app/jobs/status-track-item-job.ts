@@ -8,6 +8,7 @@ import UserMessages from '../user-messages';
 import { execFile } from 'child_process';
 import { State } from '../enums/state';
 import { appConstants } from '../app-constants';
+import { sendToTrayWindow } from '../window-manager';
 let logger = logManager.getLogger('LogTrackItemJob');
 
 export class StatusTrackItemJob {
@@ -82,8 +83,16 @@ export class StatusTrackItemJob {
             seconds > appConstants.IDLE_IN_SECONDS_TO_LOG ? State.Idle : State.Online;
         // Cannot go from OFFLINE to IDLE
         if (stateManager.isSystemOffline() && state === State.Idle) {
-            logger.info('Not saving. Cannot go from OFFLINE to IDLE');
+            logger.error('Not saving. Cannot go from OFFLINE to IDLE');
             return 'BAD_STATE';
+        }
+        // If system just got online
+        if (!stateManager.isSystemOnline() && state === State.Online) {
+            sendToTrayWindow('system-is-online');
+        }
+        // If system just got offline/idle
+        if (stateManager.isSystemOnline() && state !== State.Online) {
+            sendToTrayWindow('system-is-not-online');
         }
 
         let rawItem: any = {

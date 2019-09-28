@@ -6,7 +6,7 @@ import { trackItemService } from './services/track-item-service';
 import { logManager } from './log-manager';
 import { settingsService } from './services/settings-service';
 import { appEmitter } from './app-event-emitter';
-import WindowManager from './window-manager';
+import WindowManager, { sendToTrayWindow } from './window-manager';
 import { TrackItem } from './models/TrackItem';
 
 let logger = logManager.getLogger('StateManager');
@@ -58,10 +58,7 @@ export class StateManager {
         logger.info('log-item-started', item.toJSON());
         await this.setLogTrackItemMarkedAsRunning(item);
         // event.sender.send('log-item-started', item.toJSON());
-        WindowManager.menubar.window.webContents.send(
-            'log-item-started',
-            JSON.stringify(item.toJSON()),
-        );
+        sendToTrayWindow('log-item-started', JSON.stringify(item.toJSON()));
     }
 
     async restoreState() {

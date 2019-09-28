@@ -14,6 +14,7 @@ const EMPTY_SELECTED_ITEM = {};
 
 export function TrayAppPage({ location }: any) {
     const [loading, setLoading] = React.useState(true);
+
     const [selectedItem, setSelectedItem] = React.useState(EMPTY_SELECTED_ITEM);
     const [runningLogItem, setRunningLogItem] = React.useState();
     const [lastLogItems, setLastLogItems] = React.useState([]);
@@ -46,6 +47,7 @@ export function TrayAppPage({ location }: any) {
             setRunningLogItem(JSON.parse(logItem));
             loadLastLogItems();
         };
+
         EventEmitter.on('log-item-started', eventLogItemStarted);
 
         return () => {

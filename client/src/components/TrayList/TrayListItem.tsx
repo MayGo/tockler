@@ -45,7 +45,6 @@ const FormattedTime = ({ item, isRunning }: any) => {
 };
 
 export function TrayListItem({ item, startNewLogItemFromOld, stopRunningLogItem, isRunning }: any) {
-    console.error('item.totalMs', item.totalMs);
     return (
         <CustomListItem color={item.color}>
             <Flex alignItems="center">

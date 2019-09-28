@@ -11,6 +11,14 @@ let logger = logManager.getLogger('WindowManager');
 
 const preloadScript = join(__dirname, 'preloadStuff.js');
 
+export const sendToTrayWindow = (key, message = '') => {
+    if (WindowManager.menubar.window) {
+        WindowManager.menubar.window.webContents.send(key, message);
+    } else {
+        logger.info(`Menubar not defined yet, not sending ${key}`);
+    }
+};
+
 export default class WindowManager {
     static mainWindow;
     static menubar;
