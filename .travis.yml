@@ -39,7 +39,7 @@ script:
     - cd ..
     - cd electron
     - npm run build
-    - travis_wait 30 npm run release
+    - travis_wait 60 npm run release
 
 branches:
     only:
