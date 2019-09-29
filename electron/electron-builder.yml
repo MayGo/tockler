@@ -3,6 +3,7 @@ productName: 'Tockler'
 asar: true
 asarUnpack:
     - scripts
+    - shared
 npmRebuild: false
 beforeBuild: 'preventlogging'
 directories:
