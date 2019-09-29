@@ -21,11 +21,15 @@
         "build_windows": "electron-builder -c electron-builder.yml --win",
         "build": "webpack --progress --env.production --mode=production",
         "prepare_client": "cpx \"../client/build/**/*\" dist",
-        "release": "DEBUG=none electron-builder -c electron-builder.yml"
+        "release": "electron-builder -c electron-builder.yml"
     },
     "dependencies": {
-        "@babel/register": "^7.6.0",
         "active-win": "^5.1.2",
+        "sqlite3": "4.1.0"
+    },
+    "peerDependencies": {},
+    "devDependencies": {
+        "@babel/register": "^7.6.0",
         "compare-versions": "^3.5.1",
         "cpx": "^1.5.0",
         "cucumber": "^5.1.0",
@@ -50,10 +54,6 @@
         "sequelize": "5.19.0",
         "sequelize-typescript": "^1.0.0",
         "spectron": "^8.0.0",
-        "sqlite3": "4.1.0"
-    },
-    "peerDependencies": {},
-    "devDependencies": {
         "@types/jest": "^24.0.18",
         "@types/lodash": "^4.14.138",
         "@types/node": "^12.7.5",
