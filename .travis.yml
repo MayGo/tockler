@@ -40,7 +40,7 @@ script:
     - cd electron
     - npm run build
     - npm run prepare_client
-    - npm run release
+    - travis_wait 60 npm run release
 
 branches:
     only:
