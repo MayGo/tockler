@@ -4,6 +4,7 @@ asar: false
 asarUnpack:
     - scripts
 npmRebuild: false
+beforeBuild: 'preventlogging'
 directories:
     output: 'packaged'
 files:
