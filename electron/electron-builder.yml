@@ -1,11 +1,12 @@
 appId: 'ee.trimatech.tockler'
 productName: 'Tockler'
-asar: true
+asar: false
 asarUnpack:
     - scripts
     - shared
+
 npmRebuild: false
-beforeBuild: 'preventlogging'
+
 directories:
     output: 'packaged'
 files:
