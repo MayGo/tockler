@@ -160,7 +160,7 @@ export default class WindowManager {
         this.menubar = menubar({
             index: url,
             icon: icon,
-            preloadWindow: false,
+            preloadWindow: true,
             showDockIcon: false,
 
             browserWindow: {

@@ -4,9 +4,6 @@ import { setupMainHandler } from 'eiphop';
 import { settingsService } from './services/settings-service';
 import { appSettingService } from './services/app-setting-service';
 import { trackItemService } from './services/track-item-service';
-import { logManager } from './log-manager';
-
-const logger = logManager.getLogger('API');
 
 const settingsActions = {
     fetchAnalyserSettingsJsonString: async (req, res) => {
@@ -35,13 +32,12 @@ const appSettingsActions = {
 };
 const trackItemActions = {
     findAllDayItems: async ({ payload }, res) => {
-        logger.error('findAllDayItems  11>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
         const data = await trackItemService.findAllDayItems(
             payload.from,
             payload.to,
             payload.taskName,
         );
-        logger.error('findAllDayItems  22>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+
         res.send(data);
     },
 
@@ -62,6 +58,11 @@ const trackItemActions = {
     },
     deleteByIds: async ({ payload }, res) => {
         const data = await trackItemService.deleteByIds(payload.trackItemIds);
+        res.send(data);
+    },
+    searchFromItems: async ({ payload }, res) => {
+        const { from, to, taskName, searchStr, paging } = payload;
+        const data = await trackItemService.findAllItems(from, to, taskName, searchStr, paging);
         res.send(data);
     },
     findFirstLogItems: async (req, res) => {

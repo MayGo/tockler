@@ -78,7 +78,7 @@ export class TrackItemService {
 
         return TrackItem.findAndCountAll({
             where: where,
-            raw: false,
+            raw: true,
             limit: limit,
             offset: offset,
             order: [[order, orderSort]],
@@ -94,14 +94,11 @@ export class TrackItemService {
             taskName: taskName,
         };
 
-        this.logger.error('findAllDayItems  33>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-
         const items = await TrackItem.findAll({
             where: where,
             raw: true,
             order: [['beginDate', 'ASC']],
         });
-        this.logger.error('findAllDayItems  44>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', items);
         return items;
     }
 

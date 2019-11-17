@@ -29,6 +29,12 @@ export const HeaderMenu = ({ location }: any) => (
                 Summary
             </Link>
         </Menu.Item>
+        <Menu.Item key="/app/search">
+            <Link to="/app/search">
+                <Icon type="search" />
+                Search
+            </Link>
+        </Menu.Item>
         <Menu.Item key="/app/settings">
             <Link to="/app/settings">
                 <Icon type="setting" />

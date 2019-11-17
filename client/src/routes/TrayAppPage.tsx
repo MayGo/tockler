@@ -32,7 +32,6 @@ export function TrayAppPage({ location }: any) {
     const loadLastLogItems = async () => {
         setLoading(true);
         try {
-            console.error('findFirstLogItems');
             const items = await findFirstLogItems();
             setLastLogItems(items);
         } catch (e) {

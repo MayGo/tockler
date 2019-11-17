@@ -16,7 +16,7 @@ async function findAllDayItems(
     return data;
 }
 
-export async function findAllItems(from: moment.Moment, to: moment.Moment) {
+export async function findAllDayItemsForEveryTrack(from: moment.Moment, to: moment.Moment) {
     // TODO, query all at async
     const appItems: ITrackItem[] = await findAllDayItems(from, to, TrackItemType.AppTrackItem);
 
@@ -33,13 +33,22 @@ export async function findAllItems(from: moment.Moment, to: moment.Moment) {
 export function findFirstLogItems(): Promise<any> {
     return emit('findFirstLogItems');
 }
+export function searchFromItems({ from, to, taskName, searchStr, paging }): Promise<any> {
+    return emit('searchFromItems', {
+        from: from.toDate(),
+        to: to.toDate(),
+        taskName,
+        searchStr,
+        paging,
+    });
+}
 
 function createTrackItem(trackItem: ITrackItem): Promise<any> {
     return emit('createTrackItem', { trackItem: trackItem });
 }
 
 function updateTrackItem(trackItem: ITrackItem): Promise<any> {
-    return emit('updateTrackItem', { trackItem: trackItem });
+    return emit('updateTrackItem', { trackItem });
 }
 
 export async function saveTrackItem(trackItem): Promise<any> {
