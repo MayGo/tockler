@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MainLayout } from '../components/MainLayout/MainLayout';
 import { Flex, Box } from '@rebass/grid';
-import { Input } from 'antd';
+import { Input, Spin } from 'antd';
 import { useFormState } from 'react-use-form-state';
 import debounce from 'debounce-promise';
 import { searchFromItems } from '../services/trackItem.api';
@@ -9,10 +9,12 @@ import moment from 'moment';
 import { TrackItemType } from '../enum/TrackItemType';
 import { SearchResults } from '../components/SearchResults/SearchResults';
 import { SearchOptions } from '../components/SearchResults/SearchOptions';
+import { Spinner } from '../components/Timeline/Timeline.styles';
 
 export function SearchPage({ location }: any) {
     const [_, { text }] = useFormState({});
 
+    const [isLoading, setIsLoading] = React.useState<any>(false);
     const [dataItems, setDataItems] = useState([]);
     const [timerange, setTimerange] = useState([
         moment()
@@ -33,7 +35,7 @@ export function SearchPage({ location }: any) {
             setDataItems([]);
             return;
         }
-
+        setIsLoading(true);
         const items = await searchFromItems({
             from,
             to,
@@ -43,6 +45,7 @@ export function SearchPage({ location }: any) {
         });
         console.error('Search results:', items);
         setDataItems(items.rows);
+        setIsLoading(false);
         return;
     };
     const debouncedLoadOptions = debounce(loadItems, 1000);
@@ -65,6 +68,11 @@ export function SearchPage({ location }: any) {
                     <SearchOptions setTimerange={setTimerange} timerange={timerange} />
                 </Box>
                 <Box p={1}>
+                    {isLoading && (
+                        <Spinner>
+                            <Spin />
+                        </Spinner>
+                    )}
                     <SearchResults dataItems={dataItems} />
                 </Box>
             </Flex>

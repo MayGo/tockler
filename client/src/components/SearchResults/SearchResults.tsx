@@ -1,5 +1,4 @@
-import { Box, Flex } from '@rebass/grid';
-import { Button, Icon, Input, Table } from 'antd';
+import { Table } from 'antd';
 // tslint:disable-next-line: no-submodule-imports
 import { PaginationConfig } from 'antd/lib/table';
 import _ from 'lodash';
@@ -7,14 +6,9 @@ import moment from 'moment';
 import React from 'react';
 import Moment from 'react-moment';
 import { convertDate, DATE_TIME_FORMAT, INPUT_DATE_FORMAT, TIME_FORMAT } from '../../constants';
-import { TrackItemType } from '../../enum/TrackItemType';
 import { diffAndFormatShort } from '../../utils';
-import { filterItems } from '../Timeline/timeline.utils';
-import { FilterDropdown, FilterInput, Highlight, TotalCount } from './SearchResults.styles';
+import { TotalCount } from './SearchResults.styles';
 import { Logger } from '../../logger';
-import { deleteByIds } from '../../services/trackItem.api';
-
-const checkIfOneDay = visibleTimerange => visibleTimerange[0].isSame(visibleTimerange[1], 'day');
 
 const calculateTotal = filteredData => {
     const totalMs = _.sumBy(filteredData, c =>
@@ -30,25 +24,11 @@ const paginationConf: PaginationConfig = {
     pageSizeOptions: ['50', '100', '300', '500'],
 };
 
-const deleteTimelineItems = ids => {
-    Logger.debug('Delete timeline items', ids);
-
-    if (ids) {
-        deleteByIds(ids).then(() => {
-            Logger.debug('Deleted timeline items', ids);
-            // TODO: reload timerange or remove from timeline
-        });
-    } else {
-        Logger.error('No ids, not deleting from DB');
-    }
-};
-
 export const SearchResults = ({ dataItems }) => {
     const [state, setState] = React.useState<any>({
         filteredInfo: {},
         sortedInfo: {},
         filterDropdownVisible: false,
-        activeType: TrackItemType.AppTrackItem,
         searchText: '',
         filtered: false,
         selectedRowKeys: [],
@@ -67,22 +47,12 @@ export const SearchResults = ({ dataItems }) => {
         setState({ ...state, filteredInfo: filters, sortedInfo: sorter });
     };
 
-    const onInputChange = e => {
-        setState({ ...state, searchText: e.target.value });
-    };
-
     const onSelectChange = selectedRowKeys => {
         Logger.debug('selectedRowKeys changed: ', selectedRowKeys);
         setState({ ...state, selectedRowKeys });
     };
 
-    const deleteSelectedItems = () => {
-        const { selectedRowKeys } = state;
-        deleteTimelineItems(selectedRowKeys);
-        setState({ ...state, selectedRowKeys: [] });
-    };
-
-    const { isOneDay, activeType, sortedInfo, filteredInfo } = state;
+    const { isOneDay, sortedInfo } = state;
 
     const columns = [
         {
