@@ -12,7 +12,7 @@ import { SearchOptions } from '../components/SearchResults/SearchOptions';
 import { Spinner } from '../components/Timeline/Timeline.styles';
 
 export function SearchPage({ location }: any) {
-    const [_, { text }] = useFormState({});
+    const [, { text }] = useFormState({});
 
     const [isLoading, setIsLoading] = React.useState<any>(false);
     const [dataItems, setDataItems] = useState([]);
