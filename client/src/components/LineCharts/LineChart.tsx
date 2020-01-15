@@ -3,7 +3,7 @@ import moment from 'moment';
 import { VictoryBar, VictoryChart, VictoryAxis, VictoryTooltip } from 'victory';
 import { convertDate, TIME_FORMAT, COLORS } from '../../constants';
 import { chartTheme } from '../Timeline/ChartTheme';
-import useWindowSize from '@rehooks/window-size';
+import { useWindowWidth } from '@react-hook/window-size/throttled';
 import { SummaryContext } from '../../SummaryContext';
 import {
     addToTimeDuration,
@@ -27,7 +27,7 @@ const labelComponent = () => (
     />
 );
 export const LineChart = () => {
-    const { innerWidth: chartWidth } = useWindowSize();
+    const chartWidth = useWindowWidth();
     const { onlineTimesSummary } = React.useContext(SummaryContext);
 
     return (

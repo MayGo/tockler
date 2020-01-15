@@ -1,6 +1,6 @@
 import React from 'react';
 
-import useWindowSize from '@rehooks/window-size';
+import { useWindowWidth } from '@react-hook/window-size/throttled';
 import { Popover, Spin } from 'antd';
 import { debounce } from 'lodash';
 import moment from 'moment';
@@ -95,7 +95,7 @@ export const Timeline = React.memo<IFullProps>(
         const [selectedTimelineItem, setSelectedTimelineItem] = React.useState<any>();
         const [isRowEnabled, setIsRowEnabled] = React.useState<any>(rowEnabledDefaults);
 
-        const { innerWidth: chartWidth } = useWindowSize();
+        const chartWidth = useWindowWidth();
         const toggleRow = (rowId: any) => {
             setIsRowEnabled({ ...isRowEnabled, [rowId]: !isRowEnabled[rowId] });
         };
