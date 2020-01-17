@@ -46,7 +46,7 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
 
                 <Form.Item>
                     Active
-                    <Switch {...checkbox('active')} />
+                    <Switch {...checkbox('enabled')} />
                 </Form.Item>
                 <Form.Item>
                     Test

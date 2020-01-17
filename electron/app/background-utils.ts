@@ -1,6 +1,5 @@
 import { appConstants } from './app-constants';
 import * as moment from 'moment';
-import { TrackItem } from './models/TrackItem';
 
 export default class BackgroundUtils {
     static isSameItems(item1, item2) {

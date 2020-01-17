@@ -5,7 +5,6 @@
     "dependencies": {
         "@react-hook/window-size": "^1.0.12",
         "@rebass/grid": "6.1.0",
-        "@rehooks/window-size": "^1.0.2",
         "antd": "3.26.7",
         "cross-env": "6.0.3",
         "customize-cra": "^0.9.1",

@@ -6,7 +6,7 @@ import { trackItemService } from './services/track-item-service';
 import { logManager } from './log-manager';
 import { settingsService } from './services/settings-service';
 import { appEmitter } from './app-event-emitter';
-import WindowManager, { sendToTrayWindow } from './window-manager';
+import { sendToTrayWindow } from './window-manager';
 import { TrackItem } from './models/TrackItem';
 
 let logger = logManager.getLogger('StateManager');

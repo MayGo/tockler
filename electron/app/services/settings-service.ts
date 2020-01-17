@@ -13,7 +13,7 @@ export class SettingsService {
         });
         let item = items[0];
 
-        return item;
+            return item;
     }
 
     updateByName(name: string, jsonDataStr: any) {
@@ -34,6 +34,7 @@ export class SettingsService {
     }
     async fetchWorkSettingsJsonString() {
         let item = await this.findByName('WORK_SETTINGS');
+
         return item.jsonData;
     }
 
@@ -52,8 +53,9 @@ export class SettingsService {
     }
 
     async fetchAnalyserSettingsJsonString() {
+        this.logger.info('Fetching ANALYSER_SETTINGS:');
         let item = await this.findByName('ANALYSER_SETTINGS');
-        this.logger.info('Fetching ANALYSER_SETTINGS:', item);
+        this.logger.info('Fetched ANALYSER_SETTINGS:', item);
         if (!item) {
             // db default is object but this is initialized with array (when is initialized)
             return JSON.stringify([]);

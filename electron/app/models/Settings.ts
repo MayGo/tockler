@@ -33,9 +33,9 @@ export class Settings extends Model<Settings> {
 
     set jsonData(value: any) {
         try {
-            this.setDataValue('name', JSON.stringify(value));
+            this.setDataValue('jsonData', JSON.stringify(value));
         } catch (error) {
-            this.setDataValue('name', '{}');
+            this.setDataValue('jsonData', '{}');
         }
     }
 }
