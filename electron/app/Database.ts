@@ -21,7 +21,8 @@ class Database {
                 username: dbConfig.username,
                 password: dbConfig.password,
                 storage: dbConfig.outputPath,
-                logging: log => logger.info(log),
+
+                //logging: log => logger.info(log),
             });
             this._sequelize.addModels([AppSetting, Settings, TrackItem]);
 
