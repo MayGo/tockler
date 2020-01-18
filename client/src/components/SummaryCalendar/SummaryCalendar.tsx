@@ -1,6 +1,7 @@
 import { Flex } from '@rebass/grid';
 import { Calendar, Spin, Icon } from 'antd';
-import { Moment } from 'moment';
+import moment, { Moment } from 'moment';
+
 import React, { useContext } from 'react';
 import useReactRouter from 'use-react-router';
 import { TimelineContext } from '../../TimelineContext';
@@ -10,6 +11,10 @@ import { Item, TaskList } from './SummaryCalendar.styles';
 import { Logger } from '../../logger';
 import { convertDate, TIME_FORMAT_SHORT } from '../../constants';
 import { formatDuration } from './SummaryCalendar.util';
+import classNames from 'classnames';
+import padStart from 'lodash/padStart';
+
+moment.locale('et');
 
 export const SummaryCalendar = () => {
     const { loadTimerange } = useContext(TimelineContext);
@@ -86,6 +91,38 @@ export const SummaryCalendar = () => {
         return null;
     };
 
+    const dateFullCellRender = date => {
+        const prefixCls = 'ant';
+        const calendarPrefixCls = `${prefixCls}-fullcalendar`;
+        let style = {};
+
+        const day = date.day();
+        const isWeekend = day === 6 || day === 0;
+        const isToday = moment().isSame(date, 'day');
+        if (isWeekend) {
+            if (isToday) {
+                style = { background: '#e6f7ff' };
+            } else {
+                style = { background: 'rgb(230, 230, 230)' };
+            }
+        }
+        return (
+            <div
+                className={classNames(`${prefixCls}-cell-inner`, `${calendarPrefixCls}-date`, {
+                    [`${calendarPrefixCls}-date-today`]: moment().isSame(date, 'day'),
+                })}
+                style={style}
+            >
+                <div className={`${calendarPrefixCls}-date-value`}>
+                    {padStart(date.date(), 2, '0')}
+                </div>
+                <div className={`${calendarPrefixCls}-date-content`}>
+                    {dateCellRender && dateCellRender(date)}
+                </div>
+            </div>
+        );
+    };
+
     const monthCellRender = value => {
         const listData = getListData(value.month());
         return (
@@ -113,6 +150,7 @@ export const SummaryCalendar = () => {
                 mode={selectedMode}
                 onSelect={onDateSelect}
                 dateCellRender={dateCellRender}
+                dateFullCellRender={dateFullCellRender}
                 monthCellRender={monthCellRender}
                 onPanelChange={changeSelectedDate}
             />
