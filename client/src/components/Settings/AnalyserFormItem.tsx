@@ -1,6 +1,6 @@
 import { Box, Flex } from '@rebass/grid';
 import { Button, Divider, Form, Input, Switch } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import { useFormState } from 'react-use-form-state';
 import { testAnalyserItem } from './AnalyserForm.util';
 
@@ -18,7 +18,7 @@ const AnalyserTestItem = ({ item }) => (
 );
 
 export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem }) => {
-    const [showTests, setShowTests] = React.useState(false);
+    const [showTests, setShowTests] = useState(false);
     const toggleShowTests = () => {
         setShowTests(!showTests);
     };

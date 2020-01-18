@@ -1,5 +1,5 @@
 import { Icon, Menu, Tooltip } from 'antd';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import tocklerIcon from '../../assets/icons/tockler_icon.png';
 import { EventEmitter } from '../../services/EventEmitter';
 import { Brand, Img, MenuItem, RightMenuItem } from './TrayMenu.styles';
@@ -16,7 +16,7 @@ export const TrayMenu = () => {
         EventEmitter.send('toggle-main-window');
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         const systemIsOnline = () => {
             Logger.debug('system-is-online');
             setOnlineSince(moment());

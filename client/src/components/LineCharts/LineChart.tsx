@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import moment from 'moment';
 import { VictoryBar, VictoryChart, VictoryAxis, VictoryTooltip } from 'victory';
 import { convertDate, TIME_FORMAT, COLORS } from '../../constants';
@@ -28,7 +28,7 @@ const labelComponent = () => (
 );
 export const LineChart = () => {
     const chartWidth = useWindowWidth();
-    const { onlineTimesSummary } = React.useContext(SummaryContext);
+    const { onlineTimesSummary } = useContext(SummaryContext);
 
     return (
         <VictoryChart

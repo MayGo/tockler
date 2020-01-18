@@ -84,7 +84,7 @@ export function TrayListItem({ item, startNewLogItemFromOld, stopRunningLogItem,
                         </Flex>
                     </Flex>
                     <Flex>
-                        {item.totalMs && item.totalMs > 0 && (
+                        {item.totalMs && item.totalMs > 1 && (
                             <Box width={2 / 7}>
                                 <Medium>
                                     Duration: <b>{moment.duration(item.totalMs).format()}</b>

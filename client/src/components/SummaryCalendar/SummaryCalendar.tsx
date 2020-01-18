@@ -1,7 +1,7 @@
 import { Flex } from '@rebass/grid';
 import { Calendar, Spin, Icon } from 'antd';
 import { Moment } from 'moment';
-import React from 'react';
+import React, { useContext } from 'react';
 import useReactRouter from 'use-react-router';
 import { TimelineContext } from '../../TimelineContext';
 import { SummaryContext } from '../../SummaryContext';
@@ -12,7 +12,7 @@ import { convertDate, TIME_FORMAT_SHORT } from '../../constants';
 import { formatDuration } from './SummaryCalendar.util';
 
 export const SummaryCalendar = () => {
-    const { loadTimerange } = React.useContext(TimelineContext);
+    const { loadTimerange } = useContext(TimelineContext);
     const {
         selectedDate,
         setSelectedDate,
@@ -22,7 +22,7 @@ export const SummaryCalendar = () => {
         onlineSummary,
         onlineTimesSummary,
         isLoading,
-    } = React.useContext(SummaryContext);
+    } = useContext(SummaryContext);
 
     const { history } = useReactRouter();
 

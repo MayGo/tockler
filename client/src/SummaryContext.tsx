@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React from 'react';
+import React, { createContext, useState, useCallback, useEffect } from 'react';
 import { findAllDayItemsForEveryTrack } from './services/trackItem.api';
 import {
     summariseLog,
@@ -7,18 +7,18 @@ import {
     summariseTimeOnline,
 } from './components/SummaryCalendar/SummaryCalendar.util';
 
-export const SummaryContext = React.createContext<any>({});
+export const SummaryContext = createContext<any>({});
 
 export const SummaryProvider = ({ children }) => {
-    const [isLoading, setIsLoading] = React.useState<any>(false);
-    const [selectedDate, setSelectedDate] = React.useState<any>(moment());
-    const [selectedMode, setSelectedMode] = React.useState<any>('month');
+    const [isLoading, setIsLoading] = useState<any>(false);
+    const [selectedDate, setSelectedDate] = useState<any>(moment());
+    const [selectedMode, setSelectedMode] = useState<any>('month');
 
-    const [logSummary, setLogSummary] = React.useState<any>([]);
-    const [onlineSummary, setOnlineSummary] = React.useState<any>([]);
-    const [onlineTimesSummary, setOnlineTimesSummary] = React.useState<any>([]);
+    const [logSummary, setLogSummary] = useState<any>([]);
+    const [onlineSummary, setOnlineSummary] = useState<any>([]);
+    const [onlineTimesSummary, setOnlineTimesSummary] = useState<any>([]);
 
-    const loadData = React.useCallback(async () => {
+    const loadData = useCallback(async () => {
         setIsLoading(true);
         const beginDate = moment(selectedDate).startOf(selectedMode);
         const endDate = moment(selectedDate).endOf(selectedMode);
@@ -44,7 +44,7 @@ export const SummaryProvider = ({ children }) => {
         isLoading,
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         loadData();
     }, [selectedDate, selectedMode]); // eslint-disable-line react-hooks/exhaustive-deps
 

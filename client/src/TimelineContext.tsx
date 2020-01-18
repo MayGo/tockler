@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React from 'react';
+import React, { createContext, useState, useCallback, useEffect } from 'react';
 import { getTodayTimerange, setDayFromTimerange } from './components/Timeline/timeline.utils';
 import { useInterval } from './hooks/intervalHook';
 import { useWindowFocused } from './hooks/windowFocusedHook';
@@ -7,7 +7,7 @@ import { findAllDayItemsForEveryTrack } from './services/trackItem.api';
 import { addToTimelineItems } from './timeline.util';
 import { Logger } from './logger';
 
-export const TimelineContext = React.createContext<any>({});
+export const TimelineContext = createContext<any>({});
 
 const emptyTimeItems = {
     appItems: [],
@@ -16,18 +16,18 @@ const emptyTimeItems = {
 };
 
 export const TimelineProvider = ({ children }) => {
-    const [isLoading, setIsLoading] = React.useState<any>(true);
-    const [timerange, setTimerange] = React.useState<any>(getTodayTimerange());
-    const [lastRequestTime, setLastRequestTime] = React.useState<any>(moment());
-    const [visibleTimerange, setVisibleTimerange] = React.useState<any>([
+    const [isLoading, setIsLoading] = useState<any>(true);
+    const [timerange, setTimerange] = useState<any>(getTodayTimerange());
+    const [lastRequestTime, setLastRequestTime] = useState<any>(moment());
+    const [visibleTimerange, setVisibleTimerange] = useState<any>([
         moment().subtract(1, 'hour'),
         moment().add(1, 'hour'),
     ]);
 
-    const [timeItems, setTimeItems] = React.useState<any>(emptyTimeItems);
+    const [timeItems, setTimeItems] = useState<any>(emptyTimeItems);
     const { windowIsActive } = useWindowFocused();
 
-    const loadTimerange = React.useCallback(async () => {
+    const loadTimerange = useCallback(async () => {
         Logger.info('Loading timerange:', JSON.stringify(timerange));
         setIsLoading(true);
         const { appItems, statusItems, logItems } = await findAllDayItemsForEveryTrack(
@@ -51,7 +51,7 @@ export const TimelineProvider = ({ children }) => {
         isLoading,
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         loadTimerange();
     }, [timerange]); // eslint-disable-line react-hooks/exhaustive-deps
 

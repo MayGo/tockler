@@ -1,6 +1,6 @@
 import { Flex } from '@rebass/grid';
 import { Button, Card, Icon, Tooltip } from 'antd';
-import React from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 
 import { TimelineContext } from '../../TimelineContext';
 import { AnalyserFormItem } from './AnalyserFormItem';
@@ -14,11 +14,11 @@ const defaultAnalyserSettings = [
 const emptyItem = { findRe: '', takeTitle: '', takeGroup: '', enabled: false };
 
 export const AnalyserForm = () => {
-    const { timeItems } = React.useContext(TimelineContext);
+    const { timeItems } = useContext(TimelineContext);
     const { appItems } = timeItems;
-    const [analyserItems, setAnalyserItems] = React.useState<any>([]);
+    const [analyserItems, setAnalyserItems] = useState<any>([]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         async function fetchSettings() {
             const items = await fetchAnalyserSettings();
             setAnalyserItems(items || []);

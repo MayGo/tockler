@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, createContext, useCallback } from 'react';
 import useReactRouter from 'use-react-router';
 import { EventEmitter } from './services/EventEmitter';
 import { Logger } from './logger';
@@ -10,7 +10,7 @@ const defaultWorkSettings = {
     hoursToWork: 8,
 };
 
-export const RootContext = React.createContext<any>({});
+export const RootContext = createContext<any>({});
 
 export const RootProvider = ({ children }) => {
     const { history } = useReactRouter();
@@ -19,7 +19,7 @@ export const RootProvider = ({ children }) => {
         defaultWorkSettings,
     };
 
-    const gotoSettingsPage = React.useCallback(() => {
+    const gotoSettingsPage = useCallback(() => {
         Logger.debug('Navigating to settings page');
         history.push('/app/settings');
     }, [history]);

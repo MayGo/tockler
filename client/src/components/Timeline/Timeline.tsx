@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useState } from 'react';
 
 import { useWindowWidth } from '@react-hook/window-size/throttled';
 import { Popover, Spin } from 'antd';
@@ -90,10 +90,10 @@ const rowEnabledDefaults = {
     [TimelineRowType.Status]: true,
 };
 
-export const Timeline = React.memo<IFullProps>(
+export const Timeline = memo<IFullProps>(
     ({ timerange, visibleTimerange, setVisibleTimerange, isLoading, timeItems }) => {
-        const [selectedTimelineItem, setSelectedTimelineItem] = React.useState<any>();
-        const [isRowEnabled, setIsRowEnabled] = React.useState<any>(rowEnabledDefaults);
+        const [selectedTimelineItem, setSelectedTimelineItem] = useState<any>();
+        const [isRowEnabled, setIsRowEnabled] = useState<any>(rowEnabledDefaults);
 
         const chartWidth = useWindowWidth();
         const toggleRow = (rowId: any) => {

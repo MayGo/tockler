@@ -3,7 +3,7 @@ import { Table } from 'antd';
 import { PaginationConfig } from 'antd/lib/table';
 import _ from 'lodash';
 import moment from 'moment';
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Moment from 'react-moment';
 import { convertDate, DATE_TIME_FORMAT, INPUT_DATE_FORMAT, TIME_FORMAT } from '../../constants';
 import { diffAndFormatShort } from '../../utils';
@@ -25,7 +25,7 @@ const paginationConf: PaginationConfig = {
 };
 
 export const SearchResults = ({ dataItems }) => {
-    const [state, setState] = React.useState<any>({
+    const [state, setState] = useState<any>({
         filteredInfo: {},
         sortedInfo: {},
         filterDropdownVisible: false,
@@ -34,9 +34,9 @@ export const SearchResults = ({ dataItems }) => {
         selectedRowKeys: [],
     });
 
-    const searchInput = React.useRef<any>();
+    const searchInput = useRef<any>();
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (searchInput.current) {
             searchInput.current.focus();
         }

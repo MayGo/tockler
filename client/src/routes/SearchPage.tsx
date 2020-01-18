@@ -14,7 +14,7 @@ import { Spinner } from '../components/Timeline/Timeline.styles';
 export function SearchPage({ location }: any) {
     const [, { text }] = useFormState({});
 
-    const [isLoading, setIsLoading] = React.useState<any>(false);
+    const [isLoading, setIsLoading] = useState<any>(false);
     const [dataItems, setDataItems] = useState([]);
     const [timerange, setTimerange] = useState([
         moment()

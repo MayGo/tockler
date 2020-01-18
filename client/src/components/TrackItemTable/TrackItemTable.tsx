@@ -4,7 +4,7 @@ import { Button, Icon, Input, Table } from 'antd';
 import { PaginationConfig } from 'antd/lib/table';
 import _ from 'lodash';
 import moment from 'moment';
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Moment from 'react-moment';
 import { convertDate, DATE_TIME_FORMAT, INPUT_DATE_FORMAT, TIME_FORMAT } from '../../constants';
 import { TrackItemType } from '../../enum/TrackItemType';
@@ -44,8 +44,8 @@ const deleteTimelineItems = ids => {
 };
 
 export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
-    const [data, setData] = React.useState<any>([]);
-    const [state, setState] = React.useState<any>({
+    const [data, setData] = useState<any>([]);
+    const [state, setState] = useState<any>({
         filteredInfo: {},
         sortedInfo: {},
         filterDropdownVisible: false,
@@ -55,14 +55,14 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
         selectedRowKeys: [],
     });
 
-    const searchInput = React.useRef<any>();
+    const searchInput = useRef<any>();
 
     const filterByAppType = type =>
         type === TrackItemType.AppTrackItem
             ? filterItems(timeItems.appItems, visibleTimerange)
             : filterItems(timeItems.logItems, visibleTimerange);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const { activeType } = state;
 
         setData(filterByAppType(activeType));
@@ -72,7 +72,7 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
         });
     }, [timeItems, visibleTimerange]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (searchInput.current) {
             searchInput.current.focus();
         }

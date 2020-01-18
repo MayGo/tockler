@@ -10,9 +10,9 @@ async function findAllDayItems(
     to: moment.Moment,
     taskName: string,
 ): Promise<any> {
-    Logger.info('findAllDayItems', JSON.stringify({ from, to, taskName }));
+    //Logger.info('findAllDayItems', JSON.stringify({ from, to, taskName }));
     const data = await emit('findAllDayItems', { from: from.toDate(), to: to.toDate(), taskName });
-    Logger.info('findAllDayItems result ', data);
+    // Logger.info('findAllDayItems result ', data);
     return data;
 }
 

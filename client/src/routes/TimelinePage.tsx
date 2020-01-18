@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { MainLayout } from '../components/MainLayout/MainLayout';
 import { PieCharts } from '../components/PieCharts/PieCharts';
 import { Search } from '../components/Timeline/Search';
@@ -14,7 +14,7 @@ export function TimelinePage({ location }: any) {
         timeItems,
         loadTimerange,
         isLoading,
-    } = React.useContext(TimelineContext);
+    } = useContext(TimelineContext);
 
     const timelineProps = {
         timerange,

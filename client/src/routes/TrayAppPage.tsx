@@ -1,5 +1,5 @@
 import { Box } from '@rebass/grid';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import randomcolor from 'randomcolor';
 import { TimelineItemEdit } from '../components/Timeline/TimelineItemEdit';
 import { TrayLayout } from '../components/TrayLayout/TrayLayout';
@@ -13,11 +13,11 @@ import { useWindowFocused } from '../hooks/windowFocusedHook';
 const EMPTY_SELECTED_ITEM = {};
 
 export function TrayAppPage({ location }: any) {
-    const [loading, setLoading] = React.useState(true);
+    const [loading, setLoading] = useState(true);
 
-    const [selectedItem, setSelectedItem] = React.useState(EMPTY_SELECTED_ITEM);
-    const [runningLogItem, setRunningLogItem] = React.useState();
-    const [lastLogItems, setLastLogItems] = React.useState([]);
+    const [selectedItem, setSelectedItem] = useState(EMPTY_SELECTED_ITEM);
+    const [runningLogItem, setRunningLogItem] = useState();
+    const [lastLogItems, setLastLogItems] = useState([]);
 
     const { windowIsActive } = useWindowFocused();
 
@@ -40,7 +40,7 @@ export function TrayAppPage({ location }: any) {
         setLoading(false);
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         const eventLogItemStarted = (_, logItem) => {
             Logger.debug('log-trackItem-started:', JSON.parse(logItem));
             setRunningLogItem(JSON.parse(logItem));
@@ -55,7 +55,7 @@ export function TrayAppPage({ location }: any) {
     }, []);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    React.useEffect(() => {
+    useEffect(() => {
         loadLastLogItems();
         getRunningLogItem().then(logItem => {
             setRunningLogItem(logItem);
