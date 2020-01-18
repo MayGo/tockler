@@ -13,19 +13,25 @@ export class SettingsService {
         });
         let item = items[0];
 
-            return item;
+        return item;
     }
 
     updateByName(name: string, jsonDataStr: any) {
         this.logger.info('Updating Setting:', name, jsonDataStr);
-        return Settings.update(
-            { jsonData: JSON.parse(jsonDataStr) },
-            {
-                where: {
-                    name: name,
+
+        try {
+            const jsonData = JSON.parse(jsonDataStr);
+            return Settings.update(
+                { jsonData },
+                {
+                    where: {
+                        name: name,
+                    },
                 },
-            },
-        );
+            );
+        } catch (e) {
+            this.logger.error('Parsing jsonData failed:', e, jsonDataStr);
+        }
     }
 
     async fetchWorkSettings() {
@@ -53,14 +59,14 @@ export class SettingsService {
     }
 
     async fetchAnalyserSettingsJsonString() {
-        this.logger.info('Fetching ANALYSER_SETTINGS:');
+        this.logger.debug('Fetching ANALYSER_SETTINGS:');
         let item = await this.findByName('ANALYSER_SETTINGS');
-        this.logger.info('Fetched ANALYSER_SETTINGS:', item);
-        if (!item) {
+        this.logger.debug('Fetched ANALYSER_SETTINGS:', item);
+        if (!item || !Array.isArray(item.jsonData)) {
             // db default is object but this is initialized with array (when is initialized)
             return JSON.stringify([]);
         }
-        this.logger.info('returning jsonData', item.jsonData);
+
         return JSON.stringify(item.jsonData);
     }
 

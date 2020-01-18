@@ -42,7 +42,7 @@ export function TrayAppPage({ location }: any) {
 
     React.useEffect(() => {
         const eventLogItemStarted = (_, logItem) => {
-            Logger.debug('log-item-started:', JSON.parse(logItem));
+            Logger.debug('log-trackItem-started:', JSON.parse(logItem));
             setRunningLogItem(JSON.parse(logItem));
             loadLastLogItems();
         };
@@ -62,18 +62,18 @@ export function TrayAppPage({ location }: any) {
         });
     }, []);
 
-    const startNewLogItemEvent = (item: any, colorScope: any) => {
-        startNewLogItem(item);
+    const startNewLogItemEvent = (trackItem: any, colorScope: any) => {
+        startNewLogItem(trackItem);
         loadLastLogItems();
     };
 
-    const stopRunningLogItemEvent = (item: any, colorScope: any) => {
+    const stopRunningLogItemEvent = (trackItem: any, colorScope: any) => {
         if (runningLogItem) {
             stopRunningLogItem(runningLogItem.id);
             loadLastLogItems();
             setRunningLogItem(null);
         } else {
-            Logger.error('No running log item to stop');
+            Logger.error('No running log trackItem to stop');
         }
     };
 

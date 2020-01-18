@@ -53,6 +53,6 @@ export async function fetchAnalyserSettings() {
         return JSON.parse(jsonStr);
     } catch (e) {
         Logger.error('fetchAnalyserSettings', jsonStr, e);
-        return {};
+        return [];
     }
 }

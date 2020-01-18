@@ -7,7 +7,7 @@ import { Logger } from '../../logger';
 export const TimelineItemEditContainer = props => {
     const { setSelectedTimelineItem } = props;
     const deleteTimelineItem = id => {
-        Logger.debug('Delete timeline item', id);
+        Logger.debug('Delete timeline trackItem', id);
 
         if (id) {
             deleteByIds(id).then(() => {
@@ -20,16 +20,16 @@ export const TimelineItemEditContainer = props => {
         }
     };
 
-    const saveTimelineItem = async ({ item, colorScope }) => {
-        Logger.debug('Updating color for trackItem', item, colorScope);
+    const saveTimelineItem = async (trackItem, colorScope) => {
+        Logger.debug('Updating color for trackItem', trackItem, colorScope);
         if (colorScope === 'ALL_ITEMS') {
-            await changeColorForApp(item.app, item.color);
-            await updateTrackItemColor(item.app, item.color);
+            await changeColorForApp(trackItem.app, trackItem.color);
+            await updateTrackItemColor(trackItem.app, trackItem.color);
         } else if (colorScope === 'NEW_ITEMS') {
-            await changeColorForApp(item.app, item.color);
-            await saveTrackItem(item);
+            await changeColorForApp(trackItem.app, trackItem.color);
+            await saveTrackItem(trackItem);
         } else {
-            await saveTrackItem(item);
+            await saveTrackItem(trackItem);
         }
 
         setSelectedTimelineItem(null);
