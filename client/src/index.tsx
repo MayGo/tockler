@@ -5,6 +5,7 @@ import 'typeface-berkshire-swash';
 import { MainRouter } from './router';
 
 import { setupFrontendListener } from 'eiphop';
+import { AppDataProvider } from './routes/AppDataProvider';
 
 const { ipcRenderer } = window as any;
 
@@ -19,4 +20,9 @@ if (process.env.NODE_ENV !== 'production') {
     }); */
 }
 
-ReactDOM.render(<MainRouter />, document.getElementById('root') as HTMLElement);
+ReactDOM.render(
+    <AppDataProvider>
+        <MainRouter />
+    </AppDataProvider>,
+    document.getElementById('root') as HTMLElement,
+);

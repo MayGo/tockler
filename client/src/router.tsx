@@ -7,15 +7,17 @@ import { MainAppPage } from './routes/MainAppPage';
 import { TrayAppPage } from './routes/TrayAppPage';
 
 import { ConfigProvider } from 'antd';
-import enUS from 'antd/es/locale/en_US';
 import moment from 'moment';
-import 'moment/locale/en-gb';
+import 'moment/min/locales';
+import { useAppDataState } from './routes/AppDataProvider';
+
 
 moment.locale('en-gb');
 export function MainRouter() {
+    const state: any = useAppDataState();
     return (
         <Router>
-            <ConfigProvider locale={enUS}>
+            <ConfigProvider locale={state.locale}>
                 <RootProvider>
                     <Switch>
                         <Route path="/" exact component={MainAppPage} />
