@@ -34,3 +34,14 @@ export const setDayFromTimerange = (visibleTimerange, timerange) => [
 ];
 
 export const getTodayTimerange = () => [moment().startOf('day'), moment().endOf('day')];
+
+export const getUniqueAppNames = appItems =>
+    _(appItems)
+        .map('app')
+        .uniq()
+        .orderBy([app => app.toLowerCase()])
+        .map(app => ({
+            text: app,
+            value: app,
+        }))
+        .value();

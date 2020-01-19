@@ -9,7 +9,7 @@ import Moment from 'react-moment';
 import { convertDate, DATE_TIME_FORMAT, INPUT_DATE_FORMAT, TIME_FORMAT } from '../../constants';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { diffAndFormatShort } from '../../utils';
-import { filterItems } from '../Timeline/timeline.utils';
+import { filterItems, getUniqueAppNames } from '../Timeline/timeline.utils';
 import { FilterDropdown, FilterInput, Highlight, TotalCount } from './TrackItemTable.styles';
 import { Logger } from '../../logger';
 import { deleteByIds } from '../../services/trackItem.api';
@@ -184,10 +184,7 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
             dataIndex: 'app',
             key: 'app',
             width: 200,
-            filters: [
-                { text: 'loginwindow', value: 'loginwindow' },
-                { text: 'Google Chrome', value: 'Google Chrome' },
-            ],
+            filters: getUniqueAppNames(timeItems.appItems),
             filteredValue: filteredInfo.app || null,
             onFilter: (value: any, record: any) => record.app.includes(value),
             sorter: (a: any, b: any) => a.app - b.app,
