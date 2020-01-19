@@ -79,7 +79,6 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
     }, [state.filterDropdownVisible]);
 
     const handleChange = (pagination: any, filters: any, sorter: any) => {
-        Logger.debug('Various parameters', pagination, filters, sorter);
         setState({ ...state, filteredInfo: filters, sortedInfo: sorter });
     };
 
@@ -201,6 +200,7 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
             filterDropdownVisible: state.filterDropdownVisible,
             onFilterDropdownVisibleChange: visible => {
                 setState({
+                    ...state,
                     filterDropdownVisible: visible,
                 });
 
