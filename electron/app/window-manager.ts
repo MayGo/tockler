@@ -6,6 +6,7 @@ import config from './config';
 import * as os from 'os';
 import { logManager } from './log-manager';
 import { join } from 'path';
+import { stateManager } from '../app/state-manager';
 
 let logger = logManager.getLogger('WindowManager');
 
@@ -160,7 +161,7 @@ export default class WindowManager {
         this.menubar = menubar({
             index: url,
             icon: icon,
-            preloadWindow: true,
+            preloadWindow: false,
             showDockIcon: false,
 
             browserWindow: {
@@ -176,8 +177,8 @@ export default class WindowManager {
 
         // this.menubar.on('after-create-window', () => {});
         this.menubar.on('after-show', () => {
-            logger.info('Show tray');
             this.menubar.window.webContents.send('focus-tray', 'ping');
+
             if (config.isDev) {
                 logger.info('Open menubar dev tools');
                 this.menubar.window.openDevTools({ mode: 'bottom' });

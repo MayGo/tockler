@@ -5,13 +5,20 @@ import { TrackItem } from '../models/TrackItem';
 export class SettingsService {
     logger = logManager.getLogger('SettingsService');
 
+    cache: any = {};
+
     async findByName(name: string) {
-        let items = await Settings.findOrCreate({
+        if (this.cache[name]) {
+            return this.cache[name];
+        }
+
+        let items = await Settings.findCreateFind({
             where: {
                 name: name,
             },
         });
         let item = items[0];
+        this.cache[name] = item;
 
         return item;
     }
@@ -21,7 +28,7 @@ export class SettingsService {
 
         try {
             const jsonData = JSON.parse(jsonDataStr);
-            return Settings.update(
+            const item = Settings.update(
                 { jsonData },
                 {
                     where: {
@@ -29,6 +36,8 @@ export class SettingsService {
                     },
                 },
             );
+
+            this.cache[name] = item;
         } catch (e) {
             this.logger.error('Parsing jsonData failed:', e, jsonDataStr);
         }

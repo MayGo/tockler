@@ -39,7 +39,7 @@ export class LogTrackItemJob {
 
         let logItemMarkedAsRunning = stateManager.getLogTrackItemMarkedAsRunning();
         if (!logItemMarkedAsRunning) {
-            logger.debug('RUNNING_LOG_ITEM not found.');
+            // logger.debug('RUNNING_LOG_ITEM not found.');
             return null;
         }
 

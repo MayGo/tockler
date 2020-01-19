@@ -58,7 +58,6 @@ export class BackgroundService {
 
                     let lastItem = savedItems[savedItems.length - 1];
                     item = lastItem;
-                    stateManager.setCurrentTrackItem(item);
                 } catch (e) {
                     logger.error('Error creating items');
                 }
@@ -69,6 +68,8 @@ export class BackgroundService {
                     item = await stateManager.createNewRunningTrackItem(rawItem);
                 }
             }
+
+            stateManager.setCurrentTrackItem(item);
 
             return item;
         } catch (e) {

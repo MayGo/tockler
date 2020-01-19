@@ -2,10 +2,13 @@ import { Icon, Menu, Tooltip } from 'antd';
 import React, { useState, useEffect } from 'react';
 import tocklerIcon from '../../assets/icons/tockler_icon.png';
 import { EventEmitter } from '../../services/EventEmitter';
+import { getOnlineStartTime } from '../../services/trackItem.api';
 import { Brand, Img, MenuItem, RightMenuItem } from './TrayMenu.styles';
 import moment from 'moment';
 import Moment from 'react-moment';
 import { Logger } from '../../logger';
+
+const getNow = () => moment().subtract(1, 'seconds');
 
 export const TrayMenu = () => {
     const [onlineSince, setOnlineSince] = useState();
@@ -17,15 +20,22 @@ export const TrayMenu = () => {
     };
 
     useEffect(() => {
-        const systemIsOnline = () => {
-            Logger.debug('system-is-online');
-            setOnlineSince(moment());
+        const systemIsOnline = date => {
+            Logger.debug('system-is-online', date);
+            setOnlineSince(date ? date : getNow());
         };
         const systemIsNotOnline = () => {
             Logger.debug('system-is-not-online');
-            setOnlineSince(undefined);
+            setOnlineSince(null);
         };
-        setOnlineSince(moment());
+        const loadOnlineStartTime = async () => {
+            const onlineStartTime = await getOnlineStartTime();
+
+            setOnlineSince(onlineStartTime ? moment(onlineStartTime) : getNow());
+        };
+
+        loadOnlineStartTime();
+
         EventEmitter.on('system-is-online', systemIsOnline);
         EventEmitter.on('system-is-not-online', systemIsNotOnline);
 
@@ -47,7 +57,7 @@ export const TrayMenu = () => {
                     <Tooltip placement="bottom" title="Time without a break">
                         <Icon type="clock-circle-o" />
                         <b>
-                            <Moment date={onlineSince} durationFromNow interval={1} />
+                            <Moment date={onlineSince} durationFromNow interval={60} />
                         </b>
                     </Tooltip>
                 )}

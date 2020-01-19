@@ -4,6 +4,7 @@ import { setupMainHandler } from 'eiphop';
 import { settingsService } from './services/settings-service';
 import { appSettingService } from './services/app-setting-service';
 import { trackItemService } from './services/track-item-service';
+import { stateManager } from './state-manager';
 
 const settingsActions = {
     fetchAnalyserSettingsJsonString: async (req, res) => {
@@ -68,6 +69,11 @@ const trackItemActions = {
     findFirstLogItems: async (req, res) => {
         const data = await trackItemService.findFirstLogItems();
         res.send(data);
+    },
+    getOnlineStartTime: async (req, res) => {
+        const statusItem = stateManager.getCurrentStatusTrackItem();
+
+        res.send(statusItem ? statusItem.beginDate : null);
     },
 };
 

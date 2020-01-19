@@ -33,6 +33,11 @@ export async function findAllDayItemsForEveryTrack(from: moment.Moment, to: mome
 export function findFirstLogItems(): Promise<any> {
     return emit('findFirstLogItems');
 }
+
+export function getOnlineStartTime(): Promise<any> {
+    return emit('getOnlineStartTime');
+}
+
 export function searchFromItems({ from, to, taskName, searchStr, paging }): Promise<any> {
     return emit('searchFromItems', {
         from: from.toDate(),
@@ -70,7 +75,7 @@ export async function saveTrackItem(trackItem): Promise<any> {
         trackItem.app = 'Default';
     }
     const item = createTrackItem(trackItem);
-    Logger.info('Created trackitem to DB:', item);
+    // Logger.info('Created trackitem to DB:', item);
     return item;
 }
 

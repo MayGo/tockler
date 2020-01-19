@@ -10,7 +10,7 @@ export class TrackItemService {
 
     async createTrackItem(trackItemAttributes: TrackItem): Promise<TrackItem> {
         let trackItem = await TrackItem.create(trackItemAttributes);
-        this.logger.info(`Created trackItem :`, trackItem.toJSON());
+        // this.logger.info(`Created trackItem :`, trackItem.toJSON());
         return trackItem;
     }
 
