@@ -5,6 +5,7 @@ import { settingsService } from './services/settings-service';
 import { appSettingService } from './services/app-setting-service';
 import { trackItemService } from './services/track-item-service';
 import { stateManager } from './state-manager';
+import { State } from './enums/state';
 
 const settingsActions = {
     fetchAnalyserSettingsJsonString: async (req, res) => {
@@ -73,7 +74,7 @@ const trackItemActions = {
     getOnlineStartTime: async (req, res) => {
         const statusItem = stateManager.getCurrentStatusTrackItem();
 
-        res.send(statusItem ? statusItem.beginDate : null);
+        res.send(statusItem && statusItem.app === State.Online ? statusItem.beginDate : null);
     },
 };
 

@@ -20,9 +20,9 @@ export const TrayMenu = () => {
     };
 
     useEffect(() => {
-        const systemIsOnline = date => {
-            Logger.debug('system-is-online', date);
-            setOnlineSince(date ? date : getNow());
+        const systemIsOnline = () => {
+            Logger.debug('system-is-online');
+            setOnlineSince(getNow());
         };
         const systemIsNotOnline = () => {
             Logger.debug('system-is-not-online');
