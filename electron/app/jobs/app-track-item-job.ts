@@ -28,10 +28,11 @@ export class AppTrackItemJob {
             }
 
             this.lastUpdatedItem = updatedItem;
+            return true;
         } catch (error) {
             logger.info('Error activeWin', error.message);
+            throw error;
         }
-        return true;
     }
 
     checkIfIsInCorrectState(): void {
