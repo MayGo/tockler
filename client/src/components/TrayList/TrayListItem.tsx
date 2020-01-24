@@ -1,7 +1,7 @@
 import { Box, Flex } from '@rebass/grid';
 import { Button, Icon } from 'antd';
 import moment from 'moment';
-import React from 'react';
+import React, { memo } from 'react';
 import Moment from 'react-moment';
 import TimeAgo from 'react-timeago';
 import styled from 'styled-components';
@@ -44,7 +44,12 @@ const FormattedTime = ({ item, isRunning }: any) => {
     return <span>{full}</span>;
 };
 
-export function TrayListItem({ item, startNewLogItemFromOld, stopRunningLogItem, isRunning }: any) {
+export function TrayListItemPlain({
+    item,
+    startNewLogItemFromOld,
+    stopRunningLogItem,
+    isRunning,
+}: any) {
     return (
         <CustomListItem color={item.color}>
             <Flex alignItems="center">
@@ -115,3 +120,7 @@ export function TrayListItem({ item, startNewLogItemFromOld, stopRunningLogItem,
         </CustomListItem>
     );
 }
+
+TrayListItemPlain.whyDidYouRender = true;
+
+export const TrayListItem = memo(TrayListItemPlain);

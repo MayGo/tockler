@@ -12,12 +12,8 @@ const { ipcRenderer } = window as any;
 setupFrontendListener({ ipcRenderer } as any);
 
 if (process.env.NODE_ENV !== 'production') {
-    /*  
-    const { whyDidYouUpdate } = require('why-did-you-update');
-    whyDidYouUpdate(React, {
-        groupByComponent: true,
-        collapseComponentGroups: true,
-    }); */
+    const whyDidYouRender = require('@welldone-software/why-did-you-render');
+    whyDidYouRender(React);
 }
 
 ReactDOM.render(

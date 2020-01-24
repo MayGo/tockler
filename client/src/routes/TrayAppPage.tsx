@@ -1,5 +1,5 @@
 import { Box } from '@rebass/grid';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import randomcolor from 'randomcolor';
 import { TimelineItemEdit } from '../components/Timeline/TimelineItemEdit';
 import { TrayLayout } from '../components/TrayLayout/TrayLayout';
@@ -9,42 +9,53 @@ import { getRunningLogItem } from '../services/settings.api';
 import { startNewLogItem, findFirstLogItems, stopRunningLogItem } from '../services/trackItem.api';
 import { Logger } from '../logger';
 import { useWindowFocused } from '../hooks/windowFocusedHook';
+import { throttle } from 'lodash';
+import deepEqual from 'fast-deep-equal/es6';
 
 const EMPTY_SELECTED_ITEM = {};
+
+const EMPTY_ARRAY = [];
 
 export function TrayAppPage({ location }: any) {
     const [loading, setLoading] = useState(true);
 
     const [selectedItem, setSelectedItem] = useState(EMPTY_SELECTED_ITEM);
     const [runningLogItem, setRunningLogItem] = useState();
-    const [lastLogItems, setLastLogItems] = useState([]);
+    const [lastLogItems, setLastLogItems] = useState(EMPTY_ARRAY);
 
     const { windowIsActive } = useWindowFocused();
-
-    useEffect(() => {
-        if (windowIsActive) {
-            console.debug('Window active', windowIsActive);
-            setSelectedItem(s => ({ ...s, color: randomcolor() }));
-            loadLastLogItems();
-        }
-    }, [windowIsActive]);
 
     const loadLastLogItems = async () => {
         setLoading(true);
         try {
             const items = await findFirstLogItems();
-            setLastLogItems(items);
+            const areEqual = deepEqual(items, lastLogItems);
+
+            if (!areEqual) {
+                setLastLogItems(items);
+            }
         } catch (e) {
             console.error('Error  loading first last items', e);
         }
         setLoading(false);
     };
 
+    const loadLastLogItemsThrottled = throttle(loadLastLogItems, 4000, { trailing: false });
+
+    useEffect(() => {
+        if (windowIsActive) {
+            console.debug('Window active', windowIsActive);
+            setSelectedItem(s => ({ ...s, color: randomcolor() }));
+            loadLastLogItemsThrottled();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [windowIsActive]);
+
     useEffect(() => {
         const eventLogItemStarted = (_, logItem) => {
             Logger.debug('log-trackItem-started:', JSON.parse(logItem));
             setRunningLogItem(JSON.parse(logItem));
-            loadLastLogItems();
+            loadLastLogItemsThrottled();
         };
 
         EventEmitter.on('log-item-started', eventLogItemStarted);
@@ -52,30 +63,36 @@ export function TrayAppPage({ location }: any) {
         return () => {
             EventEmitter.off('log-item-started', eventLogItemStarted);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
-        loadLastLogItems();
+        loadLastLogItemsThrottled();
         getRunningLogItem().then(logItem => {
             setRunningLogItem(logItem);
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const startNewLogItemEvent = (trackItem: any, colorScope: any) => {
+    const startNewLogItemEvent = useCallback((trackItem: any, colorScope: any) => {
         startNewLogItem(trackItem);
-        loadLastLogItems();
-    };
+        loadLastLogItemsThrottled();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    const stopRunningLogItemEvent = (trackItem: any, colorScope: any) => {
-        if (runningLogItem) {
-            stopRunningLogItem(runningLogItem.id);
-            loadLastLogItems();
-            setRunningLogItem(null);
-        } else {
-            Logger.error('No running log trackItem to stop');
-        }
-    };
+    const stopRunningLogItemEvent = useCallback(
+        (trackItem: any, colorScope: any) => {
+            if (runningLogItem) {
+                stopRunningLogItem(runningLogItem.id);
+                loadLastLogItemsThrottled();
+                setRunningLogItem(null);
+            } else {
+                Logger.error('No running log trackItem to stop');
+            }
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [runningLogItem, setRunningLogItem],
+    );
 
     return (
         <TrayLayout location={location}>
@@ -99,3 +116,5 @@ export function TrayAppPage({ location }: any) {
         </TrayLayout>
     );
 }
+
+TrayAppPage.whyDidYouRender = true;

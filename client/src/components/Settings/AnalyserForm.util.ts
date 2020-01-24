@@ -20,7 +20,7 @@ export const findFirst = (str, findRe): any => {
 export const testAnalyserItem = (appItems, analyseSetting) => {
     if (!appItems) {
         Logger.error('appItems not loaded');
-        return;
+        return [];
     }
 
     const testItems: any = [];

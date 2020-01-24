@@ -59,7 +59,7 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
                 <Box>
                     <Divider />
 
-                    {testAnalyserItem(appItems, analyserItem).map(item => (
+                    {testAnalyserItem(appItems, analyserItem).map((item: any) => (
                         <AnalyserTestItem item={item} key={item.title} />
                     ))}
                 </Box>

@@ -17,33 +17,33 @@ export class BackgroundJob {
 
         try {
             await appTrackItemJob.run();
-            await statusTrackItemJob.run();
-            await logTrackItemJob.run();
-
-            if (!this.errorDialogIsOpen) {
-                this.interval = setInterval(
-                    () => this.runAll(),
-                    appConstants.BACKGROUND_JOB_INTERVAL,
-                );
-            }
         } catch (e) {
             logger.error('BackgroundJob:', e);
-
-            const activeWinError = e.stdout;
-
-            if (activeWinError) {
-                this.errorDialogIsOpen = true;
-                await dialog.showMessageBox({
-                    message: activeWinError.replace('active-win', 'Tockler'),
-                });
-
-                this.errorDialogIsOpen = false;
-                this.runAll();
-            }
+            await this.checkIfPermissionError(e);
+        }
+        await statusTrackItemJob.run();
+        await logTrackItemJob.run();
+        if (!this.errorDialogIsOpen) {
+            this.interval = setInterval(() => this.runAll(), appConstants.BACKGROUND_JOB_INTERVAL);
         }
 
         return true;
     }
+
+    async checkIfPermissionError(e) {
+        const activeWinError = e.stdout;
+
+        if (activeWinError) {
+            this.errorDialogIsOpen = true;
+            await dialog.showMessageBox({
+                message: activeWinError.replace('active-win', 'Tockler'),
+            });
+
+            this.errorDialogIsOpen = false;
+        }
+        return;
+    }
+
     init() {
         logger.info('Environment:' + process.env.NODE_ENV);
         logger.info('Running background service.');

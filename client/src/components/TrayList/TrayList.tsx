@@ -1,10 +1,11 @@
 import { List } from 'antd';
 import { groupBy, map, sortBy, sumBy } from 'lodash';
-import React from 'react';
+import React, { memo } from 'react';
 import { convertDate } from '../../constants';
 import { TrayListItem } from './TrayListItem';
 
-const sumDiff = data => sumBy(data, c => convertDate(c.endDate).diff(convertDate(c.beginDate)));
+const sumDiff = data =>
+    sumBy(data, (c: any) => convertDate(c.endDate).diff(convertDate(c.beginDate)));
 
 const aggregateSameAppAndName = lastLogItems => {
     const grouped = groupBy(lastLogItems, item => `${item.app}_${item.title}`);
@@ -22,7 +23,7 @@ const aggregateSameAppAndName = lastLogItems => {
     return mapped;
 };
 
-export function TrayList({
+export function TrayListPlain({
     lastLogItems,
     loading,
     runningLogItem,
@@ -54,3 +55,7 @@ export function TrayList({
         />
     );
 }
+
+TrayListPlain.whyDidYouRender = true;
+
+export const TrayList = memo(TrayListPlain);

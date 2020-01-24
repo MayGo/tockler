@@ -1,5 +1,5 @@
 import { Icon, Menu, Tooltip } from 'antd';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import tocklerIcon from '../../assets/icons/tockler_icon.png';
 import { EventEmitter } from '../../services/EventEmitter';
 import { getOnlineStartTime } from '../../services/trackItem.api';
@@ -10,7 +10,7 @@ import { Logger } from '../../logger';
 
 const getNow = () => moment().subtract(1, 'seconds');
 
-export const TrayMenu = () => {
+export const TrayMenuPlain = () => {
     const [onlineSince, setOnlineSince] = useState();
     const exitApp = () => {
         EventEmitter.send('close-app');
@@ -75,3 +75,7 @@ export const TrayMenu = () => {
         </Menu>
     );
 };
+
+TrayMenuPlain.whyDidYouRender = true;
+
+export const TrayMenu = memo(TrayMenuPlain);

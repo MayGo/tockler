@@ -1,7 +1,7 @@
 import { Table } from 'antd';
 // tslint:disable-next-line: no-submodule-imports
 import { PaginationConfig } from 'antd/lib/table';
-import _ from 'lodash';
+import { sumBy } from 'lodash';
 import moment from 'moment';
 import React, { useState, useRef, useEffect } from 'react';
 import Moment from 'react-moment';
@@ -11,7 +11,7 @@ import { TotalCount } from './SearchResults.styles';
 import { Logger } from '../../logger';
 
 const calculateTotal = filteredData => {
-    const totalMs = _.sumBy(filteredData, c =>
+    const totalMs = sumBy(filteredData, (c: any) =>
         convertDate(c.endDate).diff(convertDate(c.beginDate)),
     );
     const dur = moment.duration(totalMs);
