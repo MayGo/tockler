@@ -21,7 +21,10 @@ export class BackgroundJob {
             await logTrackItemJob.run();
 
             if (!this.errorDialogIsOpen) {
-                this.interval = setInterval(this.runAll, appConstants.BACKGROUND_JOB_INTERVAL);
+                this.interval = setInterval(
+                    () => this.runAll(),
+                    appConstants.BACKGROUND_JOB_INTERVAL,
+                );
             }
         } catch (e) {
             logger.error('BackgroundJob:', e);
