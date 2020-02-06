@@ -1,12 +1,11 @@
 import { menubar } from 'menubar';
 import MenuBuilder from './menu-builder';
 import { throttle } from 'lodash';
-import { app, ipcMain, BrowserWindow, globalShortcut } from 'electron';
+import { app, ipcMain, BrowserWindow } from 'electron';
 import config from './config';
 import * as os from 'os';
 import { logManager } from './log-manager';
 import { join } from 'path';
-import { stateManager } from '../app/state-manager';
 
 let logger = logManager.getLogger('WindowManager');
 
@@ -77,18 +76,7 @@ export default class WindowManager {
             this.mainWindow.focus();
         });
 
-        globalShortcut.register('Escape', () => {
-            logger.info('Escape is pressed');
-
-            if (this.mainWindow) {
-                this.mainWindow.setFullScreen(false);
-            }
-        });
-
         this.mainWindow.on('close', () => {
-            // Unregister all shortcuts.
-            globalShortcut.unregisterAll();
-
             if (this.mainWindow) {
                 logger.info('Closing window');
                 this.mainWindow = null;

@@ -34,6 +34,15 @@ export default class MenuBuilder {
                     { role: 'zoomout' },
                     { type: 'separator' },
                     { role: 'togglefullscreen' },
+                    {
+                        label: 'Exit fullscreen',
+                        accelerator: 'Escape',
+                        click() {
+                            if (WindowManager.mainWindow) {
+                                WindowManager.mainWindow.setFullScreen(false);
+                            }
+                        },
+                    },
                 ],
             },
             {
