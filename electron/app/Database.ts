@@ -26,9 +26,7 @@ class Database {
             });
             this._sequelize.addModels([AppSetting, Settings, TrackItem]);
 
-            logger.info('Models AppSetting', AppSetting);
-            logger.info('Models Settings', Settings);
-            logger.info('Models TrackItem', TrackItem);
+            logger.debug('Added Models AppSetting, Settings, TrackItem');
         }
     }
 

@@ -9,7 +9,7 @@ import { execFile } from 'child_process';
 import { State } from '../enums/state';
 import { appConstants } from '../app-constants';
 import { sendToTrayWindow } from '../window-manager';
-let logger = logManager.getLogger('LogTrackItemJob');
+let logger = logManager.getLogger('StatusTrackItemJob');
 
 export class StatusTrackItemJob {
     run() {
@@ -40,13 +40,13 @@ export class StatusTrackItemJob {
         // logger.debug('Script saveUserIdleTime file: ' + script)
 
         let handleSuccess = stdout => {
-            // logger.debug('Idle time: ' + stdout);
+            //  logger.debug('Idle time: ' + stdout);
 
             let seconds = stdout;
 
             this.saveIdleTrackItem(seconds).then(
                 () => {
-                    //logger.debug(`Idle saved ${seconds}`
+                    // logger.debug(`Idle saved ${seconds}`);
                 },
                 e => logger.error('Idle error', e),
             );

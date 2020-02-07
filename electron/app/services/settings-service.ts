@@ -9,26 +9,28 @@ export class SettingsService {
 
     async findByName(name: string) {
         if (this.cache[name]) {
+            // this.logger.debug(`Returning ${name} from cache:`, this.cache[name]);
             return this.cache[name];
         }
 
-        let items = await Settings.findCreateFind({
+        const [item] = await Settings.findCreateFind({
             where: {
                 name: name,
             },
         });
-        let item = items[0];
+
+        this.logger.debug(`Setting ${name} to cache:`, item.toJSON());
         this.cache[name] = item;
 
         return item;
     }
 
-    updateByName(name: string, jsonDataStr: any) {
+    async updateByName(name: string, jsonDataStr: any) {
         this.logger.info('Updating Setting:', name, jsonDataStr);
 
         try {
             const jsonData = JSON.parse(jsonDataStr);
-            const item = Settings.update(
+            const [count, items] = await Settings.update(
                 { jsonData },
                 {
                     where: {
@@ -37,7 +39,7 @@ export class SettingsService {
                 },
             );
 
-            this.cache[name] = item;
+            this.cache[name] = items[0];
         } catch (e) {
             this.logger.error('Parsing jsonData failed:', e, jsonDataStr);
         }
@@ -58,9 +60,10 @@ export class SettingsService {
     }
 
     async fetchAnalyserSettings() {
+        // this.logger.debug('Fetching ANALYSER_SETTINGS:');
         let item = await this.findByName('ANALYSER_SETTINGS');
-        this.logger.info(item.jsonData);
-        if (!item || this.isObject(item.jsonData)) {
+        // this.logger.debug('Fetched ANALYSER_SETTINGS:', item.toJSON());
+        if (!item || !Array.isArray(item.jsonData)) {
             // db default is object but this is initialized with array (when is initialized)
             return [];
         }
@@ -68,15 +71,9 @@ export class SettingsService {
     }
 
     async fetchAnalyserSettingsJsonString() {
-        this.logger.debug('Fetching ANALYSER_SETTINGS:');
-        let item = await this.findByName('ANALYSER_SETTINGS');
-        this.logger.debug('Fetched ANALYSER_SETTINGS:', item);
-        if (!item || !Array.isArray(item.jsonData)) {
-            // db default is object but this is initialized with array (when is initialized)
-            return JSON.stringify([]);
-        }
+        const data = await this.fetchAnalyserSettings();
 
-        return JSON.stringify(item.jsonData);
+        return JSON.stringify(data);
     }
 
     async getRunningLogItemAsJson() {

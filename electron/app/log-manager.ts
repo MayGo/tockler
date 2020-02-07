@@ -11,7 +11,7 @@ export class LogManager {
     }
 
     getLogger(name) {
-        return console;
+        return electronLog.create(name);
     }
 }
 

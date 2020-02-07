@@ -14,26 +14,8 @@ export class TrackItemService {
         return trackItem;
     }
 
-    async updateTrackItemByName(
-        name: string,
-        trackItemAttributes: any,
-    ): Promise<[number, Array<TrackItem>]> {
-        // TODO: not used
-        let results = await TrackItem.update(trackItemAttributes, {
-            where: { name: name },
-        });
-
-        if (results.length > 0) {
-            this.logger.info(`Updated trackItem with name ${name}.`);
-        } else {
-            this.logger.info(`TrackItem with name ${name} does not exist.`);
-        }
-
-        return results;
-    }
-
-    async updateTrackItem(itemData: TrackItem, id: number): Promise<[number, TrackItem[]]> {
-        let item = await TrackItem.update(
+    async updateTrackItem(itemData: TrackItem, id: number) {
+        let [count, items] = await TrackItem.update(
             {
                 app: itemData.app,
                 title: itemData.title,
@@ -46,7 +28,7 @@ export class TrackItemService {
                 where: { id: id },
             },
         );
-        return item;
+        return items;
     }
 
     findAllItems(from, to, taskName, searchStr, paging) {
@@ -194,7 +176,7 @@ export class TrackItemService {
             return null;
         }
 
-        //   this.logger.debug('Found RUNNING_LOG_ITEM config: ', item.toJSON());
+        this.logger.debug('Found RUNNING_LOG_ITEM config: ', item.toJSON());
 
         let logTrackItemId = item.jsonData.id;
         if (!logTrackItemId) {

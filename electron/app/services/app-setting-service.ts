@@ -42,7 +42,7 @@ export class AppSettingService {
         } else {
             let color = randomcolor();
             let item = await this.createAppSetting({ name: appName, color: color });
-            this.logger.info('Created color item to DB:', item);
+            this.logger.debug('Created color item to DB:', item.toJSON());
 
             return color;
         }
@@ -56,12 +56,12 @@ export class AppSettingService {
         if (appSetting) {
             appSetting.color = color;
             appSetting.save();
-            this.logger.info('Saved color item to DB:', appSetting);
+            this.logger.debug('Saved color item to DB:', appSetting.toJSON());
 
             return appSetting;
         } else {
             const item = await this.createAppSetting({ name: appName, color: color });
-            this.logger.info('Created color item to DB:', item);
+            this.logger.debug('Created color item to DB:', item.toJSON());
             return item;
         }
     }
