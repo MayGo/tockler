@@ -21,7 +21,7 @@ export default class AppManager {
     static async syncDb() {
         // await sequelize.sync({ logging: log => logger.info(log), alter: true });
         logger.info('Database syncing....');
-        await sequelize.sync();
+        await sequelize.sync({ logging: log => logger.info(log) });
         logger.info('Database synced.');
     }
 

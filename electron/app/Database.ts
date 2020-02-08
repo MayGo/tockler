@@ -13,6 +13,8 @@ class Database {
     constructor() {
         let dbConfig = config.databaseConfig;
 
+        logger.info('Database dir is:' + dbConfig.outputPath);
+
         if (config.isTest === true) {
         } else {
             this._sequelize = new Sequelize({
@@ -22,7 +24,7 @@ class Database {
                 password: dbConfig.password,
                 storage: dbConfig.outputPath,
 
-                //logging: log => logger.info(log),
+                logging: log => logger.info(log),
             });
             this._sequelize.addModels([AppSetting, Settings, TrackItem]);
 
