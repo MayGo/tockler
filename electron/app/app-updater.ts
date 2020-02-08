@@ -24,14 +24,15 @@ export default class AppUpdater {
 
         autoUpdater.logger = logger;
         autoUpdater.on('download-progress', progressInfo => {
-            showNotification(
-                `Downloaded: ${Math.round(progressInfo.percent)}% `,
-                'Tockler update downloading',
-            );
+            showNotification({
+                body: `Downloaded: ${Math.round(progressInfo.percent)}% `,
+                title: 'Tockler update downloading',
+                silent: true,
+            });
         });
 
         autoUpdater.on('error', err => {
-            showNotification(err ? err.stack || err : 'unknown', 'Tockler error');
+            showNotification({ title: 'Tockler error', body: err ? err.stack || err : 'unknown' });
         });
 
         AppUpdater.checkIfEnabled();
@@ -53,14 +54,15 @@ export default class AppUpdater {
 
     static updateNotAvailable = updateInfo => {
         const currentVersionString = app.getVersion();
-        showNotification(
-            `Up to date! Current ${currentVersionString} (latest: ${updateInfo.version})`,
-        );
+        showNotification({
+            body: `Up to date! Current ${currentVersionString} (latest: ${updateInfo.version})`,
+            silent: true,
+        });
     };
 
     static async checkForUpdates() {
         logger.info('Checking for updates');
-        showNotification(`Checking for updates...`);
+        showNotification({ body: `Checking for updates...`, silent: true });
 
         autoUpdater.on('update-not-available', AppUpdater.updateNotAvailable);
         const result: UpdateCheckResult = await autoUpdater.checkForUpdatesAndNotify();

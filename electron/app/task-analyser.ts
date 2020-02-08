@@ -41,11 +41,12 @@ export class TaskAnalyser {
 
         appEmitter.emit('start-new-log-item', taskAnalyser.newItem);
 
-        showNotification(
-            `Task "${taskAnalyser.newItem.title}" running.`,
-            'New task created!',
-            this.onNotificationClick,
-        );
+        showNotification({
+            title: 'New task created!',
+            body: `Task "${taskAnalyser.newItem.title}" running.`,
+            onClick: this.onNotificationClick,
+            silent: true,
+        });
 
         taskAnalyser.newItem = null;
     }
@@ -75,11 +76,11 @@ export class TaskAnalyser {
                     beginDate: new Date(),
                     endDate: new Date(),
                 };
-                showNotification(
-                    `Click to create: "${app}"`,
-                    'Create new task?',
-                    this.onNotificationClick,
-                );
+                showNotification({
+                    body: `Click to create: "${app}"`,
+                    title: 'Create new task?',
+                    onClick: this.onNotificationClick,
+                });
             }
         } catch (e) {
             this.logger.error('analyseAndNotify:', e);
