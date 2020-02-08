@@ -9,7 +9,7 @@ export class SettingsService {
 
     async findByName(name: string) {
         if (this.cache[name]) {
-            // this.logger.debug(`Returning ${name} from cache:`, this.cache[name]);
+            this.logger.debug(`Returning ${name} from cache:`, this.cache[name].toJSON());
             return this.cache[name];
         }
 
@@ -38,8 +38,9 @@ export class SettingsService {
                     },
                 },
             );
-
-            this.cache[name] = items[0];
+            if (items && items.length > 0) {
+                this.cache[name] = items[0];
+            }
         } catch (e) {
             this.logger.error('Parsing jsonData failed:', e, jsonDataStr);
         }
