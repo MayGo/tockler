@@ -7,6 +7,7 @@ import config from './config';
 
 let logger = logManager.getLogger('AppManager');
 
+let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 export default class AppManager {
     static async init() {
         initIpcActions();
@@ -21,7 +22,9 @@ export default class AppManager {
     static async syncDb() {
         // await sequelize.sync({ logging: log => logger.info(log), alter: true });
         logger.info('Database syncing....');
+
         await sequelize.sync({ logging: log => logger.info(log) });
+        await sleep(2000);
         logger.info('Database synced.');
     }
 
