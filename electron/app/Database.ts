@@ -26,9 +26,16 @@ class Database {
 
                 logging: log => logger.info(log),
             });
-            this._sequelize.addModels([AppSetting, Settings, TrackItem]);
+            this._sequelize.addModels([AppSetting]);
+            this._sequelize.addModels([Settings]);
+            this._sequelize.addModels([TrackItem]);
 
-            logger.debug('Added Models AppSetting, Settings, TrackItem');
+            logger.debug(
+                'Added Models AppSetting, Settings, TrackItem',
+                AppSetting,
+                Settings,
+                TrackItem,
+            );
         }
     }
 
