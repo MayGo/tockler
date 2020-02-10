@@ -1,78 +1,28 @@
+import { powerMonitor } from 'electron';
 import { logManager } from '../log-manager';
 import { stateManager } from '../state-manager';
 import { backgroundService } from '../background-service';
 import BackgroundUtils from '../background-utils';
-import config from '../config';
-import * as path from 'path';
-import UserMessages from '../user-messages';
-import { execFile } from 'child_process';
 import { State } from '../enums/state';
 import { appConstants } from '../app-constants';
 import { sendToTrayWindow } from '../window-manager';
+
 let logger = logManager.getLogger('StatusTrackItemJob');
 
 export class StatusTrackItemJob {
     run() {
         try {
-            this.saveUserIdleTime();
-        } catch (error) {
-            logger.error(error);
-        }
-    }
-
-    saveUserIdleTime() {
-        // 'darwin', 'freebsd', 'linux', 'sunos' or 'win32'
-        let runExec = '';
-        let args = [];
-        if (process.platform === 'darwin') {
-            runExec = 'sh';
-            args.push(path.join(config.root, 'scripts', 'get-user-idle-time.mac.sh'));
-        } else if (process.platform === 'win32') {
-            runExec = 'powershell.exe';
-            args.push(
-                '"& ""' + path.join(config.root, 'scripts', 'get-user-idle-time.ps1') + '"""',
-            );
-        } else if (process.platform === 'linux') {
-            runExec = 'sh';
-            args.push(path.join(config.root, 'scripts', 'get-user-idle-time.linux.sh'));
-        }
-
-        // logger.debug('Script saveUserIdleTime file: ' + script)
-
-        let handleSuccess = stdout => {
-            //  logger.debug('Idle time: ' + stdout);
-
-            let seconds = stdout;
+            const seconds = powerMonitor.getSystemIdleTime();
 
             this.saveIdleTrackItem(seconds).then(
                 () => {
-                    // logger.debug(`Idle saved ${seconds}`);
+                    logger.debug(`Idle saved ${seconds}`);
                 },
                 e => logger.error('Idle error', e),
             );
-        };
-
-        let handleError = (error: string) => {
-            logger.error('saveUserIdleTime error: ', error);
-            UserMessages.showError('Error getting user idle time', error);
-        };
-
-        let callcack = (err: Error, stdout: any, stderr: string) => {
-            if (stderr) {
-                handleError(stderr);
-                return;
-            }
-
-            if (err) {
-                handleError(err.toString());
-                logger.error('saveUserIdleTime err', err);
-                return;
-            }
-
-            handleSuccess(stdout);
-        };
-
-        execFile(runExec, args, { timeout: 2000 }, callcack);
+        } catch (error) {
+            logger.error(error);
+        }
     }
 
     async saveIdleTrackItem(seconds) {
