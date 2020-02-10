@@ -16,7 +16,7 @@ export class StatusTrackItemJob {
 
             this.saveIdleTrackItem(seconds).then(
                 () => {
-                    logger.debug(`Idle saved ${seconds}`);
+                    // logger.debug(`Idle saved ${seconds}`);
                 },
                 e => logger.error('Idle error', e),
             );

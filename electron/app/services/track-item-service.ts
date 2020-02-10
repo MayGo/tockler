@@ -15,7 +15,7 @@ export class TrackItemService {
     }
 
     async updateTrackItem(itemData: TrackItem, id: number) {
-        let [count, items] = await TrackItem.update(
+        let [count] = await TrackItem.update(
             {
                 app: itemData.app,
                 title: itemData.title,
@@ -28,7 +28,8 @@ export class TrackItemService {
                 where: { id: id },
             },
         );
-        return items;
+
+        return count;
     }
 
     findAllItems(from, to, taskName, searchStr, paging) {

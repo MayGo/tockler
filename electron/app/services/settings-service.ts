@@ -30,16 +30,16 @@ export class SettingsService {
 
         try {
             const jsonData = JSON.parse(jsonDataStr);
-            const [count, items] = await Settings.update(
-                { jsonData },
-                {
-                    where: {
-                        name: name,
-                    },
-                },
-            );
-            if (items && items.length > 0) {
-                this.cache[name] = items[0];
+
+            let item = await this.findByName(name);
+
+            if (item) {
+                const savedItem = await item.update({ jsonData });
+
+                this.cache[name] = savedItem;
+                return savedItem;
+            } else {
+                this.logger.error(`No item with ${name} found to update.`);
             }
         } catch (e) {
             this.logger.error('Parsing jsonData failed:', e, jsonDataStr);
