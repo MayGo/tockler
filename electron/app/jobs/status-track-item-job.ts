@@ -72,7 +72,7 @@ export class StatusTrackItemJob {
             handleSuccess(stdout);
         };
 
-        execFile(runExec, args, { timeout: 2000 }, callcack);
+        execFile(runExec, args, { timeout: 4000 }, callcack);
     }
 
     async saveIdleTrackItem(seconds) {
