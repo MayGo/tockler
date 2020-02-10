@@ -14,7 +14,7 @@ import { extensionsManager } from './extensions-manager';
 import AppUpdater from './app-updater';
 import config from './config';
 
-app.setAppUserModelId('ee.trimatech.tockler');
+app.setAppUserModelId(process.execPath);
 
 /* Single Instance Check */
 
