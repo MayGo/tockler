@@ -18,6 +18,8 @@ version: '{build}'
 install:
     - ps: Install-Product node $env:nodejs_version x64
     - ps: .\appveyor.before-build.ps1
+    - node --version
+    - npm --version
     - cd electron
     - npm install
     - cd ..

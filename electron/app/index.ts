@@ -14,6 +14,8 @@ import { extensionsManager } from './extensions-manager';
 import AppUpdater from './app-updater';
 import config from './config';
 
+app.setAppUserModelId('ee.trimatech.tockler');
+
 /* Single Instance Check */
 
 const gotTheLock = app.requestSingleInstanceLock();
@@ -78,9 +80,10 @@ if (!gotTheLock) {
 
             powerMonitor.on('resume', function() {
                 logger.info('The system is going to resume');
-                backgroundService
-                    .onResume()
-                    .then(() => logger.info('Resumed'), e => logger.error('Error in onResume', e));
+                backgroundService.onResume().then(
+                    () => logger.info('Resumed'),
+                    e => logger.error('Error in onResume', e),
+                );
             });
         } catch (error) {
             logger.error('App errored in ready event:', error);
