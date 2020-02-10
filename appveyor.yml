@@ -19,10 +19,10 @@ install:
     - ps: Install-Product node $env:nodejs_version x64
     - ps: .\appveyor.before-build.ps1
     - cd electron
-    - yarn install
+    - npm install
     - cd ..
     - cd client
-    - yarn install
+    - npm install
 
 build_script:
     - npm run build

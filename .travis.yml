@@ -20,19 +20,17 @@ node_js:
     - '12'
 
 cache:
-    yarn: true
     timeout: 600
     directories:
         - node_modules
         - $HOME/.electron
 
 install:
-    - npm install yarn -g
     - cd electron
-    - yarn install
+    - npm install
     - cd ..
     - cd client
-    - yarn install
+    - npm install
 
 script:
     - npm run build
