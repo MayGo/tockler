@@ -58,7 +58,7 @@
         "cross-env": "^7.0.0",
         "cucumber": "^6.0.5",
         "cucumber-pretty": "^6.0.0",
-        "electron": "8.0.0",
+        "electron": "7.1.10",
         "electron-builder": "22.3.2",
         "electron-connect": "0.6.3",
         "electron-reload": "1.5.0",
