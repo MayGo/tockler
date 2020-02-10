@@ -96,10 +96,6 @@ $cert = Get-ChildItem -Path Cert:\CurrentUser\My -CodeSigningCert
 Set-AuthenticodeSignature -FilePath '.\app\get-foreground-window-title.ps1' -Certificate $cert
 ```
 
-```
-Set-AuthenticodeSignature -FilePath '.\app\get-user-idle-time.ps1' -Certificate $cert
-```
-
 # License
 
 GNU General Public License v2.0
