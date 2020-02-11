@@ -41,6 +41,16 @@ Tockler is migrating from Aurelia to React. So some things may not work right no
 ![Summary](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-summary.png 'Summary')
 ![Tray window](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-tray.png 'Tray window')
 
+# Debugging
+
+## Logs
+
+By default, tockler writes logs to the following locations:
+
+on Linux: ~/.config/tockler/logs/main.log
+on macOS: ~/Library/Logs/tockler/main.log
+on Windows: %USERPROFILE%\AppData\Roaming\tockler\logs\main.log
+
 # Donations
 
 This project needs you! If you would like to support this project's further development, feel free to donate.

@@ -17,9 +17,12 @@ export class SettingsService {
             where: {
                 name: name,
             },
+            defaults: {
+                name,
+            },
         });
 
-        this.logger.debug(`Setting ${name} to cache:`, item.toJSON());
+        this.logger.debug(`Setting ${name} to cache:`, item && item.toJSON());
         this.cache[name] = item;
 
         return item;
@@ -82,6 +85,11 @@ export class SettingsService {
 
         if (settingsItem.jsonData.id) {
             let logItem = await TrackItem.findByPk(settingsItem.jsonData.id);
+            if (!logItem) {
+                this.logger.error(`No Track item found by pk: ${settingsItem.jsonData.id}`);
+                return null;
+            }
+
             return logItem.toJSON();
         }
 

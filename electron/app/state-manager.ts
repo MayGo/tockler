@@ -57,7 +57,7 @@ export class StateManager {
         const item: TrackItem = await this.createNewRunningTrackItem(rawItem);
         logger.info('log-item-started', item.toJSON());
         await this.setLogTrackItemMarkedAsRunning(item);
-        // event.sender.send('log-item-started', item.toJSON());
+
         sendToTrayWindow('log-item-started', JSON.stringify(item.toJSON()));
     }
 
@@ -67,15 +67,14 @@ export class StateManager {
         if (logItem) {
             this.logTrackItemMarkedAsRunning = logItem;
             this.setCurrentTrackItem(logItem);
+
+            logger.info('Restored running LogTrackItem:', logItem.toJSON());
+
+            return logItem;
         } else {
             logger.info('No runnin log item');
         }
-
-        if (this.logTrackItemMarkedAsRunning) {
-            logger.info('Restored running LogTrackItem:', logItem.toJSON());
-        }
-
-        return logItem;
+        return null;
     }
 
     getLogTrackItemMarkedAsRunning() {

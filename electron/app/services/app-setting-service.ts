@@ -11,7 +11,7 @@ export class AppSettingService {
         const appSetting: AppSetting = await AppSetting.create(appSettingAttributes);
 
         const { name } = appSettingAttributes;
-        this.cache[name] = appSettingAttributes;
+        this.cache[name] = appSetting;
         this.logger.info(`Created appSetting with title ${appSettingAttributes.name}.`);
         return appSetting;
     }
