@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/electron';
 // override path, to fix asar.unpacked paths
 require('hazardous');
 
@@ -5,7 +6,6 @@ import { backgroundJob } from './background-job';
 import { backgroundService } from './background-service';
 import { app, ipcMain, powerMonitor } from 'electron';
 import { logManager } from './log-manager';
-let logger = logManager.getLogger('AppIndex');
 
 import AppManager from './app-manager';
 
@@ -14,6 +14,9 @@ import { extensionsManager } from './extensions-manager';
 import AppUpdater from './app-updater';
 import config from './config';
 
+Sentry.init({ dsn: 'https://8b5e35e414d146afac47bbf66d904746@sentry.io/2004797' });
+
+let logger = logManager.getLogger('AppIndex');
 app.setAppUserModelId(process.execPath);
 
 /* Single Instance Check */

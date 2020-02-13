@@ -24,24 +24,25 @@
         "release": "electron-builder -c electron-builder.yml"
     },
     "dependencies": {
+        "@sentry/electron": "^1.2.0",
         "active-win": "^6.0.0",
-        "sequelize": "5.21.4",
-        "reflect-metadata": "^0.1.13",
-        "sqlite3": "4.1.1",
-        "hazardous": "^0.3.0",
         "eiphop": "^1.0.12",
         "electron-context-menu": "0.16.0",
         "electron-devtools-installer": "^2.2.4",
-        "electron-store": "5.1.0",
-        "electron-updater": "4.2.0",
         "electron-is-dev": "^1.1.0",
         "electron-log": "^4.0.6",
+        "electron-store": "5.1.0",
+        "electron-updater": "4.2.0",
+        "hazardous": "^0.3.0",
         "lodash": "^4.17.15",
         "menubar": "7.2.0",
         "moment": "2.24.0",
         "node-notifier": "^6.0.0",
         "randomcolor": "0.5.4",
-        "sequelize-typescript": "^1.1.0"
+        "reflect-metadata": "^0.1.13",
+        "sequelize": "5.21.4",
+        "sequelize-typescript": "^1.1.0",
+        "sqlite3": "4.1.1"
     },
     "peerDependencies": {},
     "devDependencies": {

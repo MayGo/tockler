@@ -5,6 +5,7 @@
     "dependencies": {
         "@react-hook/window-size": "^1.0.12",
         "@rebass/grid": "6.1.0",
+        "@sentry/browser": "^5.12.1",
         "@types/lodash.throttle": "^4.1.6",
         "@welldone-software/why-did-you-render": "^3.5.0",
         "antd": "3.26.7",

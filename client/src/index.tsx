@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/browser';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -6,6 +7,8 @@ import { MainRouter } from './router';
 
 import { setupFrontendListener } from 'eiphop';
 import { AppDataProvider } from './routes/AppDataProvider';
+
+Sentry.init({ dsn: 'https://8b5e35e414d146afac47bbf66d904746@sentry.io/2004797' });
 
 const { ipcRenderer } = window as any;
 
