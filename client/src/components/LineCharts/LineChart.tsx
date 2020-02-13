@@ -13,7 +13,7 @@ import {
 } from './LineChart.util';
 import { diffAndFormatShort } from '../../utils';
 
-const scale = { x: 'time', y: 'time' };
+const scale: any = { x: 'time', y: 'time' };
 const padding = { left: 50, top: 0, bottom: 20, right: 10 };
 const domainPadding = { y: 10, x: 10 };
 const labelComponent = () => (
@@ -50,7 +50,11 @@ export const LineChart = () => {
             <VictoryBar
                 y={d => toTimeDuration(convertDate(d.beginDate), convertDate(d.beginDate))}
                 y0={d => toTimeDuration(convertDate(d.beginDate), convertDate(d.endDate))}
-                x={d => convertDate(d.beginDate).startOf('day')}
+                x={d =>
+                    convertDate(d.beginDate)
+                        .startOf('day')
+                        .toISOString()
+                }
                 barWidth={10}
                 data={onlineTimesSummary}
                 labelComponent={labelComponent()}
@@ -65,7 +69,11 @@ export const LineChart = () => {
             <VictoryBar
                 y={d => toTimeDuration(convertDate(d.beginDate), convertDate(d.beginDate))}
                 y0={d => addToTimeDuration(convertDate(d.beginDate), d.online)}
-                x={d => convertDate(d.beginDate).startOf('day')}
+                x={d =>
+                    convertDate(d.beginDate)
+                        .startOf('day')
+                        .toISOString()
+                }
                 barWidth={10}
                 style={{ data: { fill: COLORS.green } }}
                 data={onlineTimesSummary}

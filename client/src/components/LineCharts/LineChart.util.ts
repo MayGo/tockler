@@ -13,12 +13,12 @@ export const generateTickValues = (date, ticks, unit, startOf) => {
 export const toTimeDuration = (from, to) => {
     const start = moment(from).startOf('day');
 
-    return moment(moment(to).diff(start));
+    return moment(to).diff(start);
 };
 export const addToTimeDuration = (from, duration) => {
     const start = moment(from).startOf('day');
 
-    return moment(moment(from).diff(start) + duration);
+    return moment(from).diff(start) + duration;
 };
 
 export const isOddHour = date => moment(date).get('hour') % 2;

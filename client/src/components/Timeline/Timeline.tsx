@@ -55,8 +55,8 @@ const getTrackItemOrder = (type: string) => {
 };
 
 const getTrackItemOrderFn = d => getTrackItemOrder(d.taskName);
-const contertDateForY = d => convertDate(d.beginDate);
-const contertDateForY0 = d => convertDate(d.endDate);
+const contertDateForY = d => convertDate(d.beginDate).toISOString();
+const contertDateForY0 = d => convertDate(d.endDate).toISOString();
 const brushStyle = {
     data: {
         width: 7,
@@ -69,7 +69,7 @@ const brushStyle = {
 
 const barWidth = 25;
 
-const scale = { y: 'time', x: 'linear' };
+const scale: any = { y: 'time', x: 'linear' };
 const padding = { left: 50, top: 0, bottom: 20, right: 10 };
 const domainPadding = { y: 35, x: 10 };
 const domainPaddingBrush = { y: 35, x: 5 };
@@ -165,7 +165,7 @@ export const Timeline = memo<IFullProps>(
 
         Logger.debug(`Rendering ${timelineData.length} items`);
 
-        const axisEvents = [
+        const axisEvents: any = [
             {
                 target: 'tickLabels',
                 eventHandlers: {
@@ -199,8 +199,8 @@ export const Timeline = memo<IFullProps>(
 
         const handleBrushDebounced = debounce(handleBrush, 300);
 
-        const domain = {
-            y: [convertDate(timerange[0]), convertDate(timerange[1])],
+        const domain: any = {
+            y: [convertDate(timerange[0]).toISOString(), convertDate(timerange[1]).toISOString()],
             x: [1, 3],
         };
 

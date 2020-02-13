@@ -48,10 +48,10 @@ const centeredLabelStyles = assign({ textAnchor: 'middle' }, baseLabelStyles);
 // * Strokes
 // *
 const strokeDasharray = '10, 5';
-const strokeLinecap = 'round';
-const strokeLinejoin = 'round';
+const strokeLinecap: any = 'round';
+const strokeLinejoin: any = 'round';
 
-export const chartTheme = {
+export const chartTheme: any = {
     area: assign(
         {
             style: {

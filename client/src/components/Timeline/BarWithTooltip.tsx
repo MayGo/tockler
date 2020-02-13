@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Portal } from 'react-portal';
-import { Bar, VictoryTooltip } from 'victory';
+import { VictoryBar, VictoryTooltip } from 'victory';
 import { chartTheme } from './ChartTheme';
 
 export const BarWithTooltip = ({
@@ -29,7 +29,7 @@ export const BarWithTooltip = ({
 
     return (
         <>
-            {<Bar datum={datum} x={x} y={y} {...rest} events={events} />}
+            {<VictoryBar x={x} y={y} {...rest} {...events} />}
             {hover && (
                 <Portal closeOnEsc closeOnOutsideClick>
                     <VictoryTooltip
@@ -41,7 +41,7 @@ export const BarWithTooltip = ({
                         pointerLength={chartTheme.tooltip.pointerLength}
                         flyoutStyle={chartTheme.tooltip.flyoutStyle}
                         active
-                        events={null}
+                        events={undefined}
                         text={getTooltipLabel(datum)}
                     />
                 </Portal>

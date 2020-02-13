@@ -68,15 +68,15 @@ export default class MenuBuilder {
             },
         ];
 
-        if (config.isDev) {
-            // View menu
-            template[1].submenu.unshift(
-                { role: 'reload' },
-                { role: 'forcereload' },
-                { role: 'toggledevtools' },
-                { type: 'separator' },
-            );
-        }
+        //if (config.isDev) {
+        // View menu
+        template[1].submenu.unshift(
+            { role: 'reload' },
+            { role: 'forcereload' },
+            { role: 'toggledevtools' },
+            { type: 'separator' },
+        );
+        //  }
 
         const PREFERENCES_ITEM = {
             label: 'Preferences',
