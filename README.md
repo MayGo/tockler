@@ -47,9 +47,11 @@ Tockler is migrating from Aurelia to React. So some things may not work right no
 
 By default, tockler writes logs to the following locations:
 
-on Linux: ~/.config/tockler/logs/main.log
-on macOS: ~/Library/Logs/tockler/main.log
-on Windows: %USERPROFILE%\AppData\Roaming\tockler\logs\main.log
+on Linux: `~/.config/tockler/logs/main.log`
+
+on macOS: `~/Library/Logs/tockler/main.log`
+
+on Windows: `%USERPROFILE%\AppData\Roaming\tockler\logs\main.log`
 
 # Donations
 
