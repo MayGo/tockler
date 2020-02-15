@@ -45,7 +45,7 @@ export const TimelineItemEdit = memo<IProps>(
         const { trackItem, colorScope } = state;
 
         useEffect(() => {
-            Logger.info('Selected timelineitem changed:', selectedTimelineItem);
+            Logger.debug('Selected timelineitem changed:', selectedTimelineItem);
             if (selectedTimelineItem) {
                 setState({
                     trackItem: selectedTimelineItem,

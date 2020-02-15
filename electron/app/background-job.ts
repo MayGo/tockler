@@ -45,8 +45,8 @@ export class BackgroundJob {
     }
 
     init() {
-        logger.info('Environment:' + process.env.NODE_ENV);
-        logger.info('Running background service.');
+        logger.debug('Environment:' + process.env.NODE_ENV);
+        logger.debug('Running background service.');
 
         this.runAll();
     }

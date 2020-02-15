@@ -29,7 +29,7 @@ export function saveIsAutoUpdateEnabled(isAutoUpdateEnabled) {
 }
 
 export async function updateByName(name, jsonData) {
-    Logger.info('updateByName', JSON.stringify(jsonData));
+    Logger.debug('updateByName', JSON.stringify(jsonData));
 
     return emit('updateByName', { name, jsonData: JSON.stringify(jsonData) });
 }

@@ -15,7 +15,7 @@ let userDir =
         ? `/Users/${OS.userInfo().username}/Library/Application Support/Tockler`
         : app.getPath('userData');
 
-console.log('User dir is:' + userDir);
+console.debug('User dir is:' + userDir);
 
 export default {
     // root directory

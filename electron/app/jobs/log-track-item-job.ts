@@ -51,7 +51,7 @@ export class LogTrackItemJob {
         if (shouldTrySplitting) {
             let splitEndDate: Date = await this.getTaskSplitDate();
             if (splitEndDate) {
-                logger.info('Splitting LogItem, new item has endDate: ', splitEndDate);
+                logger.debug('Splitting LogItem, new item has endDate: ', splitEndDate);
 
                 if (logItemMarkedAsRunning.beginDate > splitEndDate) {
                     logger.error('BeginDate is after endDate. Not saving RUNNING_LOG_ITEM');
@@ -72,7 +72,7 @@ export class LogTrackItemJob {
         let savedItem = await backgroundService.createOrUpdate(rawItem);
         // at midnight track item is split and new items ID should be RUNNING_LOG_ITEM
         if (savedItem.id !== logItemMarkedAsRunning.id) {
-            logger.info('RUNNING_LOG_ITEM changed.');
+            logger.debug('RUNNING_LOG_ITEM changed.');
             await stateManager.setLogTrackItemMarkedAsRunning(savedItem);
         }
         return savedItem;

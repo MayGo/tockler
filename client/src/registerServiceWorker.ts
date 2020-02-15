@@ -96,7 +96,7 @@ function checkValidServiceWorker(swUrl: string) {
             }
         })
         .catch(() => {
-            Logger.info('No internet connection found. App is running in offline mode.');
+            Logger.debug('No internet connection found. App is running in offline mode.');
         });
 }
 

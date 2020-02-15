@@ -29,7 +29,7 @@ export class SettingsService {
     }
 
     async updateByName(name: string, jsonDataStr: any) {
-        this.logger.info('Updating Setting:', name, jsonDataStr);
+        this.logger.debug('Updating Setting:', name, jsonDataStr);
 
         try {
             const jsonData = JSON.parse(jsonDataStr);
@@ -98,7 +98,7 @@ export class SettingsService {
 
     async saveRunningLogItemReference(logItemId) {
         const item = await this.updateByName('RUNNING_LOG_ITEM', JSON.stringify({ id: logItemId }));
-        this.logger.info('Updated RUNNING_LOG_ITEM!', logItemId);
+        this.logger.debug('Updated RUNNING_LOG_ITEM!', logItemId);
         return logItemId;
     }
 }

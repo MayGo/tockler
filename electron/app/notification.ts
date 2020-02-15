@@ -7,7 +7,7 @@ const logger = logManager.getLogger('Notification');
 
 export function showNotification({ body, title = 'Tockler', onClick = null, silent = false }) {
     if (isDesktopNotificationSupported) {
-        logger.info('Showing notification:', body, title);
+        logger.debug('Showing notification:', body, title);
         const notification = new Notification({
             title,
             body,

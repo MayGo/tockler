@@ -15,7 +15,7 @@ export const sendToTrayWindow = (key, message = '') => {
     if (WindowManager.menubar.window) {
         WindowManager.menubar.window.webContents.send(key, message);
     } else {
-        logger.info(`Menubar not defined yet, not sending ${key}`);
+        logger.debug(`Menubar not defined yet, not sending ${key}`);
     }
 };
 
@@ -29,7 +29,7 @@ export default class WindowManager {
     }
 
     static setMainWindow() {
-        logger.info('Creating main window.');
+        logger.debug('Creating main window.');
         const windowSize = config.persisted.get('windowsize') || { width: 1080, height: 720 };
         const openMaximized = config.persisted.get('openMaximized') || false;
 
@@ -47,7 +47,7 @@ export default class WindowManager {
         });
 
         if (app.dock) {
-            logger.info('Show dock window.');
+            logger.debug('Show dock window.');
             app.dock.show();
         }
 
@@ -61,28 +61,28 @@ export default class WindowManager {
 
         this.mainWindow.on('closed', () => {
             this.mainWindow = null;
-            logger.info('Main window closed');
+            logger.debug('Main window closed');
         });
 
         this.mainWindow.on('focus', () => {
             let sendEventName = 'main-window-focus';
-            logger.info('Sending focus event: ' + sendEventName);
+            logger.debug('Sending focus event: ' + sendEventName);
             // this.mainWindow.webContents.send(sendEventName, 'ping');
         });
 
         this.mainWindow.webContents.on('did-finish-load', () => {
-            logger.info('did-finish-load');
+            logger.debug('did-finish-load');
             this.mainWindow.show();
             this.mainWindow.focus();
         });
 
         this.mainWindow.on('close', () => {
             if (this.mainWindow) {
-                logger.info('Closing window');
+                logger.debug('Closing window');
                 this.mainWindow = null;
             }
             if (app.dock) {
-                logger.info('Hide dock window.');
+                logger.debug('Hide dock window.');
                 app.dock.hide();
             }
         });
@@ -100,28 +100,28 @@ export default class WindowManager {
         }
 
         WindowManager.mainWindow.show();
-        logger.info('Focusing main window');
+        logger.debug('Focusing main window');
         WindowManager.mainWindow.focus();
     }
 
     static initMainWindowEvents() {
-        logger.info('Init main window events.');
+        logger.debug('Init main window events.');
 
         ipcMain.on('toggle-main-window', (ev, name) => {
             if (!this.mainWindow) {
-                logger.info('MainWindow closed, opening');
+                logger.debug('MainWindow closed, opening');
                 WindowManager.setMainWindow();
             }
 
-            logger.info('Toggling main window');
+            logger.debug('Toggling main window');
             if (this.mainWindow.isVisible()) {
-                logger.info('Show main window');
+                logger.debug('Show main window');
                 this.mainWindow.show();
             } else if (this.mainWindow.isMinimized()) {
-                logger.info('Restore main window');
+                logger.debug('Restore main window');
                 this.mainWindow.restore();
             } else {
-                logger.info('Hide main window');
+                logger.debug('Hide main window');
                 this.mainWindow.hide();
             }
         });
@@ -136,7 +136,7 @@ export default class WindowManager {
     }
 
     static setTrayWindow() {
-        logger.info('Creating tray window.');
+        logger.debug('Creating tray window.');
         /**
          * Docs:
          * https://github.com/maxogden/menubar
@@ -168,7 +168,7 @@ export default class WindowManager {
             this.menubar.window.webContents.send('focus-tray', 'ping');
 
             if (config.isDev) {
-                logger.info('Open menubar dev tools');
+                logger.debug('Open menubar dev tools');
                 this.menubar.window.openDevTools({ mode: 'bottom' });
             }
         });

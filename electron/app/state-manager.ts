@@ -36,43 +36,43 @@ export class StateManager {
         ipcMain.on('start-new-log-item', this.startNewLogItem.bind(this));
 
         ipcMain.on('end-running-log-item', event => {
-            logger.info('end-running-log-item');
+            logger.debug('end-running-log-item');
             this.stopRunningLogTrackItem().then(
-                () => logger.info('end-running-log-item'),
+                () => logger.debug('end-running-log-item'),
                 e => logger.error('end-running-log-item', e),
             );
         });
 
         appEmitter.on('start-new-log-item', rawItem => {
-            logger.info('start-new-log-item event');
+            logger.debug('start-new-log-item event');
             this.startNewLogItem(null, rawItem).then(
-                () => logger.info('start-new-log-item'),
+                () => logger.debug('start-new-log-item'),
                 e => logger.error('start-new-log-item', e),
             );
         });
     }
 
     async startNewLogItem(event, rawItem) {
-        logger.info('start-new-log-item', rawItem);
+        logger.debug('start-new-log-item', rawItem);
         const item: TrackItem = await this.createNewRunningTrackItem(rawItem);
-        logger.info('log-item-started', item.toJSON());
+        logger.debug('log-item-started', item.toJSON());
         await this.setLogTrackItemMarkedAsRunning(item);
 
         sendToTrayWindow('log-item-started', JSON.stringify(item.toJSON()));
     }
 
     async restoreState() {
-        logger.info('Restoring state.');
+        logger.debug('Restoring state.');
         let logItem = await trackItemService.findRunningLogItem();
         if (logItem) {
             this.logTrackItemMarkedAsRunning = logItem;
             this.setCurrentTrackItem(logItem);
 
-            logger.info('Restored running LogTrackItem:', logItem.toJSON());
+            logger.debug('Restored running LogTrackItem:', logItem.toJSON());
 
             return logItem;
         } else {
-            logger.info('No runnin log item');
+            logger.debug('No runnin log item');
         }
         return null;
     }
@@ -84,7 +84,7 @@ export class StateManager {
     async setLogTrackItemMarkedAsRunning(item: TrackItem) {
         await settingsService.saveRunningLogItemReference(item.id);
         this.setCurrentTrackItem(item);
-        logger.info('Mark new LogTrackItem as running:', item.toJSON());
+        logger.debug('Mark new LogTrackItem as running:', item.toJSON());
         this.logTrackItemMarkedAsRunning = item;
     }
 
@@ -149,13 +149,13 @@ export class StateManager {
 
     setSystemToSleep() {
         this.isSleeping = true;
-        logger.info('System is going to sleep state.');
+        logger.debug('System is going to sleep state.');
         this.resetAppTrackItem();
     }
 
     setAwakeFromSleep() {
         this.isSleeping = false;
-        logger.info('System is awakeing from sleep state.');
+        logger.debug('System is awakeing from sleep state.');
     }
 
     async endRunningTrackItem(rawItem) {
@@ -163,7 +163,7 @@ export class StateManager {
 
         if (runningItem) {
             runningItem.endDate = rawItem.beginDate;
-            logger.info('Ending trackItem:', runningItem.toJSON());
+            logger.debug('Ending trackItem:', runningItem.toJSON());
             this.resetCurrentTrackItem(rawItem.taskName);
             await trackItemService.updateTrackItem(runningItem, runningItem.id);
         }

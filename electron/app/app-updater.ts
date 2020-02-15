@@ -45,10 +45,10 @@ export default class AppUpdater {
             typeof isAutoUpdateEnabled !== 'undefined' ? isAutoUpdateEnabled : true;
 
         if (isAutoUpdateEnabled) {
-            logger.info('Checking for updates.');
+            logger.debug('Checking for updates.');
             autoUpdater.checkForUpdatesAndNotify();
         } else {
-            logger.info('Auto update disabled.');
+            logger.debug('Auto update disabled.');
         }
     }
 
@@ -61,12 +61,12 @@ export default class AppUpdater {
     };
 
     static async checkForUpdates() {
-        logger.info('Checking for updates');
+        logger.debug('Checking for updates');
         showNotification({ body: `Checking for updates...`, silent: true });
 
         autoUpdater.on('update-not-available', AppUpdater.updateNotAvailable);
         const result: UpdateCheckResult = await autoUpdater.checkForUpdatesAndNotify();
-        logger.info(`Update result ${result.updateInfo.version}`);
+        logger.debug(`Update result ${result.updateInfo.version}`);
         autoUpdater.removeListener('update-not-available', AppUpdater.updateNotAvailable);
     }
 }

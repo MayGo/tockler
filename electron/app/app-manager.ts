@@ -10,6 +10,7 @@ let logger = logManager.getLogger('AppManager');
 let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 export default class AppManager {
     static async init() {
+        logger.info('Intializing Tockler');
         initIpcActions();
         await AppManager.syncDb();
 
@@ -20,16 +21,14 @@ export default class AppManager {
     }
 
     static async syncDb() {
-        // await sequelize.sync({ logging: log => logger.info(log), alter: true });
-        logger.info('Database syncing....');
-
-        await sequelize.sync({ logging: log => logger.info(log) });
-        await sleep(2000);
-        logger.info('Database synced.');
+        // await sequelize.sync({ logging: log => logger.debug(log), alter: true });
+        logger.debug('Database syncing....');
+        await sequelize.sync({ logging: log => logger.debug(log) });
+        logger.debug('Database synced.');
     }
 
     static initAppEvents() {
-        logger.info('Init app events.');
+        logger.debug('Init app events.');
 
         ipcMain.on('openAtLoginChanged', (ev, name) => {
             AppManager.setOpenAtLogin();
@@ -39,7 +38,7 @@ export default class AppManager {
     static setOpenAtLogin() {
         const openAtLogin = config.persisted.get('openAtLogin');
 
-        logger.info('Setting openAtLogin to:', openAtLogin);
+        logger.debug('Setting openAtLogin to:', openAtLogin);
         app.setLoginItemSettings({
             openAtLogin: typeof openAtLogin !== 'undefined' ? openAtLogin : true,
             openAsHidden: true,

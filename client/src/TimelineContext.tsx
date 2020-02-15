@@ -28,7 +28,7 @@ export const TimelineProvider = ({ children }) => {
     const { windowIsActive } = useWindowFocused();
 
     const loadTimerange = useCallback(async () => {
-        Logger.info('Loading timerange:', JSON.stringify(timerange));
+        Logger.debug('Loading timerange:', JSON.stringify(timerange));
         setIsLoading(true);
         const { appItems, statusItems, logItems } = await findAllDayItemsForEveryTrack(
             timerange[0],

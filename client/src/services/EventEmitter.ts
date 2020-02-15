@@ -3,7 +3,7 @@ import { Logger } from '../logger';
 const { ipcRenderer } = window as any;
 
 function send(name, ...args) {
-    Logger.info(`Send event: ${name}`);
+    Logger.debug(`Send event: ${name}`);
     ipcRenderer.send(name, ...args);
 }
 function on(name, listener) {

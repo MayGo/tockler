@@ -33,11 +33,11 @@ export class TaskAnalyser {
 
     onNotificationClick() {
         if (taskAnalyser.newItem == null) {
-            this.logger.info('Already clicked. Prevent from creating double item.');
+            this.logger.debug('Already clicked. Prevent from creating double item.');
             return;
         }
 
-        this.logger.info('Clicked. Creating new task', taskAnalyser.newItem);
+        this.logger.debug('Clicked. Creating new task', taskAnalyser.newItem);
 
         appEmitter.emit('start-new-log-item', taskAnalyser.newItem);
 

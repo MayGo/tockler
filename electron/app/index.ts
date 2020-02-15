@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/electron';
 // override path, to fix asar.unpacked paths
 require('hazardous');
 
@@ -14,8 +13,6 @@ import { extensionsManager } from './extensions-manager';
 import AppUpdater from './app-updater';
 import config from './config';
 
-Sentry.init({ dsn: 'https://8b5e35e414d146afac47bbf66d904746@sentry.io/2004797' });
-
 let logger = logManager.getLogger('AppIndex');
 app.setAppUserModelId(process.execPath);
 
@@ -24,12 +21,12 @@ app.setAppUserModelId(process.execPath);
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (!gotTheLock) {
-    logger.info('Quiting instance.');
+    logger.debug('Quiting instance.');
     app.quit();
 } else {
     app.on('second-instance', (event, commandLine, workingDirectory) => {
         // Someone tried to run a second instance, we should focus our window.
-        logger.info('Make single instance');
+        logger.debug('Make single instance');
         WindowManager.openMainWindow();
     });
     AppUpdater.init();
@@ -44,12 +41,12 @@ if (!gotTheLock) {
     require('electron-context-menu')({});
 
     ipcMain.on('close-app', function() {
-        logger.info('Closing app');
+        logger.info('Closing Tockler');
         app.quit();
     });
 
     app.on('window-all-closed', function() {
-        logger.info('window-all-closed');
+        logger.debug('window-all-closed');
         // pluginMgr.removeAll();
         // app.quit();
     });
@@ -57,7 +54,7 @@ if (!gotTheLock) {
     // User want's to open main window when reopened app. (But not open main window on application launch)
 
     app.on('activate', function() {
-        logger.info('activate');
+        logger.debug('activate');
         WindowManager.openMainWindow();
     });
 
@@ -77,14 +74,14 @@ if (!gotTheLock) {
             backgroundJob.init();
 
             powerMonitor.on('suspend', function() {
-                logger.info('The system is going to sleep');
+                logger.debug('The system is going to sleep');
                 backgroundService.onSleep();
             });
 
             powerMonitor.on('resume', function() {
-                logger.info('The system is going to resume');
+                logger.debug('The system is going to resume');
                 backgroundService.onResume().then(
-                    () => logger.info('Resumed'),
+                    () => logger.debug('Resumed'),
                     e => logger.error('Error in onResume', e),
                 );
             });

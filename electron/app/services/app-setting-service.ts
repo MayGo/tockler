@@ -12,7 +12,7 @@ export class AppSettingService {
 
         const { name } = appSettingAttributes;
         this.cache[name] = appSetting;
-        this.logger.info(`Created appSetting with title ${appSettingAttributes.name}.`);
+        this.logger.debug(`Created appSetting with title ${appSettingAttributes.name}.`);
         return appSetting;
     }
 

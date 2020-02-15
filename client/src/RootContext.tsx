@@ -33,7 +33,7 @@ export const RootProvider = ({ children }) => {
     useEffect(() => {
         EventEmitter.on('side:preferences', gotoSettingsPage);
         return () => {
-            Logger.info('Clearing eventEmitter');
+            Logger.debug('Clearing eventEmitter');
             EventEmitter.off('side:preferences', gotoSettingsPage);
         };
     }, [gotoSettingsPage]);

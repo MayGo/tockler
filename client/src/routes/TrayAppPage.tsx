@@ -35,7 +35,7 @@ export function TrayAppPage({ location }: any) {
                 setLastLogItems(items);
             }
         } catch (e) {
-            console.error('Error  loading first last items', e);
+            Logger.error('Error  loading first last items', e);
         }
         setLoading(false);
     };
@@ -44,7 +44,7 @@ export function TrayAppPage({ location }: any) {
 
     useEffect(() => {
         if (windowIsActive) {
-            console.debug('Window active', windowIsActive);
+            Logger.debug('Window active:', windowIsActive);
             setSelectedItem(s => ({ ...s, color: randomcolor() }));
             loadLastLogItemsThrottled();
         }

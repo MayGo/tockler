@@ -15,7 +15,7 @@ export class BackgroundService {
         rawItem.taskName = TrackItemType.StatusTrackItem;
         rawItem.beginDate = beginDate;
         rawItem.endDate = endDate;
-        logger.info('Adding inactive trackitem', rawItem);
+        logger.debug('Adding inactive trackitem', rawItem);
 
         stateManager.resetStatusTrackItem();
 
@@ -29,7 +29,7 @@ export class BackgroundService {
             return savedItem;
         });
 
-        logger.info('Created items');
+        logger.debug('Created items');
         return await Promise.all(promiseArray);
     }
 
@@ -87,7 +87,7 @@ export class BackgroundService {
             let item = await this.addInactivePeriod(statusTrackItem.endDate, new Date());
             stateManager.setAwakeFromSleep();
         } else {
-            logger.info('No lastTrackItems.StatusTrackItem for addInactivePeriod.');
+            logger.debug('No lastTrackItems.StatusTrackItem for addInactivePeriod.');
         }
     }
 }

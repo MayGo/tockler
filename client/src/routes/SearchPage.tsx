@@ -10,6 +10,7 @@ import { TrackItemType } from '../enum/TrackItemType';
 import { SearchResults } from '../components/SearchResults/SearchResults';
 import { SearchOptions } from '../components/SearchResults/SearchOptions';
 import { Spinner } from '../components/Timeline/Timeline.styles';
+import { Logger } from '../logger';
 
 export function SearchPage({ location }: any) {
     const [, { text }] = useFormState({});
@@ -43,7 +44,7 @@ export function SearchPage({ location }: any) {
             searchStr,
             paging,
         });
-        console.error('Search results:', items);
+        Logger.debug('Search results:', items);
         setDataItems(items.rows);
         setIsLoading(false);
         return;

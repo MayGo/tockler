@@ -3,6 +3,7 @@ import React from 'react';
 import moment from 'moment';
 import { useAppDataState } from '../../routes/AppDataProvider';
 import etEe from 'antd/es/locale/et_EE';
+import { Logger } from '../../logger';
 
 const { Option } = Select;
 
@@ -13,7 +14,7 @@ export const LocaleSelect = () => {
     const state: any = useAppDataState();
 
     function handleChange(value) {
-        console.log(`Setting locale ${value}`);
+        Logger.debug(`Setting locale ${value}`);
         moment.locale(value);
         state.setLocale(etEe);
     }

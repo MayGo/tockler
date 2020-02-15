@@ -10,9 +10,9 @@ async function findAllDayItems(
     to: moment.Moment,
     taskName: string,
 ): Promise<any> {
-    //Logger.info('findAllDayItems', JSON.stringify({ from, to, taskName }));
+    //Logger.debug('findAllDayItems', JSON.stringify({ from, to, taskName }));
     const data = await emit('findAllDayItems', { from: from.toDate(), to: to.toDate(), taskName });
-    // Logger.info('findAllDayItems result ', data);
+    // Logger.debug('findAllDayItems result ', data);
     return data;
 }
 
@@ -57,7 +57,7 @@ function updateTrackItem(trackItem: ITrackItem): Promise<any> {
 }
 
 export async function saveTrackItem(trackItem): Promise<any> {
-    Logger.info('Saving trackitem.', trackItem);
+    Logger.debug('Saving trackitem.', trackItem);
     if (!trackItem.taskName) {
         trackItem.taskName = 'LogTrackItem';
     }
@@ -68,14 +68,14 @@ export async function saveTrackItem(trackItem): Promise<any> {
             // this.showChangeColorDialog();
         }
         const item = await updateTrackItem(trackItem);
-        Logger.info('Updated trackitem to DB:', item);
+        Logger.debug('Updated trackitem to DB:', item);
         return item;
     }
     if (!trackItem.app) {
         trackItem.app = 'Default';
     }
     const item = createTrackItem(trackItem);
-    // Logger.info('Created trackitem to DB:', item);
+    // Logger.debug('Created trackitem to DB:', item);
     return item;
 }
 

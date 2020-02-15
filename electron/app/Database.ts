@@ -13,7 +13,7 @@ class Database {
     constructor() {
         let dbConfig = config.databaseConfig;
 
-        logger.info('Database dir is:' + dbConfig.outputPath);
+        logger.debug('Database dir is:' + dbConfig.outputPath);
 
         if (config.isTest === true) {
         } else {
@@ -24,7 +24,7 @@ class Database {
                 password: dbConfig.password,
                 storage: dbConfig.outputPath,
 
-                logging: log => logger.info(log),
+                logging: log => logger.debug(log),
             });
             this._sequelize.addModels([AppSetting]);
             this._sequelize.addModels([Settings]);

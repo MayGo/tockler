@@ -3,7 +3,7 @@ let logger = logManager.getLogger('ExtensionsManager');
 
 export class ExtensionsManager {
     async init() {
-        logger.info('Init extensions.');
+        logger.debug('Init extensions.');
         const installer = require('electron-devtools-installer');
         const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
         const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];

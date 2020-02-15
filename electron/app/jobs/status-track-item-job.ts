@@ -27,7 +27,7 @@ export class StatusTrackItemJob {
 
     async saveIdleTrackItem(seconds) {
         if (stateManager.isSystemSleeping()) {
-            logger.info('Computer is sleeping, not running saveIdleTrackItem');
+            logger.debug('Computer is sleeping, not running saveIdleTrackItem');
             return 'SLEEPING';
         }
 
