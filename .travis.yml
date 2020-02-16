@@ -41,14 +41,17 @@ install:
     - cd ..
     - cd client
     - npm install
+    - cd ..
 
 script:
+    - cd client
     - npm run build
     - cd ..
     - cd electron
     - npm run build
     - npm run prepare_client
-    - travis_wait 60 npm run release
+    - travis_wait 80 npm run release
+    - cd ..
 
 branches:
     only:
