@@ -23,9 +23,19 @@ cache:
     timeout: 600
     directories:
         - node_modules
+        - electron/node_modules
+        - client/node_modules
         - $HOME/.electron
 
+before_script:
+    - sentry-cli releases set-commits "$TRAVIS_COMMIT" --commit "$TRAVIS_REPO_SLUG@$TRAVIS_COMMIT"
+    - sentry-cli releases new "$TRAVIS_COMMIT"
+after_success:
+    - sentry-cli releases finalize "$TRAVIS_COMMIT"
+    - sentry-cli releases deploys "$TRAVIS_COMMIT" new -e "production"
+
 install:
+    - npm install -g sentry-cli-binary
     - cd electron
     - npm install
     - cd ..

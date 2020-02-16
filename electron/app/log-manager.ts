@@ -15,6 +15,10 @@ log.transports.file.level = 'debug';
 
 const origConsole = (log.transports as any).console;
 
+const isError = function(e) {
+    return e && e.stack && e.message;
+};
+
 export class LogManager {
     logger;
 
@@ -32,7 +36,9 @@ export class LogManager {
                 scope.setExtra('data', rest);
                 scope.setExtra('date', msgObj.date.toLocaleTimeString());
                 scope.setLevel(level);
-                if (level === 'debug') {
+                if (isError(message)) {
+                    Sentry.captureException(message);
+                } else if (level === 'debug') {
                     // ignore debug for now
                 } else {
                     Sentry.captureMessage(message);

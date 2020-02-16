@@ -8,9 +8,11 @@ const { Sentry } = window as any;
 
 const originalFactory = log.methodFactory;
 
-const isError = ((function(e) {
+const isError = function(e) {
     return e && e.stack && e.message;
-})(log as any).methodFactory = function(methodName, logLevel, loggerName) {
+};
+
+(log as any).methodFactory = function(methodName, logLevel, loggerName) {
     var rawMethod = originalFactory(methodName, logLevel, loggerName);
 
     return function() {
@@ -19,7 +21,10 @@ const isError = ((function(e) {
         Sentry.withScope(scope => {
             scope.setExtra('data', data);
             scope.setLevel(methodName);
-            if (methodName === 'debug') {
+
+            if(isError(message)){
+                Sentry.captureException(message);
+            }else if (methodName === 'debug') {
                 // ignore debug for now
             } else {
                 Sentry.captureMessage(message);
