@@ -22,9 +22,9 @@ const isError = function(e) {
             scope.setExtra('data', data);
             scope.setLevel(methodName);
 
-            if(isError(message)){
+            if (isError(message)) {
                 Sentry.captureException(message);
-            }else if (methodName === 'debug') {
+            } else if (methodName === 'debug') {
                 // ignore debug for now
             } else {
                 Sentry.captureMessage(message);
@@ -33,7 +33,7 @@ const isError = function(e) {
 
         return rawMethod(...arguments);
     };
-});
+};
 
 log.setLevel(log.getLevel());
 
