@@ -74,12 +74,13 @@ export class AppTrackItemJob {
 
     checkIfIsInCorrectState() {
         if (stateManager.isSystemSleeping()) {
+            stateManager.resetAppTrackItem();
             logger.debug('System is sleeping.');
             return false;
         }
 
         if (stateManager.isSystemIdling()) {
-            stateManager.resetAppTrackItem(); // TODO: Check if this is needed
+            stateManager.resetAppTrackItem();
             logger.debug('App is idling.');
             return false;
         }
