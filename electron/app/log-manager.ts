@@ -10,10 +10,32 @@ Sentry.init({
     release: 'tockler@' + version,
 });
 
+const origConsole = (log.transports as any).console;
+
+const sentryTransportConsole = msgObj => {
+    const { level, data, date } = msgObj;
+    const [message, ...rest] = data;
+
+    Sentry.withScope(scope => {
+        scope.setExtra('data', rest);
+        scope.setExtra('date', msgObj.date.toLocaleTimeString());
+        scope.setLevel(level);
+        if (isError(message)) {
+            Sentry.captureException(message);
+        } else if (level === 'debug') {
+            // ignore debug for now
+        } else {
+            Sentry.captureMessage(message);
+        }
+    });
+
+    origConsole(msgObj);
+};
+
+(log as any).transports.console = sentryTransportConsole;
+
 log.transports.console.level = 'info';
 log.transports.file.level = 'debug';
-
-const origConsole = (log.transports as any).console;
 
 const isError = function(e) {
     return e && e.stack && e.message;
@@ -28,25 +50,7 @@ export class LogManager {
 
     getLogger(name) {
         const logObj = log.create(name);
-        (logObj as any).transports.console = msgObj => {
-            const { level, data, date } = msgObj;
-            const [message, ...rest] = data;
-
-            Sentry.withScope(scope => {
-                scope.setExtra('data', rest);
-                scope.setExtra('date', msgObj.date.toLocaleTimeString());
-                scope.setLevel(level);
-                if (isError(message)) {
-                    Sentry.captureException(message);
-                } else if (level === 'debug') {
-                    // ignore debug for now
-                } else {
-                    Sentry.captureMessage(message);
-                }
-            });
-
-            origConsole(msgObj);
-        };
+        (logObj as any).transports.console = sentryTransportConsole;
 
         return logObj;
     }

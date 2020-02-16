@@ -44,6 +44,7 @@ export const TrayMenuPlain = () => {
             EventEmitter.off('system-is-not-online', systemIsNotOnline);
         };
     }, []);
+
     return (
         <Menu mode="horizontal" style={{ position: 'fixed', width: '100%', zIndex: 9000 }}>
             <MenuItem key="/timeline2" onClick={toggleMainWindow}>
