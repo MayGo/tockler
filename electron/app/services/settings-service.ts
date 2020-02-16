@@ -51,10 +51,9 @@ export class SettingsService {
 
     async fetchWorkSettings() {
         let item = await this.findByName('WORK_SETTINGS');
-        return item.jsonData;
-    }
-    async fetchWorkSettingsJsonString() {
-        let item = await this.findByName('WORK_SETTINGS');
+        if (!item || !item.jsonData) {
+            return {};
+        }
 
         return item.jsonData;
     }
@@ -83,7 +82,7 @@ export class SettingsService {
     async getRunningLogItemAsJson() {
         let settingsItem = await this.findByName('RUNNING_LOG_ITEM');
 
-        if (settingsItem.jsonData.id) {
+        if (settingsItem && settingsItem.jsonData && settingsItem.jsonData.id) {
             let logItem = await TrackItem.findByPk(settingsItem.jsonData.id);
             if (!logItem) {
                 this.logger.error(`No Track item found by pk: ${settingsItem.jsonData.id}`);
