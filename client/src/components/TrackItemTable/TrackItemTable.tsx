@@ -79,7 +79,7 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
     }, [state.filterDropdownVisible]);
 
     if (
-        timeItems.appItems.length >= 0 &&
+        timeItems.appItems.length > 0 &&
         data.length === 0 &&
         state.activeType === TrackItemType.AppTrackItem
     ) {
