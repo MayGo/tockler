@@ -1,0 +1,5 @@
+[defaults]
+url=https://sentry.io/
+org=trimatech-ou
+project=tockler
+
