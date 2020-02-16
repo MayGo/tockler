@@ -33,6 +33,7 @@ before_script:
 after_success:
     - sentry-cli releases finalize "$PACKAGE_VERSION"
     - sentry-cli releases deploys "$PACKAGE_VERSION" new -e "production"
+    - sentry-cli releases files "$PACKAGE_VERSION" upload-sourcemaps --no-rewrite ./client/build/static/js/ --url-prefix "~/static/js"
 
 install:
     - npm install -g sentry-cli-binary
