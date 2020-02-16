@@ -78,6 +78,21 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
         }
     }, [state.filterDropdownVisible]);
 
+    if (
+        timeItems.appItems.length >= 0 &&
+        data.length === 0 &&
+        state.activeType === TrackItemType.AppTrackItem
+    ) {
+        const beginDate = timeItems.appItems[0].beginDate;
+        const endDate = timeItems.appItems[0].endDate;
+
+        Logger.error('No items filtered for table', {
+            visibleTimerange,
+            beginDate,
+            endDate,
+        });
+    }
+
     const handleChange = (pagination: any, filters: any, sorter: any) => {
         setState({ ...state, filteredInfo: filters, sortedInfo: sorter });
     };

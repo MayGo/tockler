@@ -2,6 +2,7 @@
 
 const Store = require('electron-store');
 const electron = require('electron');
+const logger = require('electron-log');
 const Sentry = require('@sentry/electron');
 
 const version = electron.remote.app.getVersion();
@@ -15,4 +16,5 @@ Sentry.init({
 window.Sentry = Sentry;
 window.version = version;
 window.Store = Store;
+window.logger = logger;
 window.ipcRenderer = electron.ipcRenderer;
