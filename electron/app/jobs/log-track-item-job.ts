@@ -15,22 +15,27 @@ export class LogTrackItemJob {
 
     async run() {
         try {
-            this.checkIfIsInCorrectState();
-            await this.updateRunningLogItem();
+            if (this.checkIfIsInCorrectState()) {
+                await this.updateRunningLogItem();
+            }
         } catch (error) {
-            logger.error('LogTrackItemJob:', error.message);
+            logger.error('Error in LogTrackItemJob.');
+            logger.error(error);
         }
     }
 
-    checkIfIsInCorrectState(): void {
+    checkIfIsInCorrectState() {
         // saveRunningLogItem can be run before app comes back ONLINE and running log item have to be split.
         if (!stateManager.isSystemOnline()) {
-            throw new Error('Not online');
+            logger.debug('Not online');
+            return false;
         }
 
         if (stateManager.isSystemSleeping()) {
-            throw new Error('Computer is sleeping');
+            logger.debug('Computer is sleeping');
+            return false;
         }
+        return true;
     }
 
     async updateRunningLogItem() {

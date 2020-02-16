@@ -21,6 +21,7 @@ export class StatusTrackItemJob {
                 e => logger.error('Idle error', e),
             );
         } catch (error) {
+            logger.error('Error in StatusTrackItemJob.');
             logger.error(error);
         }
     }

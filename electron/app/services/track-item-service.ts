@@ -10,7 +10,7 @@ export class TrackItemService {
 
     async createTrackItem(trackItemAttributes: TrackItem): Promise<TrackItem> {
         let trackItem = await TrackItem.create(trackItemAttributes);
-        // this.logger.info(`Created trackItem :`, trackItem.toJSON());
+        // this.logger.debug(`Created trackItem :`, trackItem.toJSON());
         return trackItem;
     }
 
@@ -129,7 +129,7 @@ export class TrackItemService {
     }
 
     updateTrackItemColor(appName, color) {
-        this.logger.info('Updating app color:', appName, color);
+        this.logger.debug('Updating app color:', appName, color);
 
         return TrackItem.update(
             { color: color },
@@ -154,7 +154,7 @@ export class TrackItemService {
             where: { id: id },
         });
 
-        this.logger.info('Deleted track item with ID:', id);
+        this.logger.debug('Deleted track item with ID:', id);
         return id;
     }
 

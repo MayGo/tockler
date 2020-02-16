@@ -6,44 +6,84 @@ import { backgroundService } from '../background-service';
 import { TrackItemType } from '../enums/track-item-type';
 import { taskAnalyser } from '../task-analyser';
 import { TrackItem } from '../models/TrackItem';
+import { appConstants } from '../app-constants';
+import { dialog } from 'electron';
 
 let logger = logManager.getLogger('AppTrackItemJob');
 
 export class AppTrackItemJob {
     lastUpdatedItem: TrackItem;
-    async run() {
-        try {
-            this.checkIfIsInCorrectState();
-            let activeWindow = await activeWin();
-            let updatedItem: TrackItem = await this.saveActiveWindow(
-                activeWindow ? activeWindow : {},
-            );
+    errorDialogIsOpen = false;
+    interval;
 
-            if (!BackgroundUtils.isSameItems(updatedItem, this.lastUpdatedItem)) {
-                logger.debug('App and title changed. Analysing title');
-                taskAnalyser.analyseAndNotify(updatedItem).then(
-                    () => logger.debug('Analysing has run.'),
-                    e => logger.error('Error in Analysing', e),
+    async run() {
+        if (this.interval) {
+            clearInterval(this.interval);
+        }
+
+        try {
+            if (this.checkIfIsInCorrectState()) {
+                let activeWindow = await activeWin();
+                let updatedItem: TrackItem = await this.saveActiveWindow(
+                    activeWindow ? activeWindow : {},
                 );
+
+                if (!BackgroundUtils.isSameItems(updatedItem, this.lastUpdatedItem)) {
+                    logger.debug('App and title changed. Analysing title');
+                    taskAnalyser.analyseAndNotify(updatedItem).then(
+                        () => logger.debug('Analysing has run.'),
+                        e => logger.error('Error in Analysing', e),
+                    );
+                }
+
+                this.lastUpdatedItem = updatedItem;
+            } else {
+                return false;
             }
 
-            this.lastUpdatedItem = updatedItem;
             return true;
         } catch (error) {
-            logger.warn('Error activeWin', error.message);
-            throw error;
+            const activeWinError = await this.checkIfPermissionError(error);
+
+            if (activeWinError) {
+                logger.info('Permission error: ' + activeWinError);
+            } else {
+                logger.error('Error in AppTrackItemJob.');
+                logger.error(error);
+            }
+        }
+        if (!this.errorDialogIsOpen) {
+            this.interval = setInterval(() => this.run(), appConstants.BACKGROUND_JOB_INTERVAL);
         }
     }
 
-    checkIfIsInCorrectState(): void {
+    async checkIfPermissionError(e) {
+        const activeWinError = e.stdout;
+
+        if (activeWinError) {
+            this.errorDialogIsOpen = true;
+            await dialog.showMessageBox({
+                message: activeWinError.replace('active-win', 'Tockler'),
+            });
+
+            this.errorDialogIsOpen = false;
+            return activeWinError;
+        }
+        return;
+    }
+
+    checkIfIsInCorrectState() {
         if (stateManager.isSystemSleeping()) {
-            throw new Error('System is sleeping.');
+            logger.debug('System is sleeping.');
+            return false;
         }
 
         if (stateManager.isSystemIdling()) {
             stateManager.resetAppTrackItem(); // TODO: Check if this is needed
-            throw new Error('App is idling.');
+            logger.debug('App is idling.');
+            return false;
         }
+        return true;
     }
 
     async saveActiveWindow(result): Promise<TrackItem> {
