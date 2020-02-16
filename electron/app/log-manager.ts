@@ -12,6 +12,10 @@ Sentry.init({
 
 const origConsole = (log.transports as any).console;
 
+const isError = function(e) {
+    return e && e.stack && e.message;
+};
+
 const sentryTransportConsole = msgObj => {
     const { level, data, date } = msgObj;
     const [message, ...rest] = data;
@@ -36,10 +40,6 @@ const sentryTransportConsole = msgObj => {
 
 log.transports.console.level = 'info';
 log.transports.file.level = 'debug';
-
-const isError = function(e) {
-    return e && e.stack && e.message;
-};
 
 export class LogManager {
     logger;

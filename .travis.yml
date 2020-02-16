@@ -31,9 +31,8 @@ before_script:
     - sentry-cli releases set-commits "$PACKAGE_VERSION" --commit "$TRAVIS_REPO_SLUG@$TRAVIS_COMMIT"
     - sentry-cli releases new "$PACKAGE_VERSION"
 after_success:
+    - sentry-cli releases files "$PACKAGE_VERSION" upload-sourcemaps ./client/build/static/js/ --url-prefix "~/static/js"
     - sentry-cli releases finalize "$PACKAGE_VERSION"
-    - sentry-cli releases deploys "$PACKAGE_VERSION" new -e "production"
-    - sentry-cli releases files "$PACKAGE_VERSION" upload-sourcemaps --no-rewrite ./client/build/static/js/ --url-prefix "~/static/js"
 
 install:
     - npm install -g sentry-cli-binary
