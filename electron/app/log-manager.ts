@@ -1,7 +1,8 @@
 import * as log from 'electron-log';
 import * as Sentry from '@sentry/electron';
+import { app } from 'electron';
 
-const version = '1.0.0';
+const version = app.getVersion();
 
 Sentry.init({
     dsn: 'https://8b5e35e414d146afac47bbf66d904746@sentry.io/2004797',
