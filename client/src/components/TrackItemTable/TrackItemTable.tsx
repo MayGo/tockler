@@ -65,11 +65,27 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
     useEffect(() => {
         const { activeType } = state;
 
-        setData(filterByAppType(activeType));
+        const filteredData = filterByAppType(activeType);
+        setData(filteredData);
         setState({
             ...state,
             isOneDay: checkIfOneDay(visibleTimerange),
         });
+
+        if (
+            timeItems.appItems.length > 0 &&
+            filteredData.length === 0 &&
+            state.activeType === TrackItemType.AppTrackItem
+        ) {
+            const beginDate = timeItems.appItems[0].beginDate;
+            const endDate = timeItems.appItems[0].endDate;
+
+            Logger.error('No items filtered for table', {
+                visibleTimerange,
+                beginDate,
+                endDate,
+            });
+        }
     }, [timeItems, visibleTimerange]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
@@ -77,21 +93,6 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
             searchInput.current.focus();
         }
     }, [state.filterDropdownVisible]);
-
-    if (
-        timeItems.appItems.length > 0 &&
-        data.length === 0 &&
-        state.activeType === TrackItemType.AppTrackItem
-    ) {
-        const beginDate = timeItems.appItems[0].beginDate;
-        const endDate = timeItems.appItems[0].endDate;
-
-        Logger.error('No items filtered for table', {
-            visibleTimerange,
-            beginDate,
-            endDate,
-        });
-    }
 
     const handleChange = (pagination: any, filters: any, sorter: any) => {
         setState({ ...state, filteredInfo: filters, sortedInfo: sorter });
