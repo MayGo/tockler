@@ -1,6 +1,6 @@
 // override path, to fix asar.unpacked paths
 require('hazardous');
-
+require('events').EventEmitter.defaultMaxListeners = 30;
 import { backgroundJob } from './background-job';
 import { backgroundService } from './background-service';
 import { app, ipcMain, powerMonitor } from 'electron';
