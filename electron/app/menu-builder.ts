@@ -112,7 +112,7 @@ export default class MenuBuilder {
                 { role: 'front' },
             ];
             const about = {
-                label: app.getName(),
+                label: app.name,
                 submenu: [
                     { role: 'about' },
                     { type: 'separator' },
