@@ -23,11 +23,13 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
         setShowTests(!showTests);
     };
 
-    const [_ignore, { text, checkbox }] = useFormState(analyserItem, {
+    const [_ignore, { text, raw }] = useFormState(analyserItem, {
         onChange: (__ignore, ___ignore, nextStateValues) => {
             saveItem(nextStateValues);
         },
     });
+
+    const check = raw('enabled');
 
     return (
         <div>
@@ -46,7 +48,12 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
 
                 <Form.Item>
                     Active
-                    <Switch {...checkbox('enabled')} />
+                    <Switch
+                        onChange={value => {
+                            check.onChange(value);
+                        }}
+                        checked={check.value}
+                    />
                 </Form.Item>
                 <Form.Item>
                     Test
