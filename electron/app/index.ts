@@ -54,8 +54,12 @@ if (!gotTheLock) {
     // User want's to open main window when reopened app. (But not open main window on application launch)
 
     app.on('activate', function() {
-        logger.debug('activate');
-        WindowManager.openMainWindow();
+        logger.debug('Activate event');
+        if (app.isReady()) {
+            WindowManager.openMainWindow();
+        } else {
+            logger.debug('App is not ready in activate event');
+        }
     });
 
     app.on('ready', async () => {
