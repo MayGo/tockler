@@ -8,6 +8,7 @@ import { settingsService } from './services/settings-service';
 import { appEmitter } from './app-event-emitter';
 import { sendToTrayWindow } from './window-manager';
 import { TrackItem } from './models/TrackItem';
+import { backgroundService } from './background-service';
 
 let logger = logManager.getLogger('StateManager');
 
@@ -153,9 +154,21 @@ export class StateManager {
         this.resetAppTrackItem();
     }
 
-    setAwakeFromSleep() {
+    async setAwakeFromSleep() {
         this.isSleeping = false;
-        logger.debug('System is awakeing from sleep state.');
+        logger.debug('System is awakening from sleep state.');
+        await this.createOnlineTrackItem();
+    }
+
+    async createOnlineTrackItem() {
+        let rawItem: any = {
+            taskName: 'StatusTrackItem',
+            app: State.Online,
+            title: State.Online.toString().toLowerCase(),
+            beginDate: new Date(),
+            endDate: new Date(),
+        };
+        await backgroundService.createOrUpdate(rawItem);
     }
 
     async endRunningTrackItem(rawItem) {

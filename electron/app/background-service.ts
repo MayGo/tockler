@@ -85,7 +85,7 @@ export class BackgroundService {
         let statusTrackItem = stateManager.getCurrentStatusTrackItem();
         if (statusTrackItem != null) {
             let item = await this.addInactivePeriod(statusTrackItem.endDate, new Date());
-            stateManager.setAwakeFromSleep();
+            await stateManager.setAwakeFromSleep();
         } else {
             logger.debug('No lastTrackItems.StatusTrackItem for addInactivePeriod.');
         }
