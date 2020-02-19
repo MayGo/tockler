@@ -1,6 +1,7 @@
 import { logManager } from '../log-manager';
 import { Settings } from '../models/Settings';
 import { TrackItem } from '../models/TrackItem';
+import { settingsRepository } from '../Database';
 
 export class SettingsService {
     logger = logManager.getLogger('SettingsService');
@@ -13,7 +14,7 @@ export class SettingsService {
             return this.cache[name];
         }
 
-        const [item] = await Settings.findCreateFind({
+        const [item] = await settingsRepository.findCreateFind({
             where: {
                 name: name,
             },

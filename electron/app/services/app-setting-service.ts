@@ -1,6 +1,7 @@
 import { logManager } from '../log-manager';
 import * as randomcolor from 'randomcolor';
 import { AppSetting } from '../models/AppSetting';
+import { appSettingRepository } from '../Database';
 
 export class AppSettingService {
     logger = logManager.getLogger('AppSettingService');
@@ -8,7 +9,7 @@ export class AppSettingService {
     cache: any = {};
 
     async createAppSetting(appSettingAttributes: any): Promise<AppSetting> {
-        const appSetting: AppSetting = await AppSetting.create(appSettingAttributes);
+        const appSetting: AppSetting = await appSettingRepository.create(appSettingAttributes);
 
         const { name } = appSettingAttributes;
         this.cache[name] = appSetting;
@@ -26,7 +27,7 @@ export class AppSettingService {
                 name,
             },
         };
-        const appSettings = await AppSetting.findAll(params);
+        const appSettings = await appSettingRepository.findAll(params);
 
         const item = appSettings.length > 0 ? appSettings[0] : null;
         this.cache[name] = item;

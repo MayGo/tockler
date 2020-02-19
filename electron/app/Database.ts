@@ -1,5 +1,6 @@
 import config from './config';
 import { Sequelize } from 'sequelize-typescript';
+
 import { AppSetting } from './models/AppSetting';
 import { Settings } from './models/Settings';
 import { TrackItem } from './models/TrackItem';
@@ -23,7 +24,7 @@ class Database {
                 username: dbConfig.username,
                 password: dbConfig.password,
                 storage: dbConfig.outputPath,
-
+                repositoryMode: true,
                 logging: log => logger.debug(log),
             });
             this._sequelize.addModels([AppSetting]);
@@ -45,4 +46,9 @@ class Database {
 }
 
 const database = new Database();
+
+export const appSettingRepository = database.getSequelize().getRepository(AppSetting);
+export const settingsRepository = database.getSequelize().getRepository(Settings);
+export const trackItemRepository = database.getSequelize().getRepository(TrackItem);
+
 export const sequelize = database.getSequelize();

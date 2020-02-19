@@ -4,18 +4,19 @@ import { State } from '../enums/state';
 import { stateManager } from '../state-manager';
 import { Op } from 'sequelize';
 import { TrackItem } from '../models/TrackItem';
+import { trackItemRepository } from '../Database';
 
 export class TrackItemService {
     logger = logManager.getLogger('TrackItemService');
 
     async createTrackItem(trackItemAttributes: TrackItem): Promise<TrackItem> {
-        let trackItem = await TrackItem.create(trackItemAttributes);
+        let trackItem = await trackItemRepository.create(trackItemAttributes);
         // this.logger.debug(`Created trackItem :`, trackItem.toJSON());
         return trackItem;
     }
 
     async updateTrackItem(itemData: TrackItem, id: number) {
-        let [count] = await TrackItem.update(
+        let [count] = await trackItemRepository.update(
             {
                 app: itemData.app,
                 title: itemData.title,
@@ -59,7 +60,7 @@ export class TrackItemService {
             };
         }
 
-        return TrackItem.findAndCountAll({
+        return trackItemRepository.findAndCountAll({
             where: where,
             raw: true,
             limit: limit,
@@ -77,7 +78,7 @@ export class TrackItemService {
             taskName: taskName,
         };
 
-        const items = await TrackItem.findAll({
+        const items = await trackItemRepository.findAll({
             where: where,
             raw: true,
             order: [['beginDate', 'ASC']],
@@ -86,7 +87,7 @@ export class TrackItemService {
     }
 
     findFirstLogItems() {
-        return TrackItem.findAll({
+        return trackItemRepository.findAll({
             where: {
                 taskName: 'LogTrackItem',
             },
@@ -121,7 +122,7 @@ export class TrackItemService {
             };
         }
 
-        return TrackItem.findAll({
+        return trackItemRepository.findAll({
             where: whereQuery,
             limit: 1,
             order: [['endDate', 'DESC']],
@@ -131,26 +132,28 @@ export class TrackItemService {
     updateTrackItemColor(appName, color) {
         this.logger.debug('Updating app color:', appName, color);
 
-        return TrackItem.update(
-            { color: color },
-            {
-                fields: ['color'],
-                where: {
-                    app: appName,
+        return trackItemRepository
+            .update(
+                { color: color },
+                {
+                    fields: ['color'],
+                    where: {
+                        app: appName,
+                    },
                 },
-            },
-        ).catch((error: Error) => {
-            this.logger.error(error.message);
-        });
+            )
+            .catch((error: Error) => {
+                this.logger.error(error.message);
+            });
     }
 
     findById(id) {
-        return TrackItem.findByPk(id);
+        return trackItemRepository.findByPk(id);
     }
 
     async deleteById(id) {
         // TODO: not used
-        await TrackItem.destroy({
+        await trackItemRepository.destroy({
             where: { id: id },
         });
 
@@ -159,7 +162,7 @@ export class TrackItemService {
     }
 
     async deleteByIds(ids) {
-        await TrackItem.destroy({
+        await trackItemRepository.destroy({
             where: {
                 id: {
                     [Op.in]: ids,
