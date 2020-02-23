@@ -114,15 +114,16 @@ export default class WindowManager {
             }
 
             logger.debug('Toggling main window');
-            if (this.mainWindow.isVisible()) {
-                logger.debug('Show main window');
-                this.mainWindow.show();
+
+            if (this.mainWindow.isVisible() && !this.mainWindow.isMinimized()) {
+                logger.debug('Hide main window');
+                this.mainWindow.hide();
             } else if (this.mainWindow.isMinimized()) {
                 logger.debug('Restore main window');
                 this.mainWindow.restore();
             } else {
-                logger.debug('Hide main window');
-                this.mainWindow.hide();
+                logger.debug('Show main window');
+                this.mainWindow.show();
             }
         });
     }
