@@ -2,8 +2,6 @@ matrix:
     include:
         - os: osx
           osx_image: xcode11
-        - os: windows
-
         - os: linux
           env: CC=clang CXX=clang++ npm_config_clang=1
           compiler: clang
@@ -32,7 +30,6 @@ cache:
 before_script:
     - sentry-cli releases set-commits "$PACKAGE_VERSION" --commit "$TRAVIS_REPO_SLUG@$TRAVIS_COMMIT"
     - sentry-cli releases new "$PACKAGE_VERSION"
-
 after_success:
     - sentry-cli releases files "$PACKAGE_VERSION" upload-sourcemaps ./client/build/static/js/ --rewrite --url-prefix "~/dist/static/js"
     - sentry-cli releases files "$PACKAGE_VERSION" list
