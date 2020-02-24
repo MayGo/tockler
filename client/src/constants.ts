@@ -8,6 +8,6 @@ export const DURATION_FORMAT = 'w[w] d[d] h[h] m[m] s[s]';
 export const DURATION_SETTINGS = { largest: 2 };
 export const BREAKPOINT_TIME = '04:00';
 
-export const convertDate = (d: Date) => moment(d, INPUT_DATE_FORMAT);
+export const convertDate = (d: Date) => moment(d);
 
 export const COLORS = { green: '#8BC34A' };
