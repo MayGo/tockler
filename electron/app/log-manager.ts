@@ -38,7 +38,7 @@ const sentryTransportConsole = msgObj => {
 
 (log as any).transports.console = sentryTransportConsole;
 
-log.transports.console.level = 'info';
+log.transports.console.level = 'debug';
 log.transports.file.level = 'debug';
 
 export class LogManager {

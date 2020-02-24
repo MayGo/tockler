@@ -1,41 +1,13 @@
-import { Table, Column, PrimaryKey, Model, AutoIncrement } from 'sequelize-typescript';
+import { Model } from 'objection';
 
-@Table({
-    timestamps: false,
-    indexes: [
-        {
-            fields: ['beginDate'],
-        },
-        {
-            fields: ['endDate'],
-        },
-        {
-            fields: ['taskName'],
-        },
-    ],
-    tableName: 'TrackItems',
-})
-export class TrackItem extends Model<TrackItem> {
-    @PrimaryKey
-    @AutoIncrement
-    @Column
-    id: number;
+export class TrackItem extends Model {
+    static tableName = 'TrackItems';
 
-    @Column
-    app: string;
-
-    @Column
-    taskName: string;
-
-    @Column
-    title: string;
-
-    @Column
-    color: string;
-
-    @Column
-    beginDate: Date;
-
-    @Column
-    endDate: Date;
+    id!: number;
+    app!: string;
+    taskName!: string;
+    title!: string;
+    color!: string;
+    beginDate!: Date;
+    endDate!: Date;
 }

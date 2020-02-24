@@ -1,30 +1,25 @@
 import { app, ipcMain } from 'electron';
-import { sequelize } from './Database';
 import { logManager } from './log-manager';
 import { stateManager } from './state-manager';
 import { initIpcActions } from './API';
 import config from './config';
+import { connectAndSync } from './models/db';
 
 let logger = logManager.getLogger('AppManager');
 
-let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 export default class AppManager {
     static async init() {
         logger.info('Intializing Tockler');
         initIpcActions();
-        await AppManager.syncDb();
+
+        logger.debug('Database syncing....');
+        await connectAndSync();
+        logger.debug('Database synced.');
 
         AppManager.initAppEvents();
         AppManager.setOpenAtLogin();
 
         await stateManager.restoreState();
-    }
-
-    static async syncDb() {
-        // await sequelize.sync({ logging: log => logger.debug(log), alter: true });
-        logger.debug('Database syncing....');
-        await sequelize.sync({ logging: log => logger.debug(log) });
-        logger.debug('Database synced.');
     }
 
     static initAppEvents() {
