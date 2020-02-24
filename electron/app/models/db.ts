@@ -1,14 +1,14 @@
 import config from '../config';
-
-const { Model } = require('objection');
+import { Model } from 'objection';
 import * as Knex from 'knex';
 import { logManager } from '../log-manager';
+import { WebpackMigrationSource } from 'knex-webpack-migration-source';
 
 let logger = logManager.getLogger('Database');
 
 export async function connectAndSync() {
     let dbConfig = config.databaseConfig;
-    logger.debug('Database dir is:' + dbConfig.outputPath);
+    logger.debug('Database dir is2:' + dbConfig.outputPath);
 
     // Initialize knex.
     const knex = Knex({
@@ -25,5 +25,9 @@ export async function connectAndSync() {
     // Give the knex instance to objection.
     Model.knex(knex);
 
-    await knex.migrate.latest({ loadExtensions: ['.js'] });
+    await knex.migrate.latest({
+        migrationSource: new WebpackMigrationSource(
+            require.context('../../migrations', true, /.js$/),
+        ),
+    });
 }

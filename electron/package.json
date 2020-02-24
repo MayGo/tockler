@@ -1,6 +1,6 @@
 {
     "name": "tockler",
-    "version": "3.11.1",
+    "version": "3.11.2",
     "description": "Automatically track applications usage and working time",
     "author": "Maigo Erit <maigo.erit@gmail.com>",
     "license": "GPL-2.0",
@@ -35,6 +35,7 @@
         "electron-updater": "4.2.2",
         "hazardous": "^0.3.0",
         "knex": "^0.20.10",
+        "knex-webpack-migration-source": "^1.0.0",
         "lodash": "^4.17.15",
         "menubar": "8.0.0",
         "moment": "2.24.0",
