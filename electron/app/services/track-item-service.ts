@@ -2,7 +2,6 @@ import { logManager } from '../log-manager';
 import { settingsService } from './settings-service';
 import { State } from '../enums/state';
 import { stateManager } from '../state-manager';
-import { Op } from 'sequelize';
 import { TrackItem } from '../models/TrackItem';
 
 export class TrackItemService {
