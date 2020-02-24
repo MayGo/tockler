@@ -61,7 +61,6 @@ export class TrackItemService {
             .where('taskName', taskName)
             .where('endDate', '>=', from)
             .where('endDate', '<=', to)
-            .limit(200)
             .orderBy('beginDate', 'asc');
     }
 

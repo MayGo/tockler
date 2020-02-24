@@ -45,7 +45,7 @@ export function SearchPage({ location }: any) {
             paging,
         });
         Logger.debug('Search results:', items);
-        setDataItems(items.rows);
+        setDataItems(items);
         setIsLoading(false);
         return;
     };
