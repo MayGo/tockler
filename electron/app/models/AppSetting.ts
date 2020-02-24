@@ -1,23 +1,10 @@
-import { Table, Column, PrimaryKey, Model, AutoIncrement } from 'sequelize-typescript';
+import { Model } from 'objection';
 
-@Table({
-    timestamps: false,
-    indexes: [
-        {
-            fields: ['name'],
-        },
-    ],
-    tableName: 'AppSettings',
-})
-export class AppSetting extends Model<AppSetting> {
-    @PrimaryKey
-    @AutoIncrement
-    @Column
-    id: number;
+// TODO: add indexes name
+export class AppSetting extends Model {
+    static tableName = 'AppSettings';
 
-    @Column
-    name: string;
-
-    @Column
-    color: string;
+    id!: number;
+    name!: string;
+    color!: string;
 }

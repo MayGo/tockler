@@ -12,7 +12,7 @@ describe('createOrUpdate', () => {
     afterEach(async () => {
         AppSetting.$clearQueue();
         TrackItem.$clearQueue();
-        Settings.$clearQueue();
+        Setting.$clearQueue();
         stateManager.resetCurrentTrackItem(TrackItemType.AppTrackItem);
         stateManager.resetCurrentTrackItem(TrackItemType.LogTrackItem);
         stateManager.resetCurrentTrackItem(TrackItemType.StatusTrackItem);
@@ -22,7 +22,7 @@ describe('createOrUpdate', () => {
         //Create mock data
         AppSetting.$queueResult([]);
         TrackItem.$queueResult([]);
-        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
+        Setting.$queueResult(Setting.build({ jsonData: '{}' }));
         const rawItem: TrackItemAttributes = TrackItemTestData.getLogTrackItem({});
 
         const item = await backgroundService.createOrUpdate(rawItem);
@@ -45,7 +45,7 @@ describe('createOrUpdate', () => {
         TrackItem.$queueResult([]);
         TrackItem.$queueResult([]);
 
-        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
+        Setting.$queueResult(Setting.build({ jsonData: '{}' }));
 
         const rawItem: TrackItemAttributes = TrackItemTestData.getLogTrackItem({
             beginDate: moment()
@@ -79,7 +79,7 @@ describe('createOrUpdate', () => {
     it('Creates new item if none and marks it as running', async () => {
         //Create mock data
         AppSetting.$queueResult([AppSetting.build()]);
-        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
+        Setting.$queueResult(Setting.build({ jsonData: '{}' }));
 
         const rawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({});
 
@@ -100,8 +100,8 @@ describe('createOrUpdate', () => {
         //Create mock data
         AppSetting.$queueResult([AppSetting.build()]);
         AppSetting.$queueResult([AppSetting.build()]);
-        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
-        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
+        Setting.$queueResult(Setting.build({ jsonData: '{}' }));
+        Setting.$queueResult(Setting.build({ jsonData: '{}' }));
 
         const firstRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({});
         const secondRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem(
@@ -133,8 +133,8 @@ describe('createOrUpdate', () => {
 
         AppSetting.$queueResult([AppSetting.build()]);
         AppSetting.$queueResult([AppSetting.build()]);
-        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
-        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
+        Setting.$queueResult(Setting.build({ jsonData: '{}' }));
+        Setting.$queueResult(Setting.build({ jsonData: '{}' }));
 
         const firstRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({});
         const secondRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({}, 1);
@@ -161,8 +161,8 @@ describe('createOrUpdate', () => {
         TrackItem.$queueResult([models.TrackItem.build()]);
         AppSetting.$queueResult([AppSetting.build()]);
         AppSetting.$queueResult([AppSetting.build()]);
-        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
-        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
+        Setting.$queueResult(Setting.build({ jsonData: '{}' }));
+        Setting.$queueResult(Setting.build({ jsonData: '{}' }));
 
         const firstRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({});
         const secondRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({}, 1);
@@ -182,7 +182,7 @@ describe('addInactivePeriod', () => {
     afterEach(async () => {
         AppSetting.$clearQueue();
         TrackItem.$clearQueue();
-        Settings.$clearQueue();
+        Setting.$clearQueue();
     });
 
     it('returns saved item', async () => {
@@ -191,7 +191,7 @@ describe('addInactivePeriod', () => {
         //Create mock data
         AppSetting.$queueResult([AppSetting.build({ name: appName, color: appColor })]);
         TrackItem.$queueResult([]);
-        Settings.$queueResult(Settings.build({ jsonData: '{}' }));
+        Setting.$queueResult(Setting.build({ jsonData: '{}' }));
 
         const beginDate = moment()
             .startOf('day')

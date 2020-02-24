@@ -1,5 +1,5 @@
 import { logManager } from '../log-manager';
-import { Settings } from '../models/Settings';
+import { Setting } from '../models/Setting';
 import { TrackItem } from '../models/TrackItem';
 
 export class SettingsService {
@@ -7,20 +7,25 @@ export class SettingsService {
 
     cache: any = {};
 
+    async findCreateFind(name: string) {
+        return Setting.query()
+            .where('name', name)
+            .then(function(rows) {
+                if (rows.length === 0) {
+                    return Setting.query().insert({ name });
+                } else {
+                    return rows[0];
+                }
+            });
+    }
+
     async findByName(name: string) {
         if (this.cache[name]) {
             this.logger.debug(`Returning ${name} from cache:`, this.cache[name].toJSON());
             return this.cache[name];
         }
 
-        const [item] = await Settings.findCreateFind({
-            where: {
-                name: name,
-            },
-            defaults: {
-                name,
-            },
-        });
+        const item = await this.findCreateFind(name);
 
         this.logger.debug(`Setting ${name} to cache:`, item && item.toJSON());
         this.cache[name] = item;
@@ -37,7 +42,7 @@ export class SettingsService {
             let item = await this.findByName(name);
 
             if (item) {
-                const savedItem = await item.update({ jsonData });
+                const savedItem = await item.patch({ jsonData });
 
                 this.cache[name] = savedItem;
                 return savedItem;
@@ -83,7 +88,7 @@ export class SettingsService {
         let settingsItem = await this.findByName('RUNNING_LOG_ITEM');
 
         if (settingsItem && settingsItem.jsonData && settingsItem.jsonData.id) {
-            let logItem = await TrackItem.findByPk(settingsItem.jsonData.id);
+            let logItem = await TrackItem.query().findById(settingsItem.jsonData.id);
             if (!logItem) {
                 this.logger.error(`No Track item found by pk: ${settingsItem.jsonData.id}`);
                 return null;

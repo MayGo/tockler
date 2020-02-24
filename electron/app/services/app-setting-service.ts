@@ -8,7 +8,7 @@ export class AppSettingService {
     cache: any = {};
 
     async createAppSetting(appSettingAttributes: any): Promise<AppSetting> {
-        const appSetting: AppSetting = await AppSetting.create(appSettingAttributes);
+        const appSetting: AppSetting = await AppSetting.query().insert(appSettingAttributes);
 
         const { name } = appSettingAttributes;
         this.cache[name] = appSetting;
@@ -16,7 +16,7 @@ export class AppSettingService {
         return appSetting;
     }
 
-    async retrieveAppSettings(name): Promise<AppSetting> {
+    async retrieveAppSettings(name) {
         if (this.cache[name]) {
             return this.cache[name];
         }
@@ -26,7 +26,7 @@ export class AppSettingService {
                 name,
             },
         };
-        const appSettings = await AppSetting.findAll(params);
+        const appSettings = await AppSetting.query().where('name', name);
 
         const item = appSettings.length > 0 ? appSettings[0] : null;
         this.cache[name] = item;
@@ -51,11 +51,13 @@ export class AppSettingService {
     async changeColorForApp(appName: string, color: string) {
         this.logger.debug('Quering color with params:', appName, color);
 
-        const appSetting: AppSetting = await this.retrieveAppSettings(appName);
+        const appSetting = await this.retrieveAppSettings(appName);
 
         if (appSetting) {
-            appSetting.color = color;
-            appSetting.save();
+            await appSetting.patch({
+                color,
+            });
+
             this.logger.debug('Saved color item to DB:', appSetting.toJSON());
 
             return appSetting;

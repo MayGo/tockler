@@ -1,6 +1,7 @@
 // override path, to fix asar.unpacked paths
 require('hazardous');
 require('events').EventEmitter.defaultMaxListeners = 30;
+
 import { backgroundJob } from './background-job';
 import { backgroundService } from './background-service';
 import { app, ipcMain, powerMonitor } from 'electron';
@@ -91,6 +92,7 @@ if (!gotTheLock) {
             });
         } catch (error) {
             logger.error('App errored in ready event:', error);
+            logger.error(error);
         }
     });
 }
