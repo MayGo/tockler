@@ -54,7 +54,8 @@ export class AppSettingService {
         const appSetting = await this.retrieveAppSettings(appName);
 
         if (appSetting) {
-            await appSetting.patch({
+
+            await appSetting.$query().patch({
                 color,
             });
 

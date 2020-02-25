@@ -42,7 +42,7 @@ export class SettingsService {
             let item = await this.findByName(name);
 
             if (item) {
-                const savedItem = await item.patch({ jsonData });
+                const savedItem = await  item.$query().patchAndFetch({jsonData});
 
                 this.cache[name] = savedItem;
                 return savedItem;
