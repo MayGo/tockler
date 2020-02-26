@@ -14,11 +14,11 @@ let logger = logManager.getLogger('AppTrackItemJob');
 export class AppTrackItemJob {
     lastUpdatedItem: TrackItem;
     errorDialogIsOpen = false;
-    interval;
 
     async run() {
-        if (this.interval) {
-            clearInterval(this.interval);
+        if (this.errorDialogIsOpen) {
+            logger.debug('Not running appTrackItemJob. Error dialog is open.');
+            return;
         }
 
         try {
@@ -51,9 +51,6 @@ export class AppTrackItemJob {
                 logger.error('Error in AppTrackItemJob.');
                 logger.error(error);
             }
-        }
-        if (!this.errorDialogIsOpen) {
-            this.interval = setInterval(() => this.run(), appConstants.BACKGROUND_JOB_INTERVAL);
         }
     }
 

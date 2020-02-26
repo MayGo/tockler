@@ -1,6 +1,6 @@
 {
     "name": "tockler",
-    "version": "3.11.5",
+    "version": "3.11.6",
     "description": "Automatically track applications usage and working time",
     "author": "Maigo Erit <maigo.erit@gmail.com>",
     "license": "GPL-2.0",
@@ -59,7 +59,7 @@
         "cross-env": "^7.0.0",
         "cucumber": "^6.0.5",
         "cucumber-pretty": "^6.0.0",
-        "electron": "8.0.1",
+        "electron": "7.1.10",
         "electron-builder": "22.3.2",
         "electron-connect": "0.6.3",
         "electron-reload": "1.5.0",
