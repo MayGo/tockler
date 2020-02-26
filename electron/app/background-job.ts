@@ -3,7 +3,6 @@ import { appConstants } from './app-constants';
 import { logTrackItemJob } from './jobs/log-track-item-job';
 import { statusTrackItemJob } from './jobs/status-track-item-job';
 import { appTrackItemJob } from './jobs/app-track-item-job';
-import { dialog } from 'electron';
 
 let logger = logManager.getLogger('BackgroundJob');
 

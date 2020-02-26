@@ -6,7 +6,7 @@ import { sumBy } from 'lodash';
 import moment from 'moment';
 import React, { useState, useRef, useEffect } from 'react';
 import Moment from 'react-moment';
-import { convertDate, DATE_TIME_FORMAT, INPUT_DATE_FORMAT, TIME_FORMAT } from '../../constants';
+import { convertDate, DATE_TIME_FORMAT, TIME_FORMAT } from '../../constants';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { diffAndFormatShort } from '../../utils';
 import { filterItems, getUniqueAppNames } from '../Timeline/timeline.utils';
@@ -235,10 +235,7 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
                 convertDate(a.beginDate).valueOf() - convertDate(b.beginDate).valueOf(),
             sortOrder: sortedInfo.columnKey === 'beginDate' && sortedInfo.order,
             render: (text, record) => (
-                <Moment
-                    format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}
-                    parse={INPUT_DATE_FORMAT}
-                >
+                <Moment format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}>
                     {record.beginDate}
                 </Moment>
             ),
@@ -254,12 +251,7 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
             sortOrder: sortedInfo.columnKey === 'endDate' && sortedInfo.order,
 
             render: (text, record) => (
-                <Moment
-                    format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}
-                    parse={INPUT_DATE_FORMAT}
-                >
-                    {record.endDate}
-                </Moment>
+                <Moment format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}>{record.endDate}</Moment>
             ),
         },
 

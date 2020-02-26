@@ -11,7 +11,11 @@ async function findAllDayItems(
     taskName: string,
 ): Promise<any> {
     //Logger.debug('findAllDayItems', JSON.stringify({ from, to, taskName }));
-    const data = await emit('findAllDayItems', { from: from.toDate(), to: to.toDate(), taskName });
+    const data = await emit('findAllDayItems', {
+        from: from.valueOf(),
+        to: to.valueOf(),
+        taskName,
+    });
     // Logger.debug('findAllDayItems result ', data);
     return data;
 }
@@ -40,8 +44,8 @@ export function getOnlineStartTime(): Promise<any> {
 
 export function searchFromItems({ from, to, taskName, searchStr, paging }): Promise<any> {
     return emit('searchFromItems', {
-        from: from.toDate(),
-        to: to.toDate(),
+        from: from.valueOf(),
+        to: to.valueOf(),
         taskName,
         searchStr,
         paging,
@@ -91,10 +95,10 @@ export function startNewLogItem(oldItem: any) {
     newItem.taskName = 'LogTrackItem';
     newItem.color = oldItem.color;
     newItem.title = oldItem.title;
-    newItem.beginDate = moment().toDate();
+    newItem.beginDate = moment().valueOf();
     newItem.endDate = moment()
         .add(60, 'seconds')
-        .toDate();
+        .valueOf();
 
     EventEmitter.send('start-new-log-item', newItem);
 }

@@ -38,6 +38,7 @@ export class AppTrackItemJob {
 
                 this.lastUpdatedItem = updatedItem;
             } else {
+                logger.debug('App not in correct state');
                 return false;
             }
 
