@@ -2,17 +2,13 @@
 
 Automatically track applications usage and working time.
 
-Stable version:
+[![Release](https://img.shields.io/github/v/release/MayGo/tockler)](https://github.com/MayGo/tockler/releases/latest)
 
--   Windows [Download ver 3.1.5](https://github.com/MayGo/tockler/releases/download/v3.1.5/Tockler-Setup-3.1.5.exe)
--   OS X [Download ver 3.1.5](https://github.com/MayGo/tockler/releases/download/v3.1.5/Tockler-3.1.5.dmg)
--   Linux [Download ver 3.1.5](https://github.com/MayGo/tockler/releases/download/v3.1.5/Tockler-3.1.5-x86_64.AppImage)
+Supported:
 
-New 'React' versions: https://github.com/MayGo/tockler/releases
-
-## NB!
-
-Tockler is migrating from Aurelia to React. So some things may not work right now.
+-   Windows
+-   macOS
+-   Linux
 
 # Features
 
