@@ -54,11 +54,11 @@ export default class AppUpdater {
             }
         });
 
-        AppUpdater.checkIfEnabled();
-        setInterval(() => AppUpdater.checkIfEnabled(), CHECK_INTERVAL_MS);
+        AppUpdater.checkForNewVersions();
+        setInterval(() => AppUpdater.checkForNewVersions(), CHECK_INTERVAL_MS);
     }
 
-    static checkIfEnabled() {
+    static checkForNewVersions() {
         let isAutoUpdateEnabled = config.persisted.get('isAutoUpdateEnabled');
         isAutoUpdateEnabled =
             typeof isAutoUpdateEnabled !== 'undefined' ? isAutoUpdateEnabled : true;
@@ -71,23 +71,23 @@ export default class AppUpdater {
         }
     }
 
-    static updateNotAvailable = updateInfo => {
-        const currentVersionString = app.getVersion();
-        showNotification({
-            body: `Up to date! Current ${currentVersionString} (latest: ${updateInfo.version})`,
-            silent: true,
-        });
-    };
-
     static async checkForUpdates() {
         logger.debug('Checking for updates');
         showNotification({ body: `Checking for updates...`, silent: true });
 
-        autoUpdater.on('update-not-available', AppUpdater.updateNotAvailable);
         try {
             const result: UpdateCheckResult = await autoUpdater.checkForUpdatesAndNotify();
 
-            logger.debug(`Update result ${result?.updateInfo?.version}`);
+            if (result?.updateInfo?.version) {
+                const latestVersion = result.updateInfo.version;
+                logger.debug(`Update result ${latestVersion}`);
+                const currentVersionString = app.getVersion();
+
+                showNotification({
+                    body: `Up to date! Current ${currentVersionString} (latest: ${latestVersion})`,
+                    silent: true,
+                });
+            }
         } catch (e) {
             logger.error('Error checking updates', e);
             showNotification({
@@ -95,7 +95,5 @@ export default class AppUpdater {
                 body: e ? e.stack || e : 'unknown',
             });
         }
-
-        autoUpdater.removeListener('update-not-available', AppUpdater.updateNotAvailable);
     }
 }
