@@ -14,8 +14,18 @@ export function TimelinePage({ location }: any) {
         timeItems,
         loadTimerange,
         isLoading,
+        timerangeMode,
+        setTimerangeMode,
     } = useContext(TimelineContext);
 
+    const searchProps = {
+        changeVisibleTimerange: setVisibleTimerange,
+        loadTimerange,
+        timerange,
+        visibleTimerange,
+        timerangeMode,
+        setTimerangeMode,
+    };
     const timelineProps = {
         timerange,
         visibleTimerange,
@@ -26,12 +36,7 @@ export function TimelinePage({ location }: any) {
 
     return (
         <MainLayout location={location}>
-            <Search
-                changeVisibleTimerange={setVisibleTimerange}
-                loadTimerange={loadTimerange}
-                timerange={timerange}
-            />
-
+            <Search {...searchProps} />
             <Timeline {...timelineProps} />
             <PieCharts visibleTimerange={visibleTimerange} timeItems={timeItems} />
             <TrackItemTable visibleTimerange={visibleTimerange} timeItems={timeItems} />

@@ -1,9 +1,10 @@
 import { Box, Flex } from '@rebass/grid';
-import { Button, DatePicker, Icon } from 'antd';
+import { Button, DatePicker, Icon, Tooltip } from 'antd';
 import moment from 'moment';
 import React from 'react';
 import { getTodayTimerange } from './timeline.utils';
 import { Logger } from '../../logger';
+import { TIMERANGE_MODE_TODAY } from '../../TimelineContext';
 
 const { RangePicker } = DatePicker;
 
@@ -18,7 +19,13 @@ type IFullProps = IProps;
 const getDayBefore = d => moment(d).subtract(1, 'days');
 const getDayAfter = d => moment(d).add(1, 'days');
 
-export const Search = ({ loadTimerange, timerange, changeVisibleTimerange }) => {
+export const Search = ({
+    timerangeMode,
+    loadTimerange,
+    timerange,
+    visibleTimerange,
+    changeVisibleTimerange,
+}) => {
     const onChange = (dates: any) => {
         Logger.debug('TIMERANGE:', dates);
         if (dates != null) {
@@ -32,7 +39,7 @@ export const Search = ({ loadTimerange, timerange, changeVisibleTimerange }) => 
     };
 
     const selectToday = () => {
-        loadTimerange(getTodayTimerange());
+        loadTimerange(getTodayTimerange(), TIMERANGE_MODE_TODAY);
     };
 
     const selectYesterday = () => {
@@ -60,8 +67,8 @@ export const Search = ({ loadTimerange, timerange, changeVisibleTimerange }) => 
     };
 
     const showHour = () => {
-        const beginDate = moment(timerange[0]).startOf('hour');
-        const endDate = moment(timerange[0]).endOf('hour');
+        const beginDate = moment(visibleTimerange[1]).startOf('hour');
+        const endDate = moment(visibleTimerange[1]).endOf('hour');
         changeVisibleTimerange([beginDate, endDate]);
     };
 
@@ -82,10 +89,10 @@ export const Search = ({ loadTimerange, timerange, changeVisibleTimerange }) => 
     };
 
     const showEvening = () => {
-        const beginDate = moment(timerange[0])
+        const beginDate = moment(visibleTimerange[0])
             .startOf('day')
             .hour(17);
-        const endDate = moment(timerange[0]).endOf('day');
+        const endDate = moment(visibleTimerange[0]).endOf('day');
         changeVisibleTimerange([beginDate, endDate]);
     };
 
@@ -109,7 +116,14 @@ export const Search = ({ loadTimerange, timerange, changeVisibleTimerange }) => 
                 </Button>
             </Box>
             <Box p={1}>
-                <Button onClick={selectToday}>Today</Button>
+                <Tooltip placement="right" title="Also activates Live view">
+                    <Button
+                        onClick={selectToday}
+                        type={timerangeMode === TIMERANGE_MODE_TODAY ? 'primary' : 'default'}
+                    >
+                        Today
+                    </Button>
+                </Tooltip>
             </Box>
             <Box flex={1} />
             <Box p={1}>
