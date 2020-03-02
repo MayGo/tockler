@@ -97,8 +97,13 @@ export const TimelineProvider = ({ children }) => {
                 setLastRequestTime(moment());
 
                 setVisibleTimerange(getCenteredTimerange(visibleTimerange, lastRequestTime));
+
+                if (lastRequestTime.day() !== timerange[0].day()) {
+                    Logger.debug('Day changed. Setting today as timerange.');
+                    setTimerange(getTodayTimerange());
+                }
             } else {
-                Logger.debug('Current day not selected in UI, not requesting data');
+                // Logger.debug('Current day not selected in UI, not requesting data');
             }
         } else {
             Logger.debug('Delaying bg sync, initial data still loading.');
