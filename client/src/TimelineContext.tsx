@@ -17,23 +17,46 @@ const emptyTimeItems = {
 export const TIMERANGE_MODE_TODAY = 'TODAY';
 const BG_SYNC_DELAY_MS = 3000;
 
-const getCenteredTimerange = (currentTimerange, middleTime) => {
-    const timeBetweenMs = moment(currentTimerange[1]).diff(moment(currentTimerange[0]));
+// also caping return values with actual timerange
+const getCenteredTimerange = (timerange, visibleTimerange, middleTime) => {
+    const timeBetweenMs = moment(visibleTimerange[1]).diff(visibleTimerange[0]);
     const middlePoint = timeBetweenMs / 5;
 
-    const beginDate = moment(middleTime).subtract(timeBetweenMs - middlePoint, 'milliseconds');
-    const endDate = moment(middleTime).add(middlePoint, 'milliseconds');
+    let beginDate = moment(middleTime).subtract(timeBetweenMs - middlePoint, 'milliseconds');
+    let endDate = moment(middleTime).add(middlePoint, 'milliseconds');
+
+    // if new beginDate is smaller than actual timerange, then cap it with timeranges beginDate
+    const underTime = moment(timerange[0]).diff(beginDate);
+    if (underTime > 0) {
+        beginDate = moment(timerange[0]);
+        endDate = moment(endDate).add(underTime, 'milliseconds');
+    }
+
+    // if new endDate is bigger than actual timeranges endDate, then cap it with timeranges endDate
+    const overTime = moment(endDate).diff(timerange[1]);
+    if (overTime > 0) {
+        endDate = moment(timerange[1]);
+        beginDate = moment(beginDate).subtract(overTime, 'milliseconds');
+
+        //edge case, if we have 23h visible timerange, then cap it with timeranges beginDate
+        if (moment(timerange[0]).diff(beginDate) > 0) {
+            beginDate = moment(timerange[0]);
+        }
+    }
 
     return [beginDate, endDate];
 };
 
 export const TimelineProvider = ({ children }) => {
+    const defaultTimerange = getTodayTimerange();
     const defaultVisibleTimerange = getCenteredTimerange(
+        defaultTimerange,
         [moment().subtract(1, 'hour'), moment().add(1, 'hour')],
         moment(),
     );
+    const [liveView, setLiveView] = useState<any>(true);
     const [isLoading, setIsLoading] = useState<any>(true);
-    const [timerange, setTimerange] = useState<any>(getTodayTimerange());
+    const [timerange, setTimerange] = useState<any>(defaultTimerange);
     const [timerangeMode, setTimerangeMode] = useState(TIMERANGE_MODE_TODAY);
     const [lastRequestTime, setLastRequestTime] = useState<any>(moment());
     const [visibleTimerange, setVisibleTimerange] = useState<any>(defaultVisibleTimerange);
@@ -54,8 +77,13 @@ export const TimelineProvider = ({ children }) => {
     }, [visibleTimerange, timerange]);
 
     const loadTimerange = useCallback(
-        async (range, mode) => {
+        async range => {
+            let mode;
+            if (moment().isBetween(range[0], range[1])) {
+                mode = TIMERANGE_MODE_TODAY;
+            }
             Logger.debug('loadTimerange:', JSON.stringify(range));
+
             setTimerange(range);
             setTimerangeMode(mode);
         },
@@ -73,6 +101,8 @@ export const TimelineProvider = ({ children }) => {
         isLoading,
         timerangeMode,
         setTimerangeMode,
+        liveView,
+        setLiveView,
     };
 
     useEffect(() => {
@@ -92,13 +122,15 @@ export const TimelineProvider = ({ children }) => {
 
     useInterval(() => {
         if (!isLoading) {
-            if (timerangeMode === TIMERANGE_MODE_TODAY) {
+            if (timerangeMode === TIMERANGE_MODE_TODAY && liveView) {
                 bgSync(lastRequestTime);
                 setLastRequestTime(moment());
 
-                setVisibleTimerange(getCenteredTimerange(visibleTimerange, lastRequestTime));
+                setVisibleTimerange(
+                    getCenteredTimerange(timerange, visibleTimerange, lastRequestTime),
+                );
 
-                if (lastRequestTime.day() !== timerange[0].day()) {
+                if (lastRequestTime.day() !== timerange[1].day()) {
                     Logger.debug('Day changed. Setting today as timerange.');
                     setTimerange(getTodayTimerange());
                 }

@@ -25,7 +25,13 @@ export const Search = ({
     timerange,
     visibleTimerange,
     changeVisibleTimerange,
+    liveView,
+    setLiveView,
 }) => {
+    const showLiveViewButton = timerangeMode === TIMERANGE_MODE_TODAY;
+    const toggleLiveView = () => {
+        setLiveView(!liveView);
+    };
     const onChange = (dates: any) => {
         Logger.debug('TIMERANGE:', dates);
         if (dates != null) {
@@ -39,7 +45,8 @@ export const Search = ({
     };
 
     const selectToday = () => {
-        loadTimerange(getTodayTimerange(), TIMERANGE_MODE_TODAY);
+        loadTimerange(getTodayTimerange());
+        setLiveView(true);
     };
 
     const selectYesterday = () => {
@@ -116,15 +123,24 @@ export const Search = ({
                 </Button>
             </Box>
             <Box p={1}>
-                <Tooltip placement="right" title="Also activates Live view">
-                    <Button
-                        onClick={selectToday}
-                        type={timerangeMode === TIMERANGE_MODE_TODAY ? 'primary' : 'default'}
-                    >
+                <Tooltip placement="bottom" title="Also activates Live view">
+                    <Button onClick={selectToday} type={showLiveViewButton ? 'primary' : 'default'}>
                         Today
                     </Button>
                 </Tooltip>
             </Box>
+            {showLiveViewButton && (
+                <Box p={1}>
+                    <Tooltip
+                        placement="bottom"
+                        title={liveView ? 'Pause live view' : 'Start live view'}
+                    >
+                        <Button onClick={toggleLiveView}>
+                            <Icon type={liveView ? 'pause' : 'caret-right'} />
+                        </Button>
+                    </Tooltip>
+                </Box>
+            )}
             <Box flex={1} />
             <Box p={1}>
                 <Button onClick={showDay} type="dashed">
