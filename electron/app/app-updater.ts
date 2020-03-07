@@ -12,14 +12,7 @@ const ONE_MINUTE_MS = 60 * 1000;
 export const CHECK_INTERVAL_MS = ONE_MINUTE_MS * 30;
 
 function isNetworkError(errorObject) {
-    return (
-        errorObject.message === 'net::ERR_INTERNET_DISCONNECTED' ||
-        errorObject.message === 'net::ERR_PROXY_CONNECTION_FAILED' ||
-        errorObject.message === 'net::ERR_CONNECTION_RESET' ||
-        errorObject.message === 'net::ERR_CONNECTION_CLOSE' ||
-        errorObject.message === 'net::ERR_NAME_NOT_RESOLVED' ||
-        errorObject.message === 'net::ERR_CONNECTION_TIMED_OUT'
-    );
+    return errorObject.message.includes('net::ERR');
 }
 
 export default class AppUpdater {
@@ -48,7 +41,7 @@ export default class AppUpdater {
             } else {
                 logger.error('AutoUpdater error:', e);
                 showNotification({
-                    title: 'Tockler error',
+                    title: 'Tockler update error',
                     body: e ? e.stack || e : 'unknown',
                 });
             }
