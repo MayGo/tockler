@@ -67,6 +67,11 @@ const trackItemActions = {
         const data = await trackItemService.findAllItems(from, to, taskName, searchStr, paging);
         res.send(data);
     },
+    exportFromItems: async ({ payload }, res) => {
+        const { from, to, taskName, searchStr } = payload;
+        const data = await trackItemService.findAndExportAllItems(from, to, taskName, searchStr);
+        res.send(data);
+    },
     findFirstLogItems: async (req, res) => {
         const data = await trackItemService.findFirstLogItems();
         res.send(data);

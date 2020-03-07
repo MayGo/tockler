@@ -26,6 +26,7 @@
     "dependencies": {
         "@sentry/electron": "^1.2.0",
         "active-win": "^6.1.0",
+        "csv-stringify": "^5.3.6",
         "eiphop": "^1.0.12",
         "electron-context-menu": "0.16.0",
         "electron-devtools-installer": "^2.2.4",

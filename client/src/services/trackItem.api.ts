@@ -51,6 +51,14 @@ export function searchFromItems({ from, to, taskName, searchStr, paging }): Prom
         paging,
     });
 }
+export function exportFromItems({ from, to, taskName, searchStr }): Promise<any> {
+    return emit('exportFromItems', {
+        from: from.valueOf(),
+        to: to.valueOf(),
+        taskName,
+        searchStr,
+    });
+}
 
 function createTrackItem(trackItem: ITrackItem): Promise<any> {
     return emit('createTrackItem', { trackItem: trackItem });

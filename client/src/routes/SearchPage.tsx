@@ -3,13 +3,12 @@ import { MainLayout } from '../components/MainLayout/MainLayout';
 import { Flex, Box } from '@rebass/grid';
 import { Input, Spin, Button } from 'antd';
 import { useFormState } from 'react-use-form-state';
-import { searchFromItems } from '../services/trackItem.api';
+import { searchFromItems, exportFromItems } from '../services/trackItem.api';
 import moment from 'moment';
 import { TrackItemType } from '../enum/TrackItemType';
 import { SearchResults } from '../components/SearchResults/SearchResults';
 import { SearchOptions } from '../components/SearchResults/SearchOptions';
 import { Spinner } from '../components/Timeline/Timeline.styles';
-import { Logger } from '../logger';
 
 export function SearchPage({ location }: any) {
     const [formState, { text }] = useFormState({ search: '' });
@@ -25,14 +24,11 @@ export function SearchPage({ location }: any) {
         moment().endOf('day'),
     ]);
 
-    const from = moment()
-        .startOf('day')
-        .subtract(1, 'days');
-    const to = moment().endOf('day');
     const taskName = TrackItemType.AppTrackItem;
 
     const loadItems = async searchStr => {
         setIsLoading(true);
+        const [from, to] = timerange;
         const items = await searchFromItems({
             from,
             to,
@@ -40,14 +36,27 @@ export function SearchPage({ location }: any) {
             searchStr,
             paging: searchPaging,
         });
-        Logger.debug('Search results:', items);
+
         setSearchResult(items);
         setIsLoading(false);
         return;
     };
 
+    const exportItems = async searchStr => {
+        setIsLoading(true);
+        const [from, to] = timerange;
+        await exportFromItems({
+            from,
+            to,
+            taskName,
+            searchStr,
+        });
+
+        setIsLoading(false);
+        return;
+    };
+
     useEffect(() => {
-        console.error('Pagination changed');
         loadItems(formState.values.search);
     }, [searchPaging]);
 
@@ -74,7 +83,7 @@ export function SearchPage({ location }: any) {
                     <Box pl={1}>
                         <Button
                             onClick={() => {
-                                loadItems(formState.values.search);
+                                exportItems(formState.values.search);
                             }}
                             type="default"
                         >
