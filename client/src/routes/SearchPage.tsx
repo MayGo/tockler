@@ -3,7 +3,6 @@ import { MainLayout } from '../components/MainLayout/MainLayout';
 import { Flex, Box } from '@rebass/grid';
 import { Input, Spin, Button } from 'antd';
 import { useFormState } from 'react-use-form-state';
-import debounce from 'debounce-promise';
 import { searchFromItems } from '../services/trackItem.api';
 import moment from 'moment';
 import { TrackItemType } from '../enum/TrackItemType';
@@ -16,8 +15,9 @@ export function SearchPage({ location }: any) {
     const [formState, { text }] = useFormState({ search: '' });
 
     const [isLoading, setIsLoading] = useState<any>(false);
+    const [searchPaging, setSearchPaging] = useState<any>({ pageSize: 20, page: 1 });
 
-    const [dataItems, setDataItems] = useState([]);
+    const [searchResult, setSearchResult] = useState([]);
     const [timerange, setTimerange] = useState([
         moment()
             .startOf('day')
@@ -31,7 +31,6 @@ export function SearchPage({ location }: any) {
     const to = moment().endOf('day');
     const taskName = TrackItemType.AppTrackItem;
 
-    const paging = { limit: 10, offset: 0 };
     const loadItems = async searchStr => {
         setIsLoading(true);
         const items = await searchFromItems({
@@ -39,17 +38,18 @@ export function SearchPage({ location }: any) {
             to,
             taskName,
             searchStr,
-            paging,
+            paging: searchPaging,
         });
         Logger.debug('Search results:', items);
-        setDataItems(items);
+        setSearchResult(items);
         setIsLoading(false);
         return;
     };
 
     useEffect(() => {
-        loadItems('');
-    }, []);
+        console.error('Pagination changed');
+        loadItems(formState.values.search);
+    }, [searchPaging]);
 
     return (
         <MainLayout location={location}>
@@ -71,6 +71,16 @@ export function SearchPage({ location }: any) {
                             Search
                         </Button>
                     </Box>
+                    <Box pl={1}>
+                        <Button
+                            onClick={() => {
+                                loadItems(formState.values.search);
+                            }}
+                            type="default"
+                        >
+                            Export to CSV
+                        </Button>
+                    </Box>
                 </Flex>
                 <Box p={1}>
                     <SearchOptions setTimerange={setTimerange} timerange={timerange} />
@@ -81,7 +91,11 @@ export function SearchPage({ location }: any) {
                             <Spin />
                         </Spinner>
                     )}
-                    <SearchResults dataItems={dataItems} />
+                    <SearchResults
+                        searchResult={searchResult}
+                        searchPaging={searchPaging}
+                        setSearchPaging={setSearchPaging}
+                    />
                 </Box>
             </Flex>
         </MainLayout>

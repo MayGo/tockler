@@ -19,12 +19,17 @@ const calculateTotal = filteredData => {
     return <TotalCount>Total {dur.format()}</TotalCount>;
 };
 
-const paginationConf: PaginationConfig = {
-    showSizeChanger: true,
-    pageSizeOptions: ['50', '100', '300', '500'],
-};
-
-export const SearchResults = ({ dataItems }) => {
+export const SearchResults = ({ searchResult, searchPaging, setSearchPaging }) => {
+    const paginationConf: PaginationConfig = {
+        total: searchResult.total,
+        showSizeChanger: true,
+        pageSize: searchPaging.pageSize,
+        pageSizeOptions: ['50', '100', '300', '500'],
+        onChange: (page, pageSize) => {
+            console.error('Pagingation changed', page, pageSize);
+            // setSearchPaging({ page, pageSize });
+        },
+    };
     const [state, setState] = useState<any>({
         filteredInfo: {},
         sortedInfo: {},
@@ -44,6 +49,7 @@ export const SearchResults = ({ dataItems }) => {
 
     const handleChange = (pagination: any, filters: any, sorter: any) => {
         Logger.debug('Various parameters', pagination, filters, sorter);
+        setSearchPaging({ page: pagination.current, pageSize: pagination.pageSize });
         setState({ ...state, filteredInfo: filters, sortedInfo: sorter });
     };
 
@@ -129,7 +135,7 @@ export const SearchResults = ({ dataItems }) => {
             rowKey={(record: any) => `${record.id}`}
             columns={columns}
             pagination={paginationConf}
-            dataSource={dataItems}
+            dataSource={searchResult.results}
             onChange={handleChange}
             footer={calculateTotal}
         />

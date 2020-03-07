@@ -35,18 +35,15 @@ export class TrackItemService {
             orderSort = 'desc';
         }
 
-        let limit = paging.limit || 10;
-        let offset = paging.offset || 0;
-        if (paging.page) {
-            offset = (paging.page - 1) * limit;
-        }
+        let pageSize = paging.pageSize || 10;
+        // Objections.js uses 0 based paging
+        let page = paging.page ? paging.page - 1 : 0;
 
         const query = TrackItem.query()
             .where('taskName', taskName)
             .where('endDate', '>=', from)
             .where('endDate', '<', to)
-            .limit(limit)
-            .offset(offset)
+            .page(page, pageSize)
             .orderBy(order, orderSort);
 
         if (searchStr) {
