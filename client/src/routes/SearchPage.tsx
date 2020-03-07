@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MainLayout } from '../components/MainLayout/MainLayout';
 import { Flex, Box } from '@rebass/grid';
-import { Input, Spin } from 'antd';
+import { Input, Spin, Button } from 'antd';
 import { useFormState } from 'react-use-form-state';
 import debounce from 'debounce-promise';
 import { searchFromItems } from '../services/trackItem.api';
@@ -13,9 +13,10 @@ import { Spinner } from '../components/Timeline/Timeline.styles';
 import { Logger } from '../logger';
 
 export function SearchPage({ location }: any) {
-    const [, { text }] = useFormState({});
+    const [formState, { text }] = useFormState({ search: '' });
 
     const [isLoading, setIsLoading] = useState<any>(false);
+
     const [dataItems, setDataItems] = useState([]);
     const [timerange, setTimerange] = useState([
         moment()
@@ -32,10 +33,6 @@ export function SearchPage({ location }: any) {
 
     const paging = { limit: 10, offset: 0 };
     const loadItems = async searchStr => {
-        if (!searchStr.length) {
-            setDataItems([]);
-            return;
-        }
         setIsLoading(true);
         const items = await searchFromItems({
             from,
@@ -49,7 +46,10 @@ export function SearchPage({ location }: any) {
         setIsLoading(false);
         return;
     };
-    const debouncedLoadOptions = debounce(loadItems, 1000);
+
+    useEffect(() => {
+        loadItems('');
+    }, []);
 
     return (
         <MainLayout location={location}>
@@ -59,11 +59,18 @@ export function SearchPage({ location }: any) {
                         placeholder="Search from all items"
                         {...text({
                             name: 'search',
-                            onChange: e => {
-                                debouncedLoadOptions(e.target.value);
-                            },
                         })}
                     />
+                    <Box pl={1}>
+                        <Button
+                            onClick={() => {
+                                loadItems(formState.values.search);
+                            }}
+                            type="primary"
+                        >
+                            Search
+                        </Button>
+                    </Box>
                 </Flex>
                 <Box p={1}>
                     <SearchOptions setTimerange={setTimerange} timerange={timerange} />
