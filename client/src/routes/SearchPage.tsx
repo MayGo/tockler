@@ -58,6 +58,7 @@ export function SearchPage({ location }: any) {
 
     useEffect(() => {
         loadItems(formState.values.search);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchPaging]);
 
     return (
