@@ -8,7 +8,7 @@ let logger = logManager.getLogger('Database');
 
 export async function connectAndSync() {
     let dbConfig = config.databaseConfig;
-    logger.debug('Database dir is2:' + dbConfig.outputPath);
+    logger.debug('Database dir is:' + dbConfig.outputPath);
 
     // Initialize knex.
     const knex = Knex({

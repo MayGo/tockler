@@ -1,6 +1,6 @@
 {
     "name": "tockler",
-    "version": "3.13.0",
+    "version": "3.13.1",
     "description": "Automatically track applications usage and working time",
     "author": "Maigo Erit <maigo.erit@gmail.com>",
     "license": "GPL-2.0",
@@ -11,7 +11,8 @@
     },
     "scripts": {
         "tslint": "tslint --project .",
-        "start": "cross-env NODE_ENV=development webpack -d && electron ./dist",
+        "start": "cross-env NODE_ENV=development  webpack -d && electron ./dist",
+        "start-debug": "cross-env NODE_ENV=development  webpack -d && DEBUG=knex:* electron ./dist",
         "test": "jest -c jest-e2e.json",
         "test:e2e": "npm run build && mkdir -p ./test-results/e2e && NO_DEV_TOOLS=true NODE_ENV=test cucumber-js --require-module @babel/register __e2e__ -r ' __e2e__/**/*.{ts,js}' --format node_modules/cucumber-pretty --format usage:./test-results/e2e/usage.txt --format json:./test-results/e2e/result.json ",
         "____pre____": "",
