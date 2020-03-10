@@ -1,5 +1,5 @@
 import { app } from 'electron';
-import { autoUpdater, UpdateCheckResult } from 'electron-updater';
+import { autoUpdater, UpdateCheckResult, UpdateInfo } from 'electron-updater';
 import * as os from 'os';
 import config from './config';
 import { showNotification } from './notification';
@@ -17,20 +17,17 @@ function isNetworkError(errorObject) {
 
 export default class AppUpdater {
     static init() {
-        if (config.isDev) {
-            return;
-        }
-
-        const platform = os.platform();
-        if (platform === 'linux') {
-            return;
-        }
-
         autoUpdater.logger = logger;
+        (autoUpdater.logger as any).transports.console.level = 'error';
+
         autoUpdater.on('download-progress', progressInfo => {
+            logger.debug(`Downloaded: ${Math.round(progressInfo.percent)}% `);
+        });
+
+        autoUpdater.on('update-available', (info: UpdateInfo) => {
             showNotification({
-                body: `Downloaded: ${Math.round(progressInfo.percent)}% `,
-                title: 'Tockler update downloading',
+                body: `Downloading Tockler version ${info.version}`,
+                title: 'Update available',
                 silent: true,
             });
         });
@@ -47,7 +44,6 @@ export default class AppUpdater {
             }
         });
 
-        AppUpdater.checkForNewVersions();
         setInterval(() => AppUpdater.checkForNewVersions(), CHECK_INTERVAL_MS);
     }
 
