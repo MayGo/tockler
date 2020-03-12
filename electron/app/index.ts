@@ -76,6 +76,7 @@ if (!gotTheLock) {
             }
 
             await AppManager.init();
+
             backgroundJob.init();
 
             powerMonitor.on('suspend', function() {
