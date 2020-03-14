@@ -30,6 +30,7 @@ if (!gotTheLock) {
         logger.debug('Make single instance');
         WindowManager.openMainWindow();
     });
+
     AppUpdater.init();
 
     if (config.isDev) {
