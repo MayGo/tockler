@@ -87,10 +87,12 @@ export default class AppUpdater {
                 logger.debug(`Update result ${latestVersion}`);
                 const currentVersionString = app.getVersion();
 
-                showNotification({
-                    body: `Up to date! Current ${currentVersionString} (latest: ${latestVersion})`,
-                    silent: true,
-                });
+                if (currentVersionString === latestVersion) {
+                    showNotification({
+                        body: `Up to date! You have version ${currentVersionString}`,
+                        silent: true,
+                    });
+                }
             }
         } catch (e) {
             logger.error('Error checking updates', e);
