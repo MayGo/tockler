@@ -4,6 +4,7 @@ import config from './config';
 import { showNotification } from './notification';
 
 import { logManager } from './log-manager';
+import WindowManager, { windowManager } from './window-manager';
 
 const logger = logManager.getLogger('AppUpdater');
 
@@ -33,7 +34,9 @@ export default class AppUpdater {
 
         autoUpdater.on('update-downloaded', async (event, releaseNotes, releaseName) => {
             logger.debug('Update downloaded');
-            const { response } = await dialog.showMessageBox({
+            WindowManager.openMainWindow();
+
+            const { response } = await dialog.showMessageBox(WindowManager.mainWindow, {
                 type: 'question',
                 buttons: ['Update', 'Cancel'],
                 defaultId: 0,
