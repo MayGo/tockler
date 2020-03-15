@@ -32,9 +32,9 @@ export default class AppUpdater {
             });
         });
 
-        autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
+        autoUpdater.on('update-downloaded', async (event, releaseNotes, releaseName) => {
             logger.debug('Update downloaded');
-            const response = dialog.showMessageBoxSync({
+            const { response } = await dialog.showMessageBox({
                 type: 'question',
                 buttons: ['Update', 'Cancel'],
                 defaultId: 0,
