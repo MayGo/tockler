@@ -6,7 +6,6 @@ import { backgroundService } from '../background-service';
 import { TrackItemType } from '../enums/track-item-type';
 import { taskAnalyser } from '../task-analyser';
 import { TrackItem } from '../models/TrackItem';
-import { appConstants } from '../app-constants';
 import { dialog } from 'electron';
 
 let logger = logManager.getLogger('AppTrackItemJob');

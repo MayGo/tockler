@@ -1,4 +1,4 @@
-import { app } from 'electron';
+import { app, dialog } from 'electron';
 import { autoUpdater, UpdateCheckResult, UpdateInfo } from 'electron-updater';
 import * as os from 'os';
 import config from './config';
@@ -32,6 +32,21 @@ export default class AppUpdater {
             });
         });
 
+        autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
+            logger.debug('Update downloaded');
+            const response = dialog.showMessageBoxSync({
+                type: 'question',
+                buttons: ['Update', 'Cancel'],
+                defaultId: 0,
+                message: `Version ${releaseName} is available, do you want to install it now?`,
+                title: 'Update available',
+            });
+
+            if (response === 0) {
+                autoUpdater.quitAndInstall();
+            }
+        });
+
         autoUpdater.on('error', e => {
             if (isNetworkError(e)) {
                 logger.debug('Network error:', e);
@@ -54,18 +69,18 @@ export default class AppUpdater {
 
         if (isAutoUpdateEnabled) {
             logger.debug('Checking for updates.');
-            autoUpdater.checkForUpdatesAndNotify();
+            autoUpdater.checkForUpdates();
         } else {
             logger.debug('Auto update disabled.');
         }
     }
 
-    static async checkForUpdates() {
+    static async checkForUpdatesManual() {
         logger.debug('Checking for updates');
         showNotification({ body: `Checking for updates...`, silent: true });
 
         try {
-            const result: UpdateCheckResult = await autoUpdater.checkForUpdatesAndNotify();
+            const result: UpdateCheckResult = await autoUpdater.checkForUpdates();
 
             if (result?.updateInfo?.version) {
                 const latestVersion = result.updateInfo.version;

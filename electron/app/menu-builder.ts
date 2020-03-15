@@ -89,7 +89,7 @@ export default class MenuBuilder {
         const CHECK_UPDATES_ITEM = {
             label: 'Check for Updates...',
             click() {
-                AppUpdater.checkForUpdates();
+                AppUpdater.checkForUpdatesManual();
             },
         };
 
