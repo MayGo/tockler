@@ -25,6 +25,8 @@ publish:
 
 mac:
     category: public.app-category.productivity
+    target:
+        - dmg
 
 win:
     artifactName: ${name}-${version}-windows-${arch}.${ext}
