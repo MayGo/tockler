@@ -6,9 +6,7 @@ import { backgroundJob } from './background-job';
 import { backgroundService } from './background-service';
 import { app, ipcMain, powerMonitor } from 'electron';
 import { logManager } from './log-manager';
-
 import AppManager from './app-manager';
-
 import WindowManager from './window-manager';
 import { extensionsManager } from './extensions-manager';
 import AppUpdater from './app-updater';
