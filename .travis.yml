@@ -19,6 +19,9 @@ language: node_js
 node_js:
     - '13'
 
+env:
+    - SENTRY_DSN=$SENTRY_DSN
+
 cache:
     timeout: 600
     directories:
