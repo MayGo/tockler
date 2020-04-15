@@ -19,9 +19,6 @@ language: node_js
 node_js:
     - '13'
 
-env:
-    - SENTRY_DSN=$SENTRY_DSN
-
 cache:
     timeout: 600
     directories:
@@ -53,7 +50,7 @@ script:
     - npm run build
     - cd ..
     - cd electron
-    - npm run build
+    - SENTRY_DSN=$SENTRY_DSN npm run build
     - npm run prepare_client
     - travis_wait 80 npm run release
     - cd ..
