@@ -7,23 +7,25 @@ const Sentry = require('@sentry/electron');
 
 const version = electron.remote.app.getVersion();
 
-Sentry.init({
-    dsn: 'https://8b5e35e414d146afac47bbf66d904746@sentry.io/2004797',
-    environment: process.env.NODE_ENV || 'local',
-    release: version,
-});
+if (process.env.NODE_ENV === 'production') {
+    Sentry.init({
+        dsn: process.env.SENTRY_DSN,
+        environment: process.env.NODE_ENV,
+        release: version,
+    });
+}
 
 const origConsole = log.transports.console;
 
-const isError = function(e) {
+const isError = function (e) {
     return e && e.stack && e.message;
 };
 
-const sentryTransportConsole = msgObj => {
+const sentryTransportConsole = (msgObj) => {
     const { level, data, date } = msgObj;
     const [message, ...rest] = data;
 
-    Sentry.withScope(scope => {
+    Sentry.withScope((scope) => {
         scope.setExtra('data', rest);
         scope.setExtra('date', msgObj.date.toLocaleTimeString());
         scope.setLevel(level);

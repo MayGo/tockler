@@ -31,7 +31,7 @@ export class AppTrackItemJob {
                     logger.debug('App and title changed. Analysing title');
                     taskAnalyser.analyseAndNotify(updatedItem).then(
                         () => logger.debug('Analysing has run.'),
-                        e => logger.error('Error in Analysing', e),
+                        (e) => logger.error('Error in Analysing', e),
                     );
                 }
 
@@ -46,7 +46,7 @@ export class AppTrackItemJob {
             const activeWinError = await this.checkIfPermissionError(error);
 
             if (activeWinError) {
-                logger.info('Permission error: ' + activeWinError);
+                logger.debug('Permission error: ' + activeWinError);
             } else {
                 logger.error('Error in AppTrackItemJob.');
                 logger.error(error);
