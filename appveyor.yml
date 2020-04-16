@@ -30,8 +30,8 @@ build_script:
     - npm run build
     - cd ..
     - cd electron
-    - echo %env:SENTRY_DSN%
-    - echo "SENTRY_DSN=%env:SENTRY_DSN%" > .env
+    - echo %SENTRY_DSN%
+    - echo "SENTRY_DSN=%SENTRY_DSN%" > .env
     - npm run build
     - npm run prepare_client
     - npm run release
