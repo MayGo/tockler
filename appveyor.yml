@@ -26,6 +26,9 @@ install:
     - cd client
     - npm install
 
+before_build:
+    - echo "SENTRY_DSN=$env:SENTRY_DSN" > .env
+
 build_script:
     - npm run build
     - cd ..
