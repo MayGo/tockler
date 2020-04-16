@@ -28,6 +28,7 @@ cache:
         - $HOME/.electron
 
 before_script:
+    - echo "SENTRY_DSN=$SENTRY_DSN" >> ./electron/.env
     - sentry-cli releases set-commits "$PACKAGE_VERSION" --commit "$TRAVIS_REPO_SLUG@$TRAVIS_COMMIT"
     - sentry-cli releases new "$PACKAGE_VERSION"
 after_success:
@@ -50,7 +51,7 @@ script:
     - npm run build
     - cd ..
     - cd electron
-    - SENTRY_DSN=$SENTRY_DSN npm run build
+    - npm run build
     - npm run prepare_client
     - travis_wait 80 npm run release
     - cd ..

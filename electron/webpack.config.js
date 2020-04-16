@@ -4,6 +4,7 @@ const os = require('os');
 const { TsConfigPathsPlugin, CheckerPlugin } = require('awesome-typescript-loader');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
@@ -35,6 +36,7 @@ module.exports = {
         ],
     },
     plugins: [
+        new Dotenv(),
         new FriendlyErrorsWebpackPlugin(),
         new TsConfigPathsPlugin(),
         new CheckerPlugin(),
