@@ -25,13 +25,13 @@ install:
     - cd ..
     - cd client
     - npm install
-    - echo "CREATING SENTRY_DSN env file $env:SENTRY_DSN"
-    - echo "SENTRY_DSN=$env:SENTRY_DSN" > .\electron\.env
 
 build_script:
     - npm run build
     - cd ..
     - cd electron
+    - echo $env:SENTRY_DSN
+    - echo "SENTRY_DSN=$env:SENTRY_DSN" > .env
     - npm run build
     - npm run prepare_client
     - npm run release
