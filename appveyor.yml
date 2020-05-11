@@ -20,6 +20,7 @@ install:
     - ps: .\appveyor.before-build.ps1
     - node --version
     - npm --version
+    - echo SENTRY_DSN=%SENTRY_DSN% > .\electron\.env
     - cd electron
     - npm install
     - cd ..
@@ -30,8 +31,6 @@ build_script:
     - npm run build
     - cd ..
     - cd electron
-    - echo %SENTRY_DSN%
-    - echo "SENTRY_DSN=%SENTRY_DSN%" > .env
     - npm run build
     - npm run prepare_client
     - npm run release
