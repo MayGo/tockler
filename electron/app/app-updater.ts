@@ -38,11 +38,9 @@ export default class AppUpdater {
             logger.debug('Update downloaded');
 
             if (!AppUpdater.dialogIsOpen) {
-                WindowManager.openMainWindow();
-
                 AppUpdater.dialogIsOpen = true;
 
-                const { response } = await dialog.showMessageBox(WindowManager.mainWindow, {
+                const { response } = await dialog.showMessageBox(WindowManager.menubar.window(), {
                     type: 'question',
                     buttons: ['Update', 'Cancel'],
                     defaultId: 0,
