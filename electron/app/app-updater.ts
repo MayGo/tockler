@@ -16,11 +16,13 @@ function isNetworkError(errorObject) {
 }
 
 export default class AppUpdater {
+    static dialogIsOpen = false;
+
     static init() {
         autoUpdater.logger = logger;
         (autoUpdater.logger as any).transports.console.level = 'error';
 
-        autoUpdater.on('download-progress', progressInfo => {
+        autoUpdater.on('download-progress', (progressInfo) => {
             logger.debug(`Downloaded: ${Math.round(progressInfo.percent)}% `);
         });
 
@@ -32,24 +34,30 @@ export default class AppUpdater {
             });
         });
 
-        autoUpdater.on('update-downloaded', async (event, releaseNotes, releaseName) => {
+        autoUpdater.on('update-downloaded', async () => {
             logger.debug('Update downloaded');
-            WindowManager.openMainWindow();
 
-            const { response } = await dialog.showMessageBox(WindowManager.mainWindow, {
-                type: 'question',
-                buttons: ['Update', 'Cancel'],
-                defaultId: 0,
-                message: `Version ${releaseName} is available, do you want to install it now?`,
-                title: 'Update available',
-            });
+            if (!AppUpdater.dialogIsOpen) {
+                WindowManager.openMainWindow();
 
-            if (response === 0) {
-                autoUpdater.quitAndInstall();
+                AppUpdater.dialogIsOpen = true;
+
+                const { response } = await dialog.showMessageBox(WindowManager.mainWindow, {
+                    type: 'question',
+                    buttons: ['Update', 'Cancel'],
+                    defaultId: 0,
+                    message: `New version is downloaded, do you want to install it now?`,
+                    title: 'Update available',
+                });
+
+                AppUpdater.dialogIsOpen = false;
+                if (response === 0) {
+                    autoUpdater.quitAndInstall();
+                }
             }
         });
 
-        autoUpdater.on('error', e => {
+        autoUpdater.on('error', (e) => {
             if (isNetworkError(e)) {
                 logger.debug('Network error:', e);
             } else {
