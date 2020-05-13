@@ -4,12 +4,14 @@ import config from './config';
 import { showNotification } from './notification';
 
 import { logManager } from './log-manager';
-import WindowManager, { windowManager } from './window-manager';
+import WindowManager from './window-manager';
 
 const logger = logManager.getLogger('AppUpdater');
 
 const ONE_MINUTE_MS = 60 * 1000;
-export const CHECK_INTERVAL_MS = ONE_MINUTE_MS * 30;
+const ONE_HOUR_MS = 60 * ONE_MINUTE_MS;
+
+export const CHECK_INTERVAL_MS = ONE_HOUR_MS * 24;
 
 function isNetworkError(errorObject) {
     return errorObject.message.includes('net::ERR');
@@ -34,8 +36,8 @@ export default class AppUpdater {
             });
         });
 
-        autoUpdater.on('update-downloaded', async () => {
-            logger.debug('Update downloaded');
+        autoUpdater.on('update-downloaded', async (info: UpdateInfo) => {
+            logger.debug(`Downloaded Tockler version ${info.version}`);
 
             if (!AppUpdater.dialogIsOpen) {
                 AppUpdater.dialogIsOpen = true;
