@@ -43,7 +43,7 @@ export default class AppUpdater {
                 AppUpdater.dialogIsOpen = true;
 
                 if (!WindowManager.mainWindow) {
-                    WindowManager.setMainWindow();
+                    WindowManager.setMainWindow(false);
                 }
 
                 const { response } = await dialog.showMessageBox(WindowManager.mainWindow, {

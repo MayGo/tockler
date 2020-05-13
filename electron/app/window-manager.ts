@@ -28,10 +28,9 @@ export default class WindowManager {
         menuBuilder.buildMenu();
     }
 
-    static setMainWindow() {
+    static createMainWindow() {
         logger.debug('Creating main window.');
         const windowSize = config.persisted.get('windowsize') || { width: 1080, height: 720 };
-        const openMaximized = config.persisted.get('openMaximized') || false;
 
         this.mainWindow = new BrowserWindow({
             width: windowSize.width,
@@ -45,13 +44,18 @@ export default class WindowManager {
             title: 'Tockler',
             icon: config.iconBig,
         });
+    }
 
-        if (app.dock) {
+    static setMainWindow(showOnLoad = true) {
+        WindowManager.createMainWindow();
+        const openMaximized = config.persisted.get('openMaximized') || false;
+
+        if (app.dock && showOnLoad) {
             logger.debug('Show dock window.');
             app.dock.show();
         }
 
-        if (openMaximized) {
+        if (openMaximized && showOnLoad) {
             this.mainWindow.maximize();
         }
 
@@ -72,8 +76,10 @@ export default class WindowManager {
 
         this.mainWindow.webContents.on('did-finish-load', () => {
             logger.debug('did-finish-load');
-            this.mainWindow.show();
-            this.mainWindow.focus();
+            if (showOnLoad) {
+                this.mainWindow.show();
+                this.mainWindow.focus();
+            }
         });
 
         this.mainWindow.on('close', () => {
