@@ -1,7 +1,7 @@
-import { menubar } from 'menubar';
+import { menubar, Menubar } from 'menubar';
 import MenuBuilder from './menu-builder';
 import { throttle } from 'lodash';
-import { app, ipcMain, BrowserWindow } from 'electron';
+import { app, ipcMain, BrowserWindow, autoUpdater, dialog } from 'electron';
 import config from './config';
 import * as os from 'os';
 import { logManager } from './log-manager';
@@ -177,6 +177,29 @@ export default class WindowManager {
             if (config.isDev) {
                 logger.debug('Open menubar dev tools');
                 this.menubar.window.openDevTools({ mode: 'bottom' });
+            }
+        });
+        this.menubar.on('ready', () => {
+            console.log('app is ready');
+            // your app code here
+        });
+    }
+
+    static setTrayIconToUpdate() {
+        let iconUpdate = os.platform() === 'darwin' ? config.iconUpdate : config.iconUpdateBig;
+        WindowManager.menubar.tray.setImage(iconUpdate);
+
+        WindowManager.menubar.tray.on('click', async () => {
+            const { response } = await dialog.showMessageBox(WindowManager.menubar.window, {
+                type: 'question',
+                buttons: ['Update', 'Cancel'],
+                defaultId: 0,
+                message: `New version is downloaded, do you want to install it now?`,
+                title: 'Update available',
+            });
+
+            if (response === 0) {
+                autoUpdater.quitAndInstall();
             }
         });
     }

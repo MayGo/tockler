@@ -24,6 +24,8 @@ export default {
     userDir: userDir,
 
     icon: path.join(root, 'shared/img/icon/tockler_icon.png'),
+    iconUpdate: path.join(root, 'shared/img/icon/tockler_update_icon.png'),
+    iconUpdateBig: path.join(root, 'shared/img/icon/tockler_update_icon_big.png'),
     iconBig: path.join(root, 'shared/img/icon/tockler_icon_big_w_bg.png'),
 
     // plugins directory

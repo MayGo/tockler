@@ -39,26 +39,13 @@ export default class AppUpdater {
         autoUpdater.on('update-downloaded', async (info: UpdateInfo) => {
             logger.debug(`Downloaded Tockler version ${info.version}`);
 
-            if (!AppUpdater.dialogIsOpen) {
-                AppUpdater.dialogIsOpen = true;
+            WindowManager.setTrayIconToUpdate();
 
-                if (!WindowManager.mainWindow) {
-                    WindowManager.setMainWindow(false);
-                }
-
-                const { response } = await dialog.showMessageBox(WindowManager.mainWindow, {
-                    type: 'question',
-                    buttons: ['Update', 'Cancel'],
-                    defaultId: 0,
-                    message: `New version is downloaded, do you want to install it now?`,
-                    title: 'Update available',
-                });
-
-                AppUpdater.dialogIsOpen = false;
-                if (response === 0) {
-                    autoUpdater.quitAndInstall();
-                }
-            }
+            showNotification({
+                body: `New version is downloaded and ready to install`,
+                title: 'Update available',
+                silent: true,
+            });
         });
 
         autoUpdater.on('error', (e) => {
