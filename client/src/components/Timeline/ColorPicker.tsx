@@ -11,12 +11,18 @@ interface IState {
     displayColorPicker?: any;
 }
 
-export const ColorPicker = ({ color = '#000000', onChange }: IProps) => {
+const defaultColor = '#000000';
+export const ColorPicker = ({ color = defaultColor, onChange }: IProps) => {
     const [pickerColor, setPickerColor] = useState(color);
+
     const [displayColorPicker, setSisplayColorPicker] = useState(false);
 
     useEffect(() => {
-        setPickerColor(color);
+        if (color) {
+            setPickerColor(color);
+        } else {
+            setPickerColor(defaultColor);
+        }
     }, [color]);
 
     const handleClick = () => {

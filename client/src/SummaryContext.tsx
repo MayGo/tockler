@@ -6,6 +6,7 @@ import {
     summariseOnline,
     summariseTimeOnline,
 } from './components/SummaryCalendar/SummaryCalendar.util';
+import { Logger } from './logger';
 
 export const SummaryContext = createContext<any>({});
 
@@ -20,17 +21,22 @@ export const SummaryProvider = ({ children }) => {
 
     const loadData = useCallback(async () => {
         setIsLoading(true);
-        const beginDate = moment(selectedDate).startOf(selectedMode);
-        const endDate = moment(selectedDate).endOf(selectedMode);
+        try {
+            const beginDate = moment(selectedDate).startOf(selectedMode);
+            const endDate = moment(selectedDate).endOf(selectedMode);
 
-        findAllDayItemsForEveryTrack(beginDate, endDate).then(
-            ({ appItems, statusItems, logItems }) => {
-                setLogSummary(summariseLog(logItems, selectedMode));
-                setOnlineSummary(summariseOnline(statusItems, selectedMode));
-                setOnlineTimesSummary(summariseTimeOnline(statusItems, selectedMode));
-                setIsLoading(false);
-            },
-        );
+            const { statusItems, logItems } = await findAllDayItemsForEveryTrack(
+                beginDate,
+                endDate,
+            );
+            setLogSummary(summariseLog(logItems, selectedMode));
+            setOnlineSummary(summariseOnline(statusItems, selectedMode));
+            setOnlineTimesSummary(summariseTimeOnline(statusItems, selectedMode));
+        } catch (e) {
+            Logger.error('Errod loading summary data.', e);
+        } finally {
+            setIsLoading(false);
+        }
     }, [selectedDate, selectedMode]);
 
     const defaultContext = {

@@ -14,6 +14,7 @@ const aggregateSameAppAndName = lastLogItems => {
         return {
             app: items[0].app,
             title: items[0].title,
+            color: items[0].color,
             beginDate: sortBy(items, ['beginDate'])[0].beginDate,
             endDate: sortBy(items, ['endDate'])[items.length - 1].endDate,
             totalMs: sumDiff(items),

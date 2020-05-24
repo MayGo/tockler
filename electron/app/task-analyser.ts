@@ -3,7 +3,7 @@ import { appEmitter } from './app-event-emitter';
 import { settingsService } from './services/settings-service';
 import { TrackItemType } from './enums/track-item-type';
 import { showNotification } from './notification';
-
+import * as randomcolor from 'randomcolor';
 export interface TrackItemRaw {
     app?: string;
     taskName?: TrackItemType;
@@ -13,8 +13,8 @@ export interface TrackItemRaw {
     endDate?: Date;
 }
 
+const logger = logManager.getLogger('TrackItemService');
 export class TaskAnalyser {
-    logger = logManager.getLogger('TrackItemService');
     newItem: TrackItemRaw;
 
     findFirst(str, findRe) {
@@ -33,11 +33,11 @@ export class TaskAnalyser {
 
     onNotificationClick() {
         if (taskAnalyser.newItem == null) {
-            this.logger.debug('Already clicked. Prevent from creating double item.');
+            logger.debug('Already clicked. Prevent from creating double item.');
             return;
         }
 
-        this.logger.debug('Clicked. Creating new task', taskAnalyser.newItem);
+        logger.debug('Clicked. Creating new task', taskAnalyser.newItem);
 
         appEmitter.emit('start-new-log-item', taskAnalyser.newItem);
 
@@ -75,15 +75,17 @@ export class TaskAnalyser {
                     taskName: TrackItemType.LogTrackItem,
                     beginDate: new Date(),
                     endDate: new Date(),
+                    color: randomcolor(),
                 };
                 showNotification({
-                    body: `Click to create: "${app}"`,
+                    body: `Click to create: "${app} - ${title}"`,
                     title: 'Create new task?',
                     onClick: this.onNotificationClick,
+                    silent: true,
                 });
             }
         } catch (e) {
-            this.logger.error('analyseAndNotify:', e);
+            logger.error('analyseAndNotify:', e);
         }
     }
 }
