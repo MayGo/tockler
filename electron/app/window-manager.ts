@@ -59,7 +59,7 @@ export default class WindowManager {
             this.mainWindow.maximize();
         }
 
-        const url = config.isDev ? 'http://localhost:3000' : `file://${__dirname}/index.html`;
+        const url = config.isDev ? 'http://127.0.0.1:3000' : `file://${__dirname}/index.html`;
 
         this.mainWindow.loadURL(url);
 

@@ -4,12 +4,12 @@ import moment from 'moment';
 
 describe('summariseTimeOnline', () => {
     it('parses online items', () => {
-        const actual = summariseTimeOnline(TEST_INPUT, 'month');
+        const actual = summariseTimeOnline(TEST_INPUT, 'month', moment(1589311528755));
         const result = {
-            '12': { beginDate: 1589311528755, endDate: 1589312113568, online: 358396 },
-            '14': { beginDate: 1589480558049, endDate: 1589483666850, online: 2707998 },
-            '24': { beginDate: 1590354279611, endDate: 1590357497348, online: 3085853 },
-            '25': { beginDate: 1590375522178, endDate: 1590388476539, online: 1527164 },
+            '05-12': { beginDate: 1589311528755, endDate: 1589312113568, online: 358396 },
+            '05-14': { beginDate: 1589480558049, endDate: 1589483666850, online: 2707998 },
+            '05-24': { beginDate: 1590354279611, endDate: 1590357497348, online: 3085853 },
+            '05-25': { beginDate: 1590375522178, endDate: 1590388476539, online: 1527164 },
         };
 
         expect(actual).toEqual(result);
@@ -23,9 +23,9 @@ describe('summariseTimeOnline', () => {
                 endDate: moment('2020-04-10 03:30').valueOf(),
             },
         ];
-        const actual = summariseTimeOnline(input, 'month');
+        const actual = summariseTimeOnline(input, 'month', moment('2020-04-10 04:30'));
         const result = {
-            '9': {
+            '04-09': {
                 beginDate: moment('2020-04-10 02:30').valueOf(),
                 endDate: moment('2020-04-10 03:30').valueOf(),
                 online: 3600000,
@@ -43,9 +43,9 @@ describe('summariseTimeOnline', () => {
                 endDate: moment('2020-04-10 05:30').valueOf(),
             },
         ];
-        const actual = summariseTimeOnline(input, 'month');
+        const actual = summariseTimeOnline(input, 'month', moment('2020-04-10 04:30'));
         const result = {
-            '10': {
+            '04-10': {
                 beginDate: moment('2020-04-10 04:30').valueOf(),
                 endDate: moment('2020-04-10 05:30').valueOf(),
                 online: 3600000,
@@ -78,9 +78,9 @@ describe('summariseTimeOnline', () => {
                 endDate: moment('2020-04-11 03:30').valueOf(),
             },
         ];
-        const actual = summariseTimeOnline(input, 'month');
+        const actual = summariseTimeOnline(input, 'month', moment('2020-04-10 04:30'));
         const result = {
-            '10': {
+            '04-10': {
                 beginDate: moment('2020-04-10 04:30').valueOf(),
                 endDate: moment('2020-04-11 03:30').valueOf(),
                 online: 28800000,

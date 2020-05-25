@@ -13,6 +13,7 @@ import { convertDate, TIME_FORMAT_SHORT } from '../../constants';
 import { formatDuration } from './SummaryCalendar.util';
 import classNames from 'classnames';
 import padStart from 'lodash/padStart';
+import { DAY_MONTH_FORMAT } from '../../SummaryContext.util';
 
 moment.locale('et');
 
@@ -75,7 +76,7 @@ export const SummaryCalendar = () => {
 
     const dateCellRender = value => {
         if (value.month() === selectedDate.month()) {
-            const listData = getListData(value.date());
+            const listData = getListData(value.format(DAY_MONTH_FORMAT));
             return (
                 <TaskList>
                     {listData.map(item => (

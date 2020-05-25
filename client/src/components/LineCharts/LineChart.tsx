@@ -16,7 +16,8 @@ import { diffAndFormatShort } from '../../utils';
 
 const scale = { x: 'time', y: 'time' };
 const padding = { left: 50, top: 0, bottom: 20, right: 10 };
-const domainPadding = { y: 10, x: 10 };
+const domainPadding = { y: 10, x: 20 };
+
 const labelComponent = () => (
     <VictoryTooltip
         style={chartTheme.tooltip.style}
@@ -38,7 +39,7 @@ export const LineChart = () => {
             theme={chartTheme}
             scale={scale}
             width={chartWidth}
-            height={500}
+            height={800}
             domainPadding={domainPadding}
             padding={padding}
             horizontal
@@ -49,12 +50,17 @@ export const LineChart = () => {
                 tickFormat={formatToTimeEveryOther}
                 dependentAxis
             />
-            <VictoryAxis orientation="left" name="time-axis" tickFormat={formatToDay} />
+            <VictoryAxis
+                orientation="left"
+                name="time-axis"
+                tickFormat={formatToDay}
+                tickCount={31}
+            />
             <VictoryBar
                 y={d => toTimeDuration(convertDate(d.beginDate), convertDate(d.beginDate))}
                 y0={d => toTimeDuration(convertDate(d.beginDate), convertDate(d.endDate))}
                 x={d => convertDate(d.beginDate).startOf('day')}
-                barWidth={10}
+                barWidth={20}
                 data={onlineTimesValues}
                 labelComponent={labelComponent()}
                 labels={({ datum }) =>

@@ -7,21 +7,23 @@ import {
     DURATION_SETTINGS,
 } from '../../constants';
 import moment from 'moment';
+import { DAY_MONTH_FORMAT, MODE_MONTH } from '../../SummaryContext.util';
 
 export const formatDuration = dur =>
     moment.duration(dur).format(DURATION_FORMAT, DURATION_SETTINGS);
 
 export const groupByField = mode => item =>
-    mode === 'month' ? convertDate(item.beginDate).date() : convertDate(item.beginDate).month();
+    mode === MODE_MONTH
+        ? convertDate(item.beginDate).format(DAY_MONTH_FORMAT)
+        : convertDate(item.beginDate).month();
 
 export const groupByActualDay = item => {
     const date = convertDate(item.beginDate);
-    const day = date.date();
 
     if (date.format(TIME_FORMAT) < BREAKPOINT_TIME) {
-        return day === 1 ? day : day - 1;
+        return date.subtract(1, 'day').format(DAY_MONTH_FORMAT);
     }
-    return day;
+    return date.format(DAY_MONTH_FORMAT);
 };
 
 export const summariseLog = (items, mode) => {
@@ -48,10 +50,13 @@ export const summariseOnline = (items, mode) => {
     return data;
 };
 
-export const summariseTimeOnline = (items, mode) => {
+export const summariseTimeOnline = (items, mode, beginDate) => {
     if (mode === 'year') {
         return [];
     }
+    // We are taking sleep time from next months first day, but going to remove it from end result
+    const currentMonth = beginDate.month();
+
     const data = _(items)
         .filter(item => item.app === 'ONLINE')
         .groupBy(groupByActualDay)
@@ -64,8 +69,14 @@ export const summariseTimeOnline = (items, mode) => {
         })
         .reduce((result, currentValue) => {
             const key = groupByActualDay(currentValue);
-            result[key] = currentValue;
+
+            const month = moment(key, DAY_MONTH_FORMAT).month();
+
+            if (currentMonth === month) {
+                result[key] = currentValue;
+            }
             return result;
         }, {});
+
     return data;
 };
