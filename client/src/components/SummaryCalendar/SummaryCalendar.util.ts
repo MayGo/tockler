@@ -57,16 +57,15 @@ export const summariseTimeOnline = (items, mode) => {
         .groupBy(groupByActualDay)
         .map((value, key) => {
             return {
-                beginDate: _.minBy(
-                    value.filter(
-                        item => convertDate(item.beginDate).format(TIME_FORMAT) > BREAKPOINT_TIME,
-                    ),
-                    c => convertDate(c.beginDate),
-                ).beginDate,
+                beginDate: _.minBy(value, c => convertDate(c.beginDate)).beginDate,
                 endDate: _.maxBy(value, c => convertDate(c.endDate)).endDate,
                 online: _.sumBy(value, c => convertDate(c.endDate).diff(convertDate(c.beginDate))),
             };
         })
-        .value();
+        .reduce((result, currentValue) => {
+            const key = groupByActualDay(currentValue);
+            result[key] = currentValue;
+            return result;
+        }, {});
     return data;
 };

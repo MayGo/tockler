@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import moment from 'moment';
+import { values } from 'lodash';
 import { VictoryBar, VictoryChart, VictoryAxis, VictoryTooltip } from 'victory';
 import { convertDate, TIME_FORMAT, COLORS } from '../../constants';
 import { chartTheme } from '../Timeline/ChartTheme';
@@ -30,6 +31,8 @@ export const LineChart = () => {
     const chartWidth = useWindowWidth();
     const { onlineTimesSummary } = useContext(SummaryContext);
 
+    const onlineTimesValues = values(onlineTimesSummary);
+
     return (
         <VictoryChart
             theme={chartTheme}
@@ -52,7 +55,7 @@ export const LineChart = () => {
                 y0={d => toTimeDuration(convertDate(d.beginDate), convertDate(d.endDate))}
                 x={d => convertDate(d.beginDate).startOf('day')}
                 barWidth={10}
-                data={onlineTimesSummary}
+                data={onlineTimesValues}
                 labelComponent={labelComponent()}
                 labels={({ datum }) =>
                     `Start time: ${convertDate(datum.beginDate).format(
@@ -68,7 +71,7 @@ export const LineChart = () => {
                 x={d => convertDate(d.beginDate).startOf('day')}
                 barWidth={10}
                 style={{ data: { fill: COLORS.green } }}
-                data={onlineTimesSummary}
+                data={onlineTimesValues}
                 labelComponent={labelComponent()}
                 labels={({ datum }) => `Worked: ${moment.duration(datum.online).format()}`}
             />
