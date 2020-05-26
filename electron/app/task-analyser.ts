@@ -4,6 +4,7 @@ import { settingsService } from './services/settings-service';
 import { TrackItemType } from './enums/track-item-type';
 import { showNotification } from './notification';
 import * as randomcolor from 'randomcolor';
+import { stateManager } from './state-manager';
 export interface TrackItemRaw {
     app?: string;
     taskName?: TrackItemType;
@@ -69,20 +70,27 @@ export class TaskAnalyser {
                 let title = this.findFirst(item.title, patObj.takeTitle) || item.title;
                 let app = this.findFirst(item.title, patObj.takeGroup) || foundStr;
 
-                this.newItem = {
-                    app: app,
-                    title: title,
-                    taskName: TrackItemType.LogTrackItem,
-                    beginDate: new Date(),
-                    endDate: new Date(),
-                    color: randomcolor(),
-                };
-                showNotification({
-                    body: `Click to create: "${app} - ${title}"`,
-                    title: 'Create new task?',
-                    onClick: this.onNotificationClick,
-                    silent: true,
-                });
+                const runningItem = stateManager.getLogTrackItemMarkedAsRunning();
+
+                const sameItem =
+                    runningItem && runningItem.app == app && runningItem.title === title;
+
+                if (!sameItem) {
+                    this.newItem = {
+                        app: app,
+                        title: title,
+                        taskName: TrackItemType.LogTrackItem,
+                        beginDate: new Date(),
+                        endDate: new Date(),
+                        color: randomcolor(),
+                    };
+                    showNotification({
+                        body: `Click to create: "${app} - ${title}"`,
+                        title: 'Create new task?',
+                        onClick: this.onNotificationClick,
+                        silent: true,
+                    });
+                }
             }
         } catch (e) {
             logger.error('analyseAndNotify:', e);
