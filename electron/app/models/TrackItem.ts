@@ -7,6 +7,7 @@ export class TrackItem extends Model {
     app!: string;
     taskName!: string;
     title!: string;
+    url!: string;
     color!: string;
     beginDate!: Date;
     endDate!: Date;

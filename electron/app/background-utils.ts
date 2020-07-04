@@ -22,30 +22,19 @@ export default class BackgroundUtils {
     }
 
     static dateToAfterMidnight(d) {
-        return moment(d)
-            .startOf('day')
-            .add(1, 'days')
-            .toDate();
+        return moment(d).startOf('day').add(1, 'days').toDate();
     }
 
     static almostMidnight(d) {
-        return moment(d)
-            .startOf('day')
-            .add(1, 'days')
-            .subtract(1, 'seconds')
-            .toDate();
+        return moment(d).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
     }
 
     static startOfDay(d) {
-        return moment(d)
-            .startOf('day')
-            .toDate();
+        return moment(d).startOf('day').toDate();
     }
 
     static daysBetween(beginDate, endDate) {
-        return moment(endDate)
-            .endOf('day')
-            .diff(moment(beginDate).startOf('day'), 'days');
+        return moment(endDate).endOf('day').diff(moment(beginDate).startOf('day'), 'days');
     }
 
     static getRawTrackItem(savedItem) {
@@ -55,6 +44,7 @@ export default class BackgroundUtils {
             taskName: savedItem.taskName,
             color: savedItem.color,
             beginDate: savedItem.beginDate,
+            url: savedItem.url,
             endDate: savedItem.endDate,
         };
 
@@ -74,9 +64,7 @@ export default class BackgroundUtils {
         for (let i = 0; i < daysBetween; i++) {
             let newItem = Object.assign({}, item);
 
-            let currentDate = moment(item.beginDate)
-                .add(i, 'days')
-                .toDate();
+            let currentDate = moment(item.beginDate).add(i, 'days').toDate();
             let almostMidnight = BackgroundUtils.almostMidnight(currentDate);
             let startOfDay = BackgroundUtils.startOfDay(currentDate);
 

@@ -90,15 +90,11 @@ export class AppTrackItemJob {
         rawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
         rawItem.endDate = new Date();
 
-        if (!result.app) {
-            // logger.debug('rawitem has no app', result);
-            if (result.owner && result.owner.name) {
-                rawItem.app = result.owner.name;
-            } else {
-                rawItem.app = 'NATIVE';
-            }
+        // logger.debug('rawitem has no app', result);
+        if (result.owner && result.owner.name) {
+            rawItem.app = result.owner.name;
         } else {
-            rawItem.title = result.app;
+            rawItem.app = 'NATIVE';
         }
 
         if (!result.title) {
@@ -107,6 +103,8 @@ export class AppTrackItemJob {
         } else {
             rawItem.title = result.title.replace(/\n$/, '').replace(/^\s/, '');
         }
+
+        rawItem.url = result.url;
 
         // logger.debug('Active window (parsed):', rawItem);
 

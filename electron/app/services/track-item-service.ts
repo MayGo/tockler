@@ -18,15 +18,14 @@ export class TrackItemService {
     }
 
     async updateTrackItem(itemData: TrackItem, id: number) {
-        let count = await TrackItem.query()
-            .findById(id)
-            .patch({
-                app: itemData.app,
-                title: itemData.title,
-                color: itemData.color,
-                beginDate: itemData.beginDate,
-                endDate: itemData.endDate,
-            });
+        let count = await TrackItem.query().findById(id).patch({
+            app: itemData.app,
+            title: itemData.title,
+            url: itemData.url,
+            color: itemData.color,
+            beginDate: itemData.beginDate,
+            endDate: itemData.endDate,
+        });
 
         return count;
     }
@@ -41,15 +40,15 @@ export class TrackItemService {
             query.where('title', 'like', '%' + searchStr + '%');
         }
 
-        const toDateStr = timestamp => moment(timestamp).format('YYYY-MM-DD');
-        const toDateTimeStr = timestamp => moment(timestamp).format('YYYY-MM-DD HH:mm:ss');
+        const toDateStr = (timestamp) => moment(timestamp).format('YYYY-MM-DD');
+        const toDateTimeStr = (timestamp) => moment(timestamp).format('YYYY-MM-DD HH:mm:ss');
 
         const results = await query;
 
         const csvContent = stringify(results, {
             delimiter: ';',
             cast: {
-                number: function(value, { column }) {
+                number: function (value, { column }) {
                     if (['endDate', 'beginDate'].includes(column.toString())) {
                         return toDateTimeStr(value);
                     }
@@ -162,9 +161,7 @@ export class TrackItemService {
     updateTrackItemColor(appName, color) {
         this.logger.debug('Updating app color:', appName, color);
 
-        return TrackItem.query()
-            .patch({ color: color })
-            .where('app', appName);
+        return TrackItem.query().patch({ color: color }).where('app', appName);
     }
 
     findById(id) {
@@ -180,9 +177,7 @@ export class TrackItemService {
     }
 
     async deleteByIds(ids) {
-        await TrackItem.query()
-            .delete()
-            .whereIn('id', ids);
+        await TrackItem.query().delete().whereIn('id', ids);
         return ids;
     }
 
