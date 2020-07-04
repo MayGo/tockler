@@ -19,11 +19,16 @@ interface IProps {
 const COLOR_SCOPE_ONLY_THIS = 'ONLY_THIS';
 
 function propsAreEqual(prev, next) {
-    return (
-        prev.selectedTimelineItem &&
-        next.selectedTimelineItem &&
-        prev.selectedTimelineItem.id === next.selectedTimelineItem.id
-    );
+    if (prev.selectedTimelineItem && next.selectedTimelineItem) {
+        const equalById = prev.selectedTimelineItem.id === next.selectedTimelineItem.id;
+        if (!next.selectedTimelineItem.id) {
+            return prev.selectedTimelineItem == next.selectedTimelineItem;
+        }
+
+        return equalById;
+    }
+
+    return false;
 }
 
 export const TimelineItemEdit = memo<IProps>(
