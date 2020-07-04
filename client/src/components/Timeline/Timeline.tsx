@@ -135,7 +135,8 @@ export const Timeline = memo<IFullProps>(
             const beginTime = convertDate(d.beginDate).format(TIME_FORMAT);
             const endTime = convertDate(d.endDate).format(TIME_FORMAT);
 
-            return `${type}\r\n${d.title}\r\n${beginTime} - ${endTime}\r\n${formatDuration(
+            const url = d.url ? `${d.url}\r\n` : '';
+            return `${type}\r\n${d.title}\r\n${url}${beginTime} - ${endTime}\r\n${formatDuration(
                 moment.duration(diff),
             )}`;
         };
