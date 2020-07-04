@@ -7,10 +7,12 @@ import { Brand, Img, MenuItem, RightMenuItem } from './TrayMenu.styles';
 import moment from 'moment';
 import Moment from 'react-moment';
 import { Logger } from '../../logger';
+import { useWindowFocused } from '../../hooks/windowFocusedHook';
 
 const getNow = () => moment().subtract(1, 'seconds');
 
 export const TrayMenuPlain = () => {
+    const { windowIsActive } = useWindowFocused();
     const [onlineSince, setOnlineSince] = useState();
     const exitApp = () => {
         EventEmitter.send('close-app');
@@ -28,13 +30,6 @@ export const TrayMenuPlain = () => {
             Logger.debug('system-is-not-online');
             setOnlineSince(null);
         };
-        const loadOnlineStartTime = async () => {
-            const onlineStartTime = await getOnlineStartTime();
-
-            setOnlineSince(onlineStartTime ? moment(onlineStartTime) : getNow());
-        };
-
-        loadOnlineStartTime();
 
         EventEmitter.on('system-is-online', systemIsOnline);
         EventEmitter.on('system-is-not-online', systemIsNotOnline);
@@ -44,6 +39,19 @@ export const TrayMenuPlain = () => {
             EventEmitter.off('system-is-not-online', systemIsNotOnline);
         };
     }, []);
+
+    useEffect(() => {
+        if (windowIsActive) {
+            const loadOnlineStartTime = async () => {
+                const onlineStartTime = await getOnlineStartTime();
+
+                setOnlineSince(onlineStartTime ? moment(onlineStartTime) : getNow());
+            };
+
+            loadOnlineStartTime();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [windowIsActive]);
 
     return (
         <Menu mode="horizontal" style={{ position: 'fixed', width: '100%', zIndex: 9000 }}>
