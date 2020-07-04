@@ -1,5 +1,6 @@
 import moment from 'moment';
 import { convertDate } from '../../constants';
+import { toInteger } from 'lodash';
 
 export const generateTickValues = (date, ticks, unit, startOf) => {
     const day = convertDate(date).startOf(startOf);
@@ -30,7 +31,7 @@ export const formatToTimeEveryOther = t => {
     return formatToTime(hour);
 };
 
-export const formatToDay = t => moment(t).format('DD');
+export const formatToDay = t => toInteger(t.format('DD'));
 
 export const timeTickValues = t => {
     const ticks = 36;

@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import moment from 'moment';
 import { values } from 'lodash';
 import { VictoryBar, VictoryChart, VictoryAxis, VictoryTooltip } from 'victory';
-import { convertDate, TIME_FORMAT, COLORS } from '../../constants';
+import { convertDate, TIME_FORMAT, DAY_MONTH_LONG_FORMAT, COLORS } from '../../constants';
 import { chartTheme } from '../Timeline/ChartTheme';
 import { useWindowWidth } from '@react-hook/window-size/throttled';
 import { SummaryContext } from '../../SummaryContext';
@@ -15,8 +15,8 @@ import {
 import { diffAndFormatShort } from '../../utils';
 
 const scale = { x: 'time', y: 'time' };
-const padding = { left: 50, top: 0, bottom: 20, right: 10 };
-const domainPadding = { y: 10, x: 20 };
+const padding = { left: 50, top: 20, bottom: 20, right: 10 };
+const domainPadding = { y: 40, x: [20, 40] };
 
 const labelComponent = () => (
     <VictoryTooltip
@@ -30,9 +30,16 @@ const labelComponent = () => (
 );
 export const LineChart = () => {
     const chartWidth = useWindowWidth();
-    const { onlineTimesSummary } = useContext(SummaryContext);
+    const { onlineTimesSummary, selectedDate } = useContext(SummaryContext);
 
     const onlineTimesValues = values(onlineTimesSummary);
+
+    console.info('onlineTimesValues', onlineTimesValues.length);
+
+    const barHeight = 20;
+
+    const daysInMonth = selectedDate.daysInMonth();
+    const daysArray = Array.from(Array(daysInMonth), (_, i) => i + 1);
 
     return (
         <VictoryChart
@@ -44,27 +51,26 @@ export const LineChart = () => {
             padding={padding}
             horizontal
         >
-            <VictoryAxis
-                orientation="bottom"
-                tickCount={24}
-                tickFormat={formatToTimeEveryOther}
-                dependentAxis
-            />
+            <VictoryAxis orientation="top" tickFormat={formatToTimeEveryOther} dependentAxis />
+            <VictoryAxis orientation="bottom" tickFormat={formatToTimeEveryOther} dependentAxis />
             <VictoryAxis
                 orientation="left"
                 name="time-axis"
-                tickFormat={formatToDay}
-                tickCount={31}
+                scale="linear"
+                invertAxis
+                tickValues={daysArray}
             />
+
             <VictoryBar
                 y={d => toTimeDuration(convertDate(d.beginDate), convertDate(d.beginDate))}
                 y0={d => toTimeDuration(convertDate(d.beginDate), convertDate(d.endDate))}
-                x={d => convertDate(d.beginDate).startOf('day')}
-                barWidth={20}
+                x={d => formatToDay(convertDate(d.beginDate).startOf('day'))}
+                barWidth={barHeight}
                 data={onlineTimesValues}
                 labelComponent={labelComponent()}
                 labels={({ datum }) =>
-                    `Start time: ${convertDate(datum.beginDate).format(
+                    `${convertDate(datum.beginDate).format(DAY_MONTH_LONG_FORMAT)}\r\n
+                    Start time: ${convertDate(datum.beginDate).format(
                         TIME_FORMAT,
                     )}\r\nEnd time: ${convertDate(datum.endDate).format(
                         TIME_FORMAT,
@@ -74,12 +80,16 @@ export const LineChart = () => {
             <VictoryBar
                 y={d => toTimeDuration(convertDate(d.beginDate), convertDate(d.beginDate))}
                 y0={d => addToTimeDuration(convertDate(d.beginDate), d.online)}
-                x={d => convertDate(d.beginDate).startOf('day')}
+                x={d => formatToDay(convertDate(d.beginDate).startOf('day'))}
                 barWidth={10}
                 style={{ data: { fill: COLORS.green } }}
                 data={onlineTimesValues}
                 labelComponent={labelComponent()}
-                labels={({ datum }) => `Worked: ${moment.duration(datum.online).format()}`}
+                labels={({ datum }) =>
+                    `${convertDate(datum.beginDate).format(
+                        DAY_MONTH_LONG_FORMAT,
+                    )}\r\nWorked: ${moment.duration(datum.online).format()}`
+                }
             />
         </VictoryChart>
     );
