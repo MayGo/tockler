@@ -21,22 +21,28 @@ const isError = function (e) {
     return e && e.stack && e.message;
 };
 
+const cachedErrors = {};
+
 const sentryTransportConsole = (msgObj) => {
     const { level, data, date } = msgObj;
     const [message, ...rest] = data;
 
-    Sentry.withScope((scope) => {
-        scope.setExtra('data', rest);
-        scope.setExtra('date', msgObj.date.toLocaleTimeString());
-        scope.setLevel(level);
-        if (isError(message)) {
-            Sentry.captureException(message);
-        } else if (level === 'debug') {
-            // ignore debug for now
-        } else {
-            Sentry.captureMessage(message);
-        }
-    });
+    if (!cachedErrors[message]) {
+        cachedErrors[message] = true;
+
+        Sentry.withScope((scope) => {
+            scope.setExtra('data', rest);
+            scope.setExtra('date', msgObj.date.toLocaleTimeString());
+            scope.setLevel(level);
+            if (isError(message)) {
+                Sentry.captureException(message);
+            } else if (level === 'debug') {
+                // ignore debug for now
+            } else {
+                Sentry.captureMessage(message);
+            }
+        });
+    }
 
     origConsole(msgObj);
 };
