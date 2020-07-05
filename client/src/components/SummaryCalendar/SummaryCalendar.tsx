@@ -1,6 +1,7 @@
 import { Flex } from '@rebass/grid';
-import { Calendar, Spin, Icon } from 'antd';
-import moment, { Moment } from 'moment';
+import { Calendar, Spin } from 'antd';
+import { CoffeeOutlined, EyeOutlined, LaptopOutlined, ToolOutlined } from '@ant-design/icons';
+import moment from 'moment';
 
 import React, { useContext } from 'react';
 import useReactRouter from 'use-react-router';
@@ -17,8 +18,14 @@ import { DAY_MONTH_FORMAT } from '../../SummaryContext.util';
 
 moment.locale('et');
 
+const icons = {
+    coffee: <CoffeeOutlined />,
+    'eye-invisible': <EyeOutlined />,
+    laptop: <LaptopOutlined />,
+    tool: <ToolOutlined />,
+};
 export const SummaryCalendar = () => {
-    const { loadTimerange } = useContext(TimelineContext);
+    const { loadTimerange, timerange } = useContext(TimelineContext);
     const {
         selectedDate,
         setSelectedDate,
@@ -32,7 +39,7 @@ export const SummaryCalendar = () => {
 
     const { history } = useReactRouter();
 
-    const onDateSelect = (date: Moment | undefined) => {
+    const onDateClicked = (date: any) => {
         const pathname = '/app/timeline';
         if (date) {
             loadTimerange([date.clone().startOf('day'), date.clone().endOf('day')]);
@@ -42,7 +49,7 @@ export const SummaryCalendar = () => {
         }
     };
 
-    const changeSelectedDate = (date?: Moment, mode?: 'month' | 'year') => {
+    const changeSelectedDate = (date?: any, mode?: 'month' | 'year') => {
         setSelectedDate(date);
         setSelectedMode(mode);
     };
@@ -81,7 +88,7 @@ export const SummaryCalendar = () => {
                 <TaskList>
                     {listData.map(item => (
                         <Item key={item.content}>
-                            <Icon type={item.type} theme="outlined" />
+                            {icons[item.type]}
                             {'  '}
                             {item.content}
                         </Item>
@@ -93,8 +100,6 @@ export const SummaryCalendar = () => {
     };
 
     const dateFullCellRender = date => {
-        const prefixCls = 'ant';
-        const calendarPrefixCls = `${prefixCls}-fullcalendar`;
         let style = {};
 
         const day = date.day();
@@ -109,15 +114,16 @@ export const SummaryCalendar = () => {
         }
         return (
             <div
-                className={classNames(`${prefixCls}-cell-inner`, `${calendarPrefixCls}-date`, {
-                    [`${calendarPrefixCls}-date-today`]: moment().isSame(date, 'day'),
+                className={classNames(`ant-picker-cell-inner ant-picker-calendar-date`, {
+                    [`ant-picker-selected`]: moment().isSame(date, 'day'),
                 })}
                 style={style}
+                onClick={() => onDateClicked(date)}
             >
-                <div className={`${calendarPrefixCls}-date-value`}>
+                <div className={`ant-picker-calendar-date-value`}>
                     {padStart(date.date(), 2, '0')}
                 </div>
-                <div className={`${calendarPrefixCls}-date-content`}>
+                <div className={`ant-picker-calendar-date-content`}>
                     {dateCellRender && dateCellRender(date)}
                 </div>
             </div>
@@ -130,7 +136,7 @@ export const SummaryCalendar = () => {
             <TaskList>
                 {listData.map(item => (
                     <Item key={item.content}>
-                        <Icon type={item.type} theme="outlined" />
+                        {icons[item.type]}
                         {'  '}
                         {item.content}
                     </Item>
@@ -147,9 +153,11 @@ export const SummaryCalendar = () => {
                 </Spinner>
             )}
             <Calendar
-                value={selectedDate}
+                value={timerange[0]}
                 mode={selectedMode}
-                onSelect={onDateSelect}
+                onChange={() => {
+                    console.error('date changed');
+                }}
                 dateCellRender={dateCellRender}
                 dateFullCellRender={dateFullCellRender}
                 monthCellRender={monthCellRender}

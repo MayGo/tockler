@@ -1,4 +1,5 @@
-import { Card, Icon, Input } from 'antd';
+import { Card, Input } from 'antd';
+import { ClockCircleOutlined } from '@ant-design/icons';
 import React, { useContext } from 'react';
 import { useFormState } from 'react-use-form-state';
 import { RootContext } from '../../RootContext';
@@ -16,7 +17,7 @@ export const WorkForm = () => {
         <Card title="Work settings">
             <Input
                 placeholder="Workday length"
-                prefix={<Icon type="clock-circle-o" />}
+                prefix={<ClockCircleOutlined />}
                 maxLength={25}
                 {...number({ name: 'hoursToWork' })}
             />

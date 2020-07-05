@@ -1,6 +1,4 @@
 import { Table } from 'antd';
-// tslint:disable-next-line: no-submodule-imports
-import { PaginationConfig } from 'antd/lib/table';
 import { sumBy } from 'lodash';
 import moment from 'moment';
 import React, { useState, useRef, useEffect } from 'react';
@@ -20,7 +18,7 @@ const calculateTotal = filteredData => {
 };
 
 export const SearchResults = ({ searchResult, searchPaging, setSearchPaging }) => {
-    const paginationConf: PaginationConfig = {
+    const paginationConf = {
         total: searchResult.total,
         showSizeChanger: true,
         pageSize: searchPaging.pageSize,

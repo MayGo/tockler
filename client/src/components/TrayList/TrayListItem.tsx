@@ -1,5 +1,6 @@
 import { Box, Flex } from '@rebass/grid';
-import { Button, Icon } from 'antd';
+import { Button } from 'antd';
+import { ClockCircleOutlined, PauseOutlined, RightOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import React, { memo } from 'react';
 import Moment from 'react-moment';
@@ -66,7 +67,7 @@ export function TrayListItemPlain({
                             <Small>
                                 <FormattedTime item={item} isRunning={isRunning} />
                                 {'  '}
-                                <Icon type="clock-circle-o" />
+                                <ClockCircleOutlined />
                                 {'  '}
                                 <b>
                                     {!isRunning && (
@@ -103,7 +104,7 @@ export function TrayListItemPlain({
                         <Button
                             type="primary"
                             shape="circle"
-                            icon="pause"
+                            icon={<PauseOutlined />}
                             onClick={() => stopRunningLogItem()}
                         />
                     )}
@@ -111,7 +112,7 @@ export function TrayListItemPlain({
                         <Button
                             type="default"
                             shape="circle"
-                            icon="right"
+                            icon={<RightOutlined />}
                             onClick={() => startNewLogItemFromOld(item)}
                         />
                     )}

@@ -1,7 +1,8 @@
 import { Box, Flex } from '@rebass/grid';
-import { Button, Icon, Input, Table } from 'antd';
+import { Button, Input, Table } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 // tslint:disable-next-line: no-submodule-imports
-import { PaginationConfig } from 'antd/lib/table';
+
 import { sumBy } from 'lodash';
 import moment from 'moment';
 import React, { useState, useRef, useEffect } from 'react';
@@ -25,7 +26,7 @@ const calculateTotal = filteredData => {
     return <TotalCount>Total {dur.format()}</TotalCount>;
 };
 
-const paginationConf: PaginationConfig = {
+const paginationConf = {
     showSizeChanger: true,
     pageSizeOptions: ['50', '100', '300', '500'],
 };
@@ -48,7 +49,8 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
     const [state, setState] = useState<any>({
         filteredInfo: {},
         sortedInfo: {},
-        filterDropdownVisible: false,
+        filterTitleDropdownVisible: false,
+        filterUrlDropdownVisible: false,
         activeType: TrackItemType.AppTrackItem,
         searchText: '',
         filtered: false,
@@ -92,7 +94,7 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
         if (searchInput.current) {
             searchInput.current.focus();
         }
-    }, [state.filterDropdownVisible]);
+    }, [state.filterTitleDropdownVisible]);
 
     const handleChange = (pagination: any, filters: any, sorter: any) => {
         setState({ ...state, filteredInfo: filters, sortedInfo: sorter });
@@ -158,7 +160,8 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
         setData(filteredData);
         setState({
             ...state,
-            filterDropdownVisible: false,
+            filterTitleDropdownVisible: false,
+            filterUrlDropdownVisible: false,
             filtered: !!searchText,
         });
     };
@@ -181,7 +184,7 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
             <FilterInput>
                 <Input
                     ref={searchInput}
-                    placeholder="Search name"
+                    placeholder=""
                     value={state.searchText}
                     onChange={onInputChange}
                     onPressEnter={onSearch}
@@ -210,20 +213,39 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
             dataIndex: 'title',
             key: 'title',
             filterDropdown: FilterDropdownComp,
-            filterIcon: (
-                <Icon type="search" style={{ color: state.filtered ? '#108ee9' : '#aaa' }} />
-            ),
-            filterDropdownVisible: state.filterDropdownVisible,
-            onFilterDropdownVisibleChange: visible => {
+            filterIcon: <SearchOutlined style={{ color: state.filtered ? '#108ee9' : '#aaa' }} />,
+            filterTitleDropdownVisible: state.filterTitleDropdownVisible,
+            onfilterTitleDropdownVisibleChange: visible => {
                 setState({
                     ...state,
-                    filterDropdownVisible: visible,
+                    filterTitleDropdownVisible: visible,
                 });
-
-                // TODO: searchInput.current.focus();
+                if (visible) {
+                    setTimeout(() => (searchInput.current as any).select());
+                }
             },
             sorter: (a: any, b: any) => a.title.length - b.title.length,
             sortOrder: sortedInfo.columnKey === 'title' && sortedInfo.order,
+        },
+
+        {
+            title: 'URL',
+            dataIndex: 'url',
+            key: 'url',
+            filterDropdown: FilterDropdownComp,
+            filterIcon: <SearchOutlined style={{ color: state.filtered ? '#108ee9' : '#aaa' }} />,
+            filterUrlDropdownVisible: state.filterUrlDropdownVisible,
+            onFilterUrlDropdownVisibleChange: visible => {
+                setState({
+                    ...state,
+                    filterUrlDropdownVisible: visible,
+                });
+                if (visible) {
+                    setTimeout(() => searchInput.current.select());
+                }
+            },
+            sorter: (a: any, b: any) => a.url.length - b.url.length,
+            sortOrder: sortedInfo.columnKey === 'url' && sortedInfo.order,
         },
         {
             title: 'Begin',

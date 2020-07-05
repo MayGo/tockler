@@ -1,5 +1,6 @@
 import { Box, Flex } from '@rebass/grid';
-import { Button, DatePicker, Icon, Tooltip } from 'antd';
+import { Button, DatePicker, Tooltip } from 'antd';
+import { LeftOutlined, RightOutlined, PauseOutlined, CaretRightOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import React from 'react';
 import { getTodayTimerange } from './timeline.utils';
@@ -111,7 +112,7 @@ export const Search = ({
             </Box>
             <Box p={1}>
                 <Button onClick={goBackOneDay}>
-                    <Icon type="left" />
+                    <LeftOutlined />
                 </Button>
             </Box>
             <Box p={1}>
@@ -119,7 +120,7 @@ export const Search = ({
             </Box>
             <Box p={1}>
                 <Button onClick={goForwardOneDay}>
-                    <Icon type="right" />
+                    <RightOutlined />
                 </Button>
             </Box>
             <Box p={1}>
@@ -136,7 +137,7 @@ export const Search = ({
                         title={liveView ? 'Pause live view' : 'Start live view'}
                     >
                         <Button onClick={toggleLiveView}>
-                            <Icon type={liveView ? 'pause' : 'caret-right'} />
+                            {liveView ? <PauseOutlined /> : <CaretRightOutlined />}
                         </Button>
                     </Tooltip>
                 </Box>

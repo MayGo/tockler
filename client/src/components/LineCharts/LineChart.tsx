@@ -34,8 +34,6 @@ export const LineChart = () => {
 
     const onlineTimesValues = values(onlineTimesSummary);
 
-    console.info('onlineTimesValues', onlineTimesValues.length);
-
     const barHeight = 20;
 
     const daysInMonth = selectedDate.daysInMonth();

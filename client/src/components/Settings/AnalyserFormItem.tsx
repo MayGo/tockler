@@ -1,5 +1,6 @@
 import { Box, Flex } from '@rebass/grid';
 import { Button, Divider, Form, Input, Switch } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 import { useFormState } from 'react-use-form-state';
 import { testAnalyserItem } from './AnalyserForm.util';
@@ -59,7 +60,12 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
                     Test
                     <Switch onChange={toggleShowTests} />
                 </Form.Item>
-                <Button type="primary" shape="circle" icon="delete" onClick={removeItem} />
+                <Button
+                    type="primary"
+                    shape="circle"
+                    icon={<DeleteOutlined />}
+                    onClick={removeItem}
+                />
             </Flex>
 
             {showTests && (

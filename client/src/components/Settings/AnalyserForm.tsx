@@ -1,5 +1,6 @@
 import { Flex } from '@rebass/grid';
-import { Button, Card, Icon, Tooltip } from 'antd';
+import { Button, Card, Tooltip } from 'antd';
+import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import React, { useContext, useState, useEffect } from 'react';
 
 import { TimelineContext } from '../../TimelineContext';
@@ -51,7 +52,7 @@ export const AnalyserForm = () => {
             title="Analyser settings"
             extra={
                 <Tooltip placement="left" title="Notify if title equals these analyser items.">
-                    <Icon type="info-circle" style={{ fontSize: 20, color: 'primary' }} />
+                    <InfoCircleOutlined style={{ fontSize: 20, color: 'primary' }} />
                 </Tooltip>
             }
         >
@@ -65,7 +66,7 @@ export const AnalyserForm = () => {
                 />
             ))}
             <Flex p={1} justifyContent="flex-end">
-                <Button type="primary" shape="circle" icon="plus" onClick={addItem} />
+                <Button type="primary" shape="circle" icon={<PlusOutlined />} onClick={addItem} />
             </Flex>
 
             <Flex p={1} justifyContent="flex-start">

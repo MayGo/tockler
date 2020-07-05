@@ -1,5 +1,6 @@
 import { Box, Flex } from '@rebass/grid';
 import { Button, Input, Select, Tooltip } from 'antd';
+import { PlayCircleOutlined, SaveOutlined, DeleteOutlined, CloseOutlined } from '@ant-design/icons';
 import React, { useState, useEffect, memo } from 'react';
 import { ColorPicker } from './ColorPicker';
 import { Logger } from '../../logger';
@@ -22,7 +23,7 @@ function propsAreEqual(prev, next) {
     if (prev.selectedTimelineItem && next.selectedTimelineItem) {
         const equalById = prev.selectedTimelineItem.id === next.selectedTimelineItem.id;
         if (!next.selectedTimelineItem.id) {
-            return prev.selectedTimelineItem == next.selectedTimelineItem;
+            return prev.selectedTimelineItem === next.selectedTimelineItem;
         }
 
         return equalById;
@@ -128,8 +129,6 @@ export const TimelineItemEdit = memo<IProps>(
             return null;
         }
 
-        const saveBtnIcon = showPlayIcon ? 'play-circle-o' : 'save';
-
         return (
             <Flex p={1} w={1}>
                 <Box px={1} w={1 / 3}>
@@ -165,18 +164,28 @@ export const TimelineItemEdit = memo<IProps>(
                     <Button
                         type="primary"
                         shape="circle"
-                        icon={saveBtnIcon}
+                        icon={showPlayIcon ? <PlayCircleOutlined /> : <SaveOutlined />}
                         onClick={saveBasedOnColorOptionHandler}
                     />
                 </Box>
                 {showDeleteBtn && (
                     <Box px={1}>
-                        <Button type="primary" shape="circle" icon="delete" onClick={deleteItem} />
+                        <Button
+                            type="primary"
+                            shape="circle"
+                            icon={<DeleteOutlined />}
+                            onClick={deleteItem}
+                        />
                     </Box>
                 )}
                 {showCloseBtn && (
                     <Box px={1}>
-                        <Button type="primary" shape="circle" icon="close" onClick={closeEdit} />
+                        <Button
+                            type="primary"
+                            shape="circle"
+                            icon={<CloseOutlined />}
+                            onClick={closeEdit}
+                        />
                     </Box>
                 )}
             </Flex>

@@ -1,5 +1,6 @@
 import { Box, Flex } from '@rebass/grid';
-import { Button, DatePicker, Icon } from 'antd';
+import { Button, DatePicker } from 'antd';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import React from 'react';
 
@@ -88,7 +89,7 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
         <Flex>
             <Box p={1}>
                 <Button onClick={goBackOneDay}>
-                    <Icon type="left" />
+                    <LeftOutlined />
                 </Button>
             </Box>
             <Box p={1}>
@@ -96,7 +97,7 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
             </Box>
             <Box p={1}>
                 <Button onClick={goForwardOneDay}>
-                    <Icon type="right" />
+                    <RightOutlined />
                 </Button>
             </Box>
 

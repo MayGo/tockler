@@ -1,4 +1,5 @@
-import { Icon, Menu, Tooltip } from 'antd';
+import { Menu, Tooltip } from 'antd';
+import { ClockCircleOutlined, PoweroffOutlined, ArrowsAltOutlined } from '@ant-design/icons';
 import React, { useState, useEffect, memo } from 'react';
 import tocklerIcon from '../../assets/icons/tockler_icon.png';
 import { EventEmitter } from '../../services/EventEmitter';
@@ -64,21 +65,23 @@ export const TrayMenuPlain = () => {
             <MenuItem>
                 {onlineSince && (
                     <Tooltip placement="bottom" title="Time without a break">
-                        <Icon type="clock-circle-o" />
-                        <b>
-                            <Moment date={onlineSince} durationFromNow interval={60} />
-                        </b>
+                        <>
+                            <ClockCircleOutlined />{' '}
+                            <b>
+                                <Moment date={onlineSince} durationFromNow interval={60} />
+                            </b>
+                        </>
                     </Tooltip>
                 )}
             </MenuItem>
             <RightMenuItem key="/exitApp" onClick={exitApp}>
                 <Tooltip placement="bottom" title="Quit app">
-                    <Icon type="poweroff" />
+                    <PoweroffOutlined />
                 </Tooltip>
             </RightMenuItem>
             <RightMenuItem key="/toggleMainWindow" onClick={toggleMainWindow}>
                 <Tooltip placement="bottom" title="Open main window">
-                    <Icon type="arrows-alt" />
+                    <ArrowsAltOutlined />
                 </Tooltip>
             </RightMenuItem>
         </Menu>

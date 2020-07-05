@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
+import './App.less';
 import 'typeface-berkshire-swash';
 import { MainRouter } from './router';
 
