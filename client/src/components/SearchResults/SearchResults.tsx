@@ -1,12 +1,15 @@
-import { Table } from 'antd';
+import { Table, Tooltip } from 'antd';
+import { UnorderedListOutlined } from '@ant-design/icons';
+import useReactRouter from 'use-react-router';
 import { sumBy } from 'lodash';
 import moment from 'moment';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import Moment from 'react-moment';
 import { convertDate, DATE_TIME_FORMAT, TIME_FORMAT } from '../../constants';
 import { diffAndFormatShort } from '../../utils';
 import { TotalCount } from './SearchResults.styles';
 import { Logger } from '../../logger';
+import { TimelineContext } from '../../TimelineContext';
 
 const calculateTotal = filteredData => {
     const totalMs = sumBy(filteredData, (c: any) =>
@@ -18,6 +21,9 @@ const calculateTotal = filteredData => {
 };
 
 export const SearchResults = ({ searchResult, searchPaging, setSearchPaging }) => {
+    const { loadTimerange } = useContext(TimelineContext);
+    const { history } = useReactRouter();
+
     const paginationConf = {
         total: searchResult.total,
         showSizeChanger: true,
@@ -54,6 +60,11 @@ export const SearchResults = ({ searchResult, searchPaging, setSearchPaging }) =
     const onSelectChange = selectedRowKeys => {
         Logger.debug('selectedRowKeys changed: ', selectedRowKeys);
         setState({ ...state, selectedRowKeys });
+    };
+
+    const goToTimelinePage = date => {
+        loadTimerange([moment(date).startOf('day'), moment(date).endOf('day')]);
+        history.push('/app/timeline');
     };
 
     const { isOneDay, sortedInfo } = state;
@@ -126,6 +137,17 @@ export const SearchResults = ({ searchResult, searchPaging, setSearchPaging }) =
 
             render: (text, record) => (
                 <span>{diffAndFormatShort(record.beginDate, record.endDate)}</span>
+            ),
+        },
+        {
+            title: '',
+            dataIndex: '',
+            key: 'actions',
+            width: 40,
+            render: (text, record) => (
+                <Tooltip placement="left" title="Select date and go to timeline view">
+                    <UnorderedListOutlined onClick={() => goToTimelinePage(record.beginDate)} />
+                </Tooltip>
             ),
         },
     ];

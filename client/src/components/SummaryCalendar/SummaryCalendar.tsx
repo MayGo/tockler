@@ -40,13 +40,12 @@ export const SummaryCalendar = () => {
     const { history } = useReactRouter();
 
     const onDateClicked = (date: any) => {
-        const pathname = '/app/timeline';
-        if (date) {
-            loadTimerange([date.clone().startOf('day'), date.clone().endOf('day')]);
-            history.push(pathname);
-        } else {
+        if (!date) {
             Logger.error('No date');
+            return;
         }
+        loadTimerange([date.clone().startOf('day'), date.clone().endOf('day')]);
+        history.push('/app/timeline');
     };
 
     const changeSelectedDate = (date?: any, mode?: 'month' | 'year') => {
