@@ -26,7 +26,7 @@ export function SearchPage({ location }: any) {
 
     const taskName = TrackItemType.AppTrackItem;
 
-    const loadItems = async searchStr => {
+    const loadItems = async (searchStr, firstPage = false) => {
         setIsLoading(true);
         const [from, to] = timerange;
         const items = await searchFromItems({
@@ -38,7 +38,9 @@ export function SearchPage({ location }: any) {
         });
 
         setSearchResult(items);
+        console.info('searching with pa', searchPaging, items);
         setIsLoading(false);
+
         return;
     };
 
@@ -62,9 +64,12 @@ export function SearchPage({ location }: any) {
     }, [searchPaging]);
 
     const onSubmit = event => {
-        loadItems(formState.values.search);
+        setSearchPaging({ ...searchPaging, page: 1 });
+
         event.preventDefault();
     };
+
+    console.info('searchPaging', searchPaging);
 
     return (
         <MainLayout location={location}>

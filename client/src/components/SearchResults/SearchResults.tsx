@@ -3,7 +3,7 @@ import { UnorderedListOutlined } from '@ant-design/icons';
 import useReactRouter from 'use-react-router';
 import { sumBy } from 'lodash';
 import moment from 'moment';
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import React, { useState, useRef, useEffect, useContext, memo } from 'react';
 import Moment from 'react-moment';
 import { convertDate, DATE_TIME_FORMAT, TIME_FORMAT } from '../../constants';
 import { diffAndFormatShort } from '../../utils';
@@ -20,14 +20,15 @@ const calculateTotal = filteredData => {
     return <TotalCount>Total {dur.format()}</TotalCount>;
 };
 
-export const SearchResults = ({ searchResult, searchPaging, setSearchPaging }) => {
-    const { loadTimerange } = useContext(TimelineContext);
+const SearchResultsPlain = ({ searchResult, searchPaging, setSearchPaging }) => {
+    const { loadTimerange, setVisibleTimerange } = useContext(TimelineContext);
     const { history } = useReactRouter();
 
     const paginationConf = {
         total: searchResult.total,
         showSizeChanger: true,
         pageSize: searchPaging.pageSize,
+        current: searchPaging.page,
         pageSizeOptions: ['50', '100', '300', '500'],
         onChange: (page, pageSize) => {
             console.error('Pagingation changed', page, pageSize);
@@ -62,8 +63,15 @@ export const SearchResults = ({ searchResult, searchPaging, setSearchPaging }) =
         setState({ ...state, selectedRowKeys });
     };
 
-    const goToTimelinePage = date => {
-        loadTimerange([moment(date).startOf('day'), moment(date).endOf('day')]);
+    const goToTimelinePage = record => {
+        loadTimerange([
+            moment(record.beginDate).startOf('day'),
+            moment(record.beginDate).endOf('day'),
+        ]);
+        setVisibleTimerange([
+            moment(record.beginDate).subtract(15, 'minutes'),
+            moment(record.endDate).add(15, 'minutes'),
+        ]);
         history.push('/app/timeline');
     };
 
@@ -146,7 +154,7 @@ export const SearchResults = ({ searchResult, searchPaging, setSearchPaging }) =
             width: 40,
             render: (text, record) => (
                 <Tooltip placement="left" title="Select date and go to timeline view">
-                    <UnorderedListOutlined onClick={() => goToTimelinePage(record.beginDate)} />
+                    <UnorderedListOutlined onClick={() => goToTimelinePage(record)} />
                 </Tooltip>
             ),
         },
@@ -170,3 +178,5 @@ export const SearchResults = ({ searchResult, searchPaging, setSearchPaging }) =
         />
     );
 };
+
+export const SearchResults = memo(SearchResultsPlain);
