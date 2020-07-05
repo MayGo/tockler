@@ -61,53 +61,56 @@ export function SearchPage({ location }: any) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchPaging]);
 
+    const onSubmit = event => {
+        loadItems(formState.values.search);
+        event.preventDefault();
+    };
+
     return (
         <MainLayout location={location}>
-            <Flex p={1} w={1} flexDirection="column">
-                <Flex p={1}>
-                    <Input
-                        placeholder="Search from all items"
-                        {...text({
-                            name: 'search',
-                        })}
-                    />
-                    <Box pl={1}>
-                        <Button
-                            onClick={() => {
-                                loadItems(formState.values.search);
-                            }}
-                            type="primary"
-                        >
-                            Search
-                        </Button>
+            <form onSubmit={onSubmit}>
+                <Flex p={1} w={1} flexDirection="column">
+                    <Flex p={1}>
+                        <Input
+                            placeholder="Search from all items"
+                            {...text({
+                                name: 'search',
+                            })}
+                        />
+                        <Box pl={1}>
+                            <Button type="primary" htmlType="submit">
+                                Search
+                            </Button>
+                        </Box>
+
+                        <Box pl={1}>
+                            <Button
+                                onClick={() => {
+                                    exportItems(formState.values.search);
+                                }}
+                                type="default"
+                            >
+                                Export to CSV
+                            </Button>
+                        </Box>
+                    </Flex>
+                    <Box p={1}>
+                        <SearchOptions setTimerange={setTimerange} timerange={timerange} />
                     </Box>
-                    <Box pl={1}>
-                        <Button
-                            onClick={() => {
-                                exportItems(formState.values.search);
-                            }}
-                            type="default"
-                        >
-                            Export to CSV
-                        </Button>
+                    <Box p={1}>
+                        {isLoading && (
+                            <Spinner>
+                                <Spin />
+                            </Spinner>
+                        )}
+                        <SearchResults
+                            searchResult={searchResult}
+                            searchPaging={searchPaging}
+                            setSearchPaging={setSearchPaging}
+                        />
                     </Box>
                 </Flex>
-                <Box p={1}>
-                    <SearchOptions setTimerange={setTimerange} timerange={timerange} />
-                </Box>
-                <Box p={1}>
-                    {isLoading && (
-                        <Spinner>
-                            <Spin />
-                        </Spinner>
-                    )}
-                    <SearchResults
-                        searchResult={searchResult}
-                        searchPaging={searchPaging}
-                        setSearchPaging={setSearchPaging}
-                    />
-                </Box>
-            </Flex>
+            </form>
         </MainLayout>
     );
 }
