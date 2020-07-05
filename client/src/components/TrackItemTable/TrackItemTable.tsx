@@ -232,6 +232,8 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
             title: 'URL',
             dataIndex: 'url',
             key: 'url',
+            width: 300,
+            ellipsis: true,
             filterDropdown: FilterDropdownComp,
             filterIcon: <SearchOutlined style={{ color: state.filtered ? '#108ee9' : '#aaa' }} />,
             filterUrlDropdownVisible: state.filterUrlDropdownVisible,
@@ -252,6 +254,7 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
             dataIndex: 'beginDate',
             key: 'beginDate',
             width: 170,
+
             onFilter: (value: any, record: any) => convertDate(record.beginDate) > value,
             sorter: (a: any, b: any) =>
                 convertDate(a.beginDate).valueOf() - convertDate(b.beginDate).valueOf(),

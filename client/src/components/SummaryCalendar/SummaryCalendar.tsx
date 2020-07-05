@@ -155,9 +155,6 @@ export const SummaryCalendar = () => {
             <Calendar
                 value={timerange[0]}
                 mode={selectedMode}
-                onChange={() => {
-                    console.error('date changed');
-                }}
                 dateCellRender={dateCellRender}
                 dateFullCellRender={dateFullCellRender}
                 monthCellRender={monthCellRender}

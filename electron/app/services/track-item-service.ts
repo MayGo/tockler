@@ -112,7 +112,9 @@ export class TrackItemService {
             .orderBy(order, orderSort);
 
         if (searchStr) {
-            query.where('title', 'like', '%' + searchStr + '%');
+            query
+                .where('title', 'like', '%' + searchStr + '%')
+                .orWhere('url', 'like', '%' + searchStr + '%');
         }
 
         return query;

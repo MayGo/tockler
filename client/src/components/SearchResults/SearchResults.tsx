@@ -76,6 +76,15 @@ export const SearchResults = ({ searchResult, searchPaging, setSearchPaging }) =
             sortOrder: sortedInfo.columnKey === 'title' && sortedInfo.order,
         },
         {
+            title: 'URL',
+            dataIndex: 'url',
+            key: 'url',
+            width: 300,
+            ellipsis: true,
+            sorter: (a: any, b: any) => a.url.length - b.url.length,
+            sortOrder: sortedInfo.columnKey === 'url' && sortedInfo.order,
+        },
+        {
             title: 'Begin',
             dataIndex: 'beginDate',
             key: 'beginDate',
