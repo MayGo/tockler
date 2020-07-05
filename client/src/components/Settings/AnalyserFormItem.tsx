@@ -46,9 +46,7 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
                         <Input placeholder="Title" {...text({ name: 'takeTitle' })} />
                     </Box>
                 </Flex>
-
-                <Form.Item>
-                    Active
+                <Form.Item name="active" label="Active">
                     <Switch
                         onChange={value => {
                             check.onChange(value);
@@ -56,8 +54,8 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
                         checked={check.value}
                     />
                 </Form.Item>
-                <Form.Item>
-                    Test
+
+                <Form.Item name="test" label="Test">
                     <Switch onChange={toggleShowTests} />
                 </Form.Item>
                 <Button

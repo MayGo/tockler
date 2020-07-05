@@ -3,7 +3,7 @@ import { Calendar, Spin } from 'antd';
 import { CoffeeOutlined, EyeOutlined, LaptopOutlined, ToolOutlined } from '@ant-design/icons';
 import moment from 'moment';
 
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import useReactRouter from 'use-react-router';
 import { TimelineContext } from '../../TimelineContext';
 import { SummaryContext } from '../../SummaryContext';
@@ -52,6 +52,10 @@ export const SummaryCalendar = () => {
         setSelectedDate(date);
         setSelectedMode(mode);
     };
+
+    useEffect(() => {
+        setSelectedDate(timerange[0]);
+    }, []);
 
     const getListData = day => {
         const listData: any[] = [];
@@ -152,7 +156,7 @@ export const SummaryCalendar = () => {
                 </Spinner>
             )}
             <Calendar
-                value={timerange[0]}
+                value={selectedDate}
                 mode={selectedMode}
                 dateCellRender={dateCellRender}
                 dateFullCellRender={dateFullCellRender}
