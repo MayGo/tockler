@@ -55,6 +55,7 @@ export const SummaryCalendar = () => {
 
     useEffect(() => {
         setSelectedDate(timerange[0]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const getListData = day => {
