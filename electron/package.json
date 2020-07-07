@@ -1,6 +1,6 @@
 {
     "name": "tockler",
-    "version": "4.0.0",
+    "version": "4.0.1",
     "description": "Automatically track applications usage and working time",
     "author": "Maigo Erit <maigo.erit@gmail.com>",
     "license": "GPL-2.0",
