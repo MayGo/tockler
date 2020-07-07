@@ -41,7 +41,7 @@
     },
     "scripts": {
         "start": "cross-env ELECTRON_ENABLE_SECURITY_WARNINGS=false BROWSER=none LOG_LEVEL=debug craco start",
-        "build": "cross-env PUBLIC_URL=./ craco build",
+        "build": "cross-env GENERATE_SOURCEMAP=false PUBLIC_URL=./ craco build",
         "test": "yarn jest",
         "eject": "craco eject",
         "lint": "eslint 'src/**/*{.ts,.tsx}' --fix"
