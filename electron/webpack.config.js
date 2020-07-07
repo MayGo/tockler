@@ -40,6 +40,6 @@ module.exports = {
         new FriendlyErrorsWebpackPlugin(),
         new TsConfigPathsPlugin(),
         new CheckerPlugin(),
-        new CopyPlugin(['preloadStuff.js']),
+        new CopyPlugin({ patterns: ['preloadStuff.js'] }),
     ],
 };

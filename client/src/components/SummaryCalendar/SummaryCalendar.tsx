@@ -44,6 +44,7 @@ export const SummaryCalendar = () => {
             Logger.error('No date');
             return;
         }
+
         loadTimerange([date.clone().startOf('day'), date.clone().endOf('day')]);
         history.push('/app/timeline');
     };
