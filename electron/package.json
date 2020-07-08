@@ -1,6 +1,6 @@
 {
     "name": "tockler",
-    "version": "4.0.2",
+    "version": "4.0.3",
     "description": "Automatically track applications usage and working time",
     "author": "Maigo Erit <maigo.erit@gmail.com>",
     "license": "GPL-2.0",
@@ -43,6 +43,8 @@
         "node-notifier": "^7.0.1",
         "objection": "^2.2.1",
         "randomcolor": "0.5.4",
+        "ref-napi": "^2.0.3",
+        "ref-struct-napi": "^1.1.1",
         "sqlite3": "5.0.0"
     },
     "peerDependencies": {},
