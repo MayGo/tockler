@@ -12,6 +12,13 @@ if (process.env.NODE_ENV === 'production') {
         dsn: process.env.SENTRY_DSN,
         environment: process.env.NODE_ENV,
         release: version,
+        beforeSend(event) {
+            // Check if it is an exception, if so, show the report dialog
+            if (event.exception) {
+                Sentry.showReportDialog();
+            }
+            return event;
+        },
     });
 }
 
