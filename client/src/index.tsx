@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './App.less';
+
 import 'typeface-berkshire-swash';
 import { MainRouter } from './router';
 
 import { setupFrontendListener } from 'eiphop';
 import { AppDataProvider } from './routes/AppDataProvider';
 
+(window as any).CSPSettings = {
+    nonce: 'nonce',
+};
 const { ipcRenderer } = window as any;
 
 setupFrontendListener({ ipcRenderer } as any);

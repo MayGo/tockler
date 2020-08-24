@@ -4,12 +4,16 @@ import React from 'react';
 import { AnalyserForm } from './AnalyserForm';
 import { AppForm } from './AppForm';
 import { WorkForm } from './WorkForm';
+import { ThemeSelect } from './ThemeSelect';
 
 export const SettingsForm = () => {
     return (
         <Form>
             <Flex p={1} w={1} flexDirection="column">
                 <Box>
+                    <Box p={1} w={1 / 3}>
+                        <ThemeSelect />
+                    </Box>
                     <Box p={1} w={1 / 3}>
                         <WorkForm />
                     </Box>

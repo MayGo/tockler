@@ -3,14 +3,17 @@
         "outDir": "build/dist",
         "module": "esnext",
         "target": "es2017",
-        "lib": ["es2017", "dom"],
+        "lib": [
+            "es2017",
+            "dom"
+        ],
         "sourceMap": true,
         "allowJs": true,
         "jsx": "preserve",
         "moduleResolution": "node",
         "rootDir": "src",
         "forceConsistentCasingInFileNames": true,
-        "noImplicitReturns": true,
+        "noImplicitReturns": false,
         "noImplicitThis": true,
         "noImplicitAny": false,
         "strictNullChecks": true,
@@ -18,7 +21,10 @@
         "noUnusedLocals": false,
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true,
-        "typeRoots": ["./node_modules/@types", "../@types"],
+        "typeRoots": [
+            "./node_modules/@types",
+            "../@types"
+        ],
         "skipLibCheck": true,
         "esModuleInterop": true,
         "strict": true,
@@ -36,5 +42,7 @@
         "src/setupTests.ts",
         "config-overrides.js"
     ],
-    "include": ["src"]
+    "include": [
+        "src"
+    ]
 }
