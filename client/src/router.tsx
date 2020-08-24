@@ -15,8 +15,13 @@ import { useAppDataState } from './routes/AppDataProvider';
 moment.locale('en-gb');
 
 const initialTheme: any = {
-    name: 'dark',
-    variables: { 'primary-color': '#000000' },
+    name: 'default',
+    variables: {
+        '@normal-color': '#fff',
+        '@primary-color': '#8363ff',
+        '@body-background': '#f8f8f8',
+        '@component-background': '#f8f8f8',
+    },
 };
 export function MainRouter() {
     const [theme, setTheme] = React.useState(initialTheme);

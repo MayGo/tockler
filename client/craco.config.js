@@ -14,7 +14,12 @@ module.exports = {
         plugins: [
             new AntdThemePlugin({
                 // Variables declared here can be modified at runtime
-                variables: ['primary-color'],
+                variables: [
+                    'primary-color',
+                    'normal-color',
+                    'body-background',
+                    'component-background',
+                ],
                 themes: [
                     {
                         name: 'dark',
