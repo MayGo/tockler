@@ -1,4 +1,4 @@
-import { Box, Flex } from '@rebass/grid';
+import { Box, Flex } from 'reflexbox';
 import { Button, Input, Table } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 // tslint:disable-next-line: no-submodule-imports

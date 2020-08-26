@@ -1,4 +1,4 @@
-import { Box, Flex } from '@rebass/grid';
+import { Box, Flex } from 'reflexbox';
 import { useWindowWidth } from '@react-hook/window-size/throttled';
 import React, { memo, useContext } from 'react';
 import { RootContext } from '../../RootContext';

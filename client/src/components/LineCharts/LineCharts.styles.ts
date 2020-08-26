@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Box } from '@rebass/grid';
+import { Box } from 'reflexbox';
 
 export const LineChartBox = styled(Box).attrs({ m: 2, p: 2 })`
     border-top: 1px solid white;

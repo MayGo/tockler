@@ -1,32 +1,47 @@
 import { Select } from 'antd';
 import React from 'react';
-import { useTheme } from 'antd-theme';
-
-import { SketchPicker } from 'react-color';
+import { Box, Flex } from 'reflexbox';
+import { useTheme } from '../../routes/AntdThemeProvider';
+import { ThemeVariables } from '../../constants';
+import { ColorPicker } from '../Timeline/ColorPicker';
 
 export const ThemeSelect = () => {
     const [{ name, variables, themes }, setTheme]: any = useTheme();
 
     return (
-        <>
-            <Select
-                style={{ width: 100 }}
-                value={name}
-                onChange={theme => setTheme({ name: theme, variables })}
-            >
-                {themes.map(({ name }) => (
-                    <Select.Option key={name} value={name}>
-                        {name}
-                    </Select.Option>
-                ))}
-            </Select>
-            <SketchPicker
-                color={variables['primary-color']}
-                onChange={value => {
-                    // Will update all css attributes affected by primary-color
-                    setTheme({ name, variables: { 'primary-color': value.hex } });
-                }}
-            />
-        </>
+        <Flex pl={24} pt={10} pb={2}>
+            <Box alignSelf="center">
+                <h4>Selected Theme</h4>
+            </Box>
+            <Box pl={10}>
+                <Select
+                    style={{ width: 100 }}
+                    value={name}
+                    onChange={theme => {
+                        setTheme(ThemeVariables[theme]);
+                    }}
+                >
+                    {themes.map(({ name }) => (
+                        <Select.Option key={name} value={name}>
+                            {name}
+                        </Select.Option>
+                    ))}
+                </Select>
+            </Box>
+            <Box pl={10}>
+                <ColorPicker
+                    color={variables['primary-color']}
+                    onChange={value => {
+                        setTheme({
+                            ...ThemeVariables[name],
+                            variables: {
+                                ...ThemeVariables[name].variables,
+                                'primary-color': value.hex,
+                            },
+                        });
+                    }}
+                />
+            </Box>
+        </Flex>
     );
 };

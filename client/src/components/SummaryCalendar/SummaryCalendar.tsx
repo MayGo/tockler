@@ -1,4 +1,4 @@
-import { Flex } from '@rebass/grid';
+import { Flex } from 'reflexbox';
 import { Calendar, Spin } from 'antd';
 import { CoffeeOutlined, EyeOutlined, LaptopOutlined, ToolOutlined } from '@ant-design/icons';
 import moment from 'moment';

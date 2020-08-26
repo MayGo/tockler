@@ -1,4 +1,4 @@
-import { Box, Flex } from '@rebass/grid';
+import { Box, Flex } from 'reflexbox';
 import { Form } from 'antd';
 import React from 'react';
 import { AnalyserForm } from './AnalyserForm';
