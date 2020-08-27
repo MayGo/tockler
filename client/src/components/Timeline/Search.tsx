@@ -1,4 +1,4 @@
-import { Box, Flex } from '@rebass/grid';
+import { Box, Flex } from 'reflexbox';
 import { Button, DatePicker, Tooltip } from 'antd';
 import { LeftOutlined, RightOutlined, PauseOutlined, CaretRightOutlined } from '@ant-design/icons';
 import moment from 'moment';

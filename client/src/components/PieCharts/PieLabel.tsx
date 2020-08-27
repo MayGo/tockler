@@ -6,13 +6,14 @@ interface IProps {
     width: number;
     color?: string;
     datum?: any;
+    theme: any;
 }
 
 export class PieLabel extends React.PureComponent<IProps> {
     public static defaultEvents = VictoryTooltip.defaultEvents;
 
     public render() {
-        const { width, datum } = this.props;
+        const { width, datum, theme } = this.props;
 
         const labelWidth = width / 2;
 
@@ -30,7 +31,7 @@ export class PieLabel extends React.PureComponent<IProps> {
                     flyoutHeight={labelWidth}
                     flyoutStyle={{
                         fill: datum.color,
-                        stroke: 'white',
+                        stroke: theme.isDark ? 'black' : 'white',
                         strokeWidth: 1,
                         fillOpacity: 0.35,
                     }}

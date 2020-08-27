@@ -55,7 +55,11 @@ export const TrayMenuPlain = () => {
     }, [windowIsActive]);
 
     return (
-        <Menu mode="horizontal" style={{ position: 'fixed', width: '100%', zIndex: 9000 }}>
+        <Menu
+            mode="horizontal"
+            style={{ position: 'fixed', width: '100%', zIndex: 9000 }}
+            selectable={false}
+        >
             <MenuItem key="/timeline2" onClick={toggleMainWindow}>
                 <Brand>
                     <Img src={tocklerIcon} width="28" height="28" />

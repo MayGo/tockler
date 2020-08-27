@@ -1,4 +1,4 @@
-import { Box } from '@rebass/grid';
+import { Box } from 'reflexbox';
 import React, { useEffect, useState, useCallback } from 'react';
 import randomcolor from 'randomcolor';
 import { TimelineItemEdit } from '../components/Timeline/TimelineItemEdit';

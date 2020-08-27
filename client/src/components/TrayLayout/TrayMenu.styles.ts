@@ -9,11 +9,7 @@ export const Brand = styled.div`
 `;
 
 export const MenuItem = styled(Menu.Item)`
-    color: rgba(0, 0, 0, 0.65) !important;
     cursor: pointer;
-    &.ant-menu-item-selected {
-        color: rgba(0, 0, 0, 0.65) !important;
-    }
 
     border-bottom: none !important;
 `;

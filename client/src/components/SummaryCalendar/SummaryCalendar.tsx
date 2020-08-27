@@ -1,4 +1,4 @@
-import { Flex } from '@rebass/grid';
+import { Flex } from 'reflexbox';
 import { Calendar, Spin } from 'antd';
 import { CoffeeOutlined, EyeOutlined, LaptopOutlined, ToolOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -114,7 +114,7 @@ export const SummaryCalendar = () => {
             if (isToday) {
                 style = { background: '#e6f7ff' };
             } else {
-                style = { background: 'rgb(230, 230, 230)' };
+                style = { background: 'rgb(230, 230, 230, 0.2)' };
             }
         }
         return (

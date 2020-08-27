@@ -1,4 +1,4 @@
-import { Box, Flex } from '@rebass/grid';
+import { Box, Flex } from 'reflexbox';
 import { Button, Input, Select, Tooltip } from 'antd';
 import { PlayCircleOutlined, SaveOutlined, DeleteOutlined, CloseOutlined } from '@ant-design/icons';
 import React, { useState, useEffect, memo } from 'react';

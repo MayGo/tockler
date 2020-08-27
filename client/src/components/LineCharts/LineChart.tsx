@@ -3,7 +3,7 @@ import moment from 'moment';
 import { values } from 'lodash';
 import { VictoryBar, VictoryChart, VictoryAxis, VictoryTooltip } from 'victory';
 import { convertDate, TIME_FORMAT, DAY_MONTH_LONG_FORMAT, COLORS } from '../../constants';
-import { chartTheme } from '../Timeline/ChartTheme';
+
 import { useWindowWidth } from '@react-hook/window-size/throttled';
 import { SummaryContext } from '../../SummaryContext';
 import {
@@ -13,22 +13,24 @@ import {
     toTimeDuration,
 } from './LineChart.util';
 import { diffAndFormatShort } from '../../utils';
+import { useChartThemeState } from '../../routes/ChartThemeProvider';
 
 const scale = { x: 'time', y: 'time' };
 const padding = { left: 50, top: 20, bottom: 20, right: 10 };
 const domainPadding = { y: 40, x: [20, 40] };
 
-const labelComponent = () => (
+const labelComponent = theme => (
     <VictoryTooltip
-        style={chartTheme.tooltip.style}
-        cornerRadius={chartTheme.tooltip.cornerRadius}
-        pointerLength={chartTheme.tooltip.pointerLength}
-        flyoutStyle={chartTheme.tooltip.flyoutStyle}
+        style={theme.tooltip.style}
+        cornerRadius={theme.tooltip.cornerRadius}
+        pointerLength={theme.tooltip.pointerLength}
+        flyoutStyle={theme.tooltip.flyoutStyle}
         renderInPortal
         horizontal={false}
     />
 );
 export const LineChart = () => {
+    const { chartTheme } = useChartThemeState();
     const chartWidth = useWindowWidth();
     const { onlineTimesSummary, selectedDate } = useContext(SummaryContext);
 
@@ -65,7 +67,7 @@ export const LineChart = () => {
                 x={d => formatToDay(convertDate(d.beginDate).startOf('day'))}
                 barWidth={barHeight}
                 data={onlineTimesValues}
-                labelComponent={labelComponent()}
+                labelComponent={labelComponent(chartTheme)}
                 labels={({ datum }) =>
                     `${convertDate(datum.beginDate).format(DAY_MONTH_LONG_FORMAT)}\r\n
                     Start time: ${convertDate(datum.beginDate).format(
@@ -82,7 +84,7 @@ export const LineChart = () => {
                 barWidth={10}
                 style={{ data: { fill: COLORS.green } }}
                 data={onlineTimesValues}
-                labelComponent={labelComponent()}
+                labelComponent={labelComponent(chartTheme)}
                 labels={({ datum }) =>
                     `${convertDate(datum.beginDate).format(
                         DAY_MONTH_LONG_FORMAT,

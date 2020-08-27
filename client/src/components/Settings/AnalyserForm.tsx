@@ -1,4 +1,4 @@
-import { Flex } from '@rebass/grid';
+import { Flex } from 'reflexbox';
 import { Button, Card, Tooltip } from 'antd';
 import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import React, { useContext, useState, useEffect } from 'react';

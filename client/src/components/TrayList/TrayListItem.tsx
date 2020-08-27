@@ -1,6 +1,7 @@
-import { Box, Flex } from '@rebass/grid';
-import { Button } from 'antd';
-import { ClockCircleOutlined, PauseOutlined, RightOutlined } from '@ant-design/icons';
+import { Box, Flex } from 'reflexbox';
+import { Button, List } from 'antd';
+import { ClockCircleOutlined, PauseOutlined, CaretRightOutlined } from '@ant-design/icons';
+
 import moment from 'moment';
 import React, { memo } from 'react';
 import Moment from 'react-moment';
@@ -8,15 +9,14 @@ import TimeAgo from 'react-timeago';
 import styled from 'styled-components';
 import { convertDate } from '../../constants';
 
-const CustomListItem = styled.div`
-    background-color: white;
+const CustomListItem = styled(List.Item)`
     padding-left: 5px;
     margin-top: 5px;
     &:last-child {
         margin-bottom: 5px;
     }
-
-    border-left: 5px solid ${(props: any) => props.color};
+    background-color: ${({ theme: { variables } }) => variables['component-background']};
+    border-left: 5px solid ${props => props.color};
 `;
 
 const Small = styled(Box)`
@@ -52,8 +52,8 @@ export function TrayListItemPlain({
     isRunning,
 }: any) {
     return (
-        <CustomListItem color={item.color}>
-            <Flex alignItems="center">
+        <CustomListItem color={item.color} key={item.title}>
+            <Flex alignItems="center" width={1} pl={10} pr={10}>
                 <Box width={8 / 9} py={2}>
                     <Flex>
                         <CustomBox width={2 / 7} mr={2}>
@@ -112,7 +112,7 @@ export function TrayListItemPlain({
                         <Button
                             type="default"
                             shape="circle"
-                            icon={<RightOutlined />}
+                            icon={<CaretRightOutlined />}
                             onClick={() => startNewLogItemFromOld(item)}
                         />
                     )}

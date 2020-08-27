@@ -1,23 +1,58 @@
 const CracoLessPlugin = require('craco-less');
 
+const AntdThemePlugin = require('antd-theme/plugin');
+const ThemeLoaderPlugin = require('./theme.loader.webpack');
+
 module.exports = {
     /*  webpack: {
         configure: {
             target: 'electron-renderer',
         },
     },*/
+
+    webpack: {
+        plugins: [
+            new AntdThemePlugin({
+                // Variables declared here can be modified at runtime
+                variables: [
+                    'primary-color',
+                    'normal-color',
+                    'body-background',
+                    'component-background',
+                ],
+                themes: [
+                    {
+                        name: 'dark',
+                        filename: require.resolve('antd/lib/style/themes/dark.less'),
+                    },
+                    {
+                        name: 'compact',
+                        filename: require.resolve('antd/lib/style/themes/compact.less'),
+                    },
+                ],
+            }),
+        ],
+    },
+    babel: {
+        loaderOptions: {
+            plugins: [
+                [
+                    'import',
+                    {
+                        libraryName: 'antd',
+                        style: true,
+                    },
+                ],
+            ],
+        },
+    },
     plugins: [
         {
-            plugin: CracoLessPlugin,
+            plugin: ThemeLoaderPlugin,
             options: {
                 lessLoaderOptions: {
                     lessOptions: {
-                        modifyVars: {
-                            '@normal-color': '#fff',
-                            '@primary-color': '#8363ff',
-                            '@body-background': '#f8f8f8',
-                            '@component-background': '#f8f8f8',
-                        },
+                        compress: true,
                         javascriptEnabled: true,
                     },
                 },

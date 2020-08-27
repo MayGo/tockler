@@ -19,6 +19,14 @@ export const sendToTrayWindow = (key, message = '') => {
     }
 };
 
+export const sendToMainWindow = (key, message = '') => {
+    if (WindowManager.mainWindow) {
+        WindowManager.mainWindow.webContents.send(key, message);
+    } else {
+        logger.debug(`MainWindow not defined yet, not sending ${key}`);
+    }
+};
+
 export default class WindowManager {
     static mainWindow;
     static menubar;

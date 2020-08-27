@@ -1,4 +1,4 @@
-import { Box, Flex } from '@rebass/grid';
+import { Box, Flex } from 'reflexbox';
 import { Button, Divider, Form, Input, Switch } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';

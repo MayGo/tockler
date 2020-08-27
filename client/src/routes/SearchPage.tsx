@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MainLayout } from '../components/MainLayout/MainLayout';
-import { Flex, Box } from '@rebass/grid';
+import { Flex, Box } from 'reflexbox';
 import { Input, Spin, Button } from 'antd';
 import { useFormState } from 'react-use-form-state';
 import { searchFromItems, exportFromItems } from '../services/trackItem.api';
