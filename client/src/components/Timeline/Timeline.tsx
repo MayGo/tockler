@@ -16,12 +16,13 @@ import { convertDate, TIME_FORMAT } from '../../constants';
 import { TimelineRowType } from '../../enum/TimelineRowType';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { BarWithTooltip } from './BarWithTooltip';
-import { blueGrey700, chartTheme, disabledGrey } from './ChartTheme';
+import { getLabelColor } from './ChartTheme';
 import { BrushChart, MainChart, Spinner } from './Timeline.styles';
 import { TimelineItemEditContainer } from './TimelineItemEditContainer';
 import { Logger } from '../../logger';
 import { formatDuration } from '../SummaryCalendar/SummaryCalendar.util';
 import { colorProp } from '../charts.utils';
+import { useChartThemeState } from '../../routes/ChartThemeProvider';
 
 interface IProps {
     timerange: any;
@@ -57,7 +58,7 @@ const getTrackItemOrder = (type: string) => {
 const getTrackItemOrderFn = d => getTrackItemOrder(d.taskName);
 const contertDateForY = d => convertDate(d.beginDate);
 const contertDateForY0 = d => convertDate(d.endDate);
-const brushStyle = {
+const brushChartBarStyle = {
     data: {
         width: 7,
         fill: colorProp,
@@ -92,12 +93,13 @@ const rowEnabledDefaults = {
 
 export const Timeline = memo<IFullProps>(
     ({ timerange, visibleTimerange, setVisibleTimerange, isLoading, timeItems }) => {
+        const { chartTheme } = useChartThemeState();
         const [selectedTimelineItem, setSelectedTimelineItem] = useState<any>();
         const [isRowEnabled, setIsRowEnabled] = useState<any>(rowEnabledDefaults);
 
         const chartWidth = useWindowWidth();
         const toggleRow = (rowId: any) => {
-            setIsRowEnabled({ ...isRowEnabled, [rowId]: !isRowEnabled[rowId] });
+            setIsRowEnabled({ ...isRowEnabled, [rowId - 1]: !isRowEnabled[rowId - 1] });
         };
 
         const handleSelectionChanged = item => {
@@ -122,10 +124,10 @@ export const Timeline = memo<IFullProps>(
             changeVisibleTimerange(domain.y);
         };
         const calcRowEnabledColor = ({ index }) => {
-            return isRowEnabled[index] ? blueGrey700 : disabledGrey;
+            return getLabelColor(chartTheme.isDark, isRowEnabled[index]);
         };
         const calcRowEnabledColorFlipped = index => {
-            return !isRowEnabled[index] ? blueGrey700 : disabledGrey;
+            return getLabelColor(chartTheme.isDark, !isRowEnabled[index]);
         };
 
         const getTooltipLabel = d => {
@@ -260,6 +262,7 @@ export const Timeline = memo<IFullProps>(
                                 data={timelineData}
                                 dataComponent={
                                     <BarWithTooltip
+                                        theme={chartTheme}
                                         getTooltipLabel={getTooltipLabel}
                                         onClickBarItem={handleSelectionChanged}
                                     />
@@ -283,6 +286,11 @@ export const Timeline = memo<IFullProps>(
                                 responsive={false}
                                 brushDimension="y"
                                 brushDomain={{ y: visibleTimerange }}
+                                brushStyle={{
+                                    stroke: 'transparent',
+                                    fill: chartTheme.isDark ? 'white' : 'black',
+                                    fillOpacity: 0.1,
+                                }}
                                 onBrushDomainChange={handleBrushDebounced}
                             />
                         }
@@ -291,7 +299,7 @@ export const Timeline = memo<IFullProps>(
 
                         <VictoryBar
                             animate={false}
-                            style={brushStyle}
+                            style={brushChartBarStyle}
                             x={getTrackItemOrderFn}
                             y={contertDateForY}
                             y0={contertDateForY0}

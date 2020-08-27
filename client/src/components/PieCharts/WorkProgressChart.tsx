@@ -4,9 +4,9 @@ import _ from 'lodash';
 import moment from 'moment';
 import { VictoryContainer, VictoryPie } from 'victory';
 import { convertDate } from '../../constants';
-import { chartTheme } from '../Timeline/ChartTheme';
 import { PieLabel } from './PieLabel';
 import { colorProp } from '../charts.utils';
+import { useChartThemeState } from '../../routes/ChartThemeProvider';
 
 const sumApp = (p, c) => {
     return _.extend(p, {
@@ -15,6 +15,7 @@ const sumApp = (p, c) => {
 };
 
 export const WorkProgressChart = ({ items, width, hoursToWork }) => {
+    const { chartTheme } = useChartThemeState();
     const groupByField = 'app';
 
     const pieData: any[] = _(items)
@@ -80,7 +81,7 @@ export const WorkProgressChart = ({ items, width, hoursToWork }) => {
 
                 return `${datum[groupByField]} [${formattedDuration}]`;
             }}
-            labelComponent={<PieLabel width={width} />}
+            labelComponent={<PieLabel width={width} theme={chartTheme} />}
             x="app"
             y="timeDiffInMs"
             data={pieData}

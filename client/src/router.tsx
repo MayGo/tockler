@@ -16,6 +16,7 @@ import { ThemeVariables, THEME_LIGHT } from './constants';
 import { EventEmitter } from './services/EventEmitter';
 import { Logger } from './logger';
 import { getTheme, saveTheme } from './services/settings.api';
+import { ChartThemeProvider } from './routes/ChartThemeProvider';
 
 moment.locale('en-gb');
 
@@ -53,14 +54,16 @@ export function MainRouter() {
             <ConfigProvider locale={state.locale}>
                 <AntdThemeProvider theme={theme} onChange={value => setTheme(value)}>
                     <ThemeProvider theme={theme}>
-                        <RootProvider>
-                            <Switch>
-                                <Route path="/" exact component={MainAppPage} />
-                                <Route path="/app" component={MainAppPage} />
-                                <Route path="/trayApp" component={TrayAppPage} />
-                                <Route path="*" component={NotFound} />
-                            </Switch>
-                        </RootProvider>
+                        <ChartThemeProvider theme={theme}>
+                            <RootProvider>
+                                <Switch>
+                                    <Route path="/" exact component={MainAppPage} />
+                                    <Route path="/app" component={MainAppPage} />
+                                    <Route path="/trayApp" component={TrayAppPage} />
+                                    <Route path="*" component={NotFound} />
+                                </Switch>
+                            </RootProvider>
+                        </ChartThemeProvider>
                     </ThemeProvider>
                 </AntdThemeProvider>
             </ConfigProvider>

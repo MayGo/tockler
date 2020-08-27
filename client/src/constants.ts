@@ -21,10 +21,10 @@ export const ThemeVariables: any = {
     [THEME_DARK]: {
         name: THEME_DARK,
         variables: {
-            'normal-color': '#000000',
+            'normal-color': '#0e0e0e',
             'primary-color': '#8363ff',
             'body-background': '#303030',
-            'component-background': '#000000',
+            'component-background': '#0e0e0e',
         },
     },
     [THEME_LIGHT]: {

@@ -114,7 +114,7 @@ export const SummaryCalendar = () => {
             if (isToday) {
                 style = { background: '#e6f7ff' };
             } else {
-                style = { background: 'rgb(230, 230, 230)' };
+                style = { background: 'rgb(230, 230, 230, 0.2)' };
             }
         }
         return (

@@ -12,9 +12,18 @@ const cyan900 = '#006064';
 const colors = [deepOrange600, yellow200, lime300, lightGreen500, teal700, cyan900];
 const blueGrey50 = '#ECEFF1';
 const blueGrey300 = '#90A4AE';
+
 export const blueGrey700 = '#455A64';
 export const grey900 = '#212121';
 export const disabledGrey = '#e6e6e6';
+
+export const getLabelColor = (isDark, isEnabled) => {
+    if (isDark) {
+        return isEnabled ? almostWhite : blueGrey700;
+    }
+
+    return !isEnabled ? disabledGrey : disabledGrey;
+};
 // *
 // * Typography
 // *
@@ -33,17 +42,21 @@ const baseProps = {
 // *
 // * Labels
 // *
-const baseLabelStyles = {
+const baseLabelStyles = isDark => ({
     fontFamily: sansSerif,
     fontSize,
     letterSpacing,
     padding,
-    fill: blueGrey700,
+    fill: isDark ? almostWhite : blueGrey700,
     stroke: 'transparent',
     strokeWidth: 0,
-};
+});
 
-const centeredLabelStyles = assign({ textAnchor: 'middle' }, baseLabelStyles);
+const almostWhite = '#c3c3c3';
+const lightGray = '#151515';
+const gray = '#212121';
+
+const centeredLabelStyles = isDark => assign({ textAnchor: 'middle' }, baseLabelStyles(isDark));
 // *
 // * Strokes
 // *
@@ -51,35 +64,27 @@ const strokeDasharray = '10, 5';
 const strokeLinecap = 'round';
 const strokeLinejoin = 'round';
 
-export const chartTheme = {
-    area: assign(
-        {
-            style: {
-                data: {
-                    fill: grey900,
-                },
-                labels: centeredLabelStyles,
-            },
-        },
-        baseProps,
-    ),
+export const getChartTheme = isDark => ({
+    isDark,
+    chart: baseProps,
+
     axis: assign(
         {
             style: {
                 axis: {
                     fill: 'transparent',
-                    stroke: blueGrey300,
+                    stroke: isDark ? gray : blueGrey300,
                     strokeWidth: 1,
                     strokeLinecap,
                     strokeLinejoin,
                 },
-                axisLabel: assign({}, centeredLabelStyles, {
+                axisLabel: assign({}, centeredLabelStyles(isDark), {
                     padding,
                     stroke: 'transparent',
                 }),
                 grid: {
                     fill: 'none',
-                    stroke: blueGrey50,
+                    stroke: isDark ? lightGray : blueGrey50,
                     strokeDasharray,
                     strokeLinecap,
                     strokeLinejoin,
@@ -88,13 +93,13 @@ export const chartTheme = {
                 ticks: {
                     fill: 'transparent',
                     size: 5,
-                    stroke: blueGrey300,
+                    stroke: isDark ? gray : blueGrey300,
                     strokeWidth: 1,
                     strokeLinecap,
                     strokeLinejoin,
                 },
-                tickLabels: assign({}, baseLabelStyles, {
-                    fill: blueGrey700,
+                tickLabels: assign({}, baseLabelStyles(isDark), {
+                    fill: isDark ? almostWhite : blueGrey700,
                 }),
             },
         },
@@ -104,11 +109,50 @@ export const chartTheme = {
         {
             style: {
                 data: {
-                    fill: blueGrey700,
+                    fill: isDark ? almostWhite : blueGrey700,
                     padding,
                     strokeWidth: 0,
                 },
-                labels: baseLabelStyles,
+                labels: baseLabelStyles(isDark),
+            },
+        },
+        baseProps,
+    ),
+
+    tooltip: {
+        style: assign({}, centeredLabelStyles(isDark), { padding: 5, pointerEvents: 'none' }),
+        flyoutStyle: {
+            stroke: isDark ? almostWhite : blueGrey300,
+            strokeWidth: 0.5,
+            fill: isDark ? '#000000' : '#ffffff',
+            pointerEvents: 'none',
+        },
+        cornerRadius: 3,
+        pointerLength: 5,
+    },
+
+    pie: assign(
+        {
+            colorScale: colors,
+            style: {
+                data: {
+                    padding,
+                    stroke: blueGrey50,
+                    strokeWidth: 1,
+                },
+                labels: assign({}, baseLabelStyles(isDark), { padding: 20 }),
+            },
+        },
+        baseProps,
+    ),
+
+    area: assign(
+        {
+            style: {
+                data: {
+                    fill: grey900,
+                },
+                labels: centeredLabelStyles(isDark),
             },
         },
         baseProps,
@@ -117,15 +161,15 @@ export const chartTheme = {
         {
             style: {
                 max: { padding, stroke: blueGrey700, strokeWidth: 1 },
-                maxLabels: baseLabelStyles,
+                maxLabels: baseLabelStyles(isDark),
                 median: { padding, stroke: blueGrey700, strokeWidth: 1 },
-                medianLabels: baseLabelStyles,
+                medianLabels: baseLabelStyles(isDark),
                 min: { padding, stroke: blueGrey700, strokeWidth: 1 },
-                minLabels: baseLabelStyles,
+                minLabels: baseLabelStyles(isDark),
                 q1: { padding, fill: blueGrey700 },
-                q1Labels: baseLabelStyles,
+                q1Labels: baseLabelStyles(isDark),
                 q3: { padding, fill: blueGrey700 },
-                q3Labels: baseLabelStyles,
+                q3Labels: baseLabelStyles(isDark),
             },
             boxWidth: 20,
         },
@@ -137,7 +181,7 @@ export const chartTheme = {
                 data: {
                     stroke: blueGrey700,
                 },
-                labels: centeredLabelStyles,
+                labels: centeredLabelStyles(isDark),
             },
             candleColors: {
                 positive: '#ffffff',
@@ -146,7 +190,7 @@ export const chartTheme = {
         },
         baseProps,
     ),
-    chart: baseProps,
+
     errorbar: assign(
         {
             borderWidth: 8,
@@ -157,7 +201,7 @@ export const chartTheme = {
                     stroke: blueGrey700,
                     strokeWidth: 2,
                 },
-                labels: centeredLabelStyles,
+                labels: centeredLabelStyles(isDark),
             },
         },
         baseProps,
@@ -177,8 +221,8 @@ export const chartTheme = {
             data: {
                 type: 'circle',
             },
-            labels: baseLabelStyles,
-            title: assign({}, baseLabelStyles, { padding: 5 }),
+            labels: baseLabelStyles(isDark),
+            title: assign({}, baseLabelStyles(isDark), { padding: 5 }),
         },
     },
     line: assign(
@@ -190,25 +234,12 @@ export const chartTheme = {
                     stroke: blueGrey700,
                     strokeWidth: 2,
                 },
-                labels: centeredLabelStyles,
+                labels: centeredLabelStyles(isDark),
             },
         },
         baseProps,
     ),
-    pie: assign(
-        {
-            colorScale: colors,
-            style: {
-                data: {
-                    padding,
-                    stroke: blueGrey50,
-                    strokeWidth: 1,
-                },
-                labels: assign({}, baseLabelStyles, { padding: 20 }),
-            },
-        },
-        baseProps,
-    ),
+
     scatter: assign(
         {
             style: {
@@ -218,7 +249,7 @@ export const chartTheme = {
                     stroke: 'transparent',
                     strokeWidth: 0,
                 },
-                labels: centeredLabelStyles,
+                labels: centeredLabelStyles(isDark),
             },
         },
         baseProps,
@@ -229,17 +260,7 @@ export const chartTheme = {
         },
         baseProps,
     ),
-    tooltip: {
-        style: assign({}, centeredLabelStyles, { padding: 5, pointerEvents: 'none' }),
-        flyoutStyle: {
-            stroke: blueGrey300,
-            strokeWidth: 0.5,
-            fill: '#ffffff',
-            pointerEvents: 'none',
-        },
-        cornerRadius: 3,
-        pointerLength: 5,
-    },
+
     voronoi: assign(
         {
             style: {
@@ -248,7 +269,10 @@ export const chartTheme = {
                     stroke: 'transparent',
                     strokeWidth: 0,
                 },
-                labels: assign({}, centeredLabelStyles, { padding: 5, pointerEvents: 'none' }),
+                labels: assign({}, centeredLabelStyles(isDark), {
+                    padding: 5,
+                    pointerEvents: 'none',
+                }),
                 flyout: {
                     stroke: grey900,
                     strokeWidth: 1,
@@ -259,4 +283,4 @@ export const chartTheme = {
         },
         baseProps,
     ),
-};
+});
