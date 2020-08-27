@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import { RootProvider } from './RootContext';
@@ -13,11 +13,38 @@ import { useAppDataState } from './routes/AppDataProvider';
 import { AntdThemeProvider } from './routes/AntdThemeProvider';
 import { ThemeProvider } from 'styled-components';
 import { ThemeVariables, THEME_LIGHT } from './constants';
+import { EventEmitter } from './services/EventEmitter';
+import { Logger } from './logger';
+import { getTheme, saveTheme } from './services/settings.api';
 
 moment.locale('en-gb');
 
 export function MainRouter() {
-    const [theme, setTheme] = React.useState(ThemeVariables[THEME_LIGHT]);
+    const savedTheme = getTheme();
+
+    const [theme, setTheme] = React.useState(savedTheme || ThemeVariables[THEME_LIGHT]);
+
+    const changeActiveTheme = (event, themeName) => {
+        const themeVariables = ThemeVariables[themeName];
+        if (themeVariables) {
+            setTheme(themeVariables);
+        } else {
+            Logger.error('No such theme:', themeName);
+        }
+    };
+
+    useEffect(() => {
+        EventEmitter.on('activeThemeChanged', changeActiveTheme);
+        return () => {
+            Logger.debug('Clearing eventEmitter');
+            EventEmitter.off('activeThemeChanged', changeActiveTheme);
+        };
+    }, [changeActiveTheme]);
+
+    useEffect(() => {
+        saveTheme(theme);
+        Logger.info('Theme saved:', theme);
+    }, [theme]);
 
     const state: any = useAppDataState();
 

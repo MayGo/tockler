@@ -31,12 +31,12 @@ export const ThemeSelect = () => {
             <Box pl={10}>
                 <ColorPicker
                     color={variables['primary-color']}
-                    onChange={value => {
+                    onChange={color => {
                         setTheme({
                             ...ThemeVariables[name],
                             variables: {
                                 ...ThemeVariables[name].variables,
-                                'primary-color': value.hex,
+                                'primary-color': color,
                             },
                         });
                     }}
