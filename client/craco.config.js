@@ -1,5 +1,3 @@
-const CracoLessPlugin = require('craco-less');
-
 const AntdThemePlugin = require('antd-theme/plugin');
 const ThemeLoaderPlugin = require('./theme.loader.webpack');
 

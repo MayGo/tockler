@@ -13,8 +13,7 @@ const overrideWebpackConfig = ({ context, webpackConfig, pluginOptions }) => {
 
     const throwError = (message, githubIssueQuery) =>
         throwUnexpectedConfigError({
-            packageName: 'craco-less',
-            githubRepo: 'DocSpring/craco-less',
+            packageName: 'craco-less-modified',
             message,
             githubIssueQuery,
         });
