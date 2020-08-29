@@ -5,7 +5,6 @@ import { initIpcActions } from './API';
 import config from './config';
 import { connectAndSync } from './models/db';
 import { sendToTrayWindow, sendToMainWindow } from './window-manager';
-import { info } from 'console';
 
 let logger = logManager.getLogger('AppManager');
 

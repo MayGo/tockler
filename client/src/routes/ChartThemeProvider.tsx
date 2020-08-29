@@ -1,6 +1,6 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
 import { Logger } from '../logger';
-import { THEME_DARK, THEME_LIGHT } from '../constants';
+import { THEME_DARK } from '../constants';
 
 import { getChartTheme } from '../components/Timeline/ChartTheme';
 

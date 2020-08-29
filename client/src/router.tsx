@@ -40,7 +40,7 @@ export function MainRouter() {
             Logger.debug('Clearing eventEmitter');
             EventEmitter.off('activeThemeChanged', changeActiveTheme);
         };
-    }, [changeActiveTheme]);
+    }, [changeActiveTheme]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         saveTheme(theme);
