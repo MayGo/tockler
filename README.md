@@ -10,6 +10,10 @@ Supported:
 -   macOS
 -   Linux
 
+# Feedback
+
+Feel free to make feature requests and 'Star' this project.
+
 # Features
 
 -   View application usage and online time in timeline and table
@@ -54,12 +58,6 @@ on Windows: `%USERPROFILE%\AppData\Roaming\tockler\logs\main.log`
 
 This project needs you! If you would like to support this project's further development, feel free to donate.
 Your donation is highly appreciated. Thank you!
-
-Feel free to make feature requests and 'Star' this project.
-
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=MayGo&url=https://github.com/MayGo/tockler&title=Tockler&language=en_GB&tags=github&category=software)
-
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAHHBZZCZVDMA)
 
 ## Development
 
