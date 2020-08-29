@@ -35,6 +35,7 @@ Supported:
 ![Changing items color](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-change_color.png 'Changing items color')
 ![Settings](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-settings.png 'Settings')
 ![Summary](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-summary.png 'Summary')
+![Search](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-search.png 'Search')
 ![Tray window](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-tray.png 'Tray window')
 
 # Debugging
