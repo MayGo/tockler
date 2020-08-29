@@ -103,6 +103,7 @@ const overrideWebpackConfig = ({ context, webpackConfig, pluginOptions }) => {
             context.env === 'production' &&
             rule.loader.includes(`${pathSep}mini-css-extract-plugin${pathSep}`)
         ) {
+            /*  
             lessRule.use.push({
                 loader: rule.loader,
                 options: {
@@ -110,6 +111,7 @@ const overrideWebpackConfig = ({ context, webpackConfig, pluginOptions }) => {
                     ...(pluginOptions.miniCssExtractPluginOptions || {}),
                 },
             });
+            */
         } else if (rule.loader.includes(`${pathSep}sass-loader${pathSep}`)) {
             const defaultLessLoaderOptions =
                 context.env === 'production' ? { sourceMap: true } : {};
