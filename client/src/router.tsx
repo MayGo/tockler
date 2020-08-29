@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import { RootProvider } from './RootContext';
@@ -25,14 +25,17 @@ export function MainRouter() {
 
     const [theme, setTheme] = React.useState(savedTheme || ThemeVariables[THEME_LIGHT]);
 
-    const changeActiveTheme = (event, themeName) => {
-        const themeVariables = ThemeVariables[themeName];
-        if (themeVariables) {
-            setTheme(themeVariables);
-        } else {
-            Logger.error('No such theme:', themeName);
-        }
-    };
+    const changeActiveTheme = useCallback(
+        (event, themeName) => {
+            const themeVariables = ThemeVariables[themeName];
+            if (themeVariables) {
+                setTheme(themeVariables);
+            } else {
+                Logger.error('No such theme:', themeName);
+            }
+        },
+        [setTheme],
+    );
 
     useEffect(() => {
         EventEmitter.on('activeThemeChanged', changeActiveTheme);
