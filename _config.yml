@@ -2,7 +2,7 @@ title: Tockler
 description: Automatically track applications usage and working time.
 google_analytics: UA-73697939-1
 show_downloads: true
-theme: jekyll-theme-architect
+theme: jekyll-theme-modernist
 
 gems:
   - jekyll-mentions
