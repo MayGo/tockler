@@ -35,7 +35,7 @@
         "electron-store": "5.2.0",
         "electron-updater": "4.3.1",
         "hazardous": "^0.3.0",
-        "knex": "^0.21.1",
+        "knex": "^0.21.4",
         "knex-webpack-migration-source": "^1.0.0",
         "lodash": "^4.17.15",
         "menubar": "9.0.1",
