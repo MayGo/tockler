@@ -31,7 +31,7 @@
         "eiphop": "^1.0.13",
         "electron-context-menu": "2.1.0",
         "electron-is-dev": "^1.2.0",
-        "electron-log": "^4.2.2",
+        "electron-log": "^4.2.4",
         "electron-store": "5.2.0",
         "electron-updater": "4.3.1",
         "hazardous": "^0.3.0",
