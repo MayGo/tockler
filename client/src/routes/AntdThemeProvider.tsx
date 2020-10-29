@@ -3,7 +3,7 @@ import { loadTheme, ITheme as ComputedTheme } from 'antd-theme/lib/loadThemedSty
 import serializedVariableGroups from 'antd-theme/lib//themes';
 import Parser from 'antd-theme/lib/parser';
 
-import { tree, contexts, functionRegistry } from 'antd-theme/lib//runtime';
+import { tree, contexts, functionRegistry } from 'antd-theme/lib/runtime';
 
 type ThemeVariables = Record<string, any>;
 
