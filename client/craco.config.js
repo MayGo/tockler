@@ -7,7 +7,7 @@ module.exports = {
             target: 'electron-renderer',
         },
     },*/
-
+    eslint: false,
     webpack: {
         plugins: [
             new AntdThemePlugin({
