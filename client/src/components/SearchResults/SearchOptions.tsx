@@ -8,16 +8,8 @@ import { Logger } from '../../logger';
 
 const { RangePicker } = DatePicker;
 
-interface IProps {
-    timerange: any;
-    setTimerange: (timerange: any) => void;
-    changeVisibleTimerange: (timerange: any) => void;
-}
-
-type IFullProps = IProps;
-
-const getDayBefore = d => moment(d).subtract(1, 'days');
-const getDayAfter = d => moment(d).add(1, 'days');
+const getDayBefore = (d) => moment(d).subtract(1, 'days');
+const getDayAfter = (d) => moment(d).add(1, 'days');
 
 export const SearchOptions = ({ setTimerange, timerange }) => {
     const onChange = (dates: any) => {
@@ -33,40 +25,30 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
     };
 
     const selectWeek = () => {
-        const beginDate = moment()
-            .startOf('day')
-            .subtract(7, 'days');
+        const beginDate = moment().startOf('day').subtract(7, 'days');
         const endDate = moment().endOf('day');
         setTimerange([beginDate, endDate]);
     };
     const selectMonth = () => {
-        const beginDate = moment()
-            .startOf('day')
-            .subtract(1, 'month');
+        const beginDate = moment().startOf('day').subtract(1, 'month');
         const endDate = moment().endOf('day');
         setTimerange([beginDate, endDate]);
     };
 
     const selectMonth3 = () => {
-        const beginDate = moment()
-            .startOf('day')
-            .subtract(3, 'month');
+        const beginDate = moment().startOf('day').subtract(3, 'month');
         const endDate = moment().endOf('day');
         setTimerange([beginDate, endDate]);
     };
 
     const selectYear = () => {
-        const beginDate = moment()
-            .startOf('day')
-            .subtract(1, 'year');
+        const beginDate = moment().startOf('day').subtract(1, 'year');
         const endDate = moment().endOf('day');
         setTimerange([beginDate, endDate]);
     };
 
     const selectYear3 = () => {
-        const beginDate = moment()
-            .startOf('day')
-            .subtract(3, 'year');
+        const beginDate = moment().startOf('day').subtract(3, 'year');
         const endDate = moment().endOf('day');
         setTimerange([beginDate, endDate]);
     };

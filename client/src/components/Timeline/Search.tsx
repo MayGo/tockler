@@ -9,16 +9,8 @@ import { TIMERANGE_MODE_TODAY } from '../../TimelineContext';
 
 const { RangePicker } = DatePicker;
 
-interface IProps {
-    timerange: any;
-    loadTimerange: (timerange: any) => void;
-    changeVisibleTimerange: (timerange: any) => void;
-}
-
-type IFullProps = IProps;
-
-const getDayBefore = d => moment(d).subtract(1, 'days');
-const getDayAfter = d => moment(d).add(1, 'days');
+const getDayBefore = (d) => moment(d).subtract(1, 'days');
+const getDayAfter = (d) => moment(d).add(1, 'days');
 
 export const Search = ({
     timerangeMode,
@@ -82,24 +74,18 @@ export const Search = ({
 
     const showAM = () => {
         const beginDate = moment(timerange[0]).startOf('day');
-        const endDate = moment(timerange[0])
-            .startOf('day')
-            .hour(12);
+        const endDate = moment(timerange[0]).startOf('day').hour(12);
         changeVisibleTimerange([beginDate, endDate]);
     };
 
     const showPM = () => {
-        const beginDate = moment(timerange[0])
-            .startOf('day')
-            .hour(12);
+        const beginDate = moment(timerange[0]).startOf('day').hour(12);
         const endDate = moment(timerange[0]).endOf('day');
         changeVisibleTimerange([beginDate, endDate]);
     };
 
     const showEvening = () => {
-        const beginDate = moment(visibleTimerange[0])
-            .startOf('day')
-            .hour(17);
+        const beginDate = moment(visibleTimerange[0]).startOf('day').hour(17);
         const endDate = moment(visibleTimerange[0]).endOf('day');
         changeVisibleTimerange([beginDate, endDate]);
     };

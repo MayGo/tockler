@@ -18,9 +18,7 @@ export function SearchPage({ location }: any) {
 
     const [searchResult, setSearchResult] = useState([]);
     const [timerange, setTimerange] = useState([
-        moment()
-            .startOf('day')
-            .subtract(10, 'days'),
+        moment().startOf('day').subtract(10, 'days'),
         moment().endOf('day'),
     ]);
 
@@ -38,13 +36,12 @@ export function SearchPage({ location }: any) {
         });
 
         setSearchResult(items);
-        console.info('searching with pa', searchPaging, items);
         setIsLoading(false);
 
         return;
     };
 
-    const exportItems = async searchStr => {
+    const exportItems = async (searchStr) => {
         setIsLoading(true);
         const [from, to] = timerange;
         await exportFromItems({
@@ -63,13 +60,11 @@ export function SearchPage({ location }: any) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchPaging]);
 
-    const onSubmit = event => {
+    const onSubmit = (event) => {
         setSearchPaging({ ...searchPaging, page: 1 });
 
         event.preventDefault();
     };
-
-    console.info('searchPaging', searchPaging);
 
     return (
         <MainLayout location={location}>

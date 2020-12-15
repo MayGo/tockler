@@ -2,7 +2,7 @@ import React, { useEffect, useCallback } from 'react';
 
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import { RootProvider } from './RootContext';
-import NotFound from './routes/404';
+import { NotFound } from './routes/404';
 import { MainAppPage } from './routes/MainAppPage';
 import { TrayAppPage } from './routes/TrayAppPage';
 
@@ -55,7 +55,7 @@ export function MainRouter() {
     return (
         <Router>
             <ConfigProvider locale={state.locale}>
-                <AntdThemeProvider theme={theme} onChange={value => setTheme(value)}>
+                <AntdThemeProvider theme={theme} onChange={(value) => setTheme(value)}>
                     <ThemeProvider theme={theme}>
                         <ChartThemeProvider theme={theme}>
                             <RootProvider>

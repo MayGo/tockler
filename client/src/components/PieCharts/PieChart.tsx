@@ -14,11 +14,6 @@ const sumApp = (p, c) => {
     });
 };
 
-interface IProps {
-    items: any;
-    taskName: string;
-    width: number;
-}
 export const PieChart = ({ items, taskName, width }) => {
     const { chartTheme } = useChartThemeState();
 
@@ -26,7 +21,7 @@ export const PieChart = ({ items, taskName, width }) => {
 
     const pieData = _(items)
         .groupBy(groupByField)
-        .map(b => {
+        .map((b) => {
             return b.reduce(sumApp, {
                 app: b[0].app,
                 title: b[0].title,

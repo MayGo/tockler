@@ -114,6 +114,7 @@ const overrideWebpackConfig = ({ context, webpackConfig, pluginOptions }) => {
         } else if (rule.loader.includes(`${pathSep}sass-loader${pathSep}`)) {
             const defaultLessLoaderOptions =
                 context.env === 'production' ? { sourceMap: true } : {};
+                console.error('asdsadas...sd..sa',pluginOptions.lessLoaderOptions);
             lessRule.use.push({
                 loader: require.resolve('less-loader'),
                 options: {

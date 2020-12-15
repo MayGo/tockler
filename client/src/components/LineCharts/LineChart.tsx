@@ -19,7 +19,7 @@ const scale = { x: 'time', y: 'time' };
 const padding = { left: 50, top: 20, bottom: 20, right: 10 };
 const domainPadding = { y: 40, x: [20, 40] };
 
-const labelComponent = theme => (
+const labelComponent = (theme) => (
     <VictoryTooltip
         style={theme.tooltip.style}
         cornerRadius={theme.tooltip.cornerRadius}
@@ -62,9 +62,9 @@ export const LineChart = () => {
             />
 
             <VictoryBar
-                y={d => toTimeDuration(convertDate(d.beginDate), convertDate(d.beginDate))}
-                y0={d => toTimeDuration(convertDate(d.beginDate), convertDate(d.endDate))}
-                x={d => formatToDay(convertDate(d.beginDate).startOf('day'))}
+                y={(d) => toTimeDuration(convertDate(d.beginDate), convertDate(d.beginDate))}
+                y0={(d) => toTimeDuration(convertDate(d.beginDate), convertDate(d.endDate))}
+                x={(d) => formatToDay(convertDate(d.beginDate).startOf('day'))}
                 barWidth={barHeight}
                 data={onlineTimesValues}
                 labelComponent={labelComponent(chartTheme)}
@@ -78,9 +78,9 @@ export const LineChart = () => {
                 }
             />
             <VictoryBar
-                y={d => toTimeDuration(convertDate(d.beginDate), convertDate(d.beginDate))}
-                y0={d => addToTimeDuration(convertDate(d.beginDate), d.online)}
-                x={d => formatToDay(convertDate(d.beginDate).startOf('day'))}
+                y={(d) => toTimeDuration(convertDate(d.beginDate), convertDate(d.beginDate))}
+                y0={(d) => addToTimeDuration(convertDate(d.beginDate), d.online)}
+                x={(d) => formatToDay(convertDate(d.beginDate).startOf('day'))}
                 barWidth={10}
                 style={{ data: { fill: COLORS.green } }}
                 data={onlineTimesValues}

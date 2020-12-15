@@ -6,10 +6,6 @@ interface IProps {
     color: any;
     onChange: any;
 }
-interface IState {
-    color: any;
-    displayColorPicker?: any;
-}
 
 const defaultColor = '#000000';
 export const ColorPicker = ({ color = defaultColor, onChange }: IProps) => {
@@ -33,7 +29,7 @@ export const ColorPicker = ({ color = defaultColor, onChange }: IProps) => {
         setSisplayColorPicker(false);
     };
 
-    const handleChange = color => {
+    const handleChange = (color) => {
         setPickerColor(color.hex);
         onChange(color.hex);
     };
