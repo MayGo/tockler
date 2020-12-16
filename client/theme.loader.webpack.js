@@ -1,3 +1,4 @@
+
 const path = require('path');
 const AntdThemePlugin = require('antd-theme/plugin');
 
@@ -22,7 +23,7 @@ const overrideWebpackConfig = ({ context, webpackConfig, pluginOptions }) => {
 
     pluginOptions = pluginOptions || {};
 
-    const oneOfRule = webpackConfig.module.rules.find(rule => rule.oneOf);
+    const oneOfRule = webpackConfig.module.rules.find((rule) => rule.oneOf);
     if (!oneOfRule) {
         throwError(
             "Can't find a 'oneOf' rule under module.rules in the " +
@@ -32,7 +33,7 @@ const overrideWebpackConfig = ({ context, webpackConfig, pluginOptions }) => {
     }
 
     const sassRule = oneOfRule.oneOf.find(
-        rule => rule.test && rule.test.toString().includes('scss|sass'),
+        (rule) => rule.test && rule.test.toString().includes('scss|sass'),
     );
     if (!sassRule) {
         throwError(
@@ -48,7 +49,7 @@ const overrideWebpackConfig = ({ context, webpackConfig, pluginOptions }) => {
     };
 
     const loaders = sassRule.use;
-    loaders.forEach(ruleOrLoader => {
+    loaders.forEach((ruleOrLoader) => {
         let rule;
         if (typeof ruleOrLoader === 'string') {
             rule = {
@@ -102,8 +103,8 @@ const overrideWebpackConfig = ({ context, webpackConfig, pluginOptions }) => {
             context.env === 'production' &&
             rule.loader.includes(`${pathSep}mini-css-extract-plugin${pathSep}`)
         ) {
-            /*  
-            lessRule.use.push({
+            /* 
+           lessRule.use.push({
                 loader: rule.loader,
                 options: {
                     ...rule.options,
@@ -114,7 +115,6 @@ const overrideWebpackConfig = ({ context, webpackConfig, pluginOptions }) => {
         } else if (rule.loader.includes(`${pathSep}sass-loader${pathSep}`)) {
             const defaultLessLoaderOptions =
                 context.env === 'production' ? { sourceMap: true } : {};
-                console.error('asdsadas...sd..sa',pluginOptions.lessLoaderOptions);
             lessRule.use.push({
                 loader: require.resolve('less-loader'),
                 options: {
