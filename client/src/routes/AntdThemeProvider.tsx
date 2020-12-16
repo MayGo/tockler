@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { loadTheme, ITheme as ComputedTheme } from 'antd-theme/lib/loadThemedStyles.js';
-import serializedVariableGroups from 'antd-theme/lib//themes';
+import serializedVariableGroups from 'antd-theme/lib/themes';
 import Parser from 'antd-theme/lib/parser';
 
 import { tree, contexts, functionRegistry } from 'antd-theme/lib/runtime';
@@ -27,7 +27,7 @@ type ThemeAction = (state: ThemeOptions) => void;
 
 const ThemeContext = React.createContext<[ThemeState, ThemeAction] | undefined>(undefined);
 
-const deserialize = node => {
+const deserialize = (node) => {
     if (typeof node === 'boolean') {
         return node;
     }
@@ -79,10 +79,11 @@ interface RuntimeValue {
 
 const lookup = new Map<string, Theme>();
 
-const themes: Theme[] = Object.keys(serializedVariableGroups).map(name => {
+console.error('serializedVariableGroups', serializedVariableGroups);
+const themes: Theme[] = Object.keys(serializedVariableGroups).map((name) => {
     const serializedVariables = serializedVariableGroups[name];
     const variables: Record<string, string | RuntimeValue> = {};
-    Object.keys(serializedVariables).forEach(name => {
+    Object.keys(serializedVariables).forEach((name) => {
         const value = serializedVariables[name];
         if (typeof value === 'object') {
             variables[name] = {
@@ -103,7 +104,7 @@ function parseVariables(variables: Record<string, string> | undefined) {
         return;
     }
     const result = {};
-    Object.keys(variables).forEach(name => {
+    Object.keys(variables).forEach((name) => {
         result[name] = new Parser(variables[name]).parse();
     });
 
@@ -123,7 +124,7 @@ function compute(options: ThemeOptions): ComputedTheme {
     if (!theme) {
         return computed;
     }
-
+    console.info('theme', theme);
     const variables = parseVariables(_variables);
     const context = new contexts.Eval({}, [
         {
@@ -137,9 +138,10 @@ function compute(options: ThemeOptions): ComputedTheme {
         },
     ]);
 
-    Object.keys(theme.variables).forEach(name => {
+    Object.keys(theme.variables).forEach((name) => {
         const value = theme.variables[name];
         if (typeof value === 'string') {
+            console.info('computed name, value', name, value);
             computed.set(name, value);
             return;
         }
@@ -147,15 +149,18 @@ function compute(options: ThemeOptions): ComputedTheme {
         try {
             computed.set(name, value.node.eval(context).toCSS(context));
         } catch (err) {
+            console.error('err', err);
             computed.set(name, value.default);
         }
     });
+    console.info('computed', computed);
     return computed;
 }
 
 export function setTheme(theme: ThemeOptions) {
     const variables = compute(theme);
     loadTheme(variables);
+    console.info('set VARIABLES', variables);
     return variables;
 }
 
@@ -177,6 +182,7 @@ export const AntdThemeProvider: React.FC<AntdThemeProviderProps> = ({
             setTimeout(() => {
                 const variables = compute(theme);
                 loadTheme(variables);
+                console.info('loading theme', variables, theme);
                 pending.current = undefined;
                 setIsLoading(false);
             }, 0);

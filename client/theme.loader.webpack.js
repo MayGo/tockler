@@ -1,10 +1,9 @@
-
 const path = require('path');
 const AntdThemePlugin = require('antd-theme/plugin');
 
 // code is from https://github.com/DocSpring/craco-less/blob/master/lib/craco-less.js
 // Needed to remove couple of rules to make AntdThemePlugin.loader work
-const enableRuleIfInDoubt = false;
+const enableRuleIfInDoubt = true;
 
 const overrideWebpackConfig = ({ context, webpackConfig, pluginOptions }) => {
     const { getLoader, loaderByName, throwUnexpectedConfigError } = require('@craco/craco');
