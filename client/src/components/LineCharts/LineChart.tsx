@@ -15,9 +15,9 @@ import {
 import { diffAndFormatShort } from '../../utils';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
 
-const scale = { x: 'time', y: 'time' };
-const padding = { left: 50, top: 20, bottom: 20, right: 10 };
-const domainPadding = { y: 40, x: [20, 40] };
+const scale: any = { x: 'time', y: 'time' };
+const padding: any = { left: 50, top: 20, bottom: 20, right: 10 };
+const domainPadding: any = { y: 40, x: [20, 40] };
 
 const labelComponent = theme => (
     <VictoryTooltip
@@ -29,6 +29,7 @@ const labelComponent = theme => (
         horizontal={false}
     />
 );
+
 export const LineChart = () => {
     const { chartTheme } = useChartThemeState();
     const chartWidth = useWindowWidth();

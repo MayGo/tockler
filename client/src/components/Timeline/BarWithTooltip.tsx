@@ -41,7 +41,7 @@ export const BarWithTooltip = ({
                         pointerLength={theme.tooltip.pointerLength}
                         flyoutStyle={theme.tooltip.flyoutStyle}
                         active
-                        events={null}
+                        events={{}}
                         text={getTooltipLabel(datum)}
                     />
                 </Portal>

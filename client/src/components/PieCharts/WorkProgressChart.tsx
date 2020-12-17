@@ -59,6 +59,15 @@ export const WorkProgressChart = ({ items, width, hoursToWork }) => {
         pieData.push(pausesItem);
     }
 
+    const style: any = {
+        data: {
+            fill: colorProp,
+            stroke: colorProp,
+            strokeWidth: 0.5,
+            fillOpacity: 0.75,
+        },
+    };
+
     return (
         <VictoryPie
             theme={chartTheme}
@@ -67,14 +76,7 @@ export const WorkProgressChart = ({ items, width, hoursToWork }) => {
             height={width}
             innerRadius={width / 4}
             containerComponent={<VictoryContainer responsive={false} />}
-            style={{
-                data: {
-                    fill: colorProp,
-                    stroke: colorProp,
-                    strokeWidth: 0.5,
-                    fillOpacity: 0.75,
-                },
-            }}
+            style={style}
             labels={({ datum }) => {
                 const dur = moment.duration(datum.timeDiffInMs);
                 const formattedDuration = dur.format();
