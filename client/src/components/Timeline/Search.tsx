@@ -9,14 +9,6 @@ import { TIMERANGE_MODE_TODAY } from '../../TimelineContext';
 
 const { RangePicker } = DatePicker;
 
-interface IProps {
-    timerange: any;
-    loadTimerange: (timerange: any) => void;
-    changeVisibleTimerange: (timerange: any) => void;
-}
-
-type IFullProps = IProps;
-
 const getDayBefore = d => moment(d).subtract(1, 'days');
 const getDayAfter = d => moment(d).add(1, 'days');
 
@@ -28,6 +20,7 @@ export const Search = ({
     changeVisibleTimerange,
     liveView,
     setLiveView,
+    createNewItem,
 }) => {
     const showLiveViewButton = timerangeMode === TIMERANGE_MODE_TODAY;
     const toggleLiveView = () => {
@@ -143,6 +136,9 @@ export const Search = ({
                 </Box>
             )}
             <Box flex={1} />
+            <Box p={1}>
+                <Button onClick={createNewItem}>New Log item</Button>
+            </Box>
             <Box p={1}>
                 <Button onClick={showDay} type="dashed">
                     All Day

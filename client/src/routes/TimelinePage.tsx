@@ -30,6 +30,7 @@ export function TimelinePage({ location }: any) {
         setTimerangeMode,
         liveView,
         setLiveView,
+        createNewItem: () => {},
     };
     const timelineProps = {
         timerange,

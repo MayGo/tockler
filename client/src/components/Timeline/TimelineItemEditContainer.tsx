@@ -3,9 +3,12 @@ import { changeColorForApp } from '../../services/appSettings.api';
 import { saveTrackItem, deleteByIds, updateTrackItemColor } from '../../services/trackItem.api';
 import { TimelineItemEdit } from './TimelineItemEdit';
 import { Logger } from '../../logger';
+import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 
 export const TimelineItemEditContainer = props => {
-    const { setSelectedTimelineItem, reloadTimerange } = props;
+    const { reloadTimerange } = props;
+    const selectedTimelineItem = useStoreState(state => state.selectedTimelineItem);
+    const setSelectedTimelineItem = useStoreActions(actions => actions.setSelectedTimelineItem);
     const deleteTimelineItem = async trackItem => {
         const id = trackItem.id;
         Logger.debug('Delete timeline trackItem', id);
@@ -43,5 +46,5 @@ export const TimelineItemEditContainer = props => {
         clearTimelineItem,
         saveTimelineItem,
     };
-    return <TimelineItemEdit {...props} {...moreProps} />;
+    return <TimelineItemEdit selectedTimelineItem={selectedTimelineItem} {...moreProps} />;
 };
