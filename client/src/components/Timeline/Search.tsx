@@ -6,6 +6,7 @@ import React from 'react';
 import { getTodayTimerange } from './timeline.utils';
 import { Logger } from '../../logger';
 import { TIMERANGE_MODE_TODAY } from '../../TimelineContext';
+import { useStoreActions } from '../../store/easyPeasy';
 
 const { RangePicker } = DatePicker;
 
@@ -20,8 +21,16 @@ export const Search = ({
     changeVisibleTimerange,
     liveView,
     setLiveView,
-    createNewItem,
 }) => {
+    const setSelectedTimelineItem = useStoreActions(actions => actions.setSelectedTimelineItem);
+
+    const createNewItem = () => {
+        setSelectedTimelineItem({
+            beginDate: visibleTimerange[0].valueOf(),
+            endDate: visibleTimerange[1].valueOf(),
+        });
+    };
+
     const showLiveViewButton = timerangeMode === TIMERANGE_MODE_TODAY;
     const toggleLiveView = () => {
         setLiveView(!liveView);
@@ -137,7 +146,12 @@ export const Search = ({
             )}
             <Box flex={1} />
             <Box p={1}>
-                <Button onClick={createNewItem}>New Log item</Button>
+                <Tooltip
+                    placement="bottom"
+                    title="Start creating log with visible timerange as begin and end times."
+                >
+                    <Button onClick={createNewItem}>New Log</Button>
+                </Tooltip>
             </Box>
             <Box p={1}>
                 <Button onClick={showDay} type="dashed">
