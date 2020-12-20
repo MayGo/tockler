@@ -15,7 +15,7 @@ import { FilterDropdown, FilterInput, Highlight, TotalCount } from './TrackItemT
 import { Logger } from '../../logger';
 import { deleteByIds } from '../../services/trackItem.api';
 import { checkIfOneDay } from '../../timeline.util';
-import { useStoreState } from '../../store/easyPeasy';
+import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 
 const calculateTotal = filteredData => {
     const totalMs = sumBy(filteredData, (c: any) =>
@@ -31,22 +31,11 @@ const paginationConf = {
     pageSizeOptions: ['50', '100', '300', '500'],
 };
 
-const deleteTimelineItems = ids => {
-    Logger.debug('Delete timeline items', ids);
-
-    if (ids) {
-        deleteByIds(ids).then(() => {
-            Logger.debug('Deleted timeline items', ids);
-            // TODO: reload timerange or remove from timeline
-        });
-    } else {
-        Logger.error('No ids, not deleting from DB');
-    }
-};
-
 export const TrackItemTable = () => {
     const timeItems = useStoreState(state => state.timeItems);
     const visibleTimerange = useStoreState(state => state.visibleTimerange);
+
+    const fetchTimerange = useStoreActions(actions => actions.fetchTimerange);
 
     const [data, setData] = useState<any>([]);
     const [state, setState] = useState<any>({
@@ -59,6 +48,18 @@ export const TrackItemTable = () => {
         filtered: false,
         selectedRowKeys: [],
     });
+
+    const deleteTimelineItems = async ids => {
+        Logger.debug('Delete timeline items', ids);
+
+        if (ids) {
+            await deleteByIds(ids);
+            Logger.debug('Deleted timeline items', ids);
+            fetchTimerange();
+        } else {
+            Logger.error('No ids, not deleting from DB');
+        }
+    };
 
     const searchInput = useRef<any>();
 

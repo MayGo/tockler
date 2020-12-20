@@ -229,13 +229,7 @@ export const Timeline = memo(() => {
                 )}
                 <Popover
                     style={{ zIndex: 930 }}
-                    content={
-                        <TimelineItemEditContainer
-                            reloadTimerange={fetchTimerange}
-                            showDeleteBtn
-                            showCloseBtn
-                        />
-                    }
+                    content={<TimelineItemEditContainer />}
                     visible={!!selectedTimelineItem}
                     trigger="click"
                 >
@@ -295,8 +289,8 @@ export const Timeline = memo(() => {
                                     onBrushDomainChange={handleEditBrushDebounced}
                                     brushStyle={{
                                         pointerEvents: 'none',
-                                        stroke: '#8363ff',
-                                        fill: chartTheme.isDark ? 'green' : 'black',
+                                        stroke: chartTheme.isDark ? 'white' : 'black',
+                                        fill: chartTheme.isDark ? 'white' : 'black',
                                         opacity: ({ active }) => (active ? 0.5 : 0.4),
                                     }}
                                     brushAreaStyle={{
