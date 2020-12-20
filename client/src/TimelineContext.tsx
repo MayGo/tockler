@@ -103,6 +103,7 @@ export const TimelineProvider = ({ children }) => {
         setTimerangeMode,
         liveView,
         setLiveView,
+        fetchTimerange,
     };
 
     useEffect(() => {

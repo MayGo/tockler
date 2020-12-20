@@ -11,6 +11,8 @@ import {
     VictoryBrushContainer,
     VictoryChart,
     VictoryZoomContainer,
+    VictoryBrushLine,
+    LineSegment,
 } from 'victory';
 import { convertDate, TIME_FORMAT } from '../../constants';
 import { TimelineRowType } from '../../enum/TimelineRowType';
@@ -33,6 +35,7 @@ interface IProps {
 
     selectedTimelineItem?: any;
     setSelectedTimelineItem?: any;
+    reloadTimerange?: any;
     toggleRow?: any;
 
     chartWidth?: number;
@@ -91,9 +94,21 @@ const rowEnabledDefaults = {
     [TimelineRowType.Status]: true,
 };
 
+const GridComponent = props => {
+    console.info('...................', props);
+};
+
 export const Timeline = memo<IFullProps>(
-    ({ timerange, visibleTimerange, setVisibleTimerange, isLoading, timeItems }) => {
+    ({
+        timerange,
+        visibleTimerange,
+        setVisibleTimerange,
+        isLoading,
+        timeItems,
+        reloadTimerange,
+    }) => {
         const { chartTheme } = useChartThemeState();
+        const [selectedTimerange, setSelectedTimerange] = useState<any>();
         const [selectedTimelineItem, setSelectedTimelineItem] = useState<any>();
         const [isRowEnabled, setIsRowEnabled] = useState<any>(rowEnabledDefaults);
 
@@ -110,6 +125,7 @@ export const Timeline = memo<IFullProps>(
                 Logger.error('No item selected');
             }
         };
+
         const changeVisibleTimerange = range => {
             setVisibleTimerange([moment(range[0]), moment(range[1])]);
         };
@@ -123,9 +139,22 @@ export const Timeline = memo<IFullProps>(
 
             changeVisibleTimerange(domain.y);
         };
+
+        const handleEditBrush = domain => {
+            if (domain) {
+                const beginDate = convertDate(domain[0]).valueOf();
+                const endDate = convertDate(domain[1]).valueOf();
+
+                Logger.debug('EditBrush changed:', beginDate, endDate);
+
+                setSelectedTimelineItem({ ...selectedTimelineItem, beginDate, endDate });
+            }
+        };
+
         const calcRowEnabledColor = ({ index }) => {
             return getLabelColor(chartTheme.isDark, isRowEnabled[index]);
         };
+
         const calcRowEnabledColorFlipped = index => {
             return getLabelColor(chartTheme.isDark, !isRowEnabled[index]);
         };
@@ -201,6 +230,7 @@ export const Timeline = memo<IFullProps>(
         };
 
         const handleBrushDebounced = debounce(handleBrush, 300);
+        const handleEditBrushDebounced = debounce(handleEditBrush, 300);
 
         const domain: any = {
             y: [convertDate(timerange[0]), convertDate(timerange[1])],
@@ -221,6 +251,7 @@ export const Timeline = memo<IFullProps>(
                             <TimelineItemEditContainer
                                 selectedTimelineItem={selectedTimelineItem}
                                 setSelectedTimelineItem={setSelectedTimelineItem}
+                                reloadTimerange={reloadTimerange}
                                 showDeleteBtn
                                 showCloseBtn
                             />
@@ -246,12 +277,6 @@ export const Timeline = memo<IFullProps>(
                                 />
                             }
                         >
-                            <VictoryAxis
-                                tickValues={[1, 2, 3]}
-                                tickFormat={['App', 'Status', 'Log']}
-                                events={axisEvents}
-                                style={axisStyle}
-                            />
                             <VictoryAxis dependentAxis tickCount={20} />
 
                             <VictoryBar
@@ -266,6 +291,38 @@ export const Timeline = memo<IFullProps>(
                                         getTooltipLabel={getTooltipLabel}
                                         onClickBarItem={handleSelectionChanged}
                                     />
+                                }
+                            />
+                            <VictoryAxis
+                                tickValues={[1, 2, 3]}
+                                tickFormat={['App', 'Status', 'Log']}
+                                events={axisEvents}
+                                style={axisStyle}
+                                gridComponent={
+                                    selectedTimelineItem ? (
+                                        <VictoryBrushLine
+                                            width={barWidth}
+                                            dimension="y"
+                                            brushDomain={[
+                                                selectedTimelineItem._y,
+                                                selectedTimelineItem._y0,
+                                            ]}
+                                            onBrushDomainChange={handleEditBrushDebounced}
+                                            brushStyle={{
+                                                pointerEvents: 'none',
+                                                stroke: '#8363ff',
+                                                fill: chartTheme.isDark ? 'green' : 'black',
+                                                opacity: ({ active }) => (active ? 0.5 : 0.4),
+                                            }}
+                                            brushAreaStyle={{
+                                                stroke: 'none',
+                                                fill: 'transparent',
+                                                opacity: 0,
+                                            }}
+                                        />
+                                    ) : (
+                                        <LineSegment />
+                                    )
                                 }
                             />
                         </VictoryChart>

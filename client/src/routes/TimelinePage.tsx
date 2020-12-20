@@ -18,6 +18,7 @@ export function TimelinePage({ location }: any) {
         setTimerangeMode,
         liveView,
         setLiveView,
+        fetchTimerange,
     } = useContext(TimelineContext);
 
     const searchProps = {
@@ -36,6 +37,7 @@ export function TimelinePage({ location }: any) {
         setVisibleTimerange,
         timeItems,
         isLoading,
+        reloadTimerange: fetchTimerange,
     };
 
     return (

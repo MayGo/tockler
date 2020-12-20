@@ -100,8 +100,7 @@ export function TrayAppPage({ location }: any) {
                 <Box pt={2}>
                     <TimelineItemEdit
                         selectedTimelineItem={selectedItem}
-                        colorScopeHidden
-                        showPlayIcon
+                        trayEdit
                         saveTimelineItem={startNewLogItem}
                     />
                 </Box>

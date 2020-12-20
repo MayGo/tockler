@@ -74,7 +74,7 @@ export function SearchPage({ location }: any) {
     return (
         <MainLayout location={location}>
             <form onSubmit={onSubmit}>
-                <Flex p={1} w={1} flexDirection="column">
+                <Flex p={1} width={1} flexDirection="column">
                     <Flex p={1}>
                         <Input
                             placeholder="Search from all items"

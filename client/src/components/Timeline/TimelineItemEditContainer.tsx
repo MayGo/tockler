@@ -5,15 +5,15 @@ import { TimelineItemEdit } from './TimelineItemEdit';
 import { Logger } from '../../logger';
 
 export const TimelineItemEditContainer = props => {
-    const { setSelectedTimelineItem } = props;
-    const deleteTimelineItem = id => {
+    const { setSelectedTimelineItem, reloadTimerange } = props;
+    const deleteTimelineItem = async trackItem => {
+        const id = trackItem.id;
         Logger.debug('Delete timeline trackItem', id);
 
         if (id) {
-            deleteByIds(id).then(() => {
-                Logger.debug('Deleted timeline items', id);
-                // TODO: reload timerange or remove from timeline
-            });
+            await deleteByIds([id]);
+            Logger.debug('Deleted timeline items', id);
+            reloadTimerange();
             setSelectedTimelineItem(null);
         } else {
             Logger.error('No ids, not deleting from DB');
@@ -33,7 +33,7 @@ export const TimelineItemEditContainer = props => {
         }
 
         setSelectedTimelineItem(null);
-        // TODO: reload items
+        reloadTimerange && reloadTimerange();
     };
 
     const clearTimelineItem = () => setSelectedTimelineItem(null);

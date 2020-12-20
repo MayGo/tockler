@@ -14,8 +14,7 @@ import { filterItems, getUniqueAppNames } from '../Timeline/timeline.utils';
 import { FilterDropdown, FilterInput, Highlight, TotalCount } from './TrackItemTable.styles';
 import { Logger } from '../../logger';
 import { deleteByIds } from '../../services/trackItem.api';
-
-const checkIfOneDay = visibleTimerange => visibleTimerange[0].isSame(visibleTimerange[1], 'day');
+import { checkIfOneDay } from '../../timeline.util';
 
 const calculateTotal = filteredData => {
     const totalMs = sumBy(filteredData, (c: any) =>

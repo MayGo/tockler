@@ -1,18 +1,22 @@
 import { Box, Flex } from 'reflexbox';
-import { Button, Input, Select, Tooltip } from 'antd';
-import { PlayCircleOutlined, SaveOutlined, DeleteOutlined, CloseOutlined } from '@ant-design/icons';
+import { Button, Divider, Input, Modal, Select, TimePicker, Tooltip } from 'antd';
+import {
+    PlayCircleOutlined,
+    SaveOutlined,
+    DeleteOutlined,
+    CloseOutlined,
+    ExclamationCircleOutlined,
+} from '@ant-design/icons';
 import React, { useState, useEffect, memo } from 'react';
 import { ColorPicker } from './ColorPicker';
 import { Logger } from '../../logger';
+import moment from 'moment';
 
 interface IProps {
     selectedTimelineItem: any;
     saveTimelineItem: any;
     changeColorForApp?: any;
-    colorScopeHidden?: boolean;
-    showCloseBtn?: boolean;
-    showDeleteBtn?: boolean;
-    showPlayIcon?: boolean;
+    trayEdit?: boolean;
     clearTimelineItem?: any;
     deleteTimelineItem?: any;
 }
@@ -35,10 +39,7 @@ function propsAreEqual(prev, next) {
 export const TimelineItemEdit = memo<IProps>(
     ({
         selectedTimelineItem,
-        colorScopeHidden,
-        showCloseBtn,
-        showDeleteBtn,
-        showPlayIcon,
+        trayEdit,
         clearTimelineItem,
         saveTimelineItem,
         deleteTimelineItem,
@@ -117,11 +118,22 @@ export const TimelineItemEdit = memo<IProps>(
 
             saveTimelineItem(trackItem, colorScope);
         };
-
         const deleteItem = () => {
             const { trackItem } = state;
 
             deleteTimelineItem(trackItem);
+        };
+
+        const showDeleteConfirm = () => {
+            Modal.confirm({
+                title: 'Delete',
+                icon: <ExclamationCircleOutlined />,
+                content: 'Sure you want to delete?',
+                okText: 'Delete',
+                cancelText: 'Cancel',
+                onOk: deleteItem,
+                zIndex: 10000,
+            });
         };
 
         if (!selectedTimelineItem) {
@@ -129,56 +141,35 @@ export const TimelineItemEdit = memo<IProps>(
             return null;
         }
 
-        return (
-            <Flex p={1} w={1}>
-                <Box px={1} w={1 / 3}>
-                    <Input value={trackItem.app} placeholder="App" onChange={changeAppName} />
-                </Box>
-                <Box px={1} flex="1">
-                    <Input value={trackItem.title} placeholder="Title" onChange={changeAppTitle} />
-                </Box>
+        const colorChanged = selectedTimelineItem.color !== trackItem.color;
 
-                <Box px={1}>
-                    <ColorPicker color={trackItem.color} onChange={changeColorHandler} />
-                </Box>
-
-                {!colorScopeHidden && (
-                    <Box px={1}>
-                        <Tooltip
-                            placement="left"
-                            title="Can also change color for all items or all future items"
-                        >
-                            <Select
-                                value={colorScope}
-                                style={{ width: 120 }}
-                                onChange={changeColorScopeHandler}
-                            >
-                                <Select.Option value="ONLY_THIS">This trackItem</Select.Option>
-                                <Select.Option value="NEW_ITEMS">Future items</Select.Option>
-                                <Select.Option value="ALL_ITEMS">All items</Select.Option>
-                            </Select>
-                        </Tooltip>
+        if (trayEdit) {
+            return (
+                <Flex p={1} width={1}>
+                    <Box px={1} width={1 / 3}>
+                        <Input value={trackItem.app} placeholder="App" onChange={changeAppName} />
                     </Box>
-                )}
-                <Box px={1}>
-                    <Button
-                        type="primary"
-                        shape="circle"
-                        icon={showPlayIcon ? <PlayCircleOutlined /> : <SaveOutlined />}
-                        onClick={saveBasedOnColorOptionHandler}
-                    />
-                </Box>
-                {showDeleteBtn && (
+                    <Box px={1} flex="1">
+                        <Input
+                            value={trackItem.title}
+                            placeholder="Title"
+                            onChange={changeAppTitle}
+                        />
+                    </Box>
+
+                    <Box px={1}>
+                        <ColorPicker color={trackItem.color} onChange={changeColorHandler} />
+                    </Box>
+
                     <Box px={1}>
                         <Button
                             type="primary"
                             shape="circle"
-                            icon={<DeleteOutlined />}
-                            onClick={deleteItem}
+                            icon={<PlayCircleOutlined />}
+                            onClick={saveBasedOnColorOptionHandler}
                         />
                     </Box>
-                )}
-                {showCloseBtn && (
+
                     <Box px={1}>
                         <Button
                             type="primary"
@@ -187,9 +178,79 @@ export const TimelineItemEdit = memo<IProps>(
                             onClick={closeEdit}
                         />
                     </Box>
-                )}
-            </Flex>
+                </Flex>
+            );
+        }
+
+        return (
+            <Box width={500}>
+                <Flex p={1} width={1}>
+                    <Box px={1} width={1 / 3}>
+                        <Input value={trackItem.app} placeholder="App" onChange={changeAppName} />
+                    </Box>
+                    <Box px={1} flex="1">
+                        <Input
+                            value={trackItem.title}
+                            placeholder="Title"
+                            onChange={changeAppTitle}
+                        />
+                    </Box>
+                </Flex>
+                <Flex p={1} width={1}>
+                    <Box px={1}>
+                        <ColorPicker color={trackItem.color} onChange={changeColorHandler} />
+                    </Box>
+
+                    <Box px={1} width={1 / 3}>
+                        {colorChanged && (
+                            <Tooltip
+                                placement="left"
+                                title="Can also change color for all items or all future items"
+                            >
+                                <Select
+                                    value={colorScope}
+                                    style={{ width: 130 }}
+                                    onChange={changeColorScopeHandler}
+                                >
+                                    <Select.Option value="ONLY_THIS">This trackItem</Select.Option>
+                                    <Select.Option value="NEW_ITEMS">Future items</Select.Option>
+                                    <Select.Option value="ALL_ITEMS">All items</Select.Option>
+                                </Select>
+                            </Tooltip>
+                        )}
+                    </Box>
+
+                    <Box width={1 / 3}>
+                        <TimePicker value={moment(trackItem.beginDate)} />
+                    </Box>
+                    <Box width={1 / 3}>
+                        <TimePicker value={moment(trackItem.endDate)} />
+                    </Box>
+                </Flex>
+                <Divider />
+                <Flex width={1}>
+                    <Box px={1}>
+                        <Button icon={<CloseOutlined />} onClick={closeEdit}>
+                            Close
+                        </Button>
+                    </Box>
+                    <Box sx={{ flex: 1 }}></Box>
+                    <Box px={1}>
+                        <Button type="link" icon={<DeleteOutlined />} onClick={showDeleteConfirm}>
+                            Delete
+                        </Button>
+                    </Box>
+                    <Box px={1}>
+                        <Button
+                            type="primary"
+                            icon={<SaveOutlined />}
+                            onClick={saveBasedOnColorOptionHandler}
+                        >
+                            Save
+                        </Button>
+                    </Box>
+                </Flex>
+            </Box>
         );
     },
-    propsAreEqual,
 );
