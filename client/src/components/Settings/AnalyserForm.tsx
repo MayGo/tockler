@@ -1,11 +1,10 @@
 import { Flex } from 'reflexbox';
 import { Button, Card, Tooltip } from 'antd';
 import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import React, { useContext, useState, useEffect } from 'react';
-
-import { TimelineContext } from '../../TimelineContext';
+import React, { useState, useEffect } from 'react';
 import { AnalyserFormItem } from './AnalyserFormItem';
 import { fetchAnalyserSettings, saveAnalyserSettings } from '../../services/settings.api';
+import { useStoreState } from '../../store/easyPeasy';
 
 const defaultAnalyserSettings = [
     { findRe: '\\w+-\\d+.*JIRA', takeTitle: '', takeGroup: '\\w+-\\d+', enabled: true },
@@ -15,7 +14,7 @@ const defaultAnalyserSettings = [
 const emptyItem = { findRe: '', takeTitle: '', takeGroup: '', enabled: false };
 
 export const AnalyserForm = () => {
-    const { timeItems } = useContext(TimelineContext);
+    const timeItems = useStoreState(state => state.timeItems);
     const { appItems } = timeItems;
     const [analyserItems, setAnalyserItems] = useState<any>([]);
 

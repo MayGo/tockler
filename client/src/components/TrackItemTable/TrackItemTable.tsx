@@ -15,6 +15,7 @@ import { FilterDropdown, FilterInput, Highlight, TotalCount } from './TrackItemT
 import { Logger } from '../../logger';
 import { deleteByIds } from '../../services/trackItem.api';
 import { checkIfOneDay } from '../../timeline.util';
+import { useStoreState } from '../../store/easyPeasy';
 
 const calculateTotal = filteredData => {
     const totalMs = sumBy(filteredData, (c: any) =>
@@ -43,7 +44,10 @@ const deleteTimelineItems = ids => {
     }
 };
 
-export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
+export const TrackItemTable = () => {
+    const timeItems = useStoreState(state => state.timeItems);
+    const visibleTimerange = useStoreState(state => state.visibleTimerange);
+
     const [data, setData] = useState<any>([]);
     const [state, setState] = useState<any>({
         filteredInfo: {},

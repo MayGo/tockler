@@ -35,6 +35,35 @@ export const setDayFromTimerange = (visibleTimerange, timerange) => [
 
 export const getTodayTimerange = () => [moment().startOf('day'), moment().endOf('day')];
 
+export const getCenteredTimerange = (timerange, visibleTimerange, middleTime) => {
+    const timeBetweenMs = moment(visibleTimerange[1]).diff(visibleTimerange[0]);
+    const middlePoint = timeBetweenMs / 5;
+
+    let beginDate = moment(middleTime).subtract(timeBetweenMs - middlePoint, 'milliseconds');
+    let endDate = moment(middleTime).add(middlePoint, 'milliseconds');
+
+    // if new beginDate is smaller than actual timerange, then cap it with timeranges beginDate
+    const underTime = moment(timerange[0]).diff(beginDate);
+    if (underTime > 0) {
+        beginDate = moment(timerange[0]);
+        endDate = moment(endDate).add(underTime, 'milliseconds');
+    }
+
+    // if new endDate is bigger than actual timeranges endDate, then cap it with timeranges endDate
+    const overTime = moment(endDate).diff(timerange[1]);
+    if (overTime > 0) {
+        endDate = moment(timerange[1]);
+        beginDate = moment(beginDate).subtract(overTime, 'milliseconds');
+
+        //edge case, if we have 23h visible timerange, then cap it with timeranges beginDate
+        if (moment(timerange[0]).diff(beginDate) > 0) {
+            beginDate = moment(timerange[0]);
+        }
+    }
+
+    return [beginDate, endDate];
+};
+
 export const getUniqueAppNames = appItems =>
     _(appItems)
         .map('app')

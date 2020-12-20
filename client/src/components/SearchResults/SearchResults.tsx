@@ -3,13 +3,13 @@ import { UnorderedListOutlined } from '@ant-design/icons';
 import useReactRouter from 'use-react-router';
 import { sumBy } from 'lodash';
 import moment from 'moment';
-import React, { useState, useRef, useEffect, useContext, memo } from 'react';
+import React, { useState, useRef, useEffect, memo } from 'react';
 import Moment from 'react-moment';
 import { convertDate, DATE_TIME_FORMAT, TIME_FORMAT } from '../../constants';
 import { diffAndFormatShort } from '../../utils';
 import { TotalCount } from './SearchResults.styles';
 import { Logger } from '../../logger';
-import { TimelineContext } from '../../TimelineContext';
+import { useStoreActions } from '../../store/easyPeasy';
 
 const calculateTotal = filteredData => {
     const totalMs = sumBy(filteredData, (c: any) =>
@@ -21,7 +21,9 @@ const calculateTotal = filteredData => {
 };
 
 const SearchResultsPlain = ({ searchResult, searchPaging, setSearchPaging }) => {
-    const { loadTimerange, setVisibleTimerange } = useContext(TimelineContext);
+    const loadTimerange = useStoreActions(state => state.loadTimerange);
+    const setVisibleTimerange = useStoreActions(state => state.setVisibleTimerange);
+
     const { history } = useReactRouter();
 
     const paginationConf = {
@@ -31,7 +33,7 @@ const SearchResultsPlain = ({ searchResult, searchPaging, setSearchPaging }) => 
         current: searchPaging.page,
         pageSizeOptions: ['50', '100', '300', '500'],
         onChange: (page, pageSize) => {
-            console.error('Pagingation changed', page, pageSize);
+            console.error('Pagination changed', page, pageSize);
             // setSearchPaging({ page, pageSize });
         },
     };
