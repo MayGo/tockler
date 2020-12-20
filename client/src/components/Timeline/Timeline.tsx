@@ -12,7 +12,6 @@ import {
     VictoryChart,
     VictoryZoomContainer,
     VictoryBrushLine,
-    LineSegment,
 } from 'victory';
 import { convertDate, TIME_FORMAT } from '../../constants';
 import { TimelineRowType } from '../../enum/TimelineRowType';
@@ -90,32 +89,6 @@ const rowEnabledDefaults = {
     [TimelineRowType.App]: true,
     [TimelineRowType.Log]: true,
     [TimelineRowType.Status]: true,
-};
-
-const GridComponent = props => {
-    console.error('...................', props);
-    const { selectedTimelineItem, onBrushDomainChange, chartTheme } = props;
-    return selectedTimelineItem ? (
-        <VictoryBrushLine
-            width={barWidth}
-            dimension="y"
-            brushDomain={[selectedTimelineItem._y, selectedTimelineItem._y0]}
-            onBrushDomainChange={onBrushDomainChange}
-            brushStyle={{
-                pointerEvents: 'none',
-                stroke: '#8363ff',
-                fill: chartTheme.isDark ? 'green' : 'black',
-                opacity: ({ active }) => (active ? 0.5 : 0.4),
-            }}
-            brushAreaStyle={{
-                stroke: 'none',
-                fill: 'transparent',
-                opacity: 0,
-            }}
-        />
-    ) : (
-        <LineSegment />
-    );
 };
 
 export const Timeline = memo<IFullProps>(

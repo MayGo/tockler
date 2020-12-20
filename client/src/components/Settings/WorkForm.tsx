@@ -9,7 +9,7 @@ const { Text } = Typography;
 export const WorkForm = () => {
     const { workSettings, setWorkSettings } = useContext(RootContext);
     // tslint:disable-next-line: variable-name
-    const [_ignore, { number }] = useFormState(workSettings, {
+    const [, { number }] = useFormState(workSettings, {
         onChange: (__ignore, ___ignore, nextStateValues) => {
             setWorkSettings(nextStateValues);
         },

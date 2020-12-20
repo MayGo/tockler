@@ -24,7 +24,7 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
         setShowTests(!showTests);
     };
 
-    const [_ignore, { text, raw }] = useFormState(analyserItem, {
+    const [, { text, raw }] = useFormState(analyserItem, {
         onChange: (__ignore, ___ignore, nextStateValues) => {
             saveItem(nextStateValues);
         },

@@ -2,7 +2,7 @@ import React, { useEffect, useCallback } from 'react';
 
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import { RootProvider } from './RootContext';
-import NotFound from './routes/404';
+import { NotFound } from './routes/404';
 import { MainAppPage } from './routes/MainAppPage';
 import { TrayAppPage } from './routes/TrayAppPage';
 
