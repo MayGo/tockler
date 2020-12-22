@@ -85,7 +85,6 @@ export const Timeline = memo(() => {
     const timeItems = useStoreState(state => state.timeItems);
 
     const setVisibleTimerange = useStoreActions(actions => actions.setVisibleTimerange);
-    const fetchTimerange = useStoreActions(actions => actions.fetchTimerange);
 
     const selectedTimelineItem = useStoreState(state => state.selectedTimelineItem);
     const setSelectedTimelineItem = useStoreActions(actions => actions.setSelectedTimelineItem);

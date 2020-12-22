@@ -1,12 +1,14 @@
 import { Select } from 'antd';
 import React from 'react';
 import { Box, Flex } from 'reflexbox';
-import { useTheme } from '../../routes/AntdThemeProvider';
-import { ThemeVariables } from '../../constants';
 import { ColorPicker } from '../Timeline/ColorPicker';
+import { useStoreActions, useStoreState } from '../../store/easyPeasy';
+import { PRIMARY_COLOR_VAR, themes } from '../../store/theme.util';
 
 export const ThemeSelect = () => {
-    const [{ name, variables, themes }, setTheme]: any = useTheme();
+    const theme: any = useStoreState(state => state.theme);
+    const setThemeByName = useStoreActions(actions => actions.setThemeByName);
+    const setThemeWithVariables = useStoreActions(actions => actions.setThemeWithVariables);
 
     return (
         <Flex pl={24} pt={10} pb={2}>
@@ -16,12 +18,12 @@ export const ThemeSelect = () => {
             <Box pl={10}>
                 <Select
                     style={{ width: 100 }}
-                    value={name}
+                    value={theme.name}
                     onChange={theme => {
-                        setTheme(ThemeVariables[theme]);
+                        setThemeByName(theme);
                     }}
                 >
-                    {themes.map(({ name }) => (
+                    {Object.keys(themes).map(name => (
                         <Select.Option key={name} value={name}>
                             {name}
                         </Select.Option>
@@ -30,13 +32,13 @@ export const ThemeSelect = () => {
             </Box>
             <Box pl={10}>
                 <ColorPicker
-                    color={variables['primary-color']}
+                    color={theme.variables[PRIMARY_COLOR_VAR]}
                     onChange={color => {
-                        setTheme({
-                            ...ThemeVariables[name],
+                        setThemeWithVariables({
+                            ...theme,
                             variables: {
-                                ...ThemeVariables[name].variables,
-                                'primary-color': color,
+                                ...theme.variables,
+                                [PRIMARY_COLOR_VAR]: color,
                             },
                         });
                     }}

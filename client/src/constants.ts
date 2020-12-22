@@ -12,37 +12,3 @@ export const BREAKPOINT_TIME = '04:00';
 export const convertDate = (d: Date) => moment(d);
 
 export const COLORS = { green: '#8BC34A' };
-
-export const THEME_DARK = 'dark';
-export const THEME_LIGHT = 'default';
-export const THEME_COMPACT = 'compact';
-
-export const ThemeVariables: any = {
-    [THEME_DARK]: {
-        name: THEME_DARK,
-        variables: {
-            'normal-color': '#0e0e0e',
-            'primary-color': '#8363ff',
-            'body-background': '#303030',
-            'component-background': '#0e0e0e',
-        },
-    },
-    [THEME_LIGHT]: {
-        name: THEME_LIGHT,
-        variables: {
-            'normal-color': '#ffffff',
-            'primary-color': '#8363ff',
-            'body-background': '#f8f8f8',
-            'component-background': '#ffffff',
-        },
-    },
-    [THEME_COMPACT]: {
-        name: THEME_COMPACT,
-        variables: {
-            'normal-color': '#ffffff',
-            'primary-color': '#8363ff',
-            'body-background': '#f8f8f8',
-            'component-background': '#f8f8f8',
-        },
-    },
-};
