@@ -90,7 +90,7 @@ export function TrayListItemPlain({
                         </Flex>
                     </Flex>
                     <Flex>
-                        {item.totalMs && item.totalMs > 1 && (
+                        {item.totalMs > 1 && (
                             <Box width={2 / 7}>
                                 <Medium>
                                     Duration: <b>{moment.duration(item.totalMs).format()}</b>

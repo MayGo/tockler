@@ -69,8 +69,6 @@ export function SearchPage({ location }: any) {
         event.preventDefault();
     };
 
-    console.info('searchPaging', searchPaging);
-
     return (
         <MainLayout location={location}>
             <form onSubmit={onSubmit}>
@@ -82,13 +80,13 @@ export function SearchPage({ location }: any) {
                                 name: 'search',
                             })}
                         />
-                        <Box pl={1}>
+                        <Box px={2}>
                             <Button type="primary" htmlType="submit">
                                 Search
                             </Button>
                         </Box>
 
-                        <Box pl={1}>
+                        <Box px={2}>
                             <Button
                                 onClick={() => {
                                     exportItems(formState.values.search);

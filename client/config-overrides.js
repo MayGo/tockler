@@ -31,6 +31,7 @@ const options = {
             ...Object.keys(themeVariables),
         ]),
     ),
+    lessUrl: '/less.min.js',
     generateOnce: false, // generate color.less on each compilation
 };
 

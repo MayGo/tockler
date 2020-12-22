@@ -1,5 +1,5 @@
 import { Box } from 'reflexbox';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, memo } from 'react';
 import randomcolor from 'randomcolor';
 import { TimelineItemEdit } from '../components/Timeline/TimelineItemEdit';
 import { TrayLayout } from '../components/TrayLayout/TrayLayout';
@@ -16,7 +16,7 @@ const EMPTY_SELECTED_ITEM = {};
 
 const EMPTY_ARRAY = [];
 
-export function TrayAppPage({ location }: any) {
+const TrayAppPageTemp = () => {
     const [loading, setLoading] = useState(true);
 
     const [selectedItem, setSelectedItem] = useState(EMPTY_SELECTED_ITEM);
@@ -95,7 +95,7 @@ export function TrayAppPage({ location }: any) {
     );
 
     return (
-        <TrayLayout location={location}>
+        <TrayLayout>
             {!runningLogItem && (
                 <Box pt={2}>
                     <TimelineItemEdit
@@ -114,6 +114,8 @@ export function TrayAppPage({ location }: any) {
             />
         </TrayLayout>
     );
-}
+};
 
-TrayAppPage.whyDidYouRender = true;
+TrayAppPageTemp.whyDidYouRender = true;
+
+export const TrayAppPage = memo(TrayAppPageTemp);
