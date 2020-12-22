@@ -1,5 +1,5 @@
 import { Box, Flex } from 'reflexbox';
-import { Button, Divider, Input, Modal, Select, TimePicker, Tooltip } from 'antd';
+import { Typography, Button, Divider, Input, Modal, Select, TimePicker, Tooltip } from 'antd';
 import {
     PlayCircleOutlined,
     SaveOutlined,
@@ -11,6 +11,9 @@ import React, { useState, useEffect, memo } from 'react';
 import { ColorPicker } from './ColorPicker';
 import { Logger } from '../../logger';
 import moment from 'moment';
+import { TrackItemType } from '../../enum/TrackItemType';
+import Text from 'antd/lib/typography/Text';
+const { Title } = Typography;
 
 interface IProps {
     selectedTimelineItem: any;
@@ -35,6 +38,12 @@ function propsAreEqual(prev, next) {
 
     return false;
 }*/
+
+const statusName = {
+    [TrackItemType.AppTrackItem]: 'App',
+    [TrackItemType.StatusTrackItem]: 'Status',
+    [TrackItemType.LogTrackItem]: 'Log',
+};
 
 export const TimelineItemEdit = memo<IProps>(
     ({
@@ -183,7 +192,10 @@ export const TimelineItemEdit = memo<IProps>(
         }
 
         return (
-            <Box width={500}>
+            <Box width={600}>
+                <Flex px={2} width={1} py={1} pt={3}>
+                    <Title level={5}>{statusName[trackItem.taskName] || 'New Log item'}</Title>
+                </Flex>
                 <Flex p={1} width={1}>
                     <Box px={1} width={1 / 3}>
                         <Input value={trackItem.app} placeholder="App" onChange={changeAppName} />
@@ -197,11 +209,10 @@ export const TimelineItemEdit = memo<IProps>(
                     </Box>
                 </Flex>
                 <Flex p={1} width={1}>
-                    <Box px={1}>
-                        <ColorPicker color={trackItem.color} onChange={changeColorHandler} />
-                    </Box>
-
-                    <Box px={1} width={1 / 3}>
+                    <Flex px={1} width={1 / 3}>
+                        <Box pr={2}>
+                            <ColorPicker color={trackItem.color} onChange={changeColorHandler} />
+                        </Box>
                         {colorChanged && (
                             <Tooltip
                                 placement="left"
@@ -209,7 +220,7 @@ export const TimelineItemEdit = memo<IProps>(
                             >
                                 <Select
                                     value={colorScope}
-                                    style={{ width: 130 }}
+                                    style={{ width: '100%' }}
                                     onChange={changeColorScopeHandler}
                                 >
                                     <Select.Option value="ONLY_THIS">This trackItem</Select.Option>
@@ -218,14 +229,16 @@ export const TimelineItemEdit = memo<IProps>(
                                 </Select>
                             </Tooltip>
                         )}
-                    </Box>
+                    </Flex>
 
-                    <Box width={1 / 3}>
-                        <TimePicker value={moment(trackItem.beginDate)} />
-                    </Box>
-                    <Box width={1 / 3}>
-                        <TimePicker value={moment(trackItem.endDate)} />
-                    </Box>
+                    <Flex px={1} width={2 / 3}>
+                        <Box pr={1}>
+                            <TimePicker value={moment(trackItem.beginDate)} />
+                        </Box>
+                        <Box>
+                            <TimePicker value={moment(trackItem.endDate)} />
+                        </Box>
+                    </Flex>
                 </Flex>
                 <Divider />
                 <Flex width={1}>

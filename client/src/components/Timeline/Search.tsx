@@ -2,6 +2,7 @@ import { Box, Flex } from 'reflexbox';
 import { Button, DatePicker, Tooltip } from 'antd';
 import { LeftOutlined, RightOutlined, PauseOutlined, CaretRightOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import randomcolor from 'randomcolor';
 import React, { memo } from 'react';
 import { getTodayTimerange } from './timeline.utils';
 import { Logger } from '../../logger';
@@ -26,6 +27,7 @@ export const Search = memo(() => {
 
     const createNewItem = () => {
         setSelectedTimelineItem({
+            color: randomcolor(),
             beginDate: visibleTimerange[0].valueOf(),
             endDate: visibleTimerange[1].valueOf(),
         });
