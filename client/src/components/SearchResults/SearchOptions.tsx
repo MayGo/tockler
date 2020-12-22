@@ -8,14 +8,6 @@ import { Logger } from '../../logger';
 
 const { RangePicker } = DatePicker;
 
-interface IProps {
-    timerange: any;
-    setTimerange: (timerange: any) => void;
-    changeVisibleTimerange: (timerange: any) => void;
-}
-
-type IFullProps = IProps;
-
 const getDayBefore = d => moment(d).subtract(1, 'days');
 const getDayAfter = d => moment(d).add(1, 'days');
 

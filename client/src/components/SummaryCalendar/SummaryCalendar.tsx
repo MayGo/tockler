@@ -2,10 +2,8 @@ import { Flex } from 'reflexbox';
 import { Calendar, Spin } from 'antd';
 import { CoffeeOutlined, EyeOutlined, LaptopOutlined, ToolOutlined } from '@ant-design/icons';
 import moment from 'moment';
-
 import React, { useContext, useEffect } from 'react';
 import useReactRouter from 'use-react-router';
-import { TimelineContext } from '../../TimelineContext';
 import { SummaryContext } from '../../SummaryContext';
 import { Spinner } from '../Timeline/Timeline.styles';
 import { Item, TaskList } from './SummaryCalendar.styles';
@@ -15,6 +13,7 @@ import { formatDuration } from './SummaryCalendar.util';
 import classNames from 'classnames';
 import padStart from 'lodash/padStart';
 import { DAY_MONTH_FORMAT } from '../../SummaryContext.util';
+import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 
 moment.locale('et');
 
@@ -25,7 +24,9 @@ const icons = {
     tool: <ToolOutlined />,
 };
 export const SummaryCalendar = () => {
-    const { loadTimerange, timerange } = useContext(TimelineContext);
+    const timerange = useStoreState(state => state.timerange);
+    const loadTimerange = useStoreActions(state => state.loadTimerange);
+
     const {
         selectedDate,
         setSelectedDate,

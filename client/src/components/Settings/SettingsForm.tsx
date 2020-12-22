@@ -9,16 +9,16 @@ import { ThemeSelect } from './ThemeSelect';
 export const SettingsForm = () => {
     return (
         <Form>
-            <Flex p={1} w={1} flexDirection="column">
+            <Flex p={1} width={1} flexDirection="column">
                 <Box>
-                    <Box p={1} w={1 / 3}>
+                    <Box p={1} width={1 / 3}>
                         <ThemeSelect />
                     </Box>
-                    <Box p={1} w={1 / 3}>
+                    <Box p={1} width={1 / 3}>
                         <WorkForm />
                     </Box>
 
-                    <Box p={1} w={1 / 3}>
+                    <Box p={1} width={1 / 3}>
                         <AppForm />
                     </Box>
                     <Box p={1}>

@@ -17,6 +17,11 @@ export const handleTimelineItems = (
     };
 };
 
+export const checkIfOneDay = visibleTimerange =>
+    visibleTimerange[0].isSame(visibleTimerange[1], 'day');
+
+export const rangeToDate = (range): [Date, Date] => [range[0].toDate(), range[1].toDate()];
+
 export const addToTimelineItems = (state, payload): ITimelineState => {
     const appIds = payload.appItems.map(item => item.id);
     const logIds = payload.logItems.map(item => item.id);

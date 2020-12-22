@@ -14,11 +14,6 @@ const sumApp = (p, c) => {
     });
 };
 
-interface IProps {
-    items: any;
-    taskName: string;
-    width: number;
-}
 export const PieChart = ({ items, taskName, width }) => {
     const { chartTheme } = useChartThemeState();
 

@@ -1,8 +1,7 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
 import { Logger } from '../logger';
-import { THEME_DARK } from '../constants';
-
 import { getChartTheme } from '../components/Timeline/ChartTheme';
+import { THEMES } from '../store/theme.util';
 
 export const ChartThemeContext = createContext({ chartTheme: getChartTheme(false) });
 
@@ -17,7 +16,7 @@ export const ChartThemeProvider = ({ theme, children }) => {
     useEffect(() => {
         Logger.info('Changing chartTheme');
 
-        setChartTheme(theme.name === THEME_DARK ? getChartTheme(true) : getChartTheme(false));
+        setChartTheme(theme.name === THEMES.DARK ? getChartTheme(true) : getChartTheme(false));
     }, [theme]);
     return (
         <ChartThemeContext.Provider value={defaultContext}>{children}</ChartThemeContext.Provider>

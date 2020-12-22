@@ -1,11 +1,11 @@
 export interface ITrackItem {
-    id: number;
-    taskName: string;
-    beginDate: string;
-    endDate: string;
-    app: string;
-    title: string;
-    color: string;
+    id?: number;
+    taskName?: string;
+    beginDate: number;
+    endDate: number;
+    app?: string;
+    title?: string;
+    color?: string;
 }
 /*
 id: 472,

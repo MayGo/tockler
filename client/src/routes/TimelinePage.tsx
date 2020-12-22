@@ -1,49 +1,32 @@
-import React, { useContext } from 'react';
+import React, { useEffect } from 'react';
 import { MainLayout } from '../components/MainLayout/MainLayout';
 import { PieCharts } from '../components/PieCharts/PieCharts';
 import { Search } from '../components/Timeline/Search';
 import { Timeline } from '../components/Timeline/Timeline';
 import { TrackItemTable } from '../components/TrackItemTable/TrackItemTable';
-import { TimelineContext } from '../TimelineContext';
+import { useInterval } from '../hooks/intervalHook';
+import { useStoreActions } from '../store/easyPeasy';
+
+const BG_SYNC_DELAY_MS = 3000;
 
 export function TimelinePage({ location }: any) {
-    const {
-        timerange,
-        visibleTimerange,
-        setVisibleTimerange,
-        timeItems,
-        loadTimerange,
-        isLoading,
-        timerangeMode,
-        setTimerangeMode,
-        liveView,
-        setLiveView,
-    } = useContext(TimelineContext);
+    const fetchTimerange = useStoreActions(actions => actions.fetchTimerange);
+    const bgSyncInterval = useStoreActions(actions => actions.bgSyncInterval);
 
-    const searchProps = {
-        changeVisibleTimerange: setVisibleTimerange,
-        loadTimerange,
-        timerange,
-        visibleTimerange,
-        timerangeMode,
-        setTimerangeMode,
-        liveView,
-        setLiveView,
-    };
-    const timelineProps = {
-        timerange,
-        visibleTimerange,
-        setVisibleTimerange,
-        timeItems,
-        isLoading,
-    };
+    useInterval(() => {
+        bgSyncInterval();
+    }, [BG_SYNC_DELAY_MS]);
+
+    useEffect(() => {
+        fetchTimerange();
+    }, [fetchTimerange]);
 
     return (
         <MainLayout location={location}>
-            <Search {...searchProps} />
-            <Timeline {...timelineProps} />
-            <PieCharts visibleTimerange={visibleTimerange} timeItems={timeItems} />
-            <TrackItemTable visibleTimerange={visibleTimerange} timeItems={timeItems} />
+            <Search />
+            <Timeline />
+            <PieCharts />
+            <TrackItemTable />
         </MainLayout>
     );
 }

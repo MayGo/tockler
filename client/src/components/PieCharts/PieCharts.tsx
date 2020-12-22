@@ -6,13 +6,12 @@ import { filterItems } from '../Timeline/timeline.utils';
 import { PieChart } from './PieChart';
 import { Heading } from './PieCharts.styles';
 import { WorkProgressChart } from './WorkProgressChart';
+import { useStoreState } from '../../store/easyPeasy';
 
-interface IProps {
-    timeItems: any;
-    visibleTimerange: any;
-}
+export const PieCharts = memo(() => {
+    const timeItems = useStoreState(state => state.timeItems);
+    const visibleTimerange = useStoreState(state => state.visibleTimerange);
 
-export const PieCharts = memo<IProps>(({ timeItems, visibleTimerange }) => {
     const { workSettings } = useContext(RootContext);
     const innerWidth = useWindowWidth();
 

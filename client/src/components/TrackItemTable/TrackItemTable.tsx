@@ -14,8 +14,8 @@ import { filterItems, getUniqueAppNames } from '../Timeline/timeline.utils';
 import { FilterDropdown, FilterInput, Highlight, TotalCount } from './TrackItemTable.styles';
 import { Logger } from '../../logger';
 import { deleteByIds } from '../../services/trackItem.api';
-
-const checkIfOneDay = visibleTimerange => visibleTimerange[0].isSame(visibleTimerange[1], 'day');
+import { checkIfOneDay } from '../../timeline.util';
+import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 
 const calculateTotal = filteredData => {
     const totalMs = sumBy(filteredData, (c: any) =>
@@ -31,20 +31,12 @@ const paginationConf = {
     pageSizeOptions: ['50', '100', '300', '500'],
 };
 
-const deleteTimelineItems = ids => {
-    Logger.debug('Delete timeline items', ids);
+export const TrackItemTable = () => {
+    const timeItems = useStoreState(state => state.timeItems);
+    const visibleTimerange = useStoreState(state => state.visibleTimerange);
 
-    if (ids) {
-        deleteByIds(ids).then(() => {
-            Logger.debug('Deleted timeline items', ids);
-            // TODO: reload timerange or remove from timeline
-        });
-    } else {
-        Logger.error('No ids, not deleting from DB');
-    }
-};
+    const fetchTimerange = useStoreActions(actions => actions.fetchTimerange);
 
-export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
     const [data, setData] = useState<any>([]);
     const [state, setState] = useState<any>({
         filteredInfo: {},
@@ -56,6 +48,18 @@ export const TrackItemTable = ({ visibleTimerange, timeItems }) => {
         filtered: false,
         selectedRowKeys: [],
     });
+
+    const deleteTimelineItems = async ids => {
+        Logger.debug('Delete timeline items', ids);
+
+        if (ids) {
+            await deleteByIds(ids);
+            Logger.debug('Deleted timeline items', ids);
+            fetchTimerange();
+        } else {
+            Logger.error('No ids, not deleting from DB');
+        }
+    };
 
     const searchInput = useRef<any>();
 

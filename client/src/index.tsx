@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
 import 'typeface-berkshire-swash';
 import { MainRouter } from './router';
-
 import { setupFrontendListener } from 'eiphop';
 import { AppDataProvider } from './routes/AppDataProvider';
+import { StoreProvider } from 'easy-peasy';
+import { mainStore } from './store/mainStore';
 
 (window as any).CSPSettings = {
     nonce: 'nonce',
@@ -20,8 +20,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 ReactDOM.render(
-    <AppDataProvider>
-        <MainRouter />
-    </AppDataProvider>,
+    <StoreProvider store={mainStore}>
+        <AppDataProvider>
+            <MainRouter />
+        </AppDataProvider>
+    </StoreProvider>,
     document.getElementById('root') as HTMLElement,
 );

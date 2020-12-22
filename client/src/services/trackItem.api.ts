@@ -91,7 +91,7 @@ export async function saveTrackItem(trackItem): Promise<any> {
     return item;
 }
 
-export function deleteByIds(trackItemIds: number) {
+export function deleteByIds(trackItemIds: number[]) {
     return emit('deleteByIds', { trackItemIds });
 }
 

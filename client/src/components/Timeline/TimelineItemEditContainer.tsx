@@ -1,19 +1,23 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { changeColorForApp } from '../../services/appSettings.api';
 import { saveTrackItem, deleteByIds, updateTrackItemColor } from '../../services/trackItem.api';
 import { TimelineItemEdit } from './TimelineItemEdit';
 import { Logger } from '../../logger';
+import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 
-export const TimelineItemEditContainer = props => {
-    const { setSelectedTimelineItem } = props;
-    const deleteTimelineItem = id => {
+export const TimelineItemEditContainer = memo(() => {
+    const selectedTimelineItem = useStoreState(state => state.selectedTimelineItem);
+    const setSelectedTimelineItem = useStoreActions(actions => actions.setSelectedTimelineItem);
+    const fetchTimerange = useStoreActions(actions => actions.fetchTimerange);
+
+    const deleteTimelineItem = async trackItem => {
+        const id = trackItem.id;
         Logger.debug('Delete timeline trackItem', id);
 
         if (id) {
-            deleteByIds(id).then(() => {
-                Logger.debug('Deleted timeline items', id);
-                // TODO: reload timerange or remove from timeline
-            });
+            await deleteByIds([id]);
+            Logger.debug('Deleted timeline items', id);
+            fetchTimerange();
             setSelectedTimelineItem(null);
         } else {
             Logger.error('No ids, not deleting from DB');
@@ -33,7 +37,7 @@ export const TimelineItemEditContainer = props => {
         }
 
         setSelectedTimelineItem(null);
-        // TODO: reload items
+        fetchTimerange();
     };
 
     const clearTimelineItem = () => setSelectedTimelineItem(null);
@@ -43,5 +47,5 @@ export const TimelineItemEditContainer = props => {
         clearTimelineItem,
         saveTimelineItem,
     };
-    return <TimelineItemEdit {...props} {...moreProps} />;
-};
+    return <TimelineItemEdit selectedTimelineItem={selectedTimelineItem} {...moreProps} />;
+});
