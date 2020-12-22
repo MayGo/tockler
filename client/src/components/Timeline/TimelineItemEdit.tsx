@@ -12,7 +12,7 @@ import { ColorPicker } from './ColorPicker';
 import { Logger } from '../../logger';
 import moment from 'moment';
 import { TrackItemType } from '../../enum/TrackItemType';
-import Text from 'antd/lib/typography/Text';
+
 const { Title } = Typography;
 
 interface IProps {
