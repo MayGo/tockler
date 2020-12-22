@@ -94,6 +94,23 @@ export const TimelineItemEdit = memo<IProps>(
                 },
             });
         };
+        const changeTime = attr => value => {
+            Logger.debug('Changed app time:', value);
+            const oldDate = moment(state.trackItem[attr]);
+            const newDate = moment(
+                value
+                    .toArray()
+                    .slice(0, 4)
+                    .concat(oldDate.toArray().slice(4)),
+            );
+            setState({
+                ...state,
+                trackItem: {
+                    ...state.trackItem,
+                    [attr]: newDate.valueOf(),
+                },
+            });
+        };
 
         const changeAppTitle = e => {
             const { value } = e.target;
@@ -233,10 +250,16 @@ export const TimelineItemEdit = memo<IProps>(
 
                     <Flex px={1} width={2 / 3}>
                         <Box pr={1}>
-                            <TimePicker value={moment(trackItem.beginDate)} />
+                            <TimePicker
+                                value={moment(trackItem.beginDate)}
+                                onChange={changeTime('beginDate')}
+                            />
                         </Box>
                         <Box>
-                            <TimePicker value={moment(trackItem.endDate)} />
+                            <TimePicker
+                                value={moment(trackItem.endDate)}
+                                onChange={changeTime('endDate')}
+                            />
                         </Box>
                     </Flex>
                 </Flex>
