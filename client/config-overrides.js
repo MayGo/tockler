@@ -31,7 +31,8 @@ const options = {
             ...Object.keys(themeVariables),
         ]),
     ),
-    lessUrl: '/less.min.js',
+    publicPath: process.env.PUBLIC_URL,
+    lessUrl: `${process.env.PUBLIC_URL}less.min.js`,
     generateOnce: false, // generate color.less on each compilation
 };
 
