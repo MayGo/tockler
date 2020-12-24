@@ -246,6 +246,7 @@ export const Timeline = memo(() => {
                                 responsive={false}
                                 zoomDimension="y"
                                 zoomDomain={{ y: rangeToDate(visibleTimerange) }}
+                                key={selectedTimelineItem && selectedTimelineItem.id}
                                 onZoomDomainChange={debounce(handleZoom, 300)}
                             />
                         }
@@ -267,7 +268,6 @@ export const Timeline = memo(() => {
                             }
                         />
                         <VictoryAxis
-                            key={selectedTimelineItem && selectedTimelineItem.id}
                             tickValues={[1, 2, 3]}
                             tickFormat={['App', 'Status', 'Log']}
                             events={axisEvents}
@@ -278,7 +278,6 @@ export const Timeline = memo(() => {
                                         !selectedTimelineItem ||
                                         selectedTimelineItem.taskName !== TrackItemType.LogTrackItem
                                     }
-                                    key={selectedTimelineItem && selectedTimelineItem.id}
                                     width={barWidth}
                                     dimension="y"
                                     brushDomain={[
