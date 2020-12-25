@@ -41,6 +41,7 @@ Feel free to make feature requests and 'Star' this project.
 ![Summary](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-summary.png 'Summary')
 ![Search](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-search.png 'Search')
 ![Tray window](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-tray.png 'Tray window')
+![Edit log item](https://github.com/MayGo/tockler/raw/master/screenshots/editing-log-item.png 'Edit log item')
 
 # Debugging
 
