@@ -37,7 +37,7 @@
         "react-use-form-state": "^0.12.1",
         "reactcss": "^1.2.3",
         "reflexbox": "^4.0.6",
-        "styled-components": "5.0.0",
+        "styled-components": "5.2.1",
         "typeface-berkshire-swash": "0.0.72",
         "use-react-router": "^1.0.7",
         "victory": "^35.4.3"
