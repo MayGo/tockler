@@ -23,7 +23,7 @@
         "moment-duration-format": "2.3.2",
         "randomcolor": "^0.6.2",
         "react": "^16.13.1",
-        "react-color": "2.18.0",
+        "react-color": "2.19.3",
         "react-component-queries": "2.3.0",
         "react-dev-utils": "^10.0.0",
         "react-dom": "^16.13.1",
