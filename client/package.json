@@ -21,7 +21,7 @@
         "loglevel": "^1.6.6",
         "moment": "^2.24.0",
         "moment-duration-format": "2.3.2",
-        "randomcolor": "^0.5.4",
+        "randomcolor": "^0.6.2",
         "react": "^16.13.1",
         "react-color": "2.18.0",
         "react-component-queries": "2.3.0",
