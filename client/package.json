@@ -34,7 +34,7 @@
         "react-scripts": "^4.0.1",
         "react-sizeme": "2.6.12",
         "react-timeago": "4.4.0",
-        "react-use-form-state": "^0.12.1",
+        "react-use-form-state": "^0.13.2",
         "reactcss": "^1.2.3",
         "reflexbox": "^4.0.6",
         "styled-components": "5.2.1",
