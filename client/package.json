@@ -13,7 +13,7 @@
         "debounce-promise": "^3.1.2",
         "easy-peasy": "^4.0.1",
         "eiphop": "^1.0.13",
-        "electron-store": "5.1.0",
+        "electron-store": "5.2.0",
         "fast-deep-equal": "^3.1.1",
         "less": "^3.13.1",
         "less-loader": "^6.2.0",
