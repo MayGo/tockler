@@ -11,7 +11,7 @@
         "babel-plugin-import": "^1.13.3",
         "cross-env": "6.0.3",
         "debounce-promise": "^3.1.2",
-        "easy-peasy": "^4.0.1",
+        "easy-peasy": "^5.0.0",
         "eiphop": "^1.0.13",
         "electron-store": "5.2.0",
         "fast-deep-equal": "^3.1.1",
