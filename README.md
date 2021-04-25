@@ -34,6 +34,14 @@
 
 Feel free to make feature requests by creating a issue and 'Star' this project.
 
+# Donations
+
+This project needs your support!
+
+If you find this app useful then feel free to donate. Anything helps to keep this app up to date and always improving.
+
+Thank you!
+
 # Made with
 
 -   [Electron](https://electron.atom.io/) with [Webpack](https://webpack.github.io/) and [Typescript](https://www.typescriptlang.org/)
@@ -62,11 +70,6 @@ on Linux: `~/.config/tockler/logs/main.log`
 on macOS: `~/Library/Logs/tockler/main.log`
 
 on Windows: `%USERPROFILE%\AppData\Roaming\tockler\logs\main.log`
-
-# Donations
-
-This project needs you! If you would like to support this project's further development, feel free to donate.
-Your donation is highly appreciated. Thank you!
 
 ## Development
 
