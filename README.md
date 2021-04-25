@@ -1,3 +1,13 @@
+<!-- DONATELINKS -->
+
+[![Donate using PayPal](https://github.com/MayGo/tockler/raw/master/badges/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAHHBZZCZVDMA)
+[![Sponsor on GitHub](https://github.com/MayGo/tockler/raw/master/badges/GitHub-Badge.svg)](https://github.com/sponsors/maygo/)
+[![Become a patron](https://github.com/MayGo/tockler/raw/master/badges/Patreon-Badge.svg)](https://www.patreon.com/Tockler)
+
+<!-- DONATELINKS -->
+
+---
+
 ## ![Tockler](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-logo.png 'Tockler')
 
 Automatically track applications usage and working time.
