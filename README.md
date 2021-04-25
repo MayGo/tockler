@@ -6,13 +6,21 @@
 
 <!-- DONATELINKS -->
 
----
+## [![Release](https://img.shields.io/github/v/release/MayGo/tockler)](https://github.com/MayGo/tockler/releases/latest)
 
 ## ![Tockler](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-logo.png 'Tockler')
 
-Automatically track applications usage and working time.
+**Automatically track applications usage and working time.**
 
-[![Release](https://img.shields.io/github/v/release/MayGo/tockler)](https://github.com/MayGo/tockler/releases/latest)
+> With Tockler you can go back in time and see what you were working on. You can get information on what apps were used - exactly at what time - and what title the application had at that moment. This is enough to determine how much you did something.
+
+**Track how you spent your time on a computer.**
+
+> Tockler tracks active applications usage and computer state. It records active application titles. It tracks idle, offline, and online state. You can see this data with a nice interactive timeline chart.
+
+**Analyze your computer usage**
+
+> See you total online time today, yesterday, or any other day. In monthly calendar views and with charts.
 
 # Applications installer download
 
@@ -24,19 +32,7 @@ Automatically track applications usage and working time.
 
 # Feedback
 
-Feel free to make feature requests and 'Star' this project.
-
-# Features
-
--   View application usage and online time in timeline and table
--   Add log items
--   Statistics and summaries
--   Remind user to start new log item.
--   Group log items (e.g 'Working with tockler' or 'JIRA-1234')
-
-# Features to be implemented
-
--   Remind to take a break
+Feel free to make feature requests by creating a issue and 'Star' this project.
 
 # Made with
 
