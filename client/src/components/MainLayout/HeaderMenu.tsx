@@ -4,6 +4,7 @@ import {
     AreaChartOutlined,
     SearchOutlined,
     SettingOutlined,
+    QuestionCircleOutlined,
 } from '@ant-design/icons';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -45,6 +46,13 @@ export const HeaderMenu = ({ location }: any) => (
             <Link to="/app/settings">
                 <SettingOutlined />
                 Settings
+            </Link>
+        </Menu.Item>
+
+        <Menu.Item key="/app/support">
+            <Link to="/app/support">
+                <QuestionCircleOutlined />
+                Support
             </Link>
         </Menu.Item>
     </GrayMenu>

@@ -1,7 +1,7 @@
 import { menubar, Menubar } from 'menubar';
 import MenuBuilder from './menu-builder';
 import { throttle } from 'lodash';
-import { app, ipcMain, BrowserWindow, autoUpdater, dialog } from 'electron';
+import { app, ipcMain, BrowserWindow, autoUpdater, dialog, shell } from 'electron';
 import config from './config';
 import * as os from 'os';
 import { logManager } from './log-manager';
@@ -100,6 +100,18 @@ export default class WindowManager {
                 app.dock.hide();
             }
         });
+        this.mainWindow.webContents.on('new-window', (event, url) => {
+            logger.info('URL', url);
+
+            if (url.startsWith('file://') || url.startsWith('http://127.0.0.1:3000')) {
+                return;
+            }
+
+            event.preventDefault();
+            // open url in a browser and prevent default
+            shell.openExternal(url);
+        });
+
         this.mainWindow.on('resize', throttle(WindowManager.storeWindowSize, 500));
         WindowManager.initMenus();
     }

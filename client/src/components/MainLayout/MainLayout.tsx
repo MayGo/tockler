@@ -10,7 +10,9 @@ export function MainLayout({ children, location }: any) {
             <Layout>
                 <HeaderMenu location={location} />
                 <Content>{children}</Content>
-                <Footer>Trimatech @ 2018</Footer>
+                <Footer>
+                    <a href="https://github.com/MayGo">MayGo</a> @ 2021
+                </Footer>
             </Layout>
         </div>
     );

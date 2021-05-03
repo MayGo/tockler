@@ -5,6 +5,7 @@ import { SummaryPage } from './SummaryPage';
 import { TimelinePage } from './TimelinePage';
 import { TrayAppPage } from './TrayAppPage';
 import { SearchPage } from './SearchPage';
+import { SupportPage } from './SupportPage';
 
 export function MainAppPage({ history }: any) {
     return (
@@ -13,6 +14,7 @@ export function MainAppPage({ history }: any) {
             <Route path="/app/timeline" component={TimelinePage} />
             <Route path="/app/settings" component={SettingsPage} />
             <Route path="/app/summary" component={SummaryPage} />
+            <Route path="/app/support" component={SupportPage} />
             <Route path="/app/search" component={SearchPage} />
             <Route path="/app/trayApp" component={TrayAppPage} />
         </Switch>

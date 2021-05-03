@@ -118,7 +118,7 @@ Set-AuthenticodeSignature -FilePath '.\app\get-foreground-window-title.ps1' -Cer
 # License
 
 GNU General Public License v2.0
-2017 MayGo @ [trimatech.ee](http://trimatech.ee)
+2021 MayGo (https://github.com/MayGo)
 
 # Functionality
 
