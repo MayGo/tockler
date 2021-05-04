@@ -5,9 +5,9 @@ import emailjs from 'emailjs-com';
 import { Button, Input, Typography } from 'antd';
 const { Text, Title, Paragraph } = Typography;
 
-const TEMPLATE_ID = process.env.TEMPLATE_ID || '';
-const SERVICE_ID = process.env.SERVICE_ID || '';
-const USER_ID = process.env.USER_ID || '';
+const TEMPLATE_ID = process.env.REACT_APP_TEMPLATE_ID || '';
+const SERVICE_ID = process.env.REACT_APP_SERVICE_ID || '';
+const USER_ID = process.env.REACT_APP_USER_ID || '';
 
 export function SupportPage({ location }: any) {
     const [content, setContent] = useState('');
