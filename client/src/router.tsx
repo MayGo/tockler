@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 
-import { HashRouter as Router, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { RootProvider } from './RootContext';
 import { NotFound } from './routes/404';
 import { MainAppPage } from './routes/MainAppPage';
@@ -16,12 +16,14 @@ import { Logger } from './logger';
 import { getThemeFromStorage, saveThemeToStorage } from './services/settings.api';
 import { ChartThemeProvider } from './routes/ChartThemeProvider';
 import { useStoreActions, useStoreState } from './store/easyPeasy';
+import { useGoogleAnalytics } from './useGoogleAnalytics';
 
 moment.locale('en-gb');
 
 const savedTheme = getThemeFromStorage();
 
 export function MainRouter() {
+    useGoogleAnalytics();
     const theme = useStoreState(state => state.theme);
     const setThemeWithVariables = useStoreActions(actions => actions.setThemeWithVariables);
     const setThemeByName = useStoreActions(actions => actions.setThemeByName);
@@ -54,21 +56,19 @@ export function MainRouter() {
     const state: any = useAppDataState();
 
     return (
-        <Router>
-            <ConfigProvider locale={state.locale}>
-                <ThemeProvider theme={theme}>
-                    <ChartThemeProvider theme={theme}>
-                        <RootProvider>
-                            <Switch>
-                                <Route path="/" exact component={MainAppPage} />
-                                <Route path="/app" component={MainAppPage} />
-                                <Route path="/trayApp" component={TrayAppPage} />
-                                <Route path="*" component={NotFound} />
-                            </Switch>
-                        </RootProvider>
-                    </ChartThemeProvider>
-                </ThemeProvider>
-            </ConfigProvider>
-        </Router>
+        <ConfigProvider locale={state.locale}>
+            <ThemeProvider theme={theme}>
+                <ChartThemeProvider theme={theme}>
+                    <RootProvider>
+                        <Switch>
+                            <Route path="/" exact component={MainAppPage} />
+                            <Route path="/app" component={MainAppPage} />
+                            <Route path="/trayApp" component={TrayAppPage} />
+                            <Route path="*" component={NotFound} />
+                        </Switch>
+                    </RootProvider>
+                </ChartThemeProvider>
+            </ThemeProvider>
+        </ConfigProvider>
     );
 }

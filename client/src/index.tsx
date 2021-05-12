@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { HashRouter as Router } from 'react-router-dom';
 import 'typeface-berkshire-swash';
 import { MainRouter } from './router';
 import { setupFrontendListener } from 'eiphop';
@@ -22,7 +23,9 @@ if (process.env.NODE_ENV !== 'production') {
 ReactDOM.render(
     <StoreProvider store={mainStore}>
         <AppDataProvider>
-            <MainRouter />
+            <Router>
+                <MainRouter />
+            </Router>
         </AppDataProvider>
     </StoreProvider>,
     document.getElementById('root') as HTMLElement,
