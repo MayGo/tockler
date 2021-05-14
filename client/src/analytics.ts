@@ -8,6 +8,9 @@ const analytics = Analytics({
         googleAnalytics({
             trackingId: 'UA-196817622-1',
             anonymizeIp: true,
+            customDimensions: {
+                version: 'dimension1',
+            },
             tasks: {
                 // Set checkProtocolTask, checkStorageTask, & historyImportTask for electron apps
                 checkProtocolTask: null,

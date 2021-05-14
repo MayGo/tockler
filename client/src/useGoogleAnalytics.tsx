@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { analytics } from './analytics';
@@ -6,7 +6,7 @@ import { analytics } from './analytics';
 export function useGoogleAnalytics() {
     const location = useLocation();
 
-    React.useEffect(() => {
+    useEffect(() => {
         analytics.page({
             path: location.pathname,
             search: location.search,

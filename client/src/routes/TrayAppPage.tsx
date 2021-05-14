@@ -48,7 +48,7 @@ const TrayAppPageTemp = () => {
             Logger.debug('Window active:', windowIsActive);
             setSelectedItem(s => ({ ...s, color: randomcolor() }));
             loadLastLogItemsThrottled();
-            analytics.track('trayOpened');
+            analytics.track('trayOpened', { version: process.env.REACT_APP_VERSION });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [windowIsActive]);
