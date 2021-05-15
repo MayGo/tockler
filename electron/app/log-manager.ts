@@ -1,10 +1,12 @@
 import * as log from 'electron-log';
 import * as Sentry from '@sentry/electron';
 import { app } from 'electron';
+import config from './config';
 
 const version = app.getVersion();
 
-if (process.env.NODE_ENV === 'production') {
+const isProd = process.env.NODE_ENV === 'production';
+if (isProd) {
     Sentry.init({
         dsn: process.env.SENTRY_DSN,
         environment: process.env.NODE_ENV,
@@ -46,8 +48,7 @@ const sentryTransportConsole = (msgObj) => {
 
 (log as any).transports.console = sentryTransportConsole;
 
-log.transports.console.level = 'debug';
-log.transports.file.level = 'debug';
+let isLoggingEnabled = config.persisted.get('isLoggingEnabled');
 
 export class LogManager {
     logger;
@@ -58,7 +59,15 @@ export class LogManager {
 
     getLogger(name) {
         const logObj = log.create(name);
+
+        log.transports.console.level = isProd ? 'warn' : 'debug';
         (logObj as any).transports.console = sentryTransportConsole;
+
+        if (isLoggingEnabled) {
+            logObj.transports.file.level = 'debug';
+        } else {
+            logObj.transports.file.level = false;
+        }
 
         return logObj;
     }

@@ -59,5 +59,6 @@ log.transports.console = sentryTransportConsole;
 window.Sentry = Sentry;
 window.version = version;
 window.Store = Store;
+window.platform = electron.remote.process.platform;
 window.logger = log;
 window.ipcRenderer = electron.ipcRenderer;

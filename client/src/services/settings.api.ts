@@ -13,6 +13,9 @@ export function getOpenAtLogin() {
 export function getIsAutoUpdateEnabled() {
     return config.get('isAutoUpdateEnabled') as boolean;
 }
+export function getIsLoggingEnabled() {
+    return config.get('isLoggingEnabled') as boolean;
+}
 
 export function saveOpenAtLogin(openAtLogin) {
     if (openAtLogin !== getOpenAtLogin()) {
@@ -36,6 +39,12 @@ export function saveIsAutoUpdateEnabled(isAutoUpdateEnabled) {
     if (isAutoUpdateEnabled !== getIsAutoUpdateEnabled()) {
         Logger.debug('Setting isAutoUpdateEnabled', isAutoUpdateEnabled);
         config.set('isAutoUpdateEnabled', isAutoUpdateEnabled);
+    }
+}
+export function saveIsLoggingEnabled(isLoggingEnabled) {
+    if (isLoggingEnabled !== getIsLoggingEnabled()) {
+        Logger.debug('Setting isLoggingEnabled', isLoggingEnabled);
+        config.set('isLoggingEnabled', isLoggingEnabled);
     }
 }
 
