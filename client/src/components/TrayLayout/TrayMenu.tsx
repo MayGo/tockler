@@ -63,7 +63,7 @@ export const TrayMenuPlain = () => {
             <MenuItem key="/timeline2" onClick={toggleMainWindow}>
                 <Brand>
                     <Img src={tocklerIcon} width="28" height="28" />
-                    <span>Tockler</span>
+                    <span>GitStart DevTime</span>
                 </Brand>
             </MenuItem>
             <MenuItem>

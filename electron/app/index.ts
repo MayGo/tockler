@@ -40,12 +40,12 @@ if (!gotTheLock) {
 
     require('electron-context-menu')({});
 
-    ipcMain.on('close-app', function() {
-        logger.info('Closing Tockler');
+    ipcMain.on('close-app', function () {
+        logger.info('Closing GitStart DevTime');
         app.quit();
     });
 
-    app.on('window-all-closed', function() {
+    app.on('window-all-closed', function () {
         logger.debug('window-all-closed');
         // pluginMgr.removeAll();
         // app.quit();
@@ -53,7 +53,7 @@ if (!gotTheLock) {
 
     // User want's to open main window when reopened app. (But not open main window on application launch)
 
-    app.on('activate', function() {
+    app.on('activate', function () {
         logger.debug('Activate event');
         if (app.isReady()) {
             WindowManager.openMainWindow();
@@ -78,16 +78,16 @@ if (!gotTheLock) {
 
             backgroundJob.init();
 
-            powerMonitor.on('suspend', function() {
+            powerMonitor.on('suspend', function () {
                 logger.debug('The system is going to sleep');
                 backgroundService.onSleep();
             });
 
-            powerMonitor.on('resume', function() {
+            powerMonitor.on('resume', function () {
                 logger.debug('The system is going to resume');
                 backgroundService.onResume().then(
                     () => logger.debug('Resumed'),
-                    e => logger.error('Error in onResume', e),
+                    (e) => logger.error('Error in onResume', e),
                 );
             });
         } catch (error) {

@@ -1,22 +1,20 @@
-import { Application, SpectronClient } from "spectron";
-import { join } from "path";
+import { Application, SpectronClient } from 'spectron';
+import { join } from 'path';
 import * as utils from './utils';
 
 type TestContext = {
-    app: Application
+    app: Application;
 };
 function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 let app: Application;
-describe("application launch", function() {
-
+describe('application launch', function () {
     beforeEach(async () => {
         app = utils.createApplication();
         await utils.startApplication(app);
         app.client.windowByIndex(1);
         await app.client.waitUntilWindowLoaded();
-
     });
 
     afterEach(async () => {
@@ -25,7 +23,6 @@ describe("application launch", function() {
 
     it('Header contains application name', async () => {
         const text = await app.client.getText('#appName');
-        expect(text).toEqual('Tockler');
+        expect(text).toEqual('GitStart DevTime');
     });
-
 });

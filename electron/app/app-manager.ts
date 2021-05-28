@@ -10,7 +10,7 @@ let logger = logManager.getLogger('AppManager');
 
 export default class AppManager {
     static async init() {
-        logger.info('Intializing Tockler');
+        logger.info('Intializing GitStart DevTime');
         initIpcActions();
 
         logger.debug('Database syncing....');

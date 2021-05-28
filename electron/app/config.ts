@@ -12,7 +12,7 @@ let client = isDevelopment ? path.join(root, '..', 'client', 'build') : path.joi
 let useRealDataInDev = false;
 let userDir =
     isDevelopment && useRealDataInDev
-        ? `/Users/${OS.userInfo().username}/Library/Application Support/Tockler`
+        ? `/Users/${OS.userInfo().username}/Library/Application Support/GitStart DevTime`
         : app.getPath('userData');
 
 console.debug('User dir is:' + userDir);

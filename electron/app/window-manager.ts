@@ -49,7 +49,7 @@ export default class WindowManager {
                 zoomFactor: 1.0,
                 preload: preloadScript,
             },
-            title: 'Tockler',
+            title: 'GitStart DevTime',
             icon: config.iconBig,
         });
     }

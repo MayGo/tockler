@@ -20,7 +20,7 @@ export const HeaderMenu = ({ location }: any) => (
             <Link to="/app/timeline">
                 <Brand>
                     <Img src={tocklerIcon} width="28" height="28" />
-                    <span>Tockler</span>
+                    <span>GitStart DevTime</span>
                 </Brand>
             </Link>
         </Menu.Item>
