@@ -1,3 +1,5 @@
+> This project is based on [Tockler](https://github.com/MayGo/tockler)
+
 # Made with
 
 -   [Electron](https://electron.atom.io/) with [Webpack](https://webpack.github.io/) and [Typescript](https://www.typescriptlang.org/)
