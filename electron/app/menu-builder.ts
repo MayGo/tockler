@@ -55,13 +55,13 @@ export default class MenuBuilder {
                     {
                         label: 'Learn More',
                         click() {
-                            shell.openExternal('https://github.com/MayGo/tockler');
+                            shell.openExternal('https://github.com/GitStartHQ/DevTime');
                         },
                     },
                     {
                         label: 'Search Issues',
                         click() {
-                            shell.openExternal('https://github.com/MayGo/tockler/issues');
+                            shell.openExternal('https://github.com/GitStartHQ/DevTime/issues');
                         },
                     },
                 ],

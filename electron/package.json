@@ -7,7 +7,7 @@
     "main": "dist/index.js",
     "repository": {
         "type": "git",
-        "url": "git@github.com:MayGo/tockler.git"
+        "url": "git@github.com:GitStartHQ/DevTime.git"
     },
     "scripts": {
         "tslint": "tslint --project .",
