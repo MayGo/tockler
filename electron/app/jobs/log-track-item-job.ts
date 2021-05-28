@@ -48,8 +48,8 @@ export class LogTrackItemJob {
             return null;
         }
 
-        let rawItem: any = BackgroundUtils.getRawTrackItem(logItemMarkedAsRunning);
-        rawItem.endDate = Date.now();
+        let rawItem: Partial<TrackItem> = BackgroundUtils.getRawTrackItem(logItemMarkedAsRunning);
+        rawItem.endDate = new Date();
 
         let shouldTrySplitting = oldOnlineItem !== this.onlineItemWhenLastSplit;
 

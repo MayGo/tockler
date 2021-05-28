@@ -161,7 +161,7 @@ export class StateManager {
     }
 
     async createOnlineTrackItem() {
-        let rawItem: any = {
+        let rawItem: Partial<TrackItem> = {
             taskName: 'StatusTrackItem',
             app: State.Online,
             title: State.Online.toString().toLowerCase(),
@@ -184,9 +184,12 @@ export class StateManager {
         return runningItem;
     }
 
-    async createNewRunningTrackItem(rawItem) {
+    async createNewRunningTrackItem(rawItem: TrackItem) {
         await this.endRunningTrackItem(rawItem);
 
+        const now = new Date();
+        rawItem.createdAt = now;
+        rawItem.updatedAt = now;
         let item = await trackItemService.createTrackItem(rawItem);
         // logger.debug('Created track item to DB and set running item:', item.toJSON());
 
@@ -196,7 +199,9 @@ export class StateManager {
 
     async updateRunningTrackItemEndDate(type: TrackItemType) {
         let runningItem = this.getCurrentTrackItem(type);
-        runningItem.endDate = new Date();
+        const now = new Date();
+        runningItem.endDate = now;
+        runningItem.updatedAt = now;
         await trackItemService.updateTrackItem(runningItem, runningItem.id);
         // logger.debug('Saved track item(endDate change) to DB:', runningItem.toJSON());
         return runningItem;
