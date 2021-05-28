@@ -1,47 +1,3 @@
-<!-- DONATELINKS -->
-
-[![Donate using PayPal](https://github.com/MayGo/tockler/raw/master/badges/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAHHBZZCZVDMA)
-[![Sponsor on GitHub](https://github.com/MayGo/tockler/raw/master/badges/GitHub-Badge.svg)](https://github.com/sponsors/maygo/)
-[![Become a patron](https://github.com/MayGo/tockler/raw/master/badges/Patreon-Badge.svg)](https://www.patreon.com/Tockler)
-
-<!-- DONATELINKS -->
-
-## [![Release](https://img.shields.io/github/v/release/MayGo/tockler)](https://github.com/MayGo/tockler/releases/latest)
-
-## ![Tockler](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-logo.png 'Tockler')
-
-**Automatically track applications usage and working time.**
-
-> With Tockler you can go back in time and see what you were working on. You can get information on what apps were used - exactly at what time - and what title the application had at that moment. This is enough to determine how much you did something.
-
-**Track how you spent your time on a computer.**
-
-> Tockler tracks active applications usage and computer state. It records active application titles. It tracks idle, offline, and online state. You can see this data with a nice interactive timeline chart.
-
-**Analyze your computer usage**
-
-> See you total online time today, yesterday, or any other day. In monthly calendar views and with charts.
-
-# Applications installer download
-
-| Operating System        | Download                                                                                                                                                                                                                   |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Windows (32 and 64-bit) | <a href='https://github.com/MayGo/tockler/releases/download/v3.18.4/tockler-3.18.4-windows.exe'><img alt='Get it on Windows' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeWindows.png'/></a> |
-| macOS                   | <a href='https://github.com/MayGo/tockler/releases/download/v3.18.4/Tockler-3.18.4.dmg'><img alt='Get it on macOS' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeMacOS.png'/></a>             |
-| Linux                   | <a href='https://github.com/MayGo/tockler/releases/download/v3.18.4/Tockler-3.18.4.AppImage'><img alt='Get it on Linux' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeLinux.png'/></a>        |
-
-# Feedback
-
-Feel free to make feature requests by creating a issue and 'Star' this project.
-
-# Donations
-
-This project needs your support!
-
-If you find this app useful then feel free to donate. Anything helps to keep this app up to date and always improving.
-
-Thank you!
-
 # Made with
 
 -   [Electron](https://electron.atom.io/) with [Webpack](https://webpack.github.io/) and [Typescript](https://www.typescriptlang.org/)
@@ -49,27 +5,17 @@ Thank you!
 -   [D3 v4](https://d3js.org/) and [Victory Chart](http://formidable.com/open-source/victory/docs/victory-chart/)
 -   [Ant Design](https://ant.design/)
 
-# Screenshots
-
-![Timeline](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-timeline.png 'Timeline')
-![Changing items color](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-change_color.png 'Changing items color')
-![Settings](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-settings.png 'Settings')
-![Summary](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-summary.png 'Summary')
-![Search](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-search.png 'Search')
-![Tray window](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-tray.png 'Tray window')
-![Edit log item](https://github.com/MayGo/tockler/raw/master/screenshots/editing-log-item.gif 'Edit log item')
-
 # Debugging
 
 ## Logs
 
-By default, tockler writes logs to the following locations:
+By default, devtime writes logs to the following locations:
 
-on Linux: `~/.config/tockler/logs/main.log`
+on Linux: `~/.config/devtime/logs/main.log`
 
-on macOS: `~/Library/Logs/tockler/main.log`
+on macOS: `~/Library/Logs/devtime/main.log`
 
-on Windows: `%USERPROFILE%\AppData\Roaming\tockler\logs\main.log`
+on Windows: `%USERPROFILE%\AppData\Roaming\devtime\logs\main.log`
 
 ## Development
 
@@ -78,7 +24,7 @@ on Windows: `%USERPROFILE%\AppData\Roaming\tockler\logs\main.log`
 > Prerequisites: [Node](https://nodejs.org/), [Git](https://git-scm.com/).
 
 ```bash
-git clone https://github.com/Maygo/tockler.git  # Download this project
+git clone https://github.com/GitStartHQ/DevTime.git  # Download this project
 
 npm install yarn -g     # install yarn or binary from https://yarnpkg.com
 ```
