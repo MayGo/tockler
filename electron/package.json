@@ -2,7 +2,7 @@
     "name": "@gitstart/devtime",
     "version": "3.18.4",
     "description": "Automatically track applications usage and working time",
-    "author": "Maigo Erit <maigo.erit@gmail.com>",
+    "author": "GitStart <contact@gitstart.com>",
     "license": "GPL-2.0",
     "main": "dist/index.js",
     "repository": {
