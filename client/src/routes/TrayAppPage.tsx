@@ -11,7 +11,6 @@ import { Logger } from '../logger';
 import { useWindowFocused } from '../hooks/windowFocusedHook';
 import { throttle } from 'lodash';
 import deepEqual from 'fast-deep-equal/es6';
-import { analytics } from '../analytics';
 
 const EMPTY_SELECTED_ITEM = {};
 
@@ -48,7 +47,6 @@ const TrayAppPageTemp = () => {
             Logger.debug('Window active:', windowIsActive);
             setSelectedItem(s => ({ ...s, color: randomcolor() }));
             loadLastLogItemsThrottled();
-            analytics.track('trayOpened', { version: process.env.REACT_APP_VERSION });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [windowIsActive]);

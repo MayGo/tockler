@@ -16,14 +16,12 @@ import { Logger } from './logger';
 import { getThemeFromStorage, saveThemeToStorage } from './services/settings.api';
 import { ChartThemeProvider } from './routes/ChartThemeProvider';
 import { useStoreActions, useStoreState } from './store/easyPeasy';
-import { useGoogleAnalytics } from './useGoogleAnalytics';
 
 moment.locale('en-gb');
 
 const savedTheme = getThemeFromStorage();
 
 export function MainRouter() {
-    useGoogleAnalytics();
     const theme = useStoreState(state => state.theme);
     const setThemeWithVariables = useStoreActions(actions => actions.setThemeWithVariables);
     const setThemeByName = useStoreActions(actions => actions.setThemeByName);
