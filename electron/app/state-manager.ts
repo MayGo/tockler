@@ -36,19 +36,19 @@ export class StateManager {
     initIpc() {
         ipcMain.on('start-new-log-item', this.startNewLogItem.bind(this));
 
-        ipcMain.on('end-running-log-item', event => {
+        ipcMain.on('end-running-log-item', (event) => {
             logger.debug('end-running-log-item');
             this.stopRunningLogTrackItem().then(
                 () => logger.debug('end-running-log-item'),
-                e => logger.error('end-running-log-item', e),
+                (e) => logger.error('end-running-log-item', e),
             );
         });
 
-        appEmitter.on('start-new-log-item', rawItem => {
+        appEmitter.on('start-new-log-item', (rawItem) => {
             logger.debug('start-new-log-item event');
             this.startNewLogItem(null, rawItem).then(
                 () => logger.debug('start-new-log-item'),
-                e => logger.error('start-new-log-item', e),
+                (e) => logger.error('start-new-log-item', e),
             );
         });
     }
