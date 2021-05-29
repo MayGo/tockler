@@ -4,6 +4,7 @@ import { emit } from 'eiphop';
 
 const { Store } = window as any;
 
+console.log('got back window Store: ', window, Store);
 const config = new Store();
 
 export function getOpenAtLogin() {

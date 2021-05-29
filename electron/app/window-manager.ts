@@ -47,7 +47,9 @@ export default class WindowManager {
             show: false,
             webPreferences: {
                 zoomFactor: 1.0,
+                enableRemoteModule: true,
                 preload: preloadScript,
+                contextIsolation: false,
             },
             title: 'GitStart DevTime',
             icon: config.iconBig,
@@ -182,8 +184,9 @@ export default class WindowManager {
             browserWindow: {
                 webPreferences: {
                     zoomFactor: 1.0,
-
+                    enableRemoteModule: true,
                     preload: preloadScript,
+                    contextIsolation: false,
                 },
                 width: 500,
                 height: 600,
