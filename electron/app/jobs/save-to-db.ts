@@ -95,7 +95,7 @@ export class SaveToDbJob {
                     }
                 `,
                 variables: {
-                    userEvents: items.slice(0, 1).map((event) => {
+                    userEvents: items.map((event) => {
                         return {
                             ...(event.userEventId ? { id: event.userEventId } : {}),
                             userId: 2867, // Richard's userId on staging
