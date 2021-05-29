@@ -2,7 +2,7 @@ exports.up = function (knex) {
     return knex.schema.table('TrackItems', (table) => {
         table.dateTime('createdAt');
         table.dateTime('updatedAt');
-        table.integer('userEventId');
+        table.string('userEventId');
     });
 };
 

@@ -16,5 +16,5 @@ export class TrackItem extends Model {
     // from GitStart
     createdAt!: Date;
     updatedAt!: Date;
-    userEventId?: number;
+    userEventId?: string;
 }

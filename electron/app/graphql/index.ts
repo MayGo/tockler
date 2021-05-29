@@ -1,10 +1,12 @@
 import { ApolloQueryResult } from 'apollo-client/core/types';
 import { NetworkStatus } from 'apollo-client/core/networkStatus';
 import { GraphQLError } from 'graphql';
-import fetch from 'isomorphic-unfetch';
+import fetch from 'node-fetch';
 import jwt, { JwtHeader, SignCallback, SignOptions } from 'jsonwebtoken';
 
 import type { Token, User } from './types';
+
+global.Headers = fetch.Headers;
 
 async function getJwtKey(issuer: string) {
     const jwksClient = await import('jwks-rsa');
