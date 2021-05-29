@@ -6,6 +6,7 @@ import BackgroundUtils from '../background-utils';
 import { State } from '../enums/state';
 import { appConstants } from '../app-constants';
 import { sendToTrayWindow } from '../window-manager';
+import { TrackItem } from '../models/TrackItem';
 
 let logger = logManager.getLogger('StatusTrackItemJob');
 
@@ -18,7 +19,7 @@ export class StatusTrackItemJob {
                 () => {
                     // logger.debug(`Idle saved ${seconds}`);
                 },
-                e => logger.error('Idle error', e),
+                (e) => logger.error('Idle error', e),
             );
         } catch (error) {
             logger.error('Error in StatusTrackItemJob.');
@@ -48,7 +49,7 @@ export class StatusTrackItemJob {
             sendToTrayWindow('system-is-not-online');
         }
 
-        let rawItem: any = {
+        let rawItem: Partial<TrackItem> = {
             taskName: 'StatusTrackItem',
             app: state,
             title: state.toString().toLowerCase(),

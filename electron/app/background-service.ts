@@ -11,7 +11,10 @@ let logger = logManager.getLogger('BackgroundService');
 
 export class BackgroundService {
     async addInactivePeriod(beginDate, endDate) {
-        let rawItem: any = { app: State.Offline, title: State.Offline.toString().toLowerCase() };
+        let rawItem: Partial<TrackItem> = {
+            app: State.Offline,
+            title: State.Offline.toString().toLowerCase(),
+        };
         rawItem.taskName = TrackItemType.StatusTrackItem;
         rawItem.beginDate = beginDate;
         rawItem.endDate = endDate;
@@ -24,7 +27,7 @@ export class BackgroundService {
     }
 
     async createItems(items): Promise<any> {
-        const promiseArray = items.map(async newItem => {
+        const promiseArray = items.map(async (newItem) => {
             const savedItem = await trackItemService.createTrackItem(newItem);
             return savedItem;
         });

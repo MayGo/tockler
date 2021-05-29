@@ -13,7 +13,7 @@ export default class BackgroundUtils {
     static currentTimeMinusJobInterval() {
         let now = new Date();
         // Begin date is always BACKGROUND_JOB_INTERVAL before current date
-        now.setMilliseconds(now.getMilliseconds() - appConstants.BACKGROUND_JOB_INTERVAL);
+        now.setMilliseconds(now.getMilliseconds() - appConstants.TIME_TRACKING_JOB_INTERVAL);
         return now;
     }
 
