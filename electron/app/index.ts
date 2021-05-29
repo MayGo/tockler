@@ -10,7 +10,9 @@ import AppManager from './app-manager';
 import WindowManager from './window-manager';
 import { extensionsManager } from './extensions-manager';
 import AppUpdater from './app-updater';
+import { URL } from 'url';
 import config from './config';
+import { getUserFromToken } from './graphql';
 
 let logger = logManager.getLogger('AppIndex');
 app.setAppUserModelId(process.execPath);
@@ -65,8 +67,17 @@ if (!gotTheLock) {
     app.on('ready', async () => {
         console.log('App ready to start!!');
         protocol.registerFileProtocol('x-gitstart-devtime', (request, callback) => {
+            const parsedUrl = new URL(request.url);
+            const token = parsedUrl.searchParams.get('token');
+            const user = getUserFromToken(token);
+            if (!user) {
+                console.error('got back bad token! ', token);
+                callback({ url: 'https://app.gitstart.com' });
+                return;
+            }
+
             console.log('got back request: ', request, request.url);
-            callback({ path: 'hello world', url: request.url });
+            callback({ url: 'https://app.gitstart.com' });
         });
         try {
             if (config.isDev) {

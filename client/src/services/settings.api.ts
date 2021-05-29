@@ -25,6 +25,12 @@ export function saveOpenAtLogin(openAtLogin) {
     }
 }
 
+export function getAuthToken() {
+    const authToken = config.get('authToken');
+    Logger.info('Got token from storage:', authToken);
+    return authToken;
+}
+
 export function getThemeFromStorage() {
     const activeTheme = config.get('activeTheme');
     Logger.info('Got theme from storage:', activeTheme);

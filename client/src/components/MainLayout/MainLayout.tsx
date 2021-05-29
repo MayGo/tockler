@@ -1,5 +1,6 @@
 import { Layout } from 'antd';
 import React from 'react';
+import { AuthBanner } from '../Auth';
 import { HeaderMenu } from './HeaderMenu';
 
 const { Footer, Content } = Layout;
@@ -9,6 +10,7 @@ export function MainLayout({ children, location }: any) {
         <div>
             <Layout>
                 <HeaderMenu location={location} />
+                <AuthBanner />
                 <Content>{children}</Content>
                 <Footer>
                     <a href="https://github.com/MayGo">MayGo</a> @ 2021
