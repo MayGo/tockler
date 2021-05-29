@@ -5,7 +5,7 @@ import tocklerIcon from '../../assets/icons/tockler_icon.png';
 import { EventEmitter } from '../../services/EventEmitter';
 import { getOnlineStartTime } from '../../services/trackItem.api';
 import { Brand, Img, MenuItem, RightMenuItem } from './TrayMenu.styles';
-import moment from 'moment';
+import moment, { Moment as MomentType } from 'moment';
 import Moment from 'react-moment';
 import { Logger } from '../../logger';
 import { useWindowFocused } from '../../hooks/windowFocusedHook';
@@ -14,7 +14,7 @@ const getNow = () => moment().subtract(1, 'seconds');
 
 export const TrayMenuPlain = () => {
     const { windowIsActive } = useWindowFocused();
-    const [onlineSince, setOnlineSince] = useState();
+    const [onlineSince, setOnlineSince] = useState<MomentType | null>(null);
     const exitApp = () => {
         EventEmitter.send('close-app');
     };

@@ -7,4 +7,4 @@ dist/
 .eslintcache
 .env
 electron/.DS_Store
-electron/packaged
+electron/packaged/

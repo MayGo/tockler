@@ -6,6 +6,7 @@ const log = require('electron-log');
 const Sentry = require('@sentry/electron');
 
 const version = electron.remote.app.getVersion();
+console.log('Injecting scripts for version: ', version);
 
 if (process.env.NODE_ENV === 'production') {
     Sentry.init({
@@ -25,6 +26,7 @@ if (process.env.NODE_ENV === 'production') {
 const origConsole = log.transports.console;
 
 const isError = function (e) {
+    console.log('loggin error: ', e);
     return e && e.stack && e.message;
 };
 
