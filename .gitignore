@@ -6,4 +6,5 @@ dist/
 !scripts/
 .eslintcache
 .env
+electron/.DS_Store
 electron/packaged/

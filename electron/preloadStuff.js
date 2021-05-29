@@ -6,6 +6,7 @@ const log = require('electron-log');
 const Sentry = require('@sentry/electron');
 
 const version = electron.remote.app.getVersion();
+console.log('Injecting scripts for version: ', version, Store);
 
 if (process.env.NODE_ENV === 'production') {
     Sentry.init({
@@ -25,6 +26,7 @@ if (process.env.NODE_ENV === 'production') {
 const origConsole = log.transports.console;
 
 const isError = function (e) {
+    console.log('loggin error: ', e);
     return e && e.stack && e.message;
 };
 
@@ -59,6 +61,7 @@ log.transports.console = sentryTransportConsole;
 window.Sentry = Sentry;
 window.version = version;
 window.Store = Store;
+console.log('Set window store properly: ', window.Store);
 window.platform = electron.remote.process.platform;
 window.logger = log;
 window.ipcRenderer = electron.ipcRenderer;
