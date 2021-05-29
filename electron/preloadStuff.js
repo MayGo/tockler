@@ -6,7 +6,6 @@ const log = require('electron-log');
 const Sentry = require('@sentry/electron');
 
 const version = electron.remote.app.getVersion();
-console.log('Injecting scripts for version: ', version, Store);
 
 if (process.env.NODE_ENV === 'production') {
     Sentry.init({
