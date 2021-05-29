@@ -23,6 +23,11 @@ files:
 publish:
     - github
 
+protocols:
+    - name: GitStart DevTime
+      schemes:
+        - x-gitstart-devtime
+
 mac:
     category: public.app-category.productivity
 

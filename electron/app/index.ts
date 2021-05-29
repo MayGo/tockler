@@ -4,7 +4,7 @@ require('events').EventEmitter.defaultMaxListeners = 30;
 
 import { backgroundJob } from './background-job';
 import { backgroundService } from './background-service';
-import { app, ipcMain, powerMonitor } from 'electron';
+import { app, ipcMain, protocol, powerMonitor } from 'electron';
 import { logManager } from './log-manager';
 import AppManager from './app-manager';
 import WindowManager from './window-manager';
@@ -63,6 +63,11 @@ if (!gotTheLock) {
     });
 
     app.on('ready', async () => {
+        console.log('App ready to start!!');
+        protocol.registerFileProtocol('x-gitstart-devtime', (request, callback) => {
+            console.log('got back request: ', request, request.url);
+            callback({ path: 'hello world', url: request.url });
+        });
         try {
             if (config.isDev) {
                 await extensionsManager.init();

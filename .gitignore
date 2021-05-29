@@ -8,3 +8,4 @@ dist/
 .env
 electron/.DS_Store
 electron/packaged/
+.DS_Store
