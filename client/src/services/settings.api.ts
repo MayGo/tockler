@@ -31,6 +31,11 @@ export function getAuthToken() {
     return authToken;
 }
 
+export function setAuthToken(token: string) {
+    config.set('authToken');
+    return getAuthToken;
+}
+
 export function getThemeFromStorage() {
     const activeTheme = config.get('activeTheme');
     Logger.info('Got theme from storage:', activeTheme);

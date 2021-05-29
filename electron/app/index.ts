@@ -67,6 +67,7 @@ if (!gotTheLock) {
     app.on('ready', async () => {
         console.log('App ready to start!!');
         protocol.registerFileProtocol('x-gitstart-devtime', (request, callback) => {
+            console.log('got back request: ', request, request.url);
             const parsedUrl = new URL(request.url);
             const token = parsedUrl.searchParams.get('token');
             const user = getUserFromToken(token);
@@ -76,7 +77,7 @@ if (!gotTheLock) {
                 return;
             }
 
-            console.log('got back request: ', request, request.url);
+            setAuthToken(token);
             callback({ url: 'https://app.gitstart.com' });
         });
         try {
@@ -110,4 +111,7 @@ if (!gotTheLock) {
             logger.error(`App errored in ready event:${error.toString()}`, error);
         }
     });
+}
+function setAuthToken(token: string) {
+    throw new Error('Function not implemented.');
 }
