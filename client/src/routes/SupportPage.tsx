@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { MainLayout } from '../components/MainLayout/MainLayout';
 import { Box, Flex } from 'reflexbox';
-import { Button, Input, Typography } from 'antd';
-const { Text, Title, Paragraph } = Typography;
+import { Typography } from 'antd';
+const { Title, Paragraph } = Typography;
 
 export function SupportPage({ location }: any) {
     return (

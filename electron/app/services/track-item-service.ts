@@ -17,15 +17,8 @@ export class TrackItemService {
         return trackItem;
     }
 
-    async updateTrackItem(itemData: TrackItem, id: number) {
-        let count = await TrackItem.query().findById(id).patch({
-            app: itemData.app,
-            title: itemData.title,
-            url: itemData.url,
-            color: itemData.color,
-            beginDate: itemData.beginDate,
-            endDate: itemData.endDate,
-        });
+    async updateTrackItem(itemData: Partial<TrackItem>, id: number) {
+        let count = await TrackItem.query().findById(id).patch(itemData);
 
         return count;
     }

@@ -5,18 +5,11 @@ import { TrackItemType } from './enums/track-item-type';
 import { showNotification } from './notification';
 import * as randomcolor from 'randomcolor';
 import { stateManager } from './state-manager';
-export interface TrackItemRaw {
-    app?: string;
-    taskName?: TrackItemType;
-    title?: string;
-    color?: string;
-    beginDate?: Date;
-    endDate?: Date;
-}
+import { TrackItem } from './models/TrackItem';
 
 const logger = logManager.getLogger('TrackItemService');
 export class TaskAnalyser {
-    newItem: TrackItemRaw;
+    newItem: Partial<TrackItem>;
 
     findFirst(str, findRe) {
         if (!findRe) {

@@ -85,7 +85,7 @@ export class AppTrackItemJob {
     }
 
     async saveActiveWindow(result): Promise<TrackItem> {
-        let rawItem: any = { taskName: TrackItemType.AppTrackItem };
+        let rawItem: Partial<TrackItem> = { taskName: TrackItemType.AppTrackItem };
 
         rawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
         rawItem.endDate = new Date();
