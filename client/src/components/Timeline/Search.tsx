@@ -2,7 +2,6 @@ import { Box, Flex } from 'reflexbox';
 import { Button, DatePicker, Tooltip } from 'antd';
 import { LeftOutlined, RightOutlined, PauseOutlined, CaretRightOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import randomcolor from 'randomcolor';
 import React, { memo } from 'react';
 import { getTodayTimerange } from './timeline.utils';
 import { Logger } from '../../logger';
@@ -20,18 +19,9 @@ export const Search = memo(() => {
     const timerangeMode = useStoreState(state => state.timerangeMode);
     const liveView = useStoreState(state => state.liveView);
 
-    const setSelectedTimelineItem = useStoreActions(actions => actions.setSelectedTimelineItem);
     const loadTimerange = useStoreActions(actions => actions.loadTimerange);
     const setVisibleTimerange = useStoreActions(actions => actions.setVisibleTimerange);
     const setLiveView = useStoreActions(actions => actions.setLiveView);
-
-    const createNewItem = () => {
-        setSelectedTimelineItem({
-            color: randomcolor(),
-            beginDate: visibleTimerange[0].valueOf(),
-            endDate: visibleTimerange[1].valueOf(),
-        });
-    };
 
     const showLiveViewButton = timerangeMode === TIMERANGE_MODE_TODAY;
     const toggleLiveView = () => {
@@ -147,14 +137,6 @@ export const Search = memo(() => {
                 </Box>
             )}
             <Box flex={1} />
-            <Box p={1}>
-                <Tooltip
-                    placement="bottom"
-                    title="Start creating log with visible timerange as begin and end times."
-                >
-                    <Button onClick={createNewItem}>New Log</Button>
-                </Tooltip>
-            </Box>
             <Box p={1}>
                 <Button onClick={showDay} type="dashed">
                     All Day

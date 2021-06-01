@@ -9,7 +9,7 @@ import {
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import tocklerIcon from '../../assets/icons/tockler_icon.png';
+import tocklerIcon from '../../assets/icons/GitStart-DevTime-Icon_medium.svg';
 import { Brand, Img } from './HeaderMenu.styles';
 
 const GrayMenu = styled(Menu)``;

@@ -1,7 +1,5 @@
-import { Box } from 'reflexbox';
 import React, { useEffect, useState, useCallback, memo } from 'react';
 import randomcolor from 'randomcolor';
-import { TimelineItemEdit } from '../components/Timeline/TimelineItemEdit';
 import { TrayLayout } from '../components/TrayLayout/TrayLayout';
 import { TrayList } from '../components/TrayList/TrayList';
 import { EventEmitter } from '../services/EventEmitter';
@@ -19,8 +17,8 @@ const EMPTY_ARRAY = [];
 const TrayAppPageTemp = () => {
     const [loading, setLoading] = useState(true);
 
-    const [selectedItem, setSelectedItem] = useState(EMPTY_SELECTED_ITEM);
-    const [runningLogItem, setRunningLogItem] = useState();
+    const [, setSelectedItem] = useState(EMPTY_SELECTED_ITEM);
+    const [runningLogItem, setRunningLogItem] = useState<{ id: number } | null>();
     const [lastLogItems, setLastLogItems] = useState(EMPTY_ARRAY);
 
     const { windowIsActive } = useWindowFocused();
@@ -96,15 +94,6 @@ const TrayAppPageTemp = () => {
 
     return (
         <TrayLayout>
-            {!runningLogItem && (
-                <Box pt={2}>
-                    <TimelineItemEdit
-                        selectedTimelineItem={selectedItem}
-                        trayEdit
-                        saveTimelineItem={startNewLogItem}
-                    />
-                </Box>
-            )}
             <TrayList
                 lastLogItems={lastLogItems}
                 runningLogItem={runningLogItem}

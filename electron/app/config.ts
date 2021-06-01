@@ -23,10 +23,10 @@ export default {
     client: client,
     userDir: userDir,
 
-    icon: path.join(root, 'shared/img/icon/tockler_icon.png'),
-    iconUpdate: path.join(root, 'shared/img/icon/tockler_update_icon.png'),
-    iconUpdateBig: path.join(root, 'shared/img/icon/tockler_update_icon_big.png'),
-    iconBig: path.join(root, 'shared/img/icon/tockler_icon_big_w_bg.png'),
+    icon: path.join(root, 'shared/img/icon/GitStart-DevTime-Icon_small.png'),
+    iconUpdate: path.join(root, 'shared/img/icon/GitStart-DevTime-Icon_small.png'),
+    iconUpdateBig: path.join(root, 'shared/img/icon/GitStart-DevTime-Icon_small.png'),
+    iconBig: path.join(root, 'shared/img/icon/GitStart-DevTime-Icon_small.png'),
 
     // plugins directory
     pluginsPath: root,
