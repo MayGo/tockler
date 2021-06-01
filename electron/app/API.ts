@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron';
+import { ipcMain, shell } from 'electron';
 
 import { setupMainHandler } from 'eiphop';
 import { settingsService } from './services/settings-service';
@@ -23,6 +23,9 @@ const settingsActions = {
     fetchWorkSettings: async (req, res) => {
         const data = await settingsService.fetchWorkSettings();
         res.send(data);
+    },
+    loginInExternalBrowser: async () => {
+        shell.openExternal(`${process.env.GITSTART_LOGIN_URL}?redirectUrl=x-gitstart-devtime://`);
     },
 };
 

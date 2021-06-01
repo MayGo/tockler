@@ -4,6 +4,7 @@ import React from 'react';
 import { AnalyserForm } from './AnalyserForm';
 import { AppForm } from './AppForm';
 import { WorkForm } from './WorkForm';
+import { LoginForm } from './LoginForm';
 import { ThemeSelect } from './ThemeSelect';
 
 export const SettingsForm = () => {
@@ -17,7 +18,9 @@ export const SettingsForm = () => {
                     <Box p={1} width={1 / 3}>
                         <WorkForm />
                     </Box>
-
+                    <Box p={1} width={1 / 3}>
+                        <LoginForm />
+                    </Box>
                     <Box p={1} width={1 / 3}>
                         <AppForm />
                     </Box>

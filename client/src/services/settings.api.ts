@@ -63,6 +63,10 @@ export function fetchWorkSettings() {
     return emit('fetchWorkSettings');
 }
 
+export function loginInExternalBrowser() {
+    return emit('loginInExternalBrowser');
+}
+
 export function saveAnalyserSettings(data) {
     updateByName('ANALYSER_SETTINGS', data);
 }
