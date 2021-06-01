@@ -49,16 +49,18 @@ export class SaveToDbJob {
 
     async run() {
         try {
-            const items = await TrackItem.query().whereRaw(
-                `"taskName" = 'AppTrackItem' AND ("userEventId" IS NULL OR "updatedAt" >= ?)`,
-                [this.lastSavedAt],
-            );
+            const items = await TrackItem.query()
+                .whereRaw(
+                    `"taskName" = 'AppTrackItem' AND ("userEventId" IS NULL OR "updatedAt" >= ?)`,
+                    [this.lastSavedAt],
+                )
+                .limit(100);
             // FIXME: figure out how to do it with proper Knex `where` methods instead of `whereRaw`
             // .where('taskName', 'AppTrackItem')
             // .whereNull('userEventId')
             // .orWhere('updatedAt', '>=', this.lastSavedAt);
 
-            console.log(items.length, `need to be upserted to GitStart's DB`);
+            console.log(items.length, `TrackItems need to be upserted to GitStart's DB`);
             // console.log(items);
 
             // HACK: temporary hack to upsert to hasura.
@@ -123,10 +125,16 @@ export class SaveToDbJob {
 
             console.log('Successfully saved', items.length, `TrackItems to GitStart's DB`);
             this.lastSavedAt = new Date();
-            console.log(returned.data.insert_user_events.returning);
 
+            console.log('-------------------------');
+
+            console.log(
+                returned.data.insert_user_events.returning.length,
+                'user_events need to be linked',
+            );
             await Promise.all(
                 returned.data.insert_user_events.returning.map((userEvent, i) => {
+                    console.log({ userEventId: userEvent.id }, items[i].app, items[i].title);
                     return trackItemService.updateTrackItem(
                         { userEventId: userEvent.id },
                         items[i].id,
@@ -134,7 +142,7 @@ export class SaveToDbJob {
                 }),
             );
 
-            console.log('Successfully linked', items.length, `userEvents with its TrackItem`);
+            console.log('Successfully linked', items.length, `user_event with its TrackItem`);
         } catch (e) {
             console.error(e);
         }
