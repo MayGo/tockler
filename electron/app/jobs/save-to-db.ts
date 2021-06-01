@@ -1,3 +1,4 @@
+import moment = require('moment');
 import { appConstants } from '../app-constants';
 import { fetchGraphQLClient } from '../graphql';
 import { logManager } from '../log-manager';
@@ -45,7 +46,7 @@ export type user_events_insert_input = {
 };
 
 export class SaveToDbJob {
-    lastSavedAt: Date = new Date();
+    lastSavedAt: Date = moment().subtract(14, 'days').toDate();
 
     async run() {
         try {
@@ -64,10 +65,10 @@ export class SaveToDbJob {
             // console.log(items);
 
             // HACK: temporary hack to upsert to hasura.
-            const returned = await fetchGraphQLClient('hasura.gitstart.dev', {
+            const returned = await fetchGraphQLClient(process.env.HASURA_GRAPHQL_ENGINE_DOMAIN, {
                 // FIXME: use env variables instead
                 // DANGER: don't share secret in a public repo
-                secret: 'ADD SECRET HERE',
+                secret: process.env.HASURA_GRAPHQL_ENGINE_SECRET,
             })<
                 {
                     insert_user_events: {
