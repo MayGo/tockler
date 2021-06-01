@@ -11,8 +11,9 @@ export const LoginForm = () => {
                 Login to GitStart
             </Button>
             <Text type="secondary">
-                You must alreay have an account to login through here. Create an account at
-                https://app.gitstart.com .
+                You must alreay have a GitStart account to login through here. Create an account at{' '}
+                {/* eslint-disable-next-line */}
+                <a>https://app.gitstart.com</a>.
             </Text>
         </Card>
     );

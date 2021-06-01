@@ -16,10 +16,10 @@ export const SettingsForm = () => {
                         <ThemeSelect />
                     </Box>
                     <Box p={1} width={1 / 3}>
-                        <WorkForm />
+                        <LoginForm />
                     </Box>
                     <Box p={1} width={1 / 3}>
-                        <LoginForm />
+                        <WorkForm />
                     </Box>
                     <Box p={1} width={1 / 3}>
                         <AppForm />
