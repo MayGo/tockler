@@ -1,9 +1,12 @@
-import { Box, Flex } from 'reflexbox';
-import { Button, Divider, Form, Input, Switch } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 import { useFormState } from 'react-use-form-state';
 import { testAnalyserItem } from './AnalyserForm.util';
+import { AiOutlineDelete } from 'react-icons/ai';
+import { IconButton } from '@chakra-ui/button';
+import { Input } from '@chakra-ui/input';
+import { FormControl, FormLabel } from '@chakra-ui/form-control';
+import { Switch } from '@chakra-ui/switch';
+import { Box, Divider, Flex } from '@chakra-ui/layout';
 
 const AnalyserTestItem = ({ item }) => (
     <Box>
@@ -35,35 +38,45 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
     return (
         <div>
             <Flex justifyContent="space-between">
-                <Flex>
+                <Flex pr={4}>
                     <Box p={1}>
-                        <Input placeholder="Task" {...text({ name: 'findRe' })} />
+                        <Input placeholder="Task" {...text({ name: 'findRe' })} minWidth={200} />
                     </Box>
                     <Box p={1}>
-                        <Input placeholder="Group" {...text({ name: 'takeGroup' })} />
+                        <Input
+                            placeholder="Group"
+                            {...text({ name: 'takeGroup' })}
+                            minWidth={200}
+                        />
                     </Box>
                     <Box p={1}>
-                        <Input placeholder="Title" {...text({ name: 'takeTitle' })} />
+                        <Input
+                            placeholder="Title"
+                            {...text({ name: 'takeTitle' })}
+                            minWidth={200}
+                        />
                     </Box>
                 </Flex>
-                <Form.Item name="active" label="Active">
+                <FormControl display="flex" alignItems="center" py={2} minWidth={100}>
+                    <FormLabel htmlFor="active" mb="0">
+                        Active
+                    </FormLabel>
                     <Switch
+                        id="active"
                         onChange={value => {
                             check.onChange(value);
                         }}
                         checked={check.value}
                     />
-                </Form.Item>
+                </FormControl>
+                <FormControl display="flex" alignItems="center" py={2} minWidth={100}>
+                    <FormLabel htmlFor="test" mb="0">
+                        Test
+                    </FormLabel>
+                    <Switch id="test" onChange={toggleShowTests} />
+                </FormControl>
 
-                <Form.Item name="test" label="Test">
-                    <Switch onChange={toggleShowTests} />
-                </Form.Item>
-                <Button
-                    type="primary"
-                    shape="circle"
-                    icon={<DeleteOutlined />}
-                    onClick={removeItem}
-                />
+                <IconButton icon={<AiOutlineDelete />} onClick={removeItem} aria-label="Add Item" />
             </Flex>
 
             {showTests && (

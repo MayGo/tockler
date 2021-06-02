@@ -1,10 +1,12 @@
-import { Flex } from 'reflexbox';
-import { Button, Card, Tooltip } from 'antd';
-import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { AiOutlineInfoCircle, AiOutlinePlus } from 'react-icons/ai';
 import React, { useState, useEffect } from 'react';
 import { AnalyserFormItem } from './AnalyserFormItem';
 import { fetchAnalyserSettings, saveAnalyserSettings } from '../../services/settings.api';
 import { useStoreState } from '../../store/easyPeasy';
+import { Card } from '../Card';
+import { Tooltip } from '@chakra-ui/tooltip';
+import { Flex } from '@chakra-ui/layout';
+import { Button, IconButton } from '@chakra-ui/button';
 
 const defaultAnalyserSettings = [
     { findRe: '\\w+-\\d+.*JIRA', takeTitle: '', takeGroup: '\\w+-\\d+', enabled: true },
@@ -50,8 +52,8 @@ export const AnalyserForm = () => {
         <Card
             title="Analyser settings"
             extra={
-                <Tooltip placement="left" title="Notify if title equals these analyser items.">
-                    <InfoCircleOutlined style={{ fontSize: 20, color: 'primary' }} />
+                <Tooltip placement="left" label="Notify if title equals these analyser items.">
+                    <AiOutlineInfoCircle style={{ fontSize: 20, color: 'primary' }} />
                 </Tooltip>
             }
         >
@@ -65,7 +67,7 @@ export const AnalyserForm = () => {
                 />
             ))}
             <Flex p={1} justifyContent="flex-end">
-                <Button type="primary" shape="circle" icon={<PlusOutlined />} onClick={addItem} />
+                <IconButton icon={<AiOutlinePlus />} onClick={addItem} aria-label="Add Item" />
             </Flex>
 
             <Flex p={1} justifyContent="flex-start">
