@@ -2,7 +2,7 @@ import { ApolloQueryResult } from 'apollo-client/core/types';
 import { NetworkStatus } from 'apollo-client/core/networkStatus';
 import { GraphQLError } from 'graphql';
 import fetch from 'node-fetch';
-import jwt, { JwtHeader, SignCallback, SignOptions } from 'jsonwebtoken';
+import { verify, decode, JwtHeader, SignCallback, SignOptions } from 'jsonwebtoken';
 
 import type { Token, User } from './types';
 
@@ -68,7 +68,7 @@ export async function getUserFromTokenSecure(issuer: string, token?: string) {
 
     return new Promise<User | null>(async (res) => {
         try {
-            jwt.verify(token, await getJwtKey(issuer), options, (err, decoded: any) => {
+            verify(token, await getJwtKey(issuer), options, (err, decoded: any) => {
                 if (err) {
                     console.error('got back error decoding token', err);
                     return res(null);
@@ -88,7 +88,7 @@ export const getUserFromToken = (token?: string) => {
         console.log('got back empty token ... returning early');
         return null;
     }
-    const decoded = jwt.decode(token, { json: true }) as null | Token;
+    const decoded = decode(token, { json: true }) as null | Token;
     return verifyToken(decoded);
 };
 

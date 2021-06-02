@@ -67,6 +67,10 @@ export function loginInExternalBrowser() {
     return emit('loginInExternalBrowser');
 }
 
+export function fetchLoginSettings() {
+    return emit('fetchLoginSettings');
+}
+
 export function saveAnalyserSettings(data) {
     updateByName('ANALYSER_SETTINGS', data);
 }
