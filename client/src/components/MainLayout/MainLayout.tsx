@@ -1,8 +1,8 @@
 import { Box } from 'reflexbox';
-import { Alert, Layout } from 'antd';
+import { Layout } from 'antd';
 import React from 'react';
 import { HeaderMenu } from './HeaderMenu';
-import { loginInExternalBrowser } from '../../services/settings.api';
+import LoginAlert from '../LoginAlert';
 
 const { Footer, Content } = Layout;
 
@@ -21,14 +21,7 @@ export function MainLayout({ children, location }: any) {
                         location.pathname === '/app/summary' ||
                         location.pathname === '/app/search') ? (
                         <Box p={1}>
-                            <Alert
-                                type="warning"
-                                message="You are currently not logged in to GitStart."
-                                description="Please login so that your events are synced to GitStart."
-                                showIcon
-                                closeText="Login"
-                                onClose={loginInExternalBrowser}
-                            />
+                            <LoginAlert />
                         </Box>
                     ) : null}
                     {children}
