@@ -25,7 +25,7 @@ const settingsActions = {
         res.send(data);
     },
     loginInExternalBrowser: async () => {
-        shell.openExternal(`${process.env.GITSTART_LOGIN_URL}?redirectUrl=x-gitstart-devtime://`);
+        shell.openExternal(`${process.env.GITSTART_LOGIN_URL}?url=x-gitstart-devtime://`);
     },
 };
 
