@@ -6,6 +6,8 @@ import { MainRouter } from './router';
 import { setupFrontendListener } from 'eiphop';
 import { AppDataProvider } from './routes/AppDataProvider';
 import { StoreProvider } from 'easy-peasy';
+import { ColorModeScript } from '@chakra-ui/react';
+import { ChakraProvider, theme } from '@chakra-ui/react';
 import { mainStore } from './store/mainStore';
 
 (window as any).CSPSettings = {
@@ -22,11 +24,14 @@ if (process.env.NODE_ENV !== 'production') {
 
 ReactDOM.render(
     <StoreProvider store={mainStore}>
-        <AppDataProvider>
-            <Router>
-                <MainRouter />
-            </Router>
-        </AppDataProvider>
+        <ColorModeScript />
+        <ChakraProvider theme={theme}>
+            <AppDataProvider>
+                <Router>
+                    <MainRouter />
+                </Router>
+            </AppDataProvider>
+        </ChakraProvider>
     </StoreProvider>,
     document.getElementById('root') as HTMLElement,
 );

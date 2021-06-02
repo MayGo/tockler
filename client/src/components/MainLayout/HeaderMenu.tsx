@@ -1,59 +1,84 @@
-import { Menu } from 'antd';
 import {
-    BarsOutlined,
-    AreaChartOutlined,
-    SearchOutlined,
-    SettingOutlined,
-    QuestionCircleOutlined,
-} from '@ant-design/icons';
+    AiOutlineBars,
+    AiOutlineAreaChart,
+    AiOutlineSearch,
+    AiOutlineSetting,
+    AiOutlineQuestionCircle,
+} from 'react-icons/ai';
 import React from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import { Link as RouterLink } from 'react-router-dom';
 import tocklerIcon from '../../assets/icons/tockler_icon.png';
-import { Brand, Img } from './HeaderMenu.styles';
-
-const GrayMenu = styled(Menu)``;
+import { Brand } from './HeaderMenu.styles';
+import { Flex, Box, Center, Link } from '@chakra-ui/layout';
+import { Image } from '@chakra-ui/image';
+import { ColorModeSwitcher } from '../ColorModeSwitcher';
 
 export const HeaderMenu = ({ location }: any) => (
-    <GrayMenu selectedKeys={[location.pathname]} mode="horizontal">
-        <Menu.Item key="/app/timeline2">
-            <Link to="/app/timeline">
-                <Brand>
-                    <Img src={tocklerIcon} width="28" height="28" />
-                    <span>Tockler</span>
-                </Brand>
+    <Flex bg="black" w="100%" p={4} color="white">
+        <Box pr={3}>
+            <Link as={RouterLink} to="/app/timeline">
+                <Flex>
+                    <Center pr={3}>
+                        <Image boxSize="28px" objectFit="cover" src={tocklerIcon} alt="Tockler" />
+                    </Center>
+                    <Brand>Tockler</Brand>
+                </Flex>
             </Link>
-        </Menu.Item>
-        <Menu.Item key="/app/timeline">
-            <Link to="/app/timeline">
-                <BarsOutlined />
-                Timeline
+        </Box>
+        <Box p={3}>
+            <Link as={RouterLink} to="/app/timeline">
+                <Center>
+                    <Box pr={1}>
+                        <AiOutlineBars />
+                    </Box>
+                    Timeline
+                </Center>
             </Link>
-        </Menu.Item>
-        <Menu.Item key="/app/summary">
-            <Link to="/app/summary">
-                <AreaChartOutlined />
-                Summary
+        </Box>
+        <Box p={3}>
+            <Link as={RouterLink} to="/app/summary">
+                <Center>
+                    <Box pr={1}>
+                        <AiOutlineAreaChart />
+                    </Box>
+                    Summary
+                </Center>
             </Link>
-        </Menu.Item>
-        <Menu.Item key="/app/search">
-            <Link to="/app/search">
-                <SearchOutlined />
-                Search
+        </Box>
+        <Box p={3}>
+            <Link as={RouterLink} to="/app/search">
+                <Center>
+                    <Box pr={1}>
+                        <AiOutlineSearch />
+                    </Box>
+                    Search
+                </Center>
             </Link>
-        </Menu.Item>
-        <Menu.Item key="/app/settings">
-            <Link to="/app/settings">
-                <SettingOutlined />
-                Settings
+        </Box>
+        <Box p={3}>
+            <Link as={RouterLink} to="/app/settings">
+                <Center>
+                    <Box pr={1}>
+                        <AiOutlineSetting />
+                    </Box>
+                    Settings
+                </Center>
             </Link>
-        </Menu.Item>
-
-        <Menu.Item key="/app/support">
-            <Link to="/app/support">
-                <QuestionCircleOutlined />
-                Support
+        </Box>
+        <Box p={3}>
+            <Link as={RouterLink} to="/app/support">
+                <Center>
+                    <Box pr={1}>
+                        <AiOutlineQuestionCircle />
+                    </Box>
+                    Support
+                </Center>
             </Link>
-        </Menu.Item>
-    </GrayMenu>
+        </Box>
+        <Box flex="1">
+            <Box d="flex" justifySelf="flex-end">
+                <ColorModeSwitcher />
+            </Box>
+        </Box>
+    </Flex>
 );

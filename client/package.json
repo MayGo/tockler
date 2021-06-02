@@ -34,6 +34,8 @@
         "react-component-queries": "2.3.0",
         "react-dev-utils": "^10.0.0",
         "react-dom": "^16.13.1",
+        "react-hook-form": "^7.7.1",
+        "react-icons": "^4.2.0",
         "react-moment": "0.9.7",
         "react-portal": "^4.2.0",
         "react-router": "^5.1.2",
