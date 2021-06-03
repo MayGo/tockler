@@ -4,13 +4,15 @@ require('events').EventEmitter.defaultMaxListeners = 30;
 
 import { backgroundJob } from './background-job';
 import { backgroundService } from './background-service';
-import { app, ipcMain, protocol, powerMonitor } from 'electron';
+import { app, ipcMain, powerMonitor } from 'electron';
 import { logManager } from './log-manager';
 import AppManager from './app-manager';
 import WindowManager from './window-manager';
 import { extensionsManager } from './extensions-manager';
 import AppUpdater from './app-updater';
 import config from './config';
+import { appConstants } from './app-constants';
+import { settingsService } from './services/settings-service';
 
 let logger = logManager.getLogger('AppIndex');
 app.setAppUserModelId(process.execPath);
@@ -64,10 +66,6 @@ if (!gotTheLock) {
 
     app.on('ready', async () => {
         console.log('App ready to start!!');
-        protocol.registerFileProtocol('x-gitstart-devtime', (request, callback) => {
-            console.log('got back request: ', request, request.url);
-            callback({ path: 'hello world', url: request.url });
-        });
         try {
             if (config.isDev) {
                 await extensionsManager.init();
@@ -97,6 +95,21 @@ if (!gotTheLock) {
             });
         } catch (error) {
             logger.error(`App errored in ready event:${error.toString()}`, error);
+        }
+    });
+
+    // This makes sure to have a fresh registration everytime.
+    app.removeAsDefaultProtocolClient(appConstants.PROTOCOL_NAME);
+
+    // This sets up protocol registration. If not working when developing on Windows, please see: https://stackoverflow.com/questions/45809064/registering-custom-protocol-at-installation-process-in-electron-app
+    app.setAsDefaultProtocolClient(appConstants.PROTOCOL_NAME);
+
+    app.on('open-url', (_, rawUrl) => {
+        console.log("on.('open-url'):", rawUrl);
+        const url = new URL(rawUrl);
+
+        if (url.searchParams.has('token')) {
+            settingsService.updateLoginSettings({ token: url.searchParams.get('token') });
         }
     });
 }

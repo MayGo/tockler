@@ -1,8 +1,9 @@
 import moment = require('moment');
 import { appConstants } from '../app-constants';
-import { fetchGraphQLClient } from '../graphql';
+import { fetchGraphQLClient, getUserFromToken } from '../graphql';
 import { logManager } from '../log-manager';
 import { TrackItem } from '../models/TrackItem';
+import { settingsService } from '../services/settings-service';
 import { trackItemService } from '../services/track-item-service';
 
 let logger = logManager.getLogger('BackgroundJob');
@@ -23,6 +24,7 @@ export enum user_event_types_enum {
 }
 export type user_events_insert_input = {
     appName?: string | null;
+    title?: string | null;
     browserUrl?: string | null;
     clientId?: string | null;
     clientProjectId?: number | null;
@@ -46,6 +48,7 @@ export type user_events_insert_input = {
 };
 
 export class SaveToDbJob {
+    token: string | null = null;
     lastSavedAt: Date = moment().subtract(14, 'days').toDate();
 
     async run() {
@@ -64,10 +67,31 @@ export class SaveToDbJob {
             console.log(items.length, `TrackItems need to be upserted to GitStart's DB`);
             // console.log(items);
 
+            // if there is no cached token, check if sqlite Settings table has it.
+            if (!this.token) {
+                const loginSettings = await settingsService.getLoginSettings();
+                if (loginSettings?.token) {
+                    this.token = loginSettings.token;
+                }
+            }
+
+            // return early and wait for user to go through login flow which will add a token in the db.
+            if (!this.token) {
+                console.log('Received no token. Returning early...');
+                return;
+            }
+
+            const user = getUserFromToken(this.token);
+            if (!user) {
+                // TODO: use refreshToken to get new token instead of setting token to null
+                this.token = null;
+                await settingsService.updateLoginSettings({ token: null });
+                throw new Error('Token Expired!');
+            }
+
             // HACK: temporary hack to upsert to hasura.
             const returned = await fetchGraphQLClient(process.env.HASURA_GRAPHQL_ENGINE_DOMAIN, {
-                // FIXME: use env variables instead
-                // DANGER: don't share secret in a public repo
+                token: this.token,
                 secret: process.env.HASURA_GRAPHQL_ENGINE_SECRET,
             })<
                 {
@@ -101,9 +125,9 @@ export class SaveToDbJob {
                     userEvents: items.map((event) => {
                         return {
                             ...(event.userEventId ? { id: event.userEventId } : {}),
-                            userId: 2867, // Richard's userId on staging
                             updatedAt: new Date().toJSON(),
                             appName: event.app,
+                            title: event.title,
                             browserUrl: event.url,
                             occurredAt: new Date(event.beginDate).toJSON(),
                             duration: Math.round(
