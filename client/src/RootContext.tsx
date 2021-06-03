@@ -15,9 +15,8 @@ export const RootContext = createContext<any>({});
 export const RootProvider = ({ children }) => {
     const { history } = useReactRouter();
 
-    const prevWorkSettings = JSON.parse((window as any).localStorage.getItem('workSettings')) || {
-        defaultWorkSettings,
-    };
+    const prevWorkSettings =
+        JSON.parse((window as any).localStorage.getItem('workSettings')) || defaultWorkSettings;
 
     const gotoSettingsPage = useCallback(() => {
         Logger.debug('Navigating to settings page');

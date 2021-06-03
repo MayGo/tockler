@@ -29,7 +29,7 @@ export async function findAllDayItemsForEveryTrack(from: moment.Moment, to: mome
         to,
         TrackItemType.StatusTrackItem,
     );
-    const logItems: ITrackItem[] = await findAllDayItems(from, to, TrackItemType.LogTrackItem);
+    const logItems: ITrackItem[] = [];
 
     return { appItems, statusItems, logItems };
 }

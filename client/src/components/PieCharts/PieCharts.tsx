@@ -17,19 +17,12 @@ export const PieCharts = memo(() => {
 
     const appItems = filterItems(timeItems.appItems, visibleTimerange);
     const statusItems = filterItems(timeItems.statusItems, visibleTimerange);
-    const logItems = filterItems(timeItems.logItems, visibleTimerange);
 
-    const pieWidth = innerWidth / 4;
+    const pieWidth = Math.min(innerWidth / 3, 200);
 
     return (
         <div>
-            <Flex>
-                <Box>
-                    <Box>
-                        <PieChart items={logItems} taskName="LogTrackItem" width={pieWidth} />
-                    </Box>
-                    <Heading>Tasks</Heading>
-                </Box>
+            <Flex style={{ justifyContent: 'center' }}>
                 <Box>
                     <Box>
                         <PieChart items={statusItems} taskName="StatusTrackItem" width={pieWidth} />

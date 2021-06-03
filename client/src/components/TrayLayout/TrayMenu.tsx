@@ -1,7 +1,7 @@
 import { Menu, Tooltip } from 'antd';
 import { ClockCircleOutlined, PoweroffOutlined, ArrowsAltOutlined } from '@ant-design/icons';
 import React, { useState, useEffect, memo } from 'react';
-import tocklerIcon from '../../assets/icons/tockler_icon.png';
+import tocklerIcon from '../../assets/icons/GitStart-DevTime-Icon_medium.svg';
 import { EventEmitter } from '../../services/EventEmitter';
 import { getOnlineStartTime } from '../../services/trackItem.api';
 import { Brand, Img, MenuItem, RightMenuItem } from './TrayMenu.styles';

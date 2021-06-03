@@ -1,7 +1,7 @@
 import { Box, Flex } from 'reflexbox';
 import { Form } from 'antd';
 import React from 'react';
-import { AnalyserForm } from './AnalyserForm';
+// import { AnalyserForm } from './AnalyserForm';
 import { AppForm } from './AppForm';
 import { WorkForm } from './WorkForm';
 import { LoginForm } from './LoginForm';
@@ -24,9 +24,9 @@ export const SettingsForm = () => {
                     <Box p={1} width={1 / 3}>
                         <AppForm />
                     </Box>
-                    <Box p={1}>
+                    {/* <Box p={1}>
                         <AnalyserForm />
-                    </Box>
+                    </Box> */}
                 </Box>
             </Flex>
         </Form>

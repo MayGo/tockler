@@ -1,6 +1,5 @@
 import { logManager } from './log-manager';
 import { appConstants } from './app-constants';
-// import { logTrackItemJob } from './jobs/log-track-item-job';
 import { statusTrackItemJob } from './jobs/status-track-item-job';
 import { appTrackItemJob } from './jobs/app-track-item-job';
 import { saveToDbJob } from './jobs/save-to-db';
@@ -11,7 +10,6 @@ export class BackgroundJob {
     async runTimeTrackingJobs() {
         await appTrackItemJob.run();
         await statusTrackItemJob.run();
-        // await logTrackItemJob.run();
     }
 
     async runDbJobs() {

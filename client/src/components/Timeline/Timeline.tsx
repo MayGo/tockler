@@ -215,7 +215,7 @@ export const Timeline = memo(() => {
 
     const domain: any = {
         y: [timerange[0], timerange[1]],
-        x: [1, 3],
+        x: [1, 2],
     };
 
     return (
@@ -234,7 +234,7 @@ export const Timeline = memo(() => {
                 >
                     <VictoryChart
                         theme={chartTheme}
-                        height={100}
+                        height={70}
                         width={chartWidth}
                         domainPadding={domainPadding}
                         padding={padding}
@@ -268,8 +268,8 @@ export const Timeline = memo(() => {
                             }
                         />
                         <VictoryAxis
-                            tickValues={[1, 2, 3]}
-                            tickFormat={['App', 'Status', 'Log']}
+                            tickValues={[1, 2]}
+                            tickFormat={['App', 'Status']}
                             events={axisEvents}
                             style={axisStyle}
                             gridComponent={

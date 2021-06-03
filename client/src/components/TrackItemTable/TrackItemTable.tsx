@@ -112,25 +112,6 @@ export const TrackItemTable = () => {
         setState({ ...state, filteredInfo: {}, sortedInfo: {} });
     };
 
-    const toggleTask = () => {
-        const { activeType } = state;
-
-        clearAll();
-
-        const newActiveType =
-            activeType === TrackItemType.AppTrackItem
-                ? TrackItemType.LogTrackItem
-                : TrackItemType.AppTrackItem;
-
-        setData(filterByAppType(newActiveType));
-        setState({
-            ...state,
-
-            activeType: newActiveType,
-            isOneDay: checkIfOneDay(visibleTimerange),
-        });
-    };
-
     const onInputChange = e => {
         setState({ ...state, searchText: e.target.value });
     };
@@ -181,7 +162,7 @@ export const TrackItemTable = () => {
         setState({ ...state, selectedRowKeys: [] });
     };
 
-    const { isOneDay, activeType, sortedInfo, filteredInfo } = state;
+    const { isOneDay, sortedInfo, filteredInfo } = state;
 
     const FilterDropdownComp = () => (
         <FilterDropdown>
@@ -215,6 +196,7 @@ export const TrackItemTable = () => {
         {
             title: 'Title',
             dataIndex: 'title',
+            width: 200,
             key: 'title',
             filterDropdown: FilterDropdownComp,
             filterIcon: <SearchOutlined style={{ color: state.filtered ? '#108ee9' : '#aaa' }} />,
@@ -231,7 +213,6 @@ export const TrackItemTable = () => {
             sorter: (a: any, b: any) => a.title.length - b.title.length,
             sortOrder: sortedInfo.columnKey === 'title' && sortedInfo.order,
         },
-
         {
             title: 'URL',
             dataIndex: 'url',
@@ -257,8 +238,7 @@ export const TrackItemTable = () => {
             title: 'Begin',
             dataIndex: 'beginDate',
             key: 'beginDate',
-            width: 170,
-
+            width: 100,
             onFilter: (value: any, record: any) => convertDate(record.beginDate) > value,
             sorter: (a: any, b: any) =>
                 convertDate(a.beginDate).valueOf() - convertDate(b.beginDate).valueOf(),
@@ -273,7 +253,7 @@ export const TrackItemTable = () => {
             title: 'End',
             dataIndex: 'endDate',
             key: 'endDate',
-            width: 170,
+            width: 100,
             onFilter: (value: any, record: any) => convertDate(record.endDate) > value,
             sorter: (a: any, b: any) =>
                 convertDate(a.endDate).valueOf() - convertDate(b.endDate).valueOf(),
@@ -310,11 +290,6 @@ export const TrackItemTable = () => {
         <div>
             <Flex p={1}>
                 <Box pr={1}>
-                    {!hasSelected && (
-                        <Button type="primary" onClick={toggleTask}>
-                            Showing {activeType === TrackItemType.AppTrackItem ? 'Apps' : 'Logs'}
-                        </Button>
-                    )}
                     {hasSelected && (
                         <Button
                             type="primary"
