@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron';
+import { ipcMain, shell } from 'electron';
 
 import { setupMainHandler } from 'eiphop';
 import { settingsService } from './services/settings-service';
@@ -6,6 +6,7 @@ import { appSettingService } from './services/app-setting-service';
 import { trackItemService } from './services/track-item-service';
 import { stateManager } from './state-manager';
 import { State } from './enums/state';
+import { appConstants } from './app-constants';
 
 const settingsActions = {
     fetchAnalyserSettingsJsonString: async (req, res) => {
@@ -22,6 +23,15 @@ const settingsActions = {
     },
     fetchWorkSettings: async (req, res) => {
         const data = await settingsService.fetchWorkSettings();
+        res.send(data);
+    },
+    loginInExternalBrowser: async () => {
+        shell.openExternal(
+            `${process.env.GITSTART_LOGIN_URL}?url=${appConstants.PROTOCOL_NAME}://`,
+        );
+    },
+    fetchLoginSettings: async (req, res) => {
+        const data = await settingsService.getLoginSettings();
         res.send(data);
     },
 };

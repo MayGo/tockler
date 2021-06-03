@@ -2,6 +2,10 @@ import { logManager } from '../log-manager';
 import { Setting } from '../models/Setting';
 import { TrackItem } from '../models/TrackItem';
 
+const LOGIN_SETTINGS = 'LOGIN_SETTINGS';
+type LoginSettings = {
+    token: string;
+};
 export class SettingsService {
     logger = logManager.getLogger('SettingsService');
 
@@ -10,7 +14,7 @@ export class SettingsService {
     async findCreateFind(name: string) {
         return Setting.query()
             .where('name', name)
-            .then(function(rows) {
+            .then(function (rows) {
                 if (rows.length === 0) {
                     return Setting.query().insert({ name });
                 } else {
@@ -19,7 +23,7 @@ export class SettingsService {
             });
     }
 
-    async findByName(name: string) {
+    async findByName(name: string): Promise<Setting> {
         if (this.cache[name]) {
             this.logger.debug(`Returning ${name} from cache:`, this.cache[name].toJSON());
             return this.cache[name];
@@ -42,7 +46,7 @@ export class SettingsService {
             let item = await this.findByName(name);
 
             if (item) {
-                const savedItem = await  item.$query().patchAndFetch({jsonData});
+                const savedItem = await item.$query().patchAndFetch({ jsonData });
 
                 this.cache[name] = savedItem;
                 return savedItem;
@@ -61,6 +65,20 @@ export class SettingsService {
         }
 
         return item.jsonData;
+    }
+
+    async getLoginSettings() {
+        let item = await this.findByName(LOGIN_SETTINGS);
+        if (!item || !item.jsonData) {
+            return null;
+        }
+
+        return item.jsonData;
+    }
+
+    async updateLoginSettings(data: Partial<LoginSettings>) {
+        const jsonStr = JSON.stringify(data);
+        return this.updateByName(LOGIN_SETTINGS, jsonStr);
     }
 
     isObject(val) {
