@@ -74,8 +74,8 @@ export class TrackItemService {
         });
 
         const dialogOpts = {
-            defaultPath: `*/tockler-export_${toDateStr(from)}_${toDateStr(to)}`,
-            filters: [{ name: 'tockler-export', extensions: ['csv'] }],
+            defaultPath: `*/gitstart-devtime-export_${toDateStr(from)}_${toDateStr(to)}`,
+            filters: [{ name: 'gitstart-devtime-export', extensions: ['csv'] }],
         };
         const file = dialog.showSaveDialogSync(dialogOpts);
 

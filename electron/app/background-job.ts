@@ -21,7 +21,7 @@ export class BackgroundJob {
         logger.debug('Running background service.');
 
         // time tracking jobs
-        setInterval(() => this.runTimeTrackingJobs(), appConstants.TIME_TRACKING_JOB_INTERVAL); // TODO: Allow user to change this within the Settings view so that they can reduce tockler's energy usage
+        setInterval(() => this.runTimeTrackingJobs(), appConstants.TIME_TRACKING_JOB_INTERVAL);
 
         // db jobs
         setInterval(() => this.runDbJobs(), appConstants.DB_JOB_INTERVAL);

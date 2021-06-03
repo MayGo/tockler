@@ -1,5 +1,5 @@
 export default class AppConstants {
-    // Allow user to change this constant in the Settings page
+    // TODO: Allow user to change this setting within the Settings view in MainAppPage so that they can reduce tockler's energy usage
     TIME_TRACKING_JOB_INTERVAL: number = 3 * 1000; // 3 seconds
     DB_JOB_INTERVAL: number = 10 * 1000; // 5 minutes
     IDLE_IN_SECONDS_TO_LOG: number = 60 * 1;
