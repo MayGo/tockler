@@ -1,10 +1,11 @@
-import { Box, Flex } from 'reflexbox';
-import { Button, DatePicker } from 'antd';
+import { DatePicker } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import React from 'react';
 
 import { Logger } from '../../logger';
+import { Box, Flex } from '@chakra-ui/layout';
+import { Button } from '@chakra-ui/button';
 
 const { RangePicker } = DatePicker;
 
@@ -95,27 +96,25 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
 
             <Box flex={1} />
             <Box p={1}>
-                <Button onClick={selectWeek} type="dashed">
-                    Week
-                </Button>
+                <Button onClick={selectWeek}>Week</Button>
             </Box>
             <Box p={1}>
-                <Button onClick={selectMonth} type="dashed">
+                <Button onClick={selectMonth} variant="outline">
                     Month
                 </Button>
             </Box>
             <Box p={1}>
-                <Button onClick={selectMonth3} type="dashed">
+                <Button onClick={selectMonth3} variant="outline">
                     3 Months
                 </Button>
             </Box>
             <Box p={1}>
-                <Button onClick={selectYear} type="dashed">
+                <Button onClick={selectYear} variant="outline">
                     Year
                 </Button>
             </Box>
             <Box p={1}>
-                <Button onClick={selectYear3} type="dashed">
+                <Button onClick={selectYear3} variant="outline">
                     3 Years
                 </Button>
             </Box>

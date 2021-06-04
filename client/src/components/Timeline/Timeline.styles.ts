@@ -16,7 +16,7 @@ export const BrushChart = styled(Box).attrs({ mb: 2, py: 1 })`
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
 `;
 
-export const Spinner = styled.div`
+export const SpinnerContainer = styled.div`
     position: absolute;
     text-align: center;
     background: ${({ theme: { variables } }) => variables['@normal-color']};

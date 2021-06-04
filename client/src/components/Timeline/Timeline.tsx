@@ -1,7 +1,7 @@
 import React, { memo, useState } from 'react';
 
 import { useWindowWidth } from '@react-hook/window-size/throttled';
-import { Popover, Spin } from 'antd';
+import { Popover } from 'antd';
 import { debounce } from 'lodash';
 import moment from 'moment';
 import 'moment-duration-format';
@@ -18,7 +18,7 @@ import { TimelineRowType } from '../../enum/TimelineRowType';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { BarWithTooltip } from './BarWithTooltip';
 import { getLabelColor } from './ChartTheme';
-import { BrushChart, MainChart, Spinner } from './Timeline.styles';
+import { BrushChart, MainChart, SpinnerContainer } from './Timeline.styles';
 import { TimelineItemEditContainer } from './TimelineItemEditContainer';
 import { Logger } from '../../logger';
 import { formatDuration } from '../SummaryCalendar/SummaryCalendar.util';
@@ -26,6 +26,7 @@ import { colorProp } from '../charts.utils';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { rangeToDate } from '../../timeline.util';
+import { Spinner } from '@chakra-ui/spinner';
 
 const getTrackItemOrder = (type: string) => {
     if (type === TrackItemType.AppTrackItem) {
@@ -222,9 +223,9 @@ export const Timeline = memo(() => {
         <div>
             <MainChart>
                 {isLoading && (
-                    <Spinner>
-                        <Spin />
-                    </Spinner>
+                    <SpinnerContainer>
+                        <Spinner />
+                    </SpinnerContainer>
                 )}
                 <Popover
                     style={{ zIndex: 930 }}

@@ -156,27 +156,27 @@ export const Search = memo(() => {
                 </Tooltip>
             </Box>
             <Box p={1}>
-                <Button onClick={showDay} type="dashed">
+                <Button onClick={showDay} variant="outline">
                     All Day
                 </Button>
             </Box>
             <Box p={1}>
-                <Button onClick={showAM} type="dashed">
+                <Button onClick={showAM} variant="outline">
                     AM
                 </Button>
             </Box>
             <Box p={1}>
-                <Button onClick={showPM} type="dashed">
+                <Button onClick={showPM} variant="outline">
                     PM
                 </Button>
             </Box>
             <Box p={1}>
-                <Button onClick={showEvening} type="dashed">
+                <Button onClick={showEvening} variant="outline">
                     Evening
                 </Button>
             </Box>
             <Box p={1}>
-                <Button onClick={showHour} type="dashed">
+                <Button onClick={showHour} variant="outline">
                     Hour
                 </Button>
             </Box>

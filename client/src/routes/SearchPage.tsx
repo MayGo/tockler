@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { MainLayout } from '../components/MainLayout/MainLayout';
-import { Flex, Box } from 'reflexbox';
-import { Input, Spin, Button } from 'antd';
 import { useFormState } from 'react-use-form-state';
 import { searchFromItems, exportFromItems } from '../services/trackItem.api';
 import moment from 'moment';
 import { TrackItemType } from '../enum/TrackItemType';
 import { SearchResults } from '../components/SearchResults/SearchResults';
 import { SearchOptions } from '../components/SearchResults/SearchOptions';
-import { Spinner } from '../components/Timeline/Timeline.styles';
+
+import { Box, Flex } from '@chakra-ui/layout';
+import { Input } from '@chakra-ui/input';
+import { Button } from '@chakra-ui/button';
+import { Spinner } from '@chakra-ui/spinner';
+import { SpinnerContainer } from '../components/Timeline/Timeline.styles';
 
 export function SearchPage({ location }: any) {
     const [formState, { text }] = useFormState({ search: '' });
@@ -72,7 +75,7 @@ export function SearchPage({ location }: any) {
     return (
         <MainLayout location={location}>
             <form onSubmit={onSubmit}>
-                <Flex p={1} width={1} flexDirection="column">
+                <Flex p={1} flexDirection="column">
                     <Flex p={1}>
                         <Input
                             placeholder="Search from all items"
@@ -81,9 +84,7 @@ export function SearchPage({ location }: any) {
                             })}
                         />
                         <Box px={2}>
-                            <Button type="primary" htmlType="submit">
-                                Search
-                            </Button>
+                            <Button type="submit">Search</Button>
                         </Box>
 
                         <Box px={2}>
@@ -91,7 +92,6 @@ export function SearchPage({ location }: any) {
                                 onClick={() => {
                                     exportItems(formState.values.search);
                                 }}
-                                type="default"
                             >
                                 Export to CSV
                             </Button>
@@ -102,15 +102,11 @@ export function SearchPage({ location }: any) {
                     </Box>
                     <Box p={1}>
                         {isLoading && (
-                            <Spinner>
-                                <Spin />
-                            </Spinner>
+                            <SpinnerContainer>
+                                <Spinner />
+                            </SpinnerContainer>
                         )}
-                        <SearchResults
-                            searchResult={searchResult}
-                            searchPaging={searchPaging}
-                            setSearchPaging={setSearchPaging}
-                        />
+                        <SearchResults searchResult={searchResult} />
                     </Box>
                 </Flex>
             </form>

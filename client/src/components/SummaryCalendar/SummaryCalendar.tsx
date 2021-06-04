@@ -1,11 +1,11 @@
 import { Flex } from 'reflexbox';
-import { Calendar, Spin } from 'antd';
+import { Calendar } from 'antd';
 import { CoffeeOutlined, EyeOutlined, LaptopOutlined, ToolOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import React, { useContext, useEffect } from 'react';
 import useReactRouter from 'use-react-router';
 import { SummaryContext } from '../../SummaryContext';
-import { Spinner } from '../Timeline/Timeline.styles';
+
 import { Item, TaskList } from './SummaryCalendar.styles';
 import { Logger } from '../../logger';
 import { convertDate, TIME_FORMAT_SHORT } from '../../constants';
@@ -14,6 +14,8 @@ import classNames from 'classnames';
 import padStart from 'lodash/padStart';
 import { DAY_MONTH_FORMAT } from '../../SummaryContext.util';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
+import { Spinner } from '@chakra-ui/spinner';
+import { SpinnerContainer } from '../Timeline/Timeline.styles';
 
 moment.locale('et');
 
@@ -154,9 +156,9 @@ export const SummaryCalendar = () => {
     return (
         <Flex p={1}>
             {isLoading && (
-                <Spinner>
-                    <Spin />
-                </Spinner>
+                <SpinnerContainer>
+                    <Spinner />
+                </SpinnerContainer>
             )}
             <Calendar
                 value={selectedDate}
