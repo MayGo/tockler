@@ -1,9 +1,9 @@
-import { Select } from 'antd';
 import React from 'react';
-import { Box, Flex } from 'reflexbox';
 import { ColorPicker } from '../Timeline/ColorPicker';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { PRIMARY_COLOR_VAR, themes } from '../../store/theme.util';
+import { Select } from '@chakra-ui/select';
+import { Flex, Box } from '@chakra-ui/layout';
 
 export const ThemeSelect = () => {
     const theme: any = useStoreState(state => state.theme);
@@ -19,14 +19,13 @@ export const ThemeSelect = () => {
                 <Select
                     style={{ width: 100 }}
                     value={theme.name}
-                    onChange={theme => {
-                        setThemeByName(theme);
+                    onChange={event => {
+                        console.info('Selected theme', event.target.value);
+                        setThemeByName(event.target.value);
                     }}
                 >
                     {Object.keys(themes).map(name => (
-                        <Select.Option key={name} value={name}>
-                            {name}
-                        </Select.Option>
+                        <option value={name}>{name}</option>
                     ))}
                 </Select>
             </Box>

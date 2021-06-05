@@ -1,16 +1,15 @@
-import { Layout } from 'antd';
+import { Box } from '@chakra-ui/layout';
 import React from 'react';
 import { TrayMenu } from './TrayMenu';
-
-const { Content } = Layout;
 
 export function TrayLayout({ children }: any) {
     return (
         <div>
-            <Layout>
+            <Box w="100%">
                 <TrayMenu />
-                <Content style={{ marginTop: 47 }}>{children}</Content>
-            </Layout>
+
+                <Box>{children}</Box>
+            </Box>
         </div>
     );
 }
