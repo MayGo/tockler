@@ -1,7 +1,6 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useRef, useState } from 'react';
 
 import { useWindowWidth } from '@react-hook/window-size/throttled';
-import { Popover } from 'antd';
 import { debounce } from 'lodash';
 import moment from 'moment';
 import 'moment-duration-format';
@@ -27,6 +26,15 @@ import { useChartThemeState } from '../../routes/ChartThemeProvider';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { rangeToDate } from '../../timeline.util';
 import { Spinner } from '@chakra-ui/spinner';
+import {
+    Popover,
+    PopoverArrow,
+    PopoverBody,
+    PopoverCloseButton,
+    PopoverContent,
+    PopoverHeader,
+    PopoverTrigger,
+} from '@chakra-ui/popover';
 
 const getTrackItemOrder = (type: string) => {
     if (type === TrackItemType.AppTrackItem) {
@@ -79,6 +87,7 @@ const rowEnabledDefaults = {
 
 export const Timeline = memo(() => {
     const { chartTheme } = useChartThemeState();
+    const popoverTriggerRef = useRef();
 
     const timerange = useStoreState(state => state.timerange);
     const visibleTimerange = useStoreState(state => state.visibleTimerange);
@@ -219,6 +228,8 @@ export const Timeline = memo(() => {
         x: [1, 3],
     };
 
+    console.info('selectedTimelineItem', selectedTimelineItem, !!selectedTimelineItem);
+
     return (
         <div>
             <MainChart>
@@ -227,81 +238,84 @@ export const Timeline = memo(() => {
                         <Spinner />
                     </SpinnerContainer>
                 )}
-                <Popover
-                    style={{ zIndex: 930 }}
-                    content={<TimelineItemEditContainer />}
-                    visible={!!selectedTimelineItem}
-                    trigger="click"
+                <Popover isOpen={!!selectedTimelineItem}>
+                    <PopoverTrigger>{popoverTriggerRef.current || <div />}</PopoverTrigger>
+                    <PopoverContent p={5} w="fit-content">
+                        <PopoverArrow />
+                        <PopoverBody>
+                            <TimelineItemEditContainer />
+                        </PopoverBody>
+                    </PopoverContent>
+                </Popover>
+                <VictoryChart
+                    theme={chartTheme}
+                    height={100}
+                    width={chartWidth}
+                    domainPadding={domainPadding}
+                    padding={padding}
+                    scale={scale}
+                    horizontal
+                    domain={domain}
+                    containerComponent={
+                        <VictoryZoomContainer
+                            responsive={false}
+                            zoomDimension="y"
+                            zoomDomain={{ y: rangeToDate(visibleTimerange) }}
+                            key={selectedTimelineItem && selectedTimelineItem.id}
+                            onZoomDomainChange={debounce(handleZoom, 300)}
+                        />
+                    }
                 >
-                    <VictoryChart
-                        theme={chartTheme}
-                        height={100}
-                        width={chartWidth}
-                        domainPadding={domainPadding}
-                        padding={padding}
-                        scale={scale}
-                        horizontal
-                        domain={domain}
-                        containerComponent={
-                            <VictoryZoomContainer
-                                responsive={false}
-                                zoomDimension="y"
-                                zoomDomain={{ y: rangeToDate(visibleTimerange) }}
-                                key={selectedTimelineItem && selectedTimelineItem.id}
-                                onZoomDomainChange={debounce(handleZoom, 300)}
+                    <VictoryAxis dependentAxis tickCount={20} />
+
+                    <VictoryBar
+                        style={barStyle}
+                        x={getTrackItemOrderFn}
+                        y={convertDateForY}
+                        y0={convertDateForY0}
+                        data={timelineData}
+                        dataComponent={
+                            <BarWithTooltip
+                                popoverTriggerRef={popoverTriggerRef}
+                                theme={chartTheme}
+                                getTooltipLabel={getTooltipLabel}
+                                onClickBarItem={handleSelectionChanged}
                             />
                         }
-                    >
-                        <VictoryAxis dependentAxis tickCount={20} />
-
-                        <VictoryBar
-                            style={barStyle}
-                            x={getTrackItemOrderFn}
-                            y={convertDateForY}
-                            y0={convertDateForY0}
-                            data={timelineData}
-                            dataComponent={
-                                <BarWithTooltip
-                                    theme={chartTheme}
-                                    getTooltipLabel={getTooltipLabel}
-                                    onClickBarItem={handleSelectionChanged}
-                                />
-                            }
-                        />
-                        <VictoryAxis
-                            tickValues={[1, 2, 3]}
-                            tickFormat={['App', 'Status', 'Log']}
-                            events={axisEvents}
-                            style={axisStyle}
-                            gridComponent={
-                                <VictoryBrushLine
-                                    disable={
-                                        !selectedTimelineItem ||
-                                        selectedTimelineItem.taskName !== TrackItemType.LogTrackItem
-                                    }
-                                    width={barWidth}
-                                    dimension="y"
-                                    brushDomain={[
-                                        selectedTimelineItem ? selectedTimelineItem.beginDate : 0,
-                                        selectedTimelineItem ? selectedTimelineItem.endDate : 0,
-                                    ]}
-                                    onBrushDomainChange={handleEditBrushDebounced}
-                                    brushStyle={{
-                                        pointerEvents: 'none',
-                                        stroke: chartTheme.isDark ? 'white' : 'black',
-                                        fill: chartTheme.isDark ? 'white' : 'black',
-                                        opacity: ({ active }) => (active ? 0.5 : 0.4),
-                                    }}
-                                    brushAreaStyle={{
-                                        stroke: 'none',
-                                        fill: 'transparent',
-                                        opacity: 0,
-                                    }}
-                                />
-                            }
-                        />
-                    </VictoryChart>
-                </Popover>
+                    />
+                    <VictoryAxis
+                        tickValues={[1, 2, 3]}
+                        tickFormat={['App', 'Status', 'Log']}
+                        events={axisEvents}
+                        style={axisStyle}
+                        gridComponent={
+                            <VictoryBrushLine
+                                disable={
+                                    !selectedTimelineItem ||
+                                    selectedTimelineItem.taskName !== TrackItemType.LogTrackItem
+                                }
+                                width={barWidth}
+                                dimension="y"
+                                brushDomain={[
+                                    selectedTimelineItem ? selectedTimelineItem.beginDate : 0,
+                                    selectedTimelineItem ? selectedTimelineItem.endDate : 0,
+                                ]}
+                                onBrushDomainChange={handleEditBrushDebounced}
+                                brushStyle={{
+                                    pointerEvents: 'none',
+                                    stroke: chartTheme.isDark ? 'white' : 'black',
+                                    fill: chartTheme.isDark ? 'white' : 'black',
+                                    opacity: ({ active }) => (active ? 0.5 : 0.4),
+                                }}
+                                brushAreaStyle={{
+                                    stroke: 'none',
+                                    fill: 'transparent',
+                                    opacity: 0,
+                                }}
+                            />
+                        }
+                    />
+                </VictoryChart>
             </MainChart>
             <BrushChart>
                 <VictoryChart

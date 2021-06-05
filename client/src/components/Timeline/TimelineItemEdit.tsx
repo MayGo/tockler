@@ -1,19 +1,23 @@
-import { Box, Flex } from 'reflexbox';
-import { Typography, Button, Divider, Input, Modal, Select, TimePicker, Tooltip } from 'antd';
-import {
-    PlayCircleOutlined,
-    SaveOutlined,
-    DeleteOutlined,
-    CloseOutlined,
-    ExclamationCircleOutlined,
-} from '@ant-design/icons';
+import { TimePicker } from 'antd';
+
 import React, { useState, useEffect, memo } from 'react';
 import { ColorPicker } from './ColorPicker';
 import { Logger } from '../../logger';
 import moment from 'moment';
 import { TrackItemType } from '../../enum/TrackItemType';
-
-const { Title } = Typography;
+import { Box, Divider, Flex, Heading } from '@chakra-ui/layout';
+import { Input } from '@chakra-ui/input';
+import { Button } from '@chakra-ui/button';
+import { Tooltip } from '@chakra-ui/tooltip';
+import { Select } from '@chakra-ui/select';
+import {
+    AiOutlineClose,
+    AiOutlineDelete,
+    AiOutlineExclamationCircle,
+    AiOutlinePlayCircle,
+    AiOutlineSave,
+} from 'react-icons/ai';
+import { TimelineItemEditDeleteButton } from './TimelineItemEditDeleteButton';
 
 interface IProps {
     selectedTimelineItem: any;
@@ -25,19 +29,6 @@ interface IProps {
 }
 
 const COLOR_SCOPE_ONLY_THIS = 'ONLY_THIS';
-/*
-function propsAreEqual(prev, next) {
-    if (prev.selectedTimelineItem && next.selectedTimelineItem) {
-        const equalById = prev.selectedTimelineItem.id === next.selectedTimelineItem.id;
-        if (!next.selectedTimelineItem.id) {
-            return prev.selectedTimelineItem === next.selectedTimelineItem;
-        }
-
-        return equalById;
-    }
-
-    return false;
-}*/
 
 const statusName = {
     [TrackItemType.AppTrackItem]: 'App',
@@ -150,18 +141,6 @@ export const TimelineItemEdit = memo<IProps>(
             deleteTimelineItem(trackItem);
         };
 
-        const showDeleteConfirm = () => {
-            Modal.confirm({
-                title: 'Delete',
-                icon: <ExclamationCircleOutlined />,
-                content: 'Sure you want to delete?',
-                okText: 'Delete',
-                cancelText: 'Cancel',
-                onOk: deleteItem,
-                zIndex: 10000,
-            });
-        };
-
         if (!selectedTimelineItem) {
             Logger.debug('No trackItem');
             return null;
@@ -179,6 +158,7 @@ export const TimelineItemEdit = memo<IProps>(
                         <Input
                             value={trackItem.title}
                             placeholder="Title"
+                            c
                             onChange={changeAppTitle}
                         />
                     </Box>
@@ -189,20 +169,14 @@ export const TimelineItemEdit = memo<IProps>(
 
                     <Box px={1}>
                         <Button
-                            type="primary"
                             shape="circle"
-                            icon={<PlayCircleOutlined />}
+                            leftIcon={<AiOutlinePlayCircle />}
                             onClick={saveBasedOnColorOptionHandler}
                         />
                     </Box>
 
                     <Box px={1}>
-                        <Button
-                            type="primary"
-                            shape="circle"
-                            icon={<CloseOutlined />}
-                            onClick={closeEdit}
-                        />
+                        <Button shape="circle" leftIcon={<AiOutlineClose />} onClick={closeEdit} />
                     </Box>
                 </Flex>
             );
@@ -210,10 +184,12 @@ export const TimelineItemEdit = memo<IProps>(
 
         return (
             <Box width={600}>
-                <Flex px={2} width={1} py={1} pt={3}>
-                    <Title level={5}>{statusName[trackItem.taskName] || 'New Log item'}</Title>
+                <Flex px={2} py={1} pt={3}>
+                    <Heading as="h5" size="sm">
+                        {statusName[trackItem.taskName] || 'New Log item'}
+                    </Heading>
                 </Flex>
-                <Flex p={1} width={1}>
+                <Flex p={1}>
                     <Box px={1} width={1 / 3}>
                         <Input value={trackItem.app} placeholder="App" onChange={changeAppName} />
                     </Box>
@@ -225,30 +201,26 @@ export const TimelineItemEdit = memo<IProps>(
                         />
                     </Box>
                 </Flex>
-                <Flex p={1} width={1}>
-                    <Flex px={1} width={1 / 3}>
+                <Flex p={1}>
+                    <Flex px={1} width="33%">
                         <Box pr={2}>
                             <ColorPicker color={trackItem.color} onChange={changeColorHandler} />
                         </Box>
                         {colorChanged && (
                             <Tooltip
                                 placement="left"
-                                title="Can also change color for all items or all future items"
+                                label="Can also change color for all items or all future items"
                             >
-                                <Select
-                                    value={colorScope}
-                                    style={{ width: '100%' }}
-                                    onChange={changeColorScopeHandler}
-                                >
-                                    <Select.Option value="ONLY_THIS">This trackItem</Select.Option>
-                                    <Select.Option value="NEW_ITEMS">Future items</Select.Option>
-                                    <Select.Option value="ALL_ITEMS">All items</Select.Option>
+                                <Select value={colorScope} onChange={changeColorScopeHandler}>
+                                    <option value="ONLY_THIS">This trackItem</option>
+                                    <option value="NEW_ITEMS">Future items</option>
+                                    <option value="ALL_ITEMS">All items</option>
                                 </Select>
                             </Tooltip>
                         )}
                     </Flex>
 
-                    <Flex px={1} width={2 / 3}>
+                    <Flex px={1} width="67%">
                         <Box pr={1}>
                             <TimePicker
                                 value={moment(trackItem.beginDate)}
@@ -263,23 +235,22 @@ export const TimelineItemEdit = memo<IProps>(
                         </Box>
                     </Flex>
                 </Flex>
-                <Divider />
-                <Flex width={1}>
+                <Box py={5}>
+                    <Divider />
+                </Box>
+                <Flex>
                     <Box px={1}>
-                        <Button icon={<CloseOutlined />} onClick={closeEdit}>
+                        <Button leftIcon={<AiOutlineClose />} onClick={closeEdit}>
                             Close
                         </Button>
                     </Box>
-                    <Box sx={{ flex: 1 }}></Box>
+                    <Box flex={1}></Box>
                     <Box px={1}>
-                        <Button type="link" icon={<DeleteOutlined />} onClick={showDeleteConfirm}>
-                            Delete
-                        </Button>
+                        <TimelineItemEditDeleteButton deleteItem={deleteItem} />
                     </Box>
                     <Box px={1}>
                         <Button
-                            type="primary"
-                            icon={<SaveOutlined />}
+                            leftIcon={<AiOutlineSave />}
                             onClick={saveBasedOnColorOptionHandler}
                         >
                             Save

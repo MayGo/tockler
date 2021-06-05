@@ -10,6 +10,10 @@ export const TimelineItemEditContainer = memo(() => {
     const setSelectedTimelineItem = useStoreActions(actions => actions.setSelectedTimelineItem);
     const fetchTimerange = useStoreActions(actions => actions.fetchTimerange);
 
+    if (!selectedTimelineItem) {
+        return null;
+    }
+
     const deleteTimelineItem = async trackItem => {
         const id = trackItem.id;
         Logger.debug('Delete timeline trackItem', id);
