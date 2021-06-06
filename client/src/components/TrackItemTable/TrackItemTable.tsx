@@ -1,6 +1,6 @@
 // tslint:disable-next-line: no-submodule-imports
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import Moment from 'react-moment';
 import { DATE_TIME_FORMAT, TIME_FORMAT } from '../../constants';
 import { TrackItemType } from '../../enum/TrackItemType';
@@ -38,16 +38,24 @@ import { SelectColumnFilter } from './SelectColumnFilter';
 import { DefaultColumnFilter } from './DefaultColumnFilter';
 import { IndeterminateCheckbox } from './IndeterminateCheckbox';
 
-export const TrackItemTable = () => {
+export const TrackItemTable = ({ type }) => {
     const timeItems = useStoreState(state => state.timeItems);
     const visibleTimerange = useStoreState(state => state.visibleTimerange);
     const fetchTimerange = useStoreActions(actions => actions.fetchTimerange);
+
+    const data = useMemo(
+        () =>
+            type === TrackItemType.AppTrackItem
+                ? filterItems(timeItems.appItems, visibleTimerange)
+                : filterItems(timeItems.logItems, visibleTimerange),
+        [type, timeItems.appItems, timeItems.logItems, visibleTimerange],
+    );
 
     const dateToValue = ({ value }) => {
         return <Moment format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}>{value}</Moment>;
     };
 
-    const defaultColumn = React.useMemo(
+    const defaultColumn = useMemo(
         () => ({
             // Let's set up our default Filter UI
             Filter: DefaultColumnFilter,
@@ -55,7 +63,7 @@ export const TrackItemTable = () => {
         [],
     );
 
-    const columns = React.useMemo(
+    const columns = useMemo(
         () => [
             {
                 Header: 'App',
@@ -85,7 +93,7 @@ export const TrackItemTable = () => {
                 Header: 'Dur',
                 accessor: record => diffAndFormatShort(record.beginDate, record.endDate),
                 Footer: info => {
-                    const total = React.useMemo(() => calculateTotal(info.data), [info.data]);
+                    const total = useMemo(() => calculateTotal(info.data), [info.data]);
                     return <TotalCount>Total: {total}</TotalCount>;
                 },
             },
@@ -93,7 +101,7 @@ export const TrackItemTable = () => {
         [],
     );
 
-    const filterTypes = React.useMemo(
+    const filterTypes = useMemo(
         () => ({
             // Add a new fuzzyTextFilterFn filter type.
             fuzzyText: fuzzyTextFilterFn,
@@ -120,7 +128,6 @@ export const TrackItemTable = () => {
         footerGroups,
         prepareRow,
         page,
-
         canPreviousPage,
         canNextPage,
         pageOptions,
@@ -134,25 +141,22 @@ export const TrackItemTable = () => {
         selectedFlatRows,
         state: { pageIndex, pageSize, selectedRowIds },
     } = useTable(
-        { columns, defaultColumn, filterTypes, data: timeItems.appItems },
+        { columns, defaultColumn, filterTypes, data },
         useFilters,
         useSortBy,
         usePagination,
         useRowSelect,
         hooks => {
             hooks.visibleColumns.push(columns => [
-                // Let's make a column for selection
                 {
                     id: 'selection',
-                    // The header can use the table's getToggleAllRowsSelectedProps method
-                    // to render a checkbox
+
                     Header: ({ getToggleAllRowsSelectedProps }) => (
                         <div>
                             <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
                         </div>
                     ),
-                    // The cell can use the individual row's getToggleRowSelectedProps method
-                    // to the render a checkbox
+
                     Cell: ({ row }) => (
                         <div>
                             <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
@@ -175,11 +179,6 @@ export const TrackItemTable = () => {
             Logger.error('No ids, not deleting from DB');
         }
     };
-
-    const filterByAppType = type =>
-        type === TrackItemType.AppTrackItem
-            ? filterItems(timeItems.appItems, visibleTimerange)
-            : filterItems(timeItems.logItems, visibleTimerange);
 
     const deleteSelectedItems = () => {
         deleteTimelineItems(selectedFlatRows.map(({ original }) => original.id));
@@ -309,7 +308,8 @@ export const TrackItemTable = () => {
                         min={1}
                         max={pageOptions.length}
                         onChange={value => {
-                            const page = value ? value - 1 : 0;
+                            const currentPage = Number(value);
+                            const page = currentPage ? currentPage - 1 : 0;
                             gotoPage(page);
                         }}
                         defaultValue={pageIndex + 1}
