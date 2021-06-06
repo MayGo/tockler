@@ -1,6 +1,5 @@
+import { Box } from '@chakra-ui/layout';
 import styled from 'styled-components';
-
-import { Box } from 'reflexbox';
 
 export const MainChart = styled(Box).attrs({ mb: 2, py: 2 })`
     border-top: 1px solid ${({ theme: { variables } }) => variables['@normal-color']};

@@ -1,22 +1,21 @@
-import { Box, Flex } from 'reflexbox';
-import { Button, List } from 'antd';
-import { ClockCircleOutlined, PauseOutlined, CaretRightOutlined } from '@ant-design/icons';
-
+import { Box, Flex, Text } from '@chakra-ui/layout';
 import moment from 'moment';
 import React, { memo } from 'react';
 import Moment from 'react-moment';
 import TimeAgo from 'react-timeago';
 import styled from 'styled-components';
+import { IconButton } from '@chakra-ui/react';
 import { convertDate } from '../../constants';
+import { AiOutlineCaretRight, AiOutlineClockCircle, AiOutlinePause } from 'react-icons/ai';
 
-const CustomListItem = styled(List.Item)`
+const CustomListItem = styled(Box)`
     padding-left: 5px;
     margin-top: 5px;
     &:last-child {
         margin-bottom: 5px;
     }
     background-color: ${({ theme: { variables } }) => variables['@component-background']};
-    border-left: 5px solid ${props => props.color};
+    border-left: 5px solid ${props => props.leftColor};
 `;
 
 const Small = styled(Box)`
@@ -52,71 +51,68 @@ export function TrayListItemPlain({
     isRunning,
 }: any) {
     return (
-        <CustomListItem color={item.color} key={item.title}>
-            <Flex alignItems="center" width={1} pl={10} pr={10}>
-                <Box width={8 / 9} py={2}>
+        <CustomListItem leftColor={item.color} key={item.title}>
+            <Flex alignItems="center" width="100%" pl={1} pr={2}>
+                <Box width="80%" py={2} flex={1}>
                     <Flex>
-                        <CustomBox width={2 / 7} mr={2}>
+                        <Box overflow="hidden" width="30%" mr={2}>
                             {item.app}
-                        </CustomBox>
-                        <CustomBox width={5 / 7}>{item.title}</CustomBox>
+                        </Box>
+                        <Box overflow="hidden">{item.title}</Box>
                     </Flex>
 
-                    <Flex>
-                        <Box width={10 / 13}>
-                            <Small>
-                                <FormattedTime item={item} isRunning={isRunning} />
-                                {'  '}
-                                <ClockCircleOutlined />
-                                {'  '}
-                                <b>
-                                    {!isRunning && (
-                                        <Moment from={item.beginDate} ago>
-                                            {item.endDate}
-                                        </Moment>
-                                    )}
-                                    {isRunning && (
-                                        <Moment fromNow ago>
-                                            {item.beginDate}
-                                        </Moment>
-                                    )}
-                                </b>
-                            </Small>
+                    <Flex alignItems="center">
+                        <Text fontSize="xm">
+                            <FormattedTime item={item} isRunning={isRunning} />
+                        </Text>
+                        <Box px={1}>
+                            <AiOutlineClockCircle />
                         </Box>
-                        <Flex width={3 / 11} justifyContent="flex-end">
-                            <Small pr={2}>
-                                {item.startDate && <TimeAgo date={item.startDate} />}
-                            </Small>
-                        </Flex>
+                        <b>
+                            <Text fontSize="xm">
+                                {!isRunning && (
+                                    <Moment from={item.beginDate} ago>
+                                        {item.endDate}
+                                    </Moment>
+                                )}
+                                {isRunning && (
+                                    <Moment fromNow ago>
+                                        {item.beginDate}
+                                    </Moment>
+                                )}
+                            </Text>
+                        </b>
                     </Flex>
-                    <Flex>
-                        {item.totalMs > 1 && (
-                            <Box width={2 / 7}>
-                                <Medium>
-                                    Duration: <b>{moment.duration(item.totalMs).format()}</b>
-                                </Medium>
-                            </Box>
-                        )}
-                    </Flex>
+                    {item.startDate && (
+                        <Box pr={2}>
+                            <Text fontSize="xm">
+                                <TimeAgo date={item.startDate} />
+                            </Text>
+                        </Box>
+                    )}
+                    {item.totalMs > 1 && (
+                        <Box>
+                            <Text fontSize="sm">
+                                Duration: <b>{moment.duration(item.totalMs).format()}</b>
+                            </Text>
+                        </Box>
+                    )}
                 </Box>
-                <ActionBtn width={1 / 9} justifyContent="flex-end">
-                    {isRunning && (
-                        <Button
-                            type="primary"
-                            shape="circle"
-                            icon={<PauseOutlined />}
-                            onClick={() => stopRunningLogItem()}
-                        />
-                    )}
-                    {!isRunning && (
-                        <Button
-                            type="default"
-                            shape="circle"
-                            icon={<CaretRightOutlined />}
-                            onClick={() => startNewLogItemFromOld(item)}
-                        />
-                    )}
-                </ActionBtn>
+
+                {isRunning && (
+                    <IconButton
+                        aria-label="pause"
+                        icon={<AiOutlinePause />}
+                        onClick={() => stopRunningLogItem()}
+                    />
+                )}
+                {!isRunning && (
+                    <IconButton
+                        aria-label="start"
+                        icon={<AiOutlineCaretRight />}
+                        onClick={() => startNewLogItemFromOld(item)}
+                    />
+                )}
             </Flex>
         </CustomListItem>
     );

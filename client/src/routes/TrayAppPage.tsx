@@ -1,4 +1,3 @@
-import { Box } from 'reflexbox';
 import React, { useEffect, useState, useCallback, memo } from 'react';
 import randomcolor from 'randomcolor';
 import { TimelineItemEdit } from '../components/Timeline/TimelineItemEdit';
@@ -12,6 +11,7 @@ import { useWindowFocused } from '../hooks/windowFocusedHook';
 import { throttle } from 'lodash';
 import deepEqual from 'fast-deep-equal/es6';
 import { analytics } from '../analytics';
+import { Box } from '@chakra-ui/layout';
 
 const EMPTY_SELECTED_ITEM = {};
 

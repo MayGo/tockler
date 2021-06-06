@@ -7,7 +7,7 @@ import moment from 'moment';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { Box, Divider, Flex, Heading } from '@chakra-ui/layout';
 import { Input } from '@chakra-ui/input';
-import { Button } from '@chakra-ui/button';
+import { Button, IconButton } from '@chakra-ui/button';
 import { Tooltip } from '@chakra-ui/tooltip';
 import { Select } from '@chakra-ui/select';
 import { AiOutlineClose, AiOutlinePlayCircle, AiOutlineSave } from 'react-icons/ai';
@@ -144,8 +144,8 @@ export const TimelineItemEdit = memo<IProps>(
 
         if (trayEdit) {
             return (
-                <Flex p={1} width={1}>
-                    <Box px={1} width={1 / 3}>
+                <Flex p={1}>
+                    <Box px={1} width="33%">
                         <Input value={trackItem.app} placeholder="App" onChange={changeAppName} />
                     </Box>
                     <Box px={1} flex="1">
@@ -162,15 +162,19 @@ export const TimelineItemEdit = memo<IProps>(
                     </Box>
 
                     <Box px={1}>
-                        <Button
-                            shape="circle"
+                        <IconButton
+                            aria-label="start"
                             leftIcon={<AiOutlinePlayCircle />}
                             onClick={saveBasedOnColorOptionHandler}
                         />
                     </Box>
 
                     <Box px={1}>
-                        <Button shape="circle" leftIcon={<AiOutlineClose />} onClick={closeEdit} />
+                        <IconButton
+                            aria-label="stop"
+                            leftIcon={<AiOutlineClose />}
+                            onClick={closeEdit}
+                        />
                     </Box>
                 </Flex>
             );
@@ -184,7 +188,7 @@ export const TimelineItemEdit = memo<IProps>(
                     </Heading>
                 </Flex>
                 <Flex p={1}>
-                    <Box px={1} width={1 / 3}>
+                    <Box px={1} width="33%">
                         <Input value={trackItem.app} placeholder="App" onChange={changeAppName} />
                     </Box>
                     <Box px={1} flex="1">

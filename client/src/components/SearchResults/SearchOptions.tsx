@@ -1,11 +1,10 @@
 import { DatePicker } from 'antd';
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import React from 'react';
-
 import { Logger } from '../../logger';
 import { Box, Flex } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
+import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 
 const { RangePicker } = DatePicker;
 
@@ -82,7 +81,7 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
         <Flex>
             <Box p={1}>
                 <Button onClick={goBackOneDay}>
-                    <LeftOutlined />
+                    <AiOutlineLeft />
                 </Button>
             </Box>
             <Box p={1}>
@@ -90,7 +89,7 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
             </Box>
             <Box p={1}>
                 <Button onClick={goForwardOneDay}>
-                    <RightOutlined />
+                    <AiOutlineRight />
                 </Button>
             </Box>
 

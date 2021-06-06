@@ -1,7 +1,9 @@
-import { List } from 'antd';
+import { VStack } from '@chakra-ui/layout';
+import { Spinner } from '@chakra-ui/spinner';
 import { groupBy, map, sortBy, sumBy } from 'lodash';
 import React, { memo } from 'react';
 import { convertDate } from '../../constants';
+import { SpinnerContainer } from '../Timeline/Timeline.styles';
 import { TrayListItem } from './TrayListItem';
 
 const sumDiff = data =>
@@ -41,19 +43,21 @@ export function TrayListPlain({
     }
 
     return (
-        <List
-            loading={loading}
-            itemLayout="horizontal"
-            dataSource={items}
-            renderItem={(item: any) => (
+        <VStack spacing={1} align="stretch">
+            {loading && (
+                <SpinnerContainer>
+                    <Spinner />
+                </SpinnerContainer>
+            )}
+            {items.map(item => (
                 <TrayListItem
                     item={item}
                     isRunning={runningLogItem && item.id === runningLogItem.id}
                     startNewLogItemFromOld={startNewLogItem}
                     stopRunningLogItem={stopRunningLogItem}
                 />
-            )}
-        />
+            ))}
+        </VStack>
     );
 }
 

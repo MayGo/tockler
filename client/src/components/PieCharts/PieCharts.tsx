@@ -1,4 +1,3 @@
-import { Box, Flex } from 'reflexbox';
 import { useWindowWidth } from '@react-hook/window-size/throttled';
 import React, { memo, useContext } from 'react';
 import { RootContext } from '../../RootContext';
@@ -7,6 +6,7 @@ import { PieChart } from './PieChart';
 import { Heading } from './PieCharts.styles';
 import { WorkProgressChart } from './WorkProgressChart';
 import { useStoreState } from '../../store/easyPeasy';
+import { Box, Flex } from '@chakra-ui/layout';
 
 export const PieCharts = memo(() => {
     const timeItems = useStoreState(state => state.timeItems);

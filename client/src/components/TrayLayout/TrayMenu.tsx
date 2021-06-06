@@ -59,7 +59,7 @@ export const TrayMenuPlain = () => {
     }, [windowIsActive]);
 
     return (
-        <Flex bg="black" w="100%" p={4} color="white" position="sticky" top={0} zIndex={1}>
+        <Flex bg="black" w="100%" p={4} color="white" position="sticky" top={0} zIndex={100}>
             <Box pr={3}>
                 <Link as={RouterLink} onClick={toggleMainWindow}>
                     <Flex>

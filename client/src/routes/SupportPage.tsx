@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import { MainLayout } from '../components/MainLayout/MainLayout';
-import { Box, Flex } from 'reflexbox';
 import emailjs from 'emailjs-com';
-import { Button, Input, Typography } from 'antd';
-const { Text, Title, Paragraph } = Typography;
+import { Button } from '@chakra-ui/button';
+import { Box, Flex, Heading, Text } from '@chakra-ui/layout';
+import { Textarea } from '@chakra-ui/textarea';
+import { Input } from '@chakra-ui/input';
 
 const TEMPLATE_ID = process.env.REACT_APP_TEMPLATE_ID || '';
 const SERVICE_ID = process.env.REACT_APP_SERVICE_ID || '';
 const USER_ID = process.env.REACT_APP_USER_ID || '';
+
+const Paragraph = props => (
+    <Box py={2}>
+        <Text fontSize="lg" {...props} />
+    </Box>
+);
 
 export function SupportPage({ location }: any) {
     const [content, setContent] = useState('');
@@ -46,14 +53,16 @@ export function SupportPage({ location }: any) {
 
     return (
         <MainLayout location={location}>
-            <Box p={4} width={0.5}>
-                <Title level={3}>Contact Me</Title>
+            <Box p={4} width="50%">
+                <Heading as="h3" size="lg">
+                    Contact Me
+                </Heading>
                 <Paragraph>
                     Feel free to contact if you have any problems or feature requests. Or if you
                     have any feedback to give - good or bad.
                 </Paragraph>
                 <Flex p={1}>
-                    <Input.TextArea
+                    <Textarea
                         value={content}
                         placeholder="Content"
                         onChange={changeContent}
@@ -73,7 +82,7 @@ export function SupportPage({ location }: any) {
                     />
                 </Flex>
                 <Flex p={1}>
-                    <Button type="primary" onClick={sendForm} disabled={isSending}>
+                    <Button onClick={sendForm} disabled={isSending}>
                         Send
                     </Button>
                 </Flex>
@@ -83,8 +92,10 @@ export function SupportPage({ location }: any) {
                     </Flex>
                 )}
             </Box>
-            <Box p={4} width={0.5}>
-                <Title level={3}>Support Tockler</Title>
+            <Box p={4} width="50%">
+                <Heading as="h3" size="lg">
+                    Support Tockler
+                </Heading>
                 <Paragraph>
                     This app is made in my own free time and often at expense of family, friends,
                     and sleep. I would like to keep this app free, open-source, and improving over

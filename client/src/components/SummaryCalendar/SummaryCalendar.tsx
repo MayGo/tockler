@@ -1,11 +1,8 @@
-import { Flex } from 'reflexbox';
 import { Calendar } from 'antd';
-import { CoffeeOutlined, EyeOutlined, LaptopOutlined, ToolOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import React, { useContext, useEffect } from 'react';
 import useReactRouter from 'use-react-router';
 import { SummaryContext } from '../../SummaryContext';
-
 import { Item, TaskList } from './SummaryCalendar.styles';
 import { Logger } from '../../logger';
 import { convertDate, TIME_FORMAT_SHORT } from '../../constants';
@@ -16,14 +13,16 @@ import { DAY_MONTH_FORMAT } from '../../SummaryContext.util';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { Spinner } from '@chakra-ui/spinner';
 import { SpinnerContainer } from '../Timeline/Timeline.styles';
+import { Flex } from '@chakra-ui/layout';
+import { AiOutlineCoffee, AiOutlineEye, AiOutlineLaptop, AiOutlineTool } from 'react-icons/ai';
 
 moment.locale('et');
 
 const icons = {
-    coffee: <CoffeeOutlined />,
-    'eye-invisible': <EyeOutlined />,
-    laptop: <LaptopOutlined />,
-    tool: <ToolOutlined />,
+    coffee: <AiOutlineCoffee />,
+    'eye-invisible': <AiOutlineEye />,
+    laptop: <AiOutlineLaptop />,
+    tool: <AiOutlineTool />,
 };
 export const SummaryCalendar = () => {
     const timerange = useStoreState(state => state.timerange);
