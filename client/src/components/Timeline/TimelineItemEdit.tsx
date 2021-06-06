@@ -1,6 +1,6 @@
-import { TimePicker } from 'antd';
-
 import React, { useState, useEffect, memo } from 'react';
+
+import TimeKeeper, { TimeOutput } from 'react-timekeeper';
 import { ColorPicker } from './ColorPicker';
 import { Logger } from '../../logger';
 import moment from 'moment';
@@ -12,6 +12,8 @@ import { Tooltip } from '@chakra-ui/tooltip';
 import { Select } from '@chakra-ui/select';
 import { AiOutlineClose, AiOutlinePlayCircle, AiOutlineSave } from 'react-icons/ai';
 import { TimelineItemEditDeleteButton } from './TimelineItemEditDeleteButton';
+import { TIME_FORMAT_SHORT } from '../../constants';
+import { TimePicker } from './TimePicker';
 
 interface IProps {
     selectedTimelineItem: any;
@@ -79,15 +81,14 @@ export const TimelineItemEdit = memo<IProps>(
                 },
             });
         };
-        const changeTime = attr => value => {
+        const changeTime = attr => (value: TimeOutput) => {
             Logger.debug('Changed app time:', value);
             const oldDate = moment(state.trackItem[attr]);
-            const newDate = moment(
-                value
-                    .toArray()
-                    .slice(0, 4)
-                    .concat(oldDate.toArray().slice(4)),
-            );
+            const newDate = oldDate
+                .startOf('day')
+                .set('hours', value.hour)
+                .set('minutes', value.minute);
+
             setState({
                 ...state,
                 trackItem: {
@@ -180,6 +181,8 @@ export const TimelineItemEdit = memo<IProps>(
             );
         }
 
+        const isCreating = !selectedTimelineItem.id;
+
         return (
             <Box width={600}>
                 <Flex px={2} py={1} pt={3}>
@@ -221,13 +224,13 @@ export const TimelineItemEdit = memo<IProps>(
                     <Flex px={1} width="67%">
                         <Box pr={1}>
                             <TimePicker
-                                value={moment(trackItem.beginDate)}
+                                time={moment(trackItem.beginDate).format(TIME_FORMAT_SHORT)}
                                 onChange={changeTime('beginDate')}
                             />
                         </Box>
                         <Box>
                             <TimePicker
-                                value={moment(trackItem.endDate)}
+                                time={moment(trackItem.endDate).format(TIME_FORMAT_SHORT)}
                                 onChange={changeTime('endDate')}
                             />
                         </Box>
@@ -243,15 +246,17 @@ export const TimelineItemEdit = memo<IProps>(
                         </Button>
                     </Box>
                     <Box flex={1}></Box>
-                    <Box px={1}>
-                        <TimelineItemEditDeleteButton deleteItem={deleteItem} />
-                    </Box>
+                    {!isCreating && (
+                        <Box px={1}>
+                            <TimelineItemEditDeleteButton deleteItem={deleteItem} />
+                        </Box>
+                    )}
                     <Box px={1}>
                         <Button
                             leftIcon={<AiOutlineSave />}
                             onClick={saveBasedOnColorOptionHandler}
                         >
-                            Save
+                            {isCreating ? 'Create' : 'Update'}
                         </Button>
                     </Box>
                 </Flex>

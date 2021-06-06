@@ -9,7 +9,7 @@ import { TrackItemType } from '../enum/TrackItemType';
 import { useInterval } from '../hooks/intervalHook';
 import { useStoreActions } from '../store/easyPeasy';
 
-const BG_SYNC_DELAY_MS = 3000;
+const BG_SYNC_DELAY_MS = 10000;
 
 export function TimelinePage({ location }: any) {
     const fetchTimerange = useStoreActions(actions => actions.fetchTimerange);

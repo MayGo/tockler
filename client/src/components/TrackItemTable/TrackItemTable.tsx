@@ -98,6 +98,7 @@ export const TrackItemTable = ({ type }) => {
                 },
             },
         ],
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [],
     );
 

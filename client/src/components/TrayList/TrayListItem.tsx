@@ -5,7 +5,7 @@ import Moment from 'react-moment';
 import TimeAgo from 'react-timeago';
 import styled from 'styled-components';
 import { IconButton } from '@chakra-ui/react';
-import { convertDate } from '../../constants';
+import { convertDate, DATE_TIME_FORMAT } from '../../constants';
 import { AiOutlineCaretRight, AiOutlineClockCircle, AiOutlinePause } from 'react-icons/ai';
 
 const CustomListItem = styled(Box)`
@@ -18,7 +18,7 @@ const CustomListItem = styled(Box)`
     border-left: 5px solid ${props => props.leftColor};
 `;
 
-const formatDate = date => convertDate(date).format('YYYY-MM-DD HH:mm:ss');
+const formatDate = date => convertDate(date).format(DATE_TIME_FORMAT);
 
 const FormattedTime = ({ item, isRunning }: any) => {
     const full = isRunning
