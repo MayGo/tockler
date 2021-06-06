@@ -1,4 +1,3 @@
-import { DatePicker } from 'antd';
 import moment from 'moment';
 import randomcolor from 'randomcolor';
 import React, { memo } from 'react';
@@ -10,14 +9,15 @@ import { Box, Flex } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
 import { Tooltip } from '@chakra-ui/tooltip';
 import { AiOutlineCaretRight, AiOutlineLeft, AiOutlinePause, AiOutlineRight } from 'react-icons/ai';
-
-const { RangePicker } = DatePicker;
+import { DateRangeInput } from '../Datepicker';
+import { OnDatesChangeProps } from '@datepicker-react/hooks';
 
 const getDayBefore = d => moment(d).subtract(1, 'days');
 const getDayAfter = d => moment(d).add(1, 'days');
 
 export const Search = memo(() => {
     const timerange = useStoreState(state => state.timerange);
+
     const visibleTimerange = useStoreState(state => state.visibleTimerange);
     const timerangeMode = useStoreState(state => state.timerangeMode);
     const liveView = useStoreState(state => state.liveView);
@@ -39,16 +39,13 @@ export const Search = memo(() => {
     const toggleLiveView = () => {
         setLiveView(!liveView);
     };
-    const onChange = (dates: any) => {
-        Logger.debug('TIMERANGE:', dates);
-        if (dates != null) {
-            const beginDate = dates[0];
-            const endDate = dates[1];
-            const newTimerange = [beginDate, endDate];
-            loadTimerange(newTimerange);
-        } else {
-            Logger.error('No dates selected');
-        }
+
+    const handleOnDatesChange = (data: OnDatesChangeProps) => {
+        Logger.debug('TIMERANGE:', data);
+
+        const { startDate, endDate } = data;
+        const newTimerange = [moment(startDate).startOf('day'), moment(endDate).endOf('day')];
+        loadTimerange(newTimerange);
     };
 
     const selectToday = () => {
@@ -122,7 +119,11 @@ export const Search = memo(() => {
                 </Button>
             </Box>
             <Box p={1}>
-                <RangePicker value={timerange as any} onChange={onChange} />
+                <DateRangeInput
+                    startDate={timerange[0].toDate()}
+                    endDate={timerange[1].toDate()}
+                    onDatesChange={handleOnDatesChange}
+                />
             </Box>
             <Box p={1}>
                 <Button onClick={goForwardOneDay}>

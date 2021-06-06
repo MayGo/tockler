@@ -18,22 +18,6 @@ const CustomListItem = styled(Box)`
     border-left: 5px solid ${props => props.leftColor};
 `;
 
-const Small = styled(Box)`
-    font-size: 10px;
-`;
-
-const Medium = styled(Box)`
-    font-size: 12px;
-`;
-
-const ActionBtn = styled(Flex)`
-    margin: 2px 0;
-`;
-
-const CustomBox = styled(Box)`
-    overflow: hidden;
-`;
-
 const formatDate = date => convertDate(date).format('YYYY-MM-DD HH:mm:ss');
 
 const FormattedTime = ({ item, isRunning }: any) => {

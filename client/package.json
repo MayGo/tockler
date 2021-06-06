@@ -6,6 +6,7 @@
         "@analytics/google-analytics": "^0.5.2",
         "@chakra-ui/icons": "^1.0.13",
         "@chakra-ui/react": "^1.6.2",
+        "@datepicker-react/hooks": "^2.8.0",
         "@emotion/react": "^11",
         "@emotion/styled": "^11",
         "@react-hook/window-size": "^1.0.12",
