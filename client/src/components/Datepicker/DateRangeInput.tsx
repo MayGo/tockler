@@ -203,6 +203,7 @@ export const DateRangeInput: React.FC<DateRangeInputProps> = props => {
                     position="absolute"
                     top={placement === 'top' ? undefined : vertical ? '100px' : '45px'}
                     bottom={placement === 'bottom' ? undefined : vertical ? '100px' : '45px'}
+                    minWidth="750px"
                 >
                     {focusedInput !== null && (
                         <Datepicker

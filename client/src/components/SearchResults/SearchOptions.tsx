@@ -1,29 +1,16 @@
-import { DatePicker } from 'antd';
 import moment from 'moment';
 import React from 'react';
 import { Logger } from '../../logger';
 import { Box, Flex } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
-
-const { RangePicker } = DatePicker;
+import { OnDatesChangeProps } from '@datepicker-react/hooks';
+import { DateRangeInput } from '../Datepicker';
 
 const getDayBefore = d => moment(d).subtract(1, 'days');
 const getDayAfter = d => moment(d).add(1, 'days');
 
 export const SearchOptions = ({ setTimerange, timerange }) => {
-    const onChange = (dates: any) => {
-        Logger.debug('TIMERANGE:', dates);
-        if (dates != null) {
-            const beginDate = dates[0];
-            const endDate = dates[1];
-            const newTimerange = [beginDate, endDate];
-            setTimerange(newTimerange);
-        } else {
-            Logger.error('No dates selected');
-        }
-    };
-
     const selectWeek = () => {
         const beginDate = moment()
             .startOf('day')
@@ -77,6 +64,15 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
 
     Logger.debug('Have timerange in Search:', timerange);
 
+    const handleOnDatesChange = (data: OnDatesChangeProps) => {
+        Logger.debug('TIMERANGE:', data);
+
+        const { startDate, endDate } = data;
+        const newTimerange = [moment(startDate).startOf('day'), moment(endDate).endOf('day')];
+
+        setTimerange(newTimerange);
+    };
+
     return (
         <Flex>
             <Box p={1}>
@@ -85,7 +81,11 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
                 </Button>
             </Box>
             <Box p={1}>
-                <RangePicker value={timerange} onChange={onChange} />
+                <DateRangeInput
+                    startDate={timerange[0].toDate()}
+                    endDate={timerange[1].toDate()}
+                    onDatesChange={handleOnDatesChange}
+                />
             </Box>
             <Box p={1}>
                 <Button onClick={goForwardOneDay}>
