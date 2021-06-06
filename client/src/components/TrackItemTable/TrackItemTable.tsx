@@ -1,35 +1,41 @@
-import { Box, Flex } from 'reflexbox';
-import { Button, Input, Table } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
 // tslint:disable-next-line: no-submodule-imports
 
-import { sumBy } from 'lodash';
-import moment from 'moment';
 import React, { useState, useRef, useEffect } from 'react';
 import Moment from 'react-moment';
-import { convertDate, DATE_TIME_FORMAT, TIME_FORMAT } from '../../constants';
+import { DATE_TIME_FORMAT, TIME_FORMAT } from '../../constants';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { diffAndFormatShort } from '../../utils';
-import { filterItems, getUniqueAppNames } from '../Timeline/timeline.utils';
-import { FilterDropdown, FilterInput, Highlight, TotalCount } from './TrackItemTable.styles';
+import { filterItems } from '../Timeline/timeline.utils';
+import { TotalCount } from './TrackItemTable.styles';
 import { Logger } from '../../logger';
 import { deleteByIds } from '../../services/trackItem.api';
 import { checkIfOneDay } from '../../timeline.util';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
-
-const calculateTotal = filteredData => {
-    const totalMs = sumBy(filteredData, (c: any) =>
-        convertDate(c.endDate).diff(convertDate(c.beginDate)),
-    );
-    const dur = moment.duration(totalMs);
-
-    return <TotalCount>Total {dur.format()}</TotalCount>;
-};
-
-const paginationConf = {
-    showSizeChanger: true,
-    pageSizeOptions: ['50', '100', '300', '500'],
-};
+import { Box, Flex, Text } from '@chakra-ui/layout';
+import { Button, IconButton } from '@chakra-ui/button';
+import { Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/table';
+import {
+    ArrowLeftIcon,
+    ArrowRightIcon,
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    TriangleDownIcon,
+    TriangleUpIcon,
+} from '@chakra-ui/icons';
+import { useTable, useSortBy, usePagination, useFilters } from 'react-table';
+import { chakra } from '@chakra-ui/system';
+import { Tooltip } from '@chakra-ui/tooltip';
+import { Select } from '@chakra-ui/select';
+import {
+    NumberDecrementStepper,
+    NumberIncrementStepper,
+    NumberInput,
+    NumberInputField,
+    NumberInputStepper,
+} from '@chakra-ui/number-input';
+import { calculateTotal, fuzzyTextFilterFn } from './TrackItemTable.utils';
+import { SelectColumnFilter } from './SelectColumnFilter';
+import { DefaultColumnFilter } from './DefaultColumnFilter';
 
 export const TrackItemTable = () => {
     const timeItems = useStoreState(state => state.timeItems);
@@ -37,7 +43,6 @@ export const TrackItemTable = () => {
 
     const fetchTimerange = useStoreActions(actions => actions.fetchTimerange);
 
-    const [data, setData] = useState<any>([]);
     const [state, setState] = useState<any>({
         filteredInfo: {},
         sortedInfo: {},
@@ -72,7 +77,7 @@ export const TrackItemTable = () => {
         const { activeType } = state;
 
         const filteredData = filterByAppType(activeType);
-        setData(filteredData);
+        //  setData(filteredData);
         setState({
             ...state,
             isOneDay: checkIfOneDay(visibleTimerange),
@@ -104,10 +109,6 @@ export const TrackItemTable = () => {
         setState({ ...state, filteredInfo: filters, sortedInfo: sorter });
     };
 
-    const clearFilters = () => {
-        setState({ ...state, filteredInfo: {} });
-    };
-
     const clearAll = () => {
         setState({ ...state, filteredInfo: {}, sortedInfo: {} });
     };
@@ -122,51 +123,12 @@ export const TrackItemTable = () => {
                 ? TrackItemType.LogTrackItem
                 : TrackItemType.AppTrackItem;
 
-        setData(filterByAppType(newActiveType));
+        //   setData(filterByAppType(newActiveType));
         setState({
             ...state,
 
             activeType: newActiveType,
             isOneDay: checkIfOneDay(visibleTimerange),
-        });
-    };
-
-    const onInputChange = e => {
-        setState({ ...state, searchText: e.target.value });
-    };
-
-    const onSearch = () => {
-        const { searchText } = state;
-        const reg = new RegExp(searchText, 'gi');
-        const filteredData = data
-            .map((record: any) => {
-                const match = record.title.match(reg);
-                if (!match) {
-                    return null;
-                }
-                return {
-                    ...record,
-                    name: (
-                        <span>
-                            {record.title
-                                .split(reg)
-                                .map((text, i) =>
-                                    i > 0
-                                        ? [<Highlight key={text}>{match[0]}</Highlight>, text]
-                                        : text,
-                                )}
-                        </span>
-                    ),
-                };
-            })
-            .filter(record => !!record);
-
-        setData(filteredData);
-        setState({
-            ...state,
-            filterTitleDropdownVisible: false,
-            filterUrlDropdownVisible: false,
-            filtered: !!searchText,
         });
     };
 
@@ -183,122 +145,104 @@ export const TrackItemTable = () => {
 
     const { isOneDay, activeType, sortedInfo, filteredInfo } = state;
 
-    const FilterDropdownComp = () => (
-        <FilterDropdown>
-            <FilterInput>
-                <Input
-                    ref={searchInput}
-                    placeholder=""
-                    value={state.searchText}
-                    onChange={onInputChange}
-                    onPressEnter={onSearch}
-                />
-            </FilterInput>
-            <Button type="primary" onClick={onSearch}>
-                Search
-            </Button>
-        </FilterDropdown>
+    const dateToValue = ({ value }) => {
+        return <Moment format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}>{value}</Moment>;
+    };
+
+    const defaultColumn = React.useMemo(
+        () => ({
+            // Let's set up our default Filter UI
+            Filter: DefaultColumnFilter,
+        }),
+        [],
     );
 
-    const columns = [
-        {
-            title: 'App',
-            dataIndex: 'app',
-            key: 'app',
-            width: 200,
-            filters: getUniqueAppNames(timeItems.appItems),
-            filteredValue: filteredInfo.app || null,
-            onFilter: (value: any, record: any) => record.app.includes(value),
-            sorter: (a: any, b: any) => a.app - b.app,
-            sortOrder: sortedInfo.columnKey === 'app' && sortedInfo.order,
-        },
-        {
-            title: 'Title',
-            dataIndex: 'title',
-            key: 'title',
-            filterDropdown: FilterDropdownComp,
-            filterIcon: <SearchOutlined style={{ color: state.filtered ? '#108ee9' : '#aaa' }} />,
-            filterTitleDropdownVisible: state.filterTitleDropdownVisible,
-            onfilterTitleDropdownVisibleChange: visible => {
-                setState({
-                    ...state,
-                    filterTitleDropdownVisible: visible,
-                });
-                if (visible) {
-                    setTimeout(() => (searchInput.current as any).select());
-                }
+    const columns = React.useMemo(
+        () => [
+            {
+                Header: 'App',
+                accessor: 'app',
+                Filter: SelectColumnFilter,
+                filter: 'includes',
             },
-            sorter: (a: any, b: any) => a.title.length - b.title.length,
-            sortOrder: sortedInfo.columnKey === 'title' && sortedInfo.order,
-        },
-
-        {
-            title: 'URL',
-            dataIndex: 'url',
-            key: 'url',
-            width: 300,
-            ellipsis: true,
-            filterDropdown: FilterDropdownComp,
-            filterIcon: <SearchOutlined style={{ color: state.filtered ? '#108ee9' : '#aaa' }} />,
-            filterUrlDropdownVisible: state.filterUrlDropdownVisible,
-            onFilterUrlDropdownVisibleChange: visible => {
-                setState({
-                    ...state,
-                    filterUrlDropdownVisible: visible,
-                });
-                if (visible) {
-                    setTimeout(() => searchInput.current.select());
-                }
+            {
+                Header: 'Title',
+                accessor: 'title',
             },
-            sorter: (a: any, b: any) => a.url.length - b.url.length,
-            sortOrder: sortedInfo.columnKey === 'url' && sortedInfo.order,
-        },
-        {
-            title: 'Begin',
-            dataIndex: 'beginDate',
-            key: 'beginDate',
-            width: 170,
+            {
+                Header: 'URL',
+                accessor: 'url',
+            },
+            {
+                Header: 'Begin',
+                accessor: 'beginDate',
+                Cell: dateToValue,
+            },
+            {
+                Header: 'End',
+                accessor: 'endDate',
+                Cell: dateToValue,
+            },
+            {
+                Header: 'Dur',
+                accessor: record => diffAndFormatShort(record.beginDate, record.endDate),
+                Footer: info => {
+                    const total = React.useMemo(() => calculateTotal(info.data), [info.data]);
+                    return <TotalCount>Total: {total}</TotalCount>;
+                },
+            },
+        ],
+        [],
+    );
 
-            onFilter: (value: any, record: any) => convertDate(record.beginDate) > value,
-            sorter: (a: any, b: any) =>
-                convertDate(a.beginDate).valueOf() - convertDate(b.beginDate).valueOf(),
-            sortOrder: sortedInfo.columnKey === 'beginDate' && sortedInfo.order,
-            render: (text, record) => (
-                <Moment format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}>
-                    {record.beginDate}
-                </Moment>
-            ),
-        },
-        {
-            title: 'End',
-            dataIndex: 'endDate',
-            key: 'endDate',
-            width: 170,
-            onFilter: (value: any, record: any) => convertDate(record.endDate) > value,
-            sorter: (a: any, b: any) =>
-                convertDate(a.endDate).valueOf() - convertDate(b.endDate).valueOf(),
-            sortOrder: sortedInfo.columnKey === 'endDate' && sortedInfo.order,
+    const filterTypes = React.useMemo(
+        () => ({
+            // Add a new fuzzyTextFilterFn filter type.
+            fuzzyText: fuzzyTextFilterFn,
+            // Or, override the default text filter to use
+            // "startWith"
+            text: (rows, id, filterValue) => {
+                return rows.filter(row => {
+                    const rowValue = row.values[id];
+                    return rowValue !== undefined
+                        ? String(rowValue)
+                              .toLowerCase()
+                              .startsWith(String(filterValue).toLowerCase())
+                        : true;
+                });
+            },
+        }),
+        [],
+    );
+    const {
+        getTableProps,
+        getTableBodyProps,
+        headerGroups,
+        footerGroups,
+        prepareRow,
+        page, // Instead of using 'rows', we'll use page,
+        // which has only the rows for the active page
 
-            render: (text, record) => (
-                <Moment format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}>{record.endDate}</Moment>
-            ),
-        },
+        // The rest of these things are super handy, too ;)
+        canPreviousPage,
+        canNextPage,
+        pageOptions,
+        pageCount,
+        gotoPage,
+        nextPage,
+        previousPage,
+        setPageSize,
+        setAllFilters,
+        setSortBy,
+        state: { pageIndex, pageSize },
+    } = useTable(
+        { columns, defaultColumn, filterTypes, data: timeItems.appItems },
 
-        {
-            title: 'Dur',
-            dataIndex: '',
-            key: 'duration',
-            width: 80,
-            sorter: (a: any, b: any) =>
-                convertDate(a.endDate).diff(convertDate(a.beginDate)) -
-                convertDate(b.endDate).diff(convertDate(b.beginDate)),
-            sortOrder: sortedInfo.columnKey === 'duration' && sortedInfo.order,
+        useFilters,
 
-            render: (text, record) => (
-                <span>{diffAndFormatShort(record.beginDate, record.endDate)}</span>
-            ),
-        },
-    ];
+        useSortBy,
+        usePagination,
+    );
 
     const { selectedRowKeys } = state;
     const rowSelection = {
@@ -311,13 +255,13 @@ export const TrackItemTable = () => {
             <Flex p={1}>
                 <Box pr={1}>
                     {!hasSelected && (
-                        <Button type="primary" onClick={toggleTask}>
+                        <Button variant="solid" onClick={toggleTask}>
                             Showing {activeType === TrackItemType.AppTrackItem ? 'Apps' : 'Logs'}
                         </Button>
                     )}
                     {hasSelected && (
                         <Button
-                            type="primary"
+                            variant="solid"
                             onClick={deleteSelectedItems}
                             disabled={!hasSelected}
                         >
@@ -326,24 +270,158 @@ export const TrackItemTable = () => {
                     )}
                 </Box>
                 <Box pr={1}>
-                    <Button onClick={clearFilters}>Clear filters</Button>
+                    <Button onClick={() => setAllFilters([])}>Clear filters</Button>
                 </Box>
                 <Box pr={1}>
-                    <Button onClick={clearAll}>Clear filters and sorters</Button>
+                    <Button
+                        onClick={() => {
+                            setSortBy([]);
+                            setAllFilters([]);
+                        }}
+                    >
+                        Clear filters and sorters
+                    </Button>
                 </Box>
             </Flex>
             <Flex p={1}>
                 <Box pr={1} />
             </Flex>
-            <Table
-                rowSelection={rowSelection}
-                rowKey={(record: any) => `${record.id}`}
-                columns={columns}
-                pagination={paginationConf}
-                dataSource={data}
-                onChange={handleChange}
-                footer={calculateTotal}
-            />
+
+            <Table {...getTableProps()}>
+                <Thead>
+                    {headerGroups.map(headerGroup => (
+                        <Tr {...headerGroup.getHeaderGroupProps()}>
+                            {headerGroup.headers.map(column => (
+                                <Th
+                                    {...column.getHeaderProps(column.getSortByToggleProps())}
+                                    isNumeric={column.isNumeric}
+                                >
+                                    {column.render('Header')}
+                                    <chakra.span pl="4">
+                                        {column.isSorted ? (
+                                            column.isSortedDesc ? (
+                                                <TriangleDownIcon aria-label="sorted descending" />
+                                            ) : (
+                                                <TriangleUpIcon aria-label="sorted ascending" />
+                                            )
+                                        ) : null}
+                                    </chakra.span>
+                                    <div>{column.canFilter ? column.render('Filter') : null}</div>
+                                </Th>
+                            ))}
+                        </Tr>
+                    ))}
+                </Thead>
+                <Tbody {...getTableBodyProps()}>
+                    {page.map(row => {
+                        prepareRow(row);
+                        return (
+                            <Tr {...row.getRowProps()}>
+                                {row.cells.map(cell => (
+                                    <Td {...cell.getCellProps()} isNumeric={cell.column.isNumeric}>
+                                        {cell.render('Cell')}
+                                    </Td>
+                                ))}
+                            </Tr>
+                        );
+                    })}
+                </Tbody>
+                <Tfoot>
+                    {footerGroups.map(group => (
+                        <Tr {...group.getFooterGroupProps()}>
+                            {group.headers.map(column => (
+                                <Td {...column.getFooterProps()}>{column.render('Footer')}</Td>
+                            ))}
+                        </Tr>
+                    ))}
+                </Tfoot>
+            </Table>
+            <Flex justifyContent="space-between" m={4} alignItems="center">
+                <Flex>
+                    <Tooltip label="First Page">
+                        <IconButton
+                            aria-label="First Page"
+                            onClick={() => gotoPage(0)}
+                            isDisabled={!canPreviousPage}
+                            icon={<ArrowLeftIcon h={3} w={3} />}
+                            mr={4}
+                        />
+                    </Tooltip>
+                    <Tooltip label="Previous Page">
+                        <IconButton
+                            aria-label="Previous Page"
+                            onClick={previousPage}
+                            isDisabled={!canPreviousPage}
+                            icon={<ChevronLeftIcon h={6} w={6} />}
+                        />
+                    </Tooltip>
+                </Flex>
+
+                <Flex alignItems="center">
+                    <Text flexShrink={0} mr={8}>
+                        Page{' '}
+                        <Text fontWeight="bold" as="span">
+                            {pageIndex + 1}
+                        </Text>{' '}
+                        of{' '}
+                        <Text fontWeight="bold" as="span">
+                            {pageOptions.length}
+                        </Text>
+                    </Text>
+                    <Text flexShrink={0}>Go to page:</Text>{' '}
+                    <NumberInput
+                        ml={2}
+                        mr={8}
+                        w={28}
+                        min={1}
+                        max={pageOptions.length}
+                        onChange={value => {
+                            const page = value ? value - 1 : 0;
+                            gotoPage(page);
+                        }}
+                        defaultValue={pageIndex + 1}
+                    >
+                        <NumberInputField />
+                        <NumberInputStepper>
+                            <NumberIncrementStepper />
+                            <NumberDecrementStepper />
+                        </NumberInputStepper>
+                    </NumberInput>
+                    <Select
+                        w={32}
+                        value={pageSize}
+                        onChange={e => {
+                            setPageSize(Number(e.target.value));
+                        }}
+                    >
+                        {[10, 20, 30, 40, 50].map(pageSize => (
+                            <option key={pageSize} value={pageSize}>
+                                Show {pageSize}
+                            </option>
+                        ))}
+                    </Select>
+                </Flex>
+
+                <Flex>
+                    <Tooltip label="Next Page">
+                        <IconButton
+                            aria-label="Next Page"
+                            onClick={nextPage}
+                            isDisabled={!canNextPage}
+                            icon={<ChevronRightIcon h={6} w={6} />}
+                        />
+                    </Tooltip>
+                    <Tooltip label="Last Page">
+                        <IconButton
+                            aria-label="Last Page"
+                            onClick={() => gotoPage(pageCount - 1)}
+                            isDisabled={!canNextPage}
+                            icon={<ArrowRightIcon h={3} w={3} />}
+                            ml={4}
+                        />
+                    </Tooltip>
+                </Flex>
+            </Flex>
         </div>
     );
 };

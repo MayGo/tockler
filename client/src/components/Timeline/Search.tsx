@@ -1,6 +1,4 @@
-import { Box, Flex } from 'reflexbox';
-import { Button, DatePicker, Tooltip } from 'antd';
-import { LeftOutlined, RightOutlined, PauseOutlined, CaretRightOutlined } from '@ant-design/icons';
+import { DatePicker } from 'antd';
 import moment from 'moment';
 import randomcolor from 'randomcolor';
 import React, { memo } from 'react';
@@ -8,6 +6,10 @@ import { getTodayTimerange } from './timeline.utils';
 import { Logger } from '../../logger';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { TIMERANGE_MODE_TODAY } from '../../store/mainStore';
+import { Box, Flex } from '@chakra-ui/layout';
+import { Button } from '@chakra-ui/button';
+import { Tooltip } from '@chakra-ui/tooltip';
+import { AiOutlineCaretRight, AiOutlineLeft, AiOutlinePause, AiOutlineRight } from 'react-icons/ai';
 
 const { RangePicker } = DatePicker;
 
@@ -116,7 +118,7 @@ export const Search = memo(() => {
             </Box>
             <Box p={1}>
                 <Button onClick={goBackOneDay}>
-                    <LeftOutlined />
+                    <AiOutlineLeft />
                 </Button>
             </Box>
             <Box p={1}>
@@ -124,12 +126,15 @@ export const Search = memo(() => {
             </Box>
             <Box p={1}>
                 <Button onClick={goForwardOneDay}>
-                    <RightOutlined />
+                    <AiOutlineRight />
                 </Button>
             </Box>
             <Box p={1}>
-                <Tooltip placement="bottom" title="Also activates Live view">
-                    <Button onClick={selectToday} type={showLiveViewButton ? 'primary' : 'default'}>
+                <Tooltip placement="bottom" label="Also activates Live view">
+                    <Button
+                        onClick={selectToday}
+                        variant={showLiveViewButton ? 'solid' : 'outline'}
+                    >
                         Today
                     </Button>
                 </Tooltip>
@@ -141,7 +146,7 @@ export const Search = memo(() => {
                         title={liveView ? 'Pause live view' : 'Start live view'}
                     >
                         <Button onClick={toggleLiveView}>
-                            {liveView ? <PauseOutlined /> : <CaretRightOutlined />}
+                            {liveView ? <AiOutlinePause /> : <AiOutlineCaretRight />}
                         </Button>
                     </Tooltip>
                 </Box>

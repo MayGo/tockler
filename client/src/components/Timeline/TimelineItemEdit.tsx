@@ -10,13 +10,7 @@ import { Input } from '@chakra-ui/input';
 import { Button } from '@chakra-ui/button';
 import { Tooltip } from '@chakra-ui/tooltip';
 import { Select } from '@chakra-ui/select';
-import {
-    AiOutlineClose,
-    AiOutlineDelete,
-    AiOutlineExclamationCircle,
-    AiOutlinePlayCircle,
-    AiOutlineSave,
-} from 'react-icons/ai';
+import { AiOutlineClose, AiOutlinePlayCircle, AiOutlineSave } from 'react-icons/ai';
 import { TimelineItemEditDeleteButton } from './TimelineItemEditDeleteButton';
 
 interface IProps {

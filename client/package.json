@@ -4,6 +4,7 @@
     "private": true,
     "dependencies": {
         "@analytics/google-analytics": "^0.5.2",
+        "@chakra-ui/icons": "^1.0.13",
         "@chakra-ui/react": "^1.6.2",
         "@emotion/react": "^11",
         "@emotion/styled": "^11",
@@ -26,6 +27,7 @@
         "less-loader": "^6.2.0",
         "lodash": "4.17.19",
         "loglevel": "^1.6.6",
+        "match-sorter": "^6.3.0",
         "moment": "^2.24.0",
         "moment-duration-format": "2.3.2",
         "randomcolor": "^0.6.2",
@@ -42,6 +44,7 @@
         "react-router-dom": "^5.1.2",
         "react-scripts": "^4.0.1",
         "react-sizeme": "2.6.12",
+        "react-table": "^7.7.0",
         "react-timeago": "4.4.0",
         "react-use-form-state": "^0.13.2",
         "reactcss": "^1.2.3",

@@ -40,7 +40,7 @@ export function TimelineItemEditDeleteButton({ deleteItem }) {
                             <Button ref={cancelRef} onClick={onClose}>
                                 Cancel
                             </Button>
-                            <Button colorScheme="red" onClick={onClose} ml={3} onClick={onDelete}>
+                            <Button colorScheme="red" ml={3} onClick={onDelete}>
                                 Delete
                             </Button>
                         </AlertDialogFooter>
