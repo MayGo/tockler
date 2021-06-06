@@ -1,4 +1,3 @@
-import { Calendar } from 'antd';
 import moment from 'moment';
 import React, { useContext, useEffect } from 'react';
 import useReactRouter from 'use-react-router';
@@ -7,14 +6,13 @@ import { Item, TaskList } from './SummaryCalendar.styles';
 import { Logger } from '../../logger';
 import { convertDate, TIME_FORMAT_SHORT } from '../../constants';
 import { formatDuration } from './SummaryCalendar.util';
-import classNames from 'classnames';
-import padStart from 'lodash/padStart';
 import { DAY_MONTH_FORMAT } from '../../SummaryContext.util';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { Spinner } from '@chakra-ui/spinner';
 import { SpinnerContainer } from '../Timeline/Timeline.styles';
-import { Flex } from '@chakra-ui/layout';
+import { Box, Flex, VStack } from '@chakra-ui/layout';
 import { AiOutlineCoffee, AiOutlineEye, AiOutlineLaptop, AiOutlineTool } from 'react-icons/ai';
+import { Calendar } from '../Datepicker/Calendar';
 
 moment.locale('et');
 
@@ -47,7 +45,8 @@ export const SummaryCalendar = () => {
             return;
         }
 
-        loadTimerange([date.clone().startOf('day'), date.clone().endOf('day')]);
+        const d = moment(date);
+        loadTimerange([d.clone().startOf('day'), d.clone().endOf('day')]);
         history.push('/app/timeline');
     };
 
@@ -92,49 +91,19 @@ export const SummaryCalendar = () => {
         if (value.month() === selectedDate.month()) {
             const listData = getListData(value.format(DAY_MONTH_FORMAT));
             return (
-                <TaskList>
+                <VStack align="stretch" p={3} spacing={1}>
                     {listData.map(item => (
-                        <Item key={item.content}>
-                            {icons[item.type]}
-                            {'  '}
+                        <Flex key={item.content} alignItems="center">
+                            <Box pr={2} pl={5}>
+                                {icons[item.type]}
+                            </Box>
                             {item.content}
-                        </Item>
+                        </Flex>
                     ))}
-                </TaskList>
+                </VStack>
             );
         }
         return null;
-    };
-
-    const dateFullCellRender = date => {
-        let style = {};
-
-        const day = date.day();
-        const isWeekend = day === 6 || day === 0;
-        const isToday = moment().isSame(date, 'day');
-        if (isWeekend) {
-            if (isToday) {
-                style = { background: '#e6f7ff' };
-            } else {
-                style = { background: 'rgb(230, 230, 230, 0.2)' };
-            }
-        }
-        return (
-            <div
-                className={classNames(`ant-picker-cell-inner ant-picker-calendar-date`, {
-                    [`ant-picker-selected`]: moment().isSame(date, 'day'),
-                })}
-                style={style}
-                onClick={() => onDateClicked(date)}
-            >
-                <div className={`ant-picker-calendar-date-value`}>
-                    {padStart(date.date(), 2, '0')}
-                </div>
-                <div className={`ant-picker-calendar-date-content`}>
-                    {dateCellRender && dateCellRender(date)}
-                </div>
-            </div>
-        );
     };
 
     const monthCellRender = value => {
@@ -159,14 +128,8 @@ export const SummaryCalendar = () => {
                     <Spinner />
                 </SpinnerContainer>
             )}
-            <Calendar
-                value={selectedDate}
-                mode={selectedMode}
-                dateCellRender={dateCellRender}
-                dateFullCellRender={dateFullCellRender}
-                monthCellRender={monthCellRender}
-                onPanelChange={changeSelectedDate}
-            />
+
+            <Calendar dateCellRender={dateCellRender} onDateClicked={onDateClicked} />
         </Flex>
     );
 };
