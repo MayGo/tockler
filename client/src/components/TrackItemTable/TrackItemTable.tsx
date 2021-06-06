@@ -22,7 +22,7 @@ import {
     TriangleDownIcon,
     TriangleUpIcon,
 } from '@chakra-ui/icons';
-import { useTable, useSortBy, usePagination, useFilters } from 'react-table';
+import { useTable, useSortBy, usePagination, useFilters, useRowSelect } from 'react-table';
 import { chakra } from '@chakra-ui/system';
 import { Tooltip } from '@chakra-ui/tooltip';
 import { Select } from '@chakra-ui/select';
@@ -36,114 +36,12 @@ import {
 import { calculateTotal, fuzzyTextFilterFn } from './TrackItemTable.utils';
 import { SelectColumnFilter } from './SelectColumnFilter';
 import { DefaultColumnFilter } from './DefaultColumnFilter';
+import { IndeterminateCheckbox } from './IndeterminateCheckbox';
 
 export const TrackItemTable = () => {
     const timeItems = useStoreState(state => state.timeItems);
     const visibleTimerange = useStoreState(state => state.visibleTimerange);
-
     const fetchTimerange = useStoreActions(actions => actions.fetchTimerange);
-
-    const [state, setState] = useState<any>({
-        filteredInfo: {},
-        sortedInfo: {},
-        filterTitleDropdownVisible: false,
-        filterUrlDropdownVisible: false,
-        activeType: TrackItemType.AppTrackItem,
-        searchText: '',
-        filtered: false,
-        selectedRowKeys: [],
-    });
-
-    const deleteTimelineItems = async ids => {
-        Logger.debug('Delete timeline items', ids);
-
-        if (ids) {
-            await deleteByIds(ids);
-            Logger.debug('Deleted timeline items', ids);
-            fetchTimerange();
-        } else {
-            Logger.error('No ids, not deleting from DB');
-        }
-    };
-
-    const searchInput = useRef<any>();
-
-    const filterByAppType = type =>
-        type === TrackItemType.AppTrackItem
-            ? filterItems(timeItems.appItems, visibleTimerange)
-            : filterItems(timeItems.logItems, visibleTimerange);
-
-    useEffect(() => {
-        const { activeType } = state;
-
-        const filteredData = filterByAppType(activeType);
-        //  setData(filteredData);
-        setState({
-            ...state,
-            isOneDay: checkIfOneDay(visibleTimerange),
-        });
-
-        if (
-            timeItems.appItems.length > 0 &&
-            filteredData.length === 0 &&
-            state.activeType === TrackItemType.AppTrackItem
-        ) {
-            const beginDate = timeItems.appItems[0].beginDate;
-            const endDate = timeItems.appItems[0].endDate;
-
-            Logger.error('No items filtered for table', {
-                visibleTimerange,
-                beginDate,
-                endDate,
-            });
-        }
-    }, [timeItems, visibleTimerange]); // eslint-disable-line react-hooks/exhaustive-deps
-
-    useEffect(() => {
-        if (searchInput.current) {
-            searchInput.current.focus();
-        }
-    }, [state.filterTitleDropdownVisible]);
-
-    const handleChange = (pagination: any, filters: any, sorter: any) => {
-        setState({ ...state, filteredInfo: filters, sortedInfo: sorter });
-    };
-
-    const clearAll = () => {
-        setState({ ...state, filteredInfo: {}, sortedInfo: {} });
-    };
-
-    const toggleTask = () => {
-        const { activeType } = state;
-
-        clearAll();
-
-        const newActiveType =
-            activeType === TrackItemType.AppTrackItem
-                ? TrackItemType.LogTrackItem
-                : TrackItemType.AppTrackItem;
-
-        //   setData(filterByAppType(newActiveType));
-        setState({
-            ...state,
-
-            activeType: newActiveType,
-            isOneDay: checkIfOneDay(visibleTimerange),
-        });
-    };
-
-    const onSelectChange = selectedRowKeys => {
-        Logger.debug('selectedRowKeys changed: ', selectedRowKeys);
-        setState({ ...state, selectedRowKeys });
-    };
-
-    const deleteSelectedItems = () => {
-        const { selectedRowKeys } = state;
-        deleteTimelineItems(selectedRowKeys);
-        setState({ ...state, selectedRowKeys: [] });
-    };
-
-    const { isOneDay, activeType, sortedInfo, filteredInfo } = state;
 
     const dateToValue = ({ value }) => {
         return <Moment format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}>{value}</Moment>;
@@ -214,16 +112,15 @@ export const TrackItemTable = () => {
         }),
         [],
     );
+
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
         footerGroups,
         prepareRow,
-        page, // Instead of using 'rows', we'll use page,
-        // which has only the rows for the active page
+        page,
 
-        // The rest of these things are super handy, too ;)
         canPreviousPage,
         canNextPage,
         pageOptions,
@@ -234,38 +131,74 @@ export const TrackItemTable = () => {
         setPageSize,
         setAllFilters,
         setSortBy,
-        state: { pageIndex, pageSize },
+        selectedFlatRows,
+        state: { pageIndex, pageSize, selectedRowIds },
     } = useTable(
         { columns, defaultColumn, filterTypes, data: timeItems.appItems },
-
         useFilters,
-
         useSortBy,
         usePagination,
+        useRowSelect,
+        hooks => {
+            hooks.visibleColumns.push(columns => [
+                // Let's make a column for selection
+                {
+                    id: 'selection',
+                    // The header can use the table's getToggleAllRowsSelectedProps method
+                    // to render a checkbox
+                    Header: ({ getToggleAllRowsSelectedProps }) => (
+                        <div>
+                            <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+                        </div>
+                    ),
+                    // The cell can use the individual row's getToggleRowSelectedProps method
+                    // to the render a checkbox
+                    Cell: ({ row }) => (
+                        <div>
+                            <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                        </div>
+                    ),
+                },
+                ...columns,
+            ]);
+        },
     );
 
-    const { selectedRowKeys } = state;
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: onSelectChange,
+    const deleteTimelineItems = async ids => {
+        Logger.debug('Delete timeline items', ids);
+
+        if (ids) {
+            await deleteByIds(ids);
+            Logger.debug('Deleted timeline items', ids);
+            fetchTimerange();
+        } else {
+            Logger.error('No ids, not deleting from DB');
+        }
     };
-    const hasSelected = selectedRowKeys.length > 0;
+
+    const filterByAppType = type =>
+        type === TrackItemType.AppTrackItem
+            ? filterItems(timeItems.appItems, visibleTimerange)
+            : filterItems(timeItems.logItems, visibleTimerange);
+
+    const deleteSelectedItems = () => {
+        deleteTimelineItems(selectedFlatRows.map(({ original }) => original.id));
+    };
+
+    const isOneDay = checkIfOneDay(visibleTimerange);
+    const hasSelected = Object.keys(selectedRowIds).length > 0;
+
     return (
         <div>
             <Flex p={1}>
                 <Box pr={1}>
-                    {!hasSelected && (
-                        <Button variant="solid" onClick={toggleTask}>
-                            Showing {activeType === TrackItemType.AppTrackItem ? 'Apps' : 'Logs'}
-                        </Button>
-                    )}
                     {hasSelected && (
                         <Button
                             variant="solid"
                             onClick={deleteSelectedItems}
                             disabled={!hasSelected}
                         >
-                            Delete <b> {selectedRowKeys.length} </b> items
+                            Delete <b> {Object.keys(selectedRowIds).length} </b> items
                         </Button>
                     )}
                 </Box>
