@@ -19,7 +19,7 @@ export const LoginForm = () => {
 
     useEffect(() => {
         checkLoginSettings();
-    }, [location, location.pathname]);
+    }, []);
 
     return (
         <Card title="Login">

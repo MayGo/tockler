@@ -10,7 +10,7 @@ export class Log extends Model {
     id!: number;
     createdAt!: Date;
     updatedAt!: Date;
-    type!: 'ERROR' | string;
+    type!: 'ERROR';
     message?: string;
     jsonData?: any;
 

@@ -45,8 +45,8 @@ const appSettingsActions = {
 };
 
 const logsActions = {
-    findAllLogs: async (req, res) => {
-        const data = await logService.findAllLogs(req.from, req.to);
+    findAllLogs: async ({ payload }, res) => {
+        const data = await logService.findAllLogs(payload.from, payload.to);
         res.send(data);
     },
 };

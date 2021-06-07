@@ -3,6 +3,7 @@ import { appConstants } from '../app-constants';
 import { fetchGraphQLClient, getUserFromToken } from '../graphql';
 import { logManager } from '../log-manager';
 import { TrackItem } from '../models/TrackItem';
+import { logService } from '../services/log-service';
 import { settingsService } from '../services/settings-service';
 import { trackItemService } from '../services/track-item-service';
 
@@ -172,6 +173,13 @@ export class SaveToDbJob {
             console.log('Successfully linked', items.length, `user_event with its TrackItem`);
         } catch (e) {
             console.error(e);
+            logService
+                .createOrUpdateLog({
+                    type: 'ERROR',
+                    message: e.message,
+                    jsonData: JSON.stringify(e),
+                })
+                .catch(console.error);
         }
     }
 }

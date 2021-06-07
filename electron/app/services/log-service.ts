@@ -8,6 +8,7 @@ export class LogService {
     async createOrUpdateLog(logAttributes: Partial<Log>): Promise<Log> {
         let log: Log = null;
         if (
+            this.lastLog &&
             logAttributes.type === this.lastLog.type &&
             logAttributes.message === this.lastLog.message &&
             logAttributes.jsonData === this.lastLog.jsonData
@@ -19,6 +20,8 @@ export class LogService {
             log = this.lastLog;
             log.updatedAt = now;
         } else {
+            logAttributes.createdAt = new Date();
+            logAttributes.updatedAt = new Date();
             log = await Log.query().insert(logAttributes);
         }
         this.lastLog = log;
@@ -26,9 +29,13 @@ export class LogService {
     }
 
     async findAllLogs(from: Date, to?: Date) {
+        if (!to) {
+            to = new Date();
+        }
         return Log.query()
             .where('updatedAt', '>=', from)
             .where('updatedAt', '<=', to)
+            .skipUndefined()
             .orderBy('updatedAt', 'DESC');
     }
 }

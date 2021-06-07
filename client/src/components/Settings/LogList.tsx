@@ -7,7 +7,7 @@ type Log = {
     id: number;
     createdAt: Date;
     updatedAt: Date;
-    type: 'ERROR' | string;
+    type: 'ERROR';
     message?: string;
     jsonData?: string;
 };
@@ -34,9 +34,10 @@ export const LogList = () => {
         }
         const toCancel = setTimeout(() => {
             getAllLogs();
-        }, 5000);
+        }, 10000);
 
         return () => clearInterval(toCancel);
+        // eslint-disable-next-line
     }, []);
 
     if (logs.length === 0) {
@@ -48,8 +49,10 @@ export const LogList = () => {
             {logs.map(log => (
                 <Alert
                     type={log.type === 'ERROR' ? 'error' : 'warning'}
-                    message={log.message}
-                    description={JSON.stringify(log.jsonData)}
+                    message={`"${log.message}" ${moment(log.updatedAt).fromNow()}`}
+                    description={`${JSON.stringify(log.jsonData)} | Created at: ${moment(
+                        log.createdAt,
+                    ).format()}`}
                     closeText="Dismiss"
                     onClose={handleDismiss}
                     style={{ marginBottom: '16px' }}
