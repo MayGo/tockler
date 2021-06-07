@@ -12,9 +12,10 @@ import { Brand } from './HeaderMenu.styles';
 import { Flex, Box, Center, Link } from '@chakra-ui/layout';
 import { Image } from '@chakra-ui/image';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
+import { useColorModeValue } from '@chakra-ui/color-mode';
 
 export const HeaderMenu = () => (
-    <Flex bg="brand.900" w="100%" p={4}>
+    <Flex bg={useColorModeValue('gray.100', 'gray.900')} w="100%" p={4}>
         <Box pr={3}>
             <Link as={RouterLink} to="/app/timeline">
                 <Flex>

@@ -13,6 +13,7 @@ import { Brand } from '../MainLayout/HeaderMenu.styles';
 import { AiOutlineArrowsAlt, AiOutlineClockCircle, AiOutlinePoweroff } from 'react-icons/ai';
 import { Tooltip } from '@chakra-ui/tooltip';
 import { IconButton } from '@chakra-ui/button';
+import { useColorModeValue } from '@chakra-ui/color-mode';
 
 const getNow = () => moment().subtract(1, 'seconds');
 
@@ -59,7 +60,14 @@ export const TrayMenuPlain = () => {
     }, [windowIsActive]);
 
     return (
-        <Flex bg="black" w="100%" p={4} color="white" position="sticky" top={0} zIndex={100}>
+        <Flex
+            bg={useColorModeValue('gray.100', 'gray.900')}
+            w="100%"
+            p={4}
+            position="sticky"
+            top={0}
+            zIndex={100}
+        >
             <Box pr={3}>
                 <Link as={RouterLink} onClick={toggleMainWindow}>
                     <Flex>
@@ -97,7 +105,7 @@ export const TrayMenuPlain = () => {
                     <IconButton
                         onClick={toggleMainWindow}
                         variant="outline"
-                        colorScheme="teal"
+                        colorScheme="blue"
                         aria-label="Open main window"
                         icon={<AiOutlineArrowsAlt />}
                     />
@@ -109,7 +117,7 @@ export const TrayMenuPlain = () => {
                     <IconButton
                         onClick={exitApp}
                         variant="outline"
-                        colorScheme="teal"
+                        colorScheme="blue"
                         aria-label="Quit app"
                         icon={<AiOutlinePoweroff />}
                     />

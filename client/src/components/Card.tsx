@@ -10,7 +10,7 @@ export const Card: React.FC<any> = ({ title, children, extra, ...rest }) => {
                     textTransform="uppercase"
                     fontSize="lg"
                     letterSpacing="wide"
-                    color="teal.600"
+                    color="blue.600"
                 >
                     {title}
                 </Text>
