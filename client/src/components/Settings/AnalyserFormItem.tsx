@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { useFormState } from 'react-use-form-state';
+import React, { useEffect, useState } from 'react';
 import { testAnalyserItem } from './AnalyserForm.util';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { IconButton } from '@chakra-ui/button';
@@ -7,6 +6,7 @@ import { Input } from '@chakra-ui/input';
 import { FormControl, FormLabel } from '@chakra-ui/form-control';
 import { Switch } from '@chakra-ui/switch';
 import { Box, Divider, Flex } from '@chakra-ui/layout';
+import { useForm } from 'react-hook-form';
 
 const AnalyserTestItem = ({ item }) => (
     <Box>
@@ -21,53 +21,56 @@ const AnalyserTestItem = ({ item }) => (
     </Box>
 );
 
+type Inputs = {
+    findRe: string;
+    takeGroup: string;
+    takeTitle: string;
+    enabled: boolean;
+};
+
 export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem }) => {
     const [showTests, setShowTests] = useState(false);
     const toggleShowTests = () => {
         setShowTests(!showTests);
     };
 
-    const [, { text, raw }] = useFormState(analyserItem, {
-        onChange: (__ignore, ___ignore, nextStateValues) => {
-            saveItem(nextStateValues);
-        },
-    });
+    const {
+        watch,
+        getValues,
+        reset,
+        register,
+        formState: { isDirty, isValid },
+    } = useForm<Inputs>({ mode: 'onChange', defaultValues: analyserItem });
 
-    const check = raw('enabled');
+    const watchAllFields = watch();
+
+    useEffect(() => {
+        if (isDirty && isValid) {
+            console.info('Save values,', getValues(), analyserItem);
+            saveItem(getValues());
+            reset(getValues());
+        }
+    }, [getValues, saveItem, watchAllFields, isDirty, analyserItem, reset, isValid]);
 
     return (
         <div>
             <Flex justifyContent="space-between">
                 <Flex pr={4}>
                     <Box p={1}>
-                        <Input placeholder="Task" {...text({ name: 'findRe' })} minWidth={200} />
+                        <Input placeholder="Task" {...register('findRe')} minWidth={200} />
                     </Box>
                     <Box p={1}>
-                        <Input
-                            placeholder="Group"
-                            {...text({ name: 'takeGroup' })}
-                            minWidth={200}
-                        />
+                        <Input placeholder="Group" {...register('takeGroup')} minWidth={200} />
                     </Box>
                     <Box p={1}>
-                        <Input
-                            placeholder="Title"
-                            {...text({ name: 'takeTitle' })}
-                            minWidth={200}
-                        />
+                        <Input placeholder="Title" {...register('takeTitle')} minWidth={200} />
                     </Box>
                 </Flex>
                 <FormControl display="flex" alignItems="center" py={2} minWidth={100}>
                     <FormLabel htmlFor="active" mb="0">
                         Active
                     </FormLabel>
-                    <Switch
-                        id="active"
-                        onChange={value => {
-                            check.onChange(value);
-                        }}
-                        checked={check.value}
-                    />
+                    <Switch id="enabled" {...register('enabled')} />
                 </FormControl>
                 <FormControl display="flex" alignItems="center" py={2} minWidth={100}>
                     <FormLabel htmlFor="test" mb="0">

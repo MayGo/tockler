@@ -39,7 +39,6 @@
         "react-table": "^7.7.0",
         "react-timeago": "4.4.0",
         "react-timekeeper": "^2.1.3",
-        "react-use-form-state": "^0.13.2",
         "styled-components": "5.2.1",
         "typeface-berkshire-swash": "0.0.72",
         "use-react-router": "^1.0.7",

@@ -53,7 +53,9 @@ export const AnalyserForm = () => {
             title="Analyser settings"
             extra={
                 <Tooltip placement="left" label="Notify if title equals these analyser items.">
-                    <AiOutlineInfoCircle style={{ fontSize: 20, color: 'primary' }} />
+                    <span>
+                        <AiOutlineInfoCircle style={{ fontSize: 20, color: 'primary' }} />
+                    </span>
                 </Tooltip>
             }
         >

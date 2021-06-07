@@ -13,8 +13,8 @@ import { Flex, Box, Center, Link } from '@chakra-ui/layout';
 import { Image } from '@chakra-ui/image';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 
-export const HeaderMenu = ({ location }: any) => (
-    <Flex bg="black" w="100%" p={4} color="white">
+export const HeaderMenu = () => (
+    <Flex bg="brand.900" w="100%" p={4}>
         <Box pr={3}>
             <Link as={RouterLink} to="/app/timeline">
                 <Flex>

@@ -1,11 +1,10 @@
-import { Box, Flex, HStack, Stack, useBreakpointValue, useColorModeValue } from '@chakra-ui/react';
-import { MonthType, useDatepicker } from '@datepicker-react/hooks';
-import React, { useRef } from 'react';
-import { ActionButton, Month, ResetDatesButton } from './components';
+import { Box, Flex, HStack, useColorModeValue } from '@chakra-ui/react';
+import { useDatepicker } from '@datepicker-react/hooks';
+import React from 'react';
+import { ActionButton } from './components';
 import { useStyleProps } from './context/StylesContext';
 import { DatepickerComponentStyles } from './types';
 import { CalendarMonth } from './CalendarMonth';
-import moment from 'moment';
 
 export interface MonthProps {
     dateCellRender: any;
@@ -20,7 +19,6 @@ export const Calendar = ({ dateCellRender, onDateClicked }: MonthProps) => {
         startDate: date,
         endDate: date,
         focusedInput: null,
-        onDateSelect: onDateClicked,
     });
 
     /* useImperativeHandle(ref, () => ({

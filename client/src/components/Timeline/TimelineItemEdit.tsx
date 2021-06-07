@@ -1,6 +1,5 @@
 import React, { useState, useEffect, memo } from 'react';
-
-import TimeKeeper, { TimeOutput } from 'react-timekeeper';
+import { TimeOutput } from 'react-timekeeper';
 import { ColorPicker } from './ColorPicker';
 import { Logger } from '../../logger';
 import moment from 'moment';

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { MainLayout } from '../components/MainLayout/MainLayout';
-import { useFormState } from 'react-use-form-state';
 import { searchFromItems, exportFromItems } from '../services/trackItem.api';
 import moment from 'moment';
 import { TrackItemType } from '../enum/TrackItemType';
@@ -14,7 +13,7 @@ import { Spinner } from '@chakra-ui/spinner';
 import { SpinnerContainer } from '../components/Timeline/Timeline.styles';
 
 export function SearchPage({ location }: any) {
-    const [formState, { text }] = useFormState({ search: '' });
+    const [searchText, setSearchText] = useState('');
 
     const [isLoading, setIsLoading] = useState<any>(false);
     const [searchPaging, setSearchPaging] = useState<any>({ pageSize: 20, page: 1 });
@@ -62,7 +61,7 @@ export function SearchPage({ location }: any) {
     };
 
     useEffect(() => {
-        loadItems(formState.values.search);
+        loadItems(searchText);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchPaging]);
 
@@ -79,9 +78,8 @@ export function SearchPage({ location }: any) {
                     <Flex p={1}>
                         <Input
                             placeholder="Search from all items"
-                            {...text({
-                                name: 'search',
-                            })}
+                            value={searchText}
+                            onChange={event => setSearchText(event.target.value)}
                         />
                         <Box px={2}>
                             <Button type="submit">Search</Button>
@@ -90,7 +88,7 @@ export function SearchPage({ location }: any) {
                         <Box px={2}>
                             <Button
                                 onClick={() => {
-                                    exportItems(formState.values.search);
+                                    exportItems(searchText);
                                 }}
                             >
                                 Export to CSV
