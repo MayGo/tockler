@@ -75,18 +75,20 @@ export class SaveToDbJob {
                 }
             }
 
-            // return early and wait for user to go through login flow which will add a token in the db.
-            if (!process.env.HASURA_GRAPHQL_ENGINE_SECRET && !this.token) {
-                console.log('Received no token. Returning early...');
-                return;
-            }
+            if (!process.env.HASURA_GRAPHQL_ENGINE_SECRET) {
+                // return early and wait for user to go through login flow which will add a token in the db.
+                if (!this.token) {
+                    console.log('Received no token. Returning early...');
+                    return;
+                }
 
-            const user = getUserFromToken(this.token);
-            if (!user) {
-                // TODO: use refreshToken to get new token instead of setting token to null
-                this.token = null;
-                await settingsService.updateLoginSettings({ token: null });
-                throw new Error('Token Expired!');
+                const user = getUserFromToken(this.token);
+                if (!user) {
+                    // TODO: use refreshToken to get new token instead of setting token to null
+                    this.token = null;
+                    await settingsService.updateLoginSettings({ token: null });
+                    throw new Error('Token Expired!');
+                }
             }
 
             // HACK: temporary hack to upsert to hasura.
