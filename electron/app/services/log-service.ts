@@ -5,7 +5,7 @@ export class LogService {
     logger = logManager.getLogger('LogService');
     lastLog: null | Log = null;
 
-    async createUpdateLog(logAttributes: Partial<Log>): Promise<Log> {
+    async createOrUpdateLog(logAttributes: Partial<Log>): Promise<Log> {
         let log: Log = null;
         if (
             logAttributes.type === this.lastLog.type &&
