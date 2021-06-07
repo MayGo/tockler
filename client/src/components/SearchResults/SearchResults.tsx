@@ -1,7 +1,7 @@
-import useReactRouter from 'use-react-router';
 import moment from 'moment';
 import React, { memo } from 'react';
 import Moment from 'react-moment';
+import { useHistory } from 'react-router';
 import { DATE_TIME_FORMAT } from '../../constants';
 import { diffAndFormatShort } from '../../utils';
 import { useStoreActions } from '../../store/easyPeasy';
@@ -13,7 +13,7 @@ const SearchResultsPlain = ({ searchResult }) => {
     const loadTimerange = useStoreActions(state => state.loadTimerange);
     const setVisibleTimerange = useStoreActions(state => state.setVisibleTimerange);
 
-    const { history } = useReactRouter();
+    const history = useHistory();
 
     const goToTimelinePage = record => {
         loadTimerange([

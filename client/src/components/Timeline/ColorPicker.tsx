@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SketchPicker } from 'react-color';
-import reactCSS from 'reactcss';
+import { useStyleProps } from '../Datepicker/context/StylesContext';
 
 interface IProps {
     color: any;
@@ -34,36 +34,34 @@ export const ColorPicker = ({ color = defaultColor, onChange }: IProps) => {
         onChange(color.hex);
     };
 
-    const styles = reactCSS({
-        default: {
-            color: {
-                width: '20px',
-                height: '20px',
-                borderRadius: '2px',
-                background: pickerColor,
-            },
-            swatch: {
-                marginTop: '1px',
-                padding: '5px',
-                background: '#fff',
-                borderRadius: '3px',
-                boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
-                display: 'inline-block',
-                cursor: 'pointer',
-                position: 'relative',
-            },
-            popover: {
-                position: 'absolute',
-                zIndex: '2',
-                right: '0',
-            },
-            cover: {
-                position: 'fixed',
-                top: '0px',
-                right: '0px',
-                bottom: '0px',
-                left: '0px',
-            },
+    const styles = useStyleProps<any>({
+        color: {
+            width: '20px',
+            height: '20px',
+            borderRadius: '2px',
+            background: pickerColor,
+        },
+        swatch: {
+            marginTop: '1px',
+            padding: '5px',
+            background: '#fff',
+            borderRadius: '3px',
+            boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
+            display: 'inline-block',
+            cursor: 'pointer',
+            position: 'relative',
+        },
+        popover: {
+            position: 'absolute',
+            zIndex: '2',
+            right: '0',
+        },
+        cover: {
+            position: 'fixed',
+            top: '0px',
+            right: '0px',
+            bottom: '0px',
+            left: '0px',
         },
     });
 

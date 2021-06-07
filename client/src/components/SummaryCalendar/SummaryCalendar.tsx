@@ -1,6 +1,6 @@
 import moment from 'moment';
 import React, { useContext, useEffect } from 'react';
-import useReactRouter from 'use-react-router';
+import { useHistory } from 'react-router';
 import { SummaryContext } from '../../SummaryContext';
 import { Item, TaskList } from './SummaryCalendar.styles';
 import { Logger } from '../../logger';
@@ -37,7 +37,7 @@ export const SummaryCalendar = () => {
         isLoading,
     } = useContext(SummaryContext);
 
-    const { history } = useReactRouter();
+    const history = useHistory();
 
     const onDateClicked = (date: any) => {
         if (!date) {
