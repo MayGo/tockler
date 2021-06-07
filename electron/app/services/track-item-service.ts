@@ -87,7 +87,7 @@ export class TrackItemService {
     }
     findAllItems(from, to, taskName, searchStr, paging) {
         let order = paging.order || 'beginDate';
-        let orderSort = paging.orderSort || 'asc';
+        let orderSort = paging.orderSort || 'desc';
         if (order.startsWith('-')) {
             order = order.substring(1);
             orderSort = 'desc';
@@ -118,7 +118,7 @@ export class TrackItemService {
             .where('taskName', taskName)
             .where('endDate', '>=', from)
             .where('endDate', '<=', to)
-            .orderBy('beginDate', 'asc');
+            .orderBy('beginDate', 'desc');
     }
 
     findFirstLogItems() {
