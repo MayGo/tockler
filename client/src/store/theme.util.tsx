@@ -36,18 +36,5 @@ export const setThemeVars = (themeName, customVariables = {}) => {
 
     const variables = { ...themes[themeName], ...ThemeVariables[themeName], ...customVariables };
 
-    modifyVars(variables);
-
     return variables;
-};
-
-export const modifyVars = vars => {
-    (window as any).less
-        .modifyVars(vars)
-        .then(() => {
-            Logger.debug(`Successfully updated theme`, vars, themes);
-        })
-        .catch(error => {
-            Logger.error(`Failed to update theme`, error);
-        });
 };

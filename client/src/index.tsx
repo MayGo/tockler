@@ -4,7 +4,6 @@ import { HashRouter as Router } from 'react-router-dom';
 import 'typeface-berkshire-swash';
 import { MainRouter } from './router';
 import { setupFrontendListener } from 'eiphop';
-import { AppDataProvider } from './routes/AppDataProvider';
 import { StoreProvider } from 'easy-peasy';
 import { ColorModeScript } from '@chakra-ui/react';
 import { ChakraProvider, theme } from '@chakra-ui/react';
@@ -26,11 +25,9 @@ ReactDOM.render(
     <StoreProvider store={mainStore}>
         <ColorModeScript />
         <ChakraProvider theme={theme}>
-            <AppDataProvider>
-                <Router>
-                    <MainRouter />
-                </Router>
-            </AppDataProvider>
+            <Router>
+                <MainRouter />
+            </Router>
         </ChakraProvider>
     </StoreProvider>,
     document.getElementById('root') as HTMLElement,
