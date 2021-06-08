@@ -8,7 +8,8 @@ console.log('got back window Store: ', window, Store);
 const config = new Store();
 
 export function getOpenAtLogin() {
-    return config.get('openAtLogin') as boolean;
+    const openAtLogin = config.get('openAtLogin');
+    return typeof openAtLogin !== 'undefined' ? (openAtLogin as boolean) : true;
 }
 
 export function getIsAutoUpdateEnabled() {

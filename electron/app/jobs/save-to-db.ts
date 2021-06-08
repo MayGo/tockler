@@ -1,5 +1,6 @@
 import moment = require('moment');
 import { appConstants } from '../app-constants';
+import config from '../config';
 import { fetchGraphQLClient, getUserFromToken } from '../graphql';
 import { logManager } from '../log-manager';
 import { TrackItem } from '../models/TrackItem';
@@ -92,60 +93,11 @@ export class SaveToDbJob {
                 }
             }
 
-            // HACK: temporary hack to upsert to hasura.
-            const returned = await fetchGraphQLClient(process.env.HASURA_GRAPHQL_ENGINE_DOMAIN, {
-                token: this.token,
-                secret: process.env.HASURA_GRAPHQL_ENGINE_SECRET,
-            })<
-                {
-                    insert_user_events: {
-                        affected_rows: number;
-                        returning: { id: hasura_uuid }[];
-                    } | null;
-                },
-                { userEvents: user_events_insert_input[] }
-            >({
-                operationAction: `
-                    mutation upsertUserEvents($userEvents: [user_events_insert_input!]!) {
-                        insert_user_events(objects: $userEvents, on_conflict: {
-                            constraint: PK_22f49067e87f2c8a3fff76543d1,
-                            update_columns: [
-                                appName,
-                                browserUrl,
-                                duration,
-                                pollInterval,
-                                updatedAt
-                            ]
-                        }) {
-                            affected_rows
-                            returning {
-                                id
-                            }
-                        }
-                    }
-                `,
-                variables: {
-                    userEvents: items.map((event) => {
-                        return {
-                            ...(event.userEventId ? { id: event.userEventId } : {}),
-                            updatedAt: new Date().toJSON(),
-                            appName: event.app,
-                            title: event.title,
-                            browserUrl: event.url,
-                            occurredAt: new Date(event.beginDate).toJSON(),
-                            duration: Math.round(
-                                (new Date(event.endDate).getTime() -
-                                    new Date(event.beginDate).getTime()) /
-                                    1000,
-                            ),
-                            pollInterval: appConstants.TIME_TRACKING_JOB_INTERVAL / 1000, // ms to sec
-                            eventType: event.url
-                                ? user_event_types_enum.browse_url
-                                : user_event_types_enum.app_use,
-                        };
-                    }),
-                },
-            });
+            const returned = await sendTrackItemsToDB(
+                items,
+                process.env.HASURA_GRAPHQL_ENGINE_DOMAIN,
+                this.token,
+            );
 
             if ((returned.errors?.length ?? 0) > 0) {
                 throw new Error(JSON.stringify(returned.errors));
@@ -155,6 +107,35 @@ export class SaveToDbJob {
             this.lastSavedAt = new Date();
 
             console.log('-------------------------');
+
+            const saveToStaging = config.persisted.get('saveToStaging');
+            if (!!saveToStaging) {
+                console.log(
+                    items.length,
+                    `TrackItems need to be upserted to GitStart's Staging DB`,
+                );
+                const returnedFromStaging = await sendTrackItemsToDB(
+                    items,
+                    process.env.HASURA_GRAPHQL_ENGINE_DOMAIN,
+                    this.token,
+                    process.env.HASURA_GRAPHQL_STAGING_ENGINE_SECRET, // by providing the admin secret, it ignores the token that is provided
+                );
+                if ((returnedFromStaging.errors?.length ?? 0) > 0) {
+                    console.error('Error saving to staging DB', returnedFromStaging.errors);
+                    logService.createOrUpdateLog({
+                        type: 'WARNING',
+                        message: `Error saving to staging DB`,
+                        jsonData: JSON.stringify(returnedFromStaging.errors),
+                    });
+                } else {
+                    console.log(
+                        'Successfully saved',
+                        items.length,
+                        `TrackItems to GitStart's Staging DB`,
+                    );
+                }
+                console.log('-------------------------');
+            }
 
             console.log(
                 returned.data.insert_user_events.returning.length,
@@ -182,6 +163,68 @@ export class SaveToDbJob {
                 .catch(console.error);
         }
     }
+}
+
+async function sendTrackItemsToDB(
+    items: TrackItem[],
+    domain: string,
+    token: string,
+    secret?: string,
+) {
+    // HACK: temporary hack to upsert to hasura. Code can be much cleaner by turning this into a class.
+    const returned = await fetchGraphQLClient(domain, {
+        token,
+        secret,
+    })<
+        {
+            insert_user_events: {
+                affected_rows: number;
+                returning: { id: hasura_uuid }[];
+            } | null;
+        },
+        { userEvents: user_events_insert_input[] }
+    >({
+        operationAction: `
+            mutation upsertUserEvents($userEvents: [user_events_insert_input!]!) {
+                insert_user_events(objects: $userEvents, on_conflict: {
+                    constraint: PK_22f49067e87f2c8a3fff76543d1,
+                    update_columns: [
+                        appName,
+                        browserUrl,
+                        duration,
+                        pollInterval,
+                        updatedAt
+                    ]
+                }) {
+                    affected_rows
+                    returning {
+                        id
+                    }
+                }
+            }
+        `,
+        variables: {
+            userEvents: items.map((event) => {
+                return {
+                    ...(event.userEventId ? { id: event.userEventId } : {}),
+                    updatedAt: new Date().toJSON(),
+                    appName: event.app,
+                    title: event.title,
+                    browserUrl: event.url,
+                    occurredAt: new Date(event.beginDate).toJSON(),
+                    duration: Math.round(
+                        (new Date(event.endDate).getTime() - new Date(event.beginDate).getTime()) /
+                            1000,
+                    ),
+                    pollInterval: appConstants.TIME_TRACKING_JOB_INTERVAL / 1000, // ms to sec
+                    eventType: event.url
+                        ? user_event_types_enum.browse_url
+                        : user_event_types_enum.app_use,
+                };
+            }),
+        },
+    });
+    return returned;
 }
 
 export const saveToDbJob = new SaveToDbJob();
