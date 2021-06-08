@@ -7,6 +7,8 @@ import {
     saveIsAutoUpdateEnabled,
     getIsLoggingEnabled,
     saveIsLoggingEnabled,
+    getSaveToStaging,
+    saveSaveToStaging,
 } from '../../services/settings.api';
 
 const { Text } = Typography;
@@ -15,15 +17,19 @@ export const AppForm = () => {
     const openAtLogin = getOpenAtLogin();
     const isAutoUpdateEnabled = getIsAutoUpdateEnabled();
     const isLoggingEnabled = getIsLoggingEnabled();
+    const saveToStaging = getSaveToStaging();
+
     const onChangeOpenAtLogin = value => {
         saveOpenAtLogin(value);
     };
-
     const onChangeAutoUpdate = value => {
         saveIsAutoUpdateEnabled(value);
     };
     const onChangeLogging = value => {
         saveIsLoggingEnabled(value);
+    };
+    const handleSaveToStagingChange = value => {
+        saveSaveToStaging(value);
     };
 
     const appName = process.env.REACT_APP_NAME;
@@ -44,7 +50,7 @@ export const AppForm = () => {
         <Card title="App settings">
             <Form.Item>
                 <Switch defaultChecked={openAtLogin} onChange={onChangeOpenAtLogin} />
-                {'  '} Run at login
+                Run at login
             </Form.Item>
             <Form.Item>
                 <Switch defaultChecked={isAutoUpdateEnabled} onChange={onChangeAutoUpdate} /> {'  '}
@@ -55,6 +61,11 @@ export const AppForm = () => {
                 Enable logging (Applies after restart)
                 <br />
                 <Text type="secondary">Log path: {logPath}</Text>
+            </Form.Item>
+            <Form.Item>
+                <Switch defaultChecked={saveToStaging} onChange={handleSaveToStagingChange} />
+                Save to staging
+                <Text type="secondary">For development purposes only.</Text>
             </Form.Item>
         </Card>
     );

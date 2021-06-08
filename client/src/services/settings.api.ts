@@ -87,3 +87,14 @@ export async function fetchAnalyserSettings() {
         return [];
     }
 }
+
+export function getSaveToStaging() {
+    return config.get('saveToStaging') as boolean;
+}
+
+export function saveSaveToStaging(saveToStaging) {
+    if (saveToStaging !== getSaveToStaging()) {
+        Logger.debug('Setting saveToStaging', saveToStaging);
+        config.set('saveToStaging', saveToStaging);
+    }
+}
