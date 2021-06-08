@@ -13,6 +13,8 @@ import { SpinnerContainer } from '../Timeline/Timeline.styles';
 import { Box, Flex, VStack } from '@chakra-ui/layout';
 import { AiOutlineCoffee, AiOutlineEye, AiOutlineLaptop, AiOutlineTool } from 'react-icons/ai';
 import { Calendar } from '../Datepicker/Calendar';
+import { OnDatesChangeProps } from '@datepicker-react/hooks';
+import Moment from 'react-moment';
 
 moment.locale('et');
 
@@ -21,6 +23,21 @@ const icons = {
     'eye-invisible': <AiOutlineEye />,
     laptop: <AiOutlineLaptop />,
     tool: <AiOutlineTool />,
+};
+
+const CellContent = ({ listData }) => {
+    return (
+        <VStack align="stretch" p={3} spacing={1}>
+            {listData.map(item => (
+                <Flex key={item.content} alignItems="center">
+                    <Box pr={2} pl={5}>
+                        {icons[item.type]}
+                    </Box>
+                    {item.content}
+                </Flex>
+            ))}
+        </VStack>
+    );
 };
 export const SummaryCalendar = () => {
     const timerange = useStoreState(state => state.timerange);
@@ -90,35 +107,18 @@ export const SummaryCalendar = () => {
     const dateCellRender = value => {
         if (value.month() === selectedDate.month()) {
             const listData = getListData(value.format(DAY_MONTH_FORMAT));
-            return (
-                <VStack align="stretch" p={3} spacing={1}>
-                    {listData.map(item => (
-                        <Flex key={item.content} alignItems="center">
-                            <Box pr={2} pl={5}>
-                                {icons[item.type]}
-                            </Box>
-                            {item.content}
-                        </Flex>
-                    ))}
-                </VStack>
-            );
+            return <CellContent listData={listData} />;
         }
         return null;
     };
 
     const monthCellRender = value => {
         const listData = getListData(value.month());
-        return (
-            <TaskList>
-                {listData.map(item => (
-                    <Item key={item.content}>
-                        {icons[item.type]}
-                        {'  '}
-                        {item.content}
-                    </Item>
-                ))}
-            </TaskList>
-        );
+        return <CellContent listData={listData} />;
+    };
+
+    const onDatesChange = (data: Moment) => {
+        setSelectedDate(data);
     };
 
     return (
@@ -129,7 +129,12 @@ export const SummaryCalendar = () => {
                 </SpinnerContainer>
             )}
 
-            <Calendar dateCellRender={dateCellRender} onDateClicked={onDateClicked} />
+            <Calendar
+                selectedDate={selectedDate}
+                dateCellRender={dateCellRender}
+                onDateClicked={onDateClicked}
+                onDatesChange={onDatesChange}
+            />
         </Flex>
     );
 };
