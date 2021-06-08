@@ -36,7 +36,7 @@ export const LogList = () => {
             getAllLogs();
         }, 10000);
 
-        return () => clearInterval(toCancel);
+        return () => clearTimeout(toCancel);
         // eslint-disable-next-line
     }, []);
 
