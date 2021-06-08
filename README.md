@@ -1,5 +1,14 @@
 > This project is based on [Tockler](https://github.com/MayGo/tockler)
 
+# Applications installer download
+
+| Operating System        | Download                                                                                                                                                                                                                   |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Windows (32 and 64-bit) | <a href='https://github.com/GitStartHQ/DevTime/releases/download/v0.1.0/GitStart-DevTime-Setup-0.1.0.exe'><img alt='Get it on Windows' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeWindows.png'/></a> |
+| macOS                   | <a href='https://github.com/GitStartHQ/DevTime/releases/download/v0.1.0/GitStart-DevTime-0.1.0.dmg'><img alt='Get it on macOS' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeMacOS.png'/></a>             |
+| Linux                   | <a href='https://github.com/GitStartHQ/DevTime/releases/download/v0.1.0/GitStart-DevTime-0.1.0.AppImage'><img alt='Get it on Linux' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeLinux.png'/></a>        |
+
+
 # Made with
 
 -   [Electron](https://electron.atom.io/) with [Webpack](https://webpack.github.io/) and [Typescript](https://www.typescriptlang.org/)
