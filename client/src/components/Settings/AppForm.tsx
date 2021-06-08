@@ -56,7 +56,6 @@ export const AppForm = () => {
                 <br />
                 <Text type="secondary">Log path: {logPath}</Text>
             </Form.Item>
-            <Form.Item></Form.Item>
         </Card>
     );
 };

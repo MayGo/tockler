@@ -242,7 +242,7 @@ export const TrackItemTable = () => {
             onFilter: (value: any, record: any) => convertDate(record.beginDate) > value,
             sorter: (a: any, b: any) =>
                 convertDate(a.beginDate).valueOf() - convertDate(b.beginDate).valueOf(),
-            sortOrder: sortedInfo.columnKey === 'beginDate' && sortedInfo.order,
+            sortOrder: (sortedInfo.columnKey === 'beginDate' && sortedInfo.order) || 'descend',
             render: (text, record) => (
                 <Moment format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}>
                     {record.beginDate}
