@@ -6,6 +6,7 @@ import { AppForm } from './AppForm';
 import { WorkForm } from './WorkForm';
 import { LoginForm } from './LoginForm';
 import { ThemeSelect } from './ThemeSelect';
+import { LogList } from './LogList';
 
 export const SettingsForm = () => {
     return (
@@ -27,6 +28,9 @@ export const SettingsForm = () => {
                     {/* <Box p={1}>
                         <AnalyserForm />
                     </Box> */}
+                    <Box p={1}>
+                        <LogList />
+                    </Box>
                 </Box>
             </Flex>
         </Form>

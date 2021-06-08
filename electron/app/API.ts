@@ -7,6 +7,7 @@ import { trackItemService } from './services/track-item-service';
 import { stateManager } from './state-manager';
 import { State } from './enums/state';
 import { appConstants } from './app-constants';
+import { logService } from './services/log-service';
 
 const settingsActions = {
     fetchAnalyserSettingsJsonString: async (req, res) => {
@@ -42,6 +43,14 @@ const appSettingsActions = {
         res.send(data);
     },
 };
+
+const logsActions = {
+    findAllLogs: async ({ payload }, res) => {
+        const data = await logService.findAllLogs(payload.from, payload.to);
+        res.send(data);
+    },
+};
+
 const trackItemActions = {
     findAllDayItems: async ({ payload }, res) => {
         const data = await trackItemService.findAllDayItems(
@@ -96,6 +105,6 @@ const trackItemActions = {
 export const initIpcActions = () =>
     setupMainHandler(
         { ipcMain } as any,
-        { ...settingsActions, ...appSettingsActions, ...trackItemActions },
+        { ...settingsActions, ...appSettingsActions, ...logsActions, ...trackItemActions },
         true,
     );
