@@ -1,6 +1,6 @@
 {
-    "name": "@gitstart/devtime",
-    "version": "3.18.4",
+    "name": "devtime",
+    "version": "0.1.0",
     "private": true,
     "dependencies": {
         "@react-hook/window-size": "^1.0.12",

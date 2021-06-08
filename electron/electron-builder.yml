@@ -26,22 +26,11 @@ publish:
 protocols:
     - name: GitStart DevTime
       schemes:
-        - x-gitstart-devtime
+          - x-gitstart-devtime
 
 mac:
     category: public.app-category.productivity
 
-win:
-    artifactName: ${name}-${version}-windows-${arch}.${ext}
-    target:
-        - target: nsis
-          arch:
-              - x64
-              - ia32
-
-nsis:
-    oneClick: false
-    allowToChangeInstallationDirectory: true
 linux:
     category: Utility
     target:

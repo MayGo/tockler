@@ -1,6 +1,6 @@
 {
-    "name": "@gitstart/devtime",
-    "version": "3.18.4",
+    "name": "devtime",
+    "version": "0.1.0",
     "description": "Automatically track applications usage and working time",
     "author": "GitStart <contact@gitstart.com>",
     "license": "GPL-2.0",
@@ -22,7 +22,7 @@
         "build_windows": "electron-builder -c electron-builder.yml --win",
         "build": "webpack --progress --env.production --mode=production",
         "prepare_client": "cpx \"../client/build/**/*\" dist",
-        "release": "electron-builder -c electron-builder.yml"
+        "release": "electron-builder -c electron-builder.yml --mac --linux --win"
     },
     "dependencies": {
         "@sentry/electron": "^2.0.4",

@@ -12,7 +12,8 @@ export function getOpenAtLogin() {
 }
 
 export function getIsAutoUpdateEnabled() {
-    return config.get('isAutoUpdateEnabled') as boolean;
+    const isAutoUpdateEnabled = config.get('isAutoUpdateEnabled');
+    return typeof isAutoUpdateEnabled !== 'undefined' ? (isAutoUpdateEnabled as boolean) : true;
 }
 export function getIsLoggingEnabled() {
     return config.get('isLoggingEnabled') as boolean;

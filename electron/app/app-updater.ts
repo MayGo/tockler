@@ -1,4 +1,4 @@
-import { app, dialog } from 'electron';
+import { app } from 'electron';
 import { autoUpdater, UpdateCheckResult, UpdateInfo } from 'electron-updater';
 import config from './config';
 import { showNotification } from './notification';
