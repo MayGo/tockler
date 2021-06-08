@@ -7,6 +7,7 @@ import BackgroundUtils from '../background-utils';
 import { trackItemService } from '../services/track-item-service';
 import { settingsService } from '../services/settings-service';
 import { TrackItem } from '../models/TrackItem';
+import { logService } from '../services/log-service';
 
 let logger = logManager.getLogger('LogTrackItemJob');
 
@@ -21,6 +22,13 @@ export class LogTrackItemJob {
         } catch (error) {
             logger.error('Error in LogTrackItemJob.');
             logger.error(error);
+            logService
+                .createOrUpdateLog({
+                    type: 'ERROR',
+                    message: `Error in LogTrackItemJob: "${error.message}"`,
+                    jsonData: error.toString(),
+                })
+                .catch(console.error);
         }
     }
 
