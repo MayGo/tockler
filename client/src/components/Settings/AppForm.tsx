@@ -1,5 +1,5 @@
-import { Card, Form, Switch, Typography } from 'antd';
 import React from 'react';
+import { Card, Form, Input, Switch, Typography } from 'antd';
 import {
     getOpenAtLogin,
     getIsAutoUpdateEnabled,
@@ -7,6 +7,8 @@ import {
     saveIsAutoUpdateEnabled,
     getIsLoggingEnabled,
     saveIsLoggingEnabled,
+    getStagingUserId,
+    saveStagingUserId,
 } from '../../services/settings.api';
 
 const { Text } = Typography;
@@ -15,10 +17,11 @@ export const AppForm = () => {
     const openAtLogin = getOpenAtLogin();
     const isAutoUpdateEnabled = getIsAutoUpdateEnabled();
     const isLoggingEnabled = getIsLoggingEnabled();
+    const stagingUserId = getStagingUserId();
+
     const onChangeOpenAtLogin = value => {
         saveOpenAtLogin(value);
     };
-
     const onChangeAutoUpdate = value => {
         saveIsAutoUpdateEnabled(value);
     };
@@ -43,8 +46,7 @@ export const AppForm = () => {
     return (
         <Card title="App settings">
             <Form.Item>
-                <Switch defaultChecked={openAtLogin} onChange={onChangeOpenAtLogin} />
-                {'  '} Run at login
+                <Switch defaultChecked={openAtLogin} onChange={onChangeOpenAtLogin} /> Run at login
             </Form.Item>
             <Form.Item>
                 <Switch defaultChecked={isAutoUpdateEnabled} onChange={onChangeAutoUpdate} /> {'  '}
@@ -55,6 +57,17 @@ export const AppForm = () => {
                 Enable logging (Applies after restart)
                 <br />
                 <Text type="secondary">Log path: {logPath}</Text>
+            </Form.Item>
+            <Form.Item>
+                <Input
+                    placeholder="Staging userId"
+                    maxLength={25}
+                    defaultValue={stagingUserId}
+                    onChange={e => saveStagingUserId(e.target.value)}
+                />
+                <Text type="secondary">
+                    Used to debug on app.gitstart.dev. For development purposes only.
+                </Text>
             </Form.Item>
         </Card>
     );
