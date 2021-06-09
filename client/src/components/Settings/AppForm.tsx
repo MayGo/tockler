@@ -49,8 +49,7 @@ export const AppForm = () => {
     return (
         <Card title="App settings">
             <Form.Item>
-                <Switch defaultChecked={openAtLogin} onChange={onChangeOpenAtLogin} />
-                Run at login
+                <Switch defaultChecked={openAtLogin} onChange={onChangeOpenAtLogin} /> Run at login
             </Form.Item>
             <Form.Item>
                 <Switch defaultChecked={isAutoUpdateEnabled} onChange={onChangeAutoUpdate} /> {'  '}
