@@ -1,13 +1,15 @@
 import { menubar, Menubar } from 'menubar';
 import MenuBuilder from './menu-builder';
 import { throttle } from 'lodash';
-import { app, ipcMain, BrowserWindow, autoUpdater, dialog, shell } from 'electron';
+import { app, ipcMain, BrowserWindow, autoUpdater, dialog, shell, Tray } from 'electron';
 import config from './config';
 import * as os from 'os';
 import { logManager } from './log-manager';
 import { join } from 'path';
 
 let logger = logManager.getLogger('WindowManager');
+
+// let tray: Tray;
 
 const preloadScript = join(__dirname, 'preloadStuff.js');
 
@@ -171,6 +173,14 @@ export default class WindowManager {
          * https://github.com/maxogden/menubar
          */
         let icon = os.platform() === 'darwin' ? config.icon : config.iconBig;
+        
+        // const contextMenu = Menu.buildFromTemplate([
+        //     { label: 'Open', type: 'radio'},
+        // ]);
+        // tray = new Tray(icon);
+        // if (os.platform() === 'linux') {
+        //     tray.setContextMenu(contextMenu);
+        // }
         const url = config.isDev
             ? 'http://localhost:3000/#/trayApp'
             : `file://${__dirname}/index.html#/trayApp`;
@@ -180,6 +190,7 @@ export default class WindowManager {
             icon: icon,
             preloadWindow: false,
             showDockIcon: false,
+            tooltip: 'Open GitStart DevTime',
 
             browserWindow: {
                 webPreferences: {
