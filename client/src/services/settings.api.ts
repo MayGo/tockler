@@ -88,13 +88,13 @@ export async function fetchAnalyserSettings() {
     }
 }
 
-export function getSaveToStaging() {
-    return config.get('saveToStaging') as boolean;
+export function getStagingUserId() {
+    return config.get('stagingUserId') as number;
 }
 
-export function saveSaveToStaging(saveToStaging) {
-    if (saveToStaging !== getSaveToStaging()) {
-        Logger.debug('Setting saveToStaging', saveToStaging);
-        config.set('saveToStaging', saveToStaging);
+export function saveStagingUserId(stagingUserId) {
+    if (stagingUserId !== getStagingUserId()) {
+        Logger.debug('Setting stagingUserId', stagingUserId);
+        config.set('stagingUserId', stagingUserId);
     }
 }

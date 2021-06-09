@@ -1,5 +1,5 @@
-import { Card, Form, Switch, Typography } from 'antd';
 import React from 'react';
+import { Card, Form, Input, Switch, Typography } from 'antd';
 import {
     getOpenAtLogin,
     getIsAutoUpdateEnabled,
@@ -7,8 +7,8 @@ import {
     saveIsAutoUpdateEnabled,
     getIsLoggingEnabled,
     saveIsLoggingEnabled,
-    getSaveToStaging,
-    saveSaveToStaging,
+    getStagingUserId,
+    saveStagingUserId,
 } from '../../services/settings.api';
 
 const { Text } = Typography;
@@ -17,7 +17,7 @@ export const AppForm = () => {
     const openAtLogin = getOpenAtLogin();
     const isAutoUpdateEnabled = getIsAutoUpdateEnabled();
     const isLoggingEnabled = getIsLoggingEnabled();
-    const saveToStaging = getSaveToStaging();
+    const stagingUserId = getStagingUserId();
 
     const onChangeOpenAtLogin = value => {
         saveOpenAtLogin(value);
@@ -27,9 +27,6 @@ export const AppForm = () => {
     };
     const onChangeLogging = value => {
         saveIsLoggingEnabled(value);
-    };
-    const handleSaveToStagingChange = value => {
-        saveSaveToStaging(value);
     };
 
     const appName = process.env.REACT_APP_NAME;
@@ -62,9 +59,15 @@ export const AppForm = () => {
                 <Text type="secondary">Log path: {logPath}</Text>
             </Form.Item>
             <Form.Item>
-                <Switch defaultChecked={saveToStaging} onChange={handleSaveToStagingChange} />
-                Save to staging
-                <Text type="secondary">For development purposes only.</Text>
+                <Input
+                    placeholder="Staging userId"
+                    maxLength={25}
+                    defaultValue={stagingUserId}
+                    onChange={e => saveStagingUserId(e.target.value)}
+                />
+                <Text type="secondary">
+                    Used to debug on app.gitstart.dev. For development purposes only.
+                </Text>
             </Form.Item>
         </Card>
     );

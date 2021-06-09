@@ -77,24 +77,23 @@ export class SaveToDbJob {
                 }
             }
 
-            if (!process.env.HASURA_GRAPHQL_ENGINE_SECRET) {
-                // return early and wait for user to go through login flow which will add a token in the db.
-                if (!this.token) {
-                    console.log('Received no token. Returning early...');
-                    return;
-                }
+            // return early and wait for user to go through login flow which will add a token in the db.
+            if (!this.token) {
+                console.log('Received no token. Returning early...');
+                return;
+            }
 
-                const user = getUserFromToken(this.token);
-                if (!user) {
-                    // TODO: use refreshToken to get new token instead of setting token to null
-                    this.token = null;
-                    await settingsService.updateLoginSettings({ token: null });
-                    throw new Error('Token Expired!');
-                }
+            const user = getUserFromToken(this.token);
+            if (!user) {
+                // TODO: use refreshToken to get new token instead of setting token to null
+                this.token = null;
+                await settingsService.updateLoginSettings({ token: null });
+                throw new Error('Token Expired!');
             }
 
             const returned = await sendTrackItemsToDB(
                 items,
+                user.id,
                 process.env.HASURA_GRAPHQL_ENGINE_DOMAIN,
                 this.token,
             );
@@ -108,14 +107,15 @@ export class SaveToDbJob {
 
             console.log('-------------------------');
 
-            const saveToStaging = config.persisted.get('saveToStaging');
-            if (!!saveToStaging) {
+            const stagingUserId = config.persisted.get('stagingUserId');
+            if (!!stagingUserId) {
                 console.log(
                     items.length,
                     `TrackItems need to be upserted to GitStart's Staging DB`,
                 );
                 const returnedFromStaging = await sendTrackItemsToDB(
                     items,
+                    stagingUserId,
                     process.env.HASURA_GRAPHQL_STAGING_ENGINE_DOMAIN,
                     this.token,
                     process.env.HASURA_GRAPHQL_STAGING_ENGINE_SECRET, // by providing the admin secret, it ignores the token that is provided
@@ -162,11 +162,13 @@ export class SaveToDbJob {
                 })
                 .catch(console.error);
         }
+        console.log('-------------------------');
     }
 }
 
 async function sendTrackItemsToDB(
     items: TrackItem[],
+    userId: number,
     domain: string,
     token: string,
     secret?: string,
@@ -207,6 +209,7 @@ async function sendTrackItemsToDB(
             userEvents: items.map((event) => {
                 return {
                     ...(event.userEventId ? { id: event.userEventId } : {}),
+                    userId,
                     updatedAt: new Date().toJSON(),
                     appName: event.app,
                     title: event.title,
