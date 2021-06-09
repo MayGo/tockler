@@ -116,7 +116,7 @@ export class SaveToDbJob {
                 );
                 const returnedFromStaging = await sendTrackItemsToDB(
                     items,
-                    process.env.HASURA_GRAPHQL_ENGINE_DOMAIN,
+                    process.env.HASURA_GRAPHQL_STAGING_ENGINE_DOMAIN,
                     this.token,
                     process.env.HASURA_GRAPHQL_STAGING_ENGINE_SECRET, // by providing the admin secret, it ignores the token that is provided
                 );
