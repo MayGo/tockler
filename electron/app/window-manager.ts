@@ -1,7 +1,7 @@
 import { menubar, Menubar } from 'menubar';
 import MenuBuilder from './menu-builder';
 import { throttle } from 'lodash';
-import { app, ipcMain, BrowserWindow, autoUpdater, dialog, shell, Tray, Menu } from 'electron';
+import { app, ipcMain, BrowserWindow, autoUpdater, dialog, shell, Tray } from 'electron';
 import config from './config';
 import * as os from 'os';
 import { logManager } from './log-manager';
