@@ -5,6 +5,7 @@ import fetch from 'node-fetch';
 import { verify, decode, JwtHeader, SignCallback, SignOptions } from 'jsonwebtoken';
 
 import type { Token, User } from './types';
+import { logService } from '../services/log-service';
 
 global.Headers = fetch.Headers;
 
@@ -49,6 +50,13 @@ function verifyToken(decoded: Token | null | undefined) {
         };
     } catch (ex) {
         console.error('error parsing JSON token:', ex);
+        logService
+            .createOrUpdateLog({
+                type: 'ERROR',
+                message: `Error parsing JSON token: "${ex.message}"`,
+                jsonData: ex.toString(),
+            })
+            .catch(console.error);
         return null;
     }
 }
@@ -71,6 +79,13 @@ export async function getUserFromTokenSecure(issuer: string, token?: string) {
             verify(token, await getJwtKey(issuer), options, (err, decoded: any) => {
                 if (err) {
                     console.error('got back error decoding token', err);
+                    logService
+                        .createOrUpdateLog({
+                            type: 'ERROR',
+                            message: `Got back error decoding token: "${err.message}"`,
+                            jsonData: err.toString(),
+                        })
+                        .catch(console.error);
                     return res(null);
                 }
 
@@ -78,6 +93,13 @@ export async function getUserFromTokenSecure(issuer: string, token?: string) {
             });
         } catch (err) {
             console.error('error parsing JSON token:', err);
+            logService
+                .createOrUpdateLog({
+                    type: 'ERROR',
+                    message: `Error parsing JSON token: "${err.message}"`,
+                    jsonData: err.toString(),
+                })
+                .catch(console.error);
             return res(null);
         }
     });

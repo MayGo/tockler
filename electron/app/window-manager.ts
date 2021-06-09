@@ -6,6 +6,7 @@ import config from './config';
 import * as os from 'os';
 import { logManager } from './log-manager';
 import { join } from 'path';
+import { logService } from './services/log-service';
 
 let logger = logManager.getLogger('WindowManager');
 
@@ -163,6 +164,13 @@ export default class WindowManager {
             config.persisted.set('windowsize', WindowManager.mainWindow.getBounds());
         } catch (e) {
             logger.error('Error saving', e);
+            logService
+                .createOrUpdateLog({
+                    type: 'WARNING',
+                    message: 'Error resizing window',
+                    jsonData: e.toString(),
+                })
+                .catch(console.error);
         }
     }
 

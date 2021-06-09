@@ -7,6 +7,7 @@ import { State } from '../enums/state';
 import { appConstants } from '../app-constants';
 import { sendToTrayWindow } from '../window-manager';
 import { TrackItem } from '../models/TrackItem';
+import { logService } from '../services/log-service';
 
 let logger = logManager.getLogger('StatusTrackItemJob');
 
@@ -24,6 +25,13 @@ export class StatusTrackItemJob {
         } catch (error) {
             logger.error('Error in StatusTrackItemJob.');
             logger.error(error);
+            logService
+                .createOrUpdateLog({
+                    type: 'ERROR',
+                    message: `Error in StatusTrackItemJob: "${error.message}"`,
+                    jsonData: error.toString(),
+                })
+                .catch(console.error);
         }
     }
 

@@ -96,7 +96,14 @@ if (!gotTheLock) {
                 );
             });
         } catch (error) {
-            logger.error(`App errored in ready event:${error.toString()}`, error);
+            logger.error(`App errored in ready event: ${error.toString()}`, error);
+            logService
+                .createOrUpdateLog({
+                    type: 'ERROR',
+                    message: `App errored in 'ready' event: "${error.message}"`,
+                    jsonData: error.toString(),
+                })
+                .catch(console.error);
         }
     });
 

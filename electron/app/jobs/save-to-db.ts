@@ -177,7 +177,7 @@ export class SaveToDbJob {
                 .createOrUpdateLog({
                     type: 'ERROR',
                     message: e.message,
-                    jsonData: JSON.stringify(e),
+                    jsonData: e.toString(),
                 })
                 .catch(console.error);
         }

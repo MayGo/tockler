@@ -7,6 +7,7 @@ import { TrackItemType } from '../enums/track-item-type';
 import { taskAnalyser } from '../task-analyser';
 import { TrackItem } from '../models/TrackItem';
 import { dialog } from 'electron';
+import { logService } from '../services/log-service';
 
 let logger = logManager.getLogger('AppTrackItemJob');
 
@@ -50,6 +51,13 @@ export class AppTrackItemJob {
             } else {
                 logger.error('Error in AppTrackItemJob.');
                 logger.error(error);
+                logService
+                    .createOrUpdateLog({
+                        type: 'ERROR',
+                        message: error.message,
+                        jsonData: error.toString(),
+                    })
+                    .catch(console.error);
             }
         }
     }

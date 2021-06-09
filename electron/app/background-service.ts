@@ -6,6 +6,7 @@ import { stateManager } from './state-manager';
 import BackgroundUtils from './background-utils';
 import { TrackItemType } from './enums/track-item-type';
 import { TrackItem } from './models/TrackItem';
+import { logService } from './services/log-service';
 
 let logger = logManager.getLogger('BackgroundService');
 
@@ -63,6 +64,13 @@ export class BackgroundService {
                     item = lastItem;
                 } catch (e) {
                     logger.error('Error creating items');
+                    logService
+                        .createOrUpdateLog({
+                            type: 'ERROR',
+                            message: `Error creating items: "${e.message}"`,
+                            jsonData: e.toString(),
+                        })
+                        .catch(console.error);
                 }
             } else {
                 if (stateManager.hasSameRunningTrackItem(rawItem)) {
@@ -77,6 +85,13 @@ export class BackgroundService {
             return item;
         } catch (e) {
             logger.error('Error createOrUpdate', e);
+            logService
+                .createOrUpdateLog({
+                    type: 'ERROR',
+                    message: `Error creating or updating TrackItem: "${e.message}"`,
+                    jsonData: e.toString(),
+                })
+                .catch(console.error);
         }
     }
 

@@ -1,6 +1,7 @@
 import { logManager } from '../log-manager';
 import { Setting } from '../models/Setting';
 import { TrackItem } from '../models/TrackItem';
+import { logService } from './log-service';
 
 const LOGIN_SETTINGS = 'LOGIN_SETTINGS';
 type LoginSettings = {
@@ -55,6 +56,13 @@ export class SettingsService {
             }
         } catch (e) {
             this.logger.error('Parsing jsonData failed:', e, jsonDataStr);
+            logService
+                .createOrUpdateLog({
+                    type: 'ERROR',
+                    message: `Parsing jsonData failed: ${e.message} | ${jsonDataStr}`,
+                    jsonData: e.toString(),
+                })
+                .catch(console.error);
         }
     }
 
