@@ -1,6 +1,6 @@
 {
     "name": "devtime",
-    "version": "0.1.1",
+    "version": "0.2.1",
     "description": "Automatically track applications usage and working time",
     "author": "GitStart <contact@gitstart.com>",
     "license": "GPL-2.0",
