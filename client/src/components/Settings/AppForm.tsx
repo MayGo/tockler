@@ -2,9 +2,7 @@ import React from 'react';
 import { Card, Form, Input, Switch, Typography } from 'antd';
 import {
     getOpenAtLogin,
-    getIsAutoUpdateEnabled,
     saveOpenAtLogin,
-    saveIsAutoUpdateEnabled,
     getIsLoggingEnabled,
     saveIsLoggingEnabled,
     getStagingUserId,
@@ -15,15 +13,11 @@ const { Text } = Typography;
 
 export const AppForm = () => {
     const openAtLogin = getOpenAtLogin();
-    const isAutoUpdateEnabled = getIsAutoUpdateEnabled();
     const isLoggingEnabled = getIsLoggingEnabled();
     const stagingUserId = getStagingUserId();
 
     const onChangeOpenAtLogin = value => {
         saveOpenAtLogin(value);
-    };
-    const onChangeAutoUpdate = value => {
-        saveIsAutoUpdateEnabled(value);
     };
     const onChangeLogging = value => {
         saveIsLoggingEnabled(value);
@@ -47,10 +41,6 @@ export const AppForm = () => {
         <Card title="App settings">
             <Form.Item>
                 <Switch defaultChecked={openAtLogin} onChange={onChangeOpenAtLogin} /> Run at login
-            </Form.Item>
-            <Form.Item>
-                <Switch defaultChecked={isAutoUpdateEnabled} onChange={onChangeAutoUpdate} /> {'  '}
-                Auto update
             </Form.Item>
             <Form.Item>
                 <Switch defaultChecked={isLoggingEnabled} onChange={onChangeLogging} /> {'  '}

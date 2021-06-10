@@ -12,10 +12,6 @@ export function getOpenAtLogin() {
     return typeof openAtLogin !== 'undefined' ? (openAtLogin as boolean) : true;
 }
 
-export function getIsAutoUpdateEnabled() {
-    const isAutoUpdateEnabled = config.get('isAutoUpdateEnabled');
-    return typeof isAutoUpdateEnabled !== 'undefined' ? (isAutoUpdateEnabled as boolean) : true;
-}
 export function getIsLoggingEnabled() {
     return config.get('isLoggingEnabled') as boolean;
 }
@@ -38,12 +34,6 @@ export function saveThemeToStorage(theme) {
     config.set('activeTheme', theme);
 }
 
-export function saveIsAutoUpdateEnabled(isAutoUpdateEnabled) {
-    if (isAutoUpdateEnabled !== getIsAutoUpdateEnabled()) {
-        Logger.debug('Setting isAutoUpdateEnabled', isAutoUpdateEnabled);
-        config.set('isAutoUpdateEnabled', isAutoUpdateEnabled);
-    }
-}
 export function saveIsLoggingEnabled(isLoggingEnabled) {
     if (isLoggingEnabled !== getIsLoggingEnabled()) {
         Logger.debug('Setting isLoggingEnabled', isLoggingEnabled);
