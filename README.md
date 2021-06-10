@@ -6,7 +6,7 @@
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Windows (32 and 64-bit) | <a href='https://github.com/GitStartHQ/DevTime/releases/download/v0.2.1/GitStart-DevTime-Setup-0.2.1.exe'><img alt='Get it on Windows' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeWindows.png'/></a> |
 | macOS                   | <a href='https://github.com/GitStartHQ/DevTime/releases/download/v0.2.1/GitStart-DevTime-0.2.1.dmg'><img alt='Get it on macOS' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeMacOS.png'/></a>           |
-| Linux                   | <a href='https://github.com/GitStartHQ/DevTime/releases/download/v0.2.1/GitStart-DevTime-0.2.1.AppImage'><img alt='Get it on Linux' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeLinux.png'/></a>      |
+| Linux                   | <a href='https://github.com/GitStartHQ/DevTime/releases/download/v0.2.1/GitStart-DevTime-0.2.1.deb'><img alt='Get it on Linux' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeLinux.png'/></a>           |
 
 # Made with
 
