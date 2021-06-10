@@ -13,6 +13,7 @@ import AppUpdater from './app-updater';
 import config from './config';
 import { appConstants } from './app-constants';
 import { settingsService } from './services/settings-service';
+import { logService } from './services/log-service';
 
 let logger = logManager.getLogger('AppIndex');
 app.setAppUserModelId(process.execPath);
