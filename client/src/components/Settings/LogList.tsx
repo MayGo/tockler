@@ -7,7 +7,7 @@ type Log = {
     id: number;
     createdAt: Date;
     updatedAt: Date;
-    type: 'ERROR';
+    type: 'ERROR' | 'WARNING';
     message?: string;
     jsonData?: string;
 };
@@ -48,7 +48,9 @@ export const LogList = () => {
         <>
             {logs.map(log => (
                 <Alert
-                    type={log.type === 'ERROR' ? 'error' : 'warning'}
+                    type={
+                        log.type === 'ERROR' ? 'error' : log.type === 'WARNING' ? 'warning' : 'info'
+                    }
                     message={`"${log.message}" ${moment(log.updatedAt).fromNow()}`}
                     description={`${JSON.stringify(log.jsonData)} | Created at: ${moment(
                         log.createdAt,
