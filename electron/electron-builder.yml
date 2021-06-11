@@ -32,6 +32,7 @@ mac:
     category: public.app-category.productivity
 
 linux:
+    icon: 'shared/img/icon/GitStart-DevTime-Icon_big.icns'
     category: Utility
     target:
         - AppImage
