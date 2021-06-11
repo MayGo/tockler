@@ -6,13 +6,18 @@ import config from './config';
 const version = app.getVersion();
 
 const isProd = process.env.NODE_ENV === 'production';
-if (isProd) {
-    Sentry.init({
-        dsn: process.env.SENTRY_DSN,
-        environment: process.env.NODE_ENV,
-        release: version,
-    });
-}
+// if (isProd) {
+//     Sentry.init({
+//         dsn: process.env.SENTRY_DSN,
+//         environment: process.env.NODE_ENV,
+//         release: version,
+//     });
+// }
+Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    environment: process.env.NODE_ENV,
+    release: version,
+});
 
 const origConsole = (log.transports as any).console;
 
