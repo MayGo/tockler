@@ -1,17 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter as Router } from 'react-router-dom';
+import * as Sentry from '@sentry/react';
+import { Integrations } from '@sentry/tracing';
 import 'typeface-berkshire-swash';
 import { MainRouter } from './router';
 import { setupFrontendListener } from 'eiphop';
 import { AppDataProvider } from './routes/AppDataProvider';
 import { StoreProvider } from 'easy-peasy';
 import { mainStore } from './store/mainStore';
+require('dotenv').config();
 
 (window as any).CSPSettings = {
     nonce: 'nonce',
 };
 const { ipcRenderer } = window as any;
+
+console.log('init');
+Sentry.init({ 
+    dsn: process.env.REACT_APP_SENTRY_DSN,
+    integrations: [new Integrations.BrowserTracing()],
+    tracesSampleRate: 1.0,
+    environment: process.env.NODE_ENV,
+});
 
 setupFrontendListener({ ipcRenderer } as any);
 
