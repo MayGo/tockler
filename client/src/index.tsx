@@ -16,14 +16,13 @@ require('dotenv').config();
 };
 const { ipcRenderer } = window as any;
 
+console.log('init');
 Sentry.init({ 
     dsn: process.env.REACT_APP_SENTRY_DSN,
     integrations: [new Integrations.BrowserTracing()],
     tracesSampleRate: 1.0,
     environment: process.env.NODE_ENV,
 });
-console.log('init');
-console.log(process.env);
 
 setupFrontendListener({ ipcRenderer } as any);
 
