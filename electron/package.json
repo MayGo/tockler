@@ -10,19 +10,19 @@
         "url": "git@github.com:GitStartHQ/DevTime.git"
     },
     "scripts": {
+        "postinstall": "electron-builder install-app-deps",
         "tslint": "tslint --project .",
         "start": "cross-env NODE_ENV=development  webpack -d && electron ./dist",
         "start-debug": "cross-env NODE_ENV=development  webpack -d && DEBUG=knex:* electron ./dist",
         "test": "jest -c jest-e2e.json",
         "test:e2e": "npm run build && mkdir -p ./test-results/e2e && NO_DEV_TOOLS=true NODE_ENV=test cucumber-js --require-module @babel/register __e2e__ -r ' __e2e__/**/*.{ts,js}' --format node_modules/cucumber-pretty --format usage:./test-results/e2e/usage.txt --format json:./test-results/e2e/result.json ",
-        "____pre____": "",
-        "postinstall": "electron-builder install-app-deps",
-        "build_mac": "electron-builder -c electron-builder.yml --mac",
-        "build_linux": "electron-builder -c electron-builder.yml --linux",
-        "build_windows": "electron-builder -c electron-builder.yml --win",
-        "build": "webpack --progress --env.production --mode=production",
+        "____packaging commands____": "",
         "prepare_client": "cpx \"../client/build/**/*\" dist",
-        "release": "electron-builder -c electron-builder.yml --mac --linux --win"
+        "build": "webpack --progress --env.production --mode=production",
+        "build_mac": "yarn build && electron-builder -c electron-builder.yml --mac",
+        "build_linux": "yarn build && electron-builder -c electron-builder.yml --linux",
+        "build_windows": "yarn build && electron-builder -c electron-builder.yml --win",
+        "release": "yarn build && electron-builder -c electron-builder.yml --mac --linux --win"
     },
     "dependencies": {
         "@sentry/electron": "^2.0.4",

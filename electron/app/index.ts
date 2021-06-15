@@ -4,7 +4,7 @@ require('events').EventEmitter.defaultMaxListeners = 30;
 
 import { backgroundJob } from './background-job';
 import { backgroundService } from './background-service';
-import { app, ipcMain, powerMonitor } from 'electron';
+import { app, ipcMain, powerMonitor, protocol } from 'electron';
 import { logManager } from './log-manager';
 import AppManager from './app-manager';
 import WindowManager from './window-manager';
@@ -14,6 +14,7 @@ import config from './config';
 import { appConstants } from './app-constants';
 import { settingsService } from './services/settings-service';
 import { logService } from './services/log-service';
+import { showNotification } from './notification';
 
 let logger = logManager.getLogger('AppIndex');
 app.setAppUserModelId(process.execPath);
@@ -28,6 +29,13 @@ if (!gotTheLock) {
 } else {
     app.on('second-instance', (event, commandLine, workingDirectory) => {
         // Someone tried to run a second instance, we should focus our window.
+        console.log("on.('second-instance')");
+        const rawUrl = commandLine.find((argv) => argv.startsWith(appConstants.PROTOCOL_NAME));
+        // Preferred method of handling protocol URLs on Windows/Linux
+        if (rawUrl) {
+            console.log("on.('second-instance') URL:", rawUrl);
+            processProtocolUrl(rawUrl);
+        }
         logger.debug('Make single instance');
         WindowManager.openMainWindow();
     });
@@ -105,19 +113,58 @@ if (!gotTheLock) {
                 .catch(console.error);
         }
     });
-
-    // This makes sure to have a fresh registration everytime.
-    app.removeAsDefaultProtocolClient(appConstants.PROTOCOL_NAME);
-
-    // This sets up protocol registration. If not working when developing on Windows, please see: https://stackoverflow.com/questions/45809064/registering-custom-protocol-at-installation-process-in-electron-app
-    app.setAsDefaultProtocolClient(appConstants.PROTOCOL_NAME);
-
-    app.on('open-url', (_, rawUrl) => {
-        console.log("on.('open-url'):", rawUrl);
-        const url = new URL(rawUrl);
-
-        if (url.searchParams.has('token')) {
-            settingsService.updateLoginSettings({ token: url.searchParams.get('token') });
-        }
-    });
 }
+
+// This makes sure to have a fresh registration every time.
+app.removeAsDefaultProtocolClient(appConstants.PROTOCOL_NAME);
+
+// This sets up protocol registration. If not working when developing on Windows, please see: https://stackoverflow.com/questions/45809064/registering-custom-protocol-at-installation-process-in-electron-app
+const successRegisteringProtocol = app.setAsDefaultProtocolClient(appConstants.PROTOCOL_NAME);
+console.log(
+    `${successRegisteringProtocol ? 'Successfully registered' : 'Failed to register'} ${
+        appConstants.PROTOCOL_NAME
+    } as a protocol using setAsDefaultProtocolClient`,
+);
+
+app.whenReady().then(() => {
+    const successRegisteringFileProtocol = protocol.registerFileProtocol(
+        appConstants.PROTOCOL_NAME,
+        (request) => {
+            console.log('protocol.registerFileProtocol():', request);
+            processProtocolUrl(request.url);
+        },
+    );
+    console.log(
+        `${successRegisteringFileProtocol ? 'Successfully registered' : 'Failed to register'} ${
+            appConstants.PROTOCOL_NAME
+        } as a protocol using registerFileProtocol`,
+    );
+});
+
+// open-url event is triggered whenever opening a url with protocol PROTOCOL_NAME (e.g. type x-gitstart-devtime://test in your browser, it should open GitStart DevTime with a success notification). Preferred method of handling protocol URLs on Mac.
+app.on('open-url', (_, rawUrl) => {
+    console.log("on.('open-url'):", rawUrl);
+    processProtocolUrl(rawUrl);
+    WindowManager.openMainWindow();
+});
+
+const processProtocolUrl = async (rawUrl: string) => {
+    const url = new URL(rawUrl);
+    let returnValue: boolean = false;
+
+    if (rawUrl.includes('//test')) {
+        console.log(`testing ${appConstants.PROTOCOL_NAME} protocol...`);
+        showNotification({
+            body: `Testing ${appConstants.PROTOCOL_NAME}. URL: ${rawUrl}`,
+            silent: true,
+        });
+        returnValue = true;
+    }
+
+    if (url.searchParams.has('token')) {
+        await settingsService.updateLoginSettings({ token: url.searchParams.get('token') });
+        returnValue = true;
+    }
+
+    return returnValue;
+};

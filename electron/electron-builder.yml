@@ -4,8 +4,8 @@ asar: false
 asarUnpack:
     - scripts
     - shared
-
-npmRebuild: false
+extraResources:
+    - tracker.db
 
 directories:
     output: 'packaged'
