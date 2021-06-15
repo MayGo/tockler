@@ -4,6 +4,8 @@
     "private": true,
     "dependencies": {
         "@react-hook/window-size": "^1.0.12",
+        "@sentry/react": "^6.7.0",
+        "@sentry/tracing": "^6.7.0",
         "@welldone-software/why-did-you-render": "^3.5.0",
         "antd": "^4.9.4",
         "antd-theme-generator": "^1.2.8",
@@ -11,6 +13,7 @@
         "babel-plugin-import": "^1.13.3",
         "cross-env": "6.0.3",
         "debounce-promise": "^3.1.2",
+        "dotenv": "^10.0.0",
         "easy-peasy": "^4.0.1",
         "eiphop": "^1.0.13",
         "electron-store": "5.2.0",
