@@ -33,12 +33,12 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 ReactDOM.render(
-        <StoreProvider store={mainStore}>
-            <AppDataProvider>
-                <Router>
-                    <MainRouter />
-                </Router>
-            </AppDataProvider>
-        </StoreProvider>,
+    <StoreProvider store={mainStore}>
+        <AppDataProvider>
+            <Router>
+                <MainRouter />
+            </Router>
+        </AppDataProvider>
+    </StoreProvider>,
     document.getElementById('root') as HTMLElement,
 );
