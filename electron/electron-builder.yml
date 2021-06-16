@@ -6,6 +6,7 @@ asarUnpack:
     - shared
 extraResources:
     - tracker.db
+artifactName: '${productName}.${ext}'
 
 directories:
     output: 'packaged'
@@ -27,6 +28,13 @@ protocols:
     - name: GitStart DevTime
       schemes:
           - x-gitstart-devtime
+
+win:
+    target:
+        - target: 'nsis'
+          arch:
+              - x64
+              - ia32
 
 mac:
     category: public.app-category.productivity
