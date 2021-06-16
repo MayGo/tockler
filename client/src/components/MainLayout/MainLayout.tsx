@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { HeaderMenu } from './HeaderMenu';
 import LoginAlert from '../LoginAlert';
 import { fetchLoginSettings } from '../../services/settings.api';
+import packageJson from '../../../package.json';
 
 const { Footer, Content } = Layout;
 
@@ -42,6 +43,8 @@ export function MainLayout({ children, location }: any) {
                 </Content>
                 <Footer>
                     <a href="https://github.com/MayGo">MayGo</a> @ 2021
+                    <br />
+                    <p>v{packageJson.version}</p>
                 </Footer>
             </Layout>
         </div>
