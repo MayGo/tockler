@@ -1,6 +1,6 @@
 {
     "name": "devtime",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "description": "Automatically track applications usage and working time",
     "author": "GitStart <contact@gitstart.com>",
     "license": "GPL-2.0",
@@ -21,7 +21,7 @@
         "build": "webpack --progress --env.production --mode=production",
         "build_mac": "yarn build && electron-builder -c electron-builder.yml --mac",
         "build_linux": "yarn build && electron-builder -c electron-builder.yml --linux",
-        "build_windows": "yarn build && electron-builder -c electron-builder.yml --win",
+        "build_windows": "yarn build && electron-builder -c electron-builder.yml --win --ia32 --x64",
         "release": "yarn build && electron-builder -c electron-builder.yml --mac --linux --win --ia32 --x64",
         "full_release": "yarn prepare_client && yarn release"
     },
@@ -38,7 +38,7 @@
         "electron-updater": "4.3.5",
         "ffi-napi": "^4.0.3",
         "graphql": "^15.5.0",
-        "hazardous": "^0.3.0",
+        "hazardous": "^0.3.1",
         "jsonwebtoken": "^8.5.1",
         "jwks-rsa": "^2.0.3",
         "knex": "^0.21.13",

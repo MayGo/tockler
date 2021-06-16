@@ -1,6 +1,6 @@
 {
     "name": "devtime",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "private": true,
     "dependencies": {
         "@react-hook/window-size": "^1.0.12",
