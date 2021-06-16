@@ -6,6 +6,7 @@ asarUnpack:
     - shared
 extraResources:
     - tracker.db
+artifactName: '${productName}.${ext}'
 
 directories:
     output: 'packaged'
