@@ -21,8 +21,8 @@
         "build": "webpack --progress --env.production --mode=production",
         "build_mac": "yarn build && electron-builder -c electron-builder.yml --mac",
         "build_linux": "yarn build && electron-builder -c electron-builder.yml --linux",
-        "build_windows": "yarn build && electron-builder -c electron-builder.yml --win --ia32 --x64",
-        "release": "yarn build && electron-builder -c electron-builder.yml --mac --linux --win --ia32 --x64",
+        "build_windows": "yarn build && electron-builder -c electron-builder.yml --win",
+        "release": "yarn build && electron-builder -c electron-builder.yml --mac --linux --win",
         "full_release": "yarn prepare_client && yarn release"
     },
     "dependencies": {
