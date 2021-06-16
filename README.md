@@ -2,11 +2,12 @@
 
 # Application installers
 
-| Operating System             | Download                                                                                                                                                                                                                             |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Windows (32 and 64-bit .exe) | <a href='https://github.com/GitStartHQ/DevTime/releases/download/v0.3.0/GitStart-DevTime-Setup-0.3.0.exe'><img alt='Get it on Windows' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeWindows.png'/></a> |
-| macOS (.dmg)                 | <a href='https://github.com/GitStartHQ/DevTime/releases/download/v0.3.0/GitStart-DevTime-0.3.0.dmg'><img alt='Get it on macOS' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeMacOS.png'/></a>           |
-| Linux (.deb)                 | <a href='https://github.com/GitStartHQ/DevTime/releases/download/v0.3.0/devtime_0.3.0_amd64.deb'><img alt='Get it on Linux' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeLinux.png'/></a>              |
+| Operating System                 | Download                                                                                                                                                                                                                  |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Windows (32-bit and 64-bit .exe) | <a href='https://github.com/GitStartHQ/DevTime/releases/latest/download/GitStart-DevTime.exe'><img alt='Get it on Windows' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeWindows.png'/></a>  |
+| macOS (.dmg)                     | <a href='https://github.com/GitStartHQ/DevTime/releases/latest/download/GitStart-DevTime.dmg'><img alt='Get it on macOS' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeMacOS.png'/></a>      |
+| Linux (.deb)                     | <a href='https://github.com/GitStartHQ/DevTime/releases/latest/download/GitStart-DevTime.deb'><img alt='Get it on Linux' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeLinux.png'/></a>      |
+| Linux (.AppImage)                | <a href='https://github.com/GitStartHQ/DevTime/releases/latest/download/GitStart-DevTime.AppImage'><img alt='Get it on Linux' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeLinux.png'/></a> |
 
 # Made with
 
