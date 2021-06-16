@@ -17,12 +17,13 @@
         "test": "jest -c jest-e2e.json",
         "test:e2e": "npm run build && mkdir -p ./test-results/e2e && NO_DEV_TOOLS=true NODE_ENV=test cucumber-js --require-module @babel/register __e2e__ -r ' __e2e__/**/*.{ts,js}' --format node_modules/cucumber-pretty --format usage:./test-results/e2e/usage.txt --format json:./test-results/e2e/result.json ",
         "____packaging commands____": "",
-        "prepare_client": "cpx \"../client/build/**/*\" dist",
+        "prepare_client": "yarn --cwd ../client run build && cpx \"../client/build/**/*\" dist",
         "build": "webpack --progress --env.production --mode=production",
         "build_mac": "yarn build && electron-builder -c electron-builder.yml --mac",
         "build_linux": "yarn build && electron-builder -c electron-builder.yml --linux",
         "build_windows": "yarn build && electron-builder -c electron-builder.yml --win",
-        "release": "yarn build && electron-builder -c electron-builder.yml --mac --linux --win"
+        "release": "yarn build && electron-builder -c electron-builder.yml --mac --linux --win --ia32 --x64",
+        "full_release": "yarn prepare_client && yarn release"
     },
     "dependencies": {
         "@sentry/electron": "^2.0.4",
