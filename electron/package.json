@@ -38,7 +38,7 @@
         "electron-updater": "4.3.5",
         "ffi-napi": "^4.0.3",
         "graphql": "^15.5.0",
-        "hazardous": "^0.3.1",
+        "hazardous": "^0.3.0",
         "jsonwebtoken": "^8.5.1",
         "jwks-rsa": "^2.0.3",
         "knex": "^0.21.13",
