@@ -6,8 +6,9 @@ import { MainRouter } from './router';
 import { setupFrontendListener } from 'eiphop';
 import { StoreProvider } from 'easy-peasy';
 import { ColorModeScript } from '@chakra-ui/react';
-import { ChakraProvider, theme } from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react';
 import { mainStore } from './store/mainStore';
+import { theme } from './theme/theme';
 
 (window as any).CSPSettings = {
     nonce: 'nonce',

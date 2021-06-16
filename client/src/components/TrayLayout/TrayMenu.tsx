@@ -13,6 +13,7 @@ import { Brand } from '../MainLayout/HeaderMenu.styles';
 import { AiOutlineArrowsAlt, AiOutlineClockCircle, AiOutlinePoweroff } from 'react-icons/ai';
 import { Tooltip } from '@chakra-ui/tooltip';
 import { IconButton } from '@chakra-ui/button';
+import { useColorModeValue } from '@chakra-ui/system';
 
 const getNow = () => moment().subtract(1, 'seconds');
 
@@ -59,8 +60,16 @@ export const TrayMenuPlain = () => {
     }, [windowIsActive]);
 
     return (
-        <Flex bg="black" w="100%" p={4} color="white" position="sticky" top={0} zIndex={100}>
-            <Box pr={3}>
+        <Flex
+            bg={useColorModeValue('gray.100', 'gray.900')}
+            w="100%"
+            h={50}
+            alignItems="center"
+            position="sticky"
+            top={0}
+            zIndex={100}
+        >
+            <Box pl={4} pr={3}>
                 <Link as={RouterLink} onClick={toggleMainWindow}>
                     <Flex>
                         <Center pr={3}>
@@ -75,7 +84,6 @@ export const TrayMenuPlain = () => {
                     </Flex>
                 </Link>
             </Box>
-
             <Box p={3}>
                 {onlineSince && (
                     <Tooltip placement="bottom" label="Time without a break">
@@ -92,24 +100,24 @@ export const TrayMenuPlain = () => {
             </Box>
 
             <Box flex="1"></Box>
-            <Box pr={3}>
+            <Box pr={2}>
                 <Tooltip placement="bottom" label="Open main window">
                     <IconButton
                         onClick={toggleMainWindow}
-                        variant="outline"
-                        colorScheme="teal"
+                        variant="ghost"
+                        colorScheme="gray"
                         aria-label="Open main window"
                         icon={<AiOutlineArrowsAlt />}
                     />
                 </Tooltip>
             </Box>
 
-            <Box>
+            <Box pr={2}>
                 <Tooltip placement="bottom" label="Quit app">
                     <IconButton
                         onClick={exitApp}
-                        variant="outline"
-                        colorScheme="teal"
+                        variant="ghost"
+                        colorScheme="gray"
                         aria-label="Quit app"
                         icon={<AiOutlinePoweroff />}
                     />

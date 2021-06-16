@@ -17,7 +17,7 @@ import { TimelineRowType } from '../../enum/TimelineRowType';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { BarWithTooltip } from './BarWithTooltip';
 import { getLabelColor } from './ChartTheme';
-import { BrushChart, MainChart, SpinnerContainer } from './Timeline.styles';
+import { SpinnerContainer } from './Timeline.styles';
 import { TimelineItemEditContainer } from './TimelineItemEditContainer';
 import { Logger } from '../../logger';
 import { formatDuration } from '../SummaryCalendar/SummaryCalendar.util';
@@ -33,6 +33,9 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@chakra-ui/popover';
+import { Box } from '@chakra-ui/react';
+import { BlackBox } from '../BlackBox';
+import { BrushHandle } from './BrushHandle';
 
 const getTrackItemOrder = (type: string) => {
     if (type === TrackItemType.AppTrackItem) {
@@ -50,37 +53,37 @@ const getTrackItemOrder = (type: string) => {
 const getTrackItemOrderFn = d => getTrackItemOrder(d.taskName);
 const convertDateForY = d => convertDate(d.beginDate);
 const convertDateForY0 = d => convertDate(d.endDate);
-const brushChartBarStyle: any = {
-    data: {
-        width: 7,
-        fill: colorProp,
-        stroke: colorProp,
-        strokeWidth: 0.5,
-        fillOpacity: 0.75,
-    },
-};
 
 const barWidth = 25;
 
 const scale: any = { y: 'time', x: 'linear' };
-const padding: any = { left: 50, top: 0, bottom: 20, right: 10 };
+const padding: any = { left: 0, top: 0, bottom: 20, right: 10 };
 const domainPadding: any = { y: 35, x: 10 };
 const domainPaddingBrush: any = { y: 35, x: 5 };
-
-const barStyle: any = {
-    data: {
-        width: barWidth,
-        fill: colorProp,
-        stroke: colorProp,
-        strokeWidth: 0.5,
-        fillOpacity: 0.75,
-    },
-};
 
 const rowEnabledDefaults = {
     [TimelineRowType.App]: true,
     [TimelineRowType.Log]: true,
     [TimelineRowType.Status]: true,
+};
+
+const brushChartBarStyle: any = {
+    data: {
+        width: 7,
+        fill: colorProp,
+        stroke: 'black',
+        strokeWidth: 0.5,
+        fillOpacity: 1,
+    },
+};
+const barStyle: any = {
+    data: {
+        width: barWidth,
+        fill: colorProp,
+        stroke: 'black',
+        strokeWidth: 0.5,
+        fillOpacity: 1,
+    },
 };
 
 export const Timeline = memo(() => {
@@ -212,7 +215,7 @@ export const Timeline = memo(() => {
 
     const axisStyle = {
         grid: { strokeWidth: 0 },
-        ticks: { stroke: 'grey', size: 5 },
+        ticks: { stroke: 'gray', size: 5 },
         tickLabels: {
             fill: calcRowEnabledColor,
         },
@@ -230,7 +233,7 @@ export const Timeline = memo(() => {
 
     return (
         <div>
-            <MainChart>
+            <Box pt={4} pb={4}>
                 {isLoading && (
                     <SpinnerContainer>
                         <Spinner />
@@ -245,112 +248,118 @@ export const Timeline = memo(() => {
                         </PopoverBody>
                     </PopoverContent>
                 </Popover>
-                <VictoryChart
-                    theme={chartTheme}
-                    height={100}
-                    width={chartWidth}
-                    domainPadding={domainPadding}
-                    padding={padding}
-                    scale={scale}
-                    horizontal
-                    domain={domain}
-                    containerComponent={
-                        <VictoryZoomContainer
-                            responsive={false}
-                            zoomDimension="y"
-                            zoomDomain={{ y: rangeToDate(visibleTimerange) }}
-                            key={selectedTimelineItem && selectedTimelineItem.id}
-                            onZoomDomainChange={debounce(handleZoom, 300)}
-                        />
-                    }
-                >
-                    <VictoryAxis dependentAxis tickCount={20} />
-
-                    <VictoryBar
-                        style={barStyle}
-                        x={getTrackItemOrderFn}
-                        y={convertDateForY}
-                        y0={convertDateForY0}
-                        data={timelineData}
-                        dataComponent={
-                            <BarWithTooltip
-                                popoverTriggerRef={popoverTriggerRef}
-                                theme={chartTheme}
-                                getTooltipLabel={getTooltipLabel}
-                                onClickBarItem={handleSelectionChanged}
+                <BlackBox>
+                    <VictoryChart
+                        theme={chartTheme}
+                        height={100}
+                        width={chartWidth}
+                        domainPadding={domainPadding}
+                        padding={padding}
+                        scale={scale}
+                        horizontal
+                        domain={domain}
+                        containerComponent={
+                            <VictoryZoomContainer
+                                responsive={false}
+                                zoomDimension="y"
+                                zoomDomain={{ y: rangeToDate(visibleTimerange) }}
+                                key={selectedTimelineItem && selectedTimelineItem.id}
+                                onZoomDomainChange={debounce(handleZoom, 300)}
                             />
                         }
-                    />
-                    <VictoryAxis
-                        tickValues={[1, 2, 3]}
-                        tickFormat={['App', 'Status', 'Log']}
-                        events={axisEvents}
-                        style={axisStyle}
-                        gridComponent={
-                            <VictoryBrushLine
-                                disable={
-                                    !selectedTimelineItem ||
-                                    selectedTimelineItem.taskName !== TrackItemType.LogTrackItem
-                                }
-                                width={barWidth}
-                                dimension="y"
-                                brushDomain={[
-                                    selectedTimelineItem ? selectedTimelineItem.beginDate : 0,
-                                    selectedTimelineItem ? selectedTimelineItem.endDate : 0,
-                                ]}
-                                onBrushDomainChange={handleEditBrushDebounced}
+                    >
+                        <VictoryAxis dependentAxis tickCount={20} />
+
+                        <VictoryBar
+                            style={barStyle}
+                            x={getTrackItemOrderFn}
+                            y={convertDateForY}
+                            y0={convertDateForY0}
+                            data={timelineData}
+                            dataComponent={
+                                <BarWithTooltip
+                                    popoverTriggerRef={popoverTriggerRef}
+                                    theme={chartTheme}
+                                    getTooltipLabel={getTooltipLabel}
+                                    onClickBarItem={handleSelectionChanged}
+                                />
+                            }
+                        />
+                        <VictoryAxis
+                            tickValues={[1, 2, 3]}
+                            tickFormat={['', '', '']}
+                            events={axisEvents}
+                            style={axisStyle}
+                            gridComponent={
+                                <VictoryBrushLine
+                                    disable={
+                                        !selectedTimelineItem ||
+                                        selectedTimelineItem.taskName !== TrackItemType.LogTrackItem
+                                    }
+                                    width={barWidth}
+                                    dimension="y"
+                                    brushDomain={[
+                                        selectedTimelineItem ? selectedTimelineItem.beginDate : 0,
+                                        selectedTimelineItem ? selectedTimelineItem.endDate : 0,
+                                    ]}
+                                    onBrushDomainChange={handleEditBrushDebounced}
+                                    brushStyle={{
+                                        pointerEvents: 'none',
+                                        stroke: chartTheme.isDark ? 'white' : 'black',
+                                        fill: chartTheme.isDark ? 'white' : 'black',
+                                        opacity: ({ active }) => (active ? 0.5 : 0.4),
+                                    }}
+                                    handleComponent={<BrushHandle viewBox="0 -2 8 30" />}
+                                    brushAreaStyle={{
+                                        stroke: 'none',
+                                        fill: 'transparent',
+                                        opacity: 0,
+                                    }}
+                                />
+                            }
+                        />
+                    </VictoryChart>
+                </BlackBox>
+            </Box>
+            <Box pb={4}>
+                <BlackBox>
+                    <VictoryChart
+                        theme={chartTheme}
+                        height={50}
+                        width={chartWidth}
+                        domainPadding={domainPaddingBrush}
+                        padding={padding}
+                        horizontal
+                        scale={scale}
+                        domain={domain}
+                        containerComponent={
+                            <VictoryBrushContainer
+                                responsive={false}
+                                brushDimension="y"
+                                brushDomain={{ y: rangeToDate(visibleTimerange) }}
                                 brushStyle={{
-                                    pointerEvents: 'none',
-                                    stroke: chartTheme.isDark ? 'white' : 'black',
-                                    fill: chartTheme.isDark ? 'white' : 'black',
-                                    opacity: ({ active }) => (active ? 0.5 : 0.4),
+                                    stroke: '#A78BFA',
+                                    fill: chartTheme.isDark ? '#7C3AED' : '#7C3AED',
+                                    fillOpacity: 0.5,
                                 }}
-                                brushAreaStyle={{
-                                    stroke: 'none',
-                                    fill: 'transparent',
-                                    opacity: 0,
-                                }}
+                                handleComponent={<BrushHandle viewBox="0 -2 8 30" />}
+                                onBrushDomainChange={handleBrushDebounced}
                             />
                         }
-                    />
-                </VictoryChart>
-            </MainChart>
-            <BrushChart>
-                <VictoryChart
-                    theme={chartTheme}
-                    height={50}
-                    width={chartWidth}
-                    domainPadding={domainPaddingBrush}
-                    padding={padding}
-                    horizontal
-                    scale={scale}
-                    domain={domain}
-                    containerComponent={
-                        <VictoryBrushContainer
-                            responsive={false}
-                            brushDimension="y"
-                            brushDomain={{ y: rangeToDate(visibleTimerange) }}
-                            brushStyle={{
-                                stroke: 'transparent',
-                                fill: chartTheme.isDark ? 'white' : 'black',
-                                fillOpacity: 0.1,
-                            }}
-                            onBrushDomainChange={handleBrushDebounced}
-                        />
-                    }
-                >
-                    <VictoryAxis dependentAxis tickCount={20} />
+                    >
+                        <VictoryAxis dependentAxis tickCount={20} />
 
-                    <VictoryBar
-                        animate={false}
-                        style={brushChartBarStyle}
-                        x={getTrackItemOrderFn}
-                        y={convertDateForY}
-                        y0={convertDateForY0}
-                        data={brushData}
-                    />
-                </VictoryChart>
-            </BrushChart>
+                        <VictoryBar
+                            animate={false}
+                            style={brushChartBarStyle}
+                            x={getTrackItemOrderFn}
+                            y={convertDateForY}
+                            y0={convertDateForY0}
+                            data={brushData}
+                        />
+                    </VictoryChart>
+                </BlackBox>
+            </Box>
         </div>
     );
 });

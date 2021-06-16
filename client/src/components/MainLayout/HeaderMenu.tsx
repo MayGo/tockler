@@ -12,10 +12,23 @@ import { Brand } from './HeaderMenu.styles';
 import { Flex, Box, Center, Link } from '@chakra-ui/layout';
 import { Image } from '@chakra-ui/image';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
+import { Button } from '@chakra-ui/button';
+import { useColorModeValue } from '@chakra-ui/color-mode';
+
+const MenuItem = ({ to, icon, title }) => (
+    <Box>
+        <Button as={RouterLink} to={to} variant="ghost">
+            <Center>
+                <Box pr={2}>{icon}</Box>
+                {title}
+            </Center>
+        </Button>
+    </Box>
+);
 
 export const HeaderMenu = () => (
-    <Flex bg="brand.900" w="100%" p={4}>
-        <Box pr={3}>
+    <Flex bg={useColorModeValue('gray.100', 'gray.900')} w="100%" h={50} alignItems="center">
+        <Box pl={4} pr={3}>
             <Link as={RouterLink} to="/app/timeline">
                 <Flex>
                     <Center pr={3}>
@@ -25,60 +38,14 @@ export const HeaderMenu = () => (
                 </Flex>
             </Link>
         </Box>
-        <Box p={3}>
-            <Link as={RouterLink} to="/app/timeline">
-                <Center>
-                    <Box pr={1}>
-                        <AiOutlineBars />
-                    </Box>
-                    Timeline
-                </Center>
-            </Link>
-        </Box>
-        <Box p={3}>
-            <Link as={RouterLink} to="/app/summary">
-                <Center>
-                    <Box pr={1}>
-                        <AiOutlineAreaChart />
-                    </Box>
-                    Summary
-                </Center>
-            </Link>
-        </Box>
-        <Box p={3}>
-            <Link as={RouterLink} to="/app/search">
-                <Center>
-                    <Box pr={1}>
-                        <AiOutlineSearch />
-                    </Box>
-                    Search
-                </Center>
-            </Link>
-        </Box>
-        <Box p={3}>
-            <Link as={RouterLink} to="/app/settings">
-                <Center>
-                    <Box pr={1}>
-                        <AiOutlineSetting />
-                    </Box>
-                    Settings
-                </Center>
-            </Link>
-        </Box>
-        <Box p={3}>
-            <Link as={RouterLink} to="/app/support">
-                <Center>
-                    <Box pr={1}>
-                        <AiOutlineQuestionCircle />
-                    </Box>
-                    Support
-                </Center>
-            </Link>
-        </Box>
-        <Box flex="1">
-            <Box d="flex" justifySelf="flex-end">
-                <ColorModeSwitcher />
-            </Box>
+        <MenuItem to="/app/timeline" icon={<AiOutlineBars />} title="Timeline" />
+        <MenuItem to="/app/summary" icon={<AiOutlineAreaChart />} title="Summary" />
+        <MenuItem to="/app/search" icon={<AiOutlineSearch />} title="Search" />
+        <MenuItem to="/app/settings" icon={<AiOutlineSetting />} title="Settings" />
+        <MenuItem to="/app/support" icon={<AiOutlineQuestionCircle />} title="Support" />{' '}
+        <Box flex="1" />
+        <Box>
+            <ColorModeSwitcher />
         </Box>
     </Flex>
 );

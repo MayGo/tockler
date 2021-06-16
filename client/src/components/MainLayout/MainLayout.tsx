@@ -1,12 +1,14 @@
 import { Box } from '@chakra-ui/layout';
+import { Divider, useColorModeValue } from '@chakra-ui/react';
 import React from 'react';
 import { HeaderMenu } from './HeaderMenu';
 
 export function MainLayout({ children, location }: any) {
     return (
         <Box w="100%">
-            <HeaderMenu location={location} />
+            <HeaderMenu />
 
+            <Divider borderColor={useColorModeValue('gray.100', 'gray.600')} />
             <Box>{children}</Box>
             <Box p={3}>
                 <a href="https://github.com/MayGo">MayGo</a> @ 2021

@@ -1,10 +1,8 @@
 import { Logger } from '../logger';
-import darkVars from '../dark.json';
-import lightVars from '../light.json';
 
-export const THEMES = { LIGHT: 'default', DARK: 'dark' };
+export const THEMES = { LIGHT: 'light', DARK: 'dark' };
 
-export const themes = { [THEMES.LIGHT]: lightVars, [THEMES.DARK]: darkVars };
+export const themes = { [THEMES.LIGHT]: {}, [THEMES.DARK]: {} };
 
 export const PRIMARY_COLOR_VAR = '@primary-color';
 export const ThemeVariables: any = {
