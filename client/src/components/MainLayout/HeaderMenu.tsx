@@ -12,7 +12,6 @@ import { Brand } from './HeaderMenu.styles';
 import { Flex, Box, Center, Link } from '@chakra-ui/layout';
 import { Image } from '@chakra-ui/image';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
-<<<<<<< HEAD
 import { Button } from '@chakra-ui/button';
 import { useColorModeValue } from '@chakra-ui/color-mode';
 
