@@ -21,9 +21,8 @@ export default {
 
     icon: path.join(root, 'shared/img/icon/GitStart-DevTime-Icon_small.png'),
     iconUpdate: path.join(root, 'shared/img/icon/GitStart-DevTime-Icon_small.png'),
-    iconUpdateBig: path.join(root, 'shared/img/icon/GitStart-DevTime-Icon_small.png'),
-    iconBig: path.join(root, 'shared/img/icon/GitStart-DevTime-Icon_small.png'),
-
+    iconUpdateBig: path.join(root, 'shared/img/icon/GitStart-DevTime-Icon_big.png'),
+    iconBig: path.join(root, 'shared/img/icon/GitStart-DevTime-Icon_big.png'),
     // plugins directory
     pluginsPath: root,
 
