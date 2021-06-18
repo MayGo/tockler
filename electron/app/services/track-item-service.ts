@@ -11,7 +11,7 @@ import moment = require('moment');
 export class TrackItemService {
     logger = logManager.getLogger('TrackItemService');
 
-    async createTrackItem(trackItemAttributes: TrackItem): Promise<TrackItem> {
+    async createTrackItem(trackItemAttributes: Partial<TrackItem>): Promise<TrackItem> {
         let trackItem = await TrackItem.query().insert(trackItemAttributes);
         // this.logger.debug(`Created trackItem :`, trackItem.toJSON());
         return trackItem;

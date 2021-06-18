@@ -37,14 +37,14 @@ export class BackgroundService {
         return await Promise.all(promiseArray);
     }
 
-    async createOrUpdate(rawItem) {
+    async createOrUpdate(rawItem: Partial<TrackItem>) {
         try {
             let color = await appSettingService.getAppColor(rawItem.app);
             rawItem.color = color;
 
             let item: TrackItem;
 
-            let type: TrackItemType = rawItem.taskName;
+            let type = rawItem.taskName;
 
             if (!type) {
                 throw new Error('TaskName not defined.');
@@ -54,8 +54,9 @@ export class BackgroundService {
                 let items = BackgroundUtils.splitItemIntoDayChunks(rawItem);
 
                 if (stateManager.hasSameRunningTrackItem(rawItem)) {
-                    let firstItem = items.shift();
-                    await stateManager.endRunningTrackItem(firstItem);
+                    const currentItem = stateManager.getCurrentTrackItem(type);
+                    await stateManager.endRunningTrackItem(currentItem);
+                    items.shift();
                 }
                 try {
                     let savedItems = await this.createItems(items);
@@ -75,7 +76,7 @@ export class BackgroundService {
             } else {
                 if (stateManager.hasSameRunningTrackItem(rawItem)) {
                     item = await stateManager.updateRunningTrackItemEndDate(type);
-                } else if (!stateManager.hasSameRunningTrackItem(rawItem)) {
+                } else {
                     item = await stateManager.createNewRunningTrackItem(rawItem);
                 }
             }
