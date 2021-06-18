@@ -8,6 +8,7 @@ import { appConstants } from '../app-constants';
 import { sendToTrayWindow } from '../window-manager';
 import { TrackItem } from '../models/TrackItem';
 import { logService } from '../services/log-service';
+import { TrackItemType } from '../enums/track-item-type';
 
 let logger = logManager.getLogger('StatusTrackItemJob');
 
@@ -58,7 +59,7 @@ export class StatusTrackItemJob {
         }
 
         let rawItem: Partial<TrackItem> = {
-            taskName: 'StatusTrackItem',
+            taskName: TrackItemType.StatusTrackItem,
             app: state,
             title: state.toString().toLowerCase(),
             beginDate: BackgroundUtils.currentTimeMinusJobInterval(),

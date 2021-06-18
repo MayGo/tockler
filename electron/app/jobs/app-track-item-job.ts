@@ -99,7 +99,7 @@ export class AppTrackItemJob {
         rawItem.endDate = new Date();
 
         // logger.debug('rawitem has no app', result);
-        if (result.owner && result.owner.name) {
+        if (result.owner && result.owner.name && !['explorer.exe'].includes(result.owner.name)) {
             rawItem.app = result.owner.name;
         } else {
             rawItem.app = 'NATIVE';
@@ -107,7 +107,7 @@ export class AppTrackItemJob {
 
         if (!result.title) {
             // logger.error('rawitem has no title', result);
-            rawItem.title = 'NO_TITLE';
+            rawItem.title = null;
         } else {
             rawItem.title = result.title.replace(/\n$/, '').replace(/^\s/, '');
         }

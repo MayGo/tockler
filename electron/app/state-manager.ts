@@ -108,8 +108,15 @@ export class StateManager {
         return this.getCurrentTrackItem(TrackItemType.StatusTrackItem);
     }
 
-    hasSameRunningTrackItem(rawItem): boolean {
-        return BackgroundUtils.isSameItems(rawItem, this.getCurrentTrackItem(rawItem.taskName));
+    hasSameRunningTrackItem(rawItem: Partial<TrackItem>): boolean {
+        // We want to ignore (i.e. prolongue the last running item) native processes like Mission Control on macOS or Tab explorer on Windows
+        if (!rawItem.app || rawItem.app === 'NATIVE') {
+            return true;
+        }
+        return BackgroundUtils.isSameItems(
+            rawItem,
+            this.getCurrentTrackItem(rawItem.taskName as TrackItemType),
+        );
     }
 
     resetCurrentTrackItem(type: TrackItemType) {
@@ -162,7 +169,7 @@ export class StateManager {
 
     async createOnlineTrackItem() {
         let rawItem: Partial<TrackItem> = {
-            taskName: 'StatusTrackItem',
+            taskName: TrackItemType.StatusTrackItem,
             app: State.Online,
             title: State.Online.toString().toLowerCase(),
             beginDate: new Date(),
@@ -184,7 +191,7 @@ export class StateManager {
         return runningItem;
     }
 
-    async createNewRunningTrackItem(rawItem: TrackItem) {
+    async createNewRunningTrackItem(rawItem: Partial<TrackItem>) {
         await this.endRunningTrackItem(rawItem);
 
         const now = new Date();
