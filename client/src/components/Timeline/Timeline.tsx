@@ -1,17 +1,7 @@
-import React, { memo, useRef, useState } from 'react';
-
-import moment from 'moment';
+import React, { memo, useRef } from 'react';
 import 'moment-duration-format';
-import { convertDate } from '../../constants';
-import { TimelineRowType } from '../../enum/TimelineRowType';
-import { TrackItemType } from '../../enum/TrackItemType';
-import { getLabelColor } from './ChartTheme';
-import { SpinnerContainer } from './Timeline.styles';
 import { TimelineItemEditContainer } from './TimelineItemEditContainer';
-import { Logger } from '../../logger';
-import { useChartThemeState } from '../../routes/ChartThemeProvider';
-import { useStoreActions, useStoreState } from '../../store/easyPeasy';
-import { Spinner } from '@chakra-ui/spinner';
+import { useStoreState } from '../../store/easyPeasy';
 import {
     Popover,
     PopoverArrow,

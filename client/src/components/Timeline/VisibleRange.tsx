@@ -1,7 +1,7 @@
 import moment from 'moment';
 import React, { memo } from 'react';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
-import { Box, Flex } from '@chakra-ui/layout';
+import { Flex } from '@chakra-ui/layout';
 import { Text, HStack } from '@chakra-ui/react';
 import { Button } from '@chakra-ui/button';
 

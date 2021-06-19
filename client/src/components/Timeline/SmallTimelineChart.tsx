@@ -37,7 +37,6 @@ export const SmallTimelineChart = memo(() => {
     const visibleTimerange = useStoreState(state => state.visibleTimerange);
     const timeItems = useStoreState(state => state.timeItems);
     const setVisibleTimerange = useStoreActions(actions => actions.setVisibleTimerange);
-    const selectedTimelineItem = useStoreState(state => state.selectedTimelineItem);
 
     const changeVisibleTimerange = range => {
         setVisibleTimerange([moment(range[0]), moment(range[1])]);
@@ -63,8 +62,6 @@ export const SmallTimelineChart = memo(() => {
         y: [timerange[0], timerange[1]],
         x: [1, 3],
     };
-
-    console.info('selectedTimelineItem', selectedTimelineItem, !!selectedTimelineItem);
 
     return (
         <div ref={observe}>

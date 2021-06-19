@@ -7,9 +7,9 @@ export const filterItems = (timeItems, visibleTimerange) =>
     timeItems.filter(item => {
         const itemBegin = convertDate(item.beginDate);
         const itemEnd = convertDate(item.endDate);
-        const visBegin = visibleTimerange[0];
-        const visEnd = visibleTimerange[1];
-        return itemBegin.isBetween(visBegin, visEnd) && itemEnd.isBetween(visBegin, visEnd);
+        const [visBegin, visEnd] = visibleTimerange;
+
+        return itemBegin.isBetween(visBegin, visEnd) || itemEnd.isBetween(visBegin, visEnd);
     });
 
 export const aggregateappItems = items => {

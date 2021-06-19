@@ -7,7 +7,7 @@ export const MakeUnitSmaller: React.FC<any> = ({ children }) => {
     return values.map(value => {
         if (isNaN(value)) {
             return (
-                <Text fontSize="sm" color="gray.300" as="span">
+                <Text key={value} fontSize="sm" color="gray.300" as="span">
                     {value}
                 </Text>
             );

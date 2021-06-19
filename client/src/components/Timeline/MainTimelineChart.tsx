@@ -132,8 +132,6 @@ export const MainTimelineChart = memo(() => {
         x: [1, 3],
     };
 
-    console.info('selectedTimelineItem', selectedTimelineItem, !!selectedTimelineItem);
-
     return (
         <div ref={observe}>
             <VictoryChart

@@ -87,7 +87,7 @@ export const Search = memo(() => {
                 <Tooltip placement="bottom" label="Also activates Live view">
                     <Button
                         onClick={selectToday}
-                        variant={showLiveViewButton ? 'outline' : 'solid'}
+                        variant={showLiveViewButton ? 'solid' : 'outline'}
                     >
                         Today
                     </Button>
