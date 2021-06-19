@@ -45,7 +45,7 @@
         "victory": "^35.4.3"
     },
     "scripts": {
-        "start": "cross-env FAST_REFRESH=false ELECTRON_ENABLE_SECURITY_WARNINGS=false BROWSER=none LOG_LEVEL=debug react-scripts start",
+        "start": "cross-env ELECTRON_ENABLE_SECURITY_WARNINGS=false BROWSER=none LOG_LEVEL=debug react-scripts start",
         "build": "cross-env GENERATE_SOURCEMAP=false PUBLIC_URL=./ react-scripts build",
         "test": "yarn jest",
         "eject": "react-scripts eject",

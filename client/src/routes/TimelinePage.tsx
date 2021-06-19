@@ -1,8 +1,11 @@
-import { Box, Flex, Stack, Text, VStack } from '@chakra-ui/react';
+import { Box, Flex, HStack, Stack, Text, VStack } from '@chakra-ui/react';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/tabs';
 import React, { useEffect } from 'react';
 import { CardBox } from '../components/CardBox';
 import { MainLayout } from '../components/MainLayout/MainLayout';
+import { Metric } from '../components/Metric';
+import { MetricTile } from '../components/MetricTile';
+import { MetricTiles } from '../components/PieCharts/MetricTiles';
 import { PieCharts } from '../components/PieCharts/PieCharts';
 import { NewLogButton } from '../components/Timeline/NewLogButton';
 import { Search } from '../components/Timeline/Search';
@@ -50,7 +53,11 @@ export function TimelinePage({ location }: any) {
                         </Stack>
                         <Timeline />
                     </Flex>
-                    <VisibleRange />
+                    <Flex>
+                        <MetricTiles />
+
+                        <VisibleRange />
+                    </Flex>
                 </CardBox>
                 <CardBox>
                     <PieCharts />

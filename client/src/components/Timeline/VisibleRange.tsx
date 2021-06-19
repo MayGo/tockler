@@ -2,6 +2,7 @@ import moment from 'moment';
 import React, { memo } from 'react';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { Box, Flex } from '@chakra-ui/layout';
+import { Text, HStack } from '@chakra-ui/react';
 import { Button } from '@chakra-ui/button';
 
 export const VisibleRange = memo(() => {
@@ -47,32 +48,30 @@ export const VisibleRange = memo(() => {
     };
 
     return (
-        <Flex>
-            <Box p={1}>
+        <Flex alignItems="center">
+            <Text fontSize="md" color="gray.300" pr={4}>
+                Visible range
+            </Text>
+            <HStack>
                 <Button onClick={showDay} variant="outline">
                     All Day
                 </Button>
-            </Box>
-            <Box p={1}>
+
                 <Button onClick={showAM} variant="outline">
                     AM
                 </Button>
-            </Box>
-            <Box p={1}>
+
                 <Button onClick={showPM} variant="outline">
                     PM
                 </Button>
-            </Box>
-            <Box p={1}>
+
                 <Button onClick={showEvening} variant="outline">
                     Evening
                 </Button>
-            </Box>
-            <Box p={1}>
                 <Button onClick={showHour} variant="outline">
                     Hour
                 </Button>
-            </Box>
+            </HStack>
         </Flex>
     );
 });

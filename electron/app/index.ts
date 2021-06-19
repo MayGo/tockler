@@ -14,13 +14,13 @@ import config from './config';
 
 let logger = logManager.getLogger('AppIndex');
 app.setAppUserModelId(process.execPath);
-
+/*
 if (config.isDev) {
     try {
         logger.info('Loading Reloader');
         require('electron-reloader')(module);
     } catch {}
-}
+}*/
 
 /* Single Instance Check */
 

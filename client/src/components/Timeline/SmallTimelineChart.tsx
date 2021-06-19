@@ -1,6 +1,4 @@
 import React, { memo } from 'react';
-
-import { useWindowWidth } from '@react-hook/window-size/throttled';
 import { debounce } from 'lodash';
 import moment from 'moment';
 import 'moment-duration-format';

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Box, useColorModeValue } from '@chakra-ui/react';
 
-export const BlackBox: React.FC<any> = ({ children, ...rest }) => (
+export const TileBox: React.FC<any> = ({ children, ...rest }) => (
     <Box
         width="100%"
+        borderWidth={1}
         borderRadius="lg"
-        overflow="hidden"
         p={4}
-        bgColor={useColorModeValue('white', 'gray.900')}
+        borderColor={useColorModeValue('gray.500', 'gray.500')}
         {...rest}
     >
         {children}
