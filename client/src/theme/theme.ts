@@ -1,5 +1,6 @@
 import { extendTheme } from '@chakra-ui/react';
 import { ButtonStyle } from './components/button';
+import { TabsStyle } from './components/tabs';
 
 export const theme = extendTheme({
     colors: {
@@ -7,5 +8,6 @@ export const theme = extendTheme({
     },
     components: {
         Button: ButtonStyle,
+        Tabs: TabsStyle,
     },
 });

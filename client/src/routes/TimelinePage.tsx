@@ -1,17 +1,15 @@
 import { Box, Flex, Stack, Text, VStack } from '@chakra-ui/react';
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/tabs';
 import React, { useEffect } from 'react';
 import { CardBox } from '../components/CardBox';
 import { MainLayout } from '../components/MainLayout/MainLayout';
+import { AppUsageChart } from '../components/PieCharts/AppUsageChart';
 
 import { MetricTiles } from '../components/PieCharts/MetricTiles';
-import { PieCharts } from '../components/PieCharts/PieCharts';
 import { NewLogButton } from '../components/Timeline/NewLogButton';
 import { Search } from '../components/Timeline/Search';
 import { Timeline } from '../components/Timeline/Timeline';
 import { VisibleRange } from '../components/Timeline/VisibleRange';
-import { TrackItemTable } from '../components/TrackItemTable/TrackItemTable';
-import { TrackItemType } from '../enum/TrackItemType';
+import { TrackItemTabs } from '../components/TrackItemTable/TrackItemTabs';
 import { useInterval } from '../hooks/intervalHook';
 import { useStoreActions } from '../store/easyPeasy';
 
@@ -57,24 +55,11 @@ export function TimelinePage({ location }: any) {
                         <VisibleRange />
                     </Flex>
                 </CardBox>
-                <CardBox>
-                    <PieCharts />
+                <CardBox title="App Usage">
+                    <AppUsageChart />
                 </CardBox>
                 <CardBox>
-                    <Tabs variant="enclosed">
-                        <TabList>
-                            <Tab>Apps</Tab>
-                            <Tab>Logs</Tab>
-                        </TabList>
-                        <TabPanels>
-                            <TabPanel>
-                                <TrackItemTable type={TrackItemType.AppTrackItem} />
-                            </TabPanel>
-                            <TabPanel>
-                                <TrackItemTable type={TrackItemType.LogTrackItem} />
-                            </TabPanel>
-                        </TabPanels>
-                    </Tabs>
+                    <TrackItemTabs />
                 </CardBox>
             </VStack>
         </MainLayout>

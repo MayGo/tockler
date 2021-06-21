@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { convertDate } from '../../constants';
 
-export const sumApp = visibleTimerange => (timeDiffInMs, item) => {
+export const sumAppObject = visibleTimerange => (newItem, item) => {
     const [beginClamp, endClamp] = visibleTimerange;
 
     const beginDate = moment.max(beginClamp, convertDate(item.beginDate));
@@ -9,10 +9,14 @@ export const sumApp = visibleTimerange => (timeDiffInMs, item) => {
 
     const diff = endDate.diff(beginDate);
     if (diff < 0) {
-        return timeDiffInMs;
+        return { ...item, timeDiffInMs: newItem.timeDiffInMs };
     }
 
-    return timeDiffInMs + diff;
+    return { ...item, timeDiffInMs: newItem.timeDiffInMs + diff };
+};
+export const sumApp = visibleTimerange => (timeDiffInMs, item) => {
+    const newItem = sumAppObject(visibleTimerange)({ timeDiffInMs }, item);
+    return newItem.timeDiffInMs;
 };
 
 export const getOnlineTime = (items, visibleTimerange) => {

@@ -28,10 +28,12 @@ export const BarWithTooltip = ({
         onMouseLeave,
         onClick: () => {
             // Todo: Find a way to get barRef from Bar
-            console.info('barRef.current', barRef.current);
-            popoverTriggerRef.current = barRef.current;
 
-            onClickBarItem(datum);
+            if (onClickBarItem && popoverTriggerRef) {
+                console.info('barRef.current', barRef.current);
+                popoverTriggerRef.current = barRef.current;
+                onClickBarItem(datum);
+            }
         },
     };
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Select } from '@chakra-ui/select';
+import { ToggleColumnFilter } from './ToggleColumnFilter';
 
 export function SelectColumnFilter({ column: { filterValue, setFilter, preFilteredRows, id } }) {
     // Calculate the options for filtering
@@ -14,18 +15,20 @@ export function SelectColumnFilter({ column: { filterValue, setFilter, preFilter
 
     // Render a multi-select box
     return (
-        <Select
-            value={filterValue}
-            onChange={e => {
-                setFilter(e.target.value || undefined);
-            }}
-        >
-            <option value="">All</option>
-            {options.map((option, i) => (
-                <option key={i} value={option}>
-                    {option}
-                </option>
-            ))}
-        </Select>
+        <ToggleColumnFilter>
+            <Select
+                value={filterValue}
+                onChange={e => {
+                    setFilter(e.target.value || undefined);
+                }}
+            >
+                <option value="">All</option>
+                {options.map((option, i) => (
+                    <option key={i} value={option}>
+                        {option}
+                    </option>
+                ))}
+            </Select>
+        </ToggleColumnFilter>
     );
 }
