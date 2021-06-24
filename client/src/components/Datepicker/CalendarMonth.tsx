@@ -1,4 +1,4 @@
-import { Box, Flex, SimpleGrid, Text } from '@chakra-ui/react';
+import { Box, Flex, SimpleGrid, Text, useColorModeValue } from '@chakra-ui/react';
 import { CalendarDay, useMonth } from '@datepicker-react/hooks';
 import React from 'react';
 import { useDatepickerContext } from './context/DatepickerContext';
@@ -24,13 +24,25 @@ export const CalendarMonth = ({ year, month, dateCellRender, onDateClicked }: Mo
             fontSize: ['md', 'lg'],
         },
         monthWeekdayLabel: {
-            justifyContent: 'center',
-            color: 'gray.500',
-            mb: 4,
+            bg: 'gray.500',
+            p: 3,
+            pl: 4,
+            fontWeight: 'bold',
             fontSize: ['sm', 'md'],
         },
         monthDayGrid: {
-            rowGap: 1,
+            rowGap: '1px',
+            columnGap: '1px',
+            bg: 'gray.500',
+        },
+        emptyDay: {
+            bg: useColorModeValue('white', 'gray.700'),
+            height: '156px',
+            width: '100%',
+            minWidth: 'unset',
+            border: '2px solid',
+            borderColor: 'transparent',
+            background: useColorModeValue('white', 'gray.800'),
         },
     });
 
@@ -52,13 +64,13 @@ export const CalendarMonth = ({ year, month, dateCellRender, onDateClicked }: Mo
 
     return (
         <Box {...styleProps.monthContainer} w="100%">
-            <Flex {...styleProps.monthMonthLabel}>
+            {/*<Flex {...styleProps.monthMonthLabel}>
                 <Text>{monthLabel}</Text>
-            </Flex>
+    </Flex>*/}
             <SimpleGrid columns={7}>
                 {weekdayLabels.map((weekdayLabel: string) => (
                     <Flex key={weekdayLabel} {...styleProps.monthWeekdayLabel}>
-                        <Text>{weekdayLabel}</Text>
+                        {weekdayLabel}
                     </Flex>
                 ))}
             </SimpleGrid>
@@ -74,7 +86,7 @@ export const CalendarMonth = ({ year, month, dateCellRender, onDateClicked }: Mo
                             {dateCellRender(moment(day.date))}
                         </DayForCalendar>
                     ) : (
-                        <div key={index} />
+                        <Box key={index} {...styleProps.emptyDay} />
                     ),
                 )}
             </SimpleGrid>

@@ -7,12 +7,8 @@ export function MainLayout({ children, location }: any) {
     return (
         <Box w="100%">
             <HeaderMenu />
-
             <Divider borderColor={useColorModeValue('gray.100', 'gray.600')} />
             <Box>{children}</Box>
-            <Box p={3}>
-                <a href="https://github.com/MayGo">MayGo</a> @ 2021
-            </Box>
         </Box>
     );
 }

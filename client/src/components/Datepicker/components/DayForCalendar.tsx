@@ -1,9 +1,10 @@
-import { Box, Button, useColorModeValue } from '@chakra-ui/react';
+import { Box, Link, Text, useColorModeValue } from '@chakra-ui/react';
 import { isEndDate, isStartDate, useDay } from '@datepicker-react/hooks';
 import React, { useMemo, useRef } from 'react';
 import { OnDayRenderType, useDatepickerContext } from '../context/DatepickerContext';
 import { useStyleProps } from '../context/StylesContext';
 import { DayState, DayStyles } from '../types';
+import { Link as RouterLink } from 'react-router-dom';
 
 function getColor<T>(
     { isSelected, isWithinHoverRange, isFirst, isLast }: OnDayRenderType,
@@ -72,7 +73,7 @@ export function DayForCalendar({ day, date, onDateClicked, children }: DayProps)
     const styleProps = useStyleProps<DayStyles>({
         day: {
             base: {
-                height: '130px',
+                height: '156px',
                 width: '100%',
                 minWidth: 'unset',
                 fontWeight: 'medium',
@@ -81,8 +82,8 @@ export function DayForCalendar({ day, date, onDateClicked, children }: DayProps)
                 textColor: useColorModeValue('gray.900', 'white'),
 
                 borderColor: 'transparent',
-                background: useColorModeValue('white', 'gray.900'),
-                margin: '0 3px',
+                background: useColorModeValue('white', 'gray.700'),
+
                 overflow: 'hidden',
                 _hover: {
                     borderColor: 'transparent',
@@ -154,38 +155,6 @@ export function DayForCalendar({ day, date, onDateClicked, children }: DayProps)
     const isFirst = isStartDate(date, startDate);
     const isLast = isEndDate(date, endDate);
 
-    const containerStyle = useMemo(
-        () =>
-            getColor(
-                {
-                    isFirst,
-                    isLast,
-                    isSelected,
-                    isWithinHoverRange,
-                    isSelectedStartOrEnd,
-                    disabledDate,
-                },
-                {
-                    base: styleProps.dayContainer.base,
-                    normal: styleProps.dayContainer.normal,
-                    rangeHover: styleProps.dayContainer.rangeHover,
-                    selected: styleProps.dayContainer.selected,
-                    first: styleProps.dayContainer.first,
-                    last: styleProps.dayContainer.last,
-                    firstOrLast: styleProps.dayContainer.firstOrLast,
-                },
-            ),
-        [
-            isFirst,
-            isLast,
-            isSelected,
-            isWithinHoverRange,
-            isSelectedStartOrEnd,
-            disabledDate,
-            styleProps,
-        ],
-    );
-
     const buttonStyle = useMemo(
         () =>
             getColor(
@@ -219,7 +188,8 @@ export function DayForCalendar({ day, date, onDateClicked, children }: DayProps)
     );
 
     return (
-        <Button
+        <Link
+            as={RouterLink}
             {...buttonStyle}
             variant="unstyled"
             onClick={() => onDateClicked(date)}
@@ -233,20 +203,24 @@ export function DayForCalendar({ day, date, onDateClicked, children }: DayProps)
             type="button"
         >
             <Box w="100%" height="100%">
-                <Box textAlign="left" p={2} position="absolute">
-                    {typeof onDayRender === 'function'
-                        ? onDayRender(date, {
-                              isFirst,
-                              isLast,
-                              isSelected,
-                              isWithinHoverRange,
-                              isSelectedStartOrEnd,
-                              disabledDate,
-                          })
-                        : day}
+                <Box textAlign="left" p={3} pb={0}>
+                    {typeof onDayRender === 'function' ? (
+                        onDayRender(date, {
+                            isFirst,
+                            isLast,
+                            isSelected,
+                            isWithinHoverRange,
+                            isSelectedStartOrEnd,
+                            disabledDate,
+                        })
+                    ) : (
+                        <Text bold fontSize="larger">
+                            {day}
+                        </Text>
+                    )}
                 </Box>
                 {children}
             </Box>
-        </Button>
+        </Link>
     );
 }
