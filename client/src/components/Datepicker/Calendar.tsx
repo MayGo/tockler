@@ -1,6 +1,6 @@
 import { Box, Button, Flex, HStack, Spacer, useColorModeValue } from '@chakra-ui/react';
 import { useDatepicker } from '@datepicker-react/hooks';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ActionButton } from './components';
 import { useStyleProps } from './context/StylesContext';
 import { DatepickerComponentStyles } from './types';
@@ -8,37 +8,34 @@ import { CalendarMonth } from './CalendarMonth';
 import { YearSelect } from './YearSelect';
 import { MonthSelect } from './MonthSelect';
 import moment, { Moment } from 'moment';
+import { CALENDAR_MODE } from '../../SummaryContext.util';
 
-export interface MonthProps {
+export interface ICalendarProps {
     dateCellRender: any;
     onDateClicked: any;
-    onDatesChange: any;
+    setSelectedDate: any;
     selectedDate: Moment;
+    selectedMode: CALENDAR_MODE;
+    setSelectedMode: any;
 }
 
 export const Calendar = ({
     selectedDate,
     dateCellRender,
     onDateClicked,
-    onDatesChange,
-}: MonthProps) => {
-    const date = selectedDate.toDate();
+    setSelectedDate,
+    selectedMode,
+    setSelectedMode,
+}: ICalendarProps) => {
+    const inputDate = selectedDate.toDate();
 
     const dp = useDatepicker({
-        onDatesChange: () => {},
-        startDate: date,
-        endDate: date,
+        onDatesChange: () => null,
+        startDate: inputDate,
+        endDate: inputDate,
         focusedInput: null,
         numberOfMonths: 1,
     });
-
-    function goToNextMonths() {
-        dp.goToNextMonths();
-    }
-
-    function goToPreviousMonths() {
-        dp.goToPreviousMonths();
-    }
 
     const styleProps = useStyleProps<DatepickerComponentStyles>({
         datepickerContainer: {
@@ -67,30 +64,36 @@ export const Calendar = ({
         },
     });
 
-    const activeMonth = dp.activeMonths[0];
-    const year = activeMonth.year;
-    const month = activeMonth.month;
+    const year = selectedDate.year();
+    const month = selectedDate.month();
 
-    useEffect(() => {
-        console.info('yearmonth changed');
-        onDatesChange(
-            moment(selectedDate)
-                .set('month', month)
-                .set('year', year),
-        );
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [year, month]);
+    console.info('year, month, selectedDate', year, month, selectedDate.toISOString());
 
-    console.info('year', year, month, selectedDate.toISOString());
+    function goToPreviousMonths() {
+        const newDate = moment(selectedDate).subtract(1, 'month');
+        setSelectedDate(newDate);
+        dp.onDateSelect(newDate.toDate());
+    }
+
+    function goToNextMonths() {
+        const newDate = moment(selectedDate).add(1, 'month');
+        setSelectedDate(newDate);
+        dp.onDateSelect(newDate.toDate());
+    }
 
     const onChangeYear = event => {
         const value = event.target.value;
-        onDatesChange(moment(selectedDate).set('year', value));
+
+        const newDate = moment(selectedDate).set('year', value);
+        setSelectedDate(newDate);
+        dp.onDateSelect(newDate.toDate());
     };
     const onChangeMonth = event => {
         const value = event.target.value;
-        console.info('new monthn', value);
-        onDatesChange(moment(selectedDate).set('month', value));
+
+        const newDate = moment(selectedDate).set('month', value);
+        setSelectedDate(newDate);
+        dp.onDateSelect(newDate.toDate());
     };
 
     return (
@@ -112,21 +115,36 @@ export const Calendar = ({
                 </HStack>
                 <Spacer />
                 <HStack {...styleProps.buttonsWrapper}>
-                    <Button variant="outline" onClick={goToNextMonths}>
+                    <Button
+                        variant={selectedMode === CALENDAR_MODE.YEAR ? 'outline' : 'ghost'}
+                        onClick={() => setSelectedMode(CALENDAR_MODE.YEAR)}
+                    >
                         Year view
                     </Button>
-                    <Button variant="ghost" onClick={goToNextMonths}>
+                    <Button
+                        variant={selectedMode === CALENDAR_MODE.MONTH ? 'outline' : 'ghost'}
+                        onClick={() => setSelectedMode(CALENDAR_MODE.MONTH)}
+                    >
                         Month view
                     </Button>
                 </HStack>
             </Flex>
-
-            <CalendarMonth
-                year={year}
-                month={month}
-                dateCellRender={dateCellRender}
-                onDateClicked={onDateClicked}
-            />
+            {selectedMode === CALENDAR_MODE.MONTH && (
+                <CalendarMonth
+                    year={year}
+                    month={month}
+                    dateCellRender={dateCellRender}
+                    onDateClicked={onDateClicked}
+                />
+            )}
+            {selectedMode === CALENDAR_MODE.YEAR && (
+                <CalendarMonth
+                    year={year}
+                    month={month}
+                    dateCellRender={dateCellRender}
+                    onDateClicked={onDateClicked}
+                />
+            )}
         </Box>
     );
 };

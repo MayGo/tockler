@@ -5,10 +5,8 @@ import { SummaryContext } from '../../SummaryContext';
 import { Logger } from '../../logger';
 import { convertDate, TIME_FORMAT_SHORT } from '../../constants';
 import { formatDuration } from './SummaryCalendar.util';
-import { DAY_MONTH_FORMAT } from '../../SummaryContext.util';
+import { CALENDAR_MODE, DAY_MONTH_FORMAT } from '../../SummaryContext.util';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
-import { Spinner } from '@chakra-ui/spinner';
-import { SpinnerContainer } from '../Timeline/Timeline.styles';
 import { Box, Flex, VStack } from '@chakra-ui/layout';
 import { IoMdSunny, IoMdMoon } from 'react-icons/io';
 import { Calendar } from '../Datepicker/Calendar';
@@ -52,7 +50,7 @@ const CellContent = ({ listData }) => {
     return (
         <VStack align="stretch" p={3} pt={1} spacing={'1px'}>
             {listData.map(item => (
-                <Flex key={item.content} alignItems="center">
+                <Flex key={item.title} alignItems="center">
                     <Box pr={2}>{icons[item.type]}</Box>
                     <Text fontSize="sm" color="gray.300">
                         {item.time}
@@ -93,11 +91,6 @@ export const SummaryCalendar = () => {
         history.push('/app/timeline');
     };
 
-    const changeSelectedDate = (date?: any, mode?: 'month' | 'year') => {
-        setSelectedDate(date);
-        setSelectedMode(mode);
-    };
-
     useEffect(() => {
         setSelectedDate(timerange[0]);
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -133,20 +126,18 @@ export const SummaryCalendar = () => {
     };
 
     const dateCellRender = value => {
-        if (value.month() === selectedDate.month()) {
-            const listData = getListData(value.format(DAY_MONTH_FORMAT));
+        if (selectedMode === CALENDAR_MODE.MONTH) {
+            if (value.month() === selectedDate.month()) {
+                const listData = getListData(value.format(DAY_MONTH_FORMAT));
+                return <CellContent listData={listData} />;
+            }
+            return null;
+        } else if (selectedMode === CALENDAR_MODE.YEAR) {
+            const listData = getListData(value.month());
             return <CellContent listData={listData} />;
+        } else {
+            Logger.error('Unknown mode for calendar');
         }
-        return null;
-    };
-
-    const monthCellRender = value => {
-        const listData = getListData(value.month());
-        return <CellContent listData={listData} />;
-    };
-
-    const onDatesChange = (data: Moment) => {
-        setSelectedDate(data);
     };
 
     return (
@@ -158,7 +149,9 @@ export const SummaryCalendar = () => {
                     selectedDate={selectedDate}
                     dateCellRender={dateCellRender}
                     onDateClicked={onDateClicked}
-                    onDatesChange={onDatesChange}
+                    setSelectedDate={setSelectedDate}
+                    selectedMode={selectedMode}
+                    setSelectedMode={setSelectedMode}
                 />
             </DatepickerProvider>
         </CardBox>
