@@ -10,14 +10,9 @@ import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { Box, Flex, VStack } from '@chakra-ui/layout';
 import { IoMdSunny, IoMdMoon } from 'react-icons/io';
 import { Calendar } from '../Datepicker/Calendar';
-import Moment from 'react-moment';
-import { DatepickerProvider } from '../Datepicker/context/DatepickerContext';
-import { weekdayLabelFormatLong } from '../Datepicker/utils/formatters';
 import { Text } from '@chakra-ui/react';
 import { CardBox } from '../CardBox';
 import { Loader } from '../Timeline/Loader';
-
-moment.locale('et');
 
 const ItemIcon = props => (
     <Box
@@ -46,7 +41,7 @@ const icons = {
     tasks: <ItemIcon bg="yellow.200">&nbsp;</ItemIcon>,
 };
 
-const CellContent = ({ listData }) => {
+const DayContent = ({ listData }) => {
     return (
         <VStack align="stretch" p={3} pt={1} spacing={'1px'}>
             {listData.map(item => (
@@ -63,6 +58,7 @@ const CellContent = ({ listData }) => {
         </VStack>
     );
 };
+
 export const SummaryCalendar = () => {
     const timerange = useStoreState(state => state.timerange);
     const loadTimerange = useStoreActions(state => state.loadTimerange);
@@ -88,6 +84,7 @@ export const SummaryCalendar = () => {
 
         const d = moment(date);
         loadTimerange([d.clone().startOf('day'), d.clone().endOf('day')]);
+
         history.push('/app/timeline');
     };
 
@@ -129,12 +126,12 @@ export const SummaryCalendar = () => {
         if (selectedMode === CALENDAR_MODE.MONTH) {
             if (value.month() === selectedDate.month()) {
                 const listData = getListData(value.format(DAY_MONTH_FORMAT));
-                return <CellContent listData={listData} />;
+                return <DayContent listData={listData} />;
             }
             return null;
         } else if (selectedMode === CALENDAR_MODE.YEAR) {
             const listData = getListData(value.month());
-            return <CellContent listData={listData} />;
+            return <DayContent listData={listData} />;
         } else {
             Logger.error('Unknown mode for calendar');
         }
@@ -144,16 +141,15 @@ export const SummaryCalendar = () => {
         <CardBox p={0} position="relative">
             {isLoading && <Loader />}
 
-            <DatepickerProvider weekdayLabelFormat={weekdayLabelFormatLong}>
-                <Calendar
-                    selectedDate={selectedDate}
-                    dateCellRender={dateCellRender}
-                    onDateClicked={onDateClicked}
-                    setSelectedDate={setSelectedDate}
-                    selectedMode={selectedMode}
-                    setSelectedMode={setSelectedMode}
-                />
-            </DatepickerProvider>
+            <Calendar
+                selectedDate={selectedDate}
+                dateCellRender={dateCellRender}
+                onDateClicked={onDateClicked}
+                setSelectedDate={setSelectedDate}
+                selectedMode={selectedMode}
+                setSelectedMode={setSelectedMode}
+                focusedDate={timerange[0].toDate()}
+            />
         </CardBox>
     );
 };

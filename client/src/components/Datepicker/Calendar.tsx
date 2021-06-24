@@ -1,14 +1,23 @@
-import { Box, Button, Flex, HStack, Spacer, useColorModeValue } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Flex,
+    HStack,
+    Spacer,
+    StylesProvider,
+    useMultiStyleConfig,
+} from '@chakra-ui/react';
 import { useDatepicker } from '@datepicker-react/hooks';
 import React from 'react';
 import { ActionButton } from './components';
-import { useStyleProps } from './context/StylesContext';
-import { DatepickerComponentStyles } from './types';
 import { CalendarMonth } from './CalendarMonth';
 import { YearSelect } from './YearSelect';
 import { MonthSelect } from './MonthSelect';
 import moment, { Moment } from 'moment';
 import { CALENDAR_MODE } from '../../SummaryContext.util';
+import { useEffect } from 'react';
+import { weekdayLabelFormatLong } from './utils/formatters';
+import { DatepickerProvider } from './context/DatepickerContext';
 
 export interface ICalendarProps {
     dateCellRender: any;
@@ -17,6 +26,7 @@ export interface ICalendarProps {
     selectedDate: Moment;
     selectedMode: CALENDAR_MODE;
     setSelectedMode: any;
+    focusedDate: Date;
 }
 
 export const Calendar = ({
@@ -26,6 +36,7 @@ export const Calendar = ({
     setSelectedDate,
     selectedMode,
     setSelectedMode,
+    focusedDate,
 }: ICalendarProps) => {
     const inputDate = selectedDate.toDate();
 
@@ -37,37 +48,15 @@ export const Calendar = ({
         numberOfMonths: 1,
     });
 
-    const styleProps = useStyleProps<DatepickerComponentStyles>({
-        datepickerContainer: {
-            background: useColorModeValue('white', 'gray.700'),
-            borderRadius: 'md',
-            position: 'relative',
-            width: 'fit-content',
-            shadow: 'md',
-            px: [3, 5],
-            py: [5, 7],
-            zIndex: 1,
-        },
-        monthsWrapper: {
-            spacing: [0, 8],
-        },
-        buttonsWrapper: {
-            spacing: [1, 3],
-        },
-        arrowIcon: {
-            my: [5, 15],
-            color: 'gray.500',
-        },
-        datepickerHeader: {
-            justifyContent: 'space-between',
-            p: [1, 4],
-        },
-    });
+    useEffect(() => {
+        dp.onDateFocus(focusedDate);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [focusedDate]);
+
+    const styles = useMultiStyleConfig('Calendar', {});
 
     const year = selectedDate.year();
     const month = selectedDate.month();
-
-    console.info('year, month, selectedDate', year, month, selectedDate.toISOString());
 
     function goToPreviousMonths() {
         const newDate = moment(selectedDate).subtract(1, 'month');
@@ -88,6 +77,7 @@ export const Calendar = ({
         setSelectedDate(newDate);
         dp.onDateSelect(newDate.toDate());
     };
+
     const onChangeMonth = event => {
         const value = event.target.value;
 
@@ -97,54 +87,62 @@ export const Calendar = ({
     };
 
     return (
-        <Box {...styleProps.monthContainer} w="100%">
-            <Flex {...styleProps.datepickerHeader}>
-                <HStack {...styleProps.buttonsWrapper}>
-                    <ActionButton
-                        direction={'left'}
-                        onClick={goToPreviousMonths}
-                        aria-label="Previous month"
-                    />
-                    <MonthSelect value={month} onChange={onChangeMonth} />
-                    <YearSelect value={year} onChange={onChangeYear} />
-                    <ActionButton
-                        direction={'right'}
-                        onClick={goToNextMonths}
-                        aria-label="Next month"
-                    />
-                </HStack>
-                <Spacer />
-                <HStack {...styleProps.buttonsWrapper}>
-                    <Button
-                        variant={selectedMode === CALENDAR_MODE.YEAR ? 'outline' : 'ghost'}
-                        onClick={() => setSelectedMode(CALENDAR_MODE.YEAR)}
-                    >
-                        Year view
-                    </Button>
-                    <Button
-                        variant={selectedMode === CALENDAR_MODE.MONTH ? 'outline' : 'ghost'}
-                        onClick={() => setSelectedMode(CALENDAR_MODE.MONTH)}
-                    >
-                        Month view
-                    </Button>
-                </HStack>
-            </Flex>
-            {selectedMode === CALENDAR_MODE.MONTH && (
-                <CalendarMonth
-                    year={year}
-                    month={month}
-                    dateCellRender={dateCellRender}
-                    onDateClicked={onDateClicked}
-                />
-            )}
-            {selectedMode === CALENDAR_MODE.YEAR && (
-                <CalendarMonth
-                    year={year}
-                    month={month}
-                    dateCellRender={dateCellRender}
-                    onDateClicked={onDateClicked}
-                />
-            )}
-        </Box>
+        <DatepickerProvider
+            weekdayLabelFormat={weekdayLabelFormatLong}
+            focusedDate={focusedDate}
+            {...dp}
+        >
+            <Box w="100%">
+                <Flex justifyContent="space-between" p={4}>
+                    <HStack spacing={3}>
+                        <ActionButton
+                            direction={'left'}
+                            onClick={goToPreviousMonths}
+                            aria-label="Previous month"
+                        />
+                        <MonthSelect value={month} onChange={onChangeMonth} />
+                        <YearSelect value={year} onChange={onChangeYear} />
+                        <ActionButton
+                            direction={'right'}
+                            onClick={goToNextMonths}
+                            aria-label="Next month"
+                        />
+                    </HStack>
+                    <Spacer />
+                    <HStack spacing={3}>
+                        <Button
+                            variant={selectedMode === CALENDAR_MODE.YEAR ? 'outline' : 'ghost'}
+                            onClick={() => setSelectedMode(CALENDAR_MODE.YEAR)}
+                        >
+                            Year view
+                        </Button>
+                        <Button
+                            variant={selectedMode === CALENDAR_MODE.MONTH ? 'outline' : 'ghost'}
+                            onClick={() => setSelectedMode(CALENDAR_MODE.MONTH)}
+                        >
+                            Month view
+                        </Button>
+                    </HStack>
+                </Flex>
+                <StylesProvider value={styles}>
+                    {selectedMode === CALENDAR_MODE.MONTH && (
+                        <CalendarMonth
+                            year={year}
+                            month={month}
+                            dateCellRender={dateCellRender}
+                            onDateClicked={onDateClicked}
+                        />
+                    )}
+                    {selectedMode === CALENDAR_MODE.YEAR && (
+                        <CalendarMonth
+                            year={year}
+                            month={month}
+                            dateCellRender={dateCellRender}
+                            onDateClicked={onDateClicked}
+                        />
+                    )}
+                </StylesProvider>
+            </Box>
+        </DatepickerProvider>
     );
 };
