@@ -1,20 +1,15 @@
 import React from 'react';
-import { Box, Text, useStyleConfig } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import { isEndDate, isStartDate, useDay } from '@datepicker-react/hooks';
 import { useDatepickerContext } from '../context/DatepickerContext';
-import { Link as RouterLink } from 'react-router-dom';
+import { DayWrapper } from './DayWrapper';
 
 interface DayProps {
-    day: string;
+    month: string;
     date: Date;
     children: any;
     onDateClicked: any;
 }
-
-const DayWrapper = ({ variant, ...rest }) => {
-    const styles = useStyleConfig('CalendarDay', { variant });
-    return <Box as={RouterLink} __css={styles} data-testid="Day" {...rest} />;
-};
 
 function getVariant({ isSelected, isWithinHoverRange, isFirst, isLast }) {
     if (!isSelected && !isWithinHoverRange) return 'normal';
@@ -26,7 +21,7 @@ function getVariant({ isSelected, isWithinHoverRange, isFirst, isLast }) {
 
     return 'normal';
 }
-export function CalendarDay({ day, date, onDateClicked, children }: DayProps) {
+export function MonthBox({ month, date, onDateClicked, children }: DayProps) {
     const {
         focusedDate,
         isDateFocused,
@@ -84,7 +79,7 @@ export function CalendarDay({ day, date, onDateClicked, children }: DayProps) {
         >
             <Box textAlign="left" p={3} pb={0}>
                 <Text bold fontSize="larger">
-                    {day}
+                    {month}
                 </Text>
             </Box>
             {children}

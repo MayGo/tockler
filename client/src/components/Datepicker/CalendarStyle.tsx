@@ -15,6 +15,10 @@ export const CalendarStyle = {
         calendar: {
             w: '100%',
         },
+        separator: {
+            bg: 'gray.500',
+            h: '1px',
+        },
         weekdayLabel: {
             bg: 'gray.500',
             p: 3,

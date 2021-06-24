@@ -1,13 +1,5 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
-import {
-    Box,
-    Flex,
-    HStack,
-    Stack,
-    useBreakpointValue,
-    useColorModeValue,
-    useTheme,
-} from '@chakra-ui/react';
+import { Box, Flex, HStack, Stack, useBreakpointValue, useColorModeValue } from '@chakra-ui/react';
 import {
     END_DATE,
     MonthType,
@@ -48,9 +40,6 @@ export interface DatepickerProps
 
 export const Datepicker = React.forwardRef(
     (props: DatepickerProps, ref: Ref<DatepickerElement>) => {
-        const theme = useTheme();
-        console.log('Datepicker:ChakraTheme', { theme });
-
         const {
             changeActiveMonthOnSelect,
             dayLabelFormat,
@@ -126,7 +115,7 @@ export const Datepicker = React.forwardRef(
 
         const styleProps = useStyleProps<DatepickerComponentStyles>({
             datepickerContainer: {
-                background: useColorModeValue('white', 'gray.700'),
+                background: useColorModeValue('white', 'gray.800'),
                 borderRadius: 'md',
                 position: 'relative',
                 width: 'fit-content',
@@ -235,12 +224,12 @@ export const Datepicker = React.forwardRef(
                                     <ActionButton
                                         direction={vertical ? 'up' : 'left'}
                                         onClick={_goToPreviousMonths}
-                                        aria-label="Previous month"
+                                        tooltipLabel="Previous month"
                                     />
                                     <ActionButton
                                         direction={vertical ? 'down' : 'right'}
                                         onClick={_goToNextMonths}
-                                        aria-label="Next month"
+                                        tooltipLabel="Next month"
                                     />
                                 </HStack>
                                 {showResetDates && (

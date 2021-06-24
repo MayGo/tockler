@@ -16,8 +16,9 @@ import { MonthSelect } from './MonthSelect';
 import moment, { Moment } from 'moment';
 import { CALENDAR_MODE } from '../../SummaryContext.util';
 import { useEffect } from 'react';
-import { weekdayLabelFormatLong } from './utils/formatters';
+import { monthLabelFormatFn, weekdayLabelFormatLong } from './utils/formatters';
 import { DatepickerProvider } from './context/DatepickerContext';
+import { CalendarYear } from './CalendarYear';
 
 export interface ICalendarProps {
     dateCellRender: any;
@@ -58,21 +59,20 @@ export const Calendar = ({
     const year = selectedDate.year();
     const month = selectedDate.month();
 
-    function goToPreviousMonths() {
-        const newDate = moment(selectedDate).subtract(1, 'month');
+    function goToPrevious() {
+        const newDate = moment(selectedDate).subtract(1, selectedMode);
         setSelectedDate(newDate);
         dp.onDateSelect(newDate.toDate());
     }
 
-    function goToNextMonths() {
-        const newDate = moment(selectedDate).add(1, 'month');
+    function goToNext() {
+        const newDate = moment(selectedDate).add(1, selectedMode);
         setSelectedDate(newDate);
         dp.onDateSelect(newDate.toDate());
     }
 
     const onChangeYear = event => {
         const value = event.target.value;
-
         const newDate = moment(selectedDate).set('year', value);
         setSelectedDate(newDate);
         dp.onDateSelect(newDate.toDate());
@@ -80,15 +80,17 @@ export const Calendar = ({
 
     const onChangeMonth = event => {
         const value = event.target.value;
-
         const newDate = moment(selectedDate).set('month', value);
         setSelectedDate(newDate);
         dp.onDateSelect(newDate.toDate());
     };
 
+    const isMonthView = selectedMode === CALENDAR_MODE.MONTH;
+
     return (
         <DatepickerProvider
             weekdayLabelFormat={weekdayLabelFormatLong}
+            monthLabelFormat={monthLabelFormatFn}
             focusedDate={focusedDate}
             {...dp}
         >
@@ -97,35 +99,36 @@ export const Calendar = ({
                     <HStack spacing={3}>
                         <ActionButton
                             direction={'left'}
-                            onClick={goToPreviousMonths}
-                            aria-label="Previous month"
+                            onClick={goToPrevious}
+                            tooltipLabel={`Previous ${selectedMode}`}
                         />
-                        <MonthSelect value={month} onChange={onChangeMonth} />
+
+                        {isMonthView && <MonthSelect value={month} onChange={onChangeMonth} />}
                         <YearSelect value={year} onChange={onChangeYear} />
                         <ActionButton
                             direction={'right'}
-                            onClick={goToNextMonths}
-                            aria-label="Next month"
+                            onClick={goToNext}
+                            tooltipLabel={`Next ${selectedMode}`}
                         />
                     </HStack>
                     <Spacer />
                     <HStack spacing={3}>
                         <Button
-                            variant={selectedMode === CALENDAR_MODE.YEAR ? 'outline' : 'ghost'}
-                            onClick={() => setSelectedMode(CALENDAR_MODE.YEAR)}
-                        >
-                            Year view
-                        </Button>
-                        <Button
-                            variant={selectedMode === CALENDAR_MODE.MONTH ? 'outline' : 'ghost'}
+                            variant={isMonthView ? 'outline' : 'ghost'}
                             onClick={() => setSelectedMode(CALENDAR_MODE.MONTH)}
                         >
                             Month view
                         </Button>
+                        <Button
+                            variant={!isMonthView ? 'outline' : 'ghost'}
+                            onClick={() => setSelectedMode(CALENDAR_MODE.YEAR)}
+                        >
+                            Year view
+                        </Button>
                     </HStack>
                 </Flex>
                 <StylesProvider value={styles}>
-                    {selectedMode === CALENDAR_MODE.MONTH && (
+                    {isMonthView && (
                         <CalendarMonth
                             year={year}
                             month={month}
@@ -133,10 +136,9 @@ export const Calendar = ({
                             onDateClicked={onDateClicked}
                         />
                     )}
-                    {selectedMode === CALENDAR_MODE.YEAR && (
-                        <CalendarMonth
+                    {!isMonthView && (
+                        <CalendarYear
                             year={year}
-                            month={month}
                             dateCellRender={dateCellRender}
                             onDateClicked={onDateClicked}
                         />
