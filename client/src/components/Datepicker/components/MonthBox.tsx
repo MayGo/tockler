@@ -78,7 +78,7 @@ export function MonthBox({ month, date, onDateClicked, children }: DayProps) {
             aria-label={`Day-${date.toDateString()}`}
         >
             <Box textAlign="left" p={3} pb={0}>
-                <Text bold fontSize="larger">
+                <Text fontWeight="bold" fontSize="larger">
                     {month}
                 </Text>
             </Box>

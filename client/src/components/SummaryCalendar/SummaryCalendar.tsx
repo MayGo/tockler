@@ -11,20 +11,8 @@ import { Box, Flex, VStack } from '@chakra-ui/layout';
 import { IoMdSunny, IoMdMoon } from 'react-icons/io';
 import { Calendar } from '../Datepicker/Calendar';
 import { Text } from '@chakra-ui/react';
-import { CardBox } from '../CardBox';
 import { Loader } from '../Timeline/Loader';
-
-const ItemIcon = props => (
-    <Box
-        display="inline-flex"
-        w={'16px'}
-        h={'16px'}
-        rounded={3}
-        {...props}
-        justifyContent="center"
-        placeItems="center"
-    />
-);
+import { ItemIcon } from './ItemIcon';
 
 const icons = {
     wakeTime: (
@@ -138,7 +126,7 @@ export const SummaryCalendar = () => {
     };
 
     return (
-        <CardBox p={0} position="relative">
+        <>
             {isLoading && <Loader />}
 
             <Calendar
@@ -150,6 +138,6 @@ export const SummaryCalendar = () => {
                 setSelectedMode={setSelectedMode}
                 focusedDate={timerange[0].toDate()}
             />
-        </CardBox>
+        </>
     );
 };

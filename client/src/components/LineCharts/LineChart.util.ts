@@ -31,7 +31,15 @@ export const formatToTimeEveryOther = t => {
     return formatToTime(hour);
 };
 
+export const formatToHours = max => t => {
+    const hour = moment.duration(t * max).hours();
+    return `${hour} h`;
+};
+
 export const formatToDay = t => toInteger(t.format('DD'));
+export const dateToDayLabel = short => date => {
+    return moment(date).format(short ? 'DD' : 'DD ddd');
+};
 
 export const timeTickValues = t => {
     const ticks = 36;

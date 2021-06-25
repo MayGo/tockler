@@ -29,7 +29,7 @@ export const getLabelColor = (isDark, isEnabled) => {
 // *
 const sansSerif = "'Roboto', 'Helvetica Neue', Helvetica, sans-serif";
 const letterSpacing = 'normal';
-const fontSize = 10;
+const fontSize = 12;
 // *
 // * Layout
 // *

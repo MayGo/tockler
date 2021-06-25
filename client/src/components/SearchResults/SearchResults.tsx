@@ -1,15 +1,14 @@
+import { IconButton, Tooltip } from '@chakra-ui/react';
 import moment from 'moment';
 import React, { memo } from 'react';
-import Moment from 'react-moment';
-import { useHistory } from 'react-router';
-import { DATE_TIME_FORMAT } from '../../constants';
-import { diffAndFormatShort } from '../../utils';
-import { useStoreActions } from '../../store/easyPeasy';
 import { AiOutlineUnorderedList } from 'react-icons/ai';
-import { Tooltip } from '@chakra-ui/tooltip';
-import { Table, Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react';
+import { useHistory } from 'react-router';
+import { useStoreActions } from '../../store/easyPeasy';
+import { ItemsTable } from '../TrackItemTable/ItemsTable';
 
-const SearchResultsPlain = ({ searchResult }) => {
+const ActionCell = ({ cell }) => {
+    const { beginDate, endDate } = cell.row.original;
+
     const loadTimerange = useStoreActions(state => state.loadTimerange);
     const setVisibleTimerange = useStoreActions(state => state.setVisibleTimerange);
 
@@ -27,46 +26,50 @@ const SearchResultsPlain = ({ searchResult }) => {
         history.push('/app/timeline');
     };
 
-    console.info('searchResult.results?', searchResult);
-
     return (
-        <Table variant="simple">
-            <Thead>
-                <Tr>
-                    <Th>App</Th>
-                    <Th>Title</Th>
-                    <Th>URL</Th>
-                    <Th>Begin Date</Th>
-                    <Th>End Date</Th>
-                    <Th>Dur</Th>
-                    <Th></Th>
-                </Tr>
-            </Thead>
-            <Tbody>
-                {searchResult.results?.map(({ app, title, url, beginDate, endDate }) => (
-                    <Tr>
-                        <Td>{app}</Td>
-                        <Td>{title}</Td>
-                        <Td>{url}</Td>
-                        <Td>
-                            <Moment format={DATE_TIME_FORMAT}>{beginDate}</Moment>
-                        </Td>
-                        <Td>
-                            <Moment format={DATE_TIME_FORMAT}>{endDate}</Moment>
-                        </Td>
-                        <Td>{diffAndFormatShort(beginDate, endDate)}</Td>
-                        <Td>
-                            <Tooltip placement="left" label="Select date and go to timeline view">
-                                <AiOutlineUnorderedList
-                                    onClick={() => goToTimelinePage({ beginDate, endDate })}
-                                />
-                            </Tooltip>
-                        </Td>
-                    </Tr>
-                ))}
-            </Tbody>
-        </Table>
+        <Tooltip placement="left" label="Select date and go to timeline view">
+            <IconButton
+                variant="ghost"
+                aria-label="Go to timeline"
+                icon={<AiOutlineUnorderedList />}
+                onClick={() => goToTimelinePage({ beginDate, endDate })}
+            />
+        </Tooltip>
     );
+};
+
+const extraColumns = [
+    {
+        Cell: ActionCell,
+        id: 'actions',
+        accessor: 'title',
+        width: 20,
+        minWidth: 20,
+        maxWidth: 20,
+    },
+];
+const SearchResultsPlain = ({ searchResult, changePaging, pageIndex }) => {
+    return (
+        <ItemsTable
+            data={searchResult.results || []}
+            isOneDay={false}
+            isSearchTable
+            changePaging={changePaging}
+            pageCount={searchResult.total}
+            pageIndex={pageIndex}
+            extraColumns={extraColumns}
+        />
+    );
+
+    /* return (
+        <Td>
+        <Tooltip placement="left" label="Select date and go to timeline view">
+            <AiOutlineUnorderedList
+                onClick={() => goToTimelinePage({ beginDate, endDate })}
+            />
+        </Tooltip>
+    </Td>
+    );*/
 };
 
 export const SearchResults = memo(SearchResultsPlain);

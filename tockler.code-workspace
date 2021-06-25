@@ -1,0 +1,23 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "restoreTerminals.terminals": [
+            {
+                "splitTerminals": [
+                    {
+                        "name": "client",
+                        "commands": ["cd client", "yarn start"]
+                    },
+                    {
+                        "name": "electron",
+                        "commands": ["cd electron", "yarn start"]
+                    }
+                ]
+            }
+        ]
+    }
+}

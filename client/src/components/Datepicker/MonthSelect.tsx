@@ -20,7 +20,9 @@ export const MonthSelect = ({ value, onChange }) => {
     return (
         <Select placeholder="Select month" value={value} onChange={onChange}>
             {months.map((month, idx) => (
-                <option value={idx}>{month}</option>
+                <option key={month} value={idx}>
+                    {month}
+                </option>
             ))}
         </Select>
     );

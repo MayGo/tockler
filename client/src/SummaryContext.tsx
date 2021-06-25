@@ -24,12 +24,13 @@ export const SummaryProvider = ({ children }) => {
         setIsLoading(true);
         try {
             // TODO, query month +1 day for sleep time
-            const beginDate = moment(selectedDate).startOf(selectedMode);
-            const endDate = moment(selectedDate).endOf(selectedMode);
+            const beginDate = moment.utc(selectedDate).startOf(selectedMode);
+            const endDate = moment.utc(selectedDate).endOf(selectedMode);
 
             if (selectedMode === CALENDAR_MODE.MONTH) {
                 endDate.add(1, 'day');
             }
+
             const { statusItems, logItems } = await findAllDayItemsForEveryTrack(
                 beginDate,
                 endDate,

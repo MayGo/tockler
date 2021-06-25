@@ -11,20 +11,20 @@ export const TrackItemTabs = () => {
 
     return (
         <Tabs variant="enclosed" isLazy>
-            <TabList>
-                <Tab>Apps</Tab>
-                <Tab>Logs</Tab>
+            <TabList mb={0}>
+                <Tab borderBottomWidth={0}>Apps</Tab>
+                <Tab borderBottomWidth={0}>Logs</Tab>
                 <Box flex={1} />
                 <Box ref={tableResetRef} />
             </TabList>
             <TabPanels>
-                <TabPanel>
+                <TabPanel p={0}>
                     <TrackItemTable
                         type={TrackItemType.AppTrackItem}
                         resetButtonsRef={tableResetRef}
                     />
                 </TabPanel>
-                <TabPanel>
+                <TabPanel p={0}>
                     <TrackItemTable
                         type={TrackItemType.LogTrackItem}
                         resetButtonsRef={tableResetRef}
