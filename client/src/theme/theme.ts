@@ -1,6 +1,9 @@
 import { extendTheme } from '@chakra-ui/react';
 import { CalendarDayStyle, CalendarStyle } from '../components/Datepicker/CalendarStyle';
 import { ButtonStyle } from './components/button';
+import { FormLabelStyle } from './components/form-label';
+import { InputStyle } from './components/input';
+import { SelectStyle } from './components/select';
 import { TableStyle } from './components/table';
 import { TabsStyle } from './components/tabs';
 
@@ -16,5 +19,8 @@ export const theme = extendTheme({
         Calendar: CalendarStyle,
         CalendarDay: CalendarDayStyle,
         Table: TableStyle,
+        Input: InputStyle,
+        Select: SelectStyle,
+        FormLabel: FormLabelStyle,
     },
 });

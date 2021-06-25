@@ -8,11 +8,17 @@ export const TableStyle = {
         thead: {
             bg: mode(`gray.500`, `gray.500`)(props),
         },
+        th: {},
     }),
     variants: {
         simple: props => ({
             td: {
                 borderColor: mode(`gray.500`, `gray.500`)(props),
+            },
+            th: {
+                _notFirst: {
+                    'padding-inline-start': 'var(--chakra-space-2)',
+                },
             },
         }),
     },

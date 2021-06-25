@@ -5,6 +5,8 @@ import { Button } from '@chakra-ui/button';
 import { Box, Flex, Heading, Text } from '@chakra-ui/layout';
 import { Textarea } from '@chakra-ui/textarea';
 import { Input } from '@chakra-ui/input';
+import { CardBox } from '../components/CardBox';
+import { HStack, VStack } from '@chakra-ui/react';
 
 const TEMPLATE_ID = process.env.REACT_APP_TEMPLATE_ID || '';
 const SERVICE_ID = process.env.REACT_APP_SERVICE_ID || '';
@@ -53,65 +55,55 @@ export function SupportPage({ location }: any) {
 
     return (
         <MainLayout location={location}>
-            <Box p={4} width="50%">
-                <Heading as="h3" size="lg">
-                    Contact Me
-                </Heading>
-                <Paragraph>
-                    Feel free to contact if you have any problems or feature requests. Or if you
-                    have any feedback to give - good or bad.
-                </Paragraph>
-                <Flex p={1}>
-                    <Textarea
-                        value={content}
-                        placeholder="Content"
-                        onChange={changeContent}
-                        rows={4}
-                    />
-                </Flex>
-                {contentError && (
-                    <Flex p={1}>
-                        <Text>Content is empty!</Text>
-                    </Flex>
-                )}
-                <Flex p={1}>
-                    <Input
-                        value={email}
-                        placeholder="E-mail (If you need feedback)"
-                        onChange={changeEmail}
-                    />
-                </Flex>
-                <Flex p={1}>
-                    <Button onClick={sendForm} disabled={isSending}>
-                        Send
-                    </Button>
-                </Flex>
-                {emailSent && (
-                    <Flex p={1}>
-                        <Text>Email is sent!</Text>
-                    </Flex>
-                )}
-            </Box>
-            <Box p={4} width="50%">
-                <Heading as="h3" size="lg">
-                    Support Tockler
-                </Heading>
-                <Paragraph>
-                    This app is made in my own free time and often at expense of family, friends,
-                    and sleep. I would like to keep this app free, open-source, and improving over
-                    time. But for that, your support is needed.
-                </Paragraph>
-                <Paragraph>
-                    It is understandable if you can't give anything. You can always give some
-                    constructive feedback.
-                </Paragraph>
-                <Paragraph>
-                    So if you find this app useful then feel free to donate. Anything helps to keep
-                    this app up to date and always improving. I don't plan to get rich with that,
-                    need to justify working on this.
-                </Paragraph>
-                <Flex p={1}>
-                    <Box p={2}>
+            <VStack spacing={3} p={4} alignItems="flex-start">
+                <CardBox title="Contact Me" width="50%" divider>
+                    <VStack spacing={3} alignItems="flex-end">
+                        <Paragraph>
+                            Feel free to contact if you have any problems or feature requests. Or if
+                            you have any feedback to give - good or bad.
+                        </Paragraph>
+
+                        <Textarea
+                            value={content}
+                            placeholder="Content"
+                            onChange={changeContent}
+                            rows={4}
+                        />
+
+                        {contentError && <Text>Content is empty!</Text>}
+
+                        <Input
+                            value={email}
+                            placeholder="E-mail (If you need feedback)"
+                            onChange={changeEmail}
+                        />
+
+                        <Button onClick={sendForm} disabled={isSending}>
+                            Send
+                        </Button>
+                    </VStack>
+                    {emailSent && (
+                        <Flex p={1}>
+                            <Text>Email is sent!</Text>
+                        </Flex>
+                    )}
+                </CardBox>
+                <CardBox title="Support Tockler" divider width="50%">
+                    <Paragraph>
+                        This app is made in my own free time and often at expense of family,
+                        friends, and sleep. I would like to keep this app free, open-source, and
+                        improving over time. But for that, your support is needed.
+                    </Paragraph>
+                    <Paragraph>
+                        It is understandable if you can't give anything. You can always give some
+                        constructive feedback.
+                    </Paragraph>
+                    <Paragraph>
+                        So if you find this app useful then feel free to donate. Anything helps to
+                        keep this app up to date and always improving. I don't plan to get rich with
+                        that, need to justify working on this.
+                    </Paragraph>
+                    <HStack spacing={4} pt={4}>
                         <a
                             href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=JAHHBZZCZVDMA"
                             rel="noreferrer"
@@ -123,8 +115,7 @@ export function SupportPage({ location }: any) {
                                 style={{ maxWidth: '100%' }}
                             />
                         </a>
-                    </Box>
-                    <Box p={2}>
+
                         <a
                             href="https://github.com/sponsors/maygo/"
                             rel="noreferrer"
@@ -136,8 +127,7 @@ export function SupportPage({ location }: any) {
                                 style={{ maxWidth: '100%' }}
                             />
                         </a>
-                    </Box>
-                    <Box p={2}>
+
                         <a href="https://www.patreon.com/Tockler" rel="noreferrer" target="_blank">
                             <img
                                 src="https://github.com/MayGo/tockler/raw/master/badges/Patreon-Badge.svg"
@@ -145,9 +135,9 @@ export function SupportPage({ location }: any) {
                                 style={{ maxWidth: '100%' }}
                             />
                         </a>
-                    </Box>
-                </Flex>
-            </Box>
+                    </HStack>
+                </CardBox>
+            </VStack>
         </MainLayout>
     );
 }

@@ -50,7 +50,7 @@ export function TimelinePage({ location }: any) {
                         </Stack>
                         <Timeline />
                     </Flex>
-                    <Flex>
+                    <Flex alignItems="flex-end">
                         <MetricTiles />
                         <VisibleRange />
                     </Flex>

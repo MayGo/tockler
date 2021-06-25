@@ -5,8 +5,10 @@ import { IconButton } from '@chakra-ui/button';
 import { Input } from '@chakra-ui/input';
 import { FormControl, FormLabel } from '@chakra-ui/form-control';
 import { Switch } from '@chakra-ui/switch';
-import { Box, Divider, Flex } from '@chakra-ui/layout';
+import { Box, Flex } from '@chakra-ui/layout';
 import { useForm } from 'react-hook-form';
+import { HStack, Text } from '@chakra-ui/react';
+import { BlackBox } from '../BlackBox';
 
 const AnalyserTestItem = ({ item }) => (
     <Box>
@@ -52,45 +54,61 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
         }
     }, [getValues, saveItem, watchAllFields, isDirty, analyserItem, reset, isValid]);
 
-    return (
-        <div>
-            <Flex justifyContent="space-between">
-                <Flex pr={4}>
-                    <Box p={1}>
-                        <Input placeholder="Task" {...register('findRe')} minWidth={200} />
-                    </Box>
-                    <Box p={1}>
-                        <Input placeholder="Group" {...register('takeGroup')} minWidth={200} />
-                    </Box>
-                    <Box p={1}>
-                        <Input placeholder="Title" {...register('takeTitle')} minWidth={200} />
-                    </Box>
-                </Flex>
-                <FormControl display="flex" alignItems="center" py={2} minWidth={100}>
-                    <FormLabel htmlFor="active" mb="0">
-                        Active
-                    </FormLabel>
-                    <Switch id="enabled" {...register('enabled')} />
-                </FormControl>
-                <FormControl display="flex" alignItems="center" py={2} minWidth={100}>
-                    <FormLabel htmlFor="test" mb="0">
-                        Test
-                    </FormLabel>
-                    <Switch id="test" onChange={toggleShowTests} />
-                </FormControl>
+    const analysedItems = (showTests && testAnalyserItem(appItems, analyserItem)) || [];
 
-                <IconButton icon={<AiOutlineDelete />} onClick={removeItem} aria-label="Add Item" />
+    return (
+        <>
+            <Flex justifyContent="space-between" py={2}>
+                <HStack w="100%" spacing={3}>
+                    <Input placeholder="Task" {...register('findRe')} minWidth={200} />
+
+                    <Input placeholder="Group" {...register('takeGroup')} minWidth={200} />
+
+                    <Input placeholder="Title" {...register('takeTitle')} minWidth={200} />
+                    <Box px={3}>
+                        <FormControl
+                            display="flex"
+                            alignItems="center"
+                            minWidth={100}
+                            maxWidth={100}
+                        >
+                            <FormLabel htmlFor="active" mb="0">
+                                Active
+                            </FormLabel>
+                            <Switch id="enabled" {...register('enabled')} size="lg" />
+                        </FormControl>
+                    </Box>
+                    <Box px={3}>
+                        <FormControl
+                            display="flex"
+                            alignItems="center"
+                            minWidth={160}
+                            maxWidth={160}
+                        >
+                            <FormLabel htmlFor="test" mb="0">
+                                Test mode
+                            </FormLabel>
+                            <Switch id="test" onChange={toggleShowTests} size="lg" />
+                        </FormControl>
+                    </Box>
+
+                    <IconButton
+                        icon={<AiOutlineDelete />}
+                        variant="ghost"
+                        onClick={removeItem}
+                        aria-label="Add Item"
+                    />
+                </HStack>
             </Flex>
 
             {showTests && (
-                <Box>
-                    <Divider />
-
-                    {testAnalyserItem(appItems, analyserItem).map((item: any) => (
+                <BlackBox p={3}>
+                    {analysedItems.length === 0 && <Text>No results</Text>}
+                    {analysedItems.map((item: any) => (
                         <AnalyserTestItem item={item} key={item.title} />
                     ))}
-                </Box>
+                </BlackBox>
             )}
-        </div>
+        </>
     );
 };

@@ -1,8 +1,15 @@
 import { useForm } from 'react-hook-form';
 import React, { useContext, useEffect } from 'react';
-import { FormErrorMessage, FormLabel, FormControl, Input, Text } from '@chakra-ui/react';
+import {
+    FormErrorMessage,
+    FormLabel,
+    FormControl,
+    Input,
+    Text,
+    FormHelperText,
+} from '@chakra-ui/react';
 import { RootContext } from '../../RootContext';
-import { Card } from '../Card';
+import { CardBox } from '../CardBox';
 
 type Inputs = {
     hoursToWork: string;
@@ -41,7 +48,7 @@ export const WorkForm = () => {
     }, [register]);
 
     return (
-        <Card title="Work settings">
+        <CardBox title="Work settings" divider w="50%">
             <FormControl isInvalid={!!errors.hoursToWork}>
                 <FormLabel htmlFor="hoursToWork">Workday length</FormLabel>
                 <Input
@@ -51,9 +58,10 @@ export const WorkForm = () => {
                 <FormErrorMessage>
                     {errors.hoursToWork && errors.hoursToWork.message}
                 </FormErrorMessage>
+                <FormHelperText>
+                    Used in Progress pie chart to calculate workday progress
+                </FormHelperText>
             </FormControl>
-
-            <Text fontSize="sm">Used in Progress pie chart to calculate workday progress</Text>
-        </Card>
+        </CardBox>
     );
 };

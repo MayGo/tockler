@@ -10,7 +10,7 @@ import {
     getIsLoggingEnabled,
     saveIsLoggingEnabled,
 } from '../../services/settings.api';
-import { Card } from '../Card';
+import { CardBox } from '../CardBox';
 
 export const AppForm = () => {
     const openAtLogin = getOpenAtLogin();
@@ -42,7 +42,7 @@ export const AppForm = () => {
     }
 
     return (
-        <Card title="App settings">
+        <CardBox title="App settings" divider w="50%">
             <FormControl display="flex" alignItems="center" py={2}>
                 <FormLabel htmlFor="run-login" mb="0" flex="1">
                     Run at login?
@@ -51,6 +51,7 @@ export const AppForm = () => {
                     id="run-login"
                     defaultChecked={openAtLogin}
                     onChange={onChangeOpenAtLogin}
+                    size="lg"
                 />
             </FormControl>
             <FormControl display="flex" alignItems="center" py={2}>
@@ -61,6 +62,7 @@ export const AppForm = () => {
                     id="auto-update"
                     defaultChecked={isAutoUpdateEnabled}
                     onChange={onChangeAutoUpdate}
+                    size="lg"
                 />
             </FormControl>
             <FormControl display="flex" alignItems="center" py={2}>
@@ -71,11 +73,12 @@ export const AppForm = () => {
                     id="enable-logging"
                     defaultChecked={isLoggingEnabled}
                     onChange={onChangeLogging}
+                    size="lg"
                 />
             </FormControl>
-            <Text fontSize="xs" color="gray.500">
+            <Text fontSize="xs" color="gray.500" pt={2}>
                 Log path: {logPath}
             </Text>
-        </Card>
+        </CardBox>
     );
 };

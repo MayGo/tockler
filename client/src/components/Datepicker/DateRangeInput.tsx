@@ -1,5 +1,5 @@
 import { CalendarIcon } from '@chakra-ui/icons';
-import { Box, Stack, StackDivider, useBreakpointValue } from '@chakra-ui/react';
+import { Box, Stack, StackDivider, useBreakpointValue, Text, Icon } from '@chakra-ui/react';
 import {
     END_DATE,
     FocusedInput,
@@ -8,6 +8,7 @@ import {
     START_DATE,
 } from '@datepicker-react/hooks';
 import React, { Ref, useEffect, useRef, useState } from 'react';
+import { AiOutlineSwapRight } from 'react-icons/ai';
 import { Input, InputProps } from './components';
 import { StylesProvider, StylesProviderProps, useStyleProps } from './context/StylesContext';
 import { Datepicker, DatepickerElement, DatepickerProps } from './Datepicker';
@@ -98,7 +99,7 @@ export const DateRangeInput: React.FC<DateRangeInputProps> = props => {
     }, [startDateProp, endDateProp]);
 
     const styleProps = useStyleProps<DateRangeInputStyles>({
-        dateRangeInputContainer: { spacing: 5 },
+        dateRangeInputContainer: { spacing: 1 },
         dateRangeInputDivider: {},
     });
 
@@ -166,6 +167,7 @@ export const DateRangeInput: React.FC<DateRangeInputProps> = props => {
                             undefined
                         )
                     }
+                    alignItems="center"
                 >
                     <Input
                         iconComponent={startIcon}
@@ -182,6 +184,8 @@ export const DateRangeInput: React.FC<DateRangeInputProps> = props => {
                         value={getInputValue(startDate, displayFormat, '')}
                         allowEditableInputs={allowEditableInputs}
                     />
+
+                    <Icon as={AiOutlineSwapRight} w={6} h={6} />
                     <Input
                         id={endId || 'endDate'}
                         name={endName || 'endDate'}

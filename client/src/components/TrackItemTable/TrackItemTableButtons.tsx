@@ -5,7 +5,7 @@ import { Logger } from '../../logger';
 import { deleteByIds } from '../../services/trackItem.api';
 import { useStoreActions } from '../../store/easyPeasy';
 import { Button } from '@chakra-ui/button';
-import { HStack } from '@chakra-ui/react';
+import { HStack, Text } from '@chakra-ui/react';
 
 export const TrackItemTableButtons = ({
     setAllFilters,
@@ -37,7 +37,11 @@ export const TrackItemTableButtons = ({
         <HStack pb={4}>
             {hasSelected && (
                 <Button variant="outline" onClick={deleteSelectedItems} disabled={!hasSelected}>
-                    Delete <b> {Object.keys(selectedRowIds).length} </b> items
+                    Delete
+                    <Text fontWeight="bold" p={2}>
+                        {Object.keys(selectedRowIds).length}
+                    </Text>
+                    items
                 </Button>
             )}
 

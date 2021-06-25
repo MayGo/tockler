@@ -15,13 +15,15 @@ export const CardBox: React.FC<any> = ({ title, children, extra, p = 4, divider,
             {...rest}
         >
             {title && (
-                <Flex justifyContent="space-between" p={p} pb={3}>
+                <Flex justifyContent="space-between" pr={p}>
                     <Text
                         fontWeight="bold"
                         textTransform="uppercase"
                         fontSize="md"
                         letterSpacing="wide"
                         color={titleColor}
+                        p={p}
+                        pb={3}
                     >
                         {title}
                     </Text>

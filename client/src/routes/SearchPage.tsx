@@ -100,7 +100,9 @@ export function SearchPage({ location }: any) {
                                 onChange={event => setSearchText(event.target.value)}
                             />
                             <Box px={2}>
-                                <Button type="submit">Search</Button>
+                                <Button type="submit" bg="brand.mainColor" w="100px">
+                                    Search
+                                </Button>
                             </Box>
 
                             <Box px={2}>

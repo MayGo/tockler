@@ -237,29 +237,31 @@ export const ItemsTable = ({
                                         },
                                     })}
                                     isNumeric={column.isNumeric}
-                                    pl={'10px'}
                                 >
                                     {column.name}
-                                    <Flex alignItems="center">
-                                        <Button
-                                            variant="ghost"
-                                            fontWeight="bold"
-                                            {...column.getSortByToggleProps()}
-                                        >
-                                            {column.render('Header')}
-                                            <Box pl="4">
-                                                {column.isSorted ? (
-                                                    column.isSortedDesc ? (
-                                                        <TriangleDownIcon aria-label="sorted descending" />
-                                                    ) : (
-                                                        <TriangleUpIcon aria-label="sorted ascending" />
-                                                    )
-                                                ) : null}
-                                            </Box>
-                                        </Button>
-                                        <Box flex={1} />
-                                        {column.canFilter ? column.render('Filter') : null}
-                                    </Flex>
+                                    {column.id === 'selection' && column.render('Header')}
+                                    {column.id !== 'selection' && (
+                                        <Flex alignItems="center">
+                                            <Button
+                                                variant="ghost"
+                                                fontWeight="bold"
+                                                {...column.getSortByToggleProps()}
+                                            >
+                                                {column.render('Header')}
+                                                <Box pl="4">
+                                                    {column.isSorted ? (
+                                                        column.isSortedDesc ? (
+                                                            <TriangleDownIcon aria-label="sorted descending" />
+                                                        ) : (
+                                                            <TriangleUpIcon aria-label="sorted ascending" />
+                                                        )
+                                                    ) : null}
+                                                </Box>
+                                            </Button>
+                                            <Box flex={1} />
+                                            {column.canFilter ? column.render('Filter') : null}
+                                        </Flex>
+                                    )}
                                 </Th>
                             ))}
                         </Tr>
