@@ -64,6 +64,7 @@ export function SupportPage({ location }: any) {
                         </Paragraph>
 
                         <Textarea
+                            variant="outline"
                             value={content}
                             placeholder="Content"
                             onChange={changeContent}

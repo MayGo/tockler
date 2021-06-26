@@ -6,6 +6,7 @@ import { InputStyle } from './components/input';
 import { SelectStyle } from './components/select';
 import { TableStyle } from './components/table';
 import { TabsStyle } from './components/tabs';
+import { TextareaStyle } from './components/textarea';
 
 export const theme = extendTheme({
     colors: {
@@ -20,6 +21,7 @@ export const theme = extendTheme({
         CalendarDay: CalendarDayStyle,
         Table: TableStyle,
         Input: InputStyle,
+        Textarea: TextareaStyle,
         Select: SelectStyle,
         FormLabel: FormLabelStyle,
     },

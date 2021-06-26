@@ -17,7 +17,7 @@ export const TableStyle = {
             },
             th: {
                 _notFirst: {
-                    'padding-inline-start': 'var(--chakra-space-2)',
+                    paddingInlineStart: 'var(--chakra-space-2)',
                 },
             },
         }),
