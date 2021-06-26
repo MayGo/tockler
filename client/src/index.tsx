@@ -2,12 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter as Router } from 'react-router-dom';
 import 'typeface-berkshire-swash';
-import { MainRouter } from './router';
+import { MainRouter } from './MainRouter';
 import { setupFrontendListener } from 'eiphop';
 import { StoreProvider } from 'easy-peasy';
-import { ColorModeScript } from '@chakra-ui/react';
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import { mainStore } from './store/mainStore';
+
 import { theme } from './theme/theme';
 
 (window as any).CSPSettings = {
@@ -23,13 +23,15 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 ReactDOM.render(
-    <StoreProvider store={mainStore}>
-        <ColorModeScript />
-        <ChakraProvider theme={theme}>
-            <Router>
-                <MainRouter />
-            </Router>
-        </ChakraProvider>
-    </StoreProvider>,
+    <>
+        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+        <StoreProvider store={mainStore}>
+            <ChakraProvider theme={theme}>
+                <Router>
+                    <MainRouter />
+                </Router>
+            </ChakraProvider>
+        </StoreProvider>
+    </>,
     document.getElementById('root') as HTMLElement,
 );

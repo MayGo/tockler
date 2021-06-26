@@ -14,7 +14,7 @@ const CustomListItem = styled(Box)`
     &:last-child {
         margin-bottom: 5px;
     }
-    background-color: ${({ theme: { variables } }) => variables['@component-background']};
+    background-color: white;
     border-left: 5px solid ${props => props.leftColor};
 `;
 

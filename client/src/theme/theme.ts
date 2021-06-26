@@ -7,8 +7,20 @@ import { SelectStyle } from './components/select';
 import { TableStyle } from './components/table';
 import { TabsStyle } from './components/tabs';
 import { TextareaStyle } from './components/textarea';
+import { getThemeFromStorage } from '../services/settings.api';
+import { THEMES } from '../store/theme.util';
 
+const savedTheme = getThemeFromStorage();
+const initialColorMode = savedTheme?.name || THEMES.LIGHT;
+
+console.info('INITIAL THEME', initialColorMode);
+
+const config = {
+    initialColorMode: initialColorMode,
+    useSystemColorMode: false,
+};
 export const theme = extendTheme({
+    config,
     colors: {
         brand: {
             mainColor: '#7C3AED',
