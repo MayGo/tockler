@@ -100,8 +100,8 @@ export function SupportPage({ location }: any) {
                     </Paragraph>
                     <Paragraph>
                         So if you find this app useful then feel free to donate. Anything helps to
-                        keep this app up to date and always improving. I don't plan to get rich with
-                        that, need to justify working on this.
+                        keep this app up to date and always improving. I need to cover the costs of
+                        developing and to justify working on this.
                     </Paragraph>
                     <HStack spacing={4} pt={4}>
                         <a
