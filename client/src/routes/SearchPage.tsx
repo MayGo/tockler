@@ -9,9 +9,6 @@ import { SearchOptions } from '../components/SearchResults/SearchOptions';
 import { Box, Flex } from '@chakra-ui/layout';
 import { Input } from '@chakra-ui/input';
 import { Button } from '@chakra-ui/button';
-import { Spinner } from '@chakra-ui/spinner';
-import { SpinnerContainer } from '../components/Timeline/Timeline.styles';
-import { BlackBox } from '../components/BlackBox';
 import { Loader } from '../components/Timeline/Loader';
 import { CardBox } from '../components/CardBox';
 

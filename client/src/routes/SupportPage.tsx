@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MainLayout } from '../components/MainLayout/MainLayout';
 import emailjs from 'emailjs-com';
 import { Button } from '@chakra-ui/button';
-import { Box, Flex, Heading, Text } from '@chakra-ui/layout';
+import { Box, Flex, Text } from '@chakra-ui/layout';
 import { Textarea } from '@chakra-ui/textarea';
 import { Input } from '@chakra-ui/input';
 import { CardBox } from '../components/CardBox';

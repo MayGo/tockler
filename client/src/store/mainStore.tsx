@@ -7,10 +7,8 @@ import {
     setDayFromTimerange,
 } from '../components/Timeline/timeline.utils';
 import { Logger } from '../logger';
-import { getThemeFromStorage } from '../services/settings.api';
 import { findAllDayItemsForEveryTrack } from '../services/trackItem.api';
 import { addToTimelineItems } from '../timeline.util';
-import { THEMES } from './theme.util';
 
 const emptyTimeItems = {
     appItems: [],

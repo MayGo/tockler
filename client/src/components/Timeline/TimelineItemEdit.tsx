@@ -152,7 +152,6 @@ export const TimelineItemEdit = memo<IProps>(
                         <Input
                             value={trackItem.title}
                             placeholder="Title"
-                            c
                             onChange={changeAppTitle}
                         />
                     </Box>

@@ -1,13 +1,6 @@
 import { useForm } from 'react-hook-form';
 import React, { useContext, useEffect } from 'react';
-import {
-    FormErrorMessage,
-    FormLabel,
-    FormControl,
-    Input,
-    Text,
-    FormHelperText,
-} from '@chakra-ui/react';
+import { FormErrorMessage, FormLabel, FormControl, Input, FormHelperText } from '@chakra-ui/react';
 import { RootContext } from '../../RootContext';
 import { CardBox } from '../CardBox';
 

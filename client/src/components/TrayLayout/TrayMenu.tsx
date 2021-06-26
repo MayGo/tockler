@@ -7,7 +7,6 @@ import Moment from 'react-moment';
 import { Logger } from '../../logger';
 import { useWindowFocused } from '../../hooks/windowFocusedHook';
 import { Box, Center, Flex, Link } from '@chakra-ui/layout';
-import { Link as RouterLink } from 'react-router-dom';
 import { Image } from '@chakra-ui/image';
 import { Brand } from '../MainLayout/HeaderMenu.styles';
 import { AiOutlineArrowsAlt, AiOutlineClockCircle, AiOutlinePoweroff } from 'react-icons/ai';
@@ -70,7 +69,7 @@ export const TrayMenuPlain = () => {
             zIndex={100}
         >
             <Box pl={4} pr={3}>
-                <Link as={RouterLink} onClick={toggleMainWindow}>
+                <Link onClick={toggleMainWindow}>
                     <Flex>
                         <Center pr={3}>
                             <Image

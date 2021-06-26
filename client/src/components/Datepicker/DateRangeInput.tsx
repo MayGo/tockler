@@ -1,5 +1,5 @@
 import { CalendarIcon } from '@chakra-ui/icons';
-import { Box, Stack, StackDivider, useBreakpointValue, Text, Icon } from '@chakra-ui/react';
+import { Box, Stack, StackDivider, useBreakpointValue, Icon } from '@chakra-ui/react';
 import {
     END_DATE,
     FocusedInput,
