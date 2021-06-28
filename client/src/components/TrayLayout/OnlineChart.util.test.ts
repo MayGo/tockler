@@ -1,10 +1,5 @@
 import moment from 'moment';
-import {
-    getClampHours,
-    getOnlineTimesForChart,
-    getQuarters,
-    isBetweenHours,
-} from './OnlineChart.util';
+import { getClampHours, getOnlineTimesForChart, isBetweenHours } from './OnlineChart.util';
 
 const ONLINE = 'ONLINE';
 const OFFLINE = 'OFFLINE';
