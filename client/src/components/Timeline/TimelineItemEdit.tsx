@@ -1,5 +1,6 @@
 import React, { useState, useEffect, memo } from 'react';
 import { TimeOutput } from 'react-timekeeper';
+import randomcolor from 'randomcolor';
 import { ColorPicker } from './ColorPicker';
 import { Logger } from '../../logger';
 import moment from 'moment';
@@ -9,10 +10,12 @@ import { Input } from '@chakra-ui/input';
 import { Button, IconButton } from '@chakra-ui/button';
 import { Tooltip } from '@chakra-ui/tooltip';
 import { Select } from '@chakra-ui/select';
-import { AiOutlineClose, AiOutlinePlayCircle, AiOutlineSave } from 'react-icons/ai';
+import { AiOutlineClose, AiOutlineSave } from 'react-icons/ai';
 import { TimelineItemEditDeleteButton } from './TimelineItemEditDeleteButton';
 import { TIME_FORMAT_SHORT } from '../../constants';
 import { TimePicker } from './TimePicker';
+import { HStack } from '@chakra-ui/react';
+import { FaPlay } from 'react-icons/fa';
 
 interface IProps {
     selectedTimelineItem: any;
@@ -128,6 +131,15 @@ export const TimelineItemEdit = memo<IProps>(
             const { trackItem, colorScope } = state;
 
             saveTimelineItem(trackItem, colorScope);
+            setState({
+                ...state,
+                trackItem: {
+                    ...state.trackItem,
+                    app: '',
+                    title: '',
+                    color: randomcolor(),
+                },
+            });
         };
         const deleteItem = () => {
             const { trackItem } = state;
@@ -142,40 +154,34 @@ export const TimelineItemEdit = memo<IProps>(
 
         const colorChanged = selectedTimelineItem.color !== trackItem.color;
 
+        const onSubmit = event => {
+            event.preventDefault();
+            saveBasedOnColorOptionHandler();
+        };
         if (trayEdit) {
             return (
-                <Flex p={1}>
-                    <Box px={1} width="33%">
-                        <Input value={trackItem.app} placeholder="App" onChange={changeAppName} />
-                    </Box>
-                    <Box px={1} flex="1">
-                        <Input
-                            value={trackItem.title}
-                            placeholder="Title"
-                            onChange={changeAppTitle}
-                        />
-                    </Box>
+                <form onSubmit={onSubmit}>
+                    <HStack spacing={4}>
+                        <Box width="33%">
+                            <Input
+                                value={trackItem.app}
+                                placeholder="App"
+                                onChange={changeAppName}
+                            />
+                        </Box>
+                        <Box flex="1">
+                            <Input
+                                value={trackItem.title}
+                                placeholder="Title"
+                                onChange={changeAppTitle}
+                            />
+                        </Box>
 
-                    <Box px={1}>
                         <ColorPicker color={trackItem.color} onChange={changeColorHandler} />
-                    </Box>
 
-                    <Box px={1}>
-                        <IconButton
-                            aria-label="start"
-                            leftIcon={<AiOutlinePlayCircle />}
-                            onClick={saveBasedOnColorOptionHandler}
-                        />
-                    </Box>
-
-                    <Box px={1}>
-                        <IconButton
-                            aria-label="stop"
-                            leftIcon={<AiOutlineClose />}
-                            onClick={closeEdit}
-                        />
-                    </Box>
-                </Flex>
+                        <IconButton type="submit" aria-label="start" icon={<FaPlay />} />
+                    </HStack>
+                </form>
             );
         }
 

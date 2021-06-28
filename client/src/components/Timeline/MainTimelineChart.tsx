@@ -22,6 +22,7 @@ import { rangeToDate } from '../../timeline.util';
 import { BrushHandle } from './BrushHandle';
 import { BAR_WIDTH, CHART_PADDING, CHART_SCALE } from './timeline.constants';
 import useDimensions from 'react-cool-dimensions';
+import { OnlineChart } from '../TrayLayout/OnlineChart';
 
 const getTrackItemOrder = (type: string) => {
     if (type === TrackItemType.AppTrackItem) {
@@ -41,7 +42,7 @@ const convertDateForY = d => convertDate(d.beginDate);
 const convertDateForY0 = d => convertDate(d.endDate);
 
 const domainPadding: any = { y: 35, x: 10 };
-const barStyle: any = {
+export const barStyle: any = {
     data: {
         width: BAR_WIDTH,
         fill: colorProp,
@@ -134,6 +135,7 @@ export const MainTimelineChart = memo(() => {
 
     return (
         <div ref={observe}>
+            <OnlineChart items={statusItems} />
             <VictoryChart
                 theme={chartTheme}
                 height={100}

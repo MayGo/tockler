@@ -4,6 +4,7 @@ import {
     AiOutlineSearch,
     AiOutlineSetting,
     AiOutlineQuestionCircle,
+    AiFillTrademarkCircle,
 } from 'react-icons/ai';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
@@ -42,7 +43,8 @@ export const HeaderMenu = () => (
         <MenuItem to="/app/summary" icon={<AiOutlineAreaChart />} title="Summary" />
         <MenuItem to="/app/search" icon={<AiOutlineSearch />} title="Search" />
         <MenuItem to="/app/settings" icon={<AiOutlineSetting />} title="Settings" />
-        <MenuItem to="/app/support" icon={<AiOutlineQuestionCircle />} title="Support" />{' '}
+        <MenuItem to="/app/support" icon={<AiOutlineQuestionCircle />} title="Support" />
+        <MenuItem to="/trayPage" icon={<AiFillTrademarkCircle />} title="Tray" />
         <Box flex="1" />
         <Box>
             <ColorModeSwitcher />

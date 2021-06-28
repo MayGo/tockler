@@ -12,7 +12,7 @@ import { Button } from '@chakra-ui/button';
 import { Loader } from '../components/Timeline/Loader';
 import { CardBox } from '../components/CardBox';
 
-export function SearchPage({ location }: any) {
+export function SearchPage() {
     const fetchIdRef = useRef(0);
     const [searchText, setSearchText] = useState('');
 
@@ -76,13 +76,12 @@ export function SearchPage({ location }: any) {
     }, [searchPaging]);
 
     const onSubmit = event => {
-        setSearchPaging({ ...searchPaging, pageIndex: 1 });
-
         event.preventDefault();
+        setSearchPaging({ ...searchPaging, pageIndex: 1 });
     };
 
     return (
-        <MainLayout location={location}>
+        <MainLayout>
             <form onSubmit={onSubmit}>
                 <Flex p={1} flexDirection="column">
                     <CardBox position="relative" p={0}>

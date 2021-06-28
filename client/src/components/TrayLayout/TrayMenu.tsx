@@ -13,12 +13,13 @@ import { AiOutlineArrowsAlt, AiOutlineClockCircle, AiOutlinePoweroff } from 'rea
 import { Tooltip } from '@chakra-ui/tooltip';
 import { IconButton } from '@chakra-ui/button';
 import { useColorModeValue } from '@chakra-ui/system';
+import { HStack } from '@chakra-ui/react';
 
 const getNow = () => moment().subtract(1, 'seconds');
 
 export const TrayMenuPlain = () => {
     const { windowIsActive } = useWindowFocused();
-    const [onlineSince, setOnlineSince] = useState();
+    const [onlineSince, setOnlineSince] = useState<any>();
     const exitApp = () => {
         EventEmitter.send('close-app');
     };
@@ -60,13 +61,15 @@ export const TrayMenuPlain = () => {
 
     return (
         <Flex
-            bg={useColorModeValue('gray.100', 'gray.900')}
+            bg={useColorModeValue('gray.100', 'gray.800')}
             w="100%"
             h={50}
             alignItems="center"
             position="sticky"
             top={0}
             zIndex={100}
+            borderBottomWidth={1}
+            borderBottomColor={useColorModeValue('gray.100', 'gray.700')}
         >
             <Box pl={4} pr={3}>
                 <Link onClick={toggleMainWindow}>
@@ -99,7 +102,7 @@ export const TrayMenuPlain = () => {
             </Box>
 
             <Box flex="1"></Box>
-            <Box pr={2}>
+            <HStack spacing={3} pr={1}>
                 <Tooltip placement="bottom" label="Open main window">
                     <IconButton
                         onClick={toggleMainWindow}
@@ -109,9 +112,7 @@ export const TrayMenuPlain = () => {
                         icon={<AiOutlineArrowsAlt />}
                     />
                 </Tooltip>
-            </Box>
 
-            <Box pr={2}>
                 <Tooltip placement="bottom" label="Quit app">
                     <IconButton
                         onClick={exitApp}
@@ -121,7 +122,7 @@ export const TrayMenuPlain = () => {
                         icon={<AiOutlinePoweroff />}
                     />
                 </Tooltip>
-            </Box>
+            </HStack>
         </Flex>
     );
 };

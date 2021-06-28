@@ -6,4 +6,5 @@ dist/
 !scripts/
 .eslintcache
 .env
-electron
+packaged
+electron/packaged

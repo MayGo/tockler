@@ -6,9 +6,9 @@ import { LineChart } from '../components/LineCharts/LineChart';
 import { VStack } from '@chakra-ui/react';
 import { CardBox } from '../components/CardBox';
 
-export function SummaryPage({ location }: any) {
+export function SummaryPage() {
     return (
-        <MainLayout location={location}>
+        <MainLayout>
             <SummaryProvider>
                 <VStack p={4} spacing={4}>
                     <CardBox p={0} position="relative" overflow="hidden">

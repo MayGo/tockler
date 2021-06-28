@@ -57,9 +57,11 @@ export const CalendarDayStyle: ComponentStyleConfig = {
         borderColor: 'transparent',
         background: mode('white', 'gray.700')(props),
         overflow: 'hidden',
+
         _hover: {
             borderColor: 'transparent',
             background: 'transparent',
+            cursor: 'pointer',
         },
     }),
     variants: {

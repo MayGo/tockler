@@ -2,7 +2,7 @@ import { InputStyle } from './input';
 
 export const TextareaStyle = {
     baseStyle: props => ({
-        field: {},
+        field: InputStyle.baseStyle(props).field,
     }),
 
     variants: {

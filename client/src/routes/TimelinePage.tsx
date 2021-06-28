@@ -15,7 +15,7 @@ import { useStoreActions } from '../store/easyPeasy';
 
 const BG_SYNC_DELAY_MS = 10000;
 
-export function TimelinePage({ location }: any) {
+export function TimelinePage() {
     const fetchTimerange = useStoreActions(actions => actions.fetchTimerange);
     const bgSyncInterval = useStoreActions(actions => actions.bgSyncInterval);
 
@@ -28,7 +28,7 @@ export function TimelinePage({ location }: any) {
     }, [fetchTimerange]);
 
     return (
-        <MainLayout location={location}>
+        <MainLayout>
             <VStack p={4} spacing={4}>
                 <CardBox>
                     <Flex>

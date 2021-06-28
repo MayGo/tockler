@@ -18,7 +18,7 @@ const Paragraph = props => (
     </Box>
 );
 
-export function SupportPage({ location }: any) {
+export function SupportPage() {
     const [content, setContent] = useState('');
     const [contentError, setContentError] = useState(false);
     const [emailSent, setEmailSent] = useState(false);
@@ -54,7 +54,7 @@ export function SupportPage({ location }: any) {
     };
 
     return (
-        <MainLayout location={location}>
+        <MainLayout>
             <VStack spacing={3} p={4} alignItems="flex-start">
                 <CardBox title="Contact Me" width="50%" divider>
                     <VStack spacing={3} alignItems="flex-end">

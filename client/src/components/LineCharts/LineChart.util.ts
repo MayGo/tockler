@@ -24,7 +24,7 @@ export const addToTimeDuration = (from, duration) => {
 
 export const isOddHour = date => moment(date).get('hour') % 2;
 
-export const formatToTime = t => moment.utc(t).format('HH:mm');
+export const formatToTime = t => moment(t).format('HH:mm');
 
 export const formatToTimeEveryOther = t => {
     const hour = moment(t).startOf('hour');

@@ -59,9 +59,10 @@ export class LogManager {
 
     getLogger(name) {
         const logObj = log.create(name);
-
+        if (isProd) {
+            (logObj as any).transports.console = sentryTransportConsole;
+        }
         log.transports.console.level = isProd ? 'warn' : 'debug';
-        (logObj as any).transports.console = sentryTransportConsole;
 
         if (isLoggingEnabled) {
             logObj.transports.file.level = 'debug';

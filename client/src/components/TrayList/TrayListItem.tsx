@@ -1,104 +1,75 @@
 import { Box, Flex, Text } from '@chakra-ui/layout';
-import moment from 'moment';
-import React, { memo } from 'react';
-import Moment from 'react-moment';
-import TimeAgo from 'react-timeago';
-import styled from 'styled-components';
-import { IconButton } from '@chakra-ui/react';
+import React, { memo, useState } from 'react';
+import { HStack, IconButton, useInterval, VStack } from '@chakra-ui/react';
 import { convertDate, DATE_TIME_FORMAT } from '../../constants';
-import { AiOutlineCaretRight, AiOutlineClockCircle, AiOutlinePause } from 'react-icons/ai';
-
-const CustomListItem = styled(Box)`
-    padding-left: 5px;
-    margin-top: 5px;
-    &:last-child {
-        margin-bottom: 5px;
-    }
-    background-color: white;
-    border-left: 5px solid ${props => props.leftColor};
-`;
+import { FaPlay, FaStop } from 'react-icons/fa';
+import { shortTime } from '../../time.util';
 
 const formatDate = date => convertDate(date).format(DATE_TIME_FORMAT);
 
-const FormattedTime = ({ item, isRunning }: any) => {
+const FormattedTime = ({ beginDate, endDate, isRunning }: any) => {
     const full = isRunning
-        ? `${formatDate(item.beginDate)}`
-        : `${formatDate(item.beginDate)} - ${formatDate(item.endDate)}`;
+        ? `${formatDate(beginDate)}`
+        : `${formatDate(beginDate)} - ${formatDate(endDate)}`;
 
     return <span>{full}</span>;
 };
 
-export function TrayListItemPlain({
-    item,
-    startNewLogItemFromOld,
-    stopRunningLogItem,
-    isRunning,
-}: any) {
+const ShortTimeInterval = ({ totalMs }) => {
+    const [time, setTime] = useState(totalMs);
+    useInterval(() => {
+        setTime(oldTime => oldTime + 1000);
+    }, 1000);
+
+    return shortTime(time);
+};
+
+export function TrayListItemPlain({ item, startNewLogItemFromOld, stopRunningLogItem }: any) {
+    const { isRunning, totalMs, title, app, color } = item;
     return (
-        <CustomListItem leftColor={item.color} key={item.title}>
+        <Box p={4}>
             <Flex alignItems="center" width="100%" pl={1} pr={2}>
-                <Box width="80%" py={2} flex={1}>
-                    <Flex>
-                        <Box overflow="hidden" width="30%" mr={2}>
-                            {item.app}
-                        </Box>
-                        <Box overflow="hidden">{item.title}</Box>
-                    </Flex>
+                <VStack width={'100%'} alignItems="flex-start">
+                    <HStack alignItems="center">
+                        <Box bg={color} w="8px" h="8px" borderRadius="full" />
+                        <Text fontWeight="bold" fontSize="md">
+                            {app}
+                        </Text>
+                        <Text fontSize="md">{title}</Text>
+                    </HStack>
 
                     <Flex alignItems="center">
-                        <Text fontSize="xm">
-                            <FormattedTime item={item} isRunning={isRunning} />
+                        <Text fontSize="xs">
+                            <FormattedTime {...item} />
                         </Text>
-                        <Box px={1}>
-                            <AiOutlineClockCircle />
-                        </Box>
-                        <b>
-                            <Text fontSize="xm">
-                                {!isRunning && (
-                                    <Moment from={item.beginDate} ago>
-                                        {item.endDate}
-                                    </Moment>
-                                )}
-                                {isRunning && (
-                                    <Moment fromNow ago>
-                                        {item.beginDate}
-                                    </Moment>
-                                )}
-                            </Text>
-                        </b>
+
+                        <Text fontSize="xs" fontWeight="bold" pl={3}>
+                            {totalMs > 1 && (
+                                <>
+                                    {!isRunning && shortTime(totalMs)}
+                                    {isRunning && <ShortTimeInterval totalMs={totalMs} />}
+                                </>
+                            )}
+                        </Text>
                     </Flex>
-                    {item.startDate && (
-                        <Box pr={2}>
-                            <Text fontSize="xm">
-                                <TimeAgo date={item.startDate} />
-                            </Text>
-                        </Box>
-                    )}
-                    {item.totalMs > 1 && (
-                        <Box>
-                            <Text fontSize="sm">
-                                Duration: <b>{moment.duration(item.totalMs).format()}</b>
-                            </Text>
-                        </Box>
-                    )}
-                </Box>
+                </VStack>
 
                 {isRunning && (
                     <IconButton
                         aria-label="pause"
-                        icon={<AiOutlinePause />}
+                        icon={<FaStop />}
                         onClick={() => stopRunningLogItem()}
                     />
                 )}
                 {!isRunning && (
                     <IconButton
                         aria-label="start"
-                        icon={<AiOutlineCaretRight />}
+                        icon={<FaPlay />}
                         onClick={() => startNewLogItemFromOld(item)}
                     />
                 )}
             </Flex>
-        </CustomListItem>
+        </Box>
     );
 }
 

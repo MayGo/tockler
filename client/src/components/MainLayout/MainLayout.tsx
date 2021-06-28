@@ -3,7 +3,7 @@ import { Divider, useColorModeValue } from '@chakra-ui/react';
 import React from 'react';
 import { HeaderMenu } from './HeaderMenu';
 
-export function MainLayout({ children, location }: any) {
+export function MainLayout({ children }: any) {
     return (
         <Box w="100%">
             <HeaderMenu />

@@ -12,6 +12,9 @@ import { throttle } from 'lodash';
 import deepEqual from 'fast-deep-equal/es6';
 import { analytics } from '../analytics';
 import { Box } from '@chakra-ui/layout';
+import { Divider } from '@chakra-ui/react';
+import { ITrackItem } from '../@types/ITrackItem';
+import { OnlineChart } from '../components/TrayLayout/OnlineChart';
 
 const EMPTY_SELECTED_ITEM = {};
 
@@ -21,8 +24,8 @@ const TrayAppPageTemp = () => {
     const [loading, setLoading] = useState(true);
 
     const [selectedItem, setSelectedItem] = useState(EMPTY_SELECTED_ITEM);
-    const [runningLogItem, setRunningLogItem] = useState();
-    const [lastLogItems, setLastLogItems] = useState(EMPTY_ARRAY);
+    const [runningLogItem, setRunningLogItem] = useState<any>();
+    const [lastLogItems, setLastLogItems] = useState<ITrackItem[]>(EMPTY_ARRAY);
 
     const { windowIsActive } = useWindowFocused();
 
@@ -33,6 +36,7 @@ const TrayAppPageTemp = () => {
             const areEqual = deepEqual(items, lastLogItems);
 
             if (!areEqual) {
+                console.info('setLastLogItems', items);
                 setLastLogItems(items);
             }
         } catch (e) {
@@ -41,13 +45,13 @@ const TrayAppPageTemp = () => {
         setLoading(false);
     };
 
-    const loadLastLogItemsThrottled = throttle(loadLastLogItems, 4000, { trailing: false });
+    const loadLastLogItemsThrottled = throttle(loadLastLogItems, 1000);
 
     useEffect(() => {
         if (windowIsActive) {
             Logger.debug('Window active:', windowIsActive);
             setSelectedItem(s => ({ ...s, color: randomcolor() }));
-            loadLastLogItemsThrottled();
+            // loadLastLogItemsThrottled();
             analytics.track('trayOpened', { version: process.env.REACT_APP_VERSION });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,9 +59,10 @@ const TrayAppPageTemp = () => {
 
     useEffect(() => {
         const eventLogItemStarted = (_, logItem) => {
-            Logger.debug('log-trackItem-started:', JSON.parse(logItem));
-            setRunningLogItem(JSON.parse(logItem));
-            loadLastLogItemsThrottled();
+            const newItem: ITrackItem = JSON.parse(logItem);
+            Logger.debug('log-trackItem-started:', newItem);
+            setRunningLogItem(newItem);
+            setLastLogItems(items => [...items, newItem]);
         };
 
         EventEmitter.on('log-item-started', eventLogItemStarted);
@@ -69,7 +74,8 @@ const TrayAppPageTemp = () => {
     }, []);
 
     useEffect(() => {
-        loadLastLogItemsThrottled();
+        // loadLastLogItemsThrottled();
+        loadLastLogItems();
         getRunningLogItem().then(logItem => {
             setRunningLogItem(logItem);
         });
@@ -98,15 +104,16 @@ const TrayAppPageTemp = () => {
 
     return (
         <TrayLayout>
-            {!runningLogItem && (
-                <Box pt={2}>
-                    <TimelineItemEdit
-                        selectedTimelineItem={selectedItem}
-                        trayEdit
-                        saveTimelineItem={startNewLogItem}
-                    />
-                </Box>
-            )}
+            <Box p={4}>
+                <TimelineItemEdit
+                    selectedTimelineItem={selectedItem}
+                    trayEdit
+                    saveTimelineItem={startNewLogItem}
+                />
+            </Box>
+            <OnlineChart items={lastLogItems} />
+
+            <Divider borderColor="gray.200" />
             <TrayList
                 lastLogItems={lastLogItems}
                 runningLogItem={runningLogItem}

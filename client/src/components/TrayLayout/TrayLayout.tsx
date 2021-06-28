@@ -4,12 +4,10 @@ import { TrayMenu } from './TrayMenu';
 
 export function TrayLayout({ children }: any) {
     return (
-        <div>
-            <Box w="100%">
-                <TrayMenu />
+        <Box w="100%" minH="100vh" bg="gray.700">
+            <TrayMenu />
 
-                <Box>{children}</Box>
-            </Box>
-        </div>
+            <Box>{children}</Box>
+        </Box>
     );
 }

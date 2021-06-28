@@ -7,9 +7,10 @@ import { TIMERANGE_MODE_TODAY } from '../../store/mainStore';
 import { Box } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
 import { Tooltip } from '@chakra-ui/tooltip';
-import { AiOutlineCaretRight, AiOutlineLeft, AiOutlinePause, AiOutlineRight } from 'react-icons/ai';
+import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import { DateRangeInput } from '../Datepicker';
 import { OnDatesChangeProps } from '@datepicker-react/hooks';
+import { FaPlay, FaStop } from 'react-icons/fa';
 
 const getDayBefore = d => moment(d).subtract(1, 'days');
 const getDayAfter = d => moment(d).add(1, 'days');
@@ -100,7 +101,7 @@ export const Search = memo(() => {
                         label={liveView ? 'Pause live view' : 'Start live view'}
                     >
                         <Button onClick={toggleLiveView} bg={liveView ? 'green.500' : 'red.500'}>
-                            {liveView ? <AiOutlinePause /> : <AiOutlineCaretRight />}
+                            {liveView ? <FaStop /> : <FaPlay />}
                         </Button>
                     </Tooltip>
                 </Box>

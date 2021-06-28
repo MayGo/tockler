@@ -96,7 +96,7 @@ export function deleteByIds(trackItemIds: number[]) {
 }
 
 export function startNewLogItem(oldItem: any) {
-    Logger.debug('startNewLogItem');
+    Logger.debug('startNewLogItem', oldItem);
 
     const newItem: any = {};
     newItem.app = oldItem.app || 'WORK';

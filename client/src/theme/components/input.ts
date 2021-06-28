@@ -2,7 +2,11 @@ import { mode } from '@chakra-ui/theme-tools';
 
 export const InputStyle = {
     baseStyle: props => ({
-        field: {},
+        field: {
+            _placeholder: {
+                color: mode('gray.300', 'gray.400')(props),
+            },
+        },
     }),
 
     variants: {

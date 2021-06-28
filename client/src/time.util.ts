@@ -1,7 +1,28 @@
+import humanizeDuration from 'humanize-duration';
+
 function zeroPad(num = 0, places: number): string {
     const zero = places - num.toString().length + 1;
     return Array(+(zero > 0 && zero)).join('0') + num;
 }
+
+export const shortTime = humanizeDuration.humanizer({
+    language: 'shortEn',
+    spacer: '',
+    delimiter: ' ',
+    round: true,
+    languages: {
+        shortEn: {
+            y: () => 'y',
+            mo: () => 'mo',
+            w: () => 'w',
+            d: () => 'd',
+            h: () => 'h',
+            m: () => 'm',
+            s: () => 's',
+            ms: () => 'ms',
+        },
+    },
+});
 
 export const secondsToClock = (seconds: number, minPos = 0, maxPos = 0) => {
     let timeLeft: any = {};

@@ -9,6 +9,7 @@ import { TabsStyle } from './components/tabs';
 import { TextareaStyle } from './components/textarea';
 import { getThemeFromStorage } from '../services/settings.api';
 import { THEMES } from '../store/theme.util';
+import { ColorPickerStyle } from './components/colorPicker';
 
 const savedTheme = getThemeFromStorage();
 const initialColorMode = savedTheme?.name || THEMES.LIGHT;
@@ -36,5 +37,6 @@ export const theme = extendTheme({
         Textarea: TextareaStyle,
         Select: SelectStyle,
         FormLabel: FormLabelStyle,
+        ColorPicker: ColorPickerStyle,
     },
 });
