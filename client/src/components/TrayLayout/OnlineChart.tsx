@@ -13,7 +13,7 @@ import { getLastOnlineTime, getOnlineTime } from '../PieCharts/MetricTiles.utils
 
 const QuarterLabel = props => (
     <Box width="20px" height="20px">
-        <Text fontSize="xs" color="gray.600" textAlign="center" {...props} />
+        <Text fontSize="xs" color="gray.400" textAlign="center" {...props} />
     </Box>
 );
 
@@ -50,9 +50,12 @@ export const OnlineChart = ({ items }) => {
     return (
         <VStack>
             <Button
+                position="absolute"
                 alignSelf="flex-end"
                 variant="ghost"
                 size="xs"
+                color="gray.400"
+                fontWeight="bold"
                 onClick={() =>
                     setMode(
                         mode === CLOCK_MODE.HOURS_24 ? CLOCK_MODE.HOURS_12 : CLOCK_MODE.HOURS_24,

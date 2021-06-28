@@ -15,12 +15,26 @@ import { Box } from '@chakra-ui/layout';
 import { Divider } from '@chakra-ui/react';
 import { ITrackItem } from '../@types/ITrackItem';
 import { OnlineChart } from '../components/TrayLayout/OnlineChart';
+import { useStoreActions, useStoreState } from '../store/easyPeasy';
+import { useInterval } from '../hooks/intervalHook';
 
 const EMPTY_SELECTED_ITEM = {};
 
 const EMPTY_ARRAY = [];
+const BG_SYNC_DELAY_MS = 10000;
 
 const TrayAppPageTemp = () => {
+    const fetchTimerange = useStoreActions(actions => actions.fetchTimerange);
+    const bgSyncInterval = useStoreActions(actions => actions.bgSyncInterval);
+
+    useInterval(() => {
+        bgSyncInterval();
+    }, [BG_SYNC_DELAY_MS]);
+
+    useEffect(() => {
+        fetchTimerange();
+    }, [fetchTimerange]);
+
     const [loading, setLoading] = useState(true);
 
     const [selectedItem, setSelectedItem] = useState(EMPTY_SELECTED_ITEM);
@@ -102,6 +116,8 @@ const TrayAppPageTemp = () => {
         [runningLogItem, setRunningLogItem],
     );
 
+    const timeItems = useStoreState(state => state.timeItems);
+    const { statusItems } = timeItems;
     return (
         <TrayLayout>
             <Box p={4}>
@@ -111,8 +127,9 @@ const TrayAppPageTemp = () => {
                     saveTimelineItem={startNewLogItem}
                 />
             </Box>
-            <OnlineChart items={lastLogItems} />
-
+            <Box px={4} pb={4}>
+                <OnlineChart items={statusItems} />
+            </Box>
             <Divider borderColor="gray.200" />
             <TrayList
                 lastLogItems={lastLogItems}
