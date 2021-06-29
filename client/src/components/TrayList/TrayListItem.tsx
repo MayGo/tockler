@@ -1,9 +1,10 @@
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import React, { memo, useState } from 'react';
-import { HStack, IconButton, useInterval, VStack } from '@chakra-ui/react';
+import { HStack, IconButton, useInterval } from '@chakra-ui/react';
 import { convertDate, DATE_TIME_FORMAT } from '../../constants';
 import { FaPlay, FaStop } from 'react-icons/fa';
 import { shortTime } from '../../time.util';
+import { OverflowText } from '../TrackItemTable/OverflowText';
 
 const formatDate = date => convertDate(date).format(DATE_TIME_FORMAT);
 
@@ -28,17 +29,21 @@ export function TrayListItemPlain({ item, startNewLogItemFromOld, stopRunningLog
     const { isRunning, totalMs, title, app, color } = item;
     return (
         <Box p={4}>
-            <Flex alignItems="center" width="100%" pl={1} pr={2}>
-                <VStack width={'100%'} alignItems="flex-start">
-                    <HStack alignItems="center">
-                        <Box bg={color} w="8px" h="8px" borderRadius="full" />
-                        <Text fontWeight="bold" fontSize="md">
+            <HStack alignItems="center" width="100%" pr={2}>
+                <Box flex={1} minWidth="0">
+                    <HStack alignItems="center" pb={2} minWidth="0">
+                        <Box bg={color} w="8px" h="8px" minWidth="8px" borderRadius="full" />
+
+                        <OverflowText fontWeight="bold" fontSize="md" minWidth="100px">
                             {app}
-                        </Text>
-                        <Text fontSize="md">{title}</Text>
+                        </OverflowText>
+
+                        <OverflowText fontSize="md" minWidth="0">
+                            {title}
+                        </OverflowText>
                     </HStack>
 
-                    <Flex alignItems="center">
+                    <Flex alignItems="center" pl={4}>
                         <Text fontSize="xs">
                             <FormattedTime {...item} />
                         </Text>
@@ -52,7 +57,7 @@ export function TrayListItemPlain({ item, startNewLogItemFromOld, stopRunningLog
                             )}
                         </Text>
                     </Flex>
-                </VStack>
+                </Box>
 
                 {isRunning && (
                     <IconButton
@@ -68,7 +73,7 @@ export function TrayListItemPlain({ item, startNewLogItemFromOld, stopRunningLog
                         onClick={() => startNewLogItemFromOld(item)}
                     />
                 )}
-            </Flex>
+            </HStack>
         </Box>
     );
 }

@@ -15,17 +15,10 @@ import { calculateTotal, fuzzyTextFilterFn } from './TrackItemTable.utils';
 import { SelectColumnFilter } from './SelectColumnFilter';
 import { DefaultColumnFilter } from './DefaultColumnFilter';
 import { IndeterminateCheckbox } from './IndeterminateCheckbox';
-import { Portal, Tooltip, Text } from '@chakra-ui/react';
+import { Portal } from '@chakra-ui/react';
 import { TrackItemTableButtons } from './TrackItemTableButtons';
 import { TrackItemTablePager } from './TrackItemTablePager';
-
-const OverflowTextCell = ({ value }) => {
-    return (
-        <Tooltip label={value}>
-            <Text isTruncated>{value}</Text>
-        </Tooltip>
-    );
-};
+import { OverflowTextCell } from './OverflowText';
 
 interface ItemsTableProps {
     data: any[];

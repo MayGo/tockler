@@ -1,19 +1,16 @@
 import React, { useState, useEffect, memo } from 'react';
-import tocklerIcon from '../../assets/icons/tockler_icon.png';
 import { EventEmitter } from '../../services/EventEmitter';
 import { getOnlineStartTime } from '../../services/trackItem.api';
 import moment from 'moment';
 import Moment from 'react-moment';
 import { Logger } from '../../logger';
 import { useWindowFocused } from '../../hooks/windowFocusedHook';
-import { Box, Center, Flex, Link } from '@chakra-ui/layout';
-import { Image } from '@chakra-ui/image';
-import { Brand } from '../MainLayout/HeaderMenu.styles';
+import { Box, Center } from '@chakra-ui/layout';
 import { AiOutlineArrowsAlt, AiOutlineClockCircle, AiOutlinePoweroff } from 'react-icons/ai';
 import { Tooltip } from '@chakra-ui/tooltip';
 import { IconButton } from '@chakra-ui/button';
-import { useColorModeValue } from '@chakra-ui/system';
 import { HStack } from '@chakra-ui/react';
+import { Header } from '../Header/Header';
 
 const getNow = () => moment().subtract(1, 'seconds');
 
@@ -60,32 +57,7 @@ export const TrayMenuPlain = () => {
     }, [windowIsActive]);
 
     return (
-        <Flex
-            bg={useColorModeValue('gray.100', 'gray.800')}
-            w="100%"
-            h={50}
-            alignItems="center"
-            position="sticky"
-            top={0}
-            zIndex={100}
-            borderBottomWidth={1}
-            borderBottomColor={useColorModeValue('gray.100', 'gray.700')}
-        >
-            <Box pl={4} pr={3}>
-                <Link onClick={toggleMainWindow}>
-                    <Flex>
-                        <Center pr={3}>
-                            <Image
-                                boxSize="28px"
-                                objectFit="cover"
-                                src={tocklerIcon}
-                                alt="Tockler"
-                            />
-                        </Center>
-                        <Brand>Tockler</Brand>
-                    </Flex>
-                </Link>
-            </Box>
+        <Header brandLinkProps={{ onClick: toggleMainWindow }}>
             <Box p={3}>
                 {onlineSince && (
                     <Tooltip placement="bottom" label="Time without a break">
@@ -123,7 +95,7 @@ export const TrayMenuPlain = () => {
                     />
                 </Tooltip>
             </HStack>
-        </Flex>
+        </Header>
     );
 };
 

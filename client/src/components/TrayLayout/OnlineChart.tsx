@@ -48,23 +48,7 @@ export const OnlineChart = ({ items }) => {
     };
 
     return (
-        <VStack>
-            <Button
-                position="absolute"
-                alignSelf="flex-end"
-                variant="ghost"
-                size="xs"
-                color="gray.400"
-                fontWeight="bold"
-                onClick={() =>
-                    setMode(
-                        mode === CLOCK_MODE.HOURS_24 ? CLOCK_MODE.HOURS_12 : CLOCK_MODE.HOURS_24,
-                    )
-                }
-            >
-                {CLOCK_MODE.HOURS_12 === mode ? '12h' : '24h'}
-            </Button>
-
+        <VStack position="relative">
             <QuarterLabel>{startDate.hour()}</QuarterLabel>
 
             <HStack>
@@ -104,6 +88,21 @@ export const OnlineChart = ({ items }) => {
             </HStack>
 
             <QuarterLabel>{secondQuarter.hour()}</QuarterLabel>
+            <Button
+                position="absolute"
+                alignSelf="flex-end"
+                variant="ghost"
+                size="xs"
+                color="gray.400"
+                fontWeight="bold"
+                onClick={() =>
+                    setMode(
+                        mode === CLOCK_MODE.HOURS_24 ? CLOCK_MODE.HOURS_12 : CLOCK_MODE.HOURS_24,
+                    )
+                }
+            >
+                {CLOCK_MODE.HOURS_12 === mode ? '12h' : '24h'}
+            </Button>
         </VStack>
     );
 };

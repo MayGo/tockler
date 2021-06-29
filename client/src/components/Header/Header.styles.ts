@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Brand = styled.div`
-    font-family: 'Berkshire Swash', cursive;
+    font-family: 'Berkshire Swash';
     text-align: left;
     font-size: 26px;
 `;
