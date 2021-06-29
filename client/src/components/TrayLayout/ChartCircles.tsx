@@ -1,10 +1,11 @@
 import React from 'react';
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Text, useColorModeValue } from '@chakra-ui/react';
 import { shortTime } from '../../time.util';
 
 const NO_VALUE = '-';
 
 export const ChartCircles = ({ width, innerWidth, onlineTimeMs, lastSessionMs }) => {
+    const mainTextColor = useColorModeValue('gray.700', 'gray.300');
     return (
         <Flex
             position="absolute"
@@ -30,7 +31,7 @@ export const ChartCircles = ({ width, innerWidth, onlineTimeMs, lastSessionMs })
                 zIndex={1}
             />
             <Box
-                bg="gray.800"
+                bg={useColorModeValue('gray.100', 'gray.800')}
                 w={width}
                 h={width}
                 borderRadius="full"
@@ -44,7 +45,7 @@ export const ChartCircles = ({ width, innerWidth, onlineTimeMs, lastSessionMs })
             />
 
             <Flex
-                bg="gray.900"
+                bg={useColorModeValue('white', 'gray.900')}
                 w={innerWidth}
                 h={innerWidth}
                 borderRadius="full"
@@ -61,16 +62,16 @@ export const ChartCircles = ({ width, innerWidth, onlineTimeMs, lastSessionMs })
                 justifyContent="center"
                 flexDirection="column"
             >
-                <Text fontSize="md" color="gray.300" mt={5}>
+                <Text fontSize="md" color={mainTextColor} mt={5}>
                     Online Today
                 </Text>
-                <Text fontSize="4xl" color="gray.100">
+                <Text fontSize="4xl" color={useColorModeValue('gray.900', 'gray.100')}>
                     {shortTime(onlineTimeMs, { largest: 2, units: ['d', 'h', 'm'] }) || NO_VALUE}
                 </Text>
-                <Text fontSize="md" color="gray.300" pt={1}>
+                <Text fontSize="md" color={mainTextColor} pt={1}>
                     Last Session
                 </Text>
-                <Text fontSize="2xl" color="gray.300">
+                <Text fontSize="2xl" color={mainTextColor}>
                     {shortTime(lastSessionMs, { largest: 2, units: ['d', 'h', 'm'] }) || NO_VALUE}
                 </Text>
             </Flex>

@@ -10,7 +10,7 @@ import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { Box, Flex, VStack } from '@chakra-ui/layout';
 import { IoMdSunny, IoMdMoon } from 'react-icons/io';
 import { Calendar } from '../Datepicker/Calendar';
-import { Text } from '@chakra-ui/react';
+import { Text, useColorModeValue } from '@chakra-ui/react';
 import { Loader } from '../Timeline/Loader';
 import { ItemIcon } from './ItemIcon';
 
@@ -30,12 +30,13 @@ const icons = {
 };
 
 const DayContent = ({ listData }) => {
+    const color = useColorModeValue('black', 'gray.300');
     return (
         <VStack align="stretch" p={3} pt={1} spacing={'1px'}>
             {listData.map(item => (
                 <Flex key={item.title} alignItems="center">
                     <Box pr={2}>{icons[item.type]}</Box>
-                    <Text fontSize="sm" color="gray.300">
+                    <Text fontSize="sm" color={color}>
                         {item.time}
                     </Text>
                     <Text pl={2} fontSize="sm">

@@ -7,7 +7,7 @@ export const TileBox: React.FC<any> = ({ children, ...rest }) => (
         borderWidth={1}
         borderRadius="lg"
         p={4}
-        borderColor={useColorModeValue('gray.500', 'gray.500')}
+        borderColor={useColorModeValue('gray.300', 'gray.500')}
         {...rest}
     >
         {children}

@@ -1,4 +1,4 @@
-import { Box, Flex, Stack, Text, VStack } from '@chakra-ui/react';
+import { Box, Flex, Stack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { CardBox } from '../components/CardBox';
 import { MainLayout } from '../components/MainLayout/MainLayout';
@@ -14,6 +14,10 @@ import { useInterval } from '../hooks/intervalHook';
 import { useStoreActions } from '../store/easyPeasy';
 
 const BG_SYNC_DELAY_MS = 10000;
+
+const ItemLabel = props => (
+    <Text fontSize="md" color={useColorModeValue('gray.700', 'gray.300')} {...props} />
+);
 
 export function TimelinePage() {
     const fetchTimerange = useStoreActions(actions => actions.fetchTimerange);
@@ -38,15 +42,9 @@ export function TimelinePage() {
                     </Flex>
                     <Flex>
                         <Stack py={4} my={4} pr={4} pl={1}>
-                            <Text fontSize="md" color="gray.300">
-                                Task
-                            </Text>
-                            <Text fontSize="md" color="gray.300">
-                                Status
-                            </Text>
-                            <Text fontSize="md" color="gray.300">
-                                App
-                            </Text>
+                            <ItemLabel>Task</ItemLabel>
+                            <ItemLabel>Status</ItemLabel>
+                            <ItemLabel>App</ItemLabel>
                         </Stack>
                         <Timeline />
                     </Flex>

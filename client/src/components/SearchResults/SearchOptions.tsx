@@ -6,7 +6,7 @@ import { Button } from '@chakra-ui/button';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import { OnDatesChangeProps } from '@datepicker-react/hooks';
 import { DateRangeInput } from '../Datepicker';
-import { HStack, Text } from '@chakra-ui/react';
+import { HStack, Text, useColorModeValue } from '@chakra-ui/react';
 
 const getDayBefore = d => moment(d).subtract(1, 'days');
 const getDayAfter = d => moment(d).add(1, 'days');
@@ -92,7 +92,7 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
 
             <Box flex={1} />
 
-            <Text fontSize="md" color="gray.300" pr={4}>
+            <Text fontSize="md" color={useColorModeValue('gray.700', 'gray.300')} pr={4}>
                 Select range
             </Text>
             <HStack>

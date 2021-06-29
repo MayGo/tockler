@@ -1,4 +1,4 @@
-import { AspectRatio, Box, useMultiStyleConfig } from '@chakra-ui/react';
+import { Box, useMultiStyleConfig } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import { SketchPicker } from 'react-color';
 

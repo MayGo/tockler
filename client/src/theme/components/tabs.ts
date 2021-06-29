@@ -12,7 +12,7 @@ export const TabsStyle = {
     variants: {
         enclosed: props => ({
             tab: {
-                bg: mode('gray.500', 'gray.800')(props),
+                bg: mode('gray.100', 'gray.800')(props),
                 color: mode('black', 'white')(props),
                 _selected: {
                     bg: mode('gray.300', 'gray.500')(props),

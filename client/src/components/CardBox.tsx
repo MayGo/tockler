@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Box, Flex, Text, useColorModeValue } from '@chakra-ui/react';
 
 export const CardBox: React.FC<any> = ({ title, children, extra, p = 4, divider, ...rest }) => {
-    const titleColor = useColorModeValue('black', 'white');
-    const dividerColor = useColorModeValue('black', 'gray.500');
+    const titleColor = useColorModeValue('gray.900', 'white');
+    const dividerColor = useColorModeValue('gray.200', 'gray.500');
 
     return (
         <Box
@@ -11,7 +11,7 @@ export const CardBox: React.FC<any> = ({ title, children, extra, p = 4, divider,
             borderWidth="1px"
             borderRadius="lg"
             borderColor={useColorModeValue('gray.100', 'black')}
-            bgColor={useColorModeValue('gray.100', 'gray.700')}
+            bgColor={useColorModeValue('white', 'gray.700')}
             {...rest}
         >
             {title && (

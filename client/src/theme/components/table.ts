@@ -6,14 +6,14 @@ export const TableStyle = {
             tableLayout: 'fixed',
         },
         thead: {
-            bg: mode(`gray.500`, `gray.500`)(props),
+            bg: mode(`gray.300`, `gray.500`)(props),
         },
         th: {},
     }),
     variants: {
         simple: props => ({
             td: {
-                borderColor: mode(`gray.500`, `gray.500`)(props),
+                borderColor: mode(`gray.300`, `gray.500`)(props),
             },
             th: {
                 _notFirst: {

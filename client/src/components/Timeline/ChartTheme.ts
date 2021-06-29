@@ -10,12 +10,14 @@ const lightGreen500 = '#8BC34A';
 const teal700 = '#00796B';
 const cyan900 = '#006064';
 const colors = [deepOrange600, yellow200, lime300, lightGreen500, teal700, cyan900];
-const bluegray50 = '#ECEFF1';
-const bluegray300 = '#90A4AE';
 
-export const bluegray700 = '#455A64';
+const bluegray300 = 'var(--chakra-colors-gray-300)';
+
+export const bluegray700 = 'var(--chakra-colors-gray-700)';
 export const gray900 = 'var(--chakra-colors-gray-900)';
-export const disabledgray = '#e6e6e6';
+export const disabledgray = 'var(--chakra-colors-gray-300)';
+const almostWhite = 'var(--chakra-colors-gray-100)';
+const gray = 'var(--chakra-colors-gray-500)';
 
 export const getLabelColor = (isDark, isEnabled) => {
     if (isDark) {
@@ -52,9 +54,6 @@ const baseLabelStyles = isDark => ({
     strokeWidth: 0,
 });
 
-const almostWhite = '#c3c3c3';
-const gray = 'var(--chakra-colors-gray-500)';
-
 const centeredLabelStyles = isDark => assign({ textAnchor: 'middle' }, baseLabelStyles(isDark));
 // *
 // * Strokes
@@ -76,7 +75,7 @@ export const getChartTheme = isDark => ({
                     stroke: 'transparent',
                 }),
                 grid: {
-                    stroke: isDark ? gray : bluegray50,
+                    stroke: isDark ? gray : bluegray300,
                     pointerEvents: 'painted',
                 },
                 ticks: {
@@ -123,7 +122,7 @@ export const getChartTheme = isDark => ({
             style: {
                 data: {
                     padding,
-                    stroke: bluegray50,
+                    stroke: bluegray300,
                     strokeWidth: 1,
                 },
                 labels: assign({}, baseLabelStyles(isDark), { padding: 20 }),

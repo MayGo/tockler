@@ -1,9 +1,8 @@
 import React from 'react';
-import tocklerIcon from '../../assets/icons/tockler_icon.png';
-import { Brand } from './Header.styles';
 import { Flex, Box, Center, Link } from '@chakra-ui/layout';
-import { Image } from '@chakra-ui/image';
 import { useColorModeValue } from '@chakra-ui/color-mode';
+import { TocklerLogo } from './TocklerLogo';
+import { TocklerLogoText } from './TocklerLogoText';
 
 export const Header = ({ children, brandLinkProps }) => (
     <Flex
@@ -13,7 +12,7 @@ export const Header = ({ children, brandLinkProps }) => (
         alignItems="center"
         zIndex={100}
         borderBottomWidth={1}
-        borderBottomColor={useColorModeValue('gray.100', 'gray.700')}
+        borderBottomColor={useColorModeValue('gray.300', 'gray.700')}
         position="sticky"
         top={0}
     >
@@ -21,9 +20,11 @@ export const Header = ({ children, brandLinkProps }) => (
             <Link {...brandLinkProps} _hover={{ textDecoration: 'none' }}>
                 <Flex>
                     <Center pr={3}>
-                        <Image boxSize="28px" objectFit="cover" src={tocklerIcon} alt="Tockler" />
+                        <TocklerLogo boxSize="28px" />
                     </Center>
-                    <Brand>Tockler</Brand>
+                    <Box pt="3px">
+                        <TocklerLogoText />
+                    </Box>
                 </Flex>
             </Link>
         </Box>

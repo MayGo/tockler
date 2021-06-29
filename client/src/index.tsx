@@ -1,13 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter as Router } from 'react-router-dom';
-import 'typeface-berkshire-swash';
 import { MainRouter } from './MainRouter';
 import { setupFrontendListener } from 'eiphop';
 import { StoreProvider } from 'easy-peasy';
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import { mainStore } from './store/mainStore';
-
+import '@fontsource/inter';
 import { theme } from './theme/theme';
 
 (window as any).CSPSettings = {

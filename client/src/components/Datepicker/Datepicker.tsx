@@ -115,7 +115,7 @@ export const Datepicker = React.forwardRef(
 
         const styleProps = useStyleProps<DatepickerComponentStyles>({
             datepickerContainer: {
-                background: useColorModeValue('white', 'gray.800'),
+                background: useColorModeValue('gray.100', 'gray.800'),
                 borderRadius: 'md',
                 position: 'relative',
                 width: 'fit-content',

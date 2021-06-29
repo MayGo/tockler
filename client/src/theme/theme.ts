@@ -10,6 +10,7 @@ import { TextareaStyle } from './components/textarea';
 import { getThemeFromStorage } from '../services/settings.api';
 import { THEMES } from '../store/theme.util';
 import { ColorPickerStyle } from './components/colorPicker';
+import { mode } from '@chakra-ui/theme-tools';
 
 const savedTheme = getThemeFromStorage();
 const initialColorMode = savedTheme?.name || THEMES.LIGHT;
@@ -22,6 +23,16 @@ const config = {
 };
 export const theme = extendTheme({
     config,
+    styles: {
+        global: props => ({
+            'html, body': {
+                // color: mode('gray.600', 'white')(props),
+                bg: mode('gray.100', 'gray.800')(props),
+                fontFamily:
+                    'Inter, -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";',
+            },
+        }),
+    },
     colors: {
         brand: {
             mainColor: '#7C3AED',

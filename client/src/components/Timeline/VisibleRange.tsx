@@ -2,7 +2,7 @@ import moment from 'moment';
 import React, { memo } from 'react';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { Flex } from '@chakra-ui/layout';
-import { Text, HStack } from '@chakra-ui/react';
+import { Text, HStack, useColorModeValue } from '@chakra-ui/react';
 import { Button } from '@chakra-ui/button';
 
 export const VisibleRange = memo(() => {
@@ -49,7 +49,7 @@ export const VisibleRange = memo(() => {
 
     return (
         <Flex alignItems="center">
-            <Text fontSize="md" color="gray.300" pr={4}>
+            <Text fontSize="md" color={useColorModeValue('gray.700', 'gray.300')} pr={4}>
                 Visible range
             </Text>
             <HStack>

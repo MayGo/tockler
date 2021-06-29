@@ -21,6 +21,7 @@ export const CalendarStyle = {
         },
         weekdayLabel: {
             bg: 'gray.500',
+            color: 'white',
             p: 3,
             pl: 4,
             fontWeight: 'bold',
@@ -35,7 +36,7 @@ export const CalendarStyle = {
             ...dayStyle,
         },
         emptyDay: {
-            bg: mode('white', 'gray.800')(props),
+            bg: mode('gray.100', 'gray.800')(props),
             ...dayStyle,
         },
     }),
@@ -53,7 +54,7 @@ export const CalendarDayStyle: ComponentStyleConfig = {
         fontWeight: 'medium',
         fontSize: 'md',
         border: '2px solid',
-        textColor: mode('gray.900', 'white')(props),
+
         borderColor: 'transparent',
         background: mode('white', 'gray.700')(props),
         overflow: 'hidden',
@@ -67,19 +68,19 @@ export const CalendarDayStyle: ComponentStyleConfig = {
     variants: {
         normal: props => ({
             _hover: {
-                borderColor: mode('black', 'white')(props),
+                borderColor: mode('gray.700', 'white')(props),
             },
         }),
         rangeHover: props => ({
             _hover: {
-                borderColor: mode('black', 'white')(props),
+                borderColor: mode('gray.700', 'white')(props),
             },
         }),
         selected: props => ({
-            borderColor: mode('black', 'brand.mainColor')(props),
+            borderColor: mode('brand.mainColor', 'brand.mainColor')(props),
 
             _hover: {
-                borderColor: mode('black', 'white')(props),
+                borderColor: mode('gray.700', 'white')(props),
             },
         }),
         firstOrLast: props => ({

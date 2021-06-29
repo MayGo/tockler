@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { Text } from '@chakra-ui/react';
+import { Text, useColorModeValue } from '@chakra-ui/react';
 
 export const MakeUnitSmaller: React.FC<any> = ({ children }) => {
     const values = children.split(/(\d+)/);
+    const color = useColorModeValue('gray.700', 'gray.300');
 
     return values.map(value => {
         if (isNaN(value)) {
             return (
-                <Text key={value} fontSize="sm" color="gray.300" as="span">
+                <Text key={value} fontSize="sm" as="span" color={color}>
                     {value}
                 </Text>
             );

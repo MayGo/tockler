@@ -4,7 +4,7 @@ export const InputStyle = {
     baseStyle: props => ({
         field: {
             _placeholder: {
-                color: mode('gray.300', 'gray.400')(props),
+                color: mode('gray.500', 'gray.400')(props),
             },
         },
     }),

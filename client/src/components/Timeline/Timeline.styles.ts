@@ -1,11 +1,11 @@
 import { chakra } from '@chakra-ui/system';
-import { transparentize } from '@chakra-ui/theme-tools';
 
 export const SpinnerContainer = chakra('div', {
     baseStyle: {
         position: 'absolute',
         textAlign: 'center',
-        bg: transparentize('black', 0.75),
+
+        opacity: '75%',
         borderRadius: 'md',
         padding: 6,
         width: '100%',
