@@ -105,7 +105,10 @@ export const getChartTheme = isDark => ({
     ),
 
     tooltip: {
-        style: assign({}, centeredLabelStyles(isDark), { padding: 5, pointerEvents: 'none' }),
+        style: assign({}, centeredLabelStyles(isDark), {
+            padding: 5,
+            pointerEvents: 'none',
+        }),
         flyoutStyle: {
             stroke: isDark ? almostWhite : bluegray300,
             strokeWidth: 0.5,

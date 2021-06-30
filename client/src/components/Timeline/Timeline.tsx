@@ -23,7 +23,7 @@ export const Timeline = memo(() => {
     const selectedTimelineItem = useStoreState(state => state.selectedTimelineItem);
 
     return (
-        <Box flex="1" overflow="hidden">
+        <Box flex="1">
             <Box pt={4} pb={4}>
                 <Popover isOpen={!!selectedTimelineItem}>
                     <PopoverTrigger>{popoverTriggerRef.current || <div />}</PopoverTrigger>

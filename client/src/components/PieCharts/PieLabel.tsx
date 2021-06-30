@@ -29,6 +29,7 @@ export class PieLabel extends React.PureComponent<IProps> {
                     cornerRadius={innerWidth / 2}
                     flyoutWidth={innerWidth}
                     flyoutHeight={innerWidth}
+                    style={{ ...theme.tooltip.style, fontSize: 26 }}
                     flyoutStyle={{
                         fill: theme.isDark ? gray900 : 'white',
                         strokeWidth: 0,

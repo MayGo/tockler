@@ -74,10 +74,14 @@ export const OnlineChart = ({ items }) => {
 
                             return `${shortTime(diff * 1000 * 60)}\r\n${formatToTime(
                                 beginDate,
-                            )}-${formatToTime(endDate)}`;
+                            )} - ${formatToTime(endDate)}`;
                         }}
                         labelComponent={
-                            <PieLabel width={width} innerWidth={innerWidth} theme={chartTheme} />
+                            <PieLabel
+                                width={width}
+                                innerWidth={innerWidth - 10}
+                                theme={chartTheme}
+                            />
                         }
                         y={datum => datum.diff}
                         data={pieData}
