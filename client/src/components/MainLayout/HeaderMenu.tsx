@@ -4,7 +4,6 @@ import {
     AiOutlineSearch,
     AiOutlineSetting,
     AiOutlineQuestionCircle,
-    AiFillTrademarkCircle,
 } from 'react-icons/ai';
 import React from 'react';
 import { Box } from '@chakra-ui/layout';
@@ -20,7 +19,7 @@ export const HeaderMenu = () => (
         <MenuItem to="/app/search" icon={<AiOutlineSearch />} title="Search" />
         <MenuItem to="/app/settings" icon={<AiOutlineSetting />} title="Settings" />
         <MenuItem to="/app/support" icon={<AiOutlineQuestionCircle />} title="Support" />
-        <MenuItem to="/trayPage" icon={<AiFillTrademarkCircle />} title="Tray" />
+        {/*<MenuItem to="/trayPage" icon={<AiFillTrademarkCircle />} title="Tray" />*/}
         <Box flex="1" />
         <Box>
             <ColorModeSwitcher />

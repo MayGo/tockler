@@ -27,7 +27,7 @@ export const theme = extendTheme({
         global: props => ({
             'html, body': {
                 // color: mode('gray.600', 'white')(props),
-                bg: mode('gray.100', 'gray.800')(props),
+                bg: mode('gray.50', 'gray.800')(props),
                 fontFamily:
                     'Inter, -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";',
             },

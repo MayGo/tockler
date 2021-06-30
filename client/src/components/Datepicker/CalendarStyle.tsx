@@ -16,11 +16,11 @@ export const CalendarStyle = {
             w: '100%',
         },
         separator: {
-            bg: 'gray.500',
+            bg: mode('gray.200', 'gray.500')(props),
             h: '1px',
         },
         weekdayLabel: {
-            bg: 'gray.500',
+            bg: mode('gray.500', 'gray.500')(props),
             color: 'white',
             p: 3,
             pl: 4,
@@ -29,7 +29,7 @@ export const CalendarStyle = {
         },
 
         grid: {
-            bg: 'gray.500',
+            bg: mode('gray.200', 'gray.500')(props),
         },
         day: {
             bg: mode('white', 'gray.700')(props),
