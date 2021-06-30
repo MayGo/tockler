@@ -16,7 +16,6 @@ export const ColorPickerStyle = {
             borderColor: mode('gray.400', 'gray.400')(props),
             borderRadius: 'md',
             boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
-            display: 'inline-block',
             cursor: 'pointer',
             position: 'relative',
         },

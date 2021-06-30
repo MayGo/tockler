@@ -22,7 +22,7 @@ export const NewLogButton = memo(() => {
             placement="bottom"
             label="Start creating log with visible timerange as begin and end times."
         >
-            <Button onClick={createNewItem}>New Log</Button>
+            <Button onClick={createNewItem}>New Task</Button>
         </Tooltip>
     );
 });

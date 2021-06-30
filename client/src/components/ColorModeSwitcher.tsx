@@ -9,6 +9,8 @@ export const ColorModeSwitcher: React.FC<ColorModeSwitcherProps> = props => {
     const text = useColorModeValue('dark', 'light');
     const SwitchIcon = useColorModeValue(FaMoon, FaSun);
 
+    // TODO: Add Auto mode to toggle also
+
     return (
         <IconButton
             size="md"

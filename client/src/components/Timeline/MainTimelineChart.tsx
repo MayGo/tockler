@@ -41,15 +41,16 @@ const convertDateForY = d => convertDate(d.beginDate);
 const convertDateForY0 = d => convertDate(d.endDate);
 
 const domainPadding: any = { y: 35, x: 10 };
-export const barStyle: any = {
+
+export const barStyle: any = isDark => ({
     data: {
         width: BAR_WIDTH,
         fill: colorProp,
-        stroke: 'black',
+        stroke: isDark ? 'black' : 'white',
         strokeWidth: 0.5,
         fillOpacity: 1,
     },
-};
+});
 
 export const MainTimelineChart = memo(() => {
     const { observe, width } = useDimensions();
@@ -156,7 +157,7 @@ export const MainTimelineChart = memo(() => {
                 <VictoryAxis dependentAxis tickCount={20} />
 
                 <VictoryBar
-                    style={barStyle}
+                    style={barStyle(chartTheme.isDark)}
                     x={getTrackItemOrderFn}
                     y={convertDateForY}
                     y0={convertDateForY0}

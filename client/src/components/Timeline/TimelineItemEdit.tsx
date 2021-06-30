@@ -5,7 +5,7 @@ import { ColorPicker } from './ColorPicker';
 import { Logger } from '../../logger';
 import moment from 'moment';
 import { TrackItemType } from '../../enum/TrackItemType';
-import { Box, Divider, Flex, Heading } from '@chakra-ui/layout';
+import { Box, Divider, Heading } from '@chakra-ui/layout';
 import { Input } from '@chakra-ui/input';
 import { Button, IconButton } from '@chakra-ui/button';
 import { Tooltip } from '@chakra-ui/tooltip';
@@ -14,7 +14,7 @@ import { AiOutlineClose, AiOutlineSave } from 'react-icons/ai';
 import { TimelineItemEditDeleteButton } from './TimelineItemEditDeleteButton';
 import { TIME_FORMAT_SHORT } from '../../constants';
 import { TimePicker } from './TimePicker';
-import { HStack } from '@chakra-ui/react';
+import { HStack, VStack } from '@chakra-ui/react';
 import { FaPlay } from 'react-icons/fa';
 
 interface IProps {
@@ -31,7 +31,7 @@ const COLOR_SCOPE_ONLY_THIS = 'ONLY_THIS';
 const statusName = {
     [TrackItemType.AppTrackItem]: 'App',
     [TrackItemType.StatusTrackItem]: 'Status',
-    [TrackItemType.LogTrackItem]: 'Log',
+    [TrackItemType.LogTrackItem]: 'Task',
 };
 
 export const TimelineItemEdit = memo<IProps>(
@@ -189,26 +189,40 @@ export const TimelineItemEdit = memo<IProps>(
 
         return (
             <Box width={600}>
-                <Flex px={2} py={1} pt={3}>
-                    <Heading as="h5" size="sm">
-                        {statusName[trackItem.taskName] || 'New Log item'}
+                <VStack alignItems="flex-start" spacing={4}>
+                    <Heading fontSize="xl" pb={2}>
+                        {statusName[trackItem.taskName] || 'New Task'}
                     </Heading>
-                </Flex>
-                <Flex p={1}>
-                    <Box px={1} width="33%">
-                        <Input value={trackItem.app} placeholder="App" onChange={changeAppName} />
-                    </Box>
-                    <Box px={1} flex="1">
+                    <HStack width="100%" spacing={4}>
+                        <Box flex="2">
+                            <Input
+                                value={trackItem.app}
+                                placeholder="App"
+                                onChange={changeAppName}
+                            />
+                        </Box>
+                        <Box flex="1" maxWidth="100px">
+                            <TimePicker
+                                time={moment(trackItem.beginDate).format(TIME_FORMAT_SHORT)}
+                                onChange={changeTime('beginDate')}
+                            />
+                        </Box>
+                        <Box flex="1" maxWidth="100px">
+                            <TimePicker
+                                time={moment(trackItem.endDate).format(TIME_FORMAT_SHORT)}
+                                onChange={changeTime('endDate')}
+                            />
+                        </Box>
+                    </HStack>
+                    <Box w="100%">
                         <Input
                             value={trackItem.title}
                             placeholder="Title"
                             onChange={changeAppTitle}
                         />
                     </Box>
-                </Flex>
-                <Flex p={1}>
-                    <Flex px={1} width="33%">
-                        <Box pr={2}>
+                    <HStack>
+                        <Box>
                             <ColorPicker color={trackItem.color} onChange={changeColorHandler} />
                         </Box>
                         {colorChanged && (
@@ -223,47 +237,28 @@ export const TimelineItemEdit = memo<IProps>(
                                 </Select>
                             </Tooltip>
                         )}
-                    </Flex>
+                    </HStack>
+                </VStack>
 
-                    <Flex px={1} width="67%">
-                        <Box pr={1}>
-                            <TimePicker
-                                time={moment(trackItem.beginDate).format(TIME_FORMAT_SHORT)}
-                                onChange={changeTime('beginDate')}
-                            />
-                        </Box>
-                        <Box>
-                            <TimePicker
-                                time={moment(trackItem.endDate).format(TIME_FORMAT_SHORT)}
-                                onChange={changeTime('endDate')}
-                            />
-                        </Box>
-                    </Flex>
-                </Flex>
-                <Box py={5}>
+                <Box py={4}>
                     <Divider />
                 </Box>
-                <Flex>
-                    <Box px={1}>
-                        <Button leftIcon={<AiOutlineClose />} onClick={closeEdit}>
-                            Close
-                        </Button>
-                    </Box>
-                    <Box flex={1}></Box>
+                <HStack spacing={4}>
                     {!isCreating && (
-                        <Box px={1}>
+                        <Box>
                             <TimelineItemEditDeleteButton deleteItem={deleteItem} />
                         </Box>
                     )}
-                    <Box px={1}>
-                        <Button
-                            leftIcon={<AiOutlineSave />}
-                            onClick={saveBasedOnColorOptionHandler}
-                        >
-                            {isCreating ? 'Create' : 'Update'}
-                        </Button>
-                    </Box>
-                </Flex>
+                    <Box flex={1}></Box>
+
+                    <Button variant="outline" leftIcon={<AiOutlineClose />} onClick={closeEdit}>
+                        Cancel
+                    </Button>
+
+                    <Button leftIcon={<AiOutlineSave />} onClick={saveBasedOnColorOptionHandler}>
+                        {isCreating ? 'Create' : 'Update'}
+                    </Button>
+                </HStack>
             </Box>
         );
     },

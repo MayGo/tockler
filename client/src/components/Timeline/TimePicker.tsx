@@ -15,7 +15,7 @@ export function TimePicker({ time, onChange }) {
                 readOnly
             />
             {isOpen && (
-                <Box position="absolute">
+                <Box position="absolute" zIndex={1000}>
                     <TimeKeeper
                         time={time}
                         onChange={onChange}

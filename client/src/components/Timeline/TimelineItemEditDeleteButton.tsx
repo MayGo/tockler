@@ -21,7 +21,11 @@ export function TimelineItemEditDeleteButton({ deleteItem }) {
 
     return (
         <>
-            <Button leftIcon={<AiOutlineDelete />} onClick={() => setIsOpen(true)}>
+            <Button
+                colorScheme="red"
+                leftIcon={<AiOutlineDelete />}
+                onClick={() => setIsOpen(true)}
+            >
                 Delete
             </Button>
 
@@ -37,7 +41,7 @@ export function TimelineItemEditDeleteButton({ deleteItem }) {
                         </AlertDialogBody>
 
                         <AlertDialogFooter>
-                            <Button ref={cancelRef} onClick={onClose}>
+                            <Button variant="outline" ref={cancelRef} onClick={onClose}>
                                 Cancel
                             </Button>
                             <Button colorScheme="red" ml={3} onClick={onDelete}>

@@ -18,15 +18,15 @@ import useDimensions from 'react-cool-dimensions';
 
 const domainPaddingBrush: any = { y: 35, x: 5 };
 
-const brushChartBarStyle: any = {
+const brushChartBarStyle: any = isDark => ({
     data: {
         width: 7,
         fill: colorProp,
-        stroke: 'black',
+        stroke: isDark ? 'black' : 'white',
         strokeWidth: 0.5,
         fillOpacity: 1,
     },
-};
+});
 
 export const SmallTimelineChart = memo(() => {
     const { chartTheme } = useChartThemeState();
@@ -93,7 +93,7 @@ export const SmallTimelineChart = memo(() => {
 
                 <VictoryBar
                     animate={false}
-                    style={brushChartBarStyle}
+                    style={brushChartBarStyle(chartTheme.isDark)}
                     x={getTrackItemOrderFn}
                     y={convertDateForY}
                     y0={convertDateForY0}
