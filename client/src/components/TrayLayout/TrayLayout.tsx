@@ -1,16 +1,14 @@
-import { Layout } from 'antd';
+import { Box } from '@chakra-ui/layout';
+import { useColorModeValue } from '@chakra-ui/react';
 import React from 'react';
 import { TrayMenu } from './TrayMenu';
 
-const { Content } = Layout;
-
 export function TrayLayout({ children }: any) {
     return (
-        <div>
-            <Layout>
-                <TrayMenu />
-                <Content style={{ marginTop: 47 }}>{children}</Content>
-            </Layout>
-        </div>
+        <Box w="100%" minH="100vh" bg={useColorModeValue('gray.50', 'gray.700')}>
+            <TrayMenu />
+
+            <Box>{children}</Box>
+        </Box>
     );
 }

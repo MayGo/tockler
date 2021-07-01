@@ -1,19 +1,21 @@
-import { Box, Flex } from 'reflexbox';
-import { Typography, Button, Divider, Input, Modal, Select, TimePicker, Tooltip } from 'antd';
-import {
-    PlayCircleOutlined,
-    SaveOutlined,
-    DeleteOutlined,
-    CloseOutlined,
-    ExclamationCircleOutlined,
-} from '@ant-design/icons';
 import React, { useState, useEffect, memo } from 'react';
+import { TimeOutput } from 'react-timekeeper';
+import randomcolor from 'randomcolor';
 import { ColorPicker } from './ColorPicker';
 import { Logger } from '../../logger';
 import moment from 'moment';
 import { TrackItemType } from '../../enum/TrackItemType';
-
-const { Title } = Typography;
+import { Box, Divider, Heading } from '@chakra-ui/layout';
+import { Input } from '@chakra-ui/input';
+import { Button, IconButton } from '@chakra-ui/button';
+import { Tooltip } from '@chakra-ui/tooltip';
+import { Select } from '@chakra-ui/select';
+import { AiOutlineClose, AiOutlineSave } from 'react-icons/ai';
+import { TimelineItemEditDeleteButton } from './TimelineItemEditDeleteButton';
+import { TIME_FORMAT_SHORT } from '../../constants';
+import { TimePicker } from './TimePicker';
+import { HStack, VStack } from '@chakra-ui/react';
+import { FaPlay } from 'react-icons/fa';
 
 interface IProps {
     selectedTimelineItem: any;
@@ -25,24 +27,11 @@ interface IProps {
 }
 
 const COLOR_SCOPE_ONLY_THIS = 'ONLY_THIS';
-/*
-function propsAreEqual(prev, next) {
-    if (prev.selectedTimelineItem && next.selectedTimelineItem) {
-        const equalById = prev.selectedTimelineItem.id === next.selectedTimelineItem.id;
-        if (!next.selectedTimelineItem.id) {
-            return prev.selectedTimelineItem === next.selectedTimelineItem;
-        }
-
-        return equalById;
-    }
-
-    return false;
-}*/
 
 const statusName = {
     [TrackItemType.AppTrackItem]: 'App',
     [TrackItemType.StatusTrackItem]: 'Status',
-    [TrackItemType.LogTrackItem]: 'Log',
+    [TrackItemType.LogTrackItem]: 'Task',
 };
 
 export const TimelineItemEdit = memo<IProps>(
@@ -94,15 +83,14 @@ export const TimelineItemEdit = memo<IProps>(
                 },
             });
         };
-        const changeTime = attr => value => {
+        const changeTime = attr => (value: TimeOutput) => {
             Logger.debug('Changed app time:', value);
             const oldDate = moment(state.trackItem[attr]);
-            const newDate = moment(
-                value
-                    .toArray()
-                    .slice(0, 4)
-                    .concat(oldDate.toArray().slice(4)),
-            );
+            const newDate = oldDate
+                .startOf('day')
+                .set('hours', value.hour)
+                .set('minutes', value.minute);
+
             setState({
                 ...state,
                 trackItem: {
@@ -143,23 +131,20 @@ export const TimelineItemEdit = memo<IProps>(
             const { trackItem, colorScope } = state;
 
             saveTimelineItem(trackItem, colorScope);
+            setState({
+                ...state,
+                trackItem: {
+                    ...state.trackItem,
+                    app: '',
+                    title: '',
+                    color: randomcolor(),
+                },
+            });
         };
         const deleteItem = () => {
             const { trackItem } = state;
 
             deleteTimelineItem(trackItem);
-        };
-
-        const showDeleteConfirm = () => {
-            Modal.confirm({
-                title: 'Delete',
-                icon: <ExclamationCircleOutlined />,
-                content: 'Sure you want to delete?',
-                okText: 'Delete',
-                cancelText: 'Cancel',
-                onOk: deleteItem,
-                zIndex: 10000,
-            });
         };
 
         if (!selectedTimelineItem) {
@@ -169,123 +154,111 @@ export const TimelineItemEdit = memo<IProps>(
 
         const colorChanged = selectedTimelineItem.color !== trackItem.color;
 
+        const onSubmit = event => {
+            event.preventDefault();
+            saveBasedOnColorOptionHandler();
+        };
         if (trayEdit) {
             return (
-                <Flex p={1} width={1}>
-                    <Box px={1} width={1 / 3}>
-                        <Input value={trackItem.app} placeholder="App" onChange={changeAppName} />
-                    </Box>
-                    <Box px={1} flex="1">
-                        <Input
-                            value={trackItem.title}
-                            placeholder="Title"
-                            onChange={changeAppTitle}
-                        />
-                    </Box>
+                <form onSubmit={onSubmit}>
+                    <HStack spacing={4}>
+                        <Box width="33%">
+                            <Input
+                                value={trackItem.app}
+                                placeholder="App"
+                                onChange={changeAppName}
+                            />
+                        </Box>
+                        <Box flex="1">
+                            <Input
+                                value={trackItem.title}
+                                placeholder="Title"
+                                onChange={changeAppTitle}
+                            />
+                        </Box>
 
-                    <Box px={1}>
                         <ColorPicker color={trackItem.color} onChange={changeColorHandler} />
-                    </Box>
 
-                    <Box px={1}>
-                        <Button
-                            type="primary"
-                            shape="circle"
-                            icon={<PlayCircleOutlined />}
-                            onClick={saveBasedOnColorOptionHandler}
-                        />
-                    </Box>
-
-                    <Box px={1}>
-                        <Button
-                            type="primary"
-                            shape="circle"
-                            icon={<CloseOutlined />}
-                            onClick={closeEdit}
-                        />
-                    </Box>
-                </Flex>
+                        <IconButton type="submit" aria-label="start" icon={<FaPlay />} />
+                    </HStack>
+                </form>
             );
         }
 
+        const isCreating = !selectedTimelineItem.id;
+
         return (
             <Box width={600}>
-                <Flex px={2} width={1} py={1} pt={3}>
-                    <Title level={5}>{statusName[trackItem.taskName] || 'New Log item'}</Title>
-                </Flex>
-                <Flex p={1} width={1}>
-                    <Box px={1} width={1 / 3}>
-                        <Input value={trackItem.app} placeholder="App" onChange={changeAppName} />
-                    </Box>
-                    <Box px={1} flex="1">
+                <VStack alignItems="flex-start" spacing={4}>
+                    <Heading fontSize="xl" pb={2}>
+                        {statusName[trackItem.taskName] || 'New Task'}
+                    </Heading>
+                    <HStack width="100%" spacing={4}>
+                        <Box flex="2">
+                            <Input
+                                value={trackItem.app}
+                                placeholder="App"
+                                onChange={changeAppName}
+                            />
+                        </Box>
+                        <Box flex="1" maxWidth="100px">
+                            <TimePicker
+                                time={moment(trackItem.beginDate).format(TIME_FORMAT_SHORT)}
+                                onChange={changeTime('beginDate')}
+                            />
+                        </Box>
+                        <Box flex="1" maxWidth="100px">
+                            <TimePicker
+                                time={moment(trackItem.endDate).format(TIME_FORMAT_SHORT)}
+                                onChange={changeTime('endDate')}
+                            />
+                        </Box>
+                    </HStack>
+                    <Box w="100%">
                         <Input
                             value={trackItem.title}
                             placeholder="Title"
                             onChange={changeAppTitle}
                         />
                     </Box>
-                </Flex>
-                <Flex p={1} width={1}>
-                    <Flex px={1} width={1 / 3}>
-                        <Box pr={2}>
+                    <HStack>
+                        <Box>
                             <ColorPicker color={trackItem.color} onChange={changeColorHandler} />
                         </Box>
                         {colorChanged && (
                             <Tooltip
                                 placement="left"
-                                title="Can also change color for all items or all future items"
+                                label="Can also change color for all items or all future items"
                             >
-                                <Select
-                                    value={colorScope}
-                                    style={{ width: '100%' }}
-                                    onChange={changeColorScopeHandler}
-                                >
-                                    <Select.Option value="ONLY_THIS">This trackItem</Select.Option>
-                                    <Select.Option value="NEW_ITEMS">Future items</Select.Option>
-                                    <Select.Option value="ALL_ITEMS">All items</Select.Option>
+                                <Select value={colorScope} onChange={changeColorScopeHandler}>
+                                    <option value="ONLY_THIS">This trackItem</option>
+                                    <option value="NEW_ITEMS">Future items</option>
+                                    <option value="ALL_ITEMS">All items</option>
                                 </Select>
                             </Tooltip>
                         )}
-                    </Flex>
+                    </HStack>
+                </VStack>
 
-                    <Flex px={1} width={2 / 3}>
-                        <Box pr={1}>
-                            <TimePicker
-                                value={moment(trackItem.beginDate)}
-                                onChange={changeTime('beginDate')}
-                            />
-                        </Box>
+                <Box py={4}>
+                    <Divider />
+                </Box>
+                <HStack spacing={4}>
+                    {!isCreating && (
                         <Box>
-                            <TimePicker
-                                value={moment(trackItem.endDate)}
-                                onChange={changeTime('endDate')}
-                            />
+                            <TimelineItemEditDeleteButton deleteItem={deleteItem} />
                         </Box>
-                    </Flex>
-                </Flex>
-                <Divider />
-                <Flex width={1}>
-                    <Box px={1}>
-                        <Button icon={<CloseOutlined />} onClick={closeEdit}>
-                            Close
-                        </Button>
-                    </Box>
-                    <Box sx={{ flex: 1 }}></Box>
-                    <Box px={1}>
-                        <Button type="link" icon={<DeleteOutlined />} onClick={showDeleteConfirm}>
-                            Delete
-                        </Button>
-                    </Box>
-                    <Box px={1}>
-                        <Button
-                            type="primary"
-                            icon={<SaveOutlined />}
-                            onClick={saveBasedOnColorOptionHandler}
-                        >
-                            Save
-                        </Button>
-                    </Box>
-                </Flex>
+                    )}
+                    <Box flex={1}></Box>
+
+                    <Button variant="outline" leftIcon={<AiOutlineClose />} onClick={closeEdit}>
+                        Cancel
+                    </Button>
+
+                    <Button leftIcon={<AiOutlineSave />} onClick={saveBasedOnColorOptionHandler}>
+                        {isCreating ? 'Create' : 'Update'}
+                    </Button>
+                </HStack>
             </Box>
         );
     },

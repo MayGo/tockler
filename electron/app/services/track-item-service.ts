@@ -102,13 +102,13 @@ export class TrackItemService {
 
         let pageSize = paging.pageSize || 10;
         // Objections.js uses 0 based paging
-        let page = paging.page ? paging.page - 1 : 0;
+        let pageIndex = paging.pageIndex ? paging.pageIndex : 0;
 
         const query = TrackItem.query()
             .where('taskName', taskName)
             .where('endDate', '>=', from)
             .where('endDate', '<', to)
-            .page(page, pageSize)
+            .page(pageIndex, pageSize)
             .orderBy(order, orderSort);
 
         if (searchStr) {

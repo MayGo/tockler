@@ -6,6 +6,7 @@ import { appSettingService } from './services/app-setting-service';
 import { trackItemService } from './services/track-item-service';
 import { stateManager } from './state-manager';
 import { State } from './enums/state';
+import AppManager from './app-manager';
 
 const settingsActions = {
     fetchAnalyserSettingsJsonString: async (req, res) => {
@@ -23,6 +24,9 @@ const settingsActions = {
     fetchWorkSettings: async (req, res) => {
         const data = await settingsService.fetchWorkSettings();
         res.send(data);
+    },
+    saveThemeAndNotify: async ({ payload }, res) => {
+        AppManager.saveThemeAndNotify(payload);
     },
 };
 

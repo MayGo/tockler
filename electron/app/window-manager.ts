@@ -13,6 +13,7 @@ const preloadScript = join(__dirname, 'preloadStuff.js');
 
 export const sendToTrayWindow = (key, message = '') => {
     if (WindowManager.menubar.window) {
+        logger.debug('Send to tray window:', key, message);
         WindowManager.menubar.window.webContents.send(key, message);
     } else {
         logger.debug(`Menubar not defined yet, not sending ${key}`);

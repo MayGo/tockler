@@ -1,20 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { MainLayout } from '../components/MainLayout/MainLayout';
-import { Flex, Box } from 'reflexbox';
-import { Input, Spin, Button } from 'antd';
-import { useFormState } from 'react-use-form-state';
 import { searchFromItems, exportFromItems } from '../services/trackItem.api';
 import moment from 'moment';
 import { TrackItemType } from '../enum/TrackItemType';
 import { SearchResults } from '../components/SearchResults/SearchResults';
 import { SearchOptions } from '../components/SearchResults/SearchOptions';
-import { Spinner } from '../components/Timeline/Timeline.styles';
 
-export function SearchPage({ location }: any) {
-    const [formState, { text }] = useFormState({ search: '' });
+import { Box, Flex } from '@chakra-ui/layout';
+import { Input } from '@chakra-ui/input';
+import { Button } from '@chakra-ui/button';
+import { Loader } from '../components/Timeline/Loader';
+import { CardBox } from '../components/CardBox';
 
-    const [isLoading, setIsLoading] = useState<any>(false);
-    const [searchPaging, setSearchPaging] = useState<any>({ pageSize: 20, page: 1 });
+export function SearchPage() {
+    const fetchIdRef = useRef(0);
+    const [searchText, setSearchText] = useState('');
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [searchPaging, setSearchPaging] = useState({ pageSize: 20, pageIndex: 1 });
 
     const [searchResult, setSearchResult] = useState([]);
     const [timerange, setTimerange] = useState([
@@ -27,6 +30,7 @@ export function SearchPage({ location }: any) {
     const taskName = TrackItemType.AppTrackItem;
 
     const loadItems = async (searchStr, firstPage = false) => {
+        const fetchId = ++fetchIdRef.current;
         setIsLoading(true);
         const [from, to] = timerange;
         const items = await searchFromItems({
@@ -36,13 +40,20 @@ export function SearchPage({ location }: any) {
             searchStr,
             paging: searchPaging,
         });
-
-        setSearchResult(items);
-        console.info('searching with pa', searchPaging, items);
+        // Only update the data if this is the latest fetch
+        if (fetchId === fetchIdRef.current) {
+            setSearchResult(items);
+            console.info('searching with paging', searchPaging, timerange, items);
+        }
         setIsLoading(false);
 
         return;
     };
+
+    const changePaging = useCallback(({ pageSize, pageIndex }) => {
+        setSearchPaging({ ...searchPaging, pageSize, pageIndex });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const exportItems = async searchStr => {
         setIsLoading(true);
@@ -59,59 +70,54 @@ export function SearchPage({ location }: any) {
     };
 
     useEffect(() => {
-        loadItems(formState.values.search);
+        console.info('searchPaging in page changed');
+        loadItems(searchText);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchPaging]);
 
     const onSubmit = event => {
-        setSearchPaging({ ...searchPaging, page: 1 });
-
         event.preventDefault();
+        setSearchPaging({ ...searchPaging, pageIndex: 1 });
     };
 
     return (
-        <MainLayout location={location}>
+        <MainLayout>
             <form onSubmit={onSubmit}>
-                <Flex p={1} width={1} flexDirection="column">
-                    <Flex p={1}>
-                        <Input
-                            placeholder="Search from all items"
-                            {...text({
-                                name: 'search',
-                            })}
-                        />
-                        <Box px={2}>
-                            <Button type="primary" htmlType="submit">
-                                Search
-                            </Button>
+                <Flex p={3} flexDirection="column">
+                    <CardBox position="relative" p={0}>
+                        {isLoading && <Loader />}
+                        <Box p={4} pb={0}>
+                            <SearchOptions setTimerange={setTimerange} timerange={timerange} />
                         </Box>
+                        <Flex p={4}>
+                            <Input
+                                placeholder="Search from all items"
+                                value={searchText}
+                                onChange={event => setSearchText(event.target.value)}
+                            />
+                            <Box px={2}>
+                                <Button type="submit" bg="brand.mainColor" w="100px">
+                                    Search
+                                </Button>
+                            </Box>
 
-                        <Box px={2}>
-                            <Button
-                                onClick={() => {
-                                    exportItems(formState.values.search);
-                                }}
-                                type="default"
-                            >
-                                Export to CSV
-                            </Button>
-                        </Box>
-                    </Flex>
-                    <Box p={1}>
-                        <SearchOptions setTimerange={setTimerange} timerange={timerange} />
-                    </Box>
-                    <Box p={1}>
-                        {isLoading && (
-                            <Spinner>
-                                <Spin />
-                            </Spinner>
-                        )}
+                            <Box px={2}>
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => {
+                                        exportItems(searchText);
+                                    }}
+                                >
+                                    Export to CSV
+                                </Button>
+                            </Box>
+                        </Flex>
                         <SearchResults
                             searchResult={searchResult}
-                            searchPaging={searchPaging}
-                            setSearchPaging={setSearchPaging}
+                            changePaging={changePaging}
+                            pageIndex={searchPaging.pageIndex}
                         />
-                    </Box>
+                    </CardBox>
                 </Flex>
             </form>
         </MainLayout>

@@ -1,4 +1,3 @@
-import { Box } from 'reflexbox';
 import React, { useEffect, useState, useCallback, memo } from 'react';
 import randomcolor from 'randomcolor';
 import { TimelineItemEdit } from '../components/Timeline/TimelineItemEdit';
@@ -12,17 +11,35 @@ import { useWindowFocused } from '../hooks/windowFocusedHook';
 import { throttle } from 'lodash';
 import deepEqual from 'fast-deep-equal/es6';
 import { analytics } from '../analytics';
+import { Box } from '@chakra-ui/layout';
+import { Divider } from '@chakra-ui/react';
+import { ITrackItem } from '../@types/ITrackItem';
+import { OnlineChart } from '../components/TrayLayout/OnlineChart';
+import { useStoreActions, useStoreState } from '../store/easyPeasy';
+import { useInterval } from '../hooks/intervalHook';
 
 const EMPTY_SELECTED_ITEM = {};
 
 const EMPTY_ARRAY = [];
+const BG_SYNC_DELAY_MS = 10000;
 
 const TrayAppPageTemp = () => {
+    const fetchTimerange = useStoreActions(actions => actions.fetchTimerange);
+    const bgSyncInterval = useStoreActions(actions => actions.bgSyncInterval);
+
+    useInterval(() => {
+        bgSyncInterval();
+    }, [BG_SYNC_DELAY_MS]);
+
+    useEffect(() => {
+        fetchTimerange();
+    }, [fetchTimerange]);
+
     const [loading, setLoading] = useState(true);
 
     const [selectedItem, setSelectedItem] = useState(EMPTY_SELECTED_ITEM);
-    const [runningLogItem, setRunningLogItem] = useState();
-    const [lastLogItems, setLastLogItems] = useState(EMPTY_ARRAY);
+    const [runningLogItem, setRunningLogItem] = useState<any>();
+    const [lastLogItems, setLastLogItems] = useState<ITrackItem[]>(EMPTY_ARRAY);
 
     const { windowIsActive } = useWindowFocused();
 
@@ -33,6 +50,7 @@ const TrayAppPageTemp = () => {
             const areEqual = deepEqual(items, lastLogItems);
 
             if (!areEqual) {
+                console.info('setLastLogItems', items);
                 setLastLogItems(items);
             }
         } catch (e) {
@@ -41,13 +59,13 @@ const TrayAppPageTemp = () => {
         setLoading(false);
     };
 
-    const loadLastLogItemsThrottled = throttle(loadLastLogItems, 4000, { trailing: false });
+    const loadLastLogItemsThrottled = throttle(loadLastLogItems, 1000);
 
     useEffect(() => {
         if (windowIsActive) {
             Logger.debug('Window active:', windowIsActive);
             setSelectedItem(s => ({ ...s, color: randomcolor() }));
-            loadLastLogItemsThrottled();
+            // loadLastLogItemsThrottled();
             analytics.track('trayOpened', { version: process.env.REACT_APP_VERSION });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,9 +73,10 @@ const TrayAppPageTemp = () => {
 
     useEffect(() => {
         const eventLogItemStarted = (_, logItem) => {
-            Logger.debug('log-trackItem-started:', JSON.parse(logItem));
-            setRunningLogItem(JSON.parse(logItem));
-            loadLastLogItemsThrottled();
+            const newItem: ITrackItem = JSON.parse(logItem);
+            Logger.debug('log-trackItem-started:', newItem);
+            setRunningLogItem(newItem);
+            setLastLogItems(items => [...items, newItem]);
         };
 
         EventEmitter.on('log-item-started', eventLogItemStarted);
@@ -69,7 +88,8 @@ const TrayAppPageTemp = () => {
     }, []);
 
     useEffect(() => {
-        loadLastLogItemsThrottled();
+        // loadLastLogItemsThrottled();
+        loadLastLogItems();
         getRunningLogItem().then(logItem => {
             setRunningLogItem(logItem);
         });
@@ -96,17 +116,21 @@ const TrayAppPageTemp = () => {
         [runningLogItem, setRunningLogItem],
     );
 
+    const timeItems = useStoreState(state => state.timeItems);
+    const { statusItems } = timeItems;
     return (
         <TrayLayout>
-            {!runningLogItem && (
-                <Box pt={2}>
-                    <TimelineItemEdit
-                        selectedTimelineItem={selectedItem}
-                        trayEdit
-                        saveTimelineItem={startNewLogItem}
-                    />
-                </Box>
-            )}
+            <Box p={4}>
+                <TimelineItemEdit
+                    selectedTimelineItem={selectedItem}
+                    trayEdit
+                    saveTimelineItem={startNewLogItem}
+                />
+            </Box>
+            <Box px={4} pb={4}>
+                <OnlineChart items={statusItems} />
+            </Box>
+            <Divider borderColor="gray.200" />
             <TrayList
                 lastLogItems={lastLogItems}
                 runningLogItem={runningLogItem}

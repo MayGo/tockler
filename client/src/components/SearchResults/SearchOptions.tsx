@@ -1,66 +1,50 @@
-import { Box, Flex } from 'reflexbox';
-import { Button, DatePicker } from 'antd';
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import React from 'react';
-
+import React, { useState } from 'react';
 import { Logger } from '../../logger';
-
-const { RangePicker } = DatePicker;
+import { Box, Flex } from '@chakra-ui/layout';
+import { Button } from '@chakra-ui/button';
+import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
+import { OnDatesChangeProps } from '@datepicker-react/hooks';
+import { DateRangeInput } from '../Datepicker';
+import { HStack, Text, useColorModeValue } from '@chakra-ui/react';
 
 const getDayBefore = d => moment(d).subtract(1, 'days');
 const getDayAfter = d => moment(d).add(1, 'days');
 
+enum RANGE_OPTIONS {
+    WEEK,
+    MONTH,
+    MONTHS_3,
+    YEAR,
+    YEARS_3,
+}
+
 export const SearchOptions = ({ setTimerange, timerange }) => {
-    const onChange = (dates: any) => {
-        Logger.debug('TIMERANGE:', dates);
-        if (dates != null) {
-            const beginDate = dates[0];
-            const endDate = dates[1];
-            const newTimerange = [beginDate, endDate];
-            setTimerange(newTimerange);
-        } else {
-            Logger.error('No dates selected');
+    const [localRange, setLocalRange] = useState(RANGE_OPTIONS.WEEK);
+
+    const selectRange = range => {
+        const beginDate = moment().startOf('day');
+        const endDate = moment().endOf('day');
+
+        if (range === RANGE_OPTIONS.WEEK) {
+            beginDate.subtract(7, 'days');
         }
-    };
 
-    const selectWeek = () => {
-        const beginDate = moment()
-            .startOf('day')
-            .subtract(7, 'days');
-        const endDate = moment().endOf('day');
+        if (range === RANGE_OPTIONS.MONTH) {
+            beginDate.subtract(1, 'month');
+        }
+        if (range === RANGE_OPTIONS.MONTHS_3) {
+            beginDate.subtract(3, 'month');
+        }
+        if (range === RANGE_OPTIONS.YEAR) {
+            beginDate.subtract(1, 'year');
+        }
+        if (range === RANGE_OPTIONS.YEARS_3) {
+            beginDate.subtract(3, 'year');
+        }
         setTimerange([beginDate, endDate]);
-    };
-    const selectMonth = () => {
-        const beginDate = moment()
-            .startOf('day')
-            .subtract(1, 'month');
-        const endDate = moment().endOf('day');
-        setTimerange([beginDate, endDate]);
-    };
 
-    const selectMonth3 = () => {
-        const beginDate = moment()
-            .startOf('day')
-            .subtract(3, 'month');
-        const endDate = moment().endOf('day');
-        setTimerange([beginDate, endDate]);
-    };
-
-    const selectYear = () => {
-        const beginDate = moment()
-            .startOf('day')
-            .subtract(1, 'year');
-        const endDate = moment().endOf('day');
-        setTimerange([beginDate, endDate]);
-    };
-
-    const selectYear3 = () => {
-        const beginDate = moment()
-            .startOf('day')
-            .subtract(3, 'year');
-        const endDate = moment().endOf('day');
-        setTimerange([beginDate, endDate]);
+        setLocalRange(range);
     };
 
     const goBackOneDay = () => {
@@ -77,48 +61,76 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
 
     Logger.debug('Have timerange in Search:', timerange);
 
+    const handleOnDatesChange = (data: OnDatesChangeProps) => {
+        Logger.debug('TIMERANGE:', data);
+
+        const { startDate, endDate } = data;
+        const newTimerange = [moment(startDate).startOf('day'), moment(endDate).endOf('day')];
+
+        setTimerange(newTimerange);
+    };
+
+    const selectVariant = range => (localRange === range ? 'solid' : 'outline');
+
     return (
-        <Flex>
-            <Box p={1}>
+        <Flex alignItems="center">
+            <HStack>
                 <Button onClick={goBackOneDay}>
-                    <LeftOutlined />
+                    <AiOutlineLeft />
                 </Button>
-            </Box>
-            <Box p={1}>
-                <RangePicker value={timerange} onChange={onChange} />
-            </Box>
-            <Box p={1}>
+
+                <DateRangeInput
+                    startDate={timerange[0].toDate()}
+                    endDate={timerange[1].toDate()}
+                    onDatesChange={handleOnDatesChange}
+                />
+
                 <Button onClick={goForwardOneDay}>
-                    <RightOutlined />
+                    <AiOutlineRight />
                 </Button>
-            </Box>
+            </HStack>
 
             <Box flex={1} />
-            <Box p={1}>
-                <Button onClick={selectWeek} type="dashed">
+
+            <Text fontSize="md" color={useColorModeValue('gray.700', 'gray.300')} pr={4}>
+                Select range
+            </Text>
+            <HStack>
+                <Button
+                    onClick={() => selectRange(RANGE_OPTIONS.WEEK)}
+                    variant={selectVariant(RANGE_OPTIONS.WEEK)}
+                >
                     Week
                 </Button>
-            </Box>
-            <Box p={1}>
-                <Button onClick={selectMonth} type="dashed">
+
+                <Button
+                    onClick={() => selectRange(RANGE_OPTIONS.MONTH)}
+                    variant={selectVariant(RANGE_OPTIONS.MONTH)}
+                >
                     Month
                 </Button>
-            </Box>
-            <Box p={1}>
-                <Button onClick={selectMonth3} type="dashed">
+
+                <Button
+                    onClick={() => selectRange(RANGE_OPTIONS.MONTHS_3)}
+                    variant={selectVariant(RANGE_OPTIONS.MONTHS_3)}
+                >
                     3 Months
                 </Button>
-            </Box>
-            <Box p={1}>
-                <Button onClick={selectYear} type="dashed">
+
+                <Button
+                    onClick={() => selectRange(RANGE_OPTIONS.YEAR)}
+                    variant={selectVariant(RANGE_OPTIONS.YEAR)}
+                >
                     Year
                 </Button>
-            </Box>
-            <Box p={1}>
-                <Button onClick={selectYear3} type="dashed">
+
+                <Button
+                    onClick={() => selectRange(RANGE_OPTIONS.YEARS_3)}
+                    variant={selectVariant(RANGE_OPTIONS.YEARS_3)}
+                >
                     3 Years
                 </Button>
-            </Box>
+            </HStack>
         </Flex>
     );
 };

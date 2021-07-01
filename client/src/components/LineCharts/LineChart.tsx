@@ -1,23 +1,26 @@
 import React, { useContext } from 'react';
 import moment from 'moment';
 import { values } from 'lodash';
-import { VictoryBar, VictoryChart, VictoryAxis, VictoryTooltip } from 'victory';
-import { convertDate, TIME_FORMAT, DAY_MONTH_LONG_FORMAT, COLORS } from '../../constants';
-
-import { useWindowWidth } from '@react-hook/window-size/throttled';
-import { SummaryContext } from '../../SummaryContext';
 import {
-    addToTimeDuration,
-    formatToTimeEveryOther,
-    formatToDay,
-    toTimeDuration,
-} from './LineChart.util';
-import { diffAndFormatShort } from '../../utils';
+    VictoryBar,
+    VictoryChart,
+    VictoryAxis,
+    VictoryTooltip,
+    VictoryVoronoiContainer,
+    VictoryScatter,
+} from 'victory';
+import { convertDate, DAY_MONTH_LONG_FORMAT, COLORS, TIME_FORMAT } from '../../constants';
+import { IoMdSunny, IoMdMoon } from 'react-icons/io';
+import { SummaryContext } from '../../SummaryContext';
+import { dateToDayLabel, formatToHours } from './LineChart.util';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
+import { BAR_WIDTH } from '../Timeline/timeline.constants';
+import { BlackBox } from '../BlackBox';
+import useDimensions from 'react-cool-dimensions';
 
-const scale: any = { x: 'time', y: 'time' };
-const padding: any = { left: 50, top: 20, bottom: 20, right: 10 };
-const domainPadding: any = { y: 40, x: [20, 40] };
+const scale: any = { x: 'time', y: 'linear' };
+const padding: any = { left: 25, top: 20, bottom: 30, right: 10 };
+const domainPadding: any = { y: 0, x: [BAR_WIDTH, 0] };
 
 const labelComponent = theme => (
     <VictoryTooltip
@@ -30,68 +33,126 @@ const labelComponent = theme => (
     />
 );
 
+const formatToTime = d => convertDate(d).format(TIME_FORMAT);
+const formatToLong = d => convertDate(d).format(DAY_MONTH_LONG_FORMAT);
+
+const dateToMinutes = (max, useStartDate) => d => {
+    const m = convertDate(useStartDate ? d.beginDate : d.endDate);
+    const minutes = m.hour() * 60 + m.minute();
+
+    return minutes / 60 / max;
+};
+
+const ScatterPoint = ({ x, y, showMoon, showSun }) => {
+    if (showMoon) {
+        return <IoMdMoon fontSize="20px" x={x - 10} y={y - 10} />;
+    }
+    if (showSun) {
+        return <IoMdSunny fontSize="20px" x={x - 10} y={y - 10} />;
+    }
+    return null;
+};
+
+const getXAxisDay = d => convertDate(d.beginDate).startOf('day');
+
 export const LineChart = () => {
     const { chartTheme } = useChartThemeState();
-    const chartWidth = useWindowWidth();
+    const { observe, width } = useDimensions();
     const { onlineTimesSummary, selectedDate } = useContext(SummaryContext);
 
     const onlineTimesValues = values(onlineTimesSummary);
 
-    const barHeight = 20;
-
     const daysInMonth = selectedDate.daysInMonth();
-    const daysArray = Array.from(Array(daysInMonth), (_, i) => i + 1);
+
+    const domain: any = {
+        x: [selectedDate.startOf('month').toDate(), selectedDate.endOf('month').toDate()],
+        y: [0, 1],
+    };
+
+    const maxOnline = Math.max(...onlineTimesValues.map(d => d.online));
+    const maxHours = 24;
+
+    const axisStyle = {
+        grid: { strokeWidth: 0 },
+        ticks: { stroke: 'gray', size: 5 },
+    };
+
+    const isNarrow = width < 1400;
+
+    console.info('onlineTimesSummary', onlineTimesSummary);
 
     return (
-        <VictoryChart
-            theme={chartTheme}
-            scale={scale}
-            width={chartWidth}
-            height={800}
-            domainPadding={domainPadding}
-            padding={padding}
-            horizontal
-        >
-            <VictoryAxis orientation="top" tickFormat={formatToTimeEveryOther} dependentAxis />
-            <VictoryAxis orientation="bottom" tickFormat={formatToTimeEveryOther} dependentAxis />
-            <VictoryAxis
-                orientation="left"
-                name="time-axis"
-                scale="linear"
-                invertAxis
-                tickValues={daysArray}
-            />
+        <div ref={observe}>
+            <BlackBox position="absolute" width={width - 34} height={770} right={0} mr="25px" />
+            <VictoryChart
+                theme={chartTheme}
+                scale={scale}
+                domain={domain}
+                width={width}
+                height={800}
+                padding={padding}
+                domainPadding={domainPadding}
+                containerComponent={
+                    <VictoryVoronoiContainer
+                        voronoiDimension="x"
+                        responsive={false}
+                        labelComponent={labelComponent(chartTheme)}
+                        labels={({ datum }) => {
+                            const { childName, beginDate, endDate, online } = datum;
+                            if (childName === 'beginDate') {
+                                return `Start time: ${formatToTime(beginDate)}`;
+                            }
+                            if (childName === 'endDate') {
+                                return `End time: ${formatToTime(endDate)}`;
+                            }
+                            if (childName === 'online') {
+                                return `${formatToLong(
+                                    datum.beginDate,
+                                )}\r\nWorked: ${moment.duration(online).format()}`;
+                            }
+                            return '';
+                        }}
+                    />
+                }
+            >
+                <VictoryAxis
+                    orientation="left"
+                    tickFormat={formatToHours(maxOnline)}
+                    dependentAxis
+                />
+                <VictoryAxis
+                    orientation="bottom"
+                    name="time-axis"
+                    scale="linear"
+                    tickCount={daysInMonth}
+                    tickFormat={dateToDayLabel(isNarrow)}
+                    style={axisStyle}
+                    offsetY={20}
+                />
 
-            <VictoryBar
-                y={d => toTimeDuration(convertDate(d.beginDate), convertDate(d.beginDate))}
-                y0={d => toTimeDuration(convertDate(d.beginDate), convertDate(d.endDate))}
-                x={d => formatToDay(convertDate(d.beginDate).startOf('day'))}
-                barWidth={barHeight}
-                data={onlineTimesValues}
-                labelComponent={labelComponent(chartTheme)}
-                labels={({ datum }) =>
-                    `${convertDate(datum.beginDate).format(DAY_MONTH_LONG_FORMAT)}\r\n
-                    Start time: ${convertDate(datum.beginDate).format(
-                        TIME_FORMAT,
-                    )}\r\nEnd time: ${convertDate(datum.endDate).format(
-                        TIME_FORMAT,
-                    )}\r\nDuration: ${diffAndFormatShort(datum.beginDate, datum.endDate)}`
-                }
-            />
-            <VictoryBar
-                y={d => toTimeDuration(convertDate(d.beginDate), convertDate(d.beginDate))}
-                y0={d => addToTimeDuration(convertDate(d.beginDate), d.online)}
-                x={d => formatToDay(convertDate(d.beginDate).startOf('day'))}
-                barWidth={10}
-                style={{ data: { fill: COLORS.green } }}
-                data={onlineTimesValues}
-                labelComponent={labelComponent(chartTheme)}
-                labels={({ datum }) =>
-                    `${convertDate(datum.beginDate).format(
-                        DAY_MONTH_LONG_FORMAT,
-                    )}\r\nWorked: ${moment.duration(datum.online).format()}`
-                }
-            />
-        </VictoryChart>
+                <VictoryBar
+                    name="online"
+                    x={getXAxisDay}
+                    y={d => d.online / maxOnline}
+                    barWidth={BAR_WIDTH}
+                    style={{ data: { fill: COLORS.green } }}
+                    data={onlineTimesValues}
+                />
+                <VictoryScatter
+                    name="beginDate"
+                    data={onlineTimesValues}
+                    x={getXAxisDay}
+                    y={dateToMinutes(maxHours, true)}
+                    dataComponent={<ScatterPoint showSun />}
+                />
+                <VictoryScatter
+                    name="endDate"
+                    data={onlineTimesValues}
+                    x={getXAxisDay}
+                    y={dateToMinutes(maxHours, false)}
+                    dataComponent={<ScatterPoint showMoon />}
+                />
+            </VictoryChart>
+        </div>
     );
 };

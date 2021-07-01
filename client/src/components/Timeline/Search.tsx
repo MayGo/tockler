@@ -1,52 +1,39 @@
-import { Box, Flex } from 'reflexbox';
-import { Button, DatePicker, Tooltip } from 'antd';
-import { LeftOutlined, RightOutlined, PauseOutlined, CaretRightOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import randomcolor from 'randomcolor';
 import React, { memo } from 'react';
 import { getTodayTimerange } from './timeline.utils';
 import { Logger } from '../../logger';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { TIMERANGE_MODE_TODAY } from '../../store/mainStore';
-
-const { RangePicker } = DatePicker;
+import { Box } from '@chakra-ui/layout';
+import { Button } from '@chakra-ui/button';
+import { Tooltip } from '@chakra-ui/tooltip';
+import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
+import { DateRangeInput } from '../Datepicker';
+import { OnDatesChangeProps } from '@datepicker-react/hooks';
+import { FaPlay, FaStop } from 'react-icons/fa';
 
 const getDayBefore = d => moment(d).subtract(1, 'days');
 const getDayAfter = d => moment(d).add(1, 'days');
 
 export const Search = memo(() => {
     const timerange = useStoreState(state => state.timerange);
-    const visibleTimerange = useStoreState(state => state.visibleTimerange);
+
     const timerangeMode = useStoreState(state => state.timerangeMode);
     const liveView = useStoreState(state => state.liveView);
-
-    const setSelectedTimelineItem = useStoreActions(actions => actions.setSelectedTimelineItem);
     const loadTimerange = useStoreActions(actions => actions.loadTimerange);
-    const setVisibleTimerange = useStoreActions(actions => actions.setVisibleTimerange);
     const setLiveView = useStoreActions(actions => actions.setLiveView);
-
-    const createNewItem = () => {
-        setSelectedTimelineItem({
-            color: randomcolor(),
-            beginDate: visibleTimerange[0].valueOf(),
-            endDate: visibleTimerange[1].valueOf(),
-        });
-    };
 
     const showLiveViewButton = timerangeMode === TIMERANGE_MODE_TODAY;
     const toggleLiveView = () => {
         setLiveView(!liveView);
     };
-    const onChange = (dates: any) => {
-        Logger.debug('TIMERANGE:', dates);
-        if (dates != null) {
-            const beginDate = dates[0];
-            const endDate = dates[1];
-            const newTimerange = [beginDate, endDate];
-            loadTimerange(newTimerange);
-        } else {
-            Logger.error('No dates selected');
-        }
+
+    const handleOnDatesChange = (data: OnDatesChangeProps) => {
+        Logger.debug('TIMERANGE:', data);
+
+        const { startDate, endDate } = data;
+        const newTimerange = [moment(startDate).startOf('day'), moment(endDate).endOf('day')];
+        loadTimerange(newTimerange);
     };
 
     const selectToday = () => {
@@ -72,64 +59,37 @@ export const Search = memo(() => {
         loadTimerange([beginDate, endDate]);
     };
 
-    const showDay = () => {
-        const beginDate = moment(timerange[0]).startOf('day');
-        const endDate = moment(timerange[0]).endOf('day');
-        setVisibleTimerange([beginDate, endDate]);
-    };
-
-    const showHour = () => {
-        const beginDate = moment(visibleTimerange[1]).startOf('hour');
-        const endDate = moment(visibleTimerange[1]).endOf('hour');
-        setVisibleTimerange([beginDate, endDate]);
-    };
-
-    const showAM = () => {
-        const beginDate = moment(timerange[0]).startOf('day');
-        const endDate = moment(timerange[0])
-            .startOf('day')
-            .hour(12);
-        setVisibleTimerange([beginDate, endDate]);
-    };
-
-    const showPM = () => {
-        const beginDate = moment(timerange[0])
-            .startOf('day')
-            .hour(12);
-        const endDate = moment(timerange[0]).endOf('day');
-        setVisibleTimerange([beginDate, endDate]);
-    };
-
-    const showEvening = () => {
-        const beginDate = moment(visibleTimerange[0])
-            .startOf('day')
-            .hour(17);
-        const endDate = moment(visibleTimerange[0]).endOf('day');
-        setVisibleTimerange([beginDate, endDate]);
-    };
-
     Logger.debug('Have timerange in Search:', timerange);
     return (
-        <Flex>
+        <>
             <Box p={1}>
-                <Button onClick={selectYesterday}>Yesterday</Button>
+                <Button variant="outline" onClick={selectYesterday}>
+                    Yesterday
+                </Button>
             </Box>
             <Box p={1}>
                 <Button onClick={goBackOneDay}>
-                    <LeftOutlined />
+                    <AiOutlineLeft />
                 </Button>
             </Box>
             <Box p={1}>
-                <RangePicker value={timerange as any} onChange={onChange} />
+                <DateRangeInput
+                    startDate={timerange[0].toDate()}
+                    endDate={timerange[1].toDate()}
+                    onDatesChange={handleOnDatesChange}
+                />
             </Box>
             <Box p={1}>
                 <Button onClick={goForwardOneDay}>
-                    <RightOutlined />
+                    <AiOutlineRight />
                 </Button>
             </Box>
             <Box p={1}>
-                <Tooltip placement="bottom" title="Also activates Live view">
-                    <Button onClick={selectToday} type={showLiveViewButton ? 'primary' : 'default'}>
+                <Tooltip placement="bottom" label="Also activates Live view">
+                    <Button
+                        onClick={selectToday}
+                        variant={showLiveViewButton ? 'solid' : 'outline'}
+                    >
                         Today
                     </Button>
                 </Tooltip>
@@ -138,48 +98,14 @@ export const Search = memo(() => {
                 <Box p={1}>
                     <Tooltip
                         placement="bottom"
-                        title={liveView ? 'Pause live view' : 'Start live view'}
+                        label={liveView ? 'Pause live view' : 'Start live view'}
                     >
-                        <Button onClick={toggleLiveView}>
-                            {liveView ? <PauseOutlined /> : <CaretRightOutlined />}
+                        <Button onClick={toggleLiveView} bg={liveView ? 'green.500' : 'red.500'}>
+                            {liveView ? <FaStop /> : <FaPlay />}
                         </Button>
                     </Tooltip>
                 </Box>
             )}
-            <Box flex={1} />
-            <Box p={1}>
-                <Tooltip
-                    placement="bottom"
-                    title="Start creating log with visible timerange as begin and end times."
-                >
-                    <Button onClick={createNewItem}>New Log</Button>
-                </Tooltip>
-            </Box>
-            <Box p={1}>
-                <Button onClick={showDay} type="dashed">
-                    All Day
-                </Button>
-            </Box>
-            <Box p={1}>
-                <Button onClick={showAM} type="dashed">
-                    AM
-                </Button>
-            </Box>
-            <Box p={1}>
-                <Button onClick={showPM} type="dashed">
-                    PM
-                </Button>
-            </Box>
-            <Box p={1}>
-                <Button onClick={showEvening} type="dashed">
-                    Evening
-                </Button>
-            </Box>
-            <Box p={1}>
-                <Button onClick={showHour} type="dashed">
-                    Hour
-                </Button>
-            </Box>
-        </Flex>
+        </>
     );
 });

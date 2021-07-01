@@ -10,26 +10,28 @@ const lightGreen500 = '#8BC34A';
 const teal700 = '#00796B';
 const cyan900 = '#006064';
 const colors = [deepOrange600, yellow200, lime300, lightGreen500, teal700, cyan900];
-const blueGrey50 = '#ECEFF1';
-const blueGrey300 = '#90A4AE';
 
-export const blueGrey700 = '#455A64';
-export const grey900 = '#212121';
-export const disabledGrey = '#e6e6e6';
+const bluegray300 = 'var(--chakra-colors-gray-300)';
+
+export const bluegray700 = 'var(--chakra-colors-gray-700)';
+export const gray900 = 'var(--chakra-colors-gray-900)';
+export const disabledgray = 'var(--chakra-colors-gray-300)';
+const almostWhite = 'var(--chakra-colors-gray-100)';
+const gray = 'var(--chakra-colors-gray-500)';
 
 export const getLabelColor = (isDark, isEnabled) => {
     if (isDark) {
-        return isEnabled ? almostWhite : blueGrey700;
+        return isEnabled ? almostWhite : bluegray700;
     }
 
-    return !isEnabled ? disabledGrey : disabledGrey;
+    return !isEnabled ? disabledgray : disabledgray;
 };
 // *
 // * Typography
 // *
 const sansSerif = "'Roboto', 'Helvetica Neue', Helvetica, sans-serif";
 const letterSpacing = 'normal';
-const fontSize = 10;
+const fontSize = 12;
 // *
 // * Layout
 // *
@@ -47,22 +49,15 @@ const baseLabelStyles = isDark => ({
     fontSize,
     letterSpacing,
     padding,
-    fill: isDark ? almostWhite : blueGrey700,
+    fill: isDark ? almostWhite : bluegray700,
     stroke: 'transparent',
     strokeWidth: 0,
 });
-
-const almostWhite = '#c3c3c3';
-const lightGray = '#151515';
-const gray = '#212121';
 
 const centeredLabelStyles = isDark => assign({ textAnchor: 'middle' }, baseLabelStyles(isDark));
 // *
 // * Strokes
 // *
-const strokeDasharray = '10, 5';
-const strokeLinecap = 'round';
-const strokeLinejoin = 'round';
 
 export const getChartTheme = isDark => ({
     isDark,
@@ -73,33 +68,23 @@ export const getChartTheme = isDark => ({
             style: {
                 axis: {
                     fill: 'transparent',
-                    stroke: isDark ? gray : blueGrey300,
-                    strokeWidth: 1,
-                    strokeLinecap,
-                    strokeLinejoin,
+                    strokeWidth: 0,
                 },
                 axisLabel: assign({}, centeredLabelStyles(isDark), {
                     padding,
                     stroke: 'transparent',
                 }),
                 grid: {
-                    fill: 'none',
-                    stroke: isDark ? lightGray : blueGrey50,
-                    strokeDasharray,
-                    strokeLinecap,
-                    strokeLinejoin,
+                    stroke: isDark ? gray : bluegray300,
                     pointerEvents: 'painted',
                 },
                 ticks: {
                     fill: 'transparent',
                     size: 5,
-                    stroke: isDark ? gray : blueGrey300,
-                    strokeWidth: 1,
-                    strokeLinecap,
-                    strokeLinejoin,
+                    strokeWidth: 0,
                 },
                 tickLabels: assign({}, baseLabelStyles(isDark), {
-                    fill: isDark ? almostWhite : blueGrey700,
+                    fill: isDark ? almostWhite : bluegray700,
                 }),
             },
         },
@@ -109,7 +94,7 @@ export const getChartTheme = isDark => ({
         {
             style: {
                 data: {
-                    fill: isDark ? almostWhite : blueGrey700,
+                    fill: isDark ? almostWhite : bluegray700,
                     padding,
                     strokeWidth: 0,
                 },
@@ -120,9 +105,12 @@ export const getChartTheme = isDark => ({
     ),
 
     tooltip: {
-        style: assign({}, centeredLabelStyles(isDark), { padding: 5, pointerEvents: 'none' }),
+        style: assign({}, centeredLabelStyles(isDark), {
+            padding: 15,
+            pointerEvents: 'none',
+        }),
         flyoutStyle: {
-            stroke: isDark ? almostWhite : blueGrey300,
+            stroke: isDark ? almostWhite : bluegray300,
             strokeWidth: 0.5,
             fill: isDark ? '#000000' : '#ffffff',
             pointerEvents: 'none',
@@ -137,7 +125,7 @@ export const getChartTheme = isDark => ({
             style: {
                 data: {
                     padding,
-                    stroke: blueGrey50,
+                    stroke: bluegray300,
                     strokeWidth: 1,
                 },
                 labels: assign({}, baseLabelStyles(isDark), { padding: 20 }),
@@ -150,7 +138,7 @@ export const getChartTheme = isDark => ({
         {
             style: {
                 data: {
-                    fill: grey900,
+                    fill: gray900,
                 },
                 labels: centeredLabelStyles(isDark),
             },
@@ -160,15 +148,15 @@ export const getChartTheme = isDark => ({
     boxplot: assign(
         {
             style: {
-                max: { padding, stroke: blueGrey700, strokeWidth: 1 },
+                max: { padding, stroke: bluegray700, strokeWidth: 1 },
                 maxLabels: baseLabelStyles(isDark),
-                median: { padding, stroke: blueGrey700, strokeWidth: 1 },
+                median: { padding, stroke: bluegray700, strokeWidth: 1 },
                 medianLabels: baseLabelStyles(isDark),
-                min: { padding, stroke: blueGrey700, strokeWidth: 1 },
+                min: { padding, stroke: bluegray700, strokeWidth: 1 },
                 minLabels: baseLabelStyles(isDark),
-                q1: { padding, fill: blueGrey700 },
+                q1: { padding, fill: bluegray700 },
                 q1Labels: baseLabelStyles(isDark),
-                q3: { padding, fill: blueGrey700 },
+                q3: { padding, fill: bluegray700 },
                 q3Labels: baseLabelStyles(isDark),
             },
             boxWidth: 20,
@@ -179,13 +167,13 @@ export const getChartTheme = isDark => ({
         {
             style: {
                 data: {
-                    stroke: blueGrey700,
+                    stroke: bluegray700,
                 },
                 labels: centeredLabelStyles(isDark),
             },
             candleColors: {
                 positive: '#ffffff',
-                negative: blueGrey700,
+                negative: bluegray700,
             },
         },
         baseProps,
@@ -198,7 +186,7 @@ export const getChartTheme = isDark => ({
                 data: {
                     fill: 'transparent',
                     opacity: 1,
-                    stroke: blueGrey700,
+                    stroke: bluegray700,
                     strokeWidth: 2,
                 },
                 labels: centeredLabelStyles(isDark),
@@ -231,7 +219,7 @@ export const getChartTheme = isDark => ({
                 data: {
                     fill: 'transparent',
                     opacity: 1,
-                    stroke: blueGrey700,
+                    stroke: bluegray700,
                     strokeWidth: 2,
                 },
                 labels: centeredLabelStyles(isDark),
@@ -244,7 +232,7 @@ export const getChartTheme = isDark => ({
         {
             style: {
                 data: {
-                    fill: blueGrey700,
+                    fill: bluegray700,
                     opacity: 1,
                     stroke: 'transparent',
                     strokeWidth: 0,
@@ -274,7 +262,7 @@ export const getChartTheme = isDark => ({
                     pointerEvents: 'none',
                 }),
                 flyout: {
-                    stroke: grey900,
+                    stroke: gray900,
                     strokeWidth: 1,
                     fill: '#f0f0f0',
                     pointerEvents: 'none',

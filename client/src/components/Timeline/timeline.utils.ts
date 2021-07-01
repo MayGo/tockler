@@ -1,14 +1,15 @@
 import _ from 'lodash';
 import moment from 'moment';
 import { convertDate } from '../../constants';
+import { TrackItemType } from '../../enum/TrackItemType';
 
 export const filterItems = (timeItems, visibleTimerange) =>
     timeItems.filter(item => {
         const itemBegin = convertDate(item.beginDate);
         const itemEnd = convertDate(item.endDate);
-        const visBegin = visibleTimerange[0];
-        const visEnd = visibleTimerange[1];
-        return itemBegin.isBetween(visBegin, visEnd) && itemEnd.isBetween(visBegin, visEnd);
+        const [visBegin, visEnd] = visibleTimerange;
+
+        return itemBegin.isBetween(visBegin, visEnd) || itemEnd.isBetween(visBegin, visEnd);
     });
 
 export const aggregateappItems = items => {
@@ -74,3 +75,20 @@ export const getUniqueAppNames = appItems =>
             value: app,
         }))
         .value();
+
+export const getTrackItemOrder = (type: string) => {
+    if (type === TrackItemType.AppTrackItem) {
+        return 1;
+    }
+    if (type === TrackItemType.StatusTrackItem) {
+        return 2;
+    }
+    if (type === TrackItemType.LogTrackItem) {
+        return 3;
+    }
+    return 0;
+};
+
+export const getTrackItemOrderFn = d => getTrackItemOrder(d.taskName);
+export const convertDateForY = d => convertDate(d.beginDate);
+export const convertDateForY0 = d => convertDate(d.endDate);

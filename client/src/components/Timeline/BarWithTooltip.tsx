@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Portal } from 'react-portal';
 import { Bar, VictoryTooltip } from 'victory';
 
@@ -6,11 +6,13 @@ export const BarWithTooltip = ({
     datum = {},
     onClickBarItem,
     getTooltipLabel,
+    popoverTriggerRef,
     x = 0,
     y = 0,
     theme,
     ...rest
 }) => {
+    const barRef = useRef();
     const [hover, setHover] = useState(false);
 
     const onMouseEnter = () => {
@@ -24,7 +26,15 @@ export const BarWithTooltip = ({
     const events = {
         onMouseEnter,
         onMouseLeave,
-        onClick: () => onClickBarItem(datum),
+        onClick: () => {
+            // Todo: Find a way to get barRef from Bar
+
+            if (onClickBarItem && popoverTriggerRef) {
+                console.info('barRef.current', barRef.current);
+                popoverTriggerRef.current = barRef.current;
+                onClickBarItem(datum);
+            }
+        },
     };
 
     return (

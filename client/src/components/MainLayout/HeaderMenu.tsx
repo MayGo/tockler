@@ -1,59 +1,28 @@
-import { Menu } from 'antd';
 import {
-    BarsOutlined,
-    AreaChartOutlined,
-    SearchOutlined,
-    SettingOutlined,
-    QuestionCircleOutlined,
-} from '@ant-design/icons';
+    AiOutlineBars,
+    AiOutlineAreaChart,
+    AiOutlineSearch,
+    AiOutlineSetting,
+    AiOutlineQuestionCircle,
+} from 'react-icons/ai';
 import React from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
-import tocklerIcon from '../../assets/icons/tockler_icon.png';
-import { Brand, Img } from './HeaderMenu.styles';
+import { Box } from '@chakra-ui/layout';
+import { ColorModeSwitcher } from '../ColorModeSwitcher';
+import { Header } from '../Header/Header';
+import { MenuItem } from '../Header/MenuItem';
+import { Link as RouterLink } from 'react-router-dom';
 
-const GrayMenu = styled(Menu)``;
-
-export const HeaderMenu = ({ location }: any) => (
-    <GrayMenu selectedKeys={[location.pathname]} mode="horizontal">
-        <Menu.Item key="/app/timeline2">
-            <Link to="/app/timeline">
-                <Brand>
-                    <Img src={tocklerIcon} width="28" height="28" />
-                    <span>Tockler</span>
-                </Brand>
-            </Link>
-        </Menu.Item>
-        <Menu.Item key="/app/timeline">
-            <Link to="/app/timeline">
-                <BarsOutlined />
-                Timeline
-            </Link>
-        </Menu.Item>
-        <Menu.Item key="/app/summary">
-            <Link to="/app/summary">
-                <AreaChartOutlined />
-                Summary
-            </Link>
-        </Menu.Item>
-        <Menu.Item key="/app/search">
-            <Link to="/app/search">
-                <SearchOutlined />
-                Search
-            </Link>
-        </Menu.Item>
-        <Menu.Item key="/app/settings">
-            <Link to="/app/settings">
-                <SettingOutlined />
-                Settings
-            </Link>
-        </Menu.Item>
-
-        <Menu.Item key="/app/support">
-            <Link to="/app/support">
-                <QuestionCircleOutlined />
-                Support
-            </Link>
-        </Menu.Item>
-    </GrayMenu>
+export const HeaderMenu = () => (
+    <Header brandLinkProps={{ to: '/app/timeline', as: RouterLink }}>
+        <MenuItem to="/app/timeline" icon={<AiOutlineBars />} title="Timeline" />
+        <MenuItem to="/app/summary" icon={<AiOutlineAreaChart />} title="Summary" />
+        <MenuItem to="/app/search" icon={<AiOutlineSearch />} title="Search" />
+        <MenuItem to="/app/settings" icon={<AiOutlineSetting />} title="Settings" />
+        <MenuItem to="/app/support" icon={<AiOutlineQuestionCircle />} title="Support" />
+        {/*<MenuItem to="/trayPage" icon={<AiFillTrademarkCircle />} title="Tray" />*/}
+        <Box flex="1" />
+        <Box>
+            <ColorModeSwitcher />
+        </Box>
+    </Header>
 );

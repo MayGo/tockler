@@ -7,13 +7,13 @@ import {
     DURATION_SETTINGS,
 } from '../../constants';
 import moment from 'moment';
-import { DAY_MONTH_FORMAT, MODE_MONTH } from '../../SummaryContext.util';
+import { DAY_MONTH_FORMAT, CALENDAR_MODE } from '../../SummaryContext.util';
 
 export const formatDuration = dur =>
     moment.duration(dur).format(DURATION_FORMAT, DURATION_SETTINGS);
 
 export const groupByField = mode => item =>
-    mode === MODE_MONTH
+    mode === CALENDAR_MODE.MONTH
         ? convertDate(item.beginDate).format(DAY_MONTH_FORMAT)
         : convertDate(item.beginDate).month();
 

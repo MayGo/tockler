@@ -6,51 +6,65 @@ const { Store } = window as any;
 
 const config = new Store();
 
+const THEME_CONFIG_KEY = 'selectedTheme';
+const IS_NATIVE_THEME_ENABLED = 'isNativeThemeEnabled';
+const IS_LOGGING_ENABLED = 'isLoggingEnabled';
+const OPEN_AT_LOGIN = 'openAtLogin';
+const IS_AUTO_UPDATE_ENABLED = 'isAutoUpdateEnabled';
+const NATIVE_THEME_CONFIG_CHANGED = 'nativeThemeChanged';
+
+export function getNativeThemeChange() {
+    return config.get(IS_NATIVE_THEME_ENABLED) as boolean;
+}
+
 export function getOpenAtLogin() {
-    return config.get('openAtLogin') as boolean;
+    return config.get(OPEN_AT_LOGIN) as boolean;
 }
 
 export function getIsAutoUpdateEnabled() {
-    return config.get('isAutoUpdateEnabled') as boolean;
+    return config.get(IS_AUTO_UPDATE_ENABLED) as boolean;
 }
 export function getIsLoggingEnabled() {
-    return config.get('isLoggingEnabled') as boolean;
+    return config.get(IS_LOGGING_ENABLED) as boolean;
 }
 
+export function saveNativeThemeChange(enabled) {
+    config.set(IS_NATIVE_THEME_ENABLED, enabled);
+    EventEmitter.send(NATIVE_THEME_CONFIG_CHANGED);
+}
 export function saveOpenAtLogin(openAtLogin) {
     if (openAtLogin !== getOpenAtLogin()) {
         EventEmitter.send('openAtLoginChanged');
-        config.set('openAtLogin', openAtLogin);
+        config.set(OPEN_AT_LOGIN, openAtLogin);
     }
 }
 
 export function getThemeFromStorage() {
-    const activeTheme = config.get('activeTheme');
-    Logger.info('Got theme from storage:', activeTheme);
-    return activeTheme;
+    const colorMode = config.get(THEME_CONFIG_KEY);
+    Logger.info('Got theme from storage:', colorMode);
+    return colorMode;
 }
 
-export function saveThemeToStorage(theme) {
-    Logger.info('Save theme to storage:', theme);
-    config.set('activeTheme', theme);
+export function saveThemeToStorage(colorMode) {
+    Logger.info('Save theme to config:', colorMode);
+    return emit('saveThemeAndNotify', colorMode);
 }
 
 export function saveIsAutoUpdateEnabled(isAutoUpdateEnabled) {
     if (isAutoUpdateEnabled !== getIsAutoUpdateEnabled()) {
         Logger.debug('Setting isAutoUpdateEnabled', isAutoUpdateEnabled);
-        config.set('isAutoUpdateEnabled', isAutoUpdateEnabled);
+        config.set(IS_AUTO_UPDATE_ENABLED, isAutoUpdateEnabled);
     }
 }
 export function saveIsLoggingEnabled(isLoggingEnabled) {
     if (isLoggingEnabled !== getIsLoggingEnabled()) {
         Logger.debug('Setting isLoggingEnabled', isLoggingEnabled);
-        config.set('isLoggingEnabled', isLoggingEnabled);
+        config.set(IS_LOGGING_ENABLED, isLoggingEnabled);
     }
 }
 
 export async function updateByName(name, jsonData) {
     Logger.debug('updateByName', JSON.stringify(jsonData));
-
     return emit('updateByName', { name, jsonData: JSON.stringify(jsonData) });
 }
 

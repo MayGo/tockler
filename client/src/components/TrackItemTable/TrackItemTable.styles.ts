@@ -1,4 +1,4 @@
-import { Box, Flex } from 'reflexbox';
+import { Box, Flex } from '@chakra-ui/layout';
 import styled from 'styled-components';
 
 export const FilterDropdown = styled(Flex).attrs({ p: 2 })`

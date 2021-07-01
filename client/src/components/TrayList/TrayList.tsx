@@ -1,13 +1,16 @@
-import { List } from 'antd';
-import { groupBy, map, sortBy, sumBy } from 'lodash';
+import { VStack } from '@chakra-ui/layout';
+import { StackDivider } from '@chakra-ui/react';
+import { groupBy, map, orderBy, sortBy, sumBy } from 'lodash';
 import React, { memo } from 'react';
 import { convertDate } from '../../constants';
+import { Loader } from '../Timeline/Loader';
+
 import { TrayListItem } from './TrayListItem';
 
 const sumDiff = data =>
     sumBy(data, (c: any) => convertDate(c.endDate).diff(convertDate(c.beginDate)));
 
-const aggregateSameAppAndName = lastLogItems => {
+const aggregateSameAppAndName = (lastLogItems, runningLogItem) => {
     const grouped = groupBy(lastLogItems, item => `${item.app}_${item.title}`);
 
     const mapped = map(grouped, items => {
@@ -15,6 +18,7 @@ const aggregateSameAppAndName = lastLogItems => {
             app: items[0].app,
             title: items[0].title,
             color: items[0].color,
+            isRunning: runningLogItem ? !!items.find(item => item.id === runningLogItem.id) : false,
             beginDate: sortBy(items, ['beginDate'])[0].beginDate,
             endDate: sortBy(items, ['endDate'])[items.length - 1].endDate,
             totalMs: sumDiff(items),
@@ -31,29 +35,26 @@ export function TrayListPlain({
     stopRunningLogItem,
     startNewLogItem,
 }: any) {
-    // Remove runningLogItem from aggregated values and show it as running Item
-    let items;
-    if (runningLogItem) {
-        items = aggregateSameAppAndName(lastLogItems.filter(item => item.id !== runningLogItem.id));
-        items.unshift(runningLogItem);
-    } else {
-        items = aggregateSameAppAndName(lastLogItems);
-    }
+    const aggrItems = aggregateSameAppAndName(lastLogItems, runningLogItem);
+    let items = orderBy(aggrItems, ['isRunning', 'endDate'], ['desc', 'desc']);
 
     return (
-        <List
-            loading={loading}
-            itemLayout="horizontal"
-            dataSource={items}
-            renderItem={(item: any) => (
+        <VStack
+            spacing={1}
+            align="stretch"
+            divider={<StackDivider borderColor="gray.200" />}
+            position="relative"
+        >
+            {loading && <Loader />}
+            {items.map(item => (
                 <TrayListItem
+                    key={item.title}
                     item={item}
-                    isRunning={runningLogItem && item.id === runningLogItem.id}
                     startNewLogItemFromOld={startNewLogItem}
                     stopRunningLogItem={stopRunningLogItem}
                 />
-            )}
-        />
+            ))}
+        </VStack>
     );
 }
 

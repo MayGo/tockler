@@ -1,5 +1,5 @@
 import React, { useEffect, useState, createContext, useCallback } from 'react';
-import useReactRouter from 'use-react-router';
+import { useHistory } from 'react-router';
 import { EventEmitter } from './services/EventEmitter';
 import { Logger } from './logger';
 
@@ -13,7 +13,7 @@ const defaultWorkSettings = {
 export const RootContext = createContext<any>({});
 
 export const RootProvider = ({ children }) => {
-    const { history } = useReactRouter();
+    const history = useHistory();
 
     const prevWorkSettings = JSON.parse((window as any).localStorage.getItem('workSettings')) || {
         defaultWorkSettings,

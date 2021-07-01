@@ -1,28 +1,53 @@
-import { Flex } from 'reflexbox';
-import { Calendar, Spin } from 'antd';
-import { CoffeeOutlined, EyeOutlined, LaptopOutlined, ToolOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import React, { useContext, useEffect } from 'react';
-import useReactRouter from 'use-react-router';
+import { useHistory } from 'react-router';
 import { SummaryContext } from '../../SummaryContext';
-import { Spinner } from '../Timeline/Timeline.styles';
-import { Item, TaskList } from './SummaryCalendar.styles';
 import { Logger } from '../../logger';
 import { convertDate, TIME_FORMAT_SHORT } from '../../constants';
 import { formatDuration } from './SummaryCalendar.util';
-import classNames from 'classnames';
-import padStart from 'lodash/padStart';
-import { DAY_MONTH_FORMAT } from '../../SummaryContext.util';
+import { CALENDAR_MODE, DAY_MONTH_FORMAT } from '../../SummaryContext.util';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
-
-moment.locale('et');
+import { Box, Flex, VStack } from '@chakra-ui/layout';
+import { IoMdSunny, IoMdMoon } from 'react-icons/io';
+import { Calendar } from '../Datepicker/Calendar';
+import { Text, useColorModeValue } from '@chakra-ui/react';
+import { Loader } from '../Timeline/Loader';
+import { ItemIcon } from './ItemIcon';
 
 const icons = {
-    coffee: <CoffeeOutlined />,
-    'eye-invisible': <EyeOutlined />,
-    laptop: <LaptopOutlined />,
-    tool: <ToolOutlined />,
+    wakeTime: (
+        <ItemIcon bg="gray.300">
+            <IoMdSunny color="black" fontSize="10px" />
+        </ItemIcon>
+    ),
+    sleepTime: (
+        <ItemIcon bg="gray.500">
+            <IoMdMoon fontSize="10px" />
+        </ItemIcon>
+    ),
+    online: <ItemIcon bg="green.400">&nbsp;</ItemIcon>,
+    tasks: <ItemIcon bg="yellow.200">&nbsp;</ItemIcon>,
 };
+
+const DayContent = ({ listData }) => {
+    const color = useColorModeValue('black', 'gray.300');
+    return (
+        <VStack align="stretch" p={3} pt={1} spacing={'1px'}>
+            {listData.map(item => (
+                <Flex key={item.title} alignItems="center">
+                    <Box pr={2}>{icons[item.type]}</Box>
+                    <Text fontSize="sm" color={color}>
+                        {item.time}
+                    </Text>
+                    <Text pl={2} fontSize="sm">
+                        {item.title}
+                    </Text>
+                </Flex>
+            ))}
+        </VStack>
+    );
+};
+
 export const SummaryCalendar = () => {
     const timerange = useStoreState(state => state.timerange);
     const loadTimerange = useStoreActions(state => state.loadTimerange);
@@ -38,7 +63,7 @@ export const SummaryCalendar = () => {
         isLoading,
     } = useContext(SummaryContext);
 
-    const { history } = useReactRouter();
+    const history = useHistory();
 
     const onDateClicked = (date: any) => {
         if (!date) {
@@ -46,13 +71,10 @@ export const SummaryCalendar = () => {
             return;
         }
 
-        loadTimerange([date.clone().startOf('day'), date.clone().endOf('day')]);
-        history.push('/app/timeline');
-    };
+        const d = moment(date);
+        loadTimerange([d.clone().startOf('day'), d.clone().endOf('day')]);
 
-    const changeSelectedDate = (date?: any, mode?: 'month' | 'year') => {
-        setSelectedDate(date);
-        setSelectedMode(mode);
+        history.push('/app/timeline');
     };
 
     useEffect(() => {
@@ -66,106 +88,57 @@ export const SummaryCalendar = () => {
         const times = onlineTimesSummary[day];
         if (times) {
             listData.push({
-                type: 'coffee',
-                content: `Wake time ${convertDate(times.beginDate).format(TIME_FORMAT_SHORT)}`,
+                type: 'wakeTime',
+                time: convertDate(times.beginDate).format(TIME_FORMAT_SHORT),
+                title: `Wake time`,
             });
             listData.push({
-                type: 'eye-invisible',
-                content: `Sleep time ${convertDate(times.endDate).format(TIME_FORMAT_SHORT)}`,
+                type: 'sleepTime',
+                time: convertDate(times.endDate).format(TIME_FORMAT_SHORT),
+                title: `Sleep time`,
             });
         }
 
         const online = onlineSummary[day];
         if (online) {
-            listData.push({ type: 'laptop', content: `Worked  ${formatDuration(online)}` });
+            listData.push({ type: 'online', time: formatDuration(online), title: `Online` });
         }
 
         const worked = logSummary[day];
         if (worked) {
-            listData.push({ type: 'tool', content: `Tasks  ${formatDuration(worked)}` });
+            listData.push({ type: 'tasks', time: formatDuration(worked), title: `Tasks` });
         }
         return listData || [];
     };
 
     const dateCellRender = value => {
-        if (value.month() === selectedDate.month()) {
-            const listData = getListData(value.format(DAY_MONTH_FORMAT));
-            return (
-                <TaskList>
-                    {listData.map(item => (
-                        <Item key={item.content}>
-                            {icons[item.type]}
-                            {'  '}
-                            {item.content}
-                        </Item>
-                    ))}
-                </TaskList>
-            );
-        }
-        return null;
-    };
-
-    const dateFullCellRender = date => {
-        let style = {};
-
-        const day = date.day();
-        const isWeekend = day === 6 || day === 0;
-        const isToday = moment().isSame(date, 'day');
-        if (isWeekend) {
-            if (isToday) {
-                style = { background: '#e6f7ff' };
-            } else {
-                style = { background: 'rgb(230, 230, 230, 0.2)' };
+        if (selectedMode === CALENDAR_MODE.MONTH) {
+            if (value.month() === selectedDate.month()) {
+                const listData = getListData(value.format(DAY_MONTH_FORMAT));
+                return <DayContent listData={listData} />;
             }
+            return null;
+        } else if (selectedMode === CALENDAR_MODE.YEAR) {
+            const listData = getListData(value.month());
+            return <DayContent listData={listData} />;
+        } else {
+            Logger.error('Unknown mode for calendar');
         }
-        return (
-            <div
-                className={classNames(`ant-picker-cell-inner ant-picker-calendar-date`, {
-                    [`ant-picker-selected`]: moment().isSame(date, 'day'),
-                })}
-                style={style}
-                onClick={() => onDateClicked(date)}
-            >
-                <div className={`ant-picker-calendar-date-value`}>
-                    {padStart(date.date(), 2, '0')}
-                </div>
-                <div className={`ant-picker-calendar-date-content`}>
-                    {dateCellRender && dateCellRender(date)}
-                </div>
-            </div>
-        );
-    };
-
-    const monthCellRender = value => {
-        const listData = getListData(value.month());
-        return (
-            <TaskList>
-                {listData.map(item => (
-                    <Item key={item.content}>
-                        {icons[item.type]}
-                        {'  '}
-                        {item.content}
-                    </Item>
-                ))}
-            </TaskList>
-        );
     };
 
     return (
-        <Flex p={1}>
-            {isLoading && (
-                <Spinner>
-                    <Spin />
-                </Spinner>
-            )}
+        <>
+            {isLoading && <Loader />}
+
             <Calendar
-                value={selectedDate}
-                mode={selectedMode}
+                selectedDate={selectedDate}
                 dateCellRender={dateCellRender}
-                dateFullCellRender={dateFullCellRender}
-                monthCellRender={monthCellRender}
-                onPanelChange={changeSelectedDate}
+                onDateClicked={onDateClicked}
+                setSelectedDate={setSelectedDate}
+                selectedMode={selectedMode}
+                setSelectedMode={setSelectedMode}
+                focusedDate={timerange[0].toDate()}
             />
-        </Flex>
+        </>
     );
 };

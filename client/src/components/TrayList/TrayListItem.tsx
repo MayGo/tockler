@@ -1,124 +1,80 @@
-import { Box, Flex } from 'reflexbox';
-import { Button, List } from 'antd';
-import { ClockCircleOutlined, PauseOutlined, CaretRightOutlined } from '@ant-design/icons';
+import { Box, Flex, Text } from '@chakra-ui/layout';
+import React, { memo, useState } from 'react';
+import { HStack, IconButton, useInterval } from '@chakra-ui/react';
+import { convertDate, DATE_TIME_FORMAT } from '../../constants';
+import { FaPlay, FaStop } from 'react-icons/fa';
+import { shortTime } from '../../time.util';
+import { OverflowText } from '../TrackItemTable/OverflowText';
 
-import moment from 'moment';
-import React, { memo } from 'react';
-import Moment from 'react-moment';
-import TimeAgo from 'react-timeago';
-import styled from 'styled-components';
-import { convertDate } from '../../constants';
+const formatDate = date => convertDate(date).format(DATE_TIME_FORMAT);
 
-const CustomListItem = styled(List.Item)`
-    padding-left: 5px;
-    margin-top: 5px;
-    &:last-child {
-        margin-bottom: 5px;
-    }
-    background-color: ${({ theme: { variables } }) => variables['@component-background']};
-    border-left: 5px solid ${props => props.color};
-`;
-
-const Small = styled(Box)`
-    font-size: 10px;
-`;
-
-const Medium = styled(Box)`
-    font-size: 12px;
-`;
-
-const ActionBtn = styled(Flex)`
-    margin: 2px 0;
-`;
-
-const CustomBox = styled(Box)`
-    overflow: hidden;
-`;
-
-const formatDate = date => convertDate(date).format('YYYY-MM-DD HH:mm:ss');
-
-const FormattedTime = ({ item, isRunning }: any) => {
+const FormattedTime = ({ beginDate, endDate, isRunning }: any) => {
     const full = isRunning
-        ? `${formatDate(item.beginDate)}`
-        : `${formatDate(item.beginDate)} - ${formatDate(item.endDate)}`;
+        ? `${formatDate(beginDate)}`
+        : `${formatDate(beginDate)} - ${formatDate(endDate)}`;
 
     return <span>{full}</span>;
 };
 
-export function TrayListItemPlain({
-    item,
-    startNewLogItemFromOld,
-    stopRunningLogItem,
-    isRunning,
-}: any) {
-    return (
-        <CustomListItem color={item.color} key={item.title}>
-            <Flex alignItems="center" width={1} pl={10} pr={10}>
-                <Box width={8 / 9} py={2}>
-                    <Flex>
-                        <CustomBox width={2 / 7} mr={2}>
-                            {item.app}
-                        </CustomBox>
-                        <CustomBox width={5 / 7}>{item.title}</CustomBox>
-                    </Flex>
+const ShortTimeInterval = ({ totalMs }) => {
+    const [time, setTime] = useState(totalMs);
+    useInterval(() => {
+        setTime(oldTime => oldTime + 1000);
+    }, 1000);
 
-                    <Flex>
-                        <Box width={10 / 13}>
-                            <Small>
-                                <FormattedTime item={item} isRunning={isRunning} />
-                                {'  '}
-                                <ClockCircleOutlined />
-                                {'  '}
-                                <b>
-                                    {!isRunning && (
-                                        <Moment from={item.beginDate} ago>
-                                            {item.endDate}
-                                        </Moment>
-                                    )}
-                                    {isRunning && (
-                                        <Moment fromNow ago>
-                                            {item.beginDate}
-                                        </Moment>
-                                    )}
-                                </b>
-                            </Small>
-                        </Box>
-                        <Flex width={3 / 11} justifyContent="flex-end">
-                            <Small pr={2}>
-                                {item.startDate && <TimeAgo date={item.startDate} />}
-                            </Small>
-                        </Flex>
-                    </Flex>
-                    <Flex>
-                        {item.totalMs > 1 && (
-                            <Box width={2 / 7}>
-                                <Medium>
-                                    Duration: <b>{moment.duration(item.totalMs).format()}</b>
-                                </Medium>
-                            </Box>
-                        )}
+    return shortTime(time);
+};
+
+export function TrayListItemPlain({ item, startNewLogItemFromOld, stopRunningLogItem }: any) {
+    const { isRunning, totalMs, title, app, color } = item;
+    return (
+        <Box p={4}>
+            <HStack alignItems="center" width="100%" pr={2}>
+                <Box flex={1} minWidth="0">
+                    <HStack alignItems="center" pb={2} minWidth="0">
+                        <Box bg={color} w="8px" h="8px" minWidth="8px" borderRadius="full" />
+
+                        <OverflowText fontWeight="bold" fontSize="md" minWidth="100px">
+                            {app}
+                        </OverflowText>
+
+                        <OverflowText fontSize="md" minWidth="0">
+                            {title}
+                        </OverflowText>
+                    </HStack>
+
+                    <Flex alignItems="center" pl={4}>
+                        <Text fontSize="xs">
+                            <FormattedTime {...item} />
+                        </Text>
+
+                        <Text fontSize="xs" fontWeight="bold" pl={3}>
+                            {totalMs > 1 && (
+                                <>
+                                    {!isRunning && shortTime(totalMs)}
+                                    {isRunning && <ShortTimeInterval totalMs={totalMs} />}
+                                </>
+                            )}
+                        </Text>
                     </Flex>
                 </Box>
-                <ActionBtn width={1 / 9} justifyContent="flex-end">
-                    {isRunning && (
-                        <Button
-                            type="primary"
-                            shape="circle"
-                            icon={<PauseOutlined />}
-                            onClick={() => stopRunningLogItem()}
-                        />
-                    )}
-                    {!isRunning && (
-                        <Button
-                            type="default"
-                            shape="circle"
-                            icon={<CaretRightOutlined />}
-                            onClick={() => startNewLogItemFromOld(item)}
-                        />
-                    )}
-                </ActionBtn>
-            </Flex>
-        </CustomListItem>
+
+                {isRunning && (
+                    <IconButton
+                        aria-label="pause"
+                        icon={<FaStop />}
+                        onClick={() => stopRunningLogItem()}
+                    />
+                )}
+                {!isRunning && (
+                    <IconButton
+                        aria-label="start"
+                        icon={<FaPlay />}
+                        onClick={() => startNewLogItemFromOld(item)}
+                    />
+                )}
+            </HStack>
+        </Box>
     );
 }
 
