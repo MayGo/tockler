@@ -73,11 +73,11 @@ Thank you!
 
 By default, tockler writes logs to the following locations:
 
-on Linux: `~/.config/tockler/logs/main.log`
+Linux: `~/.config/tockler/logs/main.log`
 
-on macOS: `~/Library/Logs/tockler/main.log`
+macOS: `~/Library/Logs/tockler/main.log`
 
-on Windows: `%USERPROFILE%\AppData\Roaming\tockler\logs\main.log`
+Windows: `%USERPROFILE%\AppData\Roaming\tockler\logs\main.log`
 
 ## Development
 
