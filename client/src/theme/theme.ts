@@ -13,7 +13,7 @@ import { ColorPickerStyle } from './components/colorPicker';
 import { mode } from '@chakra-ui/theme-tools';
 
 const savedTheme = getThemeFromStorage();
-const initialColorMode = savedTheme?.name || THEMES.LIGHT;
+const initialColorMode = savedTheme || THEMES.LIGHT;
 
 console.info('INITIAL THEME', initialColorMode);
 

@@ -8,6 +8,13 @@ import { sendToTrayWindow, sendToMainWindow } from './window-manager';
 
 let logger = logManager.getLogger('AppManager');
 
+const IS_NATIVE_THEME_ENABLED = 'isNativeThemeEnabled';
+const NATIVE_THEME_CONFIG_CHANGED = 'nativeThemeChanged';
+const THEME_CONFIG_KEY = 'selectedTheme';
+
+const theThemeHasChanged = () => {
+    AppManager.saveThemeAndNotify(AppManager.getNativeTheme());
+};
 export default class AppManager {
     static async init() {
         logger.info('Intializing Tockler');
@@ -26,14 +33,23 @@ export default class AppManager {
     static initAppEvents() {
         logger.debug('Init app events.');
 
-        ipcMain.on('openAtLoginChanged', (ev, name) => {
+        ipcMain.on('openAtLoginChanged', () => {
             AppManager.setOpenAtLogin();
         });
 
-        nativeTheme.on('updated', function theThemeHasChanged() {
-            const themeName = nativeTheme.shouldUseDarkColors ? 'dark' : 'default';
-            AppManager.saveTheme(themeName);
+        const checkNativeThemeState = () => {
+            if (config.persisted.get(IS_NATIVE_THEME_ENABLED)) {
+                AppManager.setToggleNativeThemeListeners(true);
+                AppManager.saveThemeAndNotify(AppManager.getNativeTheme());
+            } else {
+                AppManager.setToggleNativeThemeListeners(false);
+            }
+        };
+
+        ipcMain.on(NATIVE_THEME_CONFIG_CHANGED, () => {
+            checkNativeThemeState();
         });
+        checkNativeThemeState();
     }
 
     static setOpenAtLogin() {
@@ -47,9 +63,26 @@ export default class AppManager {
         });
     }
 
-    static saveTheme(theme) {
+    static setToggleNativeThemeListeners(enable: boolean) {
+        nativeTheme.removeListener('updated', theThemeHasChanged);
+
+        if (enable) {
+            nativeTheme.addListener('updated', theThemeHasChanged);
+        }
+    }
+
+    static getNativeTheme() {
+        return nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
+    }
+
+    static saveActiveTheme(theme: string) {
+        config.persisted.set(THEME_CONFIG_KEY, theme);
+    }
+
+    static saveThemeAndNotify(theme) {
         logger.info('Theme changed', theme);
-        config.persisted.set('activeThemeName', theme);
+        AppManager.saveActiveTheme(theme);
+
         sendToMainWindow('activeThemeChanged', theme);
         sendToTrayWindow('activeThemeChanged', theme);
     }

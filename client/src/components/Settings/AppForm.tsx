@@ -9,22 +9,29 @@ import {
     saveIsAutoUpdateEnabled,
     getIsLoggingEnabled,
     saveIsLoggingEnabled,
+    getNativeThemeChange,
+    saveNativeThemeChange,
 } from '../../services/settings.api';
 import { CardBox } from '../CardBox';
 
 export const AppForm = () => {
+    const isNativeThemeEnabled = getNativeThemeChange();
     const openAtLogin = getOpenAtLogin();
     const isAutoUpdateEnabled = getIsAutoUpdateEnabled();
     const isLoggingEnabled = getIsLoggingEnabled();
+
+    const onChangeNativeThemeChange = event => {
+        saveNativeThemeChange(event.target.checked);
+    };
     const onChangeOpenAtLogin = event => {
-        saveOpenAtLogin(event.target.value);
+        saveOpenAtLogin(event.target.checked);
     };
 
     const onChangeAutoUpdate = event => {
-        saveIsAutoUpdateEnabled(event.target.value);
+        saveIsAutoUpdateEnabled(event.target.checked);
     };
     const onChangeLogging = event => {
-        saveIsLoggingEnabled(event.target.value);
+        saveIsLoggingEnabled(event.target.checked);
     };
 
     const appName = process.env.REACT_APP_NAME;
@@ -43,6 +50,17 @@ export const AppForm = () => {
 
     return (
         <CardBox title="App settings" divider w="50%">
+            <FormControl display="flex" alignItems="center" py={2}>
+                <FormLabel htmlFor="os-theme" mb="0" flex="1">
+                    Use OS theme?
+                </FormLabel>
+                <Switch
+                    id="os-theme"
+                    defaultChecked={isNativeThemeEnabled}
+                    onChange={onChangeNativeThemeChange}
+                    size="lg"
+                />
+            </FormControl>
             <FormControl display="flex" alignItems="center" py={2}>
                 <FormLabel htmlFor="run-login" mb="0" flex="1">
                     Run at login?
