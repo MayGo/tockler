@@ -69,8 +69,6 @@ Thank you!
 ![Search](https://github.com/MayGo/tockler/raw/master/screenshots/dark/tockler-search.png 'Search')
 ![Tray window](https://github.com/MayGo/tockler/raw/master/screenshots/dark/tockler-tray.png 'Tray window')
 
-# Debugging
-
 ## Logs
 
 By default, tockler writes logs to the following locations:
@@ -102,7 +100,7 @@ Renderer and main process builds have been separated. It's easier to boilerplate
 ```
 cd client/
 yarn install            # Install dependencies
-npm start
+yarn start
 ```
 
 #### Electron (main)
@@ -125,18 +123,13 @@ $cert = Get-ChildItem -Path Cert:\CurrentUser\My -CodeSigningCert
 Set-AuthenticodeSignature -FilePath '.\app\get-foreground-window-title.ps1' -Certificate $cert
 ```
 
+# Errors
+
+### while installing electron deps: electron-builder Error: Unresolved node modules: ref
+
+Quick fix: ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true yarn
+
 # License
 
 GNU General Public License v2.0
 2021 MayGo (https://github.com/MayGo)
-
-# Functionality
-
--   On app launch only tray window runs. Main window does not open.
--   Main window opens from tray windows arrow or by reopening application.
-
-# Errors
-
-## while installing electron deps: electron-builder Error: Unresolved node modules: ref
-
-Quick fix: ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true yarn
