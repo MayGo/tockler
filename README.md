@@ -69,6 +69,8 @@ Thank you!
 ![Search](https://github.com/MayGo/tockler/raw/master/screenshots/dark/tockler-search.png 'Search')
 ![Tray window](https://github.com/MayGo/tockler/raw/master/screenshots/dark/tockler-tray.png 'Tray window')
 
+Theme by StyleStack.com
+
 ## Logs
 
 By default, tockler writes logs to the following locations:
