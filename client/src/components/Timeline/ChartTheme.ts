@@ -106,7 +106,7 @@ export const getChartTheme = isDark => ({
 
     tooltip: {
         style: assign({}, centeredLabelStyles(isDark), {
-            padding: 5,
+            padding: 15,
             pointerEvents: 'none',
         }),
         flyoutStyle: {
