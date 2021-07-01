@@ -21,6 +21,9 @@ const config = {
     initialColorMode: initialColorMode,
     useSystemColorMode: false,
 };
+
+export const MAIN_THEME_COLOR = '#7C3AED';
+
 export const theme = extendTheme({
     config,
     styles: {
@@ -35,7 +38,7 @@ export const theme = extendTheme({
     },
     colors: {
         brand: {
-            mainColor: '#7C3AED',
+            mainColor: MAIN_THEME_COLOR,
         },
     },
     components: {

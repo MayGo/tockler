@@ -36,6 +36,7 @@ export const OnlineChart = ({ items }) => {
         beginClamp: startDate,
         endClamp: endDate,
         items,
+        mode,
     });
 
     const style: any = {

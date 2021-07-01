@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { MAIN_THEME_COLOR } from '../../theme/theme';
 
 const clampItem = ({ beginClamp, endClamp }) => item => {
     const beginDate = Math.max(beginClamp, item.beginDate);
@@ -20,10 +21,13 @@ export enum CLOCK_MODE {
 }
 
 export const getQuarters = (date, mode) => {
-    const startDate = roundTo(moment(date))
-        .subtract(mode, 'hours')
-        .set('minutes', 0)
-        .set('seconds', 0);
+    const startDate =
+        mode === CLOCK_MODE.HOURS_12
+            ? roundTo(moment(date))
+                  .subtract(mode, 'hours')
+                  .set('minutes', 0)
+                  .set('seconds', 0)
+            : moment(date).startOf('day');
 
     const quarter = mode / 4;
     return [
@@ -54,7 +58,7 @@ export const isBetweenHours = ({ beginClamp, endClamp }) => item => {
     );
 };
 
-export const getOnlineTimesForChart = ({ beginClamp, endClamp, items }) => {
+export const getOnlineTimesForChart = ({ beginClamp, endClamp, items, mode }) => {
     const pieData: any[] = [];
     const arr: any[] = [];
 
@@ -108,6 +112,16 @@ export const getOnlineTimesForChart = ({ beginClamp, endClamp, items }) => {
         }
 
         if (!next) {
+            const currentTimeItem = {
+                beginDate: moment(),
+                endDate: moment(),
+                color: MAIN_THEME_COLOR,
+                diff: mode === CLOCK_MODE.HOURS_12 ? 2 : 4,
+                x: nr++,
+            };
+
+            pieData.push(currentTimeItem);
+
             const diff = moment(moment(endClamp)).diff(item.endDate, 'minutes');
 
             if (diff > 0) {
@@ -121,6 +135,7 @@ export const getOnlineTimesForChart = ({ beginClamp, endClamp, items }) => {
             }
         }
     });
+
     console.info('pieData items', pieData);
     return pieData;
 };
