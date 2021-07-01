@@ -47,17 +47,27 @@ Thank you!
 -   [Electron](https://electron.atom.io/) with [Webpack](https://webpack.github.io/) and [Typescript](https://www.typescriptlang.org/)
 -   [React](https://reactjs.org/)
 -   [D3 v4](https://d3js.org/) and [Victory Chart](http://formidable.com/open-source/victory/docs/victory-chart/)
--   [Ant Design](https://ant.design/)
+-   [Chakra UI](https://chakra-ui.com/)
 
 # Screenshots
 
-![Timeline](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-timeline.png 'Timeline')
-![Changing items color](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-change_color.png 'Changing items color')
-![Settings](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-settings.png 'Settings')
-![Summary](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-summary.png 'Summary')
-![Search](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-search.png 'Search')
-![Tray window](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-tray.png 'Tray window')
-![Edit log item](https://github.com/MayGo/tockler/raw/master/screenshots/editing-log-item.gif 'Edit log item')
+### Light theme
+
+![Timeline](https://github.com/MayGo/tockler/raw/master/screenshots/light/tockler-timeline.png 'Timeline')
+![Settings](https://github.com/MayGo/tockler/raw/master/screenshots/light/tockler-settings.png 'Settings')
+![Summary](https://github.com/MayGo/tockler/raw/master/screenshots/light/tockler-summary-calendar.png 'Summary')
+![Summary](https://github.com/MayGo/tockler/raw/master/screenshots/light/tockler-summary-chart.png 'Summary')
+![Search](https://github.com/MayGo/tockler/raw/master/screenshots/light/tockler-search.png 'Search')
+![Tray window](https://github.com/MayGo/tockler/raw/master/screenshots/light/tockler-tray.png 'Tray window')
+
+### Dark theme
+
+![Timeline](https://github.com/MayGo/tockler/raw/master/screenshots/dark/tockler-timeline.png 'Timeline')
+![Settings](https://github.com/MayGo/tockler/raw/master/screenshots/dark/tockler-settings.png 'Settings')
+![Summary](https://github.com/MayGo/tockler/raw/master/screenshots/dark/tockler-summary-calendar.png 'Summary')
+![Summary](https://github.com/MayGo/tockler/raw/master/screenshots/dark/tockler-summary-chart.png 'Summary')
+![Search](https://github.com/MayGo/tockler/raw/master/screenshots/dark/tockler-search.png 'Search')
+![Tray window](https://github.com/MayGo/tockler/raw/master/screenshots/dark/tockler-tray.png 'Tray window')
 
 # Debugging
 
