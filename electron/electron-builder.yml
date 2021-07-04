@@ -6,6 +6,8 @@ asarUnpack:
     - shared
 
 npmRebuild: false
+build:
+    afterSign: 'scripts/notarize.js'
 
 directories:
     output: 'packaged'
@@ -25,6 +27,10 @@ publish:
 
 mac:
     category: public.app-category.productivity
+    hardenedRuntime: true
+    gatekeeperAssess: false
+    entitlements: 'build/entitlements.mac.plist'
+    entitlementsInherit": 'build/entitlements.mac.plist'
 
 win:
     artifactName: ${name}-${version}-windows-${arch}.${ext}
@@ -42,3 +48,6 @@ linux:
     target:
         - AppImage
         - deb
+
+dmg:
+    sign: false
