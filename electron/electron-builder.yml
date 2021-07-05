@@ -6,7 +6,7 @@ asarUnpack:
     - shared
 
 npmRebuild: false
-afterSign: 'scripts/notarize.js'
+afterSign: './scripts/notarize.js'
 
 directories:
     output: 'packaged'
@@ -28,7 +28,7 @@ mac:
     category: public.app-category.productivity
     hardenedRuntime: true
     gatekeeperAssess: false
-    entitlements: build/entitlements.mac.plist
+    entitlements: build/entitlements.mac.plist,
     entitlementsInherit: build/entitlements.mac.plist
 
 win:
