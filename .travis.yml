@@ -17,7 +17,7 @@ sudo: true
 
 language: node_js
 node_js:
-    - '13'
+    - '14'
 
 cache:
     timeout: 600
