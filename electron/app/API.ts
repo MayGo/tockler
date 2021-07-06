@@ -8,6 +8,8 @@ import { stateManager } from './state-manager';
 import { State } from './enums/state';
 import { appConstants } from './app-constants';
 import { logService } from './services/log-service';
+import { whitelistService } from './services/whitelist-service';
+import { blacklistService } from './services/blacklist-service';
 
 const settingsActions = {
     fetchAnalyserSettingsJsonString: async (req, res) => {
@@ -40,6 +42,36 @@ const settingsActions = {
 const appSettingsActions = {
     changeColorForApp: async ({ payload }, res) => {
         const data = await appSettingService.changeColorForApp(payload.appName, payload.color);
+        res.send(data);
+    },
+};
+
+const listActions = {
+    // whitelist actions
+    getWhitelist: async (_, res) => {
+        const data = await whitelistService.getWhitelist();
+        res.send(data);
+    },
+    upsertWhitelistItem: async ({ payload }, res) => {
+        const data = await whitelistService.createOrUpdateWhitelistItem(payload.whitelistItem);
+        res.send(data);
+    },
+    deleteWhitelistItem: async ({ payload }, res) => {
+        const data = await whitelistService.deleteByIds(payload.whitelistIds);
+        res.send(data);
+    },
+
+    // blacklist actions
+    getBlacklist: async (_, res) => {
+        const data = await blacklistService.getBlacklist();
+        res.send(data);
+    },
+    upsertBlacklistItem: async ({ payload }, res) => {
+        const data = await blacklistService.createOrUpdateBlacklistItem(payload.blacklistItem);
+        res.send(data);
+    },
+    deleteBlacklistItem: async ({ payload }, res) => {
+        const data = await blacklistService.deleteByIds(payload.blacklistIds);
         res.send(data);
     },
 };
@@ -105,6 +137,12 @@ const trackItemActions = {
 export const initIpcActions = () =>
     setupMainHandler(
         { ipcMain } as any,
-        { ...settingsActions, ...appSettingsActions, ...logsActions, ...trackItemActions },
+        {
+            ...settingsActions,
+            ...appSettingsActions,
+            ...logsActions,
+            ...trackItemActions,
+            ...listActions,
+        },
         true,
     );

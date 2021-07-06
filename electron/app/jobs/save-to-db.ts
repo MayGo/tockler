@@ -56,12 +56,37 @@ export class SaveToDbJob {
     async run() {
         try {
             const items = await TrackItem.query()
+                .joinRaw(
+                    `LEFT JOIN Whitelist
+                    ON (
+                        (
+                            Whitelist.app IS NULL
+                            OR Whitelist.app = ''
+                            OR TrackItems.app LIKE '%' || Whitelist.app || '%'
+                        ) 
+                        AND (
+                            Whitelist.title IS NULL
+                            OR Whitelist.title = ''
+                            OR TrackItems.title LIKE '%' || Whitelist.title || '%'
+                        ) 
+                        AND (
+                            Whitelist.url IS NULL
+                            OR Whitelist.url = ''
+                            OR TrackItems.url LIKE '%' || Whitelist.url || '%'
+                        )
+                    )`,
+                )
                 .whereRaw(
-                    `"taskName" = 'AppTrackItem' AND ("userEventId" IS NULL OR "updatedAt" >= ?)`,
+                    `"taskName" = 'AppTrackItem'
+                    AND Whitelist.id IS NOT NULL
+                    AND (
+                        "userEventId" IS NULL
+                        OR TrackItems."updatedAt" >= ?
+                    )`,
                     [this.lastSavedAt],
                 )
                 .limit(100);
-            // FIXME: figure out how to do it with proper Knex `where` methods instead of `whereRaw`
+            // FIXME: figure out how to do it with proper Knex `where` methods instead of `whereRaw` as it might be more "safe"
             // .where('taskName', 'AppTrackItem')
             // .whereNull('userEventId')
             // .orWhere('updatedAt', '>=', this.lastSavedAt);
@@ -77,35 +102,52 @@ export class SaveToDbJob {
                 }
             }
 
-            // return early and wait for user to go through login flow which will add a token in the db.
-            if (!this.token) {
-                console.log('Received no token. Returning early...');
-                return;
+            if (this.token) {
+                const user = getUserFromToken(this.token);
+                if (!user) {
+                    // TODO: use refreshToken to get new token instead of setting token to null
+                    this.token = null;
+                    await settingsService.updateLoginSettings({ token: null });
+                    throw new Error('Token Expired!');
+                }
+
+                const returned = await sendTrackItemsToDB(
+                    items,
+                    user.id,
+                    process.env.HASURA_GRAPHQL_ENGINE_DOMAIN,
+                    this.token,
+                );
+
+                if ((returned.errors?.length ?? 0) > 0) {
+                    throw new Error(JSON.stringify(returned.errors));
+                }
+
+                console.log('Successfully saved', items.length, `TrackItems to GitStart's DB`);
+                this.lastSavedAt = new Date();
+
+                console.log('-------------------------');
+
+                console.log(
+                    returned.data.insert_user_events.returning.length,
+                    'user_events need to be linked',
+                );
+                await Promise.all(
+                    returned.data.insert_user_events.returning.map((userEvent, i) => {
+                        console.log({ userEventId: userEvent.id }, items[i].app, items[i].title);
+                        return trackItemService.updateTrackItem(
+                            { userEventId: userEvent.id },
+                            items[i].id,
+                        );
+                    }),
+                );
+
+                console.log('Successfully linked', items.length, `user_event with its TrackItem`);
+                console.log('-------------------------');
+            } else {
+                // wait for user to go through login flow which will add a token in the db.
+                console.log('Received no token. Waiting for user to login...');
+                console.log('-------------------------');
             }
-
-            const user = getUserFromToken(this.token);
-            if (!user) {
-                // TODO: use refreshToken to get new token instead of setting token to null
-                this.token = null;
-                await settingsService.updateLoginSettings({ token: null });
-                throw new Error('Token Expired!');
-            }
-
-            const returned = await sendTrackItemsToDB(
-                items,
-                user.id,
-                process.env.HASURA_GRAPHQL_ENGINE_DOMAIN,
-                this.token,
-            );
-
-            if ((returned.errors?.length ?? 0) > 0) {
-                throw new Error(JSON.stringify(returned.errors));
-            }
-
-            console.log('Successfully saved', items.length, `TrackItems to GitStart's DB`);
-            this.lastSavedAt = new Date();
-
-            console.log('-------------------------');
 
             const stagingUserId = config.persisted.get('stagingUserId');
             if (!!stagingUserId) {
@@ -134,24 +176,7 @@ export class SaveToDbJob {
                         `TrackItems to GitStart's Staging DB`,
                     );
                 }
-                console.log('-------------------------');
             }
-
-            console.log(
-                returned.data.insert_user_events.returning.length,
-                'user_events need to be linked',
-            );
-            await Promise.all(
-                returned.data.insert_user_events.returning.map((userEvent, i) => {
-                    console.log({ userEventId: userEvent.id }, items[i].app, items[i].title);
-                    return trackItemService.updateTrackItem(
-                        { userEventId: userEvent.id },
-                        items[i].id,
-                    );
-                }),
-            );
-
-            console.log('Successfully linked', items.length, `user_event with its TrackItem`);
         } catch (e) {
             console.error(e);
             logService
