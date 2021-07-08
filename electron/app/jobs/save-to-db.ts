@@ -199,6 +199,22 @@ async function sendTrackItemsToDB(
     secret?: string,
 ) {
     // HACK: temporary hack to upsert to hasura. Code can be much cleaner by turning this into a class.
+    const userEvents = items.map((event) => {
+        return {
+            ...(event.userEventId ? { id: event.userEventId } : {}),
+            userId,
+            updatedAt: new Date().toJSON(),
+            appName: event.app,
+            title: event.title,
+            browserUrl: event.url,
+            occurredAt: new Date(event.beginDate).toJSON(),
+            duration: Math.round(
+                (new Date(event.endDate).getTime() - new Date(event.beginDate).getTime()) / 1000,
+            ),
+            pollInterval: appConstants.TIME_TRACKING_JOB_INTERVAL / 1000, // ms to sec
+            eventType: event.url ? user_event_types_enum.browse_url : user_event_types_enum.app_use,
+        };
+    });
     const returned = await fetchGraphQLClient(domain, {
         token,
         secret,
@@ -231,25 +247,7 @@ async function sendTrackItemsToDB(
             }
         `,
         variables: {
-            userEvents: items.map((event) => {
-                return {
-                    ...(event.userEventId ? { id: event.userEventId } : {}),
-                    userId,
-                    updatedAt: new Date().toJSON(),
-                    appName: event.app,
-                    title: event.title,
-                    browserUrl: event.url,
-                    occurredAt: new Date(event.beginDate).toJSON(),
-                    duration: Math.round(
-                        (new Date(event.endDate).getTime() - new Date(event.beginDate).getTime()) /
-                            1000,
-                    ),
-                    pollInterval: appConstants.TIME_TRACKING_JOB_INTERVAL / 1000, // ms to sec
-                    eventType: event.url
-                        ? user_event_types_enum.browse_url
-                        : user_event_types_enum.app_use,
-                };
-            }),
+            userEvents,
         },
     });
     return returned;
