@@ -32,8 +32,8 @@ export function saveNativeThemeChange(enabled) {
 }
 export function saveOpenAtLogin(openAtLogin) {
     if (openAtLogin !== getOpenAtLogin()) {
-        EventEmitter.send('openAtLoginChanged');
         configSet(OPEN_AT_LOGIN, openAtLogin);
+        EventEmitter.send('openAtLoginChanged');
     }
 }
 
