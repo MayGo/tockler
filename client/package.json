@@ -40,7 +40,7 @@
         "react-table": "^7.7.0",
         "react-timekeeper": "^2.1.3",
         "use-react-router": "^1.0.7",
-        "victory": "^35.4.3"
+        "victory": "^35.8.6"
     },
     "scripts": {
         "start": "cross-env ELECTRON_ENABLE_SECURITY_WARNINGS=false BROWSER=none LOG_LEVEL=debug react-scripts start",
