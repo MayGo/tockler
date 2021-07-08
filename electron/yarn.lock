@@ -3616,11 +3616,6 @@ edge-paths@^2.1.0:
     "@types/which" "^1.3.2"
     which "^2.0.2"
 
-eiphop@^1.0.13:
-  version "1.0.13"
-  resolved "https://registry.yarnpkg.com/eiphop/-/eiphop-1.0.13.tgz#d9fd19f6c20b5abab3540d4e82c56b5a9256fd37"
-  integrity sha512-iiDAYLf8LckQTyVlC/fqMUnIGlLpYzqVgvctgGbi1WK6fz0LSMw6ekp4Mm2lHP+EtrM68VSl5vCXdSUX29Os5A==
-
 ejs@^3.1.6:
   version "3.1.6"
   resolved "https://registry.yarnpkg.com/ejs/-/ejs-3.1.6.tgz#5bfd0a0689743bb5268b3550cceeebbc1702822a"
@@ -6298,7 +6293,7 @@ lodash.zip@^4.2.0:
   resolved "https://registry.yarnpkg.com/lodash.zip/-/lodash.zip-4.2.0.tgz#ec6662e4896408ed4ab6c542a3990b72cc080020"
   integrity sha1-7GZi5IlkCO1KtsVCo5kLcswIACA=
 
-lodash@4.x, lodash@^4.17.10, lodash@^4.17.15, lodash@^4.17.20, lodash@^4.17.21, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.7.0:
+lodash@4.x, lodash@^4.17.10, lodash@^4.17.15, lodash@^4.17.21, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.7.0:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
