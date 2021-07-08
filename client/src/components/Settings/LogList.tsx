@@ -34,7 +34,7 @@ export const LogList = () => {
         }
         const toCancel = setTimeout(() => {
             getAllLogs();
-        }, 10000);
+        }, 600000);
 
         return () => clearTimeout(toCancel);
         // eslint-disable-next-line
@@ -57,7 +57,7 @@ export const LogList = () => {
                     ).format()}`}
                     closeText="Dismiss"
                     onClose={handleDismiss}
-                    style={{ marginBottom: '16px' }}
+                    style={{ marginBottom: '8px' }}
                 />
             ))}
         </>

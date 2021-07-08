@@ -1,8 +1,7 @@
 import { Box, Flex } from 'reflexbox';
 import { Button, Input, Table } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined, CheckOutlined } from '@ant-design/icons';
 // tslint:disable-next-line: no-submodule-imports
-
 import { sumBy } from 'lodash';
 import moment from 'moment';
 import React, { useState, useRef, useEffect } from 'react';
@@ -277,6 +276,21 @@ export const TrackItemTable = () => {
             render: (text, record) => (
                 <span>{diffAndFormatShort(record.beginDate, record.endDate)}</span>
             ),
+        },
+
+        {
+            title: 'Sent',
+            dataIndex: '',
+            key: 'sent',
+            width: 50,
+            render: (text, record) => {
+                if (!record.userEventId) return null;
+                return (
+                    <span>
+                        <CheckOutlined />
+                    </span>
+                );
+            },
         },
     ];
 

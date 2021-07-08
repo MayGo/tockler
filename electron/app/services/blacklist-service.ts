@@ -5,25 +5,26 @@ export class BlacklistService {
     logger = logManager.getLogger('BlacklistService');
 
     async createOrUpdateBlacklistItem(
-        blacklistAttributes: Partial<Blacklist>,
-    ): Promise<Partial<Blacklist>> {
-        let item: Partial<Blacklist> = null;
+        blacklistItems: Partial<Blacklist>[],
+    ): Promise<Partial<Blacklist>[]> {
         const now = new Date();
-
-        if (blacklistAttributes.id) {
-            const updates: Partial<Blacklist> = {
-                updatedAt: now,
-                ...blacklistAttributes,
-            };
-            await Blacklist.query().findById(blacklistAttributes.id).patch(updates);
-            item = updates;
-        } else {
-            blacklistAttributes.createdAt = now;
-            blacklistAttributes.updatedAt = now;
-            item = await Blacklist.query().insert(blacklistAttributes);
+        let items: Partial<Blacklist>[] = [];
+        for (const blacklistAttributes of blacklistItems) {
+            if (blacklistAttributes.id) {
+                const updates: Partial<Blacklist> = {
+                    updatedAt: now,
+                    ...blacklistAttributes,
+                };
+                await Blacklist.query().findById(blacklistAttributes.id).patch(updates);
+                items.push(updates);
+            } else {
+                blacklistAttributes.createdAt = now;
+                blacklistAttributes.updatedAt = now;
+                items.push(await Blacklist.query().insert(blacklistAttributes));
+            }
         }
 
-        return item;
+        return items;
     }
 
     async getBlacklist(): Promise<Blacklist[]> {
@@ -65,6 +66,7 @@ export class BlacklistService {
     }
 
     async deleteByIds(ids: number[]) {
+        console.log(ids);
         await Blacklist.query().delete().whereIn('id', ids);
         return ids;
     }

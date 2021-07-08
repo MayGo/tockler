@@ -52,12 +52,12 @@ const listActions = {
         const data = await whitelistService.getWhitelist();
         res.send(data);
     },
-    upsertWhitelistItem: async ({ payload }, res) => {
-        const data = await whitelistService.createOrUpdateWhitelistItem(payload.whitelistItem);
+    upsertWhitelistItems: async ({ payload }, res) => {
+        const data = await whitelistService.createOrUpdateWhitelistItem(payload.whitelistItems);
         res.send(data);
     },
-    deleteWhitelistItem: async ({ payload }, res) => {
-        const data = await whitelistService.deleteByIds(payload.whitelistIds);
+    deleteWhitelistItems: async ({ payload }, res) => {
+        const data = await whitelistService.deleteByIds(payload.ids);
         res.send(data);
     },
 
@@ -66,12 +66,12 @@ const listActions = {
         const data = await blacklistService.getBlacklist();
         res.send(data);
     },
-    upsertBlacklistItem: async ({ payload }, res) => {
-        const data = await blacklistService.createOrUpdateBlacklistItem(payload.blacklistItem);
+    upsertBlacklistItems: async ({ payload }, res) => {
+        const data = await blacklistService.createOrUpdateBlacklistItem(payload.blacklistItems);
         res.send(data);
     },
-    deleteBlacklistItem: async ({ payload }, res) => {
-        const data = await blacklistService.deleteByIds(payload.blacklistIds);
+    deleteBlacklistItems: async ({ payload }, res) => {
+        const data = await blacklistService.deleteByIds(payload.ids);
         res.send(data);
     },
 };

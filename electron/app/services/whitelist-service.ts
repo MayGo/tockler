@@ -5,25 +5,26 @@ export class WhitelistService {
     logger = logManager.getLogger('WhitelistService');
 
     async createOrUpdateWhitelistItem(
-        whitelistAttributes: Partial<Whitelist>,
-    ): Promise<Partial<Whitelist>> {
-        let item: Partial<Whitelist> = null;
+        whitelistItems: Partial<Whitelist>[],
+    ): Promise<Partial<Whitelist>[]> {
         const now = new Date();
-
-        if (whitelistAttributes.id) {
-            const updates: Partial<Whitelist> = {
-                updatedAt: now,
-                ...whitelistAttributes,
-            };
-            await Whitelist.query().findById(whitelistAttributes.id).patch(updates);
-            item = updates;
-        } else {
-            whitelistAttributes.createdAt = now;
-            whitelistAttributes.updatedAt = now;
-            item = await Whitelist.query().insert(whitelistAttributes);
+        let items: Partial<Whitelist>[] = [];
+        for (const whitelistAttributes of whitelistItems) {
+            if (whitelistAttributes.id) {
+                const updates: Partial<Whitelist> = {
+                    updatedAt: now,
+                    ...whitelistAttributes,
+                };
+                await Whitelist.query().findById(whitelistAttributes.id).patch(updates);
+                items.push(updates);
+            } else {
+                whitelistAttributes.createdAt = now;
+                whitelistAttributes.updatedAt = now;
+                items.push(await Whitelist.query().insert(whitelistAttributes));
+            }
         }
 
-        return item;
+        return items;
     }
 
     async getWhitelist(): Promise<Whitelist[]> {
