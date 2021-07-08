@@ -8,6 +8,7 @@ import { taskAnalyser } from '../task-analyser';
 import { TrackItem } from '../models/TrackItem';
 import { dialog } from 'electron';
 import { logService } from '../services/log-service';
+import { blacklistService } from '../services/blacklist-service';
 
 let logger = logManager.getLogger('AppTrackItemJob');
 
@@ -116,7 +117,17 @@ export class AppTrackItemJob {
 
         // logger.debug('Active window (parsed):', rawItem);
 
-        let savedItem = await backgroundService.createOrUpdate(rawItem);
+        const isInBlacklist = await blacklistService.isInBlacklist({
+            app: rawItem.app,
+            title: rawItem.title,
+            url: rawItem.url,
+        });
+
+        let savedItem = null;
+        if (!isInBlacklist) {
+            savedItem = await backgroundService.createOrUpdate(rawItem);
+        }
+
         return savedItem;
     }
 }

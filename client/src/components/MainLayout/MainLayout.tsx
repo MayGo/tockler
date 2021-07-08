@@ -42,8 +42,6 @@ export function MainLayout({ children, location }: any) {
                     {children}
                 </Content>
                 <Footer>
-                    <a href="https://github.com/MayGo">MayGo</a> @ 2021
-                    <br />
                     <p>v{packageJson.version}</p>
                 </Footer>
             </Layout>
