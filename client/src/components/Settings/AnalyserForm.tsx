@@ -47,6 +47,7 @@ export const AnalyserForm = () => {
 
     const setDefaults = () => {
         setAnalyserItems([...analyserItems, ...defaultAnalyserSettings]);
+        saveAnalyserSettings([...analyserItems, ...defaultAnalyserSettings]);
     };
 
     return (
