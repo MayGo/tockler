@@ -14,10 +14,10 @@
   dependencies:
     analytics-utils "^0.4.4"
 
-"@analytics/google-analytics@^0.5.2":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@analytics/google-analytics/-/google-analytics-0.5.2.tgz#e94501ae23284ebdccb3453cf9158984b7443388"
-  integrity sha512-6jviLzo6s7MLvsfPLCSppGgoHb9piShCk/n66s75yR8XN+Pz8ADk1Rh28jRErbLSJToJcCMOwDXikCF7U4exMQ==
+"@analytics/google-analytics@^0.5.3":
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/@analytics/google-analytics/-/google-analytics-0.5.3.tgz#08642f6e9ab9a76aceb53356ea66c53552eec9b7"
+  integrity sha512-5ZH3hpM8W/rhBrF+3TNjD2ZjabW4A8k/maqF4IGmWWNq31Bd8xh3KAhifDs76xn8hTWKGapTORZLfo87mB+9Dw==
   dependencies:
     universal-analytics "^0.4.20"
 

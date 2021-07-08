@@ -3,7 +3,7 @@
     "version": "3.19.2",
     "private": true,
     "dependencies": {
-        "@analytics/google-analytics": "^0.5.2",
+        "@analytics/google-analytics": "^0.5.3",
         "@chakra-ui/icons": "^1.0.13",
         "@chakra-ui/react": "^1.6.3",
         "@datepicker-react/hooks": "^2.8.0",
