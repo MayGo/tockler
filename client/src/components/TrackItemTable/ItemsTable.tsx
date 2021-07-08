@@ -4,7 +4,7 @@ import React, { useEffect, useMemo } from 'react';
 import Moment from 'react-moment';
 import { DATE_TIME_FORMAT, TIME_FORMAT } from '../../constants';
 import { diffAndFormatShort } from '../../utils';
-import { TotalCount } from './TrackItemTable.styles';
+
 import { Box, Flex } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
 import { Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/table';
@@ -101,7 +101,7 @@ export const ItemsTable = ({
                 accessor: record => diffAndFormatShort(record.beginDate, record.endDate),
                 Footer: info => {
                     const total = useMemo(() => calculateTotal(info.data), [info.data]);
-                    return <TotalCount>Total: {total}</TotalCount>;
+                    return <Box pr={4}>Total: {total}</Box>;
                 },
                 width: 80,
                 minWidth: 80,
