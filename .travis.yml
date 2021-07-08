@@ -20,7 +20,7 @@ node_js:
     - '14'
 
 cache:
-    timeout: 600
+    timeout: 1000
     directories:
         - node_modules
         - electron/node_modules
