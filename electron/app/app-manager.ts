@@ -53,11 +53,17 @@ export default class AppManager {
     }
 
     static setOpenAtLogin() {
-        const openAtLogin = config.persisted.get('openAtLogin');
+        let openAtLogin = config.persisted.get('openAtLogin');
+
+        const firstTime = typeof openAtLogin === 'undefined';
+        if (firstTime) {
+            config.persisted.set('openAtLogin', true);
+            openAtLogin = true;
+        }
 
         logger.debug('Setting openAtLogin to:', openAtLogin);
         app.setLoginItemSettings({
-            openAtLogin: typeof openAtLogin !== 'undefined' ? openAtLogin : true,
+            openAtLogin: openAtLogin,
             openAsHidden: true,
             args: ['--process-start-args', `"--hidden"`],
         });
