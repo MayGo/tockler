@@ -1,5 +1,5 @@
 import { Box, Flex } from 'reflexbox';
-import { Button, Input, Table } from 'antd';
+import { Button, Input, Table, Tooltip } from 'antd';
 import { SearchOutlined, CheckOutlined } from '@ant-design/icons';
 // tslint:disable-next-line: no-submodule-imports
 import { sumBy } from 'lodash';
@@ -283,12 +283,28 @@ export const TrackItemTable = () => {
             dataIndex: '',
             key: 'sent',
             width: 50,
+            filters: [
+                {
+                    text: 'Sent',
+                    value: 'sent',
+                },
+                {
+                    text: 'Unsent',
+                    value: 'unsent',
+                },
+            ],
+            onFilter: (value, record) => {
+                if (value === 'sent') return !!record.userEventId;
+                if (value === 'unsent') return !record.userEventId;
+                return false;
+            },
+            filteredValue: filteredInfo.sent || null,
             render: (text, record) => {
                 if (!record.userEventId) return null;
                 return (
-                    <span>
+                    <Tooltip title="Sent to GitStart">
                         <CheckOutlined />
-                    </span>
+                    </Tooltip>
                 );
             },
         },
