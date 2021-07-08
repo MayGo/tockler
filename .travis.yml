@@ -53,7 +53,7 @@ script:
     - cd electron
     - npm run build
     - npm run prepare_client
-    - travis_wait 80 npm run release
+    - travis_wait 120 npm run release
     - cd ..
 
 branches:
