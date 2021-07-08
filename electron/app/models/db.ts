@@ -1,6 +1,6 @@
 import config from '../config';
 import { Model } from 'objection';
-import * as Knex from 'knex';
+import { knex } from 'knex';
 import { logManager } from '../log-manager';
 import { WebpackMigrationSource } from 'knex-webpack-migration-source';
 
@@ -10,8 +10,7 @@ export async function connectAndSync() {
     let dbConfig = config.databaseConfig;
     logger.debug('Database dir is:' + dbConfig.outputPath);
 
-    // Initialize knex.
-    const knex = Knex({
+    const knexInstance = knex({
         client: 'sqlite3',
         useNullAsDefault: true,
         connection: {
@@ -23,9 +22,9 @@ export async function connectAndSync() {
     });
 
     // Give the knex instance to objection.
-    Model.knex(knex);
+    Model.knex(knexInstance);
 
-    await knex.migrate.latest({
+    await knexInstance.migrate.latest({
         migrationSource: new WebpackMigrationSource(
             require.context('../../migrations', true, /.js$/),
         ),

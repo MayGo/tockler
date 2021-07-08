@@ -1,11 +1,11 @@
 'use strict';
-
+const { contextBridge, ipcRenderer, ipcMain } = require('electron');
 const Store = require('electron-store');
-const electron = require('electron');
+
 const log = require('electron-log');
 const Sentry = require('@sentry/electron');
 
-const version = electron.remote.app.getVersion();
+const config = new Store();
 
 if (process.env.NODE_ENV === 'production') {
     Sentry.init({
@@ -56,9 +56,50 @@ const sentryTransportConsole = (msgObj) => {
 
 log.transports.console = sentryTransportConsole;
 
+const isProd = false;
+log.transports.console.level = isProd ? 'warn' : 'debug';
+
+const IS_LOGGING_ENABLED = 'isLoggingEnabled';
+let isLoggingEnabled = config.get(IS_LOGGING_ENABLED);
+
+if (isLoggingEnabled) {
+    log.transports.file.level = 'debug';
+} else {
+    log.transports.file.level = false;
+}
+
+const listeners = {};
+
+contextBridge.exposeInMainWorld('electron', {
+    configGet: (key) => {
+        return config.get(key);
+    },
+    configSet: (key, value) => {
+        return config.set(key, value);
+    },
+    logger: log,
+    platform: process.platform,
+
+    invokeIpc: async (actionName, payload) => {
+        return await ipcRenderer.invoke(actionName, payload);
+    },
+    sendIpc: (key, ...args) => {
+        log.debug('Send message with key: ' + key, args);
+        ipcRenderer.send(key, ...args);
+    },
+    onIpc: (key, fn) => {
+        const saferFn = (event, ...args) => fn(...args);
+        // Deliberately strip event as it includes `sender`
+        log.debug('Add listener with key: ' + key);
+        ipcRenderer.on(key, saferFn);
+        listeners[key] = saferFn;
+    },
+    removeListenerIpc: (key) => {
+        log.debug('Remove listener with key: ' + key);
+        const fn = listeners[key];
+        delete listeners[key];
+        ipcRenderer.removeListener('response', fn);
+    },
+});
+
 window.Sentry = Sentry;
-window.version = version;
-window.Store = Store;
-window.platform = electron.remote.process.platform;
-window.logger = log;
-window.ipcRenderer = electron.ipcRenderer;

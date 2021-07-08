@@ -20,7 +20,7 @@ export function MainRouter() {
     const { setColorMode } = useColorMode();
 
     const changeActiveTheme = useCallback(
-        (event, themeName) => {
+        themeName => {
             setColorMode(themeName);
         },
         [setColorMode],

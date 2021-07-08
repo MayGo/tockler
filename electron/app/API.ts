@@ -1,6 +1,5 @@
+import { setupMainHandler } from './setupMainHandler';
 import { ipcMain } from 'electron';
-
-import { setupMainHandler } from 'eiphop';
 import { settingsService } from './services/settings-service';
 import { appSettingService } from './services/app-setting-service';
 import { trackItemService } from './services/track-item-service';
@@ -9,81 +8,60 @@ import { State } from './enums/state';
 import AppManager from './app-manager';
 
 const settingsActions = {
-    fetchAnalyserSettingsJsonString: async (req, res) => {
-        const data = await settingsService.fetchAnalyserSettingsJsonString();
-        res.send(data);
+    fetchAnalyserSettingsJsonString: async () => {
+        return settingsService.fetchAnalyserSettingsJsonString();
     },
-    updateByName: async ({ payload }, res) => {
-        const data = await settingsService.updateByName(payload.name, payload.jsonData);
-        res.send(data);
+    updateByName: async (payload) => {
+        return settingsService.updateByName(payload.name, payload.jsonData);
     },
-    getRunningLogItemAsJson: async (req, res) => {
-        const data = await settingsService.getRunningLogItemAsJson();
-        res.send(data);
+    getRunningLogItemAsJson: async () => {
+        return settingsService.getRunningLogItemAsJson();
     },
-    fetchWorkSettings: async (req, res) => {
-        const data = await settingsService.fetchWorkSettings();
-        res.send(data);
+    fetchWorkSettings: async () => {
+        return settingsService.fetchWorkSettings();
     },
-    saveThemeAndNotify: async ({ payload }, res) => {
+    saveThemeAndNotify: async (payload) => {
         AppManager.saveThemeAndNotify(payload);
     },
 };
 
 const appSettingsActions = {
-    changeColorForApp: async ({ payload }, res) => {
-        const data = await appSettingService.changeColorForApp(payload.appName, payload.color);
-        res.send(data);
+    changeColorForApp: async (payload) => {
+        return appSettingService.changeColorForApp(payload.appName, payload.color);
     },
 };
 const trackItemActions = {
-    findAllDayItems: async ({ payload }, res) => {
-        const data = await trackItemService.findAllDayItems(
-            payload.from,
-            payload.to,
-            payload.taskName,
-        );
-
-        res.send(data);
+    findAllDayItems: async (payload) => {
+        return trackItemService.findAllDayItems(payload.from, payload.to, payload.taskName);
     },
 
-    createTrackItem: async ({ payload }, res) => {
-        const data = await trackItemService.createTrackItem(payload.trackItem);
-        res.send(data);
+    createTrackItem: async (payload) => {
+        return trackItemService.createTrackItem(payload.trackItem);
     },
-    updateTrackItem: async ({ payload }, res) => {
-        const data = await trackItemService.updateTrackItem(
-            payload.trackItem,
-            payload.trackItem.id,
-        );
-        res.send(data);
+    updateTrackItem: async (payload) => {
+        return trackItemService.updateTrackItem(payload.trackItem, payload.trackItem.id);
     },
-    updateTrackItemColor: async ({ payload }, res) => {
-        const data = await trackItemService.updateTrackItemColor(payload.appName, payload.color);
-        res.send(data);
+    updateTrackItemColor: async (payload) => {
+        return trackItemService.updateTrackItemColor(payload.appName, payload.color);
     },
-    deleteByIds: async ({ payload }, res) => {
-        const data = await trackItemService.deleteByIds(payload.trackItemIds);
-        res.send(data);
+    deleteByIds: async (payload) => {
+        return trackItemService.deleteByIds(payload.trackItemIds);
     },
-    searchFromItems: async ({ payload }, res) => {
+    searchFromItems: async (payload) => {
         const { from, to, taskName, searchStr, paging } = payload;
-        const data = await trackItemService.findAllItems(from, to, taskName, searchStr, paging);
-        res.send(data);
+        return trackItemService.findAllItems(from, to, taskName, searchStr, paging);
     },
-    exportFromItems: async ({ payload }, res) => {
+    exportFromItems: async (payload) => {
         const { from, to, taskName, searchStr } = payload;
-        const data = await trackItemService.findAndExportAllItems(from, to, taskName, searchStr);
-        res.send(data);
+        return trackItemService.findAndExportAllItems(from, to, taskName, searchStr);
     },
-    findFirstLogItems: async (req, res) => {
-        const data = await trackItemService.findFirstLogItems();
-        res.send(data);
+    findFirstLogItems: async () => {
+        return trackItemService.findFirstLogItems();
     },
-    getOnlineStartTime: async (req, res) => {
+    getOnlineStartTime: async () => {
         const statusItem = stateManager.getCurrentStatusTrackItem();
 
-        res.send(statusItem && statusItem.app === State.Online ? statusItem.beginDate : null);
+        return statusItem && statusItem.app === State.Online ? statusItem.beginDate : null;
     },
 };
 

@@ -72,7 +72,7 @@ const TrayAppPageTemp = () => {
     }, [windowIsActive]);
 
     useEffect(() => {
-        const eventLogItemStarted = (_, logItem) => {
+        const eventLogItemStarted = logItem => {
             const newItem: ITrackItem = JSON.parse(logItem);
             Logger.debug('log-trackItem-started:', newItem);
             setRunningLogItem(newItem);

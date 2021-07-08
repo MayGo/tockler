@@ -1,5 +1,5 @@
-import { emit } from 'eiphop';
+import { EventEmitter } from './EventEmitter';
 
 export async function changeColorForApp(appName: string, color: string) {
-    return emit('changeColorForApp', { appName, color });
+    return EventEmitter.emit('changeColorForApp', { appName, color });
 }

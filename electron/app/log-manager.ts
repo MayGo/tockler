@@ -62,7 +62,7 @@ export class LogManager {
         if (isProd) {
             (logObj as any).transports.console = sentryTransportConsole;
         }
-        log.transports.console.level = isProd ? 'warn' : 'debug';
+        // log.transports.console.level = isProd ? 'warn' : 'debug';
 
         if (isLoggingEnabled) {
             logObj.transports.file.level = 'debug';

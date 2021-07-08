@@ -3,7 +3,6 @@ import { ITrackItem } from '../@types/ITrackItem';
 import { TrackItemType } from '../enum/TrackItemType';
 import { Logger } from '../logger';
 import { EventEmitter } from './EventEmitter';
-import { emit } from 'eiphop';
 
 async function findAllDayItems(
     from: moment.Moment,
@@ -11,7 +10,7 @@ async function findAllDayItems(
     taskName: string,
 ): Promise<any> {
     //Logger.debug('findAllDayItems', JSON.stringify({ from, to, taskName }));
-    const data = await emit('findAllDayItems', {
+    const data = await EventEmitter.emit('findAllDayItems', {
         from: from.valueOf(),
         to: to.valueOf(),
         taskName,
@@ -35,15 +34,15 @@ export async function findAllDayItemsForEveryTrack(from: moment.Moment, to: mome
 }
 
 export function findFirstLogItems(): Promise<any> {
-    return emit('findFirstLogItems');
+    return EventEmitter.emit('findFirstLogItems');
 }
 
 export function getOnlineStartTime(): Promise<any> {
-    return emit('getOnlineStartTime');
+    return EventEmitter.emit('getOnlineStartTime');
 }
 
 export function searchFromItems({ from, to, taskName, searchStr, paging }): Promise<any> {
-    return emit('searchFromItems', {
+    return EventEmitter.emit('searchFromItems', {
         from: from.valueOf(),
         to: to.valueOf(),
         taskName,
@@ -52,7 +51,7 @@ export function searchFromItems({ from, to, taskName, searchStr, paging }): Prom
     });
 }
 export function exportFromItems({ from, to, taskName, searchStr }): Promise<any> {
-    return emit('exportFromItems', {
+    return EventEmitter.emit('exportFromItems', {
         from: from.valueOf(),
         to: to.valueOf(),
         taskName,
@@ -61,11 +60,11 @@ export function exportFromItems({ from, to, taskName, searchStr }): Promise<any>
 }
 
 function createTrackItem(trackItem: ITrackItem): Promise<any> {
-    return emit('createTrackItem', { trackItem: trackItem });
+    return EventEmitter.emit('createTrackItem', { trackItem: trackItem });
 }
 
 function updateTrackItem(trackItem: ITrackItem): Promise<any> {
-    return emit('updateTrackItem', { trackItem });
+    return EventEmitter.emit('updateTrackItem', { trackItem });
 }
 
 export async function saveTrackItem(trackItem): Promise<any> {
@@ -92,7 +91,7 @@ export async function saveTrackItem(trackItem): Promise<any> {
 }
 
 export function deleteByIds(trackItemIds: number[]) {
-    return emit('deleteByIds', { trackItemIds });
+    return EventEmitter.emit('deleteByIds', { trackItemIds });
 }
 
 export function startNewLogItem(oldItem: any) {
@@ -117,5 +116,5 @@ export function stopRunningLogItem(runningLogItemId: number) {
 }
 
 export function updateTrackItemColor(appName: string, color: string) {
-    return emit('updateTrackItemColor', { appName, color });
+    return EventEmitter.emit('updateTrackItemColor', { appName, color });
 }

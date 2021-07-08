@@ -1,26 +1,24 @@
 import { Logger } from '../logger';
 
-const { ipcRenderer } = window as any;
+const { electron } = window as any;
+const { invokeIpc, sendIpc, onIpc, removeListenerIpc } = electron;
 
 function send(name, ...args) {
     Logger.debug(`Send event: ${name}`);
-    ipcRenderer.send(name, ...args);
+
+    sendIpc(name, ...args);
 }
 function on(name, listener) {
-    ipcRenderer.on(name, listener);
+    onIpc(name, listener);
 }
 
 function off(name, listener) {
-    ipcRenderer.removeListener(name, listener);
-}
-
-function once(name, listener) {
-    ipcRenderer.once(name, listener);
+    removeListenerIpc(name, listener);
 }
 
 export const EventEmitter = {
     send,
     on,
     off,
-    once,
+    emit: invokeIpc,
 };
