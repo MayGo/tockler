@@ -25,7 +25,7 @@
         "release": "electron-builder -c electron-builder.yml"
     },
     "dependencies": {
-        "@sentry/electron": "^2.0.4",
+        "@sentry/electron": "^2.5.0",
         "active-win": "^7.6.0",
         "csv-stringify": "^5.5.3",
         "electron-context-menu": "3.1.1",
