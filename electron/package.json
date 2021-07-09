@@ -33,7 +33,7 @@
         "electron-log": "^4.3.5",
         "electron-reloader": "^1.2.1",
         "electron-store": "8.0.0",
-        "electron-updater": "4.3.9",
+        "electron-updater": "4.3.10",
         "hazardous": "^0.3.0",
         "knex": "^0.95.6",
         "knex-webpack-migration-source": "^1.0.0",
