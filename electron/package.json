@@ -43,7 +43,7 @@
         "node-notifier": "^10.0.0",
         "objection": "^2.2.3",
         "randomcolor": "0.6.2",
-        "ref-napi": "^3.0.1",
+        "ref-napi": "^3.0.3",
         "ref-struct-napi": "^1.1.1",
         "sqlite3": "5.0.2"
     },
