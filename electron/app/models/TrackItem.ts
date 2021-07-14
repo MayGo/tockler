@@ -18,4 +18,5 @@ export class TrackItem extends Model {
     createdAt!: Date;
     updatedAt!: Date;
     userEventId?: string;
+    isSummarized?: boolean;
 }

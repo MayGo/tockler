@@ -1,4 +1,5 @@
 {
     "cSpell.words": ["reflexbox"],
-    "editor.detectIndentation": true
+    "editor.detectIndentation": true,
+    "window.title": "${activeEditorShort}${separator}${rootName} ${separator} [Branch: automatic-creation-of-user_work_logs]"
 }
