@@ -102,7 +102,7 @@ export type user_work_logs_insert_input = {
 export class SaveToDbJob {
     token: string | null = null;
     lastSavedUserEventsAt: Date = moment().subtract(14, 'days').toDate();
-    lastSavedUserWorklogsAt: Date = moment().subtract(14, 'days').toDate();
+    lastSavedUserWorklogsAt: Date = new Date();
     lastSavedSummary: (SummaryItem & { worklogId: number }) | null;
 
     async run() {
@@ -121,10 +121,10 @@ export class SaveToDbJob {
                 const events = await TrackItem.query()
                     .whereRaw(
                         `"taskName" = 'AppTrackItem'
-                    AND (
-                        "isSummarized" = 0
-                        OR "updatedAt" >= ?
-                    )`,
+                        AND (
+                            "isSummarized" = 0
+                            OR "updatedAt" >= ?
+                        )`,
                         [this.lastSavedUserWorklogsAt],
                     )
                     .limit(100);
@@ -267,8 +267,9 @@ export class SaveToDbJob {
                     }
                 }
 
+                const numberOfWorklogsToUpsert = grouppedSummary.length;
                 console.log(
-                    grouppedSummary.length,
+                    numberOfWorklogsToUpsert,
                     "user_work_logs need to be upserted to GitStart's DB",
                 );
 
@@ -276,8 +277,21 @@ export class SaveToDbJob {
                     // check if first summary item matches this.lastSavedSummary
                     if (
                         this.lastSavedSummary?.endAt &&
-                        grouppedSummary[0].startAt >
-                            moment(this.lastSavedSummary.endAt).add(5, 'minutes').toDate()
+                        grouppedSummary[0].startAt <=
+                            moment(this.lastSavedSummary.endAt).add(5, 'minutes').toDate() &&
+                        ((grouppedSummary[0].type === 'task' &&
+                            grouppedSummary[0].type === this.lastSavedSummary.type &&
+                            grouppedSummary[0].id === this.lastSavedSummary.id) ||
+                            (grouppedSummary[0].type === 'ticket' &&
+                                grouppedSummary[0].type === this.lastSavedSummary.type &&
+                                grouppedSummary[0].id === this.lastSavedSummary.id) ||
+                            (grouppedSummary[0].type === 'client_project' &&
+                                grouppedSummary[0].type === this.lastSavedSummary.type &&
+                                grouppedSummary[0].id === this.lastSavedSummary.id) ||
+                            (grouppedSummary[0].type === 'client' &&
+                                grouppedSummary[0].type === this.lastSavedSummary.type &&
+                                grouppedSummary[0].id.toString() ===
+                                    this.lastSavedSummary.id.toString()))
                     ) {
                         // mutation to update worklog endAt field
                         const returned = await fetchGraphQLClient(
@@ -409,8 +423,9 @@ export class SaveToDbJob {
                     updatedAt: new Date(),
                     isSummarized: true,
                 });
+                this.lastSavedUserWorklogsAt = new Date();
 
-                console.log('Successfully upserted', grouppedSummary.length, 'user worklogs');
+                console.log('Successfully upserted', numberOfWorklogsToUpsert, 'user worklogs');
             }
 
             // ------------------------------------
