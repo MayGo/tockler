@@ -26,9 +26,9 @@
 
 | Operating System        | Download                                                                                                                                                                                                                   |
 | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Windows (32 and 64-bit) | <a href='https://github.com/MayGo/tockler/releases/download/v3.19.4/tockler-3.19.4-windows.exe'><img alt='Get it on Windows' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeWindows.png'/></a> |
-| macOS                   | <a href='https://github.com/MayGo/tockler/releases/download/v3.19.4/Tockler-3.19.4.dmg'><img alt='Get it on macOS' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeMacOS.png'/></a>             |
-| Linux                   | <a href='https://github.com/MayGo/tockler/releases/download/v3.19.4/Tockler-3.19.4.AppImage'><img alt='Get it on Linux' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeLinux.png'/></a>        |
+| Windows (32 and 64-bit) | <a href='https://github.com/MayGo/tockler/releases/download/v3.19.5/tockler-3.19.5-windows.exe'><img alt='Get it on Windows' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeWindows.png'/></a> |
+| macOS                   | <a href='https://github.com/MayGo/tockler/releases/download/v3.19.5/Tockler-3.19.5.dmg'><img alt='Get it on macOS' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeMacOS.png'/></a>             |
+| Linux                   | <a href='https://github.com/MayGo/tockler/releases/download/v3.19.5/Tockler-3.19.5.AppImage'><img alt='Get it on Linux' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeLinux.png'/></a>        |
 
 # Feedback
 
