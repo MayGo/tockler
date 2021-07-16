@@ -29,13 +29,13 @@ export default {
         root,
         isWin
             ? 'shared/img/icon/win/tockler_icon_big.ico'
-            : 'shared/img/icon/mac/tockler_icon_tray.png',
+            : 'shared/img/icon/mac/tockler_icon_trayTemplate.png',
     ),
     iconTrayUpdate: path.join(
         root,
         isWin
             ? 'shared/img/icon/win/tockler_icon_big_update.ico'
-            : 'shared/img/icon/mac/tockler_icon_tray_update.png',
+            : 'shared/img/icon/mac/tockler_icon_tray_updateTemplate.png',
     ),
     iconNotification: path.join(
         root,
