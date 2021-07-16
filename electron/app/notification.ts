@@ -12,7 +12,7 @@ export function showNotification({ body, title = 'Tockler', onClick = null, sile
             title,
             body,
             silent,
-            icon: config.iconBig,
+            icon: config.iconTray,
         });
         if (onClick) {
             notification.once('click', onClick);

@@ -1,8 +1,8 @@
 import { app } from 'electron';
 import * as path from 'path';
+import * as os from 'os';
 
 const Config = require('electron-store');
-const OS = require('os');
 const isDevelopment = require('electron-is-dev');
 
 let root = path.join(__dirname, '..');
@@ -12,10 +12,12 @@ let client = isDevelopment ? path.join(root, '..', 'client', 'build') : path.joi
 let useRealDataInDev = false;
 let userDir =
     isDevelopment && useRealDataInDev
-        ? `/Users/${OS.userInfo().username}/Library/Application Support/Tockler`
+        ? `/Users/${os.userInfo().username}/Library/Application Support/Tockler`
         : app.getPath('userData');
 
 console.debug('User dir is:' + userDir);
+
+const isWin = os.platform() === 'win32';
 
 export default {
     // root directory
@@ -23,10 +25,30 @@ export default {
     client: client,
     userDir: userDir,
 
-    icon: path.join(root, 'shared/img/icon/tockler_icon.png'),
-    iconUpdate: path.join(root, 'shared/img/icon/tockler_update_icon.png'),
-    iconUpdateBig: path.join(root, 'shared/img/icon/tockler_update_icon_big.png'),
-    iconBig: path.join(root, 'shared/img/icon/tockler_icon_big_w_bg.png'),
+    iconTray: path.join(
+        root,
+        isWin
+            ? 'shared/img/icon/win/tockler_icon_big.ico'
+            : 'shared/img/icon/mac/tockler_icon_tray.png',
+    ),
+    iconTrayUpdate: path.join(
+        root,
+        isWin
+            ? 'shared/img/icon/win/tockler_icon_big_update.ico'
+            : 'shared/img/icon/mac/tockler_icon_tray_update.png',
+    ),
+    iconNotification: path.join(
+        root,
+        isWin
+            ? 'shared/img/icon/win/tockler_icon_big.ico'
+            : 'shared/img/icon/mac/tockler_icon_big.png',
+    ),
+    iconWindow: path.join(
+        root,
+        isWin
+            ? 'shared/img/icon/win/tockler_icon_big.ico'
+            : 'shared/img/icon/mac/tockler_icon_big.png',
+    ),
 
     // plugins directory
     pluginsPath: root,

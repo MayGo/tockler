@@ -53,7 +53,7 @@ export default class WindowManager {
                 preload: preloadScript,
             },
             title: 'Tockler',
-            icon: config.iconBig,
+            icon: config.iconWindow,
         });
     }
 
@@ -171,14 +171,14 @@ export default class WindowManager {
          * Docs:
          * https://github.com/maxogden/menubar
          */
-        let icon = os.platform() === 'darwin' ? config.icon : config.iconBig;
+
         const url = config.isDev
             ? 'http://localhost:3000/#/trayApp'
             : `file://${__dirname}/index.html#/trayApp`;
 
         this.menubar = menubar({
             index: url,
-            icon: icon,
+            icon: config.iconTray,
             preloadWindow: false,
             showDockIcon: false,
 
@@ -209,8 +209,7 @@ export default class WindowManager {
     }
 
     static setTrayIconToUpdate() {
-        let iconUpdate = os.platform() === 'darwin' ? config.iconUpdate : config.iconUpdateBig;
-        WindowManager.menubar.tray.setImage(iconUpdate);
+        WindowManager.menubar.tray.setImage(config.iconTrayUpdate);
 
         WindowManager.menubar.tray.on('click', async () => {
             const { response } = await dialog.showMessageBox(WindowManager.menubar.window, {

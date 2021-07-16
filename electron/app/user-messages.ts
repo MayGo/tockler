@@ -5,8 +5,6 @@ import { logManager } from './log-manager';
 
 const logger = logManager.getLogger('UserMessages');
 
-const iconUrl = config.iconBig;
-
 export default class UserMessages {
     static lastError = '';
     static lastTime = moment();
@@ -26,11 +24,11 @@ export default class UserMessages {
             {
                 title: title,
                 message: error,
-                icon: iconUrl,
+                icon: config.iconNotification,
                 sound: true, // Only Notification Center or Windows Toasters
                 wait: false, // Wait with callback, until user action is taken against notification
             },
-            function(err, response) {
+            function (err, response) {
                 logger.error('Notifier error:', err, response);
                 // UserMessages.lastError = '';
             },
