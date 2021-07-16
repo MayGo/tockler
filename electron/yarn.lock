@@ -3616,11 +3616,6 @@ edge-paths@^2.1.0:
     "@types/which" "^1.3.2"
     which "^2.0.2"
 
-eiphop@^1.0.13:
-  version "1.0.13"
-  resolved "https://registry.yarnpkg.com/eiphop/-/eiphop-1.0.13.tgz#d9fd19f6c20b5abab3540d4e82c56b5a9256fd37"
-  integrity sha512-iiDAYLf8LckQTyVlC/fqMUnIGlLpYzqVgvctgGbi1WK6fz0LSMw6ekp4Mm2lHP+EtrM68VSl5vCXdSUX29Os5A==
-
 ejs@^3.1.6:
   version "3.1.6"
   resolved "https://registry.yarnpkg.com/ejs/-/ejs-3.1.6.tgz#5bfd0a0689743bb5268b3550cceeebbc1702822a"
@@ -3764,7 +3759,7 @@ electron-to-chromium@^1.3.723:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.769.tgz#73ad7e3f2d435810b6f8b29617ec344c782fcbed"
   integrity sha512-B+3hW8D76/uoTPSobWI3D/CFn2S4jPn88dVJ+BkD88Lz6LijQpL+hfdzIFJGTQK4KdE0XwmNbjUQFH1OQVwKdQ==
 
-electron-updater@4.3.9:
+electron-updater@^4.3.9:
   version "4.3.9"
   resolved "https://registry.yarnpkg.com/electron-updater/-/electron-updater-4.3.9.tgz#247c660bafad7c07935e1b81acd3e9a5fd733154"
   integrity sha512-LCNfedSwZfS4Hza+pDyPR05LqHtGorCStaBgVpRnfKxOlZcvpYEX0AbMeH5XUtbtGRoH2V8osbbf2qKPNb7AsA==

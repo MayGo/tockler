@@ -1,6 +1,6 @@
 {
     "name": "tockler",
-    "version": "3.19.5",
+    "version": "3.19.6",
     "private": true,
     "dependencies": {
         "@analytics/google-analytics": "^0.5.3",
