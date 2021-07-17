@@ -43,6 +43,7 @@ export function MainLayout({ children }: any) {
             />
 
             <ColorModeSwitcher />
+            <Link href="https://github.com/sponsors/MayGo">Donate</Link>
           </HStack>
         </Flex>
         <Box zIndex={1}>{children}</Box>
