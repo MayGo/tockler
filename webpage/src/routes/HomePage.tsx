@@ -23,7 +23,7 @@ import {
   FaWindows,
 } from 'react-icons/fa';
 import { CgDarkMode } from 'react-icons/cg';
-import { IoMdAnalytics } from 'react-icons/io';
+import { IoMdAnalytics, IoMdNotifications } from 'react-icons/io';
 import { FeatureItem } from '../components/FeatureItem';
 import { ListItem } from '../components/ListItem';
 
@@ -129,6 +129,10 @@ export function HomePage() {
             <FeatureItem title="Local data" icon={FaDatabase}>
               Works without internet access. All data is stored locally on your
               device. You can search items and all data is exportable to CSV.
+            </FeatureItem>
+            <FeatureItem title="Reminders" icon={IoMdNotifications}>
+              Configure notifications to be fired if application with required
+              title is opened.
             </FeatureItem>
           </Grid>
         </Box>
