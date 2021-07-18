@@ -11,7 +11,7 @@ ReactDOM.render(
   <StrictMode>
     <ColorModeScript />
     <ChakraProvider theme={theme}>
-      <Router>
+      <Router basename={process.env.PUBLIC_URL}>
         <MainRouter />
       </Router>
     </ChakraProvider>
