@@ -99,6 +99,7 @@ export function HomePage() {
           <a
             href="https://www.producthunt.com/posts/tockler?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-tockler"
             target="_blank"
+            rel="noreferrer"
           >
             <img
               src={`https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=304890&theme=${colorProductHunt}`}
