@@ -8,3 +8,4 @@ dist/
 .env
 packaged
 electron/packaged
+!.github/FUNDING.yml
