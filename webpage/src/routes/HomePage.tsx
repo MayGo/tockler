@@ -57,7 +57,7 @@ export function HomePage() {
               leftIcon={<FaApple />}
               as={Link}
               textDecoration="none !important"
-              href="https://github.com/MayGo/tockler/releases/download/v3.19.8/Tockler-3.19.8.dmg"
+              href="https://github.com/MayGo/tockler/releases/download/v3.19.9/Tockler-3.19.9.dmg"
             >
               macOS
             </Button>
@@ -66,7 +66,7 @@ export function HomePage() {
               leftIcon={<FaWindows />}
               as={Link}
               textDecoration="none !important"
-              href="https://github.com/MayGo/tockler/releases/download/v3.19.8/tockler-3.19.8-windows.exe"
+              href="https://github.com/MayGo/tockler/releases/download/v3.19.9/tockler-3.19.9-windows.exe"
             >
               Windows
             </Button>
@@ -75,7 +75,7 @@ export function HomePage() {
               leftIcon={<FaLinux />}
               as={Link}
               textDecoration="none !important"
-              href="https://github.com/MayGo/tockler/releases/download/v3.19.8/Tockler-3.19.8.AppImage"
+              href="https://github.com/MayGo/tockler/releases/download/v3.19.9/Tockler-3.19.9.AppImage"
             >
               Linux
             </Button>
@@ -86,7 +86,7 @@ export function HomePage() {
         </Center>
         <Center pt="4">
           <Text fontSize="xs">
-            Latest: v3.19.8.{' '}
+            Latest: v3.19.9.{' '}
             <Link
               color="blue.500"
               href="https://github.com/MayGo/tockler/releases/latest"
