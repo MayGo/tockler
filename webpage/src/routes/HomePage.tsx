@@ -35,6 +35,7 @@ export function HomePage() {
 
   const { toggleColorMode } = useColorMode();
   const colorModeText = useColorModeValue('dark', 'light');
+  const colorProductHunt = useColorModeValue('light', 'dark');
   return (
     <MainLayout>
       <Box px={5} pt="120px">
@@ -93,6 +94,20 @@ export function HomePage() {
               Releases Page
             </Link>
           </Text>
+        </Center>
+        <Center pt="8">
+          <a
+            href="https://www.producthunt.com/posts/tockler?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-tockler"
+            target="_blank"
+          >
+            <img
+              src={`https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=304890&theme=${colorProductHunt}`}
+              alt="Tockler - Automatically track applications usage and working time. | Product Hunt"
+              style={{ width: '250px', height: '54px' }}
+              width="250"
+              height="54"
+            />
+          </a>
         </Center>
       </Box>
       <Center pb={12}>
