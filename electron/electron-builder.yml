@@ -33,14 +33,19 @@ mac:
     asarUnpack: '**/*.node'
 
 win:
-    artifactName: ${name}-${version}-windows-${arch}.${ext}
+    artifactName: ${name}-${version}-portable-${os}-${arch}.${ext}
     target:
         - target: nsis
           arch:
               - x64
               - ia32
+        - target: portable
+          arch:
+              - x64
+              - ia32
 
 nsis:
+    artifactName: ${name}-${version}-setup-${os}-${arch}.${ext}
     oneClick: false
     allowToChangeInstallationDirectory: true
     differentialPackage: false
