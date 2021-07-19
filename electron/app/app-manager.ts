@@ -4,12 +4,14 @@ import { stateManager } from './state-manager';
 import { initIpcActions } from './API';
 import config from './config';
 import { connectAndSync } from './models/db';
-import { sendToTrayWindow, sendToMainWindow } from './window-manager';
+import WindowManager, { sendToTrayWindow, sendToMainWindow } from './window-manager';
 
 let logger = logManager.getLogger('AppManager');
 
 const IS_NATIVE_THEME_ENABLED = 'isNativeThemeEnabled';
 const NATIVE_THEME_CONFIG_CHANGED = 'nativeThemeChanged';
+
+const USE_PURPLE_TRAY_ICON_CHANGED = 'usePurpleTrayIconChanged';
 const THEME_CONFIG_KEY = 'selectedTheme';
 
 const theThemeHasChanged = () => {
@@ -49,6 +51,10 @@ export default class AppManager {
         ipcMain.on(NATIVE_THEME_CONFIG_CHANGED, () => {
             checkNativeThemeState();
         });
+        ipcMain.on(USE_PURPLE_TRAY_ICON_CHANGED, () => {
+            WindowManager.toggleTrayIcon();
+        });
+
         checkNativeThemeState();
     }
 

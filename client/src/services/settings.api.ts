@@ -10,31 +10,66 @@ const IS_LOGGING_ENABLED = 'isLoggingEnabled';
 const OPEN_AT_LOGIN = 'openAtLogin';
 const IS_AUTO_UPDATE_ENABLED = 'isAutoUpdateEnabled';
 const NATIVE_THEME_CONFIG_CHANGED = 'nativeThemeChanged';
+const USE_PURPLE_TRAY_ICON = 'usePurpleTrayIcon';
+const USE_PURPLE_TRAY_ICON_CHANGED = 'usePurpleTrayIconChanged';
 
 export function getNativeThemeChange() {
     return configGet(IS_NATIVE_THEME_ENABLED) as boolean;
-}
-
-export function getOpenAtLogin() {
-    return configGet(OPEN_AT_LOGIN) as boolean;
-}
-
-export function getIsAutoUpdateEnabled() {
-    return configGet(IS_AUTO_UPDATE_ENABLED) as boolean;
-}
-export function getIsLoggingEnabled() {
-    return configGet(IS_LOGGING_ENABLED) as boolean;
 }
 
 export function saveNativeThemeChange(enabled) {
     configSet(IS_NATIVE_THEME_ENABLED, enabled);
     EventEmitter.send(NATIVE_THEME_CONFIG_CHANGED);
 }
+
+// -----
+
+export function getOpenAtLogin() {
+    return configGet(OPEN_AT_LOGIN) as boolean;
+}
+
 export function saveOpenAtLogin(openAtLogin) {
     if (openAtLogin !== getOpenAtLogin()) {
         configSet(OPEN_AT_LOGIN, openAtLogin);
         EventEmitter.send('openAtLoginChanged');
     }
+}
+
+// -----
+
+export function getIsAutoUpdateEnabled() {
+    return configGet(IS_AUTO_UPDATE_ENABLED) as boolean;
+}
+
+export function saveIsAutoUpdateEnabled(isAutoUpdateEnabled) {
+    if (isAutoUpdateEnabled !== getIsAutoUpdateEnabled()) {
+        Logger.debug('Setting isAutoUpdateEnabled', isAutoUpdateEnabled);
+        configSet(IS_AUTO_UPDATE_ENABLED, isAutoUpdateEnabled);
+    }
+}
+
+// -----
+
+export function getIsLoggingEnabled() {
+    return configGet(IS_LOGGING_ENABLED) as boolean;
+}
+
+export function saveIsLoggingEnabled(isLoggingEnabled) {
+    if (isLoggingEnabled !== getIsLoggingEnabled()) {
+        Logger.debug('Setting isLoggingEnabled', isLoggingEnabled);
+        configSet(IS_LOGGING_ENABLED, isLoggingEnabled);
+    }
+}
+
+// -----
+
+export function getUsePurpleTrayIcon() {
+    return configGet(USE_PURPLE_TRAY_ICON) as boolean;
+}
+
+export function saveUsePurpleTrayIcon(enabled) {
+    configSet(USE_PURPLE_TRAY_ICON, enabled);
+    EventEmitter.send(USE_PURPLE_TRAY_ICON_CHANGED);
 }
 
 export function getThemeFromStorage() {
@@ -46,19 +81,6 @@ export function getThemeFromStorage() {
 export function saveThemeToStorage(colorMode) {
     Logger.info('Save theme to config:', colorMode);
     return EventEmitter.emit('saveThemeAndNotify', colorMode);
-}
-
-export function saveIsAutoUpdateEnabled(isAutoUpdateEnabled) {
-    if (isAutoUpdateEnabled !== getIsAutoUpdateEnabled()) {
-        Logger.debug('Setting isAutoUpdateEnabled', isAutoUpdateEnabled);
-        configSet(IS_AUTO_UPDATE_ENABLED, isAutoUpdateEnabled);
-    }
-}
-export function saveIsLoggingEnabled(isLoggingEnabled) {
-    if (isLoggingEnabled !== getIsLoggingEnabled()) {
-        Logger.debug('Setting isLoggingEnabled', isLoggingEnabled);
-        configSet(IS_LOGGING_ENABLED, isLoggingEnabled);
-    }
 }
 
 export async function updateByName(name, jsonData) {

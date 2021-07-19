@@ -3,8 +3,7 @@ import MenuBuilder from './menu-builder';
 import { throttle } from 'lodash';
 import { app, ipcMain, BrowserWindow, dialog, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
-import config from './config';
-import * as os from 'os';
+import config, { getIcon, getTrayIcon } from './config';
 import { logManager } from './log-manager';
 import { join } from 'path';
 
@@ -224,6 +223,11 @@ export default class WindowManager {
                 autoUpdater.quitAndInstall();
             }
         });
+    }
+
+    static toggleTrayIcon() {
+        const iconTray = getTrayIcon();
+        WindowManager.menubar.tray.setImage(iconTray);
     }
 }
 

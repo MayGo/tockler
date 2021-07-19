@@ -19,36 +19,33 @@ console.debug('User dir is:' + userDir);
 
 const isWin = os.platform() === 'win32';
 
+const persisted = new Config();
+
+export const getIcon = (winFileName, macFileName) => {
+    return path.join(
+        root,
+        isWin ? `shared/img/icon/win/${winFileName}` : `shared/img/icon/mac/${macFileName}`,
+    );
+};
+
+export const getTrayIcon = () => {
+    const usePurpleTrayIcon = persisted.get('usePurpleTrayIcon');
+    return getIcon(
+        'tockler_icon_big.ico',
+        usePurpleTrayIcon ? 'tockler_icon_tray.png' : 'tockler_icon_trayTemplate.png',
+    );
+};
+
 export default {
     // root directory
     root: root,
     client: client,
     userDir: userDir,
 
-    iconTray: path.join(
-        root,
-        isWin
-            ? 'shared/img/icon/win/tockler_icon_big.ico'
-            : 'shared/img/icon/mac/tockler_icon_trayTemplate.png',
-    ),
-    iconTrayUpdate: path.join(
-        root,
-        isWin
-            ? 'shared/img/icon/win/tockler_icon_big_update.ico'
-            : 'shared/img/icon/mac/tockler_icon_tray_updateTemplate.png',
-    ),
-    iconNotification: path.join(
-        root,
-        isWin
-            ? 'shared/img/icon/win/tockler_icon_big.ico'
-            : 'shared/img/icon/mac/tockler_icon_big.png',
-    ),
-    iconWindow: path.join(
-        root,
-        isWin
-            ? 'shared/img/icon/win/tockler_icon_big.ico'
-            : 'shared/img/icon/mac/tockler_icon_big.png',
-    ),
+    iconTray: getTrayIcon(),
+    iconTrayUpdate: getIcon('tockler_icon_big_update.ico', 'tockler_icon_tray_updateTemplate.png'),
+    iconNotification: getIcon('tockler_icon_big.ico', 'tockler_icon_big.png'),
+    iconWindow: getIcon('tockler_icon_big.ico', 'tockler_icon_big.png'),
 
     // plugins directory
     pluginsPath: root,
@@ -70,5 +67,5 @@ export default {
         password: 'password',
         outputPath: path.join(userDir, 'tracker.db'),
     },
-    persisted: new Config(),
+    persisted,
 };

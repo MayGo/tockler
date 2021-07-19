@@ -11,6 +11,8 @@ import {
     saveIsLoggingEnabled,
     getNativeThemeChange,
     saveNativeThemeChange,
+    getUsePurpleTrayIcon,
+    saveUsePurpleTrayIcon,
 } from '../../services/settings.api';
 import { CardBox } from '../CardBox';
 
@@ -19,6 +21,7 @@ export const AppForm = () => {
     const openAtLogin = getOpenAtLogin();
     const isAutoUpdateEnabled = getIsAutoUpdateEnabled();
     const isLoggingEnabled = getIsLoggingEnabled();
+    const usePurpleTrayIcon = getUsePurpleTrayIcon();
 
     const onChangeNativeThemeChange = event => {
         saveNativeThemeChange(event.target.checked);
@@ -33,6 +36,9 @@ export const AppForm = () => {
     const onChangeLogging = event => {
         saveIsLoggingEnabled(event.target.checked);
     };
+    const onChangeUsePurpleTrayIcon = event => {
+        saveUsePurpleTrayIcon(event.target.checked);
+    };
 
     const appName = process.env.REACT_APP_NAME;
     const platform = (window as any).electron.platform;
@@ -42,9 +48,11 @@ export const AppForm = () => {
     const windowsPath = `%USERPROFILE%\\AppData\\Roaming\${appName}\\logs\\main.log`;
 
     let logPath = linuxPath;
+
+    const isMacOS = platform === 'darwin';
     if (platform === 'win32') {
         logPath = windowsPath;
-    } else if (platform === 'darwin') {
+    } else if (isMacOS) {
         logPath = macOSPath;
     }
 
@@ -83,6 +91,19 @@ export const AppForm = () => {
                     size="lg"
                 />
             </FormControl>
+            {isMacOS && (
+                <FormControl display="flex" alignItems="center" py={2}>
+                    <FormLabel htmlFor="enable-purple-tray" mb="0" flex="1">
+                        Use purple tray icon?
+                    </FormLabel>
+                    <Switch
+                        id="enable-purple-tray"
+                        defaultChecked={usePurpleTrayIcon}
+                        onChange={onChangeUsePurpleTrayIcon}
+                        size="lg"
+                    />
+                </FormControl>
+            )}
             <FormControl display="flex" alignItems="center" py={2}>
                 <FormLabel htmlFor="enable-logging" mb="0" flex="1">
                     Enable logging? (Applies after restart)
