@@ -43,6 +43,7 @@ win:
 nsis:
     oneClick: false
     allowToChangeInstallationDirectory: true
+    differentialPackage: false
 linux:
     category: Utility
     target:
