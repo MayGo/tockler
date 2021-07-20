@@ -31,6 +31,16 @@ mac:
     entitlements: './build/entitlements.mac.plist'
     entitlementsInherit: 'build/entitlements.mac.plist'
     asarUnpack: '**/*.node'
+    darkModeSupport: true
+    target:
+        - dmg
+        - mas
+
+mas:
+    type: distribution
+    entitlements: './build/entitlements.mas.plist'
+    entitlementsInherit: 'build/entitlements.mas.plist'
+    provisioningProfile: embedded.provisionprofile
 
 win:
     artifactName: ${name}-${version}-portable-${os}-${arch}.${ext}
@@ -54,6 +64,8 @@ linux:
     target:
         - AppImage
         - deb
+        - snap
+        - rpm
 
 dmg:
     sign: false
