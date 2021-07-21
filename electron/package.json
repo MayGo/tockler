@@ -40,7 +40,6 @@
         "lodash": "^4.17.20",
         "menubar": "9.0.5",
         "moment": "2.29.1",
-        "node-notifier": "^10.0.0",
         "objection": "^2.2.3",
         "randomcolor": "0.6.2",
         "ref-napi": "^3.0.1",
