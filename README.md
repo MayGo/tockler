@@ -117,6 +117,10 @@ yarn start
 
 Build scripts samples are in travis/appveyor files.
 
+### Testing MAS build
+
+In electron-builder.yml replace provisioningProfile with development.provisionprofile
+
 # Signing
 
 https://4sysops.com/archives/sign-your-powershell-scripts-to-increase-security/'
