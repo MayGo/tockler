@@ -196,7 +196,11 @@ export default class WindowManager {
         // to prevent white flash
         // this.menubar.app.commandLine.appendSwitch('disable-backgrounding-occluded-windows', 'true');
 
-        // this.menubar.on('after-create-window', () => {});
+        this.menubar.on('after-create-window', () => {
+            // https://github.com/maxogden/menubar/issues/306
+            this.menubar.app.dock.hide();
+        });
+
         this.menubar.on('after-show', () => {
             this.menubar.window.webContents.send('focus-tray', 'ping');
 

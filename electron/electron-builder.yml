@@ -33,6 +33,8 @@ mac:
     entitlementsInherit: 'build/entitlements.mac.plist'
     asarUnpack: '**/*.node'
     darkModeSupport: true
+    extendInfo:
+        LSUIElement: 1
     target:
         - dmg
 
