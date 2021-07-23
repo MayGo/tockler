@@ -1,8 +1,8 @@
 import { EventEmitter } from './EventEmitter';
 import { Logger } from '../logger';
 
-const { electron } = window as any;
-const { configGet, configSet } = electron;
+const { electronBridge } = window as any;
+const { configGet, configSet } = electronBridge;
 
 const THEME_CONFIG_KEY = 'selectedTheme';
 const IS_NATIVE_THEME_ENABLED = 'isNativeThemeEnabled';

@@ -41,7 +41,7 @@ export const AppForm = () => {
     };
 
     const appName = process.env.REACT_APP_NAME;
-    const platform = (window as any).electron.platform;
+    const platform = (window as any).electronBridge.platform;
 
     const linuxPath = `~/.config/${appName}/logs/main.log`;
     const macOSPath = `~/Library/Logs/${appName}/main.log`;

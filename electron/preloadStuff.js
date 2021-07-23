@@ -1,5 +1,5 @@
 'use strict';
-const { contextBridge, ipcRenderer, ipcMain } = require('electron');
+const { contextBridge, ipcRenderer } = require('electron');
 const Store = require('electron-store');
 
 const log = require('electron-log');
@@ -70,7 +70,7 @@ if (isLoggingEnabled) {
 
 const listeners = {};
 
-contextBridge.exposeInMainWorld('electron', {
+contextBridge.exposeInMainWorld('electronBridge', {
     configGet: (key) => {
         return config.get(key);
     },
@@ -79,6 +79,7 @@ contextBridge.exposeInMainWorld('electron', {
     },
     logger: log,
     platform: process.platform,
+    isMas: process.mas === true,
 
     invokeIpc: async (actionName, payload) => {
         return await ipcRenderer.invoke(actionName, payload);

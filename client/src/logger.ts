@@ -1,1 +1,1 @@
-export const Logger: any = (window as any).electron.logger;
+export const Logger: any = (window as any).electronBridge.logger;

@@ -1,7 +1,7 @@
 import { Logger } from '../logger';
 
-const { electron } = window as any;
-const { invokeIpc, sendIpc, onIpc, removeListenerIpc } = electron;
+const { electronBridge } = window as any;
+const { invokeIpc, sendIpc, onIpc, removeListenerIpc } = electronBridge;
 
 function send(name, ...args) {
     Logger.debug(`Send event: ${name}`);

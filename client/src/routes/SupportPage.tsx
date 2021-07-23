@@ -18,6 +18,8 @@ const Paragraph = props => (
     </Box>
 );
 
+const isMas = (window as any).electronBridge.isMas;
+
 export function SupportPage() {
     const [content, setContent] = useState('');
     const [contentError, setContentError] = useState(false);
@@ -89,55 +91,61 @@ export function SupportPage() {
                         </Flex>
                     )}
                 </CardBox>
-                <CardBox title="Support Tockler" divider width="50%">
-                    <Paragraph>
-                        This app is made in my own free time and often at expense of family,
-                        friends, and sleep. I would like to keep this app free, open-source, and
-                        improving over time. But for that, your support is needed.
-                    </Paragraph>
-                    <Paragraph>
-                        It is understandable if you can't give anything. You can always give some
-                        constructive feedback.
-                    </Paragraph>
-                    <Paragraph>
-                        So if you find this app useful then feel free to donate. Anything helps to
-                        keep this app up to date and always improving. I need to cover the costs of
-                        developing and to justify working on this.
-                    </Paragraph>
-                    <HStack spacing={4} pt={4}>
-                        <a
-                            href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=JAHHBZZCZVDMA"
-                            rel="noreferrer"
-                            target="_blank"
-                        >
-                            <img
-                                src="https://github.com/MayGo/tockler/raw/master/badges/Donate-PayPal-green.svg"
-                                alt="Donate using PayPal"
-                                style={{ maxWidth: '100%' }}
-                            />
-                        </a>
+                {!isMas && (
+                    <CardBox title="Support Tockler" divider width="50%">
+                        <Paragraph>
+                            This app is made in my own free time and often at expense of family,
+                            friends, and sleep. I would like to keep this app free, open-source, and
+                            improving over time. But for that, your support is needed.
+                        </Paragraph>
+                        <Paragraph>
+                            It is understandable if you can't give anything. You can always give
+                            some constructive feedback.
+                        </Paragraph>
+                        <Paragraph>
+                            So if you find this app useful then feel free to donate. Anything helps
+                            to keep this app up to date and always improving. I need to cover the
+                            costs of developing and to justify working on this.
+                        </Paragraph>
+                        <HStack spacing={4} pt={4}>
+                            <a
+                                href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=JAHHBZZCZVDMA"
+                                rel="noreferrer"
+                                target="_blank"
+                            >
+                                <img
+                                    src="https://github.com/MayGo/tockler/raw/master/badges/Donate-PayPal-green.svg"
+                                    alt="Donate using PayPal"
+                                    style={{ maxWidth: '100%' }}
+                                />
+                            </a>
 
-                        <a
-                            href="https://github.com/sponsors/maygo/"
-                            rel="noreferrer"
-                            target="_blank"
-                        >
-                            <img
-                                src="https://github.com/MayGo/tockler/raw/master/badges/GitHub-Badge.svg"
-                                alt="Sponsor on GitHub"
-                                style={{ maxWidth: '100%' }}
-                            />
-                        </a>
+                            <a
+                                href="https://github.com/sponsors/maygo/"
+                                rel="noreferrer"
+                                target="_blank"
+                            >
+                                <img
+                                    src="https://github.com/MayGo/tockler/raw/master/badges/GitHub-Badge.svg"
+                                    alt="Sponsor on GitHub"
+                                    style={{ maxWidth: '100%' }}
+                                />
+                            </a>
 
-                        <a href="https://www.patreon.com/Tockler" rel="noreferrer" target="_blank">
-                            <img
-                                src="https://github.com/MayGo/tockler/raw/master/badges/Patreon-Badge.svg"
-                                alt="Become a patron"
-                                style={{ maxWidth: '100%' }}
-                            />
-                        </a>
-                    </HStack>
-                </CardBox>
+                            <a
+                                href="https://www.patreon.com/Tockler"
+                                rel="noreferrer"
+                                target="_blank"
+                            >
+                                <img
+                                    src="https://github.com/MayGo/tockler/raw/master/badges/Patreon-Badge.svg"
+                                    alt="Become a patron"
+                                    style={{ maxWidth: '100%' }}
+                                />
+                            </a>
+                        </HStack>
+                    </CardBox>
+                )}
             </VStack>
         </MainLayout>
     );
