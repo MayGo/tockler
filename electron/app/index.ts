@@ -23,13 +23,10 @@ if (config.isDev) {
 }*/
 
 /* Single Instance Check */
-
+const isMas = process.mas === true;
 const gotTheLock = app.requestSingleInstanceLock();
 
-if (!gotTheLock) {
-    logger.debug('Quiting instance.');
-    app.quit();
-} else {
+if (gotTheLock || isMas) {
     app.on('second-instance', (event, commandLine, workingDirectory) => {
         // Someone tried to run a second instance, we should focus our window.
         logger.debug('Make single instance');
@@ -49,7 +46,6 @@ if (!gotTheLock) {
 
     app.on('window-all-closed', function () {
         logger.debug('window-all-closed');
-        // pluginMgr.removeAll();
         // app.quit();
     });
 
@@ -96,4 +92,7 @@ if (!gotTheLock) {
             logger.error(`App errored in ready event:${error.toString()}`, error);
         }
     });
+} else {
+    logger.debug('Quiting instance.');
+    app.quit();
 }

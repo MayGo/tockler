@@ -28,6 +28,8 @@ export const sendToMainWindow = (key, message = '') => {
     }
 };
 
+const isMas = process.mas === true;
+
 export default class WindowManager {
     static mainWindow;
     static menubar;
@@ -44,8 +46,7 @@ export default class WindowManager {
         this.mainWindow = new BrowserWindow({
             width: windowSize.width,
             height: windowSize.height,
-
-            show: false,
+            show: true,
             webPreferences: {
                 zoomFactor: 1.0,
                 contextIsolation: true,
@@ -178,6 +179,7 @@ export default class WindowManager {
         this.menubar = menubar({
             index: url,
             icon: config.iconTray,
+            //  preloadWindow: false, in MAS build shows white tray only
             preloadWindow: false,
             showDockIcon: false,
 
@@ -191,6 +193,8 @@ export default class WindowManager {
                 height: 600,
             },
         });
+        // to prevent white flash
+        // this.menubar.app.commandLine.appendSwitch('disable-backgrounding-occluded-windows', 'true');
 
         // this.menubar.on('after-create-window', () => {});
         this.menubar.on('after-show', () => {

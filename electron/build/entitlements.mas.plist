@@ -3,9 +3,9 @@
 <plist version="1.0">
   <dict>
     <key>com.apple.security.app-sandbox</key>
-	  <true/>
-    <key>com.apple.security.application-groups</key>
-    <string>LK9S62EK7N.ee.trimatech.tockler</string>
+    <true/>
+    <key>com.apple.security.inherit</key>
+    <true/>
     <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
     <true/>
   </dict>
