@@ -44,6 +44,10 @@ if (gotTheLock || isMas) {
         app.quit();
     });
 
+    app.on('will-quit', async () => {
+        logger.debug('will-quit');
+        await AppManager.destroy();
+    });
     app.on('window-all-closed', function () {
         logger.debug('window-all-closed');
         // app.quit();

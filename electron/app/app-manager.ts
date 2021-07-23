@@ -18,18 +18,24 @@ const theThemeHasChanged = () => {
     AppManager.saveThemeAndNotify(AppManager.getNativeTheme());
 };
 export default class AppManager {
+    static knexInstance;
     static async init() {
         logger.info('Intializing Tockler');
         initIpcActions();
 
         logger.debug('Database syncing....');
-        await connectAndSync();
+        AppManager.knexInstance = await connectAndSync();
         logger.debug('Database synced.');
 
         AppManager.initAppEvents();
         AppManager.setOpenAtLogin();
 
         await stateManager.restoreState();
+    }
+
+    static async destroy() {
+        await AppManager.knexInstance.destroy();
+        logger.info('Closed db connection');
     }
 
     static initAppEvents() {

@@ -29,4 +29,5 @@ export async function connectAndSync() {
             require.context('../../migrations', true, /.js$/),
         ),
     });
+    return knexInstance;
 }
