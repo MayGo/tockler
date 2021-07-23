@@ -119,7 +119,9 @@ Build scripts samples are in travis/appveyor files.
 
 ### Testing MAS build
 
-In electron-builder.yml replace provisioningProfile with development.provisionprofile
+In electron-builder.yml replace
+type: development
+provisioningProfile: development.provisionprofile
 
 # Signing
 
