@@ -38,7 +38,9 @@ export function TimelinePage() {
                     <Flex>
                         <Search />
                         <Box flex={1} />
-                        <NewLogButton />
+                        <Box py={1}>
+                            <NewLogButton />
+                        </Box>
                     </Flex>
                     <Flex>
                         <Stack py={4} my={4} pr={4} pl={1}>
