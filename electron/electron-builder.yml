@@ -35,7 +35,6 @@ mac:
     darkModeSupport: true
     target:
         - dmg
-        - mas
 
 mas:
     type: distribution
