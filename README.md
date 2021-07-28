@@ -6,7 +6,7 @@
 
 <!-- DONATELINKS -->
 
-## [![Release](https://img.shields.io/github/v/release/MayGo/tockler)](https://github.com/MayGo/tockler/releases/latest)
+[![Release](https://img.shields.io/github/v/release/MayGo/tockler)](https://github.com/MayGo/tockler/releases/latest) [![Total downloads](https://img.shields.io/github/downloads/maygo/tockler/total)](https://github.com/MayGo/tockler/releases) [![Latest downloads](https://img.shields.io/github/downloads/maygo/tockler/latest/total)](https://github.com/MayGo/tockler/releases/latest)
 
 <a href="https://www.producthunt.com/posts/tockler?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-tockler" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=304890&theme=light" alt="Tockler - Automatically track applications usage and working time. | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 
