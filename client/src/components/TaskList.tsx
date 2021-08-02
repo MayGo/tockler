@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React from 'react';
 import _ from 'lodash';
 
 import { useStoreState } from '../store/easyPeasy';

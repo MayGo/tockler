@@ -4,7 +4,6 @@ import randomcolor from 'randomcolor';
 import { ColorPicker } from './ColorPicker';
 import { Logger } from '../../logger';
 import moment from 'moment';
-import { TrackItemType } from '../../enum/TrackItemType';
 import { Box, Divider, Heading } from '@chakra-ui/layout';
 import { Input } from '@chakra-ui/input';
 import { Button, IconButton } from '@chakra-ui/button';
