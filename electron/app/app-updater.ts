@@ -11,7 +11,7 @@ const logger = logManager.getLogger('AppUpdater');
 const ONE_MINUTE_MS = 60 * 1000;
 const ONE_HOUR_MS = 60 * ONE_MINUTE_MS;
 
-export const CHECK_INTERVAL_MS = ONE_HOUR_MS * 24;
+export const CHECK_INTERVAL_MS = ONE_HOUR_MS * 8;
 
 function isNetworkError(errorObject) {
     return errorObject.message.includes('net::ERR');
