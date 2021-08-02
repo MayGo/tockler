@@ -23,7 +23,7 @@ export const CardBox: React.FC<any> = ({ title, children, extra, p = 4, divider,
                         letterSpacing="wide"
                         color={titleColor}
                         p={p}
-                        pb={3}
+                        pb={divider ? 3 : 0}
                     >
                         {title}
                     </Text>

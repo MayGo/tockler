@@ -5,6 +5,7 @@ import { MainLayout } from '../components/MainLayout/MainLayout';
 import { AppUsageChart } from '../components/PieCharts/AppUsageChart';
 
 import { MetricTiles } from '../components/PieCharts/MetricTiles';
+import { TaskList } from '../components/TaskList';
 import { NewLogButton } from '../components/Timeline/NewLogButton';
 import { Search } from '../components/Timeline/Search';
 import { Timeline } from '../components/Timeline/Timeline';
@@ -57,6 +58,9 @@ export function TimelinePage() {
                 </CardBox>
                 <CardBox title="App Usage">
                     <AppUsageChart />
+                </CardBox>
+                <CardBox title="Tasks">
+                    <TaskList />
                 </CardBox>
                 <CardBox>
                     <TrackItemTabs />
