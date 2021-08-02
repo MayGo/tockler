@@ -15,6 +15,7 @@ import { BrushHandle } from './BrushHandle';
 import { convertDateForY, convertDateForY0, getTrackItemOrderFn } from './timeline.utils';
 import { CHART_PADDING, CHART_SCALE } from './timeline.constants';
 import useDimensions from 'react-cool-dimensions';
+import { clampRange } from '../PieCharts/MetricTiles.utils';
 
 const domainPaddingBrush: any = { y: 35, x: 5 };
 
@@ -28,6 +29,8 @@ const brushChartBarStyle: any = isDark => ({
     },
 });
 
+const xDomain: [number, number] = [1, 3];
+
 export const SmallTimelineChart = memo(() => {
     const { chartTheme } = useChartThemeState();
 
@@ -39,7 +42,7 @@ export const SmallTimelineChart = memo(() => {
     const setVisibleTimerange = useStoreActions(actions => actions.setVisibleTimerange);
 
     const changeVisibleTimerange = range => {
-        setVisibleTimerange([moment(range[0]), moment(range[1])]);
+        setVisibleTimerange(clampRange(timerange, [moment(range[0]), moment(range[1])]));
     };
 
     const handleBrush = domain => {
@@ -60,7 +63,7 @@ export const SmallTimelineChart = memo(() => {
 
     const domain: any = {
         y: [timerange[0], timerange[1]],
-        x: [1, 3],
+        x: xDomain,
     };
 
     return (

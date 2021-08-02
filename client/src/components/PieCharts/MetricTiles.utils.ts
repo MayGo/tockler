@@ -1,11 +1,19 @@
 import moment from 'moment';
 import { convertDate } from '../../constants';
 
+export const clampRange = (clampToRange, range) => {
+    const begin = moment.max(clampToRange[0], convertDate(range[0]));
+    const end = moment.min(clampToRange[1], convertDate(range[1]));
+    return [begin, end];
+};
+
 export const sumAppObject = visibleTimerange => (newItem, item) => {
     const [beginClamp, endClamp] = visibleTimerange;
 
-    const beginDate = moment.max(beginClamp, convertDate(item.beginDate));
-    const endDate = moment.min(endClamp, convertDate(item.endDate));
+    const [beginDate, endDate] = clampRange(
+        [beginClamp, endClamp],
+        [convertDate(item.beginDate), convertDate(item.endDate)],
+    );
 
     const diff = endDate.diff(beginDate);
     if (diff < 0) {
