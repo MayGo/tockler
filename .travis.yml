@@ -19,6 +19,10 @@ language: node_js
 node_js:
     - '14'
 
+env:
+    global:
+        - ELECTRON_CACHE=$HOME/.cache/electron
+        - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
 cache:
     timeout: 1000
     directories:
@@ -26,6 +30,9 @@ cache:
         - electron/node_modules
         - client/node_modules
         - $HOME/.electron
+        - $HOME/.cache/electron
+        - $HOME/.cache/electron-builder
+        - $HOME/.npm/_prebuilds
 
 before_script:
     - echo "SENTRY_DSN=$SENTRY_DSN" >> ./electron/.env
