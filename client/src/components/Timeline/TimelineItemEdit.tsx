@@ -16,6 +16,7 @@ import { TIME_FORMAT_SHORT } from '../../constants';
 import { TimePicker } from './TimePicker';
 import { HStack, VStack } from '@chakra-ui/react';
 import { FaPlay } from 'react-icons/fa';
+import { ITEM_TYPES } from '../../utils';
 
 interface IProps {
     selectedTimelineItem: any;
@@ -27,12 +28,6 @@ interface IProps {
 }
 
 const COLOR_SCOPE_ONLY_THIS = 'ONLY_THIS';
-
-const statusName = {
-    [TrackItemType.AppTrackItem]: 'App',
-    [TrackItemType.StatusTrackItem]: 'Status',
-    [TrackItemType.LogTrackItem]: 'Task',
-};
 
 export const TimelineItemEdit = memo<IProps>(
     ({
@@ -191,7 +186,7 @@ export const TimelineItemEdit = memo<IProps>(
             <Box width={600}>
                 <VStack alignItems="flex-start" spacing={4}>
                     <Heading fontSize="xl" pb={2}>
-                        {statusName[trackItem.taskName] || 'New Task'}
+                        {ITEM_TYPES[trackItem.taskName] || 'New Task'}
                     </Heading>
                     <HStack width="100%" spacing={4}>
                         <Box flex="2">

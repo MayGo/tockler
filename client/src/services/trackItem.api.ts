@@ -42,6 +42,7 @@ export function getOnlineStartTime(): Promise<any> {
 }
 
 export function searchFromItems({ from, to, taskName, searchStr, paging }): Promise<any> {
+    Logger.debug('Searching items:', { from, to, taskName, searchStr, paging });
     return EventEmitter.emit('searchFromItems', {
         from: from.valueOf(),
         to: to.valueOf(),

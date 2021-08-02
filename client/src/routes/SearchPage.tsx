@@ -11,13 +11,16 @@ import { Input } from '@chakra-ui/input';
 import { Button } from '@chakra-ui/button';
 import { Loader } from '../components/Timeline/Loader';
 import { CardBox } from '../components/CardBox';
+import { TypeSelect } from '../components/TypeSelect';
+import { HStack } from '@chakra-ui/react';
 
 export function SearchPage() {
     const fetchIdRef = useRef(0);
     const [searchText, setSearchText] = useState('');
+    const [taskName, setTaskName] = useState(TrackItemType.AppTrackItem);
 
     const [isLoading, setIsLoading] = useState(false);
-    const [searchPaging, setSearchPaging] = useState({ pageSize: 20, pageIndex: 1 });
+    const [searchPaging, setSearchPaging] = useState({ pageSize: 20, pageIndex: 0 });
 
     const [searchResult, setSearchResult] = useState([]);
     const [timerange, setTimerange] = useState([
@@ -26,8 +29,6 @@ export function SearchPage() {
             .subtract(10, 'days'),
         moment().endOf('day'),
     ]);
-
-    const taskName = TrackItemType.AppTrackItem;
 
     const loadItems = async (searchStr, firstPage = false) => {
         const fetchId = ++fetchIdRef.current;
@@ -77,7 +78,7 @@ export function SearchPage() {
 
     const onSubmit = event => {
         event.preventDefault();
-        setSearchPaging({ ...searchPaging, pageIndex: 1 });
+        setSearchPaging({ ...searchPaging, pageIndex: 0 });
     };
 
     return (
@@ -89,29 +90,30 @@ export function SearchPage() {
                         <Box p={4} pb={0}>
                             <SearchOptions setTimerange={setTimerange} timerange={timerange} />
                         </Box>
-                        <Flex p={4}>
+                        <HStack p={4}>
+                            <TypeSelect
+                                value={taskName}
+                                onChange={event => setTaskName(event.target.value)}
+                            />
                             <Input
                                 placeholder="Search from all items"
                                 value={searchText}
                                 onChange={event => setSearchText(event.target.value)}
                             />
-                            <Box px={2}>
-                                <Button type="submit" bg="brand.mainColor" w="100px">
-                                    Search
-                                </Button>
-                            </Box>
 
-                            <Box px={2}>
-                                <Button
-                                    variant="ghost"
-                                    onClick={() => {
-                                        exportItems(searchText);
-                                    }}
-                                >
-                                    Export to CSV
-                                </Button>
-                            </Box>
-                        </Flex>
+                            <Button type="submit" bg="brand.mainColor" w="100px">
+                                Search
+                            </Button>
+
+                            <Button
+                                variant="ghost"
+                                onClick={() => {
+                                    exportItems(searchText);
+                                }}
+                            >
+                                Export to CSV
+                            </Button>
+                        </HStack>
                         <SearchResults
                             searchResult={searchResult}
                             changePaging={changePaging}
