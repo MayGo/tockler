@@ -68,7 +68,6 @@ linux:
     target:
         - AppImage
         - deb
-        - rpm
 
 dmg:
     sign: false
