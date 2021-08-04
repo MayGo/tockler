@@ -3,16 +3,16 @@ import { Box } from '@chakra-ui/layout';
 import React, { useState } from 'react';
 import TimeKeeper from 'react-timekeeper';
 
-export function TimePicker({ time, onChange }) {
+export function TimePicker({ time, onChange, readOnly }) {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
         <>
             <Input
                 value={time}
-                onFocus={() => setIsOpen(true)}
-                onBlur={() => setIsOpen(false)}
-                readOnly
+                onFocus={() => !readOnly && setIsOpen(true)}
+                onBlur={() => !readOnly && setIsOpen(false)}
+                readOnly={readOnly}
             />
             {isOpen && (
                 <Box position="absolute" zIndex={1000}>

@@ -5,10 +5,11 @@ import { SketchPicker } from 'react-color';
 interface IProps {
     color: any;
     onChange: any;
+    readOnly?: boolean;
 }
 
 const defaultColor = '#000000';
-export const ColorPicker = ({ color = defaultColor, onChange }: IProps) => {
+export const ColorPicker = ({ color = defaultColor, onChange, readOnly }: IProps) => {
     const [pickerColor, setPickerColor] = useState(color);
 
     const [displayColorPicker, setSisplayColorPicker] = useState(false);
@@ -40,7 +41,7 @@ export const ColorPicker = ({ color = defaultColor, onChange }: IProps) => {
         <Box __css={styles.swatch} onClick={handleClick}>
             <Box __css={styles.color} />
 
-            {displayColorPicker ? (
+            {!readOnly && displayColorPicker ? (
                 <Box __css={styles.popover}>
                     <Box __css={styles.cover} onClick={handleClose} />
                     <SketchPicker color={pickerColor} onChange={handleChange} />

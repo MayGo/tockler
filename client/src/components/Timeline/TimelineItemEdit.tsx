@@ -18,6 +18,7 @@ import { ITEM_TYPES } from '../../utils';
 import { changeColorForApp } from '../../services/appSettings.api';
 import { saveTrackItem, deleteByIds, updateTrackItemColor } from '../../services/trackItem.api';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
+import { TrackItemType } from '../../enum/TrackItemType';
 
 const COLOR_SCOPE_ONLY_THIS = 'ONLY_THIS';
 
@@ -33,8 +34,6 @@ export const TimelineItemEdit = memo(() => {
 
     const { trackItem, colorScope } = state;
 
-    console.info('selectedTimelineItem,.,.,.,,.,,.,,.', selectedTimelineItem);
-
     const deleteTimelineItem = async () => {
         const id = trackItem.id;
         Logger.debug('Delete timeline trackItem', id);
@@ -48,6 +47,8 @@ export const TimelineItemEdit = memo(() => {
             Logger.error('No ids, not deleting from DB');
         }
     };
+
+    const readOnly = selectedTimelineItem?.taskName !== TrackItemType.LogTrackItem;
 
     const saveTimelineItem = async () => {
         Logger.debug('Updating color for trackItem', trackItem, colorScope);
@@ -178,27 +179,43 @@ export const TimelineItemEdit = memo(() => {
                 </Heading>
                 <HStack width="100%" spacing={4}>
                     <Box flex="2">
-                        <Input value={trackItem.app} placeholder="App" onChange={changeAppName} />
+                        <Input
+                            value={trackItem.app}
+                            placeholder="App"
+                            onChange={changeAppName}
+                            readOnly={readOnly}
+                        />
                     </Box>
                     <Box flex="1" maxWidth="100px">
                         <TimePicker
                             time={moment(trackItem.beginDate).format(TIME_FORMAT_SHORT)}
                             onChange={changeTime('beginDate')}
+                            readOnly={readOnly}
                         />
                     </Box>
                     <Box flex="1" maxWidth="100px">
                         <TimePicker
                             time={moment(trackItem.endDate).format(TIME_FORMAT_SHORT)}
                             onChange={changeTime('endDate')}
+                            readOnly={readOnly}
                         />
                     </Box>
                 </HStack>
                 <Box w="100%">
-                    <Input value={trackItem.title} placeholder="Title" onChange={changeAppTitle} />
+                    <Input
+                        value={trackItem.title}
+                        placeholder="Title"
+                        onChange={changeAppTitle}
+                        readOnly={readOnly}
+                    />
                 </Box>
                 <HStack>
                     <Box>
-                        <ColorPicker color={trackItem.color} onChange={changeColorHandler} />
+                        <ColorPicker
+                            color={trackItem.color}
+                            onChange={changeColorHandler}
+                            readOnly={readOnly}
+                        />
                     </Box>
                     {colorChanged && (
                         <Tooltip
@@ -229,10 +246,11 @@ export const TimelineItemEdit = memo(() => {
                 <Button variant="outline" leftIcon={<AiOutlineClose />} onClick={closeEdit}>
                     Cancel
                 </Button>
-
-                <Button leftIcon={<AiOutlineSave />} onClick={saveBasedOnColorOptionHandler}>
-                    {isCreating ? 'Create' : 'Update'}
-                </Button>
+                {!readOnly && (
+                    <Button leftIcon={<AiOutlineSave />} onClick={saveBasedOnColorOptionHandler}>
+                        {isCreating ? 'Create' : 'Update'}
+                    </Button>
+                )}
             </HStack>
         </Box>
     );
