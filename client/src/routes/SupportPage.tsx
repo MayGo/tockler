@@ -6,7 +6,9 @@ import { Box, Flex, Text } from '@chakra-ui/layout';
 import { Textarea } from '@chakra-ui/textarea';
 import { Input } from '@chakra-ui/input';
 import { CardBox } from '../components/CardBox';
-import { HStack, VStack } from '@chakra-ui/react';
+import { Link, HStack, VStack } from '@chakra-ui/react';
+import { FaGithub, FaPaypal, FaProductHunt } from 'react-icons/fa';
+import { SiOpencollective } from 'react-icons/si';
 
 const TEMPLATE_ID = process.env.REACT_APP_TEMPLATE_ID || '';
 const SERVICE_ID = process.env.REACT_APP_SERVICE_ID || '';
@@ -58,7 +60,7 @@ export function SupportPage() {
     return (
         <MainLayout>
             <VStack spacing={3} p={4} alignItems="flex-start">
-                <CardBox title="Contact Me" width="50%" divider>
+                <CardBox title="Contact Me" width={[, , , '100%', '50%']} divider>
                     <VStack spacing={3} alignItems="flex-end">
                         <Paragraph>
                             Feel free to contact if you have any problems or feature requests. Or if
@@ -92,7 +94,7 @@ export function SupportPage() {
                     )}
                 </CardBox>
                 {!isMas && (
-                    <CardBox title="Support Tockler" divider width="50%">
+                    <CardBox title="Support Tockler" divider width={[, , , '100%', '50%']}>
                         <Paragraph>
                             This app is made in my own free time and often at expense of family,
                             friends, and sleep. I would like to keep this app free, open-source, and
@@ -108,41 +110,53 @@ export function SupportPage() {
                             costs of developing and to justify working on this.
                         </Paragraph>
                         <HStack spacing={4} pt={4}>
-                            <a
+                            <Button
+                                isFullWidth
+                                as={Link}
+                                leftIcon={<FaPaypal />}
+                                textDecoration="none !important"
                                 href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=JAHHBZZCZVDMA"
                                 rel="noreferrer"
                                 target="_blank"
                             >
-                                <img
-                                    src="https://github.com/MayGo/tockler/raw/master/badges/Donate-PayPal-green.svg"
-                                    alt="Donate using PayPal"
-                                    style={{ maxWidth: '100%' }}
-                                />
-                            </a>
+                                Donate using PayPal
+                            </Button>
 
-                            <a
+                            <Button
+                                isFullWidth
+                                as={Link}
+                                leftIcon={<FaGithub />}
+                                textDecoration="none !important"
                                 href="https://github.com/sponsors/maygo/"
                                 rel="noreferrer"
                                 target="_blank"
                             >
-                                <img
-                                    src="https://github.com/MayGo/tockler/raw/master/badges/GitHub-Badge.svg"
-                                    alt="Sponsor on GitHub"
-                                    style={{ maxWidth: '100%' }}
-                                />
-                            </a>
-
-                            <a
+                                Sponsor on GitHub
+                            </Button>
+                        </HStack>
+                        <HStack spacing={4} pt={4}>
+                            <Button
+                                isFullWidth
+                                as={Link}
+                                leftIcon={<FaProductHunt />}
+                                textDecoration="none !important"
                                 href="https://www.patreon.com/Tockler"
                                 rel="noreferrer"
                                 target="_blank"
                             >
-                                <img
-                                    src="https://github.com/MayGo/tockler/raw/master/badges/Patreon-Badge.svg"
-                                    alt="Become a patron"
-                                    style={{ maxWidth: '100%' }}
-                                />
-                            </a>
+                                Become a Patron
+                            </Button>
+                            <Button
+                                isFullWidth
+                                as={Link}
+                                leftIcon={<SiOpencollective />}
+                                textDecoration="none !important"
+                                href="https://www.patreon.com/Tockler"
+                                rel="noreferrer"
+                                target="_blank"
+                            >
+                                Contribute in Open Collective
+                            </Button>
                         </HStack>
                     </CardBox>
                 )}
