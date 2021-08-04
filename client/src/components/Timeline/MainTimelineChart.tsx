@@ -87,14 +87,13 @@ export const MainTimelineChart = memo(() => {
     const handleEditBrush = (domain, props) => {
         if (domain) {
             console.info('props', props);
-            if (props.index === TimelineRowType.Log) {
-                const beginDate = convertDate(domain[0]).valueOf();
-                const endDate = convertDate(domain[1]).valueOf();
 
-                Logger.debug('EditBrush changed:', beginDate, endDate);
+            const beginDate = convertDate(domain[0]).valueOf();
+            const endDate = convertDate(domain[1]).valueOf();
 
-                setSelectedTimelineItem({ ...selectedTimelineItem, beginDate, endDate });
-            }
+            Logger.debug('EditBrush changed:', beginDate, endDate);
+
+            setSelectedTimelineItem({ ...selectedTimelineItem, beginDate, endDate });
         }
     };
 
@@ -172,8 +171,8 @@ export const MainTimelineChart = memo(() => {
                     }
                 />
                 <VictoryAxis
-                    tickValues={[1, 2, 3]}
-                    tickFormat={['', '', '']}
+                    tickValues={[3]}
+                    tickFormat={['']}
                     style={axisStyle}
                     gridComponent={
                         <VictoryBrushLine
