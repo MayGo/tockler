@@ -3,17 +3,22 @@ import React, { memo } from 'react';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { Button } from '@chakra-ui/button';
 import { Tooltip } from '@chakra-ui/tooltip';
+import { TrackItemType } from '../../enum/TrackItemType';
 
 export const NewLogButton = memo(() => {
     const visibleTimerange = useStoreState(state => state.visibleTimerange);
+    const selectedTimelineItem = useStoreState(state => state.selectedTimelineItem);
 
     const setSelectedTimelineItem = useStoreActions(actions => actions.setSelectedTimelineItem);
 
     const createNewItem = () => {
         setSelectedTimelineItem({
+            app: '',
+            title: '',
+            taskName: TrackItemType.LogTrackItem,
             color: randomcolor(),
-            beginDate: visibleTimerange[0].valueOf(),
-            endDate: visibleTimerange[1].valueOf(),
+            beginDate: selectedTimelineItem?.beginDate || visibleTimerange[0].valueOf(),
+            endDate: selectedTimelineItem?.endDate || visibleTimerange[1].valueOf(),
         });
     };
 
