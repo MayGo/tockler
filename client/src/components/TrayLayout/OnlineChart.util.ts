@@ -136,6 +136,6 @@ export const getOnlineTimesForChart = ({ beginClamp, endClamp, items, mode }) =>
         }
     });
 
-    console.info('pieData items', pieData);
+    console.info('onlineChart items', pieData);
     return pieData;
 };

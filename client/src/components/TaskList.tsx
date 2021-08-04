@@ -28,22 +28,32 @@ export const TaskList = () => {
         })
         .valueOf();
 
-    return data.map(({ app, title, color, timeDiffInMs }) => {
-        return (
-            <HStack alignItems="center" pb={2} minWidth="0" spacing={4} key={`${app}_${title}`}>
-                <Box bg={color} w="8px" h="8px" minWidth="8px" borderRadius="full" />
+    return (
+        <>
+            {data.map(({ app, title, color, timeDiffInMs }) => {
+                return (
+                    <HStack
+                        alignItems="center"
+                        pb={2}
+                        minWidth="0"
+                        spacing={4}
+                        key={`${app}_${title}`}
+                    >
+                        <Box bg={color} w="8px" h="8px" minWidth="8px" borderRadius="full" />
 
-                <Text fontWeight="bold" fontSize="md">
-                    {app}
-                </Text>
+                        <Text fontWeight="bold" fontSize="md">
+                            {app}
+                        </Text>
 
-                <Text fontSize="md" minWidth="0">
-                    {title}
-                </Text>
-                <Text fontSize="md" minWidth="0" fontWeight="bold">
-                    {shortTime(timeDiffInMs)}
-                </Text>
-            </HStack>
-        );
-    });
+                        <Text fontSize="md" minWidth="0">
+                            {title}
+                        </Text>
+                        <Text fontSize="md" minWidth="0" fontWeight="bold">
+                            {shortTime(timeDiffInMs)}
+                        </Text>
+                    </HStack>
+                );
+            })}
+        </>
+    );
 };
