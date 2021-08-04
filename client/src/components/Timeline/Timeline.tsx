@@ -1,6 +1,6 @@
 import React, { memo, useRef } from 'react';
 import 'moment-duration-format';
-import { TimelineItemEditContainer } from './TimelineItemEditContainer';
+import { TimelineItemEdit } from './TimelineItemEdit';
 import { useStoreState } from '../../store/easyPeasy';
 import {
     Popover,
@@ -25,19 +25,19 @@ export const Timeline = memo(() => {
     return (
         <Box flex="1">
             <Box pt={4} pb={4}>
-                <Popover isOpen={!!selectedTimelineItem}>
-                    <PopoverTrigger>{popoverTriggerRef.current || <div />}</PopoverTrigger>
-                    <PopoverContent p={6} w="fit-content">
-                        <PopoverArrow />
-                        <PopoverBody p={0}>
-                            <TimelineItemEditContainer />
-                        </PopoverBody>
-                    </PopoverContent>
-                </Popover>
                 <BlackBox position="relative">
                     {isLoading && <Loader />}
                     <MainTimelineChart />
                 </BlackBox>
+                <Popover isOpen={!!selectedTimelineItem}>
+                    <PopoverTrigger>{popoverTriggerRef.current || <div />}</PopoverTrigger>
+                    <PopoverContent p={4} w="fit-content">
+                        <PopoverArrow />
+                        <PopoverBody p={0}>
+                            <TimelineItemEdit />
+                        </PopoverBody>
+                    </PopoverContent>
+                </Popover>
             </Box>
             <Box pb={4}>
                 <BlackBox position="relative">

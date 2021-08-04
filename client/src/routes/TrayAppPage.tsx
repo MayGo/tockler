@@ -1,6 +1,4 @@
 import React, { useEffect, useState, useCallback, memo } from 'react';
-import randomcolor from 'randomcolor';
-import { TimelineItemEdit } from '../components/Timeline/TimelineItemEdit';
 import { TrayLayout } from '../components/TrayLayout/TrayLayout';
 import { TrayList } from '../components/TrayList/TrayList';
 import { EventEmitter } from '../services/EventEmitter';
@@ -17,8 +15,7 @@ import { ITrackItem } from '../@types/ITrackItem';
 import { OnlineChart } from '../components/TrayLayout/OnlineChart';
 import { useStoreActions, useStoreState } from '../store/easyPeasy';
 import { useInterval } from '../hooks/intervalHook';
-
-const EMPTY_SELECTED_ITEM = {};
+import { TrayItemEdit } from './tray/TrayItemEdit';
 
 const EMPTY_ARRAY = [];
 const BG_SYNC_DELAY_MS = 10000;
@@ -37,7 +34,6 @@ const TrayAppPageTemp = () => {
 
     const [loading, setLoading] = useState(true);
 
-    const [selectedItem, setSelectedItem] = useState(EMPTY_SELECTED_ITEM);
     const [runningLogItem, setRunningLogItem] = useState<any>();
     const [lastLogItems, setLastLogItems] = useState<ITrackItem[]>(EMPTY_ARRAY);
 
@@ -64,7 +60,6 @@ const TrayAppPageTemp = () => {
     useEffect(() => {
         if (windowIsActive) {
             Logger.debug('Window active:', windowIsActive);
-            setSelectedItem(s => ({ ...s, color: randomcolor() }));
             // loadLastLogItemsThrottled();
             analytics.track('trayOpened', { version: process.env.REACT_APP_VERSION });
         }
@@ -96,14 +91,14 @@ const TrayAppPageTemp = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const startNewLogItemEvent = useCallback((trackItem: any, colorScope: any) => {
+    const startNewLogItemEvent = useCallback((trackItem: any) => {
         startNewLogItem(trackItem);
         loadLastLogItemsThrottled();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const stopRunningLogItemEvent = useCallback(
-        (trackItem: any, colorScope: any) => {
+        () => {
             if (runningLogItem) {
                 stopRunningLogItem(runningLogItem.id);
                 loadLastLogItemsThrottled();
@@ -121,11 +116,7 @@ const TrayAppPageTemp = () => {
     return (
         <TrayLayout>
             <Box p={4}>
-                <TimelineItemEdit
-                    selectedTimelineItem={selectedItem}
-                    trayEdit
-                    saveTimelineItem={startNewLogItem}
-                />
+                <TrayItemEdit saveTimelineItem={startNewLogItem} />
             </Box>
             <Box px={4} pb={4}>
                 <OnlineChart items={statusItems} />

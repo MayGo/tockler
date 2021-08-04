@@ -68,24 +68,39 @@ function updateTrackItem(trackItem: ITrackItem): Promise<any> {
     return EventEmitter.emit('updateTrackItem', { trackItem });
 }
 
-export async function saveTrackItem(trackItem): Promise<any> {
+function getRawTrackItem(savedItem) {
+    let item = {
+        id: savedItem.id,
+        app: savedItem.app,
+        title: savedItem.title,
+        taskName: savedItem.taskName,
+        color: savedItem.color,
+        beginDate: savedItem.beginDate,
+        url: savedItem.url,
+        endDate: savedItem.endDate,
+    };
+
+    return item;
+}
+
+export async function saveTrackItem(inputItem): Promise<any> {
+    const trackItem = getRawTrackItem(inputItem);
     Logger.debug('Saving trackitem.', trackItem);
+
     if (!trackItem.taskName) {
         trackItem.taskName = 'LogTrackItem';
     }
+
     if (trackItem.id) {
-        if (trackItem.originalColor === trackItem.color) {
-            // this.updateTrackItem(trackItem);
-        } else {
-            // this.showChangeColorDialog();
-        }
         const item = await updateTrackItem(trackItem);
         Logger.debug('Updated trackitem to DB:', item);
         return item;
     }
+
     if (!trackItem.app) {
         trackItem.app = 'Default';
     }
+
     const item = createTrackItem(trackItem);
     // Logger.debug('Created trackitem to DB:', item);
     return item;
