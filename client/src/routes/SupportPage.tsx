@@ -60,7 +60,7 @@ export function SupportPage() {
     return (
         <MainLayout>
             <VStack spacing={3} p={4} alignItems="flex-start">
-                <CardBox title="Contact Me" width={[, , , '100%', '50%']} divider>
+                <CardBox title="Contact Me" width={['100%', '100%', '100%', '100%', '50%']} divider>
                     <VStack spacing={3} alignItems="flex-end">
                         <Paragraph>
                             Feel free to contact if you have any problems or feature requests. Or if
@@ -94,7 +94,11 @@ export function SupportPage() {
                     )}
                 </CardBox>
                 {!isMas && (
-                    <CardBox title="Support Tockler" divider width={[, , , '100%', '50%']}>
+                    <CardBox
+                        title="Support Tockler"
+                        divider
+                        width={['100%', '100%', '100%', '100%', '50%']}
+                    >
                         <Paragraph>
                             This app is made in my own free time and often at expense of family,
                             friends, and sleep. I would like to keep this app free, open-source, and

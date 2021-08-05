@@ -10,7 +10,6 @@ import {
     VictoryBrushLine,
 } from 'victory';
 import { convertDate, TIME_FORMAT } from '../../constants';
-import { TimelineRowType } from '../../enum/TimelineRowType';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { BarWithTooltip } from './BarWithTooltip';
 import { Logger } from '../../logger';
