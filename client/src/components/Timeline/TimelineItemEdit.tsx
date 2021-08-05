@@ -141,12 +141,13 @@ export const TimelineItemEdit = memo(() => {
         clearTimelineItem();
     };
 
-    const changeColorScopeHandler = newColorScope => {
-        Logger.debug('Changed color scope:', newColorScope);
+    const changeColorScopeHandler = e => {
+        const { value } = e.target;
+        Logger.debug('Changed color scope:', value);
 
         setState(oldState => ({
             ...oldState,
-            colorScope: newColorScope,
+            colorScope: value,
         }));
     };
 
@@ -211,11 +212,7 @@ export const TimelineItemEdit = memo(() => {
                 </Box>
                 <HStack>
                     <Box>
-                        <ColorPicker
-                            color={trackItem.color}
-                            onChange={changeColorHandler}
-                            readOnly={readOnly}
-                        />
+                        <ColorPicker color={trackItem.color} onChange={changeColorHandler} />
                     </Box>
                     {colorChanged && (
                         <Tooltip
@@ -246,11 +243,10 @@ export const TimelineItemEdit = memo(() => {
                 <Button variant="outline" leftIcon={<AiOutlineClose />} onClick={closeEdit}>
                     Cancel
                 </Button>
-                {!readOnly && (
-                    <Button leftIcon={<AiOutlineSave />} onClick={saveBasedOnColorOptionHandler}>
-                        {isCreating ? 'Create' : 'Update'}
-                    </Button>
-                )}
+
+                <Button leftIcon={<AiOutlineSave />} onClick={saveBasedOnColorOptionHandler}>
+                    {isCreating ? 'Create' : 'Update'}
+                </Button>
             </HStack>
         </Box>
     );
