@@ -198,7 +198,8 @@ export default class WindowManager {
 
         this.menubar.on('after-create-window', () => {
             // https://github.com/maxogden/menubar/issues/306
-            this.menubar.app.dock.hide();
+            logger.debug('Hiding dock, as a fix.');
+            this.menubar.app?.dock?.hide();
         });
 
         this.menubar.on('after-show', () => {
