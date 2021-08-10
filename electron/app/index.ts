@@ -93,7 +93,7 @@ if (gotTheLock || isMas) {
                 );
             });
         } catch (error) {
-            logger.error(`App errored in ready event:${error.toString()}`, error);
+            logger.error(`App errored in ready event: ${error.toString()}`, error);
         }
     });
 } else {

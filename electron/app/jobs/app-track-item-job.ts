@@ -48,8 +48,7 @@ export class AppTrackItemJob {
             if (activeWinError) {
                 logger.debug('Permission error: ' + activeWinError);
             } else {
-                logger.error('Error in AppTrackItemJob.');
-                logger.error(error);
+                logger.error(`Error in AppTrackItemJob: ${error.toString()}`, error);
             }
         }
     }

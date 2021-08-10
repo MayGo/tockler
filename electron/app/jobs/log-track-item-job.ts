@@ -19,8 +19,7 @@ export class LogTrackItemJob {
                 await this.updateRunningLogItem();
             }
         } catch (error) {
-            logger.error('Error in LogTrackItemJob.');
-            logger.error(error);
+            logger.error(`Error in LogTrackItemJob: ${error.toString()}`, error);
         }
     }
 
@@ -70,7 +69,7 @@ export class LogTrackItemJob {
 
                 rawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
             } else {
-                logger.error('No splitEndDate for item:', rawItem);
+                logger.debug('No splitEndDate for item:', rawItem);
             }
         }
 
