@@ -739,7 +739,7 @@
     "@sentry/utils" "6.7.1"
     tslib "^1.9.3"
 
-"@sentry/electron@^2.0.4":
+"@sentry/electron@^2.5.1":
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/@sentry/electron/-/electron-2.5.1.tgz#6d1d42117e074c4b9f2f200def8ffb602c0221b6"
   integrity sha512-1rVE1IgGZTAy2qlLQxDsuhv7/0sT88oHYyD4f6ZTDzge3lsReeMu4xA32M4ldo4yRlRQM5gpdSS/D7Q/4huH0A==
