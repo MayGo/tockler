@@ -28,9 +28,9 @@
 
 | Operating System        | Download                                                                                                                                                                                                                       |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Windows (32 and 64-bit) | <a href='https://github.com/MayGo/tockler/releases/download/v3.19.16/tockler-3.19.16-setup-win.exe'><img alt='Get it on Windows' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeWindows.png'/></a> |
-| macOS                   | <a href='https://github.com/MayGo/tockler/releases/download/v3.19.16/Tockler-3.19.16.dmg'><img alt='Get it on macOS' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeMacOS.png'/></a>               |
-| Linux                   | <a href='https://github.com/MayGo/tockler/releases/download/v3.19.16/Tockler-3.19.16.AppImage'><img alt='Get it on Linux' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeLinux.png'/></a>          |
+| Windows (32 and 64-bit) | <a href='https://github.com/MayGo/tockler/releases/download/v3.19.17/tockler-3.19.17-setup-win.exe'><img alt='Get it on Windows' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeWindows.png'/></a> |
+| macOS                   | <a href='https://github.com/MayGo/tockler/releases/download/v3.19.17/Tockler-3.19.17.dmg'><img alt='Get it on macOS' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeMacOS.png'/></a>               |
+| Linux                   | <a href='https://github.com/MayGo/tockler/releases/download/v3.19.17/Tockler-3.19.17.AppImage'><img alt='Get it on Linux' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeLinux.png'/></a>          |
 
 # Feedback
 
