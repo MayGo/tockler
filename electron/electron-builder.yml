@@ -33,10 +33,13 @@ mac:
     entitlementsInherit: 'build/entitlements.mac.plist'
     asarUnpack: '**/*.node'
     darkModeSupport: true
+    electronUpdaterCompatibility: '>=2.16.0'
     extendInfo:
         LSUIElement: 1
     target:
         - dmg
+        - zip
+        - pkg
 
 mas:
     entitlements: './build/entitlements.mas.plist'
@@ -48,6 +51,7 @@ mas:
 
 win:
     artifactName: ${name}-${version}-portable-${os}-${arch}.${ext}
+    electronUpdaterCompatibility: '>=2.16.0'
     target:
         - target: nsis
           arch:
@@ -65,6 +69,7 @@ nsis:
     differentialPackage: false
 linux:
     category: Utility
+    electronUpdaterCompatibility: '>=2.16.0'
     target:
         - AppImage
         - deb
