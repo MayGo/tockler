@@ -1,3 +1,4 @@
+import { stateManager } from './state-manager';
 import { app, dialog } from 'electron';
 import { autoUpdater, UpdateCheckResult, UpdateInfo } from 'electron-updater';
 import config from './config';
@@ -68,7 +69,7 @@ export default class AppUpdater {
         isAutoUpdateEnabled =
             typeof isAutoUpdateEnabled !== 'undefined' ? isAutoUpdateEnabled : true;
 
-        if (isAutoUpdateEnabled) {
+        if (isAutoUpdateEnabled && !stateManager.isSystemSleeping()) {
             logger.debug('Checking for updates.');
             autoUpdater.checkForUpdates();
         } else {
