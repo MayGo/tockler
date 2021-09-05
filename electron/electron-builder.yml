@@ -52,7 +52,6 @@ mas:
 win:
     artifactName: ${name}-${version}-portable-${os}-${arch}.${ext}
     electronUpdaterCompatibility: '>=2.16.0'
-    publisherName: 'Developer ID Application: TRIMATECH OU (LK9S62EK7N)'
     target:
         - target: appx
         - target: nsis
@@ -64,6 +63,8 @@ win:
               - x64
               - ia32
 
+appx:
+    certificateFile: nothing
 nsis:
     artifactName: ${name}-${version}-setup-${os}-${arch}.${ext}
     oneClick: false
