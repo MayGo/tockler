@@ -31,7 +31,7 @@ export const Timeline = memo(() => {
                 </BlackBox>
                 <Popover isOpen={!!selectedTimelineItem}>
                     <PopoverTrigger>{popoverTriggerRef.current || <div />}</PopoverTrigger>
-                    <PopoverContent p={4} w="fit-content">
+                    <PopoverContent p={4} w="fit-content" boxShadow="lg">
                         <PopoverArrow />
                         <PopoverBody p={0}>
                             <TimelineItemEdit />

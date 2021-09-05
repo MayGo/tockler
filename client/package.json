@@ -26,7 +26,7 @@
         "moment-duration-format": "2.3.2",
         "randomcolor": "^0.6.2",
         "react": "^17.0.2",
-        "react-color": "2.19.3",
+        "react-color-palette": "^6.1.0",
         "react-cool-dimensions": "^2.0.7",
         "react-dom": "^17.0.2",
         "react-hook-form": "^7.8.4",

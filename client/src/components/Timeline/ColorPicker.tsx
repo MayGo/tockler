@@ -1,6 +1,16 @@
-import { Box, useMultiStyleConfig } from '@chakra-ui/react';
-import React, { useState, useEffect } from 'react';
-import { SketchPicker } from 'react-color';
+import {
+    Box,
+    Button,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+    useMultiStyleConfig,
+    useColorMode,
+} from '@chakra-ui/react';
+import React, { useEffect } from 'react';
+import { ColorPicker as ReactPicker, useColor, toColor } from 'react-color-palette';
+import 'react-color-palette/lib/css/styles.css';
+import { THEMES } from '../../store/theme.util';
 
 interface IProps {
     color: any;
@@ -9,44 +19,45 @@ interface IProps {
 }
 
 const defaultColor = '#000000';
-export const ColorPicker = ({ color = defaultColor, onChange, readOnly }: IProps) => {
-    const [pickerColor, setPickerColor] = useState(color);
 
-    const [displayColorPicker, setSisplayColorPicker] = useState(false);
+export const ColorPicker = ({ color = defaultColor, onChange, readOnly }: IProps) => {
+    const { colorMode } = useColorMode();
+    const [pickerColor, setPickerColor] = useColor('hex', color);
 
     useEffect(() => {
         if (color) {
-            setPickerColor(color);
+            setPickerColor(toColor('hex', color));
         } else {
-            setPickerColor(defaultColor);
+            setPickerColor(toColor('hex', defaultColor));
         }
-    }, [color]);
+    }, [setPickerColor, color]);
 
-    const handleClick = () => {
-        setSisplayColorPicker(!displayColorPicker);
+    const handleChange = value => {
+        setPickerColor(value);
+        onChange(value.hex);
     };
 
-    const handleClose = () => {
-        setSisplayColorPicker(false);
-    };
-
-    const handleChange = color => {
-        setPickerColor(color.hex);
-        onChange(color.hex);
-    };
-
-    const styles = useMultiStyleConfig('ColorPicker', { pickerColor });
+    const styles = useMultiStyleConfig('ColorPicker', { bgColor: pickerColor.hex });
 
     return (
-        <Box __css={styles.swatch} onClick={handleClick}>
-            <Box __css={styles.color} />
-
-            {!readOnly && displayColorPicker ? (
-                <Box __css={styles.popover}>
-                    <Box __css={styles.cover} onClick={handleClose} />
-                    <SketchPicker color={pickerColor} onChange={handleChange} />
-                </Box>
-            ) : null}
-        </Box>
+        <>
+            <Popover>
+                <PopoverTrigger>
+                    <Button __css={styles.button}>
+                        <Box __css={styles.color}></Box>
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent p={0} mx={2} border="none" background="transparent" boxShadow="lg">
+                    <ReactPicker
+                        width={320}
+                        height={200}
+                        color={pickerColor}
+                        onChange={handleChange}
+                        hideHSV
+                        dark={colorMode === THEMES.DARK}
+                    />
+                </PopoverContent>
+            </Popover>
+        </>
     );
 };
