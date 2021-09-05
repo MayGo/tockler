@@ -54,6 +54,7 @@ win:
     electronUpdaterCompatibility: '>=2.16.0'
     publisherName: 'Developer ID Application: TRIMATECH OU (LK9S62EK7N)'
     target:
+        - target: appx
         - target: nsis
           arch:
               - x64
