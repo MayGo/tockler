@@ -20,7 +20,7 @@ interface IProps {
 
 const defaultColor = '#000000';
 
-export const ColorPicker = ({ color = defaultColor, onChange, readOnly }: IProps) => {
+export const ColorPicker = ({ color = defaultColor, onChange }: IProps) => {
     const { colorMode } = useColorMode();
     const [pickerColor, setPickerColor] = useColor('hex', color);
 
