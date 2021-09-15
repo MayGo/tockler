@@ -13,6 +13,7 @@ import { Loader } from '../components/Timeline/Loader';
 import { CardBox } from '../components/CardBox';
 import { TypeSelect } from '../components/TypeSelect';
 import { HStack } from '@chakra-ui/react';
+import { PaywallOverlay } from '../components/Paywall/PaywallOverlay';
 
 export function SearchPage() {
     const fetchIdRef = useRef(0);
@@ -83,6 +84,7 @@ export function SearchPage() {
 
     return (
         <MainLayout>
+            <PaywallOverlay />
             <form onSubmit={onSubmit}>
                 <Flex p={3} flexDirection="column">
                     <CardBox position="relative" p={0}>

@@ -11,6 +11,7 @@ import { getThemeFromStorage } from '../services/settings.api';
 import { THEMES } from '../store/theme.util';
 import { ColorPickerStyle } from './components/colorPicker';
 import { mode } from '@chakra-ui/theme-tools';
+import { PaywallStyle } from './components/paywall';
 
 const savedTheme = getThemeFromStorage();
 const initialColorMode = savedTheme || THEMES.LIGHT;
@@ -52,5 +53,6 @@ export const theme = extendTheme({
         Select: SelectStyle,
         FormLabel: FormLabelStyle,
         ColorPicker: ColorPickerStyle,
+        Paywall: PaywallStyle,
     },
 });
