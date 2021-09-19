@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { Box, useColorModeValue, Center, Flex, Button } from '@chakra-ui/react';
+import { Box, useColorModeValue, Center, Flex, Button, Link } from '@chakra-ui/react';
 import paywallImage from '../../assets/paywall.png';
+
+const PAYMENT_LINK = process.env.REACT_APP_STIPE_PREMIUM_PAYMENT_LINK || '';
 
 export const Paywall: React.FC<any> = ({ children, ...rest }) => (
     <Box
@@ -23,7 +25,15 @@ export const Paywall: React.FC<any> = ({ children, ...rest }) => (
                 <Box pt={3}>
                     Update to <b>Premium</b> to unlock the <b>full</b> experience.
                 </Box>
-                <Button bg="brand.mainColor" mt={14} w={185} size="lg">
+                <Button
+                    as={Link}
+                    bg="brand.mainColor"
+                    mt={14}
+                    w={185}
+                    size="lg"
+                    href={PAYMENT_LINK}
+                    target="_blank"
+                >
                     Unlock&nbsp;<b>Premium</b>
                 </Button>
             </Flex>
