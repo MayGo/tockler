@@ -79,3 +79,7 @@ linux:
 
 dmg:
     sign: false
+protocols:
+    name: Tockler
+    schemes:
+        - tockler

@@ -11,6 +11,7 @@ import WindowManager from './window-manager';
 import { extensionsManager } from './extensions-manager';
 import AppUpdater from './app-updater';
 import config from './config';
+import * as path from 'path';
 
 let logger = logManager.getLogger('AppIndex');
 app.setAppUserModelId(process.execPath);
@@ -96,7 +97,22 @@ if (gotTheLock || isMas) {
             logger.error(`App errored in ready event: ${error.toString()}`, error);
         }
     });
+
+    app.on('open-url', (event, url) => {
+        logger.debug(`Got app link (tockler://open), opening main window. Arrived from  ${url}`);
+        WindowManager.openMainWindow();
+    });
 } else {
     logger.debug('Quiting instance.');
     app.quit();
+}
+
+if (process.defaultApp) {
+    if (process.argv.length >= 2) {
+        app.setAsDefaultProtocolClient('tockler', process.execPath, [
+            path.resolve(process.argv[1]),
+        ]);
+    }
+} else {
+    app.setAsDefaultProtocolClient('tockler');
 }

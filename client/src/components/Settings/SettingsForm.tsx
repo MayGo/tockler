@@ -3,6 +3,7 @@ import { AnalyserForm } from './AnalyserForm';
 import { AppForm } from './AppForm';
 import { WorkForm } from './WorkForm';
 import { VStack } from '@chakra-ui/react';
+import { Subscriptions } from '../Paywall/Subscriptions';
 
 export const SettingsForm = () => {
     return (
@@ -12,6 +13,7 @@ export const SettingsForm = () => {
             <AppForm />
 
             <AnalyserForm />
+            <Subscriptions />
         </VStack>
     );
 };
