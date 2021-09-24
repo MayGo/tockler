@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import { CardBox } from '../components/CardBox';
 import { MainLayout } from '../components/MainLayout/MainLayout';
 import { AppUsageChart } from '../components/PieCharts/AppUsageChart';
-
 import { MetricTiles } from '../components/PieCharts/MetricTiles';
 import { TaskList } from '../components/TaskList';
 import { NewLogButton } from '../components/Timeline/NewLogButton';
@@ -13,6 +12,7 @@ import { VisibleRange } from '../components/Timeline/VisibleRange';
 import { TrackItemTabs } from '../components/TrackItemTable/TrackItemTabs';
 import { useInterval } from '../hooks/intervalHook';
 import { useStoreActions } from '../store/easyPeasy';
+import { PaywallOverlay } from '../components/Paywall/PaywallOverlay';
 
 const BG_SYNC_DELAY_MS = 10000;
 
@@ -34,6 +34,7 @@ export function TimelinePage() {
 
     return (
         <MainLayout>
+            <PaywallOverlay top={130} />
             <VStack p={4} spacing={4}>
                 <CardBox>
                     <Flex>
@@ -56,6 +57,7 @@ export function TimelinePage() {
                         <VisibleRange />
                     </Flex>
                 </CardBox>
+
                 <CardBox title="App Usage">
                     <AppUsageChart />
                 </CardBox>

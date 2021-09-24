@@ -100,7 +100,7 @@ export const Search = memo(() => {
                         placement="bottom"
                         label={liveView ? 'Pause live view' : 'Start live view'}
                     >
-                        <Button onClick={toggleLiveView} bg={liveView ? 'green.500' : 'red.500'}>
+                        <Button onClick={toggleLiveView} colorScheme={liveView ? 'green' : 'red'}>
                             {liveView ? <FaStop /> : <FaPlay />}
                         </Button>
                     </Tooltip>
