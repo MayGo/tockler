@@ -48,6 +48,14 @@ const UserProvider = ({ children }: any) => {
         }
     }, [subscriptions]);
 
+    useEffect(() => {
+        if (!user && !loading) {
+            console.info('Setting subscription status when no user');
+            setHasSubscription(false);
+            setSubscriptionToLocalStorage(false);
+        }
+    }, [user, loading]);
+
     const value = {
         firebaseUser: user,
         error,

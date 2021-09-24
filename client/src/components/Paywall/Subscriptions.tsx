@@ -38,7 +38,8 @@ export const Subscriptions: React.FC<any> = () => {
             window.open(data.url, '_blank');
             setIsLoadingPortal(false);
         } catch (e) {
-            alert(e);
+            alert('Error opening customer portal. Make sure you are connected to internet.');
+            console.error('Error loading portal', e);
             setIsLoadingPortal(false);
         }
     };
@@ -47,7 +48,7 @@ export const Subscriptions: React.FC<any> = () => {
         <CardBox title="Subscription" divider>
             You have subscribed to <b>Premium</b>
             <Text py={3}>
-                View invoices, update subscription, cancel subscription and payment methods:{' '}
+                View invoices, update subscription and payment methods or cancel subscription:{' '}
                 <Button
                     onClick={openBillingSettings}
                     aria-label="billing"
