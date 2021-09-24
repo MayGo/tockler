@@ -63,8 +63,6 @@ win:
               - x64
               - ia32
 
-appx:
-    certificateFile: nothing
 nsis:
     artifactName: ${name}-${version}-setup-${os}-${arch}.${ext}
     oneClick: false
