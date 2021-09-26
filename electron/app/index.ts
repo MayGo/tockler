@@ -7,11 +7,12 @@ import { backgroundService } from './background-service';
 import { app, ipcMain, powerMonitor } from 'electron';
 import { logManager } from './log-manager';
 import AppManager from './app-manager';
-import WindowManager from './window-manager';
+import WindowManager, { sendToMainWindow } from './window-manager';
 import { extensionsManager } from './extensions-manager';
 import AppUpdater from './app-updater';
 import config from './config';
 import * as path from 'path';
+const UrlParse = require('url-parse');
 
 let logger = logManager.getLogger('AppIndex');
 app.setAppUserModelId(process.execPath);
@@ -99,7 +100,16 @@ if (gotTheLock || isMas) {
     });
 
     app.on('open-url', (event, url) => {
-        logger.debug(`Got app link (tockler://open), opening main window. Arrived from  ${url}`);
+        logger.debug(`Got app link (tockler://open or tockler://login), opening main window. Arrived from  ${url}`);
+        const urlParsed = new UrlParse(url, false);
+
+        if (urlParsed.host === 'login') {
+            WindowManager.openMainWindow();
+            sendToMainWindow('event-login-url', urlParsed.query);
+            logger.debug('event-login-url sent', urlParsed.query);
+            return;
+        }
+
         WindowManager.openMainWindow();
     });
 } else {
@@ -109,9 +119,7 @@ if (gotTheLock || isMas) {
 
 if (process.defaultApp) {
     if (process.argv.length >= 2) {
-        app.setAsDefaultProtocolClient('tockler', process.execPath, [
-            path.resolve(process.argv[1]),
-        ]);
+        app.setAsDefaultProtocolClient('tockler', process.execPath, [path.resolve(process.argv[1])]);
     }
 } else {
     app.setAsDefaultProtocolClient('tockler');

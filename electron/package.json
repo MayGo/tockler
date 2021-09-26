@@ -44,7 +44,8 @@
         "randomcolor": "0.6.2",
         "ref-napi": "^3.0.1",
         "ref-struct-napi": "^1.1.1",
-        "sqlite3": "5.0.2"
+        "sqlite3": "5.0.2",
+        "url-parse": "^1.5.3"
     },
     "peerDependencies": {},
     "devDependencies": {

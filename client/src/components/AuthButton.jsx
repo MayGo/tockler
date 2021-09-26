@@ -10,7 +10,19 @@ import { auth } from '../utils/firebase.utils';
 const SignInForm = () => {
     const uiConfig = {
         signInFlow: 'redirect',
-        signInOptions: [firebase.auth.EmailAuthProvider.PROVIDER_ID, firebase.auth.GoogleAuthProvider.PROVIDER_ID],
+        signInOptions: [
+            {
+                provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+                signInMethod: firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD,
+                forceSameDevice: false,
+                emailLinkSignIn() {
+                    return {
+                        url: `https://tockler-app.firebaseapp.com/logintoapp`,
+                        handleCodeInApp: true,
+                    };
+                },
+            },
+        ],
         callbacks: {
             // Avoid redirects after sign-in.
             signInSuccessWithAuthResult: () => false,
