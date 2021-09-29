@@ -45,19 +45,6 @@ const PremiumInfo: React.FC<any> = () => (
     </>
 );
 
-const RestoreInfo: React.FC<any> = () => (
-    <>
-        <Box>You need to login to restore subscription</Box>
-    </>
-);
-
-const LoginInfo: React.FC<any> = () => (
-    <>
-        <Box>Before we can redirect you to payment window, we need to get you signed in.</Box>
-        <Box pt={3}>It is needed, so you can easily unsubscribe later and to check subscription status.</Box>
-    </>
-);
-
 const AddSubsciptionButton: React.FC<any> = () => {
     const { firebaseUser } = React.useContext(UserContext);
     const [isLoading, setIsLoading] = React.useState(false);
@@ -129,18 +116,6 @@ const AddSubsciptionButton: React.FC<any> = () => {
     );
 };
 
-const Subscriptions: React.FC<any> = () => {
-    const { subscriptions, subscriptionsLoading } = React.useContext(UserContext);
-
-    if (subscriptionsLoading || !subscriptions || subscriptions?.length === 0) {
-        return null;
-    }
-
-    const subscription = subscriptions[0];
-
-    return <Box>{`${subscription.price}`}</Box>;
-};
-
 const STEP_BEGIN = 0;
 const STEP_LOGIN = 1;
 const STEP_RESTORE = 2;
@@ -189,7 +164,6 @@ export const Paywall: React.FC<any> = ({ children, ...rest }) => {
 
                     {step === STEP_LOGIN && (
                         <>
-                            <LoginInfo />
                             <AuthCheck>
                                 <AddSubsciptionButton />
                             </AuthCheck>
@@ -197,8 +171,7 @@ export const Paywall: React.FC<any> = ({ children, ...rest }) => {
                     )}
                     {step === STEP_RESTORE && (
                         <>
-                            <RestoreInfo />
-                            <AuthCheck>
+                            <AuthCheck isRestore>
                                 <AddSubsciptionButton />
                             </AuthCheck>
                         </>
@@ -207,7 +180,6 @@ export const Paywall: React.FC<any> = ({ children, ...rest }) => {
                         <>
                             <PremiumInfo />
                             <AuthCheck>
-                                <Subscriptions />
                                 <AddSubsciptionButton />
                             </AuthCheck>
                         </>

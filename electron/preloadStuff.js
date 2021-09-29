@@ -98,8 +98,8 @@ contextBridge.exposeInMainWorld('electronBridge', {
     removeListenerIpc: (key) => {
         log.debug('Remove listener with key: ' + key);
         const fn = listeners[key];
+        ipcRenderer.removeListener(key, fn);
         delete listeners[key];
-        ipcRenderer.removeListener('response', fn);
     },
 });
 
