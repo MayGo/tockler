@@ -15,7 +15,7 @@ const SpinnerContainer = chakra('div', {
         height: '100%',
         top: 0,
         left: 0,
-        zIndex: 1000,
+        zIndex: 9,
         margin: 'auto auto',
     },
 });
