@@ -53,7 +53,6 @@ win:
     artifactName: ${name}-${version}-portable-${os}-${arch}.${ext}
     electronUpdaterCompatibility: '>=2.16.0'
     target:
-        - target: appx
         - target: nsis
           arch:
               - x64
