@@ -58,6 +58,9 @@ const trackItemActions = {
     findFirstLogItems: async () => {
         return trackItemService.findFirstLogItems();
     },
+    findFirstTrackItem: async () => {
+        return trackItemService.findFirstTrackItem();
+    },
     getOnlineStartTime: async () => {
         const statusItem = stateManager.getCurrentStatusTrackItem();
 
@@ -66,8 +69,4 @@ const trackItemActions = {
 };
 
 export const initIpcActions = () =>
-    setupMainHandler(
-        { ipcMain } as any,
-        { ...settingsActions, ...appSettingsActions, ...trackItemActions },
-        true,
-    );
+    setupMainHandler({ ipcMain } as any, { ...settingsActions, ...appSettingsActions, ...trackItemActions }, true);

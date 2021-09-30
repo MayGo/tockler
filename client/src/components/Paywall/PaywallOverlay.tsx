@@ -5,9 +5,9 @@ import { UserContext } from './UserProvider';
 
 export const PaywallOverlay: React.FC<any> = ({ children, ...rest }) => {
     const styles = useMultiStyleConfig('Paywall', {});
-    const { hasSubscription } = React.useContext(UserContext);
+    const { hasTrial, hasSubscription } = React.useContext(UserContext);
 
-    if (hasSubscription) {
+    if (hasTrial || hasSubscription) {
         return null;
     }
 

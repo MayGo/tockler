@@ -113,11 +113,7 @@ export class TrackItemService {
 
         if (searchStr) {
             query.where(function () {
-                this.where('title', 'like', '%' + searchStr + '%').orWhere(
-                    'url',
-                    'like',
-                    '%' + searchStr + '%',
-                );
+                this.where('title', 'like', '%' + searchStr + '%').orWhere('url', 'like', '%' + searchStr + '%');
             });
         }
 
@@ -133,10 +129,10 @@ export class TrackItemService {
     }
 
     findFirstLogItems() {
-        return TrackItem.query()
-            .where('taskName', 'LogTrackItem')
-            .limit(200)
-            .orderBy('beginDate', 'desc');
+        return TrackItem.query().where('taskName', 'LogTrackItem').limit(200).orderBy('beginDate', 'desc');
+    }
+    findFirstTrackItem() {
+        return TrackItem.query().limit(1).orderBy('beginDate', 'asc');
     }
 
     findLastOnlineItem() {
@@ -154,10 +150,7 @@ export class TrackItemService {
             .orderBy('endDate', 'desc');
 
         if (currentStatusItem) {
-            this.logger.debug(
-                'Find by excluding currentStatus item id:',
-                currentStatusItem.toJSON(),
-            );
+            this.logger.debug('Find by excluding currentStatus item id:', currentStatusItem.toJSON());
             query.whereNot('id', currentStatusItem.id);
         }
 

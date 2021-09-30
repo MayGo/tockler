@@ -4,11 +4,7 @@ import { TrackItemType } from '../enum/TrackItemType';
 import { Logger } from '../logger';
 import { EventEmitter } from './EventEmitter';
 
-async function findAllDayItems(
-    from: moment.Moment,
-    to: moment.Moment,
-    taskName: string,
-): Promise<any> {
+async function findAllDayItems(from: moment.Moment, to: moment.Moment, taskName: string): Promise<any> {
     //Logger.debug('findAllDayItems', JSON.stringify({ from, to, taskName }));
     const data = await EventEmitter.emit('findAllDayItems', {
         from: from.valueOf(),
@@ -23,11 +19,7 @@ export async function findAllDayItemsForEveryTrack(from: moment.Moment, to: mome
     // TODO, query all at async
     const appItems: ITrackItem[] = await findAllDayItems(from, to, TrackItemType.AppTrackItem);
 
-    const statusItems: ITrackItem[] = await findAllDayItems(
-        from,
-        to,
-        TrackItemType.StatusTrackItem,
-    );
+    const statusItems: ITrackItem[] = await findAllDayItems(from, to, TrackItemType.StatusTrackItem);
     const logItems: ITrackItem[] = await findAllDayItems(from, to, TrackItemType.LogTrackItem);
 
     return { appItems, statusItems, logItems };
@@ -35,6 +27,10 @@ export async function findAllDayItemsForEveryTrack(from: moment.Moment, to: mome
 
 export function findFirstLogItems(): Promise<any> {
     return EventEmitter.emit('findFirstLogItems');
+}
+
+export function findFirstTrackItem(): Promise<any> {
+    return EventEmitter.emit('findFirstTrackItem');
 }
 
 export function getOnlineStartTime(): Promise<any> {
