@@ -7,6 +7,8 @@ import { UserContext } from './UserProvider';
 import { auth, firestore } from '../../utils/firebase.utils';
 import { APP_RETURN_URL } from './Paywall.utils';
 
+import { useCollectionData } from 'react-firebase-hooks/firestore';
+
 const PremiumButton: React.FC<any> = ({ onRestoreClick, ...rest }) => {
     const { firebaseUser } = React.useContext(UserContext);
     const signOut = () => auth.signOut().then(() => console.log('signed out'));
@@ -45,9 +47,30 @@ const PremiumInfo: React.FC<any> = () => (
     </>
 );
 
+interface PriceInterface {
+    id: string;
+    active: boolean;
+    currency: string;
+    unit_amount: number;
+}
+interface ProductInterface {
+    id: string;
+    active: boolean;
+    prices: PriceInterface[];
+}
+
+const priceConverter = {
+    toFirestore: (data: PriceInterface) => data,
+    fromFirestore: (snap: any) => snap.data() as PriceInterface,
+};
+
 const AddSubsciptionButton: React.FC<any> = () => {
     const { firebaseUser } = React.useContext(UserContext);
     const [isLoading, setIsLoading] = React.useState(false);
+
+    const productsRef = firestore.collection('products').where('active', '==', true);
+
+    const [products, loadingProducts] = useCollectionData<ProductInterface>(productsRef, { idField: 'id' });
 
     const checkoutSessionsRef = firebaseUser?.uid
         ? firestore
@@ -57,29 +80,54 @@ const AddSubsciptionButton: React.FC<any> = () => {
         : null;
 
     const addSubscription = async () => {
-        const selectedPrice = {
-            price: 'price_1JbUlDCoQF7vf9DtQwYGsO1X',
-            quantity: 1,
-        };
-        const checkoutSession = {
-            //  automatic_tax: true,
-            //  tax_id_collection: true,
-            collect_shipping_address: false,
-            line_items: [selectedPrice],
-            success_url: APP_RETURN_URL,
-            cancel_url: APP_RETURN_URL,
-            mode: 'subscription',
-            metadata: {
-                key: 'value',
-            },
-        };
-
         if (!checkoutSessionsRef) {
             return null;
         }
 
         try {
             setIsLoading(true);
+
+            const product = products?.find(product => product.active);
+
+            if (!product) {
+                console.error('No product found');
+                alert('No product found!');
+                return;
+            }
+
+            const pricesSnapshot = await firestore
+                .collection('products')
+                .doc(product.id)
+                .collection('prices')
+                .withConverter(priceConverter)
+                .get();
+
+            const prices: any[] = pricesSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+            const priceId = prices?.find(price => price.active)?.id;
+
+            if (!priceId) {
+                console.error('No price found');
+                alert('No price found!');
+                return;
+            }
+
+            const selectedPrice = {
+                price: priceId,
+                quantity: 1,
+            };
+            const checkoutSession = {
+                //  automatic_tax: true,
+                //  tax_id_collection: true,
+                collect_shipping_address: false,
+                line_items: [selectedPrice],
+                success_url: APP_RETURN_URL,
+                cancel_url: APP_RETURN_URL,
+                mode: 'subscription',
+                metadata: {
+                    key: 'value',
+                },
+            };
+
             const resp = await checkoutSessionsRef.add(checkoutSession);
             resp.onSnapshot(snap => {
                 const data = snap.data();
@@ -105,7 +153,7 @@ const AddSubsciptionButton: React.FC<any> = () => {
         }
     };
 
-    if (isLoading) {
+    if (isLoading || loadingProducts) {
         return <Loader />;
     }
 

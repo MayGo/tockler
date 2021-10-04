@@ -12,7 +12,7 @@ import { setEmailToLocalStorage } from './Paywall/Paywall.utils';
 
 const sendEmail = email => {
     const actionCodeSettings = {
-        url: `https://tockler-app.firebaseapp.com/logintoapp`,
+        url: `https://tockler.io/logintoapp`,
         handleCodeInApp: true,
     };
     return firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings);

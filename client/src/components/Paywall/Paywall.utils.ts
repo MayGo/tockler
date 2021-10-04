@@ -20,7 +20,7 @@ export function setTrialToLocalStorage(trial) {
     (window as any).localStorage.setItem(HAS_TRIAL, trial);
 }
 
-export const APP_RETURN_URL = 'https://tockler-app.web.app/toapp';
+export const APP_RETURN_URL = 'https://tockler.io/toapp';
 
 export function getEmailFromLocalStorage(): string {
     const email = (window as any).localStorage.getItem(USER_EMAIL);
