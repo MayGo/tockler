@@ -20,6 +20,7 @@ type UserState = {
     subscriptionsLoading: boolean;
     hasSubscription: boolean;
     hasTrial: boolean;
+    trialDays: number;
 };
 
 const noUserState = {
@@ -30,11 +31,13 @@ const noUserState = {
     subscriptionsLoading: false,
     hasSubscription: getSubscriptionFromLocalStorage(),
     hasTrial: getTrialFromLocalStorage(),
+    trialDays: 0,
 };
 
 const UserContext = createContext<UserState>(noUserState);
 
 const UserProvider = ({ children }: any) => {
+    const [trialDays, setTrialDays] = useState(0);
     const [hasTrial, setHasTrial] = useState(getTrialFromLocalStorage());
     const [hasSubscription, setHasSubscription] = useState(getSubscriptionFromLocalStorage());
     const [user, loading, error] = useAuthState(auth);
@@ -58,8 +61,9 @@ const UserProvider = ({ children }: any) => {
             const now = moment();
             const TRIAL_DAYS = 7;
 
-            const trialing = now.diff(beginDate, 'days') <= TRIAL_DAYS;
-
+            const daysLeft = now.diff(beginDate, 'days');
+            const trialing = daysLeft <= TRIAL_DAYS;
+            setTrialDays(daysLeft);
             setHasTrial(trialing);
             setTrialToLocalStorage(trialing);
         };
@@ -92,6 +96,7 @@ const UserProvider = ({ children }: any) => {
         subscriptionsLoading,
         hasSubscription,
         hasTrial,
+        trialDays,
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

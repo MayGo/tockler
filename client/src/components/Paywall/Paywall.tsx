@@ -87,7 +87,7 @@ const AddSubsciptionButton: React.FC<any> = () => {
         try {
             setIsLoading(true);
 
-            const product = products?.find(product => product.active);
+            const product = products?.find(item => item.active);
 
             if (!product) {
                 console.error('No product found');
