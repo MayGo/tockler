@@ -3,7 +3,6 @@
     "version": "3.19.22",
     "private": true,
     "dependencies": {
-        "@analytics/google-analytics": "^0.5.3",
         "@chakra-ui/icons": "^1.0.14",
         "@chakra-ui/react": "^1.6.5",
         "@datepicker-react/hooks": "^2.8.0",
@@ -13,7 +12,6 @@
         "@hookform/resolvers": "^2.8.1",
         "@react-hook/window-size": "^1.0.12",
         "@welldone-software/why-did-you-render": "^3.5.0",
-        "analytics": "^0.7.5",
         "debounce-promise": "^3.1.2",
         "easy-peasy": "^4.0.1",
         "emailjs-com": "^2.6.4",
@@ -32,6 +30,7 @@
         "react-cool-dimensions": "^2.0.7",
         "react-dom": "^17.0.2",
         "react-firebase-hooks": "^3.0.4",
+        "react-ga": "^3.3.0",
         "react-hook-form": "^7.8.4",
         "react-icons": "^4.2.0",
         "react-moment": "0.9.7",

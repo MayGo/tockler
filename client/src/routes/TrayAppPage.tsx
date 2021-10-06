@@ -8,7 +8,6 @@ import { Logger } from '../logger';
 import { useWindowFocused } from '../hooks/windowFocusedHook';
 import { throttle } from 'lodash';
 import deepEqual from 'fast-deep-equal/es6';
-import { analytics } from '../analytics';
 import { Box } from '@chakra-ui/layout';
 import { Divider } from '@chakra-ui/react';
 import { ITrackItem } from '../@types/ITrackItem';
@@ -16,6 +15,7 @@ import { OnlineChart } from '../components/TrayLayout/OnlineChart';
 import { useStoreActions, useStoreState } from '../store/easyPeasy';
 import { useInterval } from '../hooks/intervalHook';
 import { TrayItemEdit } from './tray/TrayItemEdit';
+import ReactGA from 'react-ga';
 
 const EMPTY_ARRAY = [];
 const BG_SYNC_DELAY_MS = 10000;
@@ -61,7 +61,11 @@ const TrayAppPageTemp = () => {
         if (windowIsActive) {
             Logger.debug('Window active:', windowIsActive);
             // loadLastLogItemsThrottled();
-            analytics.track('trayOpened', { version: process.env.REACT_APP_VERSION });
+
+            ReactGA.event({
+                category: 'Tray',
+                action: `Opened Tray`,
+            });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [windowIsActive]);

@@ -6,7 +6,7 @@ import { Loader } from '../Loader';
 import { UserContext } from './UserProvider';
 import { auth, firestore } from '../../utils/firebase.utils';
 import { APP_RETURN_URL } from './Paywall.utils';
-
+import ReactGA from 'react-ga';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 const PremiumButton: React.FC<any> = ({ onRestoreClick, ...rest }) => {
@@ -85,6 +85,11 @@ const AddSubsciptionButton: React.FC<any> = () => {
         }
 
         try {
+            ReactGA.event({
+                category: 'Paywall',
+                action: `User pressed Subscribe`,
+            });
+
             setIsLoading(true);
 
             const product = products?.find(item => item.active);
@@ -169,6 +174,8 @@ const STEP_LOGIN = 1;
 const STEP_RESTORE = 2;
 const STEP_END = 3;
 
+const StepTexts = { [STEP_BEGIN]: 'BEGIN', [STEP_LOGIN]: 'LOGIN', [STEP_RESTORE]: 'RESTORE', [STEP_END]: 'END' };
+
 export const Paywall: React.FC<any> = ({ children, ...rest }) => {
     const [step, setStep] = React.useState(STEP_BEGIN);
     const { firebaseUser } = React.useContext(UserContext);
@@ -180,6 +187,13 @@ export const Paywall: React.FC<any> = ({ children, ...rest }) => {
             setStep(STEP_BEGIN);
         }
     }, [firebaseUser]);
+
+    React.useEffect(() => {
+        ReactGA.event({
+            category: 'Paywall',
+            action: `User went to ${StepTexts[step]} step`,
+        });
+    }, [step]);
 
     return (
         <Box

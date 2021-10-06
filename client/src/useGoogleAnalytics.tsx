@@ -1,15 +1,13 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-
-import { analytics } from './analytics';
+import ReactGA from 'react-ga';
 
 export function useGoogleAnalytics() {
     const location = useLocation();
 
     useEffect(() => {
-        analytics.page({
-            path: location.pathname,
-            search: location.search,
-        });
+        console.info('Setting page', location.pathname);
+        ReactGA.set({ path: location.pathname, search: location.search }); // Update the user's current page
+        ReactGA.pageview(location.pathname); // Record a pageview for the given page
     }, [location]);
 }
