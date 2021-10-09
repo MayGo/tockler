@@ -12,6 +12,8 @@ import { extensionsManager } from './extensions-manager';
 import AppUpdater from './app-updater';
 import config from './config';
 import * as path from 'path';
+import { Deeplink } from 'electron-deeplink';
+
 const UrlParse = require('url-parse');
 
 let logger = logManager.getLogger('AppIndex');
@@ -29,6 +31,9 @@ const isMas = process.mas === true;
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (gotTheLock || isMas) {
+    const protocol = 'tockler';
+    const deeplink = new Deeplink({ app, mainWindow: WindowManager.mainWindow, protocol });
+
     app.on('second-instance', (event, commandLine, workingDirectory) => {
         // Someone tried to run a second instance, we should focus our window.
         logger.debug('Make single instance');
@@ -99,7 +104,7 @@ if (gotTheLock || isMas) {
         }
     });
 
-    app.on('open-url', (event, url) => {
+    deeplink.on('received', (url) => {
         logger.debug(`Got app link (tockler://open or tockler://login), opening main window. Arrived from  ${url}`);
         const urlParsed = new UrlParse(url, false);
 
@@ -115,12 +120,4 @@ if (gotTheLock || isMas) {
 } else {
     logger.debug('Quiting instance.');
     app.quit();
-}
-
-if (process.defaultApp) {
-    if (process.argv.length >= 2) {
-        app.setAsDefaultProtocolClient('tockler', process.execPath, [path.resolve(process.argv[1])]);
-    }
-} else {
-    app.setAsDefaultProtocolClient('tockler');
 }
