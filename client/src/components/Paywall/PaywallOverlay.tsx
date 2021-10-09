@@ -2,17 +2,25 @@ import * as React from 'react';
 import { Box, useMultiStyleConfig, Center } from '@chakra-ui/react';
 import { Paywall } from './Paywall';
 import { UserContext } from './UserProvider';
+import ReactGA from 'react-ga';
 
 export const PaywallOverlay: React.FC<any> = ({ children, ...rest }) => {
     const styles = useMultiStyleConfig('Paywall', {});
     const { hasTrial, hasSubscription } = React.useContext(UserContext);
+
+    React.useEffect(() => {
+        ReactGA.event({
+            category: 'Paywall',
+            action: `Paywall overlay displayed!`,
+        });
+    }, []);
 
     if (hasTrial || hasSubscription) {
         return null;
     }
 
     return (
-        <Box position="absolute" zIndex={10000} w="100%" h={'100%'} __css={styles.overlay} {...rest}>
+        <Box position="absolute" zIndex={10000} w="100%" h="100%" __css={styles.overlay} {...rest}>
             <Center h={800}>
                 <Paywall />
             </Center>

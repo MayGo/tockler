@@ -5,10 +5,10 @@ export const PaywallStyle = {
     baseStyle: props => ({
         overlay: {
             background: mode(
-            transparentize(`white`, 0.5)(props.theme),
+                transparentize(`white`, 0.5)(props.theme),
                 transparentize(`black`, 0.5)(props.theme),
             )(props),
-            'backdrop-filter': 'blur(4px)',
+            backdropFilter: 'blur(4px)',
         },
     }),
 };
