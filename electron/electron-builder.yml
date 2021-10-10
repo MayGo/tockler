@@ -73,6 +73,7 @@ linux:
     target:
         - AppImage
         - deb
+        - snap
 
 dmg:
     sign: false
