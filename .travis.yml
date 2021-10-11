@@ -12,9 +12,11 @@ addons:
             - libgnome-keyring-dev
             - icnsutils
             - graphicsmagick
+            - xz-utils
+            - rpm
 
 sudo: true
-
+dist: bionic
 language: node_js
 node_js:
     - '14'
