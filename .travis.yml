@@ -43,6 +43,9 @@ after_success:
     - sentry-cli releases files "$PACKAGE_VERSION" list
     - sentry-cli releases finalize "$PACKAGE_VERSION"
 
+before_install:
+    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then echo $SNAP_TOKEN > /tmp/login_token_file; fi
+
 install:
     - npm install -g sentry-cli-binary
     - cd electron
@@ -52,6 +55,8 @@ install:
     - cd client
     - npm install
     - cd ..
+    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo snap install snapcraft --classic; fi
+    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then snapcraft login --with /tmp/login_token_file; fi
 
 script:
     - cd client
