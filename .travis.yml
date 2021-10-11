@@ -16,7 +16,7 @@ addons:
             - rpm
 
 sudo: true
-dist: bionic
+dist: trusty
 language: node_js
 node_js:
     - '14'
