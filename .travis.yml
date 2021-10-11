@@ -2,7 +2,7 @@ matrix:
     include:
         - os: osx
           osx_image: xcode11
-        - os: linux
+        - os: ubuntu-18.04
           env: CC=clang CXX=clang++ npm_config_clang=1
           compiler: clang
 
@@ -16,7 +16,6 @@ addons:
             - rpm
 
 sudo: true
-dist: trusty
 language: node_js
 node_js:
     - '14'
