@@ -4,6 +4,9 @@ node_js:
 
 matrix:
     include:
+        - os: osx
+          osx_image: xcode11
+
         - os: linux
           dist: bionic
           env: CC=clang CXX=clang++ npm_config_clang=1
