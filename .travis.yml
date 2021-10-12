@@ -6,20 +6,17 @@ matrix:
           env: CC=clang CXX=clang++ npm_config_clang=1
           compiler: clang
 
+dist: xenial
 addons:
     snaps:
-        - snapcraft
+        - name: snapcraft
+          confinement: classic
     apt:
         packages:
             - libgnome-keyring-dev
             - icnsutils
             - graphicsmagick
             - xz-utils
-            - rpm
-addons:
-    snaps:
-        - name: snapcraft
-          confinement: classic
 
 sudo: true
 language: node_js
