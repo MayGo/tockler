@@ -1,3 +1,9 @@
+dist: bionic
+sudo: true
+language: bash
+node_js:
+    - '14'
+
 matrix:
     include:
         - os: osx
@@ -6,12 +12,7 @@ matrix:
           env: CC=clang CXX=clang++ npm_config_clang=1
           compiler: clang
 
-dist: xenial
 addons:
-    snaps:
-        - name: snapcraft
-          channel: stable
-          classic: true
     apt:
         packages:
             - libgnome-keyring-dev
@@ -19,15 +20,14 @@ addons:
             - graphicsmagick
             - xz-utils
 
-sudo: true
-language: node_js
-node_js:
-    - '14'
-
 env:
     global:
-        - ELECTRON_CACHE=$HOME/.cache/electron
-        - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+        - ELECTRON_CACHE: $HOME/.cache/electron
+        - ELECTRON_BUILDER_CACHE: $HOME/.cache/electron-builder
+        - LC_ALL: C.UTF-8
+        - LANG: C.UTF-8
+        - SNAPCRAFT_ENABLE_SILENT_REPORT: y
+        - SNAPCRAFT_ENABLE_DEVELOPER_DEBUG: y
 cache:
     timeout: 1000
     directories:
@@ -60,9 +60,10 @@ install:
     - cd client
     - npm install
     - cd ..
+    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo snap install snapcraft --classic; fi
+    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then snapcraft login --with /tmp/login_token_file; fi
 
 script:
-    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then snapcraft login --with /tmp/login_token_file; fi
     - cd client
     - npm run build
     - cd ..
