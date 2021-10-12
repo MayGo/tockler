@@ -22,10 +22,7 @@ env:
     global:
         - ELECTRON_CACHE: $HOME/.cache/electron
         - ELECTRON_BUILDER_CACHE: $HOME/.cache/electron-builder
-        - LC_ALL: C.UTF-8
-        - LANG: C.UTF-8
-        - SNAPCRAFT_ENABLE_SILENT_REPORT: y
-        - SNAPCRAFT_ENABLE_DEVELOPER_DEBUG: y
+
 cache:
     timeout: 1000
     directories:
