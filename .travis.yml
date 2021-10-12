@@ -10,7 +10,8 @@ dist: xenial
 addons:
     snaps:
         - name: snapcraft
-          confinement: classic
+          channel: stable
+          classic: true
     apt:
         packages:
             - libgnome-keyring-dev
@@ -59,9 +60,9 @@ install:
     - cd client
     - npm install
     - cd ..
-    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then snapcraft login --with /tmp/login_token_file; fi
 
 script:
+    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then snapcraft login --with /tmp/login_token_file; fi
     - cd client
     - npm run build
     - cd ..
