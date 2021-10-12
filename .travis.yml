@@ -1,5 +1,6 @@
 sudo: true
-language: node_js
+dist: trusty
+language: bash
 node_js:
     - '14'
 
