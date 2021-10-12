@@ -6,8 +6,6 @@ node_js:
 
 matrix:
     include:
-        - os: osx
-          osx_image: xcode11
         - os: ubuntu-18.04
           env: CC=clang CXX=clang++ npm_config_clang=1
           compiler: clang
@@ -53,7 +51,6 @@ before_install:
 
 install:
     - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo snap install snapcraft --classic; fi
-    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then snapcraft login --with /tmp/login_token_file; fi
     - npm install -g sentry-cli-binary
     - cd electron
     - PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
