@@ -133,6 +133,14 @@ $cert = Get-ChildItem -Path Cert:\CurrentUser\My -CodeSigningCert
 Set-AuthenticodeSignature -FilePath '.\app\get-foreground-window-title.ps1' -Certificate $cert
 ```
 
+# Snapcraft token
+
+To generate SNAP_TOKEN run
+`snapcraft export-login --snaps=tockler --acls=package_upload,channel --channels=stable -`
+Copy output and Add SNAP_TOKEN to travis environment variables.
+In travis we have:
+`echo "$SNAP_TOKEN" | snapcraft login --with -`
+
 # Errors
 
 ### while installing electron deps: electron-builder Error: Unresolved node modules: ref
