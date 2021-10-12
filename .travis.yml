@@ -1,5 +1,5 @@
 sudo: true
-language: npm
+language: node_js
 node_js:
     - '14'
 
