@@ -1,5 +1,5 @@
 sudo: true
-dist: trusty
+dist: xenial
 language: bash
 node_js:
     - '14'
