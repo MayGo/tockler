@@ -46,7 +46,7 @@ after_success:
     - sentry-cli releases finalize "$PACKAGE_VERSION"
 
 before_install:
-    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then echo $SNAP_TOKEN > /tmp/login_token_file; fi
+    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then echo $SNAP_TOKEN | base64 -d > /tmp/login_token_file; fi
 
 install:
     - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo snap install snapcraft --classic; fi
