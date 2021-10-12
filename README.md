@@ -32,17 +32,13 @@
 | macOS                   | <a href='https://github.com/MayGo/tockler/releases/download/v3.20.0/Tockler-3.20.0.dmg'><img alt='Get it on macOS' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeMacOS.png'/></a>               |
 | Linux                   | <a href='https://github.com/MayGo/tockler/releases/download/v3.20.0/Tockler-3.20.0.AppImage'><img alt='Get it on Linux' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeLinux.png'/></a>          |
 
+Tockler is free to download and use. But some of it's features are limited.
+
+You can try Premium features for 30 days. After that, you can subscribe In-App
+
 # Feedback
 
 Feel free to make feature requests by creating a issue and 'Star' this project.
-
-# Donations
-
-This project needs your support!
-
-If you find this app useful then feel free to donate. Anything helps to keep this app up to date and always improving.
-
-Thank you!
 
 # Made with
 

@@ -59,7 +59,7 @@ const UserProvider = ({ children }: any) => {
 
             const beginDate = moment(firstItem.beginDate);
             const now = moment();
-            const TRIAL_DAYS = 7;
+            const TRIAL_DAYS = 30;
 
             const daysLeft = now.diff(beginDate, 'days');
             const trialing = daysLeft <= TRIAL_DAYS;

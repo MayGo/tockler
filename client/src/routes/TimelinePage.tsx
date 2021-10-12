@@ -16,6 +16,7 @@ import { PaywallOverlay } from '../components/Paywall/PaywallOverlay';
 import moment from 'moment';
 
 const BG_SYNC_DELAY_MS = 10000;
+const TIMELINE_TRIAL_DAYS = 30;
 
 const ItemLabel = props => <Text fontSize="md" color={useColorModeValue('gray.700', 'gray.300')} {...props} />;
 
@@ -34,7 +35,7 @@ export function TimelinePage() {
     }, [fetchTimerange]);
 
     const now = moment();
-    const showPaywall = now.diff(beginDate, 'days') > 5;
+    const showPaywall = now.diff(beginDate, 'days') > TIMELINE_TRIAL_DAYS;
 
     return (
         <MainLayout>
