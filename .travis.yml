@@ -1,4 +1,3 @@
-sudo: true
 language: node_js
 node_js:
     - '14'
@@ -6,9 +5,10 @@ node_js:
 matrix:
     include:
         - os: linux
-          dist: trusty
+          dist: bionic
           env: CC=clang CXX=clang++ npm_config_clang=1
           compiler: clang
+          sudo: required
 
 addons:
     apt:
