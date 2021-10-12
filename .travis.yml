@@ -7,6 +7,8 @@ matrix:
           compiler: clang
 
 addons:
+    snaps:
+        - snapcraft
     apt:
         packages:
             - libgnome-keyring-dev
@@ -14,6 +16,10 @@ addons:
             - graphicsmagick
             - xz-utils
             - rpm
+addons:
+    snaps:
+        - name: snapcraft
+          confinement: classic
 
 sudo: true
 language: node_js
@@ -56,7 +62,6 @@ install:
     - cd client
     - npm install
     - cd ..
-    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo snap install snapcraft --classic; fi
     - if [ "$TRAVIS_OS_NAME" = "linux" ]; then snapcraft login --with /tmp/login_token_file; fi
 
 script:
