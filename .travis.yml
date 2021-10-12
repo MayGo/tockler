@@ -1,6 +1,6 @@
 dist: bionic
 sudo: true
-language: bash
+language: npm
 node_js:
     - '14'
 
