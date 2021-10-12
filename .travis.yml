@@ -44,7 +44,7 @@ after_success:
 
 install:
     - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo snap install snapcraft --classic; fi
-    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then echo "$SNAP_TOKEN" > /tmp/login_token_file && snapcraft login --with /tmp/login_token_file; fi
+    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then echo "$SNAP_TOKEN" | snapcraft login --with -; fi
     - npm install -g sentry-cli-binary
     - cd electron
     - PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
