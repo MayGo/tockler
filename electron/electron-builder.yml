@@ -75,7 +75,7 @@ linux:
         - deb
         - snap
 snap:
-    confinement: classic
+    confinement: devmode
     assumes:
         - common-data-dir
 
