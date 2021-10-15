@@ -61,9 +61,9 @@ const UserProvider = ({ children }: any) => {
             const now = moment();
             const TRIAL_DAYS = 30;
 
-            const daysLeft = now.diff(beginDate, 'days');
-            const trialing = daysLeft <= TRIAL_DAYS;
-            setTrialDays(daysLeft);
+            const daysUsed = now.diff(beginDate, 'days');
+            const trialing = daysUsed <= TRIAL_DAYS;
+            setTrialDays(TRIAL_DAYS - daysUsed);
             setHasTrial(trialing);
             setTrialToLocalStorage(trialing);
         };
