@@ -73,7 +73,7 @@ linux:
     target:
         - AppImage
         - deb
-        -
+        - snap
 snap:
     confinement: classic
     assumes:
