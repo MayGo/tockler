@@ -37,7 +37,6 @@ mac:
     extendInfo:
         LSUIElement: 1
     target:
-        - dmg
         - zip
         - pkg
 
@@ -71,13 +70,17 @@ linux:
     category: Utility
     electronUpdaterCompatibility: '>=2.16.0'
     target:
-        - AppImage
-        - deb
         - snap
 snap:
     confinement: devmode
     assumes:
         - common-data-dir
+        - command-chain
+    layout:
+        /usr/bin/xprop:
+            bind-file: $SNAP/xprop
+        /usr/bin/xwininfo:
+            bind-file: $SNAP/xwininfo
 
 dmg:
     sign: false
