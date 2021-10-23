@@ -13,7 +13,7 @@
         "@react-hook/window-size": "^1.0.12",
         "@welldone-software/why-did-you-render": "^3.5.0",
         "debounce-promise": "^3.1.2",
-        "easy-peasy": "^4.0.1",
+        "easy-peasy": "^4.0.2",
         "emailjs-com": "^2.6.4",
         "fast-deep-equal": "^3.1.1",
         "firebase": "^8.2.4",
