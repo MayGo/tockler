@@ -38,6 +38,7 @@ mac:
         LSUIElement: 1
     target:
         - dmg
+        - zip
 
 mas:
     entitlements: './build/entitlements.mas.plist'
@@ -70,6 +71,7 @@ linux:
     electronUpdaterCompatibility: '>=2.16.0'
     target:
         - snap
+        - AppImage
 snap:
     confinement: devmode
     assumes:
