@@ -444,23 +444,7 @@
     ajv "^6.12.0"
     ajv-keywords "^3.4.1"
 
-"@electron/get@^1.0.1", "@electron/get@^1.12.4":
-  version "1.12.4"
-  resolved "https://registry.yarnpkg.com/@electron/get/-/get-1.12.4.tgz#a5971113fc1bf8fa12a8789dc20152a7359f06ab"
-  integrity sha512-6nr9DbJPUR9Xujw6zD3y+rS95TyItEVM0NVjt1EehY2vUWfIgPiIPVHxCvaTS0xr2B+DRxovYVKbuOWqC35kjg==
-  dependencies:
-    debug "^4.1.1"
-    env-paths "^2.2.0"
-    fs-extra "^8.1.0"
-    got "^9.6.0"
-    progress "^2.0.3"
-    semver "^6.2.0"
-    sumchecker "^3.0.1"
-  optionalDependencies:
-    global-agent "^2.0.2"
-    global-tunnel-ng "^2.7.1"
-
-"@electron/get@^1.13.0":
+"@electron/get@^1.0.1", "@electron/get@^1.12.4", "@electron/get@^1.13.0":
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/@electron/get/-/get-1.13.0.tgz#95c6bcaff4f9a505ea46792424f451efea89228c"
   integrity sha512-+SjZhRuRo+STTO1Fdhzqnv9D2ZhjxXP6egsJ9kiO8dtP68cDx7dFCwWi64dlMQV7sWcfW1OYCW4wviEBzmRsfQ==
@@ -3839,10 +3823,10 @@ electron@*:
     "@types/node" "^14.6.2"
     extract-zip "^1.0.3"
 
-electron@13.1.6:
-  version "13.1.6"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-13.1.6.tgz#6ecaf969255d62ce82cc0b5c948bf26e7dfb489b"
-  integrity sha512-XiB55/JTaQpDFQrD9pulYnOGwaWeMyRIub5ispvoE2bWBvM5zVMLptwMLb0m3KTMrfSkzhedZvOu7fwYvR7L7Q==
+electron@13.3.0:
+  version "13.3.0"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-13.3.0.tgz#5f4f245723dd50fcd2c3d386a1d66fe748af404f"
+  integrity sha512-d/BvOLDjI4i7yf9tqCuLL2fFGA2TrM/D9PyRpua+rJolG0qrwp/FohP02L0m+44kmPpofIo4l3NPwLmzyKKimA==
   dependencies:
     "@electron/get" "^1.0.1"
     "@types/node" "^14.6.2"
@@ -7111,10 +7095,10 @@ object.pick@^1.3.0:
   dependencies:
     isobject "^3.0.1"
 
-objection@^2.2.3:
-  version "2.2.15"
-  resolved "https://registry.yarnpkg.com/objection/-/objection-2.2.15.tgz#104ecb180b0d2e8dff756a83886be035e3d323e5"
-  integrity sha512-ZOLJDigE9Z2ppk3C//S2fcWL6ph2jUe6Cwl0CEpslTZegnnOeG6RPIV80nhPAaghWjl/8F2kox/w89VVBN4ccg==
+objection@^2.2.16:
+  version "2.2.16"
+  resolved "https://registry.yarnpkg.com/objection/-/objection-2.2.16.tgz#552ec6d625a7f80d6e204fc63732cbd3fc56f31c"
+  integrity sha512-sq8erZdxW5ruPUK6tVvwDxyO16U49XAn/BmOm2zaNhNA2phOPCe2/7+R70nDEF1SFrgJOrwDu/PtoxybuJxnjQ==
   dependencies:
     ajv "^6.12.6"
     db-errors "^0.2.3"
