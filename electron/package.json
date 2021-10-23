@@ -63,7 +63,7 @@
         "cucumber": "^7.0.0-rc.0",
         "cucumber-pretty": "^6.0.0",
         "dotenv-webpack": "^7.0.3",
-        "electron": "13.1.6",
+        "electron": "13.3.0",
         "electron-builder": "22.13.0",
         "electron-devtools-installer": "^3.1.1",
         "electron-notarize": "^1.0.0",
