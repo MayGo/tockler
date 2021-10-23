@@ -1,5 +1,3 @@
-// override path, to fix asar.unpacked paths
-require('hazardous');
 require('events').EventEmitter.defaultMaxListeners = 30;
 
 import { backgroundJob } from './background-job';
@@ -11,7 +9,6 @@ import WindowManager, { sendToMainWindow } from './window-manager';
 import { extensionsManager } from './extensions-manager';
 import AppUpdater from './app-updater';
 import config from './config';
-import * as path from 'path';
 import { Deeplink } from 'electron-deeplink';
 
 const UrlParse = require('url-parse');
