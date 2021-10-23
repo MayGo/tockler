@@ -43,7 +43,7 @@ const dateToMinutes = (max, useStartDate) => d => {
     return minutes / 60 / max;
 };
 
-const ScatterPoint = ({ x, y, showMoon, showSun }) => {
+const ScatterPoint = ({ x = 0, y = 0, showMoon = false, showSun = false }) => {
     if (showMoon) {
         return <IoMdMoon fontSize="20px" x={x - 10} y={y - 10} />;
     }
@@ -79,8 +79,6 @@ export const LineChart = () => {
 
     const isNarrow = width < 1400;
 
-    console.info('onlineTimesSummary', onlineTimesSummary);
-
     return (
         <div ref={observe}>
             <BlackBox position="absolute" width={width - 34} height={770} right={0} mr="25px" />
@@ -106,20 +104,16 @@ export const LineChart = () => {
                                 return `End time: ${formatToTime(endDate)}`;
                             }
                             if (childName === 'online') {
-                                return `${formatToLong(
-                                    datum.beginDate,
-                                )}\r\nWorked: ${moment.duration(online).format()}`;
+                                return `${formatToLong(datum.beginDate)}\r\nWorked: ${moment
+                                    .duration(online)
+                                    .format()}`;
                             }
                             return '';
                         }}
                     />
                 }
             >
-                <VictoryAxis
-                    orientation="left"
-                    tickFormat={formatToHours(maxOnline)}
-                    dependentAxis
-                />
+                <VictoryAxis orientation="left" tickFormat={formatToHours(maxOnline)} dependentAxis />
                 <VictoryAxis
                     orientation="bottom"
                     name="time-axis"
