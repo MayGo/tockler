@@ -37,8 +37,7 @@ mac:
     extendInfo:
         LSUIElement: 1
     target:
-        - zip
-        - pkg
+        - dmg
 
 mas:
     entitlements: './build/entitlements.mas.plist'
