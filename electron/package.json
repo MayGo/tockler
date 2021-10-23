@@ -20,7 +20,7 @@
         "build_mac": "electron-builder -c electron-builder.yml --mac",
         "build_linux": "electron-builder -c electron-builder.yml --linux",
         "build_windows": "electron-builder -c electron-builder.yml --win",
-        "build": "webpack --progress --env.production --mode=production",
+        "build": "webpack --progress --mode=production",
         "prepare_client": "cpx \"../client/build/**/*\" dist",
         "release": "electron-builder -c electron-builder.yml"
     },
