@@ -73,47 +73,32 @@ export const AppForm = () => {
                 <FormLabel htmlFor="run-login" mb="0" flex="1">
                     Run at login?
                 </FormLabel>
-                <Switch
-                    id="run-login"
-                    defaultChecked={openAtLogin}
-                    onChange={onChangeOpenAtLogin}
-                    size="lg"
-                />
+                <Switch id="run-login" defaultChecked={openAtLogin} onChange={onChangeOpenAtLogin} size="lg" />
             </FormControl>
             <FormControl display="flex" alignItems="center" py={2}>
                 <FormLabel htmlFor="auto-update" mb="0" flex="1">
                     Auto update?
                 </FormLabel>
+                <Switch id="auto-update" defaultChecked={isAutoUpdateEnabled} onChange={onChangeAutoUpdate} size="lg" />
+            </FormControl>
+
+            <FormControl display="flex" alignItems="center" py={2}>
+                <FormLabel htmlFor="enable-purple-tray" mb="0" flex="1">
+                    Use purple tray icon?
+                </FormLabel>
                 <Switch
-                    id="auto-update"
-                    defaultChecked={isAutoUpdateEnabled}
-                    onChange={onChangeAutoUpdate}
+                    id="enable-purple-tray"
+                    defaultChecked={usePurpleTrayIcon}
+                    onChange={onChangeUsePurpleTrayIcon}
                     size="lg"
                 />
             </FormControl>
-            {isMacOS && (
-                <FormControl display="flex" alignItems="center" py={2}>
-                    <FormLabel htmlFor="enable-purple-tray" mb="0" flex="1">
-                        Use purple tray icon?
-                    </FormLabel>
-                    <Switch
-                        id="enable-purple-tray"
-                        defaultChecked={usePurpleTrayIcon}
-                        onChange={onChangeUsePurpleTrayIcon}
-                        size="lg"
-                    />
-                </FormControl>
-            )}
+
             <FormControl display="flex" alignItems="center" py={2}>
                 <FormLabel htmlFor="enable-logging" mb="0" flex="1">
                     Enable logging? (Applies after restart)
                 </FormLabel>
-                <Switch
-                    id="enable-logging"
-                    defaultChecked={isLoggingEnabled}
-                    onChange={onChangeLogging}
-                    size="lg"
-                />
+                <Switch id="enable-logging" defaultChecked={isLoggingEnabled} onChange={onChangeLogging} size="lg" />
             </FormControl>
             <Text fontSize="xs" color="gray.500" pt={2}>
                 Log path: {logPath}
