@@ -15,13 +15,6 @@ const UrlParse = require('url-parse');
 
 let logger = logManager.getLogger('AppIndex');
 app.setAppUserModelId(process.execPath);
-/*
-if (config.isDev) {
-    try {
-        logger.info('Loading Reloader');
-        require('electron-reloader')(module);
-    } catch {}
-}*/
 
 /* Single Instance Check */
 const isMas = process.mas === true;
