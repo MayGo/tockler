@@ -62,7 +62,7 @@
         "@types/webpack-env": "1.16.3",
         "cross-env": "7.0.3",
         "prettier": "^2.4.1",
-        "ts-jest": "^27.0.7",
+        "ts-jest": "^26.5.6",
         "typescript": "~3.9.10"
     },
     "eslintConfig": {
