@@ -4,7 +4,7 @@ import { shortTime } from '../../time.util';
 
 const NO_VALUE = '-';
 
-export const ChartCircles = ({ width, innerWidth, onlineTimeMs, lastSessionMs }) => {
+export const ChartCircles = ({ width, innerWidth, onlineTimeMs, lastSessionMs, onlineSince }) => {
     const mainTextColor = useColorModeValue('gray.700', 'gray.300');
 
     return (
@@ -69,17 +69,24 @@ export const ChartCircles = ({ width, innerWidth, onlineTimeMs, lastSessionMs })
                 justifyContent="center"
                 flexDirection="column"
             >
-                <Text fontSize="md" color={mainTextColor} mt={5}>
+                <Text fontSize="xs" color={mainTextColor} mt={1}>
+                    Session Time
+                </Text>
+                <Text fontSize="2xl" color={useColorModeValue('blue.700', 'blue.300')}>
+                    {onlineSince}
+                </Text>
+
+                <Text fontSize="xs" color={mainTextColor} mt={3}>
                     Online Today
                 </Text>
-                <Text fontSize="4xl" color={useColorModeValue('gray.900', 'gray.100')}>
-                    {shortTime(onlineTimeMs, { largest: 2, units: ['d', 'h', 'm'] }) || NO_VALUE}
+                <Text fontSize="4xl" color={useColorModeValue('gray.900', 'gray.100')} mt={-1}>
+                    {onlineTimeMs}
                 </Text>
-                <Text fontSize="md" color={mainTextColor} pt={1}>
+                <Text fontSize="xs" color={mainTextColor} pt={0}>
                     Last Session
                 </Text>
                 <Text fontSize="2xl" color={mainTextColor}>
-                    {shortTime(lastSessionMs, { largest: 2, units: ['d', 'h', 'm'] }) || NO_VALUE}
+                    {shortTime(lastSessionMs, { largest: 2, units: ['d', 'h', 'm', 's'] }) || NO_VALUE}
                 </Text>
             </Flex>
         </Flex>

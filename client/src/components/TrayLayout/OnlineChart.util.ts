@@ -1,3 +1,4 @@
+import { first, orderBy } from 'lodash';
 import moment from 'moment';
 import { MAIN_THEME_COLOR } from '../../theme/theme';
 
@@ -39,8 +40,8 @@ export const getQuarters = (date, mode) => {
 };
 
 export const getClampHours = ({ realDate, startHour, endHour }) => {
-    let beginClamp = moment(realDate).startOf('day').set('hour', startHour).valueOf();
-    let endClamp = moment(realDate).startOf('day').set('hour', endHour).valueOf();
+    let beginClamp = moment(realDate).startOf('day').set('hour', startHour);
+    let endClamp = moment(realDate).startOf('day').set('hour', endHour);
     return { beginClamp, endClamp };
 };
 
@@ -53,7 +54,17 @@ export const isBetweenHours =
         );
     };
 
-export const getOnlineTimesForChart = ({ beginClamp, endClamp, items, mode = null }) => {
+export const getOnlineTimesForChart = ({
+    beginClamp,
+    endClamp,
+    items,
+    mode,
+}: {
+    beginClamp: moment.Moment;
+    endClamp: moment.Moment;
+    items: any[];
+    mode?: CLOCK_MODE;
+}) => {
     const pieData: any[] = [];
     const arr: any[] = [];
 
@@ -130,6 +141,61 @@ export const getOnlineTimesForChart = ({ beginClamp, endClamp, items, mode = nul
         }
     });
 
-    // console.info('onlineChart items', pieData);
     return pieData;
+};
+
+/*
+-On20-Br1-On20-Br1-On20 = On60
+-On20-Br5-On20 = On20
+-On20-Br4-On20 = On40
+-On20-Br4-On20-Br4-0n-20 = On60
+*/
+
+const getBeginEndDiff = (beginDate, endDate) => {
+    return moment(moment(endDate)).diff(moment(beginDate));
+};
+
+const minBreakTime = 5;
+
+const MINUTES = 60 * 1000;
+
+const takeWhileNoBreaks = (items) => {
+    const newItems: any[] = [];
+    let olderItem;
+
+    items.forEach((currentItem) => {
+        if (olderItem) {
+            const diff = getBeginEndDiff(currentItem.endDate, olderItem.beginDate);
+            const isAllowed = diff / MINUTES <= minBreakTime;
+
+            if (!isAllowed) {
+                return newItems;
+            }
+        }
+        newItems.push(currentItem);
+        olderItem = currentItem;
+    });
+    return newItems;
+};
+
+export const getTotalOnlineDuration = (now, items) => {
+    if (items.length === 0) {
+        return 0;
+    }
+
+    const filtered = items.filter((item) => item.app === 'ONLINE');
+    const sorted = orderBy(filtered, ['beginDate'], ['desc']);
+
+    if (getBeginEndDiff(first(sorted).endDate, now) / MINUTES >= minBreakTime) {
+        return 0;
+    }
+
+    const onlyNeeded = takeWhileNoBreaks(sorted);
+
+    if (onlyNeeded.length === 0) {
+        return 0;
+    }
+
+    const diffs = onlyNeeded.map(({ beginDate, endDate }) => getBeginEndDiff(beginDate, endDate));
+    return diffs.reduce((a, b) => a + b, 0);
 };

@@ -1,5 +1,6 @@
+import { last } from 'lodash';
 import moment from 'moment';
-import { getClampHours, getOnlineTimesForChart, isBetweenHours } from './OnlineChart.util';
+import { getClampHours, getOnlineTimesForChart, getTotalOnlineDuration, isBetweenHours } from './OnlineChart.util';
 
 const ONLINE = 'ONLINE';
 const OFFLINE = 'OFFLINE';
@@ -48,9 +49,9 @@ describe('OnlineChart getOnlineTimesForChart', () => {
             items: [...items, ...otherItems],
         });
 
-        expect(actual.find(item => item.beginDate === beginDate)).toBeUndefined();
-        expect(actual.find(item => item.app === OFFLINE)).toBeUndefined();
-        expect(actual.find(item => item.app === ONLINE)).not.toBeUndefined();
+        expect(actual.find((item) => item.beginDate === beginDate)).toBeUndefined();
+        expect(actual.find((item) => item.app === OFFLINE)).toBeUndefined();
+        expect(actual.find((item) => item.app === ONLINE)).not.toBeUndefined();
     });
     it('Sets first, last and in between empty items hours 0 to 24', () => {
         const items = [
@@ -203,7 +204,6 @@ describe('OnlineChart getOnlineTimesForChart', () => {
 
         const actual = getOnlineTimesForChart({
             ...getClampHours({ realDate, startHour: 0, endHour: 12 }),
-
             items: [...items],
         });
 
@@ -289,6 +289,95 @@ describe('OnlineChart getOnlineTimesForChart', () => {
     });
 });
 
+const getDateFromTime = (time: string) => {
+    return moment(`2021-06-19T${time}`).valueOf();
+};
+
+const MINUTES = 60 * 1000;
+describe.only('OnlineChart getTotalOnlineDuration', () => {
+    it('getTotalOnlineDuration sums diffs', () => {
+        const items = [
+            {
+                app: ONLINE,
+                beginDate: getDateFromTime('08:00:00'),
+                endDate: getDateFromTime('08:15:00'),
+            },
+            {
+                app: ONLINE,
+                beginDate: getDateFromTime('08:15:00'),
+                endDate: getDateFromTime('08:25:00'),
+            },
+        ];
+        const now = last(items)?.endDate;
+        let duration = getTotalOnlineDuration(now, items);
+
+        expect(duration).toEqual(25 * MINUTES);
+    });
+
+    it('getTotalOnlineDuration only sums ONLINE items', () => {
+        const items = [
+            {
+                app: ONLINE,
+                beginDate: getDateFromTime('08:00:00'),
+                endDate: getDateFromTime('08:10:00'),
+            },
+            {
+                beginDate: getDateFromTime('08:11:00'),
+                endDate: getDateFromTime('08:14:00'),
+            },
+        ];
+        const now = last(items)?.endDate;
+        let duration = getTotalOnlineDuration(now, items);
+
+        expect(duration).toEqual(10 * MINUTES);
+    });
+
+    it('getTotalOnlineDuration take items until finds minimal break time.', () => {
+        const items = [
+            {
+                app: ONLINE,
+                beginDate: getDateFromTime('07:00:00'),
+                endDate: getDateFromTime('07:10:00'),
+            },
+            {
+                app: ONLINE,
+                beginDate: getDateFromTime('08:00:00'),
+                endDate: getDateFromTime('08:14:00'),
+            },
+
+            {
+                app: ONLINE,
+                beginDate: getDateFromTime('08:15:00'),
+                endDate: getDateFromTime('08:25:00'),
+            },
+            {
+                app: ONLINE,
+                beginDate: getDateFromTime('08:29:00'),
+                endDate: getDateFromTime('08:39:00'),
+            },
+        ];
+
+        const now = last(items)?.endDate;
+        let duration = getTotalOnlineDuration(now, items);
+
+        expect(duration).toEqual(34 * MINUTES);
+    });
+
+    it('getTotalOnlineDuration returns 0 if just taken a break', () => {
+        const now = getDateFromTime('08:25:00');
+        const items = [
+            {
+                app: ONLINE,
+                beginDate: getDateFromTime('08:00:00'),
+                endDate: getDateFromTime('08:20:00'),
+            },
+        ];
+        let duration = getTotalOnlineDuration(now, items);
+
+        expect(duration).toEqual(0);
+    });
+});
+
 describe('OnlineChart isBetweenHours', () => {
     it('isBetweenHours returns correctly if partly out of range in end part', () => {
         let startHour = 12;
@@ -349,4 +438,4 @@ describe('OnlineChart isBetweenHours', () => {
 
 export // Use an empty export to please Babel's single file emit.
 // https://github.com/Microsoft/TypeScript/issues/15230
-{};
+ {};
