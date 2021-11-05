@@ -1,28 +1,18 @@
 import { Box, Flex, Text } from '@chakra-ui/layout';
-import React, { memo, useState } from 'react';
-import { HStack, IconButton, useInterval } from '@chakra-ui/react';
+import React, { memo } from 'react';
+import { HStack, IconButton } from '@chakra-ui/react';
 import { convertDate, DATE_TIME_FORMAT } from '../../constants';
 import { FaPlay, FaStop } from 'react-icons/fa';
 import { shortTime } from '../../time.util';
 import { OverflowText } from '../TrackItemTable/OverflowText';
+import { ShortTimeInterval } from './ShortTimeInterval';
 
-const formatDate = date => convertDate(date).format(DATE_TIME_FORMAT);
+const formatDate = (date) => convertDate(date).format(DATE_TIME_FORMAT);
 
 const FormattedTime = ({ beginDate, endDate, isRunning }: any) => {
-    const full = isRunning
-        ? `${formatDate(beginDate)}`
-        : `${formatDate(beginDate)} - ${formatDate(endDate)}`;
+    const full = isRunning ? `${formatDate(beginDate)}` : `${formatDate(beginDate)} - ${formatDate(endDate)}`;
 
     return <span>{full}</span>;
-};
-
-const ShortTimeInterval = ({ totalMs }) => {
-    const [time, setTime] = useState(totalMs);
-    useInterval(() => {
-        setTime(oldTime => oldTime + 1000);
-    }, 1000);
-
-    return shortTime(time);
 };
 
 export function TrayListItemPlain({ item, startNewLogItemFromOld, stopRunningLogItem }: any) {
@@ -59,19 +49,9 @@ export function TrayListItemPlain({ item, startNewLogItemFromOld, stopRunningLog
                     </Flex>
                 </Box>
 
-                {isRunning && (
-                    <IconButton
-                        aria-label="pause"
-                        icon={<FaStop />}
-                        onClick={() => stopRunningLogItem()}
-                    />
-                )}
+                {isRunning && <IconButton aria-label="pause" icon={<FaStop />} onClick={() => stopRunningLogItem()} />}
                 {!isRunning && (
-                    <IconButton
-                        aria-label="start"
-                        icon={<FaPlay />}
-                        onClick={() => startNewLogItemFromOld(item)}
-                    />
+                    <IconButton aria-label="start" icon={<FaPlay />} onClick={() => startNewLogItemFromOld(item)} />
                 )}
             </HStack>
         </Box>

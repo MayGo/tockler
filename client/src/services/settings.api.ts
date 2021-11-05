@@ -88,12 +88,27 @@ export async function updateByName(name, jsonData) {
     return EventEmitter.emit('updateByName', { name, jsonData: JSON.stringify(jsonData) });
 }
 
+export async function notifyUser(message) {
+    Logger.debug('notifyUser', message);
+    return EventEmitter.emit('notifyUser', { message });
+}
+
 export function getRunningLogItem() {
     return EventEmitter.emit('getRunningLogItemAsJson');
 }
 
-export function fetchWorkSettings() {
-    return EventEmitter.emit('fetchWorkSettings');
+export async function fetchWorkSettings() {
+    const jsonStr = await EventEmitter.emit('fetchWorkSettingsJsonString');
+    try {
+        return JSON.parse(jsonStr);
+    } catch (e) {
+        Logger.error('Error in fetchWorkSettings', jsonStr, e);
+        return null;
+    }
+}
+
+export function saveWorkSettings(data) {
+    updateByName('WORK_SETTINGS', data);
 }
 
 export function saveAnalyserSettings(data) {

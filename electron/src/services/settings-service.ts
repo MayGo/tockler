@@ -10,7 +10,7 @@ export class SettingsService {
     async findCreateFind(name: string) {
         return Setting.query()
             .where('name', name)
-            .then(function(rows) {
+            .then(function (rows) {
                 if (rows.length === 0) {
                     return Setting.query().insert({ name });
                 } else {
@@ -21,13 +21,13 @@ export class SettingsService {
 
     async findByName(name: string) {
         if (this.cache[name]) {
-            this.logger.debug(`Returning ${name} from cache:`, this.cache[name].toJSON());
+            // this.logger.debug(`Returning ${name} from cache:`, this.cache[name].toJSON());
             return this.cache[name];
         }
 
         const item = await this.findCreateFind(name);
 
-        this.logger.debug(`Setting ${name} to cache:`, item && item.toJSON());
+        //  this.logger.debug(`Setting ${name} to cache:`, item && item.toJSON());
         this.cache[name] = item;
 
         return item;
@@ -42,9 +42,9 @@ export class SettingsService {
             let item = await this.findByName(name);
 
             if (item) {
-                const savedItem = await  item.$query().patchAndFetch({jsonData});
+                const savedItem = await item.$query().patchAndFetch({ jsonData });
 
-                this.cache[name] = savedItem;
+                delete this.cache[name];
                 return savedItem;
             } else {
                 this.logger.error(`No item with ${name} found to update.`);
@@ -61,6 +61,12 @@ export class SettingsService {
         }
 
         return item.jsonData;
+    }
+
+    async fetchWorkSettingsJsonString() {
+        const data = await this.fetchWorkSettings();
+
+        return JSON.stringify(data);
     }
 
     isObject(val) {
