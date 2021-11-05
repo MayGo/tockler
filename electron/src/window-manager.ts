@@ -1,11 +1,13 @@
-import { menubar, Menubar } from 'menubar';
+import { menubar } from 'menubar';
 import MenuBuilder from './menu-builder';
 import { throttle } from 'lodash';
-import { app, ipcMain, BrowserWindow, dialog, shell } from 'electron';
+import { app, ipcMain, BrowserWindow, dialog, shell, Tray, nativeImage } from 'electron';
 import { autoUpdater } from 'electron-updater';
-import config, { getIcon, getTrayIcon } from './config';
+import config, { getTrayIcon } from './config';
 import { logManager } from './log-manager';
 import { join } from 'path';
+
+import * as positioner from 'electron-traywindow-positioner';
 
 let logger = logManager.getLogger('WindowManager');
 
@@ -17,6 +19,26 @@ export const sendToTrayWindow = (key, message = '') => {
         WindowManager.menubar.window.webContents.send(key, message);
     } else {
         logger.debug(`Menubar not defined yet, not sending ${key}`);
+    }
+};
+
+const AUTOHIDE_NOTIFICATION_WINDOW = 10000;
+
+export const sendToNotificationWindow = (key, message = '') => {
+    if (WindowManager.notificationWindow) {
+        if (key === 'notifyUser') {
+            positioner.position(WindowManager.notificationWindow, WindowManager.tray.getBounds());
+            WindowManager.notificationWindow.showInactive();
+
+            setTimeout(() => {
+                WindowManager.notificationWindow.hide();
+            }, AUTOHIDE_NOTIFICATION_WINDOW);
+        }
+
+        logger.debug('Send to notification window:', key, message);
+        WindowManager.notificationWindow.webContents.send(key, message);
+    } else {
+        logger.debug(`NotificationBar not defined yet, not sending ${key}`);
     }
 };
 
@@ -33,6 +55,8 @@ const isMas = process.mas === true;
 export default class WindowManager {
     static mainWindow;
     static menubar;
+    static notificationWindow: BrowserWindow;
+    static tray: Tray;
 
     static initMenus() {
         const menuBuilder = new MenuBuilder();
@@ -167,20 +191,20 @@ export default class WindowManager {
 
     static setTrayWindow() {
         logger.debug('Creating tray window.');
+
+        this.tray = new Tray(config.iconTray);
         /**
          * Docs:
          * https://github.com/maxogden/menubar
          */
 
-        const url = config.isDev
-            ? 'http://localhost:3000/#/trayApp'
-            : `file://${__dirname}/index.html#/trayApp`;
+        const url = config.isDev ? 'http://localhost:3000/#/trayApp' : `file://${__dirname}/index.html#/trayApp`;
 
         this.menubar = menubar({
             index: url,
-            icon: config.iconTray,
+            tray: this.tray,
             //  preloadWindow: false, in MAS build shows white tray only
-            preloadWindow: false,
+            preloadWindow: true,
             showDockIcon: false,
 
             browserWindow: {
@@ -207,12 +231,45 @@ export default class WindowManager {
 
             if (config.isDev) {
                 logger.debug('Open menubar dev tools');
-                this.menubar.window.openDevTools({ mode: 'bottom' });
+                //   this.menubar.window.openDevTools({ mode: 'bottom' });
             }
         });
         this.menubar.on('ready', () => {
             console.log('app is ready');
             // your app code here
+        });
+    }
+
+    static setNotificationWindow() {
+        logger.debug('Creating notification window.');
+
+        const url = config.isDev
+            ? 'http://localhost:3000/#/notificationApp'
+            : `file://${__dirname}/index.html#/notificationApp`;
+
+        this.notificationWindow = new BrowserWindow({
+            focusable: false,
+            alwaysOnTop: true,
+            hasShadow: false,
+            //transparent: true,
+            frame: false,
+            //backgroundColor: '#00000000',
+
+            opacity: 0.7,
+            webPreferences: {
+                zoomFactor: 1.0,
+                contextIsolation: true,
+                preload: preloadScript,
+            },
+            width: 70,
+            height: 27,
+        });
+        this.notificationWindow.loadURL(url);
+
+        this.menubar.on('ready', () => {
+            this.menubar.tray.on('click', () => {
+                this.notificationWindow.hide();
+            });
         });
     }
 

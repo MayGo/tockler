@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { VictoryContainer, VictoryPie } from 'victory';
 import { colorProp } from '../charts.utils';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
@@ -9,8 +9,10 @@ import { CLOCK_MODE, getOnlineTimesForChart, getQuarters, getTotalOnlineDuration
 import moment from 'moment';
 import { Box, VStack, HStack, Text, Button, useColorModeValue } from '@chakra-ui/react';
 import { ChartCircles } from './ChartCircles';
-import { getLastOnlineTime, getOnlineTime } from '../PieCharts/MetricTiles.utils';
+import { getOnlineTime } from '../PieCharts/MetricTiles.utils';
 import { ShortTimeInterval } from '../TrayList/ShortTimeInterval';
+import { RootContext } from '../../RootContext';
+import { notifyUser } from '../../services/settings.api';
 
 const QuarterLabel = (props) => (
     <Box width="20px" height="20px">
@@ -21,14 +23,54 @@ const QuarterLabel = (props) => (
 const MINUTES = 60 * 1000;
 
 export const OnlineChart = ({ items }) => {
+    const { workSettings } = useContext(RootContext);
+
     const { chartTheme } = useChartThemeState();
     const [mode, setMode] = useState(CLOCK_MODE.HOURS_12);
 
-    const [onlineSince, setOnlineSince] = useState<any>(getTotalOnlineDuration(moment(), items));
-    const onlineSinceColor = useColorModeValue('var(--chakra-colors-blue-700)', 'var(--chakra-colors-blue-300)');
+    const [currentSession, setCurrentSession] = useState<any | undefined>();
+    const [userHasBeenNotified, setUserHasBeenNotified] = useState(false);
+    const [lastSession, setLastSession] = useState<any | undefined>();
+    const onlineSinceColor = useColorModeValue('var(--chakra-colors-blue-500)', 'var(--chakra-colors-blue-500)');
+    const overtimeColor = 'var(--chakra-colors-red-500)';
+
+    const sessionLength = workSettings.sessionLength;
+    const MAX_TIMER = sessionLength * MINUTES;
+    const sessionIsOvertime = currentSession > MAX_TIMER;
+    const minBreakTime = 5;
 
     useEffect(() => {
-        setOnlineSince(getTotalOnlineDuration(moment(), items));
+        if (sessionIsOvertime) {
+            if (!userHasBeenNotified) {
+                console.warn('Notifying user to take a break');
+                notifyUser(currentSession);
+                setUserHasBeenNotified(true);
+            }
+        } else {
+            setUserHasBeenNotified(false);
+        }
+    }, [sessionIsOvertime, currentSession, userHasBeenNotified]);
+
+    useEffect(() => {
+        const grouped = getTotalOnlineDuration(moment(), items, minBreakTime);
+        const sessionTime = grouped[0];
+        setCurrentSession(sessionTime);
+
+        if (sessionIsOvertime) {
+            if (!userHasBeenNotified) {
+                console.warn('Notifying user to take a break');
+                notifyUser(sessionTime);
+                setUserHasBeenNotified(true);
+            }
+        } else {
+            setUserHasBeenNotified(false);
+        }
+
+        if (grouped.length > 1) {
+            setLastSession(grouped[1]);
+        } else {
+            setLastSession(undefined);
+        }
     }, [items]);
 
     const width = 300;
@@ -37,8 +79,6 @@ export const OnlineChart = ({ items }) => {
     const [startDate, firstQuarter, secondQuarter, thirdQuarter, endDate] = getQuarters(moment(), mode);
 
     const onlineTimeMs = getOnlineTime(items, [startDate, endDate]);
-
-    const lastSessionMs = getLastOnlineTime(items, [startDate, endDate]);
 
     const pieData = getOnlineTimesForChart({
         beginClamp: startDate,
@@ -56,7 +96,16 @@ export const OnlineChart = ({ items }) => {
         },
     };
 
-    const MAX_TIMER = 60 * MINUTES;
+    const sessionLineHighlight = 0.3 * MINUTES;
+    const sessionLine = MAX_TIMER - currentSession; // - sessionLineHighlight;
+
+    console.info('MAX_TIMER - currentSession - 0.3 * MINUTES', {
+        sessionLength,
+        MAX_TIMER,
+        currentSession,
+        sessionLineHighlight,
+        sessionLine,
+    });
 
     return (
         <VStack position="relative">
@@ -70,8 +119,8 @@ export const OnlineChart = ({ items }) => {
                         width={width}
                         innerWidth={innerWidth}
                         onlineTimeMs={<ShortTimeInterval totalMs={onlineTimeMs} />}
-                        lastSessionMs={lastSessionMs}
-                        onlineSince={<ShortTimeInterval totalMs={onlineSince} />}
+                        lastSessionMs={lastSession}
+                        currentSession={<ShortTimeInterval totalMs={currentSession} />}
                     />
                     <VictoryPie
                         theme={chartTheme}
@@ -92,29 +141,25 @@ export const OnlineChart = ({ items }) => {
                         y={(datum) => datum.diff}
                         data={pieData}
                     />
-                    <Box
-                        position="absolute"
-                        top={0}
-                        mt={'63px'}
-                        left="50%"
-                        ml={`${-((width - 70) / 2)}px`}
-                        opacity="0.9"
-                        zIndex={10}
-                    >
+                    <Box position="absolute" top={0} mt={'63px'} left="50%" ml={`${-((width - 70) / 2)}px`} zIndex={10}>
                         <VictoryPie
                             theme={chartTheme}
                             padding={2}
-                            width={width - 69}
-                            height={width - 69}
+                            width={width - 70}
+                            height={width - 70}
                             innerRadius={innerWidth / 2 - 5}
                             containerComponent={<VictoryContainer responsive={false} />}
                             style={style}
                             y={(datum) => datum.diff}
                             labels={() => null}
                             data={[
-                                { x: 1, diff: MAX_TIMER - onlineSince - 0.3 * MINUTES, color: 'transparent' },
-                                { x: 2, diff: 0.3 * MINUTES, color: 'white' },
-                                { x: 3, diff: onlineSince, color: onlineSinceColor },
+                                { x: 1, diff: sessionLine, color: 'transparent' },
+                                // { x: 2, diff: sessionLineHighlight, color: onlineSinceLineColor },
+                                {
+                                    x: 3,
+                                    diff: currentSession,
+                                    color: sessionIsOvertime ? overtimeColor : onlineSinceColor,
+                                },
                             ]}
                         />
                     </Box>

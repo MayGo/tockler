@@ -73,6 +73,8 @@ if (gotTheLock || isMas) {
                 WindowManager.setTrayWindow();
             }
 
+            WindowManager.setNotificationWindow();
+
             await AppManager.init();
 
             backgroundJob.init();

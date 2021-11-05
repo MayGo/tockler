@@ -6,22 +6,33 @@ import { trackItemService } from './services/track-item-service';
 import { stateManager } from './state-manager';
 import { State } from './enums/state';
 import AppManager from './app-manager';
+import { sendToTrayWindow, sendToNotificationWindow } from './window-manager';
 
 const settingsActions = {
     fetchAnalyserSettingsJsonString: async () => {
         return settingsService.fetchAnalyserSettingsJsonString();
     },
     updateByName: async (payload) => {
+        if (payload.name === 'WORK_SETTINGS') {
+            setTimeout(() => {
+                sendToTrayWindow('WORK_SETTINGS_UPDATED');
+            }, 1000);
+        }
+
         return settingsService.updateByName(payload.name, payload.jsonData);
     },
     getRunningLogItemAsJson: async () => {
         return settingsService.getRunningLogItemAsJson();
     },
-    fetchWorkSettings: async () => {
-        return settingsService.fetchWorkSettings();
+
+    fetchWorkSettingsJsonString: async () => {
+        return settingsService.fetchWorkSettingsJsonString();
     },
     saveThemeAndNotify: async (payload) => {
         AppManager.saveThemeAndNotify(payload);
+    },
+    notifyUser: async (payload) => {
+        sendToNotificationWindow('notifyUser', payload.message);
     },
 };
 

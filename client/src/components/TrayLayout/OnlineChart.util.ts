@@ -54,6 +54,10 @@ export const isBetweenHours =
         );
     };
 
+export const isLessThanHours = (now) => (item) => {
+    return moment(item.endDate) <= moment(now);
+};
+
 export const getOnlineTimesForChart = ({
     beginClamp,
     endClamp,
@@ -155,47 +159,52 @@ const getBeginEndDiff = (beginDate, endDate) => {
     return moment(moment(endDate)).diff(moment(beginDate));
 };
 
-const minBreakTime = 5;
-
 const MINUTES = 60 * 1000;
 
-const takeWhileNoBreaks = (items) => {
-    const newItems: any[] = [];
+export const groupByBreaks = (items, minBreakTime) => {
+    let newItems: any[] = [];
     let olderItem;
+
+    const groups: any[][] = [];
 
     items.forEach((currentItem) => {
         if (olderItem) {
             const diff = getBeginEndDiff(currentItem.endDate, olderItem.beginDate);
-            const isAllowed = diff / MINUTES <= minBreakTime;
+            const hasHadBreak = diff / MINUTES > minBreakTime;
 
-            if (!isAllowed) {
-                return newItems;
+            if (hasHadBreak) {
+                groups.push(newItems);
+                newItems = [];
             }
         }
         newItems.push(currentItem);
         olderItem = currentItem;
     });
-    return newItems;
+    groups.push(newItems);
+    return groups;
 };
 
-export const getTotalOnlineDuration = (now, items) => {
-    if (items.length === 0) {
-        return 0;
+export const getTotalOnlineDuration = (now, items, minBreakTime) => {
+    const filtered = items.filter((item) => item.app === 'ONLINE').filter(isLessThanHours(now));
+
+    if (filtered.length === 0) {
+        return [0];
     }
 
-    const filtered = items.filter((item) => item.app === 'ONLINE');
     const sorted = orderBy(filtered, ['beginDate'], ['desc']);
 
     if (getBeginEndDiff(first(sorted).endDate, now) / MINUTES >= minBreakTime) {
-        return 0;
+        return [0];
     }
 
-    const onlyNeeded = takeWhileNoBreaks(sorted);
+    const onlyNeeded = groupByBreaks(sorted, minBreakTime);
 
     if (onlyNeeded.length === 0) {
-        return 0;
+        return [0];
     }
 
-    const diffs = onlyNeeded.map(({ beginDate, endDate }) => getBeginEndDiff(beginDate, endDate));
-    return diffs.reduce((a, b) => a + b, 0);
+    return onlyNeeded.map((group) => {
+        const diffs = group.map(({ beginDate, endDate }) => getBeginEndDiff(beginDate, endDate));
+        return diffs.reduce((a, b) => a + b, 0);
+    });
 };

@@ -18,13 +18,13 @@ import moment from 'moment';
 const BG_SYNC_DELAY_MS = 10000;
 const TIMELINE_TRIAL_DAYS = 30;
 
-const ItemLabel = props => <Text fontSize="md" color={useColorModeValue('gray.700', 'gray.300')} {...props} />;
+const ItemLabel = (props) => <Text fontSize="md" color={useColorModeValue('gray.700', 'gray.300')} {...props} />;
 
 export function TimelinePage() {
-    const timerange = useStoreState(state => state.timerange);
+    const timerange = useStoreState((state) => state.timerange);
     const [beginDate] = timerange;
-    const fetchTimerange = useStoreActions(actions => actions.fetchTimerange);
-    const bgSyncInterval = useStoreActions(actions => actions.bgSyncInterval);
+    const fetchTimerange = useStoreActions((actions) => actions.fetchTimerange);
+    const bgSyncInterval = useStoreActions((actions) => actions.bgSyncInterval);
 
     useInterval(() => {
         bgSyncInterval();

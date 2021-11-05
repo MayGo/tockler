@@ -13,7 +13,7 @@ const isDev = process.env.NODE_ENV !== 'production';
 
 const trackingId: string = process.env.REACT_APP_TRACKING_ID || '';
 
-ReactGA.initialize(trackingId, { debug: isDev });
+ReactGA.initialize(trackingId, { debug: false });
 
 ReactGA.set({
     appVersion: process.env.REACT_APP_VERSION,

@@ -12,6 +12,7 @@ import { ChartThemeProvider } from './routes/ChartThemeProvider';
 import { useGoogleAnalytics } from './useGoogleAnalytics';
 import { useColorMode } from '@chakra-ui/react';
 import { TrayPage } from './routes/TrayPage';
+import { NotificationAppPage } from './routes/NotificationAppPage';
 
 moment.locale('en-gb');
 
@@ -20,7 +21,7 @@ export function MainRouter() {
     const { setColorMode } = useColorMode();
 
     const changeActiveTheme = useCallback(
-        themeName => {
+        (themeName) => {
             setColorMode(themeName);
         },
         [setColorMode],
@@ -42,6 +43,7 @@ export function MainRouter() {
                     <Route path="/" exact component={MainAppPage} />
                     <Route path="/app" component={MainAppPage} />
                     <Route path="/trayApp" component={TrayAppPage} />
+                    <Route path="/notificationApp" component={NotificationAppPage} />
                     <Route path="/trayPage" component={TrayPage} />
                     <Route path="*" component={NotFound} />
                 </Switch>
