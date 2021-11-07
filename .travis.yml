@@ -64,7 +64,7 @@ script:
     - cd electron
     - npm run build
     - npm run prepare_client
-    - travis_wait 120 npm run release
+    - DEBUG=electron-builder travis_wait 120 npm run release
     - cd ..
 
 branches:
