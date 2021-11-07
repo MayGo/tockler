@@ -4,7 +4,7 @@ import { stateManager } from './state-manager';
 import { initIpcActions } from './API';
 import config from './config';
 import { connectAndSync } from './models/db';
-import WindowManager, { sendToTrayWindow, sendToMainWindow } from './window-manager';
+import WindowManager, { sendToTrayWindow, sendToMainWindow, sendToNotificationWindow } from './window-manager';
 
 let logger = logManager.getLogger('AppManager');
 
@@ -103,5 +103,6 @@ export default class AppManager {
 
         sendToMainWindow('activeThemeChanged', theme);
         sendToTrayWindow('activeThemeChanged', theme);
+        sendToNotificationWindow('activeThemeChanged', theme);
     }
 }
