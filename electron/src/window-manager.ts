@@ -253,6 +253,7 @@ export default class WindowManager {
             hasShadow: false,
             //transparent: true,
             frame: false,
+            show: false,
             //backgroundColor: '#00000000',
 
             opacity: 0.7,

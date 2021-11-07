@@ -71,6 +71,7 @@ export const OnlineChart = ({ items }) => {
         } else {
             setLastSession(undefined);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [items]);
 
     const width = 300;
