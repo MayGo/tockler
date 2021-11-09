@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { VictoryContainer, VictoryPie } from 'victory';
 import { colorProp } from '../charts.utils';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
