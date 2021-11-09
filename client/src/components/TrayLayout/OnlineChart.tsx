@@ -53,13 +53,14 @@ export const OnlineChart = ({ items }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sessionIsOvertime, currentSession, smallNotificationsEnabled]);
 
-    useInterval(() => {
-        if (reNotifyInterval > 0 && smallNotificationsEnabled) {
-            console.info('Setting interval');
+    useInterval(
+        () => {
+            console.info('Calling interval');
 
             notifyUser(currentSession);
-        }
-    }, reNotifyInterval * MINUTES);
+        },
+        sessionIsOvertime && reNotifyInterval > 0 && smallNotificationsEnabled ? reNotifyInterval * MINUTES : null,
+    );
 
     useEffect(() => {
         const grouped = getTotalOnlineDuration(moment(), items, minBreakTime);
