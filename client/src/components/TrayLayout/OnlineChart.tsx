@@ -25,8 +25,6 @@ const MINUTES = 60 * 1000;
 
 export const OnlineChart = ({ items }) => {
     const { workSettings } = useContext(RootContext);
-    const reNotifyIntervalRef = useRef<any>();
-    const reNotifyFn = useRef<any>();
 
     const { chartTheme } = useChartThemeState();
     const [mode, setMode] = useState(CLOCK_MODE.HOURS_12);
@@ -58,7 +56,7 @@ export const OnlineChart = ({ items }) => {
     useInterval(() => {
         if (reNotifyInterval > 0 && smallNotificationsEnabled) {
             console.info('Setting interval');
-            //reNotifyFn.current();
+
             notifyUser(currentSession);
         }
     }, reNotifyInterval * MINUTES);
@@ -106,7 +104,6 @@ export const OnlineChart = ({ items }) => {
         MAX_TIMER,
         currentSession,
         sessionLine,
-        reNotifyIntervalRef: reNotifyIntervalRef.current,
     });
 
     return (
