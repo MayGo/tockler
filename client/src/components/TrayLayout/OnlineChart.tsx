@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { VictoryContainer, VictoryPie } from 'victory';
 import { colorProp } from '../charts.utils';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
@@ -13,6 +13,7 @@ import { getOnlineTime } from '../PieCharts/MetricTiles.utils';
 import { ShortTimeInterval } from '../TrayList/ShortTimeInterval';
 import { RootContext } from '../../RootContext';
 import { notifyUser } from '../../services/settings.api';
+import { useInterval } from '../../hooks/intervalHook';
 
 const QuarterLabel = (props) => (
     <Box width="20px" height="20px">
@@ -24,6 +25,8 @@ const MINUTES = 60 * 1000;
 
 export const OnlineChart = ({ items }) => {
     const { workSettings } = useContext(RootContext);
+    const reNotifyIntervalRef = useRef<any>();
+    const reNotifyFn = useRef<any>();
 
     const { chartTheme } = useChartThemeState();
     const [mode, setMode] = useState(CLOCK_MODE.HOURS_12);
@@ -34,13 +37,13 @@ export const OnlineChart = ({ items }) => {
     const onlineSinceColor = useColorModeValue('var(--chakra-colors-blue-500)', 'var(--chakra-colors-blue-500)');
     const overtimeColor = 'var(--chakra-colors-red-500)';
 
-    const sessionLength = workSettings.sessionLength;
+    const { sessionLength, minBreakTime, reNotifyInterval, smallNotificationsEnabled } = workSettings;
+
     const MAX_TIMER = sessionLength * MINUTES;
     const sessionIsOvertime = currentSession > MAX_TIMER;
-    const minBreakTime = 5;
 
     useEffect(() => {
-        if (sessionIsOvertime) {
+        if (sessionIsOvertime && smallNotificationsEnabled) {
             if (!userHasBeenNotified) {
                 console.warn('Notifying user to take a break');
                 notifyUser(currentSession);
@@ -49,22 +52,21 @@ export const OnlineChart = ({ items }) => {
         } else {
             setUserHasBeenNotified(false);
         }
-    }, [sessionIsOvertime, currentSession, userHasBeenNotified]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sessionIsOvertime, currentSession, smallNotificationsEnabled]);
+
+    useInterval(() => {
+        if (reNotifyInterval > 0 && smallNotificationsEnabled) {
+            console.info('Setting interval');
+            //reNotifyFn.current();
+            notifyUser(currentSession);
+        }
+    }, reNotifyInterval * MINUTES);
 
     useEffect(() => {
         const grouped = getTotalOnlineDuration(moment(), items, minBreakTime);
         const sessionTime = grouped[0];
         setCurrentSession(sessionTime);
-
-        if (sessionIsOvertime) {
-            if (!userHasBeenNotified) {
-                console.warn('Notifying user to take a break');
-                notifyUser(sessionTime);
-                setUserHasBeenNotified(true);
-            }
-        } else {
-            setUserHasBeenNotified(false);
-        }
 
         if (grouped.length > 1) {
             setLastSession(grouped[1]);
@@ -97,15 +99,14 @@ export const OnlineChart = ({ items }) => {
         },
     };
 
-    const sessionLineHighlight = 0.3 * MINUTES;
-    const sessionLine = MAX_TIMER - currentSession; // - sessionLineHighlight;
+    const sessionLine = MAX_TIMER - currentSession;
 
-    console.info('MAX_TIMER - currentSession - 0.3 * MINUTES', {
-        sessionLength,
+    console.info('Online Chart configuration', {
+        workSettings,
         MAX_TIMER,
         currentSession,
-        sessionLineHighlight,
         sessionLine,
+        reNotifyIntervalRef: reNotifyIntervalRef.current,
     });
 
     return (

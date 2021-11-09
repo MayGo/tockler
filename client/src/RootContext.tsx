@@ -12,6 +12,9 @@ const defaultWorkSettings = {
     hoursToWork: 8, // not used
     sessionLength: 50,
     minBreakTime: 5,
+    notificationDuration: 10,
+    reNotifyInterval: 5,
+    smallNotificationsEnabled: true,
 };
 
 export const RootContext = createContext<any>({});

@@ -6,6 +6,7 @@ import { autoUpdater } from 'electron-updater';
 import config, { getTrayIcon } from './config';
 import { logManager } from './log-manager';
 import { join } from 'path';
+import { settingsService } from './services/settings-service';
 
 import * as positioner from 'electron-traywindow-positioner';
 
@@ -22,17 +23,17 @@ export const sendToTrayWindow = (key, message = '') => {
     }
 };
 
-const AUTOHIDE_NOTIFICATION_WINDOW = 10000;
-
-export const sendToNotificationWindow = (key, message = '') => {
+export const sendToNotificationWindow = async (key, message = '') => {
     if (WindowManager.notificationWindow) {
         if (key === 'notifyUser') {
             positioner.position(WindowManager.notificationWindow, WindowManager.tray.getBounds());
             WindowManager.notificationWindow.showInactive();
+            const workSettings = await settingsService.fetchWorkSettings();
+            const { notificationDuration } = workSettings;
 
             setTimeout(() => {
                 WindowManager.notificationWindow.hide();
-            }, AUTOHIDE_NOTIFICATION_WINDOW);
+            }, notificationDuration * 1000);
         }
 
         logger.debug('Send to notification window:', key, message);

@@ -5,4 +5,7 @@ export type WorkSettingsI = {
     hoursToWork: number;
     sessionLength: number;
     minBreakTime: number;
+    notificationDuration: number;
+    reNotifyInterval: number;
+    smallNotificationsEnabled: boolean;
 };

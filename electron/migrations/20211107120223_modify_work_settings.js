@@ -4,11 +4,12 @@ exports.up = async function (knex) {
     return subQuery.then((response) => {
         if (response.length > 0) {
             let workSettings;
-            const workSettingsRaw = response[0];
+            const workSettingsRaw = response[0].jsonData;
 
             try {
                 workSettings = JSON.parse(workSettingsRaw);
             } catch (error) {
+                console.error('Error parsing workSettings in migration.');
                 // Just in case, there is error in JSON
                 workSettings = { hoursToWork: 8 };
             }
