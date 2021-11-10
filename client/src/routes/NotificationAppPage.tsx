@@ -25,7 +25,9 @@ const NotificationAppPageTemp = () => {
     return (
         <Box p={1} bg={'brand.mainColor'}>
             <Center>
-                <Text fontSize="small">{currentSession && <ShortTimeInterval totalMs={currentSession} />}</Text>
+                <Text fontSize="small" color="white">
+                    {currentSession && <ShortTimeInterval totalMs={currentSession} />}
+                </Text>
             </Center>
         </Box>
     );

@@ -141,27 +141,39 @@ export const OnlineChart = ({ items }) => {
                         y={(datum) => datum.diff}
                         data={pieData}
                     />
-                    <Box position="absolute" top={0} mt={'63px'} left="50%" ml={`${-((width - 70) / 2)}px`} zIndex={10}>
-                        <VictoryPie
-                            theme={chartTheme}
-                            padding={2}
-                            width={width - 70}
-                            height={width - 70}
-                            innerRadius={innerWidth / 2 - 5}
-                            containerComponent={<VictoryContainer responsive={false} />}
-                            style={style}
-                            y={(datum) => datum.diff}
-                            labels={() => null}
-                            data={[
-                                { x: 1, diff: sessionLine, color: 'transparent' },
-                                // { x: 2, diff: sessionLineHighlight, color: onlineSinceLineColor },
-                                {
-                                    x: 3,
-                                    diff: currentSession,
-                                    color: sessionIsOvertime ? overtimeColor : onlineSinceColor,
-                                },
-                            ]}
-                        />
+                    <Box
+                        position="absolute"
+                        top={0}
+                        mt={'63px'}
+                        left="50%"
+                        ml={`${-((width - 70) / 2)}px`}
+                        zIndex={10}
+                        pointerEvents="none"
+                    >
+                        <svg style={{ pointerEvents: 'none' }} width={width - 70} height={width - 70}>
+                            <VictoryPie
+                                theme={chartTheme}
+                                padding={2}
+                                width={width - 70}
+                                height={width - 70}
+                                standalone={false}
+                                innerRadius={innerWidth / 2 - 5}
+                                containerComponent={
+                                    <VictoryContainer responsive={false} style={{ pointerEvents: 'none' }} />
+                                }
+                                style={style}
+                                y={(datum) => datum.diff}
+                                labels={() => null}
+                                data={[
+                                    { x: 1, diff: sessionLine, color: 'transparent' },
+                                    {
+                                        x: 3,
+                                        diff: currentSession,
+                                        color: sessionIsOvertime ? overtimeColor : onlineSinceColor,
+                                    },
+                                ]}
+                            />
+                        </svg>
                     </Box>
                 </Box>
 
