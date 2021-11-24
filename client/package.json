@@ -9,7 +9,7 @@
         "@emotion/react": "^11",
         "@emotion/styled": "^11",
         "@fontsource/inter": "^4.5.0",
-        "@hookform/resolvers": "^2.8.2",
+        "@hookform/resolvers": "^2.8.3",
         "@react-hook/window-size": "^3.0.7",
         "@welldone-software/why-did-you-render": "^6.2.1",
         "debounce-promise": "^3.1.2",
