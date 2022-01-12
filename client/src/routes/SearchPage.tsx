@@ -13,7 +13,6 @@ import { Loader } from '../components/Timeline/Loader';
 import { CardBox } from '../components/CardBox';
 import { TypeSelect } from '../components/TypeSelect';
 import { HStack } from '@chakra-ui/react';
-import { PaywallOverlay } from '../components/Paywall/PaywallOverlay';
 
 export function SearchPage() {
     const fetchIdRef = useRef(0);
@@ -24,12 +23,7 @@ export function SearchPage() {
     const [searchPaging, setSearchPaging] = useState({ pageSize: 20, pageIndex: 0 });
 
     const [searchResult, setSearchResult] = useState([]);
-    const [timerange, setTimerange] = useState([
-        moment()
-            .startOf('day')
-            .subtract(10, 'days'),
-        moment().endOf('day'),
-    ]);
+    const [timerange, setTimerange] = useState([moment().startOf('day').subtract(10, 'days'), moment().endOf('day')]);
 
     const loadItems = async (searchStr, firstPage = false) => {
         const fetchId = ++fetchIdRef.current;
@@ -57,7 +51,7 @@ export function SearchPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const exportItems = async searchStr => {
+    const exportItems = async (searchStr) => {
         setIsLoading(true);
         const [from, to] = timerange;
         await exportFromItems({
@@ -77,14 +71,13 @@ export function SearchPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchPaging]);
 
-    const onSubmit = event => {
+    const onSubmit = (event) => {
         event.preventDefault();
         setSearchPaging({ ...searchPaging, pageIndex: 0 });
     };
 
     return (
         <MainLayout>
-            <PaywallOverlay />
             <form onSubmit={onSubmit}>
                 <Flex p={3} flexDirection="column">
                     <CardBox position="relative" p={0}>
@@ -93,14 +86,11 @@ export function SearchPage() {
                             <SearchOptions setTimerange={setTimerange} timerange={timerange} />
                         </Box>
                         <HStack p={4}>
-                            <TypeSelect
-                                value={taskName}
-                                onChange={event => setTaskName(event.target.value)}
-                            />
+                            <TypeSelect value={taskName} onChange={(event) => setTaskName(event.target.value)} />
                             <Input
                                 placeholder="Search from all items"
                                 value={searchText}
-                                onChange={event => setSearchText(event.target.value)}
+                                onChange={(event) => setSearchText(event.target.value)}
                             />
 
                             <Button type="submit" bg="brand.mainColor" w="100px">

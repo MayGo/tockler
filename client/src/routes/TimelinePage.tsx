@@ -11,18 +11,13 @@ import { Timeline } from '../components/Timeline/Timeline';
 import { VisibleRange } from '../components/Timeline/VisibleRange';
 import { TrackItemTabs } from '../components/TrackItemTable/TrackItemTabs';
 import { useInterval } from '../hooks/intervalHook';
-import { useStoreActions, useStoreState } from '../store/easyPeasy';
-import { PaywallOverlay } from '../components/Paywall/PaywallOverlay';
-import moment from 'moment';
+import { useStoreActions } from '../store/easyPeasy';
 
 const BG_SYNC_DELAY_MS = 10000;
-const TIMELINE_TRIAL_DAYS = 30;
 
 const ItemLabel = (props) => <Text fontSize="md" color={useColorModeValue('gray.700', 'gray.300')} {...props} />;
 
 export function TimelinePage() {
-    const timerange = useStoreState((state) => state.timerange);
-    const [beginDate] = timerange;
     const fetchTimerange = useStoreActions((actions) => actions.fetchTimerange);
     const bgSyncInterval = useStoreActions((actions) => actions.bgSyncInterval);
 
@@ -34,12 +29,8 @@ export function TimelinePage() {
         fetchTimerange();
     }, [fetchTimerange]);
 
-    const now = moment();
-    const showPaywall = now.diff(beginDate, 'days') > TIMELINE_TRIAL_DAYS;
-
     return (
         <MainLayout>
-            {showPaywall && <PaywallOverlay top={130} />}
             <VStack p={4} spacing={4}>
                 <CardBox>
                     <Flex>

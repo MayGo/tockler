@@ -5,12 +5,10 @@ import { SummaryProvider } from '../SummaryContext';
 import { LineChart } from '../components/LineCharts/LineChart';
 import { VStack } from '@chakra-ui/react';
 import { CardBox } from '../components/CardBox';
-import { PaywallOverlay } from '../components/Paywall/PaywallOverlay';
 
 export function SummaryPage() {
     return (
         <MainLayout>
-            <PaywallOverlay />
             <SummaryProvider>
                 <VStack p={4} spacing={4}>
                     <CardBox p={0} position="relative" overflow="hidden">
