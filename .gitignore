@@ -9,3 +9,4 @@ dist/
 packaged
 electron/packaged
 !.github/FUNDING.yml
+client/.env.development
