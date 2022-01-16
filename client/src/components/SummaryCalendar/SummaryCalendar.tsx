@@ -33,7 +33,7 @@ const DayContent = ({ listData }) => {
     const color = useColorModeValue('black', 'gray.300');
     return (
         <VStack align="stretch" p={3} pt={1} spacing={'1px'}>
-            {listData.map(item => (
+            {listData.map((item) => (
                 <Flex key={item.title} alignItems="center">
                     <Box pr={2}>{icons[item.type]}</Box>
                     <Text fontSize="sm" color={color}>
@@ -49,8 +49,8 @@ const DayContent = ({ listData }) => {
 };
 
 export const SummaryCalendar = () => {
-    const timerange = useStoreState(state => state.timerange);
-    const loadTimerange = useStoreActions(state => state.loadTimerange);
+    const timerange = useStoreState((state) => state.timerange);
+    const loadTimerange = useStoreActions((state) => state.loadTimerange);
 
     const {
         selectedDate,
@@ -78,11 +78,11 @@ export const SummaryCalendar = () => {
     };
 
     useEffect(() => {
-        setSelectedDate(timerange[0]);
+        setSelectedDate(timerange[0].clone());
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const getListData = day => {
+    const getListData = (day) => {
         const listData: any[] = [];
 
         const times = onlineTimesSummary[day];
@@ -111,7 +111,7 @@ export const SummaryCalendar = () => {
         return listData || [];
     };
 
-    const dateCellRender = value => {
+    const dateCellRender = (value) => {
         if (selectedMode === CALENDAR_MODE.MONTH) {
             if (value.month() === selectedDate.month()) {
                 const listData = getListData(value.format(DAY_MONTH_FORMAT));

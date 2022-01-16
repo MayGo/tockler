@@ -12,16 +12,16 @@ import { DateRangeInput } from '../Datepicker';
 import { OnDatesChangeProps } from '@datepicker-react/hooks';
 import { FaPlay, FaStop } from 'react-icons/fa';
 
-const getDayBefore = d => moment(d).subtract(1, 'days');
-const getDayAfter = d => moment(d).add(1, 'days');
+const getDayBefore = (d) => moment(d).subtract(1, 'days');
+const getDayAfter = (d) => moment(d).add(1, 'days');
 
 export const Search = memo(() => {
-    const timerange = useStoreState(state => state.timerange);
+    const timerange = useStoreState((state) => state.timerange);
 
-    const timerangeMode = useStoreState(state => state.timerangeMode);
-    const liveView = useStoreState(state => state.liveView);
-    const loadTimerange = useStoreActions(actions => actions.loadTimerange);
-    const setLiveView = useStoreActions(actions => actions.setLiveView);
+    const timerangeMode = useStoreState((state) => state.timerangeMode);
+    const liveView = useStoreState((state) => state.liveView);
+    const loadTimerange = useStoreActions((actions) => actions.loadTimerange);
+    const setLiveView = useStoreActions((actions) => actions.setLiveView);
 
     const showLiveViewButton = timerangeMode === TIMERANGE_MODE_TODAY;
     const toggleLiveView = () => {
@@ -86,20 +86,14 @@ export const Search = memo(() => {
             </Box>
             <Box p={1}>
                 <Tooltip placement="bottom" label="Also activates Live view">
-                    <Button
-                        onClick={selectToday}
-                        variant={showLiveViewButton ? 'solid' : 'outline'}
-                    >
+                    <Button onClick={selectToday} variant={showLiveViewButton ? 'solid' : 'outline'}>
                         Today
                     </Button>
                 </Tooltip>
             </Box>
             {showLiveViewButton && (
                 <Box p={1}>
-                    <Tooltip
-                        placement="bottom"
-                        label={liveView ? 'Pause live view' : 'Start live view'}
-                    >
+                    <Tooltip placement="bottom" label={liveView ? 'Pause live view' : 'Start live view'}>
                         <Button onClick={toggleLiveView} colorScheme={liveView ? 'green' : 'red'}>
                             {liveView ? <FaStop /> : <FaPlay />}
                         </Button>
