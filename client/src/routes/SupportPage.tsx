@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { MainLayout } from '../components/MainLayout/MainLayout';
-import emailjs from 'emailjs-com';
 import { Button } from '@chakra-ui/button';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import { Textarea } from '@chakra-ui/textarea';
@@ -12,11 +11,31 @@ const TEMPLATE_ID = process.env.REACT_APP_TEMPLATE_ID || '';
 const SERVICE_ID = process.env.REACT_APP_SERVICE_ID || '';
 const USER_ID = process.env.REACT_APP_USER_ID || '';
 
-const Paragraph = props => (
+const EMAILJS_API = 'https://api.emailjs.com/api/v1.0/email/send';
+
+const Paragraph = (props) => (
     <Box py={2}>
         <Text fontSize="lg" {...props} />
     </Box>
 );
+
+const sendEmail = (templateParams) => {
+    var data = {
+        service_id: SERVICE_ID,
+        template_id: TEMPLATE_ID,
+        user_id: USER_ID,
+        template_params: { ...templateParams },
+    };
+
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    };
+    return fetch(EMAILJS_API, requestOptions);
+};
+
+const errToString = (err) => (err.text ? err.text : err.toString());
 
 export function SupportPage() {
     const [content, setContent] = useState('');
@@ -25,12 +44,12 @@ export function SupportPage() {
     const [isSending, setIsSending] = useState(false);
     const [email, setEmail] = useState('');
 
-    const changeContent = e => {
+    const changeContent = (e) => {
         const { value } = e.target;
         setContent(value);
     };
 
-    const changeEmail = e => {
+    const changeEmail = (e) => {
         const { value } = e.target;
         setEmail(value);
     };
@@ -40,15 +59,15 @@ export function SupportPage() {
             setContentError(true);
             return;
         }
-        const templateParams = { reply_to: email, message: content };
+
         try {
             setIsSending(true);
-            await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, USER_ID);
+            await sendEmail({ reply_to: email, message: content });
             setEmailSent(true);
             setContent('');
             setContentError(false);
         } catch (err) {
-            alert('Email send error! ' + (err.text ? err.text : err.toString()));
+            alert('Email send error! ' + errToString(err));
         }
         setIsSending(false);
     };
@@ -57,7 +76,7 @@ export function SupportPage() {
         <MainLayout>
             <VStack spacing={3} p={4} alignItems="flex-start">
                 <CardBox title="Contact Me" width={['100%', '100%', '100%', '100%', '50%']} divider>
-                    <VStack spacing={3} alignItems="flex-end">
+                    <VStack spacing={3} alignItems="flex-start">
                         <Paragraph>
                             Feel free to contact if you have any problems or feature requests. Or if you have any
                             feedback to give - good or bad.
@@ -71,7 +90,7 @@ export function SupportPage() {
                             rows={4}
                         />
 
-                        {contentError && <Text>Content is empty!</Text>}
+                        {contentError && <Text color="red">Content is empty!</Text>}
 
                         <Input value={email} placeholder="E-mail (If you need feedback)" onChange={changeEmail} />
 
@@ -80,8 +99,8 @@ export function SupportPage() {
                         </Button>
                     </VStack>
                     {emailSent && (
-                        <Flex p={1}>
-                            <Text>Email is sent!</Text>
+                        <Flex pt={5}>
+                            <Text color="green">Email is sent!</Text>
                         </Flex>
                     )}
                 </CardBox>
