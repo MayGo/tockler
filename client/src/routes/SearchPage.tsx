@@ -23,6 +23,7 @@ export function SearchPage() {
     const [searchPaging, setSearchPaging] = useState({ pageSize: 20, pageIndex: 0 });
 
     const [searchResult, setSearchResult] = useState([]);
+    const [total, setTotal] = useState(0);
     const [timerange, setTimerange] = useState([moment().startOf('day').subtract(10, 'days'), moment().endOf('day')]);
 
     const loadItems = async (searchStr, firstPage = false) => {
@@ -36,11 +37,26 @@ export function SearchPage() {
             searchStr,
             paging: searchPaging,
         });
+
+        const sum = await searchFromItems({
+            from,
+            to,
+            taskName,
+            searchStr,
+            paging: searchPaging,
+            sumTotal: true,
+        });
+
+        const sumColumn = 'sum(endDate-beginDate)';
+
+        setTotal(sum.results.length > 0 ? sum.results[0][sumColumn] : 0);
         // Only update the data if this is the latest fetch
         if (fetchId === fetchIdRef.current) {
             setSearchResult(items);
+
             console.info('searching with paging', searchPaging, timerange, items);
         }
+
         setIsLoading(false);
 
         return;
@@ -110,6 +126,7 @@ export function SearchPage() {
                             searchResult={searchResult}
                             changePaging={changePaging}
                             pageIndex={searchPaging.pageIndex}
+                            total={total}
                         />
                     </CardBox>
                 </Flex>

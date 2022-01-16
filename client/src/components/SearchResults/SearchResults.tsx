@@ -9,16 +9,13 @@ import { ItemsTable } from '../TrackItemTable/ItemsTable';
 const ActionCell = ({ cell }) => {
     const { beginDate, endDate } = cell.row.original;
 
-    const loadTimerange = useStoreActions(state => state.loadTimerange);
-    const setVisibleTimerange = useStoreActions(state => state.setVisibleTimerange);
+    const loadTimerange = useStoreActions((state) => state.loadTimerange);
+    const setVisibleTimerange = useStoreActions((state) => state.setVisibleTimerange);
 
     const history = useHistory();
 
-    const goToTimelinePage = record => {
-        loadTimerange([
-            moment(record.beginDate).startOf('day'),
-            moment(record.beginDate).endOf('day'),
-        ]);
+    const goToTimelinePage = (record) => {
+        loadTimerange([moment(record.beginDate).startOf('day'), moment(record.beginDate).endOf('day')]);
         setVisibleTimerange([
             moment(record.beginDate).subtract(15, 'minutes'),
             moment(record.endDate).add(15, 'minutes'),
@@ -48,7 +45,7 @@ const extraColumns = [
         maxWidth: 20,
     },
 ];
-const SearchResultsPlain = ({ searchResult, changePaging, pageIndex }) => {
+const SearchResultsPlain = ({ searchResult, changePaging, pageIndex, total }) => {
     return (
         <ItemsTable
             data={searchResult.results || []}
@@ -58,6 +55,7 @@ const SearchResultsPlain = ({ searchResult, changePaging, pageIndex }) => {
             pageCount={searchResult.total}
             pageIndex={pageIndex}
             extraColumns={extraColumns}
+            total={total}
         />
     );
 

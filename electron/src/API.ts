@@ -59,8 +59,8 @@ const trackItemActions = {
         return trackItemService.deleteByIds(payload.trackItemIds);
     },
     searchFromItems: async (payload) => {
-        const { from, to, taskName, searchStr, paging } = payload;
-        return trackItemService.findAllItems(from, to, taskName, searchStr, paging);
+        const { from, to, taskName, searchStr, paging, sumTotal } = payload;
+        return trackItemService.findAllItems(from, to, taskName, searchStr, paging, sumTotal);
     },
     exportFromItems: async (payload) => {
         const { from, to, taskName, searchStr } = payload;

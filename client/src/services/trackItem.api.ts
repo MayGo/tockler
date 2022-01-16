@@ -37,7 +37,7 @@ export function getOnlineStartTime(): Promise<any> {
     return EventEmitter.emit('getOnlineStartTime');
 }
 
-export function searchFromItems({ from, to, taskName, searchStr, paging }): Promise<any> {
+export function searchFromItems({ from, to, taskName, searchStr, paging, sumTotal = false }): Promise<any> {
     Logger.debug('Searching items:', { from, to, taskName, searchStr, paging });
     return EventEmitter.emit('searchFromItems', {
         from: from.valueOf(),
@@ -45,6 +45,7 @@ export function searchFromItems({ from, to, taskName, searchStr, paging }): Prom
         taskName,
         searchStr,
         paging,
+        sumTotal,
     });
 }
 export function exportFromItems({ from, to, taskName, searchStr }): Promise<any> {
@@ -115,9 +116,7 @@ export function startNewLogItem(oldItem: any) {
     newItem.color = oldItem.color;
     newItem.title = oldItem.title;
     newItem.beginDate = moment().valueOf();
-    newItem.endDate = moment()
-        .add(60, 'seconds')
-        .valueOf();
+    newItem.endDate = moment().add(60, 'seconds').valueOf();
 
     EventEmitter.send('start-new-log-item', newItem);
 }

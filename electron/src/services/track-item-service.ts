@@ -7,6 +7,7 @@ import { dialog } from 'electron';
 import { writeFileSync } from 'fs';
 import * as stringify from 'csv-stringify/lib/sync';
 import moment = require('moment');
+import { raw } from 'objection';
 
 export class TrackItemService {
     logger = logManager.getLogger('TrackItemService');
@@ -92,7 +93,7 @@ export class TrackItemService {
 
         return true;
     }
-    findAllItems(from, to, taskName, searchStr, paging) {
+    findAllItems(from, to, taskName, searchStr, paging, sumTotal) {
         let order = paging.order || 'beginDate';
         let orderSort = paging.orderSort || 'asc';
         if (order.startsWith('-')) {
@@ -115,6 +116,10 @@ export class TrackItemService {
             query.where(function () {
                 this.where('title', 'like', '%' + searchStr + '%').orWhere('url', 'like', '%' + searchStr + '%');
             });
+        }
+
+        if (sumTotal) {
+            query.sum(raw('endDate-beginDate'));
         }
 
         return query;

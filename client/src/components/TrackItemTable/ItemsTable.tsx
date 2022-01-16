@@ -7,11 +7,11 @@ import { diffAndFormatShort } from '../../utils';
 
 import { Box, Flex } from '@chakra-ui/layout';
 import { Button } from '@chakra-ui/button';
-import { Table, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/table';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/table';
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 import { useTable, useSortBy, usePagination, useFilters, useRowSelect } from 'react-table';
 
-import { calculateTotal, fuzzyTextFilterFn } from './TrackItemTable.utils';
+import { calculateTotal, fuzzyTextFilterFn, totalToDuration } from './TrackItemTable.utils';
 import { SelectColumnFilter } from './SelectColumnFilter';
 import { DefaultColumnFilter } from './DefaultColumnFilter';
 import { IndeterminateCheckbox } from './IndeterminateCheckbox';
@@ -29,6 +29,7 @@ interface ItemsTableProps {
     pageIndex?: number;
     changePaging?: any;
     extraColumns?: any[];
+    total: number;
 }
 
 export const ItemsTable = ({
@@ -40,6 +41,7 @@ export const ItemsTable = ({
     pageIndex: controlledPageIndex,
     changePaging,
     extraColumns = [],
+    total,
 }: ItemsTableProps) => {
     const dateToValue = ({ value }) => {
         return <Moment format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}>{value}</Moment>;
@@ -98,11 +100,7 @@ export const ItemsTable = ({
             },
             {
                 Header: 'Duration',
-                accessor: record => diffAndFormatShort(record.beginDate, record.endDate),
-                Footer: info => {
-                    const total = useMemo(() => calculateTotal(info.data), [info.data]);
-                    return <Box pr={4}>Total: {total}</Box>;
-                },
+                accessor: (record) => diffAndFormatShort(record.beginDate, record.endDate),
                 width: 80,
                 minWidth: 80,
                 maxWidth: 80,
@@ -120,12 +118,10 @@ export const ItemsTable = ({
             // Or, override the default text filter to use
             // "startWith"
             text: (rows, id, filterValue) => {
-                return rows.filter(row => {
+                return rows.filter((row) => {
                     const rowValue = row.values[id];
                     return rowValue !== undefined
-                        ? String(rowValue)
-                              .toLowerCase()
-                              .startsWith(String(filterValue).toLowerCase())
+                        ? String(rowValue).toLowerCase().startsWith(String(filterValue).toLowerCase())
                         : true;
                 });
             },
@@ -146,7 +142,6 @@ export const ItemsTable = ({
         getTableProps,
         getTableBodyProps,
         headerGroups,
-        footerGroups,
         prepareRow,
         page,
         canPreviousPage,
@@ -173,8 +168,8 @@ export const ItemsTable = ({
         useSortBy,
         usePagination,
         useRowSelect,
-        hooks => {
-            hooks.visibleColumns.push(columns => [
+        (hooks) => {
+            hooks.visibleColumns.push((columns) => [
                 {
                     id: 'selection',
                     width: 10,
@@ -206,21 +201,21 @@ export const ItemsTable = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pageIndex, pageSize]);
 
+    const subTotal = useMemo(() => calculateTotal(data), [data]);
+
     return (
         <>
             <Portal containerRef={resetButtonsRef}>
                 {!isSearchTable && (
-                    <TrackItemTableButtons
-                        {...{ setAllFilters, setSortBy, selectedFlatRows, selectedRowIds }}
-                    />
+                    <TrackItemTableButtons {...{ setAllFilters, setSortBy, selectedFlatRows, selectedRowIds }} />
                 )}
             </Portal>
 
             <Table {...getTableProps()}>
                 <Thead>
-                    {headerGroups.map(headerGroup => (
+                    {headerGroups.map((headerGroup) => (
                         <Tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map(column => (
+                            {headerGroup.headers.map((column) => (
                                 <Th
                                     {...column.getHeaderProps({
                                         style: {
@@ -261,11 +256,11 @@ export const ItemsTable = ({
                     ))}
                 </Thead>
                 <Tbody {...getTableBodyProps()}>
-                    {page.map(row => {
+                    {page.map((row) => {
                         prepareRow(row);
                         return (
                             <Tr {...row.getRowProps()}>
-                                {row.cells.map(cell => (
+                                {row.cells.map((cell) => (
                                     <Td {...cell.getCellProps()} isNumeric={cell.column.isNumeric}>
                                         {cell.render('Cell')}
                                     </Td>
@@ -274,16 +269,12 @@ export const ItemsTable = ({
                         );
                     })}
                 </Tbody>
-                <Tfoot>
-                    {footerGroups.map(group => (
-                        <Tr {...group.getFooterGroupProps()}>
-                            {group.headers.map(column => (
-                                <Td {...column.getFooterProps()}>{column.render('Footer')}</Td>
-                            ))}
-                        </Tr>
-                    ))}
-                </Tfoot>
             </Table>
+            <Box display="flex" justifyContent="end" pt={5}>
+                <Box pr={5} whiteSpace={'nowrap'}>
+                    Total: {subTotal} / <b>{totalToDuration(total)}</b>
+                </Box>
+            </Box>
 
             <TrackItemTablePager
                 {...{
