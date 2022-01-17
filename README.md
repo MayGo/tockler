@@ -26,11 +26,11 @@
 
 # Applications installer download
 
-| Operating System        | Download                                                                                                                                                                                                                      |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Windows (32 and 64-bit) | <a href='https://github.com/MayGo/tockler/releases/download/v3.20.0/tockler-3.20.12-setup-win.exe'><img alt='Get it on Windows' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeWindows.png'/></a> |
-| macOS                   | <a href='https://github.com/MayGo/tockler/releases/download/v3.20.0/Tockler-3.20.12.dmg'><img alt='Get it on macOS' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeMacOS.png'/></a>               |
-| Linux                   | <a href='https://github.com/MayGo/tockler/releases/download/v3.20.0/Tockler-3.20.12.AppImage'><img alt='Get it on Linux' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeLinux.png'/></a>          |
+| Operating System        | Download                                                                                                                                                                                                                       |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Windows (32 and 64-bit) | <a href='https://github.com/MayGo/tockler/releases/download/v3.21.10/tockler-3.21.10-setup-win.exe'><img alt='Get it on Windows' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeWindows.png'/></a> |
+| macOS                   | <a href='https://github.com/MayGo/tockler/releases/download/v3.21.10/Tockler-3.21.10.dmg'><img alt='Get it on macOS' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeMacOS.png'/></a>               |
+| Linux                   | <a href='https://github.com/MayGo/tockler/releases/download/v3.21.10/Tockler-3.21.10.AppImage'><img alt='Get it on Linux' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeLinux.png'/></a>          |
 
 Tockler is free to download and use.
 
