@@ -94,12 +94,8 @@ export class TrackItemService {
         return true;
     }
     findAllItems(from, to, taskName, searchStr, paging, sumTotal) {
-        let order = paging.order || 'beginDate';
-        let orderSort = paging.orderSort || 'asc';
-        if (order.startsWith('-')) {
-            order = order.substring(1);
-            orderSort = 'desc';
-        }
+        let sortByKey = paging.sortByKey || 'beginDate';
+        let sortByOrder = paging.sortByOrder || 'asc';
 
         let pageSize = paging.pageSize || 10;
         // Objections.js uses 0 based paging
@@ -110,7 +106,7 @@ export class TrackItemService {
             .where('endDate', '>=', from)
             .where('endDate', '<', to)
             .page(pageIndex, pageSize)
-            .orderBy(order, orderSort);
+            .orderBy(sortByKey, sortByOrder);
 
         if (searchStr) {
             query.where(function () {

@@ -27,9 +27,10 @@ interface ItemsTableProps {
     isSearchTable: boolean;
     pageCount?: number;
     pageIndex?: number;
-    changePaging?: any;
+    fetchData?: any;
     extraColumns?: any[];
     total: number;
+    manualSortBy: boolean;
 }
 
 export const ItemsTable = ({
@@ -39,9 +40,10 @@ export const ItemsTable = ({
     isSearchTable,
     pageCount: controlledPageCount,
     pageIndex: controlledPageIndex,
-    changePaging,
+    fetchData,
     extraColumns = [],
     total,
+    manualSortBy = false,
 }: ItemsTableProps) => {
     const dateToValue = ({ value }) => {
         return <Moment format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}>{value}</Moment>;
@@ -100,6 +102,7 @@ export const ItemsTable = ({
             },
             {
                 Header: 'Duration',
+                disableSortBy: manualSortBy,
                 accessor: (record) => diffAndFormatShort(record.beginDate, record.endDate),
                 width: 80,
                 minWidth: 80,
@@ -155,13 +158,14 @@ export const ItemsTable = ({
         setAllFilters,
         setSortBy,
         selectedFlatRows,
-        state: { pageIndex, pageSize, selectedRowIds },
+        state: { pageIndex, pageSize, selectedRowIds, sortBy },
     } = useTable(
         {
             columns,
             defaultColumn,
             filterTypes,
             data,
+            manualSortBy,
             ...pagingProps,
         },
         useFilters,
@@ -195,11 +199,18 @@ export const ItemsTable = ({
 
     useEffect(() => {
         if (isSearchTable) {
-            console.info('Change paging', { pageIndex, pageSize });
-            changePaging({ pageIndex, pageSize });
+            console.info('Change paging', { pageIndex, pageSize, sortBy });
+            fetchData({ pageIndex, pageSize, sortBy });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pageIndex, pageSize]);
+
+    useEffect(() => {
+        if (manualSortBy) {
+            fetchData({ pageIndex, pageSize, sortBy });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [fetchData, sortBy, manualSortBy]);
 
     const subTotal = useMemo(() => calculateTotal(data), [data]);
 

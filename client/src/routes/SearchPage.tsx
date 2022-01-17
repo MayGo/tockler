@@ -43,17 +43,17 @@ export function SearchPage() {
             to,
             taskName,
             searchStr,
-            paging: searchPaging,
+            paging: {},
             sumTotal: true,
         });
 
+        console.info('Sum data', sum);
         const sumColumn = 'sum(endDate-beginDate)';
 
-        setTotal(sum.results.length > 0 ? sum.results[0][sumColumn] : 0);
         // Only update the data if this is the latest fetch
         if (fetchId === fetchIdRef.current) {
             setSearchResult(items);
-
+            setTotal(sum.results.length > 0 ? sum.results[0][sumColumn] : 0);
             console.info('searching with paging', searchPaging, timerange, items);
         }
 
@@ -62,8 +62,16 @@ export function SearchPage() {
         return;
     };
 
-    const changePaging = useCallback(({ pageSize, pageIndex }) => {
-        setSearchPaging({ ...searchPaging, pageSize, pageIndex });
+    const fetchData = useCallback(({ pageSize, pageIndex, sortBy }) => {
+        const pageProps = { pageSize, pageIndex };
+        if (sortBy && sortBy.length > 0) {
+            const [sort] = sortBy;
+
+            pageProps['sortByKey'] = sort.id;
+            pageProps['sortByOrder'] = sort.desc ? 'desc' : 'asc';
+        }
+
+        setSearchPaging(pageProps);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -124,7 +132,7 @@ export function SearchPage() {
                         </HStack>
                         <SearchResults
                             searchResult={searchResult}
-                            changePaging={changePaging}
+                            fetchData={fetchData}
                             pageIndex={searchPaging.pageIndex}
                             total={total}
                         />

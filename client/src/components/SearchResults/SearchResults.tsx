@@ -45,29 +45,21 @@ const extraColumns = [
         maxWidth: 20,
     },
 ];
-const SearchResultsPlain = ({ searchResult, changePaging, pageIndex, total }) => {
+
+const SearchResultsPlain = ({ searchResult, fetchData, pageIndex, total }) => {
     return (
         <ItemsTable
             data={searchResult.results || []}
             isOneDay={false}
             isSearchTable
-            changePaging={changePaging}
+            fetchData={fetchData}
             pageCount={searchResult.total}
             pageIndex={pageIndex}
             extraColumns={extraColumns}
             total={total}
+            manualSortBy
         />
     );
-
-    /* return (
-        <Td>
-        <Tooltip placement="left" label="Select date and go to timeline view">
-            <AiOutlineUnorderedList
-                onClick={() => goToTimelinePage({ beginDate, endDate })}
-            />
-        </Tooltip>
-    </Td>
-    );*/
 };
 
 export const SearchResults = memo(SearchResultsPlain);
