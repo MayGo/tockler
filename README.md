@@ -1,3 +1,12 @@
+<p align="center">
+  <a href="https://tockler.io/#gh-light-mode-only">
+    <img src="https://github.com/MayGo/tockler/raw/master/screenshots/tockler-logo-light.svg" width="318px" alt="Tockler logo" />
+  </a>
+  <a href="https://tockler.io/#gh-dark-mode-only">
+    <img src="https://github.com/MayGo/tockler/raw/master/screenshots/tockler-logo-dark.svg" width="318px" alt="Tockler logo" />
+  </a>
+</p>
+
 <!-- DONATELINKS -->
 
 [![Donate using PayPal](https://github.com/MayGo/tockler/raw/master/badges/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAHHBZZCZVDMA)
@@ -9,8 +18,6 @@
 [![Release](https://img.shields.io/github/v/release/MayGo/tockler)](https://github.com/MayGo/tockler/releases/latest) [![Total downloads](https://img.shields.io/github/downloads/maygo/tockler/total)](https://github.com/MayGo/tockler/releases) [![Latest downloads](https://img.shields.io/github/downloads/maygo/tockler/latest/total)](https://github.com/MayGo/tockler/releases/latest)
 
 <a href="https://www.producthunt.com/posts/tockler?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-tockler" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=304890&theme=light" alt="Tockler - Automatically track applications usage and working time. | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
-
-## ![Tockler](https://github.com/MayGo/tockler/raw/master/screenshots/tockler-logo.png 'Tockler')
 
 **Automatically track applications usage and working time.**
 
