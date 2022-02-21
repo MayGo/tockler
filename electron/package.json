@@ -43,7 +43,7 @@
         "objection": "^2.2.17",
         "randomcolor": "0.6.2",
         "sqlite3": "5.0.2",
-        "url-parse": "^1.5.3"
+        "url-parse": "^1.5.9"
     },
     "peerDependencies": {},
     "devDependencies": {
