@@ -5,7 +5,7 @@ import { stateManager } from '../state-manager';
 import { TrackItem } from '../models/TrackItem';
 import { dialog } from 'electron';
 import { writeFileSync } from 'fs';
-import * as stringify from 'csv-stringify/lib/sync';
+import { stringify } from 'csv-stringify/sync';
 import moment = require('moment');
 import { raw } from 'objection';
 
