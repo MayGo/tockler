@@ -1118,6 +1118,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.8.tgz#50d680c8a8a78fe30abe6906453b21ad8ab0ad7b"
   integrity sha512-YofkM6fGv4gDJq78g4j0mMuGMkZVxZDgtU0JRdx6FgiJDG+0fY0GKVolOV8WqVmEhLCXkQRjwDdKyPxJp/uucg==
 
+"@types/node@18.11.9":
+  version "18.11.9"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.9.tgz#02d013de7058cea16d36168ef2fc653464cfbad4"
+  integrity sha512-CRpX21/kGdzjOpFsZSkcrXMGIBWMGNIHXXBVFSH+ggkftxg+XYP20TESbh+zFvFj3EQOl5byk0HTRn1IL6hbqg==
+
 "@types/node@^10.12.18":
   version "10.17.60"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.17.60.tgz#35f3d6213daed95da7f0f73e75bcc6980e90597b"
@@ -1132,11 +1137,6 @@
   version "15.14.2"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-15.14.2.tgz#7af8ab20156586f076f4760bc1b3c5ddfffd1ff2"
   integrity sha512-dvMUE/m2LbXPwlvVuzCyslTEtQ2ZwuuFClDrOQ6mp2CenCg971719PTILZ4I6bTP27xfFFc+o7x2TkLuun/MPw==
-
-"@types/node@^16.11.4":
-  version "16.11.19"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.19.tgz#1afa165146997b8286b6eabcb1c2d50729055169"
-  integrity sha512-BPAcfDPoHlRQNKktbsbnpACGdypPFBuX4xQlsWDE7B8XXcfII+SpOLay3/qZmCLb39kV5S1RTYwXdkx2lwLYng==
 
 "@types/plist@^3.0.1":
   version "3.0.2"
@@ -2648,7 +2648,7 @@ crc@^3.8.0:
   dependencies:
     buffer "^5.1.0"
 
-cross-env@^7.0.3:
+cross-env@7.0.3:
   version "7.0.3"
   resolved "https://registry.yarnpkg.com/cross-env/-/cross-env-7.0.3.tgz#865264b29677dc015ba8418918965dd232fc54cf"
   integrity sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==
@@ -2958,10 +2958,10 @@ dotenv-expand@^5.1.0:
   resolved "https://registry.yarnpkg.com/dotenv-expand/-/dotenv-expand-5.1.0.tgz#3fbaf020bfd794884072ea26b1e9791d45a629f0"
   integrity sha512-YXQl1DSa4/PQyRfgrv6aoNjhasp/p4qs9FjJ4q4cQk+8m4r6k4ZSiEyytKG8f8W9gi8WsQtIObNmKd+tMzNTmA==
 
-dotenv-webpack@^7.0.3:
-  version "7.0.3"
-  resolved "https://registry.yarnpkg.com/dotenv-webpack/-/dotenv-webpack-7.0.3.tgz#f50ec3c7083a69ec6076e110566720003b7b107b"
-  integrity sha512-O0O9pOEwrk+n1zzR3T2uuXRlw64QxHSPeNN1GaiNBloQFNaCUL9V8jxSVz4jlXXFP/CIqK8YecWf8BAvsSgMjw==
+dotenv-webpack@^8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/dotenv-webpack/-/dotenv-webpack-8.0.1.tgz#6656550460a8076fab20e5ac2eac867e72478645"
+  integrity sha512-CdrgfhZOnx4uB18SgaoP9XHRN2v48BbjuXQsZY5ixs5A8579NxQkmMxRtI7aTwSiSQcM2ao12Fdu+L3ZS3bG4w==
   dependencies:
     dotenv-defaults "^2.0.2"
 
