@@ -1,7 +1,6 @@
 import { Box, Flex, Stack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { CardBox } from '../components/CardBox';
-import { MainLayout } from '../components/MainLayout/MainLayout';
 import { AppUsageChart } from '../components/PieCharts/AppUsageChart';
 import { MetricTiles } from '../components/PieCharts/MetricTiles';
 import { TaskList } from '../components/TaskList';
@@ -30,40 +29,38 @@ export function TimelinePage() {
     }, [fetchTimerange]);
 
     return (
-        <MainLayout>
-            <VStack p={4} spacing={4}>
-                <CardBox>
-                    <Flex>
-                        <Search />
-                        <Box flex={1} />
-                        <Box py={1}>
-                            <NewLogButton />
-                        </Box>
-                    </Flex>
-                    <Flex>
-                        <Stack py={4} my={4} pr={4} pl={1}>
-                            <ItemLabel>Task</ItemLabel>
-                            <ItemLabel>Status</ItemLabel>
-                            <ItemLabel>App</ItemLabel>
-                        </Stack>
-                        <Timeline />
-                    </Flex>
-                    <Flex alignItems="flex-end">
-                        <MetricTiles />
-                        <VisibleRange />
-                    </Flex>
-                </CardBox>
+        <VStack p={4} spacing={4}>
+            <CardBox>
+                <Flex>
+                    <Search />
+                    <Box flex={1} />
+                    <Box py={1}>
+                        <NewLogButton />
+                    </Box>
+                </Flex>
+                <Flex>
+                    <Stack py={4} my={4} pr={4} pl={1}>
+                        <ItemLabel>Task</ItemLabel>
+                        <ItemLabel>Status</ItemLabel>
+                        <ItemLabel>App</ItemLabel>
+                    </Stack>
+                    <Timeline />
+                </Flex>
+                <Flex alignItems="flex-end">
+                    <MetricTiles />
+                    <VisibleRange />
+                </Flex>
+            </CardBox>
 
-                <CardBox title="App Usage">
-                    <AppUsageChart />
-                </CardBox>
-                <CardBox title="Tasks">
-                    <TaskList />
-                </CardBox>
-                <CardBox>
-                    <TrackItemTabs />
-                </CardBox>
-            </VStack>
-        </MainLayout>
+            <CardBox title="App Usage">
+                <AppUsageChart />
+            </CardBox>
+            <CardBox title="Tasks">
+                <TaskList />
+            </CardBox>
+            <CardBox>
+                <TrackItemTabs />
+            </CardBox>
+        </VStack>
     );
 }

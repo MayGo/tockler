@@ -74,7 +74,7 @@ export const SummaryCalendar = () => {
         const d = moment(date);
         loadTimerange([d.clone().startOf('day'), d.clone().endOf('day')]);
 
-        navigate('/app/timeline');
+        navigate('/timeline');
     };
 
     useEffect(() => {

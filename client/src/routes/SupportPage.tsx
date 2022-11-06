@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { MainLayout } from '../components/MainLayout/MainLayout';
 import { Button } from '@chakra-ui/button';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import { Textarea } from '@chakra-ui/textarea';
@@ -73,38 +72,36 @@ export function SupportPage() {
     };
 
     return (
-        <MainLayout>
-            <VStack spacing={3} p={4} alignItems="flex-start">
-                <CardBox title="Contact Me" width={['100%', '100%', '100%', '100%', '50%']} divider>
-                    <VStack spacing={3} alignItems="flex-start">
-                        <Paragraph>
-                            Feel free to contact if you have any problems or feature requests. Or if you have any
-                            feedback to give - good or bad.
-                        </Paragraph>
+        <VStack spacing={3} p={4} alignItems="flex-start">
+            <CardBox title="Contact Me" width={['100%', '100%', '100%', '100%', '50%']} divider>
+                <VStack spacing={3} alignItems="flex-start">
+                    <Paragraph>
+                        Feel free to contact if you have any problems or feature requests. Or if you have any feedback
+                        to give - good or bad.
+                    </Paragraph>
 
-                        <Textarea
-                            variant="outline"
-                            value={content}
-                            placeholder="Content"
-                            onChange={changeContent}
-                            rows={4}
-                        />
+                    <Textarea
+                        variant="outline"
+                        value={content}
+                        placeholder="Content"
+                        onChange={changeContent}
+                        rows={4}
+                    />
 
-                        {contentError && <Text color="red">Content is empty!</Text>}
+                    {contentError && <Text color="red">Content is empty!</Text>}
 
-                        <Input value={email} placeholder="E-mail (If you need feedback)" onChange={changeEmail} />
+                    <Input value={email} placeholder="E-mail (If you need feedback)" onChange={changeEmail} />
 
-                        <Button onClick={sendForm} disabled={isSending}>
-                            Send
-                        </Button>
-                    </VStack>
-                    {emailSent && (
-                        <Flex pt={5}>
-                            <Text color="green">Email is sent!</Text>
-                        </Flex>
-                    )}
-                </CardBox>
-            </VStack>
-        </MainLayout>
+                    <Button onClick={sendForm} disabled={isSending}>
+                        Send
+                    </Button>
+                </VStack>
+                {emailSent && (
+                    <Flex pt={5}>
+                        <Text color="green">Email is sent!</Text>
+                    </Flex>
+                )}
+            </CardBox>
+        </VStack>
     );
 }

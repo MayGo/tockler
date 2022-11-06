@@ -1,12 +1,4 @@
-import {
-    Box,
-    Button,
-    Flex,
-    HStack,
-    Spacer,
-    StylesProvider,
-    useMultiStyleConfig,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Spacer, StylesProvider, useMultiStyleConfig } from '@chakra-ui/react';
 import { useDatepicker } from '@datepicker-react/hooks';
 import React from 'react';
 import { ActionButton } from './components';
@@ -71,14 +63,14 @@ export const Calendar = ({
         dp.onDateSelect(newDate.toDate());
     }
 
-    const onChangeYear = event => {
+    const onChangeYear = (event) => {
         const value = event.target.value;
         const newDate = moment(selectedDate).set('year', value);
         setSelectedDate(newDate);
         dp.onDateSelect(newDate.toDate());
     };
 
-    const onChangeMonth = event => {
+    const onChangeMonth = (event) => {
         const value = event.target.value;
         const newDate = moment(selectedDate).set('month', value);
         setSelectedDate(newDate);
@@ -91,8 +83,8 @@ export const Calendar = ({
         <DatepickerProvider
             weekdayLabelFormat={weekdayLabelFormatLong}
             monthLabelFormat={monthLabelFormatFn}
-            focusedDate={focusedDate}
             {...dp}
+            focusedDate={focusedDate}
         >
             <Box w="100%">
                 <Flex justifyContent="space-between" p={4}>
@@ -105,11 +97,7 @@ export const Calendar = ({
 
                         {isMonthView && <MonthSelect value={month} onChange={onChangeMonth} />}
                         <YearSelect value={year} onChange={onChangeYear} />
-                        <ActionButton
-                            direction={'right'}
-                            onClick={goToNext}
-                            tooltipLabel={`Next ${selectedMode}`}
-                        />
+                        <ActionButton direction={'right'} onClick={goToNext} tooltipLabel={`Next ${selectedMode}`} />
                     </HStack>
                     <Spacer />
                     <HStack spacing={3}>
@@ -137,11 +125,7 @@ export const Calendar = ({
                         />
                     )}
                     {!isMonthView && (
-                        <CalendarYear
-                            year={year}
-                            dateCellRender={dateCellRender}
-                            onDateClicked={onDateClicked}
-                        />
+                        <CalendarYear year={year} dateCellRender={dateCellRender} onDateClicked={onDateClicked} />
                     )}
                 </StylesProvider>
             </Box>

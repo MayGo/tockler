@@ -21,7 +21,7 @@ const ActionCell = ({ cell }) => {
             moment(record.beginDate).subtract(15, 'minutes'),
             moment(record.endDate).add(15, 'minutes'),
         ]);
-        navigate('/app/timeline');
+        navigate('/timeline');
     };
 
     return (

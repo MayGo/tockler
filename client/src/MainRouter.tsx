@@ -40,12 +40,11 @@ export function MainRouter() {
         <ChartThemeProvider>
             <RootProvider>
                 <Routes>
-                    <Route path="/" index element={<MainAppPage />} />
-                    <Route path="/app" element={<MainAppPage />} />
+                    <Route path="*" element={<MainAppPage />} />
+
                     <Route path="/trayApp" element={<TrayAppPage />} />
                     <Route path="/notificationApp" element={<NotificationAppPage />} />
                     <Route path="/trayPage" element={<TrayPage />} />
-                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </RootProvider>
         </ChartThemeProvider>

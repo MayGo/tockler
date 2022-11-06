@@ -6,17 +6,20 @@ import { TimelinePage } from './TimelinePage';
 import { TrayAppPage } from './TrayAppPage';
 import { SearchPage } from './SearchPage';
 import { SupportPage } from './SupportPage';
+import { MainLayout } from '../components/MainLayout/MainLayout';
 
 export function MainAppPage() {
     return (
         <Routes>
-            <Route index path="/" element={<TimelinePage />} />
-            <Route path="/app/timeline" element={<TimelinePage />} />
-            <Route path="/app/settings" element={<SettingsPage />} />
-            <Route path="/app/summary" element={<SummaryPage />} />
-            <Route path="/app/support" element={<SupportPage />} />
-            <Route path="/app/search" element={<SearchPage />} />
-            <Route path="/app/trayApp" element={<TrayAppPage />} />
+            <Route path="/" element={<MainLayout />}>
+                <Route index element={<TimelinePage />} />
+                <Route path="timeline" element={<TimelinePage />} />
+                <Route path="settings" element={<SettingsPage />} />
+                <Route path="summary" element={<SummaryPage />} />
+                <Route path="support" element={<SupportPage />} />
+                <Route path="search" element={<SearchPage />} />
+                <Route path="trayApp" element={<TrayAppPage />} />
+            </Route>
         </Routes>
     );
 }

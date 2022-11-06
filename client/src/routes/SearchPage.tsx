@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { MainLayout } from '../components/MainLayout/MainLayout';
 import { searchFromItems, exportFromItems } from '../services/trackItem.api';
 import moment from 'moment';
 import { TrackItemType } from '../enum/TrackItemType';
@@ -101,44 +100,42 @@ export function SearchPage() {
     };
 
     return (
-        <MainLayout>
-            <form onSubmit={onSubmit}>
-                <Flex p={3} flexDirection="column">
-                    <CardBox position="relative" p={0}>
-                        {isLoading && <Loader />}
-                        <Box p={4} pb={0}>
-                            <SearchOptions setTimerange={setTimerange} timerange={timerange} />
-                        </Box>
-                        <HStack p={4}>
-                            <TypeSelect value={taskName} onChange={(event) => setTaskName(event.target.value)} />
-                            <Input
-                                placeholder="Search from all items"
-                                value={searchText}
-                                onChange={(event) => setSearchText(event.target.value)}
-                            />
-
-                            <Button type="submit" bg="brand.mainColor" w="100px">
-                                Search
-                            </Button>
-
-                            <Button
-                                variant="ghost"
-                                onClick={() => {
-                                    exportItems(searchText);
-                                }}
-                            >
-                                Export to CSV
-                            </Button>
-                        </HStack>
-                        <SearchResults
-                            searchResult={searchResult}
-                            fetchData={fetchData}
-                            pageIndex={searchPaging.pageIndex}
-                            total={total}
+        <form onSubmit={onSubmit}>
+            <Flex p={3} flexDirection="column">
+                <CardBox position="relative" p={0}>
+                    {isLoading && <Loader />}
+                    <Box p={4} pb={0}>
+                        <SearchOptions setTimerange={setTimerange} timerange={timerange} />
+                    </Box>
+                    <HStack p={4}>
+                        <TypeSelect value={taskName} onChange={(event) => setTaskName(event.target.value)} />
+                        <Input
+                            placeholder="Search from all items"
+                            value={searchText}
+                            onChange={(event) => setSearchText(event.target.value)}
                         />
-                    </CardBox>
-                </Flex>
-            </form>
-        </MainLayout>
+
+                        <Button type="submit" bg="brand.mainColor" w="100px">
+                            Search
+                        </Button>
+
+                        <Button
+                            variant="ghost"
+                            onClick={() => {
+                                exportItems(searchText);
+                            }}
+                        >
+                            Export to CSV
+                        </Button>
+                    </HStack>
+                    <SearchResults
+                        searchResult={searchResult}
+                        fetchData={fetchData}
+                        pageIndex={searchPaging.pageIndex}
+                        total={total}
+                    />
+                </CardBox>
+            </Flex>
+        </form>
     );
 }

@@ -1,13 +1,16 @@
 import { Box } from '@chakra-ui/layout';
 
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 import { HeaderMenu } from './HeaderMenu';
 
-export function MainLayout({ children }: any) {
+export function MainLayout() {
     return (
         <Box w="100%">
             <HeaderMenu />
-            <Box>{children}</Box>
+            <Box>
+                <Outlet />
+            </Box>
         </Box>
     );
 }
