@@ -1,9 +1,9 @@
 import React, { useEffect, useState, createContext, useCallback } from 'react';
-import { useHistory } from 'react-router';
 import { EventEmitter } from './services/EventEmitter';
 import { Logger } from './logger';
 import { fetchWorkSettings, saveWorkSettings } from './services/settings.api';
 import { WorkSettingsI } from './components/Settings/WorkForm.util';
+import { useNavigate } from 'react-router-dom';
 
 const defaultWorkSettings = {
     workDayStartTime: '08:30', // not used
@@ -20,12 +20,12 @@ const defaultWorkSettings = {
 export const RootContext = createContext<any>({});
 
 export const RootProvider = ({ children }) => {
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const gotoSettingsPage = useCallback(() => {
         Logger.debug('Navigating to settings page');
-        history.push('/app/settings');
-    }, [history]);
+        navigate('/app/settings');
+    }, [navigate]);
 
     const [workSettings, setWorkSettings] = useState<WorkSettingsI>(defaultWorkSettings);
 

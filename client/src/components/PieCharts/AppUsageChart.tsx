@@ -16,8 +16,8 @@ import { secondsToClock } from '../../time.util';
 export const AppUsageChart = memo(() => {
     const { observe, width } = useDimensions();
     const { chartTheme } = useChartThemeState();
-    const timeItems = useStoreState(state => state.timeItems);
-    const visibleTimerange = useStoreState(state => state.visibleTimerange);
+    const timeItems = useStoreState((state) => state.timeItems);
+    const visibleTimerange = useStoreState((state) => state.visibleTimerange);
 
     const appItems = filterItems(timeItems.appItems, visibleTimerange);
 
@@ -25,7 +25,7 @@ export const AppUsageChart = memo(() => {
 
     const data = _(appItems)
         .groupBy(groupByField)
-        .map(b => {
+        .map((b) => {
             return b.reduce(sumAppObject(visibleTimerange), {
                 app: b[0].app,
                 title: b[0].title,
@@ -37,7 +37,7 @@ export const AppUsageChart = memo(() => {
         .reverse()
         .valueOf();
 
-    const getTooltipLabel = datum => {
+    const getTooltipLabel = (datum) => {
         const dur = moment.duration(datum.timeDiffInMs).asSeconds();
 
         return `${datum[groupByField]}\r\n${secondsToClock(dur)}`;
@@ -55,7 +55,7 @@ export const AppUsageChart = memo(() => {
     return (
         <div ref={observe}>
             <VictoryStack height={BAR_WIDTH} padding={0} width={width} horizontal>
-                {data.map(item => (
+                {data.map((item) => (
                     <VictoryBar
                         key={item.app}
                         style={style}
@@ -63,9 +63,7 @@ export const AppUsageChart = memo(() => {
                         data={[item]}
                         x="app"
                         y="timeDiffInMs"
-                        dataComponent={
-                            <BarWithTooltip theme={chartTheme} getTooltipLabel={getTooltipLabel} />
-                        }
+                        dataComponent={<BarWithTooltip theme={chartTheme} getTooltipLabel={getTooltipLabel} />}
                     />
                 ))}
             </VictoryStack>

@@ -8,8 +8,8 @@ import { useStoreState } from '../../store/easyPeasy';
 import { ItemsTable } from './ItemsTable';
 
 export const TrackItemTable = ({ type, resetButtonsRef }) => {
-    const timeItems = useStoreState(state => state.timeItems);
-    const visibleTimerange = useStoreState(state => state.visibleTimerange);
+    const timeItems = useStoreState((state) => state.timeItems);
+    const visibleTimerange = useStoreState((state) => state.visibleTimerange);
 
     const data = useMemo(
         () =>
@@ -27,6 +27,8 @@ export const TrackItemTable = ({ type, resetButtonsRef }) => {
             resetButtonsRef={resetButtonsRef}
             isOneDay={isOneDay}
             isSearchTable={false}
+            total={0}
+            manualSortBy={false}
         />
     );
 };

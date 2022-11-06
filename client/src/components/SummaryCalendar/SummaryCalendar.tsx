@@ -1,6 +1,5 @@
 import moment from 'moment';
 import React, { useContext, useEffect } from 'react';
-import { useHistory } from 'react-router';
 import { SummaryContext } from '../../SummaryContext';
 import { Logger } from '../../logger';
 import { convertDate, TIME_FORMAT_SHORT } from '../../constants';
@@ -13,6 +12,7 @@ import { Calendar } from '../Datepicker/Calendar';
 import { Text, useColorModeValue } from '@chakra-ui/react';
 import { Loader } from '../Timeline/Loader';
 import { ItemIcon } from './ItemIcon';
+import { useNavigate } from 'react-router-dom';
 
 const icons = {
     wakeTime: (
@@ -63,7 +63,7 @@ export const SummaryCalendar = () => {
         isLoading,
     } = useContext(SummaryContext);
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const onDateClicked = (date: any) => {
         if (!date) {
@@ -74,7 +74,7 @@ export const SummaryCalendar = () => {
         const d = moment(date);
         loadTimerange([d.clone().startOf('day'), d.clone().endOf('day')]);
 
-        history.push('/app/timeline');
+        navigate('/app/timeline');
     };
 
     useEffect(() => {

@@ -18,7 +18,7 @@ export const OverflowText = ({ children, ...props }: TextProps) => {
 export const OverflowTextCell = ({ value }: IProps) => {
     return (
         <Tooltip label={value}>
-            <Text isTruncated>{value}</Text>
+            <Text noOfLines={1}>{value}</Text>
         </Tooltip>
     );
 };

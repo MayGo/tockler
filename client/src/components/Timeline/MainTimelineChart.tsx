@@ -2,13 +2,7 @@ import React, { memo, useRef } from 'react';
 import { debounce } from 'lodash';
 import moment from 'moment';
 import 'moment-duration-format';
-import {
-    VictoryAxis,
-    VictoryBar,
-    VictoryChart,
-    VictoryZoomContainer,
-    VictoryBrushLine,
-} from 'victory';
+import { VictoryAxis, VictoryBar, VictoryChart, VictoryZoomContainer, VictoryBrushLine } from 'victory';
 import { convertDate, TIME_FORMAT } from '../../constants';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { BarWithTooltip } from './BarWithTooltip';
@@ -35,13 +29,13 @@ const getTrackItemOrder = (type: string) => {
     return 0;
 };
 
-const getTrackItemOrderFn = d => getTrackItemOrder(d.taskName);
-const convertDateForY = d => convertDate(d.beginDate);
-const convertDateForY0 = d => convertDate(d.endDate);
+const getTrackItemOrderFn = (d) => getTrackItemOrder(d.taskName);
+const convertDateForY = (d) => convertDate(d.beginDate);
+const convertDateForY0 = (d) => convertDate(d.endDate);
 
 const domainPadding: any = { y: 35, x: 10 };
 
-export const barStyle: any = isDark => ({
+export const barStyle: any = (isDark) => ({
     data: {
         width: BAR_WIDTH,
         fill: colorProp,
@@ -55,18 +49,18 @@ export const MainTimelineChart = memo(() => {
     const { observe, width } = useDimensions();
 
     const { chartTheme } = useChartThemeState();
-    const popoverTriggerRef = useRef();
+    const popoverTriggerRef = useRef(null);
 
-    const timerange = useStoreState(state => state.timerange);
-    const visibleTimerange = useStoreState(state => state.visibleTimerange);
-    const timeItems = useStoreState(state => state.timeItems);
+    const timerange = useStoreState((state) => state.timerange);
+    const visibleTimerange = useStoreState((state) => state.visibleTimerange);
+    const timeItems = useStoreState((state) => state.timeItems);
 
-    const setVisibleTimerange = useStoreActions(actions => actions.setVisibleTimerange);
+    const setVisibleTimerange = useStoreActions((actions) => actions.setVisibleTimerange);
 
-    const selectedTimelineItem = useStoreState(state => state.selectedTimelineItem);
-    const setSelectedTimelineItem = useStoreActions(actions => actions.setSelectedTimelineItem);
+    const selectedTimelineItem = useStoreState((state) => state.selectedTimelineItem);
+    const setSelectedTimelineItem = useStoreActions((actions) => actions.setSelectedTimelineItem);
 
-    const handleSelectionChanged = item => {
+    const handleSelectionChanged = (item) => {
         if (item) {
             Logger.debug('Selected item:', item);
             setSelectedTimelineItem(item);
@@ -75,11 +69,11 @@ export const MainTimelineChart = memo(() => {
         }
     };
 
-    const changeVisibleTimerange = range => {
+    const changeVisibleTimerange = (range) => {
         setVisibleTimerange([moment(range[0]), moment(range[1])]);
     };
 
-    const handleZoom = domain => {
+    const handleZoom = (domain) => {
         changeVisibleTimerange(domain.y);
     };
 
@@ -96,7 +90,7 @@ export const MainTimelineChart = memo(() => {
         }
     };
 
-    const getTooltipLabel = d => {
+    const getTooltipLabel = (d) => {
         const diff = convertDate(d.endDate).diff(convertDate(d.beginDate));
 
         const type = d.taskName === TrackItemType.StatusTrackItem ? 'STATUS' : d.app;
@@ -104,9 +98,7 @@ export const MainTimelineChart = memo(() => {
         const endTime = convertDate(d.endDate).format(TIME_FORMAT);
 
         const url = d.url ? `${d.url}\r\n` : '';
-        return `${type}\r\n${d.title}\r\n${url}${beginTime} - ${endTime}\r\n${formatDuration(
-            moment.duration(diff),
-        )}`;
+        return `${type}\r\n${d.title}\r\n${url}${beginTime} - ${endTime}\r\n${formatDuration(moment.duration(diff))}`;
     };
 
     const { appItems, logItems, statusItems } = timeItems;
@@ -176,8 +168,7 @@ export const MainTimelineChart = memo(() => {
                     gridComponent={
                         <VictoryBrushLine
                             disable={
-                                !selectedTimelineItem ||
-                                selectedTimelineItem.taskName !== TrackItemType.LogTrackItem
+                                !selectedTimelineItem || selectedTimelineItem.taskName !== TrackItemType.LogTrackItem
                             }
                             width={BAR_WIDTH}
                             dimension="y"

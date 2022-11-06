@@ -7,7 +7,7 @@ import {
     AlertDialogHeader,
     AlertDialogOverlay,
 } from '@chakra-ui/modal';
-import React from 'react';
+import React, { useRef } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 
 export function TimelineItemEditDeleteButton({ deleteItem }) {
@@ -17,15 +17,11 @@ export function TimelineItemEditDeleteButton({ deleteItem }) {
         deleteItem();
         onClose();
     };
-    const cancelRef = React.useRef();
+    const cancelRef = useRef(null);
 
     return (
         <>
-            <Button
-                colorScheme="red"
-                leftIcon={<AiOutlineDelete />}
-                onClick={() => setIsOpen(true)}
-            >
+            <Button colorScheme="red" leftIcon={<AiOutlineDelete />} onClick={() => setIsOpen(true)}>
                 Delete
             </Button>
 
@@ -36,9 +32,7 @@ export function TimelineItemEditDeleteButton({ deleteItem }) {
                             Delete Customer
                         </AlertDialogHeader>
 
-                        <AlertDialogBody>
-                            Are you sure? You can't undo this action afterwards.
-                        </AlertDialogBody>
+                        <AlertDialogBody>Are you sure? You can't undo this action afterwards.</AlertDialogBody>
 
                         <AlertDialogFooter>
                             <Button variant="outline" ref={cancelRef} onClick={onClose}>

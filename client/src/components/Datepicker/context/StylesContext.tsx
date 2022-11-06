@@ -11,6 +11,7 @@ export interface StylesContextProps {
 export interface StylesProviderProps {
     overwriteDefaultStyles?: boolean;
     styles?: Partial<DatepickerStyles>;
+    children: React.ReactNode;
 }
 
 export const emptyStylesObject: DatepickerStyles = {
@@ -74,6 +75,7 @@ export const emptyStylesObject: DatepickerStyles = {
         base: {},
     },
     datepickerHeader: {},
+    emptyDay: {},
 };
 
 export const StylesContext = createContext<StylesContextProps>({
@@ -86,22 +88,17 @@ export const StylesProvider: FC<StylesProviderProps> = ({
     overwriteDefaultStyles = false,
     styles = emptyStylesObject,
 }) => (
-    <StylesContext.Provider
-        value={{ overwriteDefaultStyles, styles: merge(emptyStylesObject, styles) }}
-    >
+    <StylesContext.Provider value={{ overwriteDefaultStyles, styles: merge(emptyStylesObject, styles) }}>
         {children}
     </StylesContext.Provider>
 );
 
-export function useStyleProps<
-    InitialStyles extends Partial<DatepickerStyles> = Partial<DatepickerStyles>
->(inlineStyles: InitialStyles) {
+export function useStyleProps<InitialStyles extends Partial<DatepickerStyles> = Partial<DatepickerStyles>>(
+    inlineStyles: InitialStyles,
+) {
     const { styles, overwriteDefaultStyles } = useContext(StylesContext);
-    const keys = Object.keys(inlineStyles);
+    const keys = Object.keys(inlineStyles) as (keyof DatepickerStyles)[];
     const filteredStyles = pick(styles, keys);
-    const result = merge(
-        filteredStyles,
-        !overwriteDefaultStyles ? inlineStyles : ({} as InitialStyles),
-    );
+    const result = merge(filteredStyles, !overwriteDefaultStyles ? inlineStyles : ({} as InitialStyles));
     return result;
 }

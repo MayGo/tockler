@@ -7,7 +7,7 @@ import { TrackItemType } from '../../enum/TrackItemType';
 import { Box } from '@chakra-ui/react';
 
 export const TrackItemTabs = () => {
-    const tableResetRef = useRef();
+    const tableResetRef = useRef(null);
 
     return (
         <Tabs variant="enclosed" isLazy>
@@ -19,16 +19,10 @@ export const TrackItemTabs = () => {
             </TabList>
             <TabPanels>
                 <TabPanel p={0}>
-                    <TrackItemTable
-                        type={TrackItemType.AppTrackItem}
-                        resetButtonsRef={tableResetRef}
-                    />
+                    <TrackItemTable type={TrackItemType.AppTrackItem} resetButtonsRef={tableResetRef} />
                 </TabPanel>
                 <TabPanel p={0}>
-                    <TrackItemTable
-                        type={TrackItemType.LogTrackItem}
-                        resetButtonsRef={tableResetRef}
-                    />
+                    <TrackItemTable type={TrackItemType.LogTrackItem} resetButtonsRef={tableResetRef} />
                 </TabPanel>
             </TabPanels>
         </Tabs>

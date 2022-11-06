@@ -10,7 +10,7 @@ import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { setEmailToLocalStorage } from './Paywall/Paywall.utils';
 
-const sendEmail = email => {
+const sendEmail = (email) => {
     const actionCodeSettings = {
         url: `https://tockler.io/logintoapp`,
         handleCodeInApp: true,
@@ -19,11 +19,7 @@ const sendEmail = email => {
 };
 
 export const loginSchema = yup.object().shape({
-    email: yup
-        .string()
-        .email()
-        .label('Email')
-        .required(),
+    email: yup.string().email().label('Email').required(),
 });
 
 type LoginFormInputs = {
@@ -37,10 +33,10 @@ const EmailForm = () => {
     } = useFormContext();
 
     return (
-        <FormControl isInvalid={!!errors?.email} errortext={errors?.email?.message} isRequired w="100%">
+        <FormControl isInvalid={!!errors?.email} isRequired w="100%">
             <Box pt={4} w="100%">
                 <Input placeholder="Email" {...register('email')} />
-                <FormErrorMessage>{errors?.email?.message}</FormErrorMessage>
+                <FormErrorMessage>{errors?.email?.message?.toString()}</FormErrorMessage>
             </Box>
             <Center p={4}>
                 <Button type="submit" bg="brand.mainColor" disabled={!!errors.email}>
@@ -150,7 +146,7 @@ export const AuthButton = ({ isRestore }) => {
             setStep(STEP_EMAIL_SENT);
         } catch (e) {
             console.error('Error sending email', e);
-            alert(e?.message);
+            //  alert(e?.message);
         }
     };
 

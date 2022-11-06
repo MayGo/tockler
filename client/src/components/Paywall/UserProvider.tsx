@@ -14,7 +14,7 @@ import moment from 'moment';
 
 type UserState = {
     firebaseUser: firebase.User | null | undefined;
-    error: firebase.auth.Error | undefined;
+    error: Error | undefined;
     loading: boolean;
     subscriptions: any[] | undefined;
     subscriptionsLoading: boolean;

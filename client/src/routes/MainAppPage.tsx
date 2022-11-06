@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { SettingsPage } from './SettingsPage';
 import { SummaryPage } from './SummaryPage';
 import { TimelinePage } from './TimelinePage';
@@ -9,14 +9,14 @@ import { SupportPage } from './SupportPage';
 
 export function MainAppPage() {
     return (
-        <Switch>
-            <Route exact path="/" component={TimelinePage} />
-            <Route path="/app/timeline" component={TimelinePage} />
-            <Route path="/app/settings" component={SettingsPage} />
-            <Route path="/app/summary" component={SummaryPage} />
-            <Route path="/app/support" component={SupportPage} />
-            <Route path="/app/search" component={SearchPage} />
-            <Route path="/app/trayApp" component={TrayAppPage} />
-        </Switch>
+        <Routes>
+            <Route index path="/" element={<TimelinePage />} />
+            <Route path="/app/timeline" element={<TimelinePage />} />
+            <Route path="/app/settings" element={<SettingsPage />} />
+            <Route path="/app/summary" element={<SummaryPage />} />
+            <Route path="/app/support" element={<SupportPage />} />
+            <Route path="/app/search" element={<SearchPage />} />
+            <Route path="/app/trayApp" element={<TrayAppPage />} />
+        </Routes>
     );
 }

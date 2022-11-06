@@ -19,9 +19,9 @@ export const WorkProgressChart = ({ items, width, hoursToWork }) => {
     const groupByField = 'app';
 
     const pieData: any[] = _(items)
-        .filter(item => item.app === 'ONLINE')
+        .filter((item) => item.app === 'ONLINE')
         .groupBy(groupByField)
-        .map(b => {
+        .map((b) => {
             return b.reduce(sumApp, {
                 app: 'Worked',
                 timeDiffInMs: 0,
@@ -83,7 +83,7 @@ export const WorkProgressChart = ({ items, width, hoursToWork }) => {
 
                 return `${datum[groupByField]} [${formattedDuration}]`;
             }}
-            labelComponent={<PieLabel width={width} theme={chartTheme} />}
+            labelComponent={<PieLabel width={width} theme={chartTheme} innerWidth={0} />}
             x="app"
             y="timeDiffInMs"
             data={pieData}

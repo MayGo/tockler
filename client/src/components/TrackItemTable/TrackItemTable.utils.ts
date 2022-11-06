@@ -17,7 +17,7 @@ export const calculateTotal = (filteredData) => {
 export const totalToDuration = (totalMs) => moment.duration(totalMs).format();
 
 export function fuzzyTextFilterFn(rows, id, filterValue) {
-    return matchSorter(rows, filterValue, { keys: [(row) => row.values[id]] });
+    return matchSorter(rows, filterValue, { keys: [(row: any) => row.values[id]] });
 }
 
 // Let the table remove the filter if the string is empty

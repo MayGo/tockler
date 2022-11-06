@@ -11,11 +11,11 @@ import { getEmailFromLocalStorage } from './Paywall/Paywall.utils';
 export const AuthCheck = ({ children, isRestore = false }) => {
     const [user, loading, error] = useAuthState(auth);
 
-    const gotLoginUrl = useCallback(query => {
+    const gotLoginUrl = useCallback((query) => {
         Logger.debug('event-login-url:', query);
         const email = getEmailFromLocalStorage();
         if (email) {
-            auth.signInWithEmailLink(email, query).catch(err => {
+            auth.signInWithEmailLink(email, query).catch((err) => {
                 Logger.error('Error signing in with email link:', err.code, err);
             });
         } else {
@@ -40,7 +40,7 @@ export const AuthCheck = ({ children, isRestore = false }) => {
     }
 
     if (error) {
-        return <Box p={3}>{error}</Box>;
+        return <Box p={3}>{error?.toString()}</Box>;
     }
 
     return children;

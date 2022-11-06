@@ -1,16 +1,16 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Select } from '@chakra-ui/select';
 import { ToggleColumnFilter } from './ToggleColumnFilter';
 
 export function SelectColumnFilter({ column: { filterValue, setFilter, preFilteredRows, id } }) {
     // Calculate the options for filtering
     // using the preFilteredRows
-    const options = React.useMemo(() => {
+    const options = useMemo(() => {
         const options = new Set();
-        preFilteredRows.forEach(row => {
+        preFilteredRows.forEach((row) => {
             options.add(row.values[id]);
         });
-        return [...options.values()];
+        return [...options.values()] as string[];
     }, [id, preFilteredRows]);
 
     // Render a multi-select box
@@ -18,7 +18,7 @@ export function SelectColumnFilter({ column: { filterValue, setFilter, preFilter
         <ToggleColumnFilter>
             <Select
                 value={filterValue}
-                onChange={e => {
+                onChange={(e) => {
                     setFilter(e.target.value || undefined);
                 }}
             >

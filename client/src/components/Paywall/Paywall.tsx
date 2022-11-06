@@ -70,13 +70,12 @@ const AddSubsciptionButton: React.FC<any> = () => {
 
     const productsRef = firestore.collection('products').where('active', '==', true);
 
-    const [products, loadingProducts] = useCollectionData<ProductInterface>(productsRef, { idField: 'id' });
+    const [products, loadingProducts] = useCollectionData<ProductInterface>(productsRef, {
+        snapshotOptions: { idField: 'id' },
+    });
 
     const checkoutSessionsRef = firebaseUser?.uid
-        ? firestore
-              .collection('customers')
-              .doc(firebaseUser?.uid)
-              .collection('checkout_sessions')
+        ? firestore.collection('customers').doc(firebaseUser?.uid).collection('checkout_sessions')
         : null;
 
     const addSubscription = async () => {
@@ -92,7 +91,7 @@ const AddSubsciptionButton: React.FC<any> = () => {
 
             setIsLoading(true);
 
-            const product = products?.find(item => item.active);
+            const product = products?.find((item) => item.active);
 
             if (!product) {
                 console.error('No product found');
@@ -107,8 +106,8 @@ const AddSubsciptionButton: React.FC<any> = () => {
                 .withConverter(priceConverter)
                 .get();
 
-            const prices: any[] = pricesSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-            const priceId = prices?.find(price => price.active)?.id;
+            const prices: any[] = pricesSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+            const priceId = prices?.find((price) => price.active)?.id;
 
             if (!priceId) {
                 console.error('No price found');
@@ -134,7 +133,7 @@ const AddSubsciptionButton: React.FC<any> = () => {
             };
 
             const resp = await checkoutSessionsRef.add(checkoutSession);
-            resp.onSnapshot(snap => {
+            resp.onSnapshot((snap) => {
                 const data = snap.data();
                 if (data) {
                     const { error, url } = data;

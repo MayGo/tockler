@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { RootProvider } from './RootContext';
 import { NotFound } from './routes/404';
 import { MainAppPage } from './routes/MainAppPage';
@@ -39,14 +39,14 @@ export function MainRouter() {
     return (
         <ChartThemeProvider>
             <RootProvider>
-                <Switch>
-                    <Route path="/" exact component={MainAppPage} />
-                    <Route path="/app" component={MainAppPage} />
-                    <Route path="/trayApp" component={TrayAppPage} />
-                    <Route path="/notificationApp" component={NotificationAppPage} />
-                    <Route path="/trayPage" component={TrayPage} />
-                    <Route path="*" component={NotFound} />
-                </Switch>
+                <Routes>
+                    <Route path="/" index element={<MainAppPage />} />
+                    <Route path="/app" element={<MainAppPage />} />
+                    <Route path="/trayApp" element={<TrayAppPage />} />
+                    <Route path="/notificationApp" element={<NotificationAppPage />} />
+                    <Route path="/trayPage" element={<TrayPage />} />
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
             </RootProvider>
         </ChartThemeProvider>
     );

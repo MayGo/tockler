@@ -21,7 +21,7 @@ export const PieChart = ({ items, taskName, width }) => {
 
     const pieData = _(items)
         .groupBy(groupByField)
-        .map(b => {
+        .map((b) => {
             return b.reduce(sumApp, {
                 app: b[0].app,
                 title: b[0].title,
@@ -55,7 +55,7 @@ export const PieChart = ({ items, taskName, width }) => {
 
                 return `${datum[groupByField]} [${formattedDuration}]`;
             }}
-            labelComponent={<PieLabel width={width} theme={chartTheme} />}
+            labelComponent={<PieLabel width={width} theme={chartTheme} innerWidth={0} />}
             x="app"
             y="timeDiffInMs"
             data={pieData}

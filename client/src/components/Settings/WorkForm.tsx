@@ -17,7 +17,7 @@ import * as yup from 'yup';
 import { CardBox } from '../CardBox';
 import { WorkSettingsI } from './WorkForm.util';
 import { RootContext } from '../../RootContext';
-import { useDebouncedCallback } from 'use-debounce/lib';
+import { useDebouncedCallback } from 'use-debounce';
 import { notifyUser } from '../../services/settings.api';
 
 const schema = yup
@@ -75,10 +75,10 @@ export const WorkForm = () => {
             <Box>
                 <Divider />
             </Box>
-            <Text fontSize="lg" fontVariant="bold" pt={2} pb={4}>
+            <Text fontSize="lg" as="b" pt={2} pb={4}>
                 Break notify settings
             </Text>
-            <Text fontSize="sm" fontVariant="bold" pt={2} pb={4}>
+            <Text fontSize="sm" as="b" pt={2} pb={4}>
                 Used to show one session progress in tray graphic and to notify about a break. The idea of this
                 notification is for you not to lose focus, but to remind you to take a break if you are in between some
                 work.
