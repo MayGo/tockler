@@ -22,7 +22,7 @@ const scale: any = { x: 'time', y: 'linear' };
 const padding: any = { left: 25, top: 20, bottom: 30, right: 10 };
 const domainPadding: any = { y: 0, x: [BAR_WIDTH, 0] };
 
-const labelComponent = theme => (
+const labelComponent = (theme) => (
     <VictoryTooltip
         style={theme.tooltip.style}
         cornerRadius={theme.tooltip.cornerRadius}
@@ -33,10 +33,10 @@ const labelComponent = theme => (
     />
 );
 
-const formatToTime = d => convertDate(d).format(TIME_FORMAT);
-const formatToLong = d => convertDate(d).format(DAY_MONTH_LONG_FORMAT);
+const formatToTime = (d) => convertDate(d).format(TIME_FORMAT);
+const formatToLong = (d) => convertDate(d).format(DAY_MONTH_LONG_FORMAT);
 
-const dateToMinutes = (max, useStartDate) => d => {
+const dateToMinutes = (max, useStartDate) => (d) => {
     const m = convertDate(useStartDate ? d.beginDate : d.endDate);
     const minutes = m.hour() * 60 + m.minute();
 
@@ -53,7 +53,7 @@ const ScatterPoint = ({ x = 0, y = 0, showMoon = false, showSun = false }) => {
     return null;
 };
 
-const getXAxisDay = d => convertDate(d.beginDate).startOf('day');
+const getXAxisDay = (d) => convertDate(d.beginDate).startOf('day').valueOf();
 
 export const LineChart = () => {
     const { chartTheme } = useChartThemeState();
@@ -69,7 +69,7 @@ export const LineChart = () => {
         y: [0, 1],
     };
 
-    const maxOnline = Math.max(...onlineTimesValues.map(d => d.online));
+    const maxOnline = Math.max(...onlineTimesValues.map((d) => d.online));
     const maxHours = 24;
 
     const axisStyle = {
@@ -127,7 +127,7 @@ export const LineChart = () => {
                 <VictoryBar
                     name="online"
                     x={getXAxisDay}
-                    y={d => d.online / maxOnline}
+                    y={(d) => d.online / maxOnline}
                     barWidth={BAR_WIDTH}
                     style={{ data: { fill: COLORS.green } }}
                     data={onlineTimesValues}

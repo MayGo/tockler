@@ -39,7 +39,7 @@
         "react-table": "^7.8.0",
         "react-timekeeper": "^2.2.1",
         "use-debounce": "^8.0.4",
-        "victory": "^35.9.0",
+        "victory": "^36.6.8",
         "yup": "^0.32.11"
     },
     "scripts": {

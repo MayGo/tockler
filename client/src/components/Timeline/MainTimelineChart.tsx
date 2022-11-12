@@ -30,8 +30,6 @@ const getTrackItemOrder = (type: string) => {
 };
 
 const getTrackItemOrderFn = (d) => getTrackItemOrder(d.taskName);
-const convertDateForY = (d) => convertDate(d.beginDate);
-const convertDateForY0 = (d) => convertDate(d.endDate);
 
 const domainPadding: any = { y: 35, x: 10 };
 
@@ -149,8 +147,8 @@ export const MainTimelineChart = memo(() => {
                 <VictoryBar
                     style={barStyle(chartTheme.isDark)}
                     x={getTrackItemOrderFn}
-                    y={convertDateForY}
-                    y0={convertDateForY0}
+                    y={(d) => d.beginDate}
+                    y0={(d) => d.endDate}
                     data={timelineData}
                     dataComponent={
                         <BarWithTooltip

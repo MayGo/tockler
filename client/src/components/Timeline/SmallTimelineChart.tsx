@@ -12,14 +12,14 @@ import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { rangeToDate } from '../../timeline.util';
 
 import { BrushHandle } from './BrushHandle';
-import { convertDateForY, convertDateForY0, getTrackItemOrderFn } from './timeline.utils';
+import { getTrackItemOrderFn } from './timeline.utils';
 import { CHART_PADDING, CHART_SCALE } from './timeline.constants';
 import useDimensions from 'react-cool-dimensions';
 import { clampRange } from '../PieCharts/MetricTiles.utils';
 
 const domainPaddingBrush: any = { y: 35, x: 5 };
 
-const brushChartBarStyle: any = isDark => ({
+const brushChartBarStyle: any = (isDark) => ({
     data: {
         width: 7,
         fill: colorProp,
@@ -36,16 +36,16 @@ export const SmallTimelineChart = memo(() => {
 
     const { observe, width } = useDimensions();
 
-    const timerange = useStoreState(state => state.timerange);
-    const visibleTimerange = useStoreState(state => state.visibleTimerange);
-    const timeItems = useStoreState(state => state.timeItems);
-    const setVisibleTimerange = useStoreActions(actions => actions.setVisibleTimerange);
+    const timerange = useStoreState((state) => state.timerange);
+    const visibleTimerange = useStoreState((state) => state.visibleTimerange);
+    const timeItems = useStoreState((state) => state.timeItems);
+    const setVisibleTimerange = useStoreActions((actions) => actions.setVisibleTimerange);
 
-    const changeVisibleTimerange = range => {
+    const changeVisibleTimerange = (range) => {
         setVisibleTimerange(clampRange(timerange, [moment(range[0]), moment(range[1])]));
     };
 
-    const handleBrush = domain => {
+    const handleBrush = (domain) => {
         Logger.debug('Selected with brush:', domain.y);
 
         changeVisibleTimerange(domain.y);
@@ -98,8 +98,8 @@ export const SmallTimelineChart = memo(() => {
                     animate={false}
                     style={brushChartBarStyle(chartTheme.isDark)}
                     x={getTrackItemOrderFn}
-                    y={convertDateForY}
-                    y0={convertDateForY0}
+                    y={(d) => d.beginDate}
+                    y0={(d) => d.endDate}
                     data={brushData}
                 />
             </VictoryChart>

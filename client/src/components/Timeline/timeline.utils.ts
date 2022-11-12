@@ -90,5 +90,3 @@ export const getTrackItemOrder = (type: string) => {
 };
 
 export const getTrackItemOrderFn = (d) => getTrackItemOrder(d.taskName);
-export const convertDateForY = (d) => convertDate(d.beginDate);
-export const convertDateForY0 = (d) => convertDate(d.endDate);
