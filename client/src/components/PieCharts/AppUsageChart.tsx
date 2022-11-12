@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { filterItems } from '../Timeline/timeline.utils';
 import _ from 'lodash';
 import { useStoreState } from '../../store/easyPeasy';
-import { VictoryBar, VictoryStack } from 'victory';
+import { VictoryBar, VictoryLabel, VictoryStack } from 'victory';
 import useDimensions from 'react-cool-dimensions';
 import { BAR_WIDTH } from '../Timeline/timeline.constants';
 import { sumAppObject } from './MetricTiles.utils';
@@ -12,6 +12,24 @@ import { useChartThemeState } from '../../routes/ChartThemeProvider';
 import { BarWithTooltip } from '../Timeline/BarWithTooltip';
 import { colorProp } from '../charts.utils';
 import { secondsToClock } from '../../time.util';
+
+/**
+ * Measures the rendered width of arbitrary text given the font size and font face
+ * @param {string} text The text to measure
+ * @param {number} fontSize The font size in pixels
+ * @param {string} fontFace The font face ("Arial", "Helvetica", etc.)
+ * @returns {number} The width of the text
+ * */
+function getTextWidth(text, fontSize, fontFace) {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    if (!context) {
+        console.warn('No 2d context');
+        return 0;
+    }
+    context.font = `${fontSize}px ${fontFace}`;
+    return context.measureText(text).width;
+}
 
 export const AppUsageChart = memo(() => {
     const { observe, width } = useDimensions();
@@ -52,6 +70,7 @@ export const AppUsageChart = memo(() => {
         },
     };
 
+    const labelPadding = 10;
     return (
         <div ref={observe}>
             <VictoryStack height={BAR_WIDTH} padding={0} width={width} horizontal>
@@ -63,6 +82,29 @@ export const AppUsageChart = memo(() => {
                         data={[item]}
                         x="app"
                         y="timeDiffInMs"
+                        labels={({ datum }) => datum.app}
+                        labelComponent={
+                            <VictoryLabel
+                                verticalAnchor="end"
+                                textAnchor="end"
+                                text={({ datum, scale }) => {
+                                    // @ts-ignore
+                                    const textWidth = getTextWidth(
+                                        datum.app,
+                                        14,
+                                        '"Gill Sans", Seravek, "Trebuchet MS", sans-serif;',
+                                    );
+
+                                    const timeDiff = datum._y1 - datum._y0;
+                                    const width = scale?.y ? scale.y(timeDiff) : 0;
+                                    const canFit = textWidth + labelPadding * 2 < width;
+                                    // @ts-ignore
+                                    return canFit ? datum.app : '';
+                                }}
+                                dx={-labelPadding}
+                                dy={-5}
+                            />
+                        }
                         dataComponent={<BarWithTooltip theme={chartTheme} getTooltipLabel={getTooltipLabel} />}
                     />
                 ))}
