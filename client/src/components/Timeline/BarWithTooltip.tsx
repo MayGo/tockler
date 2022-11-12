@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Portal } from 'react-portal';
 import { Bar, VictoryTooltip } from 'victory';
+
 interface PropsI {
     datum?: {};
     onClickBarItem?: any;
@@ -9,7 +10,12 @@ interface PropsI {
     x?: number;
     y?: number;
     theme: any;
+    centerTime?: boolean;
 }
+
+const calculateMiddle = (datum) => {
+    return datum.beginDate + (datum.endDate - datum.beginDate) / 2;
+};
 
 export const BarWithTooltip = ({
     datum = {},
@@ -19,6 +25,7 @@ export const BarWithTooltip = ({
     x = 0,
     y = 0,
     theme,
+    centerTime = false,
     ...rest
 }: PropsI) => {
     const barRef = useRef();
@@ -46,14 +53,19 @@ export const BarWithTooltip = ({
         },
     };
 
+    const midpoint = calculateMiddle(datum);
+    // @ts-ignore
+    const newX = rest.scale.y(midpoint);
+
     return (
         <>
             {<Bar datum={datum} x={x} y={y} {...rest} events={events} />}
+
             {hover && (
                 <Portal closeOnEsc closeOnOutsideClick>
                     <VictoryTooltip
                         horizontal={false}
-                        x={x}
+                        x={centerTime ? newX : x}
                         y={y}
                         style={theme.tooltip.style}
                         cornerRadius={theme.tooltip.cornerRadius}
@@ -62,6 +74,7 @@ export const BarWithTooltip = ({
                         active
                         events={{}}
                         text={getTooltipLabel(datum)}
+                        datum={datum}
                     />
                 </Portal>
             )}

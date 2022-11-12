@@ -156,6 +156,7 @@ export const MainTimelineChart = memo(() => {
                             theme={chartTheme}
                             getTooltipLabel={getTooltipLabel}
                             onClickBarItem={handleSelectionChanged}
+                            centerTime
                         />
                     }
                 />
