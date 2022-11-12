@@ -1,9 +1,10 @@
 import React, { useEffect, useState, createContext, useCallback } from 'react';
 import { EventEmitter } from './services/EventEmitter';
 import { Logger } from './logger';
-import { fetchWorkSettings, saveWorkSettings } from './services/settings.api';
+import { fetchDataSettings, fetchWorkSettings, saveDataSettings, saveWorkSettings } from './services/settings.api';
 import { WorkSettingsI } from './components/Settings/WorkForm.util';
 import { useNavigate } from 'react-router-dom';
+import { DataSettingsI } from './components/Settings/DataForm.util';
 
 const defaultWorkSettings = {
     workDayStartTime: '08:30', // not used
@@ -15,6 +16,10 @@ const defaultWorkSettings = {
     notificationDuration: 10,
     reNotifyInterval: 5,
     smallNotificationsEnabled: true,
+};
+const defaultDataSettings = {
+    idleAfterSeconds: 60,
+    backgroundJobInterval: 3,
 };
 
 export const RootContext = createContext<any>({});
@@ -28,10 +33,16 @@ export const RootProvider = ({ children }) => {
     }, [navigate]);
 
     const [workSettings, setWorkSettings] = useState<WorkSettingsI>(defaultWorkSettings);
+    const [dataSettings, setDataSettings] = useState<DataSettingsI>(defaultDataSettings);
 
     const updateWorkSettings = useCallback((newWorkSettings) => {
         setWorkSettings(newWorkSettings);
         saveWorkSettings(newWorkSettings);
+    }, []);
+
+    const updateDataSettings = useCallback((newDataSettings) => {
+        setDataSettings(newDataSettings);
+        saveDataSettings(newDataSettings);
     }, []);
 
     const loadSettings = useCallback(async () => {
@@ -39,6 +50,11 @@ export const RootProvider = ({ children }) => {
 
         if (newWorkSettings) {
             setWorkSettings(newWorkSettings);
+        }
+        const newDataSettings = await fetchDataSettings();
+
+        if (newDataSettings) {
+            setDataSettings(newDataSettings);
         }
     }, []);
 
@@ -67,6 +83,8 @@ export const RootProvider = ({ children }) => {
     const defaultContext = {
         workSettings,
         updateWorkSettings,
+        dataSettings,
+        updateDataSettings,
     };
 
     return <RootContext.Provider value={defaultContext}>{children}</RootContext.Provider>;

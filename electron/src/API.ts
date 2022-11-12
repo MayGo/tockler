@@ -28,6 +28,10 @@ const settingsActions = {
     fetchWorkSettingsJsonString: async () => {
         return settingsService.fetchWorkSettingsJsonString();
     },
+
+    fetchDataSettingsJsonString: async () => {
+        return settingsService.fetchDataSettingsJsonString();
+    },
     saveThemeAndNotify: async (payload) => {
         AppManager.saveThemeAndNotify(payload);
     },

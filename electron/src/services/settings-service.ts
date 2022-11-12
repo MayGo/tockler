@@ -63,8 +63,23 @@ export class SettingsService {
         return item.jsonData;
     }
 
+    async fetchDataSettings() {
+        let item = await this.findByName('DATA_SETTINGS');
+        if (!item || !item.jsonData) {
+            return {};
+        }
+
+        return item.jsonData;
+    }
+
     async fetchWorkSettingsJsonString() {
         const data = await this.fetchWorkSettings();
+
+        return JSON.stringify(data);
+    }
+
+    async fetchDataSettingsJsonString() {
+        const data = await this.fetchDataSettings();
 
         return JSON.stringify(data);
     }

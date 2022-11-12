@@ -107,8 +107,23 @@ export async function fetchWorkSettings() {
     }
 }
 
+export async function fetchDataSettings() {
+    const jsonStr = await EventEmitter.emit('fetchDataSettingsJsonString');
+    try {
+        return JSON.parse(jsonStr);
+    } catch (e) {
+        Logger.error('Error in fetchDataSettings', jsonStr, e);
+        return null;
+    }
+}
+
 export function saveWorkSettings(data) {
     updateByName('WORK_SETTINGS', data);
+}
+
+export function saveDataSettings(data) {
+    updateByName('DATA_SETTINGS', data);
+    EventEmitter.send('dataConfigChanged');
 }
 
 export function saveAnalyserSettings(data) {

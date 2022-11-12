@@ -75,15 +75,19 @@ export const WorkForm = () => {
             <Box>
                 <Divider />
             </Box>
-            <Text fontSize="lg" as="b" pt={2} pb={4}>
-                Break notify settings
-            </Text>
-            <Text fontSize="sm" as="b" pt={2} pb={4}>
-                Used to show one session progress in tray graphic and to notify about a break. The idea of this
-                notification is for you not to lose focus, but to remind you to take a break if you are in between some
-                work.
-            </Text>
 
+            <Box pt={4} pb={2}>
+                <Text fontSize="lg" as="b">
+                    Break notify settings
+                </Text>
+            </Box>
+            <Box pt={2} pb={4}>
+                <Text fontSize="sm" as="i">
+                    Used to show one session progress in tray graphic and to notify about a break. The idea of this
+                    notification is for you not to lose focus, but to remind you to take a break if you are in between
+                    some work.
+                </Text>
+            </Box>
             <FormControl isInvalid={!!errors.sessionLength} pb={4}>
                 <FormLabel htmlFor="sessionLength">Session length in minutes</FormLabel>
                 <Input placeholder="Session length" {...register('sessionLength')} />
@@ -123,7 +127,6 @@ export const WorkForm = () => {
                     {errors.notificationDuration && errors.notificationDuration.message}
                 </FormErrorMessage>
             </FormControl>
-
             <FormControl isInvalid={!!errors.minBreakTime}>
                 <FormLabel htmlFor="minBreakTime">Min break time in minutes</FormLabel>
                 <Input
