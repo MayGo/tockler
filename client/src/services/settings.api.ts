@@ -123,7 +123,7 @@ export function saveWorkSettings(data) {
 
 export function saveDataSettings(data) {
     updateByName('DATA_SETTINGS', data);
-    EventEmitter.send('dataConfigChanged');
+    return EventEmitter.emit('updateByNameDataSettings', { name: 'DATA_SETTINGS', jsonData: JSON.stringify(data) });
 }
 
 export function saveAnalyserSettings(data) {

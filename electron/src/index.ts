@@ -1,6 +1,6 @@
 require('events').EventEmitter.defaultMaxListeners = 30;
 
-import { backgroundJob } from './background-job';
+import { initBackgroundJob } from './initBackgroundJob';
 import { backgroundService } from './background-service';
 import { app, ipcMain, powerMonitor } from 'electron';
 import { logManager } from './log-manager';
@@ -77,7 +77,7 @@ if (gotTheLock || isMas) {
 
             await AppManager.init();
 
-            backgroundJob.init();
+            await initBackgroundJob();
 
             powerMonitor.on('suspend', function () {
                 logger.debug('The system is going to sleep');

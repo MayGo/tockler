@@ -69,7 +69,7 @@ export class LogTrackItemJob {
 
                 rawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
             } else {
-                logger.debug('No splitEndDate for item:', rawItem);
+                // logger.debug('No splitEndDate for item:', rawItem);
             }
         }
 
@@ -92,14 +92,10 @@ export class LogTrackItemJob {
             let minutesAfterToSplit = settings.splitTaskAfterIdlingForMinutes || 3;
             let minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
 
-            logger.debug(
-                `Minutes from now:  ${minutesFromNow}, minutesAfterToSplit: ${minutesAfterToSplit}`,
-            );
+            logger.debug(`Minutes from now:  ${minutesFromNow}, minutesAfterToSplit: ${minutesAfterToSplit}`);
 
             if (minutesFromNow >= minutesAfterToSplit) {
-                let endDate = moment(onlineItem.endDate)
-                    .add(minutesAfterToSplit, 'minutes')
-                    .toDate();
+                let endDate = moment(onlineItem.endDate).add(minutesAfterToSplit, 'minutes').toDate();
                 return endDate;
             }
         } else {

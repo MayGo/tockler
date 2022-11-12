@@ -10,11 +10,11 @@ import { sendToTrayWindow } from '../window-manager';
 let logger = logManager.getLogger('StatusTrackItemJob');
 
 export class StatusTrackItemJob {
-    run() {
+    run(idleAfterSeconds: number) {
         try {
             const seconds = powerMonitor.getSystemIdleTime();
 
-            this.saveIdleTrackItem(seconds).then(
+            this.saveIdleTrackItem(seconds, idleAfterSeconds).then(
                 () => {
                     // logger.debug(`Idle saved ${seconds}`);
                 },
@@ -25,14 +25,13 @@ export class StatusTrackItemJob {
         }
     }
 
-    async saveIdleTrackItem(seconds) {
+    async saveIdleTrackItem(seconds: number, idleAfterSeconds: number = 60) {
         if (stateManager.isSystemSleeping()) {
             logger.debug('Computer is sleeping, not running saveIdleTrackItem');
             return 'SLEEPING';
         }
 
-        let state: State =
-            seconds > appConstants.IDLE_IN_SECONDS_TO_LOG ? State.Idle : State.Online;
+        let state: State = seconds > idleAfterSeconds ? State.Idle : State.Online;
         // Cannot go from OFFLINE to IDLE
         if (stateManager.isSystemOffline() && state === State.Idle) {
             logger.error('Not saving. Cannot go from OFFLINE to IDLE');

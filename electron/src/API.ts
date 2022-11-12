@@ -7,6 +7,7 @@ import { stateManager } from './state-manager';
 import { State } from './enums/state';
 import AppManager from './app-manager';
 import { sendToTrayWindow, sendToNotificationWindow } from './window-manager';
+import { initBackgroundJob } from './initBackgroundJob';
 
 const settingsActions = {
     fetchAnalyserSettingsJsonString: async () => {
@@ -23,6 +24,11 @@ const settingsActions = {
     },
     getRunningLogItemAsJson: async () => {
         return settingsService.getRunningLogItemAsJson();
+    },
+    updateByNameDataSettings: async (payload) => {
+        const result = await settingsService.updateByName(payload.name, payload.jsonData);
+        await initBackgroundJob();
+        return result;
     },
 
     fetchWorkSettingsJsonString: async () => {

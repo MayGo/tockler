@@ -151,7 +151,7 @@ export class TrackItemService {
             .orderBy('endDate', 'desc');
 
         if (currentStatusItem) {
-            this.logger.debug('Find by excluding currentStatus item id:', currentStatusItem.toJSON());
+            //  this.logger.debug('Find by excluding currentStatus item id:', currentStatusItem.toJSON());
             query.whereNot('id', currentStatusItem.id);
         }
 

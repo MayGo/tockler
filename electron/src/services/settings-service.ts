@@ -66,10 +66,12 @@ export class SettingsService {
     async fetchDataSettings() {
         let item = await this.findByName('DATA_SETTINGS');
         if (!item || !item.jsonData) {
-            return {};
+            return { idleAfterSeconds: 60, backgroundJobInterval: 3 };
         }
 
-        return item.jsonData;
+        const { idleAfterSeconds, backgroundJobInterval } = item.jsonData;
+
+        return { idleAfterSeconds: +idleAfterSeconds, backgroundJobInterval: +backgroundJobInterval };
     }
 
     async fetchWorkSettingsJsonString() {
