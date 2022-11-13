@@ -60,7 +60,7 @@
         "electron": "21.2.3",
         "electron-builder": "23.6.0",
         "electron-devtools-installer": "^3.2.0",
-        "electron-notarize": "^1.1.1",
+        "@electron/notarize": "^1.2.3",
         "jest": "29.2.2",
         "jest-cli": "29.2.2",
         "ts-loader": "^9.4.1",
