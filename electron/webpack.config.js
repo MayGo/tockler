@@ -1,7 +1,4 @@
 const path = require('path');
-const os = require('os');
-
-const { TsConfigPathsPlugin, CheckerPlugin } = require('awesome-typescript-loader');
 const CopyPlugin = require('copy-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const nodeExternals = require('webpack-node-externals');
@@ -30,14 +27,9 @@ module.exports = {
         rules: [
             {
                 test: /\.ts$/i,
-                loader: 'awesome-typescript-loader',
+                loader: 'ts-loader',
             },
         ],
     },
-    plugins: [
-        new Dotenv(),
-        new TsConfigPathsPlugin(),
-        new CheckerPlugin(),
-        new CopyPlugin({ patterns: ['preloadStuff.js'] }),
-    ],
+    plugins: [new Dotenv(), new CopyPlugin({ patterns: ['preloadStuff.js'] })],
 };
