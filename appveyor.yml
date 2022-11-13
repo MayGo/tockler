@@ -1,4 +1,4 @@
-os: Visual Studio 2021
+os: Visual Studio 2022
 
 platform:
     - x64
