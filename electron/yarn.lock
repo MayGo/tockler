@@ -1003,11 +1003,6 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.9.tgz#02d013de7058cea16d36168ef2fc653464cfbad4"
   integrity sha512-CRpX21/kGdzjOpFsZSkcrXMGIBWMGNIHXXBVFSH+ggkftxg+XYP20TESbh+zFvFj3EQOl5byk0HTRn1IL6hbqg==
 
-"@types/node@^10.12.18":
-  version "10.17.60"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.17.60.tgz#35f3d6213daed95da7f0f73e75bcc6980e90597b"
-  integrity sha512-F0KIgDJfy2nA3zMLmWGKxcH2ZVEtCZXHHdOQs2gSaQ27+lNeEfGxzkIw90aXswATX7AZ33tahPbzy6KAfUreVw==
-
 "@types/node@^16.11.26":
   version "16.18.3"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.18.3.tgz#d7f7ba828ad9e540270f01ce00d391c54e6e0abc"
@@ -1060,7 +1055,7 @@
   dependencies:
     webdriverio "*"
 
-"@types/webpack-env@^1.13.6":
+"@types/webpack-env@^1.18.0":
   version "1.18.0"
   resolved "https://registry.yarnpkg.com/@types/webpack-env/-/webpack-env-1.18.0.tgz#ed6ecaa8e5ed5dfe8b2b3d00181702c9925f13fb"
   integrity sha512-56/MAlX5WMsPVbOg7tAxnYvNYMMWr/QJiIp6BxVSW3JJXUVzzOn64qW8TzQyMSqSUFM2+PVI4aUHcHOzIz/1tg==
@@ -4920,14 +4915,6 @@ kleur@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
-
-knex-webpack-migration-source@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/knex-webpack-migration-source/-/knex-webpack-migration-source-1.0.0.tgz#829a28d584bdfaac2720a444feff1f40d48b756c"
-  integrity sha512-bUSlhjnLR7lMxIt9j6xmsYzRageIDBvfQ1kQ8dVnloEgW9/vxpUlMqLAxl8kC1/0Z3Es1R6kzjMG1s0wrrexig==
-  dependencies:
-    "@types/node" "^10.12.18"
-    "@types/webpack-env" "^1.13.6"
 
 knex@2.3.0:
   version "2.3.0"

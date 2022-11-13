@@ -2,7 +2,7 @@ import config from '../config';
 import { Model } from 'objection';
 import { knex } from 'knex';
 import { logManager } from '../log-manager';
-import { WebpackMigrationSource } from 'knex-webpack-migration-source';
+import { WebpackMigrationSource } from './WebpackMigrationSource';
 
 let logger = logManager.getLogger('Database');
 
@@ -25,9 +25,7 @@ export async function connectAndSync() {
     Model.knex(knexInstance);
 
     await knexInstance.migrate.latest({
-        migrationSource: new WebpackMigrationSource(
-            require.context('../../migrations', true, /.js$/),
-        ),
+        migrationSource: new WebpackMigrationSource(require.context('../../migrations', true, /.js$/)),
     });
     return knexInstance;
 }
