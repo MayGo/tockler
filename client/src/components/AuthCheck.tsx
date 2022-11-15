@@ -7,6 +7,7 @@ import { auth } from '../utils/firebase.utils';
 import { Logger } from '../logger';
 import { EventEmitter } from '../services/EventEmitter';
 import { getEmailFromLocalStorage } from './Paywall/Paywall.utils';
+import { signInWithEmailLink } from 'firebase/auth';
 
 export const AuthCheck = ({ children, isRestore = false }) => {
     const [user, loading, error] = useAuthState(auth);
@@ -15,7 +16,7 @@ export const AuthCheck = ({ children, isRestore = false }) => {
         Logger.debug('event-login-url:', query);
         const email = getEmailFromLocalStorage();
         if (email) {
-            auth.signInWithEmailLink(email, query).catch((err) => {
+            signInWithEmailLink(auth, email, query).catch((err) => {
                 Logger.error('Error signing in with email link:', err.code, err);
             });
         } else {

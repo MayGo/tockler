@@ -8,6 +8,7 @@ import { auth, firestore } from '../../utils/firebase.utils';
 import { APP_RETURN_URL } from './Paywall.utils';
 import ReactGA from 'react-ga';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
+import { addDoc, collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
 
 const PremiumButton: React.FC<any> = ({ onRestoreClick, ...rest }) => {
     const { firebaseUser } = React.useContext(UserContext);
@@ -68,14 +69,12 @@ const AddSubsciptionButton: React.FC<any> = () => {
     const { firebaseUser } = React.useContext(UserContext);
     const [isLoading, setIsLoading] = React.useState(false);
 
-    const productsRef = firestore.collection('products').where('active', '==', true);
+    const productsRef = query(collection(firestore, 'products'), where('active', '==', true));
 
-    const [products, loadingProducts] = useCollectionData<ProductInterface>(productsRef, {
-        snapshotOptions: { idField: 'id' },
-    });
+    const [products, loadingProducts] = useCollectionData(productsRef);
 
     const checkoutSessionsRef = firebaseUser?.uid
-        ? firestore.collection('customers').doc(firebaseUser?.uid).collection('checkout_sessions')
+        ? collection(firestore, 'customers', `${firebaseUser?.uid}`, 'checkout_sessions')
         : null;
 
     const addSubscription = async () => {
@@ -99,12 +98,9 @@ const AddSubsciptionButton: React.FC<any> = () => {
                 return;
             }
 
-            const pricesSnapshot = await firestore
-                .collection('products')
-                .doc(product.id)
-                .collection('prices')
-                .withConverter(priceConverter)
-                .get();
+            const pricesSnapshot = await getDocs(
+                collection(firestore, 'products', `${product.id}`, 'prices').withConverter(priceConverter),
+            );
 
             const prices: any[] = pricesSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
             const priceId = prices?.find((price) => price.active)?.id;
@@ -132,8 +128,8 @@ const AddSubsciptionButton: React.FC<any> = () => {
                 },
             };
 
-            const resp = await checkoutSessionsRef.add(checkoutSession);
-            resp.onSnapshot((snap) => {
+            const resp = await addDoc(checkoutSessionsRef, checkoutSession);
+            onSnapshot(resp, (snap) => {
                 const data = snap.data();
                 if (data) {
                     const { error, url } = data;

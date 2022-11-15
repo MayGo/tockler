@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState, createContext } from 'react';
-import firebase from 'firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { auth, firestore } from '../../utils/firebase.utils';
@@ -11,9 +10,11 @@ import {
 } from './Paywall.utils';
 import { findFirstTrackItem } from '../../services/trackItem.api';
 import moment from 'moment';
+import { collection, doc, query, where } from 'firebase/firestore';
+import { User } from 'firebase/auth';
 
 type UserState = {
-    firebaseUser: firebase.User | null | undefined;
+    firebaseUser: User | null | undefined;
     error: Error | undefined;
     loading: boolean;
     subscriptions: any[] | undefined;
@@ -42,13 +43,9 @@ const UserProvider = ({ children }: any) => {
     const [hasSubscription, setHasSubscription] = useState(getSubscriptionFromLocalStorage());
     const [user, loading, error] = useAuthState(auth);
 
-    const subscriptionsRef = user?.uid
-        ? firestore
-              .collection('customers')
-              .doc(user?.uid)
-              .collection('subscriptions')
-              .where('status', 'in', ['trialing', 'active'])
-        : null;
+    const subRef = collection(firestore, 'customers', `${user?.uid}`, 'subscriptions');
+
+    const subscriptionsRef = user?.uid ? query(subRef, where('status', 'in', ['trialing', 'active'])) : null;
 
     const [subscriptions, subscriptionsLoading] = useCollectionData(subscriptionsRef);
 

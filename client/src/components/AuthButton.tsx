@@ -1,4 +1,3 @@
-import firebase from 'firebase';
 import 'firebase/auth';
 import '@firebase/performance';
 import React, { useState } from 'react';
@@ -9,13 +8,15 @@ import ReactGA from 'react-ga';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { setEmailToLocalStorage } from './Paywall/Paywall.utils';
+import { sendSignInLinkToEmail } from 'firebase/auth';
+import { auth } from '../utils/firebase.utils';
 
 const sendEmail = (email) => {
     const actionCodeSettings = {
         url: `https://tockler.io/logintoapp`,
         handleCodeInApp: true,
     };
-    return firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings);
+    return sendSignInLinkToEmail(auth, email, actionCodeSettings);
 };
 
 export const loginSchema = yup.object().shape({

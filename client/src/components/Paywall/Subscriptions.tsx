@@ -1,10 +1,10 @@
 import * as React from 'react';
-import firebase from 'firebase';
 import { Flex, Button, Text } from '@chakra-ui/react';
 import { UserContext } from './UserProvider';
 import { CardBox } from '../CardBox';
-import { auth } from '../../utils/firebase.utils';
+import { auth, firebaseApp } from '../../utils/firebase.utils';
 import { APP_RETURN_URL } from './Paywall.utils';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 const functionLocation = 'us-central1';
 
@@ -28,12 +28,11 @@ export const Subscriptions: React.FC<any> = () => {
             setIsLoadingPortal(true);
 
             // Call billing portal function
-            const functionRef = firebase
-                .app()
-                .functions(functionLocation)
-                .httpsCallable('ext-firestore-stripe-subscriptions-createPortalLink');
 
-            const { data } = await functionRef({ returnUrl: APP_RETURN_URL });
+            const functions = getFunctions(firebaseApp, functionLocation);
+            const functionRef = httpsCallable(functions, 'ext-firestore-stripe-subscriptions-createPortalLink');
+
+            const { data } = (await functionRef({ returnUrl: APP_RETURN_URL })) as any;
 
             window.open(data.url, '_blank');
             setIsLoadingPortal(false);

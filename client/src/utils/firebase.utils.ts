@@ -1,24 +1,18 @@
 import firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/firestore';
-import 'firebase/database';
 import { firebaseConfig } from '../firebaseConfig';
+import { enableIndexedDbPersistence, getFirestore, Timestamp } from 'firebase/firestore';
+import { getDatabase } from 'firebase/database';
+import { getAuth } from 'firebase/auth';
 
-export const appsAmount = firebase.apps.length;
+console.info('Initializing firebase');
+export const firebaseApp = firebase.initializeApp(firebaseConfig);
+export const firestore = getFirestore();
 
-if (!firebase.apps.length) {
-    console.info('Initializing firebase');
-    firebase.initializeApp(firebaseConfig);
-    firebase
-        .firestore()
-        .enablePersistence()
-        .catch(err => {
-            console.error('Error enabling persistence', err.code, err);
-        });
-}
+enableIndexedDbPersistence(firestore).catch((err) => {
+    console.error('Error enabling persistence', err.code, err);
+});
 
-export const firestore = firebase.firestore();
-export const database = firebase.database();
-export const auth = firebase.auth();
+export const database = getDatabase();
+export const auth = getAuth();
 
-export const TIMESTAMP = firebase.database.ServerValue.TIMESTAMP;
+export const TIMESTAMP = Timestamp;
