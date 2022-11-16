@@ -1,10 +1,10 @@
-os: Visual Studio 2019
+os: Visual Studio 2022
 
 platform:
     - x64
 
 environment:
-    nodejs_version: '16'
+    nodejs_version: '18.9.1'
     SIGNTOOL: C:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe
 
 branches:
@@ -24,7 +24,7 @@ install:
     - npm install
     - cd ..
     - cd client
-    - npm install
+    - npm install --legacy-peer-deps
 
 build_script:
     - npm run build
