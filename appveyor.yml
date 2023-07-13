@@ -26,8 +26,6 @@ install:
     - cd client
     - npm install --legacy-peer-deps
 
-build: off
-
 build_script:
     - npm run build
     - cd ..
