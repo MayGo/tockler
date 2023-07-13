@@ -7,13 +7,13 @@ import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import { mainStore } from './store/mainStore';
 import '@fontsource/inter';
 import { theme } from './theme/theme';
-import ReactGA from 'react-ga';
+import ReactGA from 'react-ga4';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
 const trackingId: string = process.env.REACT_APP_TRACKING_ID || '';
 
-ReactGA.initialize(trackingId, { debug: false });
+ReactGA.initialize(trackingId);
 
 ReactGA.set({
     appVersion: process.env.REACT_APP_VERSION,

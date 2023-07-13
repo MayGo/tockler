@@ -6,7 +6,7 @@ import { Loader } from '../Loader';
 import { UserContext } from './UserProvider';
 import { auth, firestore } from '../../utils/firebase.utils';
 import { APP_RETURN_URL } from './Paywall.utils';
-import ReactGA from 'react-ga';
+import ReactGA from 'react-ga4';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { addDoc, collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
 

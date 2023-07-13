@@ -15,14 +15,14 @@ import { OnlineChart } from '../components/TrayLayout/OnlineChart';
 import { useStoreActions, useStoreState } from '../store/easyPeasy';
 import { useInterval } from '../hooks/intervalHook';
 import { TrayItemEdit } from './tray/TrayItemEdit';
-import ReactGA from 'react-ga';
+import ReactGA from 'react-ga4';
 
 const EMPTY_ARRAY = [];
 const BG_SYNC_DELAY_MS = 10000;
 
 const TrayAppPageTemp = () => {
-    const fetchTimerange = useStoreActions(actions => actions.fetchTimerange);
-    const bgSyncInterval = useStoreActions(actions => actions.bgSyncInterval);
+    const fetchTimerange = useStoreActions((actions) => actions.fetchTimerange);
+    const bgSyncInterval = useStoreActions((actions) => actions.bgSyncInterval);
 
     useInterval(() => {
         bgSyncInterval();
@@ -71,11 +71,11 @@ const TrayAppPageTemp = () => {
     }, [windowIsActive]);
 
     useEffect(() => {
-        const eventLogItemStarted = logItem => {
+        const eventLogItemStarted = (logItem) => {
             const newItem: ITrackItem = JSON.parse(logItem);
             Logger.debug('log-trackItem-started:', newItem);
             setRunningLogItem(newItem);
-            setLastLogItems(items => [...items, newItem]);
+            setLastLogItems((items) => [...items, newItem]);
         };
 
         EventEmitter.on('log-item-started', eventLogItemStarted);
@@ -89,7 +89,7 @@ const TrayAppPageTemp = () => {
     useEffect(() => {
         // loadLastLogItemsThrottled();
         loadLastLogItems();
-        getRunningLogItem().then(logItem => {
+        getRunningLogItem().then((logItem) => {
             setRunningLogItem(logItem);
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -115,7 +115,7 @@ const TrayAppPageTemp = () => {
         [runningLogItem, setRunningLogItem],
     );
 
-    const timeItems = useStoreState(state => state.timeItems);
+    const timeItems = useStoreState((state) => state.timeItems);
     const { statusItems } = timeItems;
     return (
         <TrayLayout>

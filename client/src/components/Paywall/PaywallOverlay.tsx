@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Box, useMultiStyleConfig, Center } from '@chakra-ui/react';
 import { Paywall } from './Paywall';
 import { UserContext } from './UserProvider';
-import ReactGA from 'react-ga';
+import ReactGA from 'react-ga4';
 
 export const PaywallOverlay: React.FC<any> = ({ children, ...rest }) => {
     const styles = useMultiStyleConfig('Paywall', {});
