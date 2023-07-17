@@ -7,6 +7,10 @@
   </a>
 </p>
 
+<p align="center">
+ <a  href="https://trimatechdesigns.etsy.com/">Support Tockler by visiting my Store</a>
+</p>
+
 **Automatically track applications usage and working time.**
 
 > With Tockler you can go back in time and see what you were working on. You can get information on what apps were used - exactly at what time - and what title the application had at that moment. This is enough to determine how much you did something.
@@ -34,8 +38,10 @@
 <br/>
 
 <!-- DONATELINKS -->
-<p align="center">Tockler needs <b>YOUR</b> support. Currently, every expense is coming from my pocket. <br/>It would be awesome if this project would keep itself alive from donations.
+<p align="center">Tockler needs <b>YOUR</b> support. Currently, every expense is coming from my pocket. And this project has <b>Zero</b> backers<br/>It would be awesome if this project would keep itself alive from donations.
+
  </p>
+
 <p align="center">
 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAHHBZZCZVDMA">
     <img src="https://github.com/MayGo/tockler/raw/master/badges/Donate-PayPal-green.svg" alt="Donate using PayPal" />
