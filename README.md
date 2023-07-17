@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
- <a  href="https://trimatechdesigns.etsy.com/">Support Tockler by visiting my Store</a>
+ <a  href="https://trimatechdesigns.etsy.com/">Support Tockler by visiting my Etsy Store</a>
 </p>
 
 **Automatically track applications usage and working time.**
