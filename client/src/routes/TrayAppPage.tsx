@@ -15,7 +15,7 @@ import { OnlineChart } from '../components/TrayLayout/OnlineChart';
 import { useStoreActions, useStoreState } from '../store/easyPeasy';
 import { useInterval } from '../hooks/intervalHook';
 import { TrayItemEdit } from './tray/TrayItemEdit';
-import ReactGA from 'react-ga4';
+import { sendOpenTrayEvent } from '../useGoogleAnalytics.utils';
 
 const EMPTY_ARRAY = [];
 const BG_SYNC_DELAY_MS = 10000;
@@ -62,10 +62,7 @@ const TrayAppPageTemp = () => {
             Logger.debug('Window active:', windowIsActive);
             // loadLastLogItemsThrottled();
 
-            ReactGA.event({
-                category: 'Tray',
-                action: `Opened Tray`,
-            });
+            sendOpenTrayEvent();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [windowIsActive]);

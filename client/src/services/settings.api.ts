@@ -97,6 +97,10 @@ export function getRunningLogItem() {
     return EventEmitter.emit('getRunningLogItemAsJson');
 }
 
+export function getMachineId() {
+    return EventEmitter.emit('getMachineId');
+}
+
 export async function fetchWorkSettings() {
     const jsonStr = await EventEmitter.emit('fetchWorkSettingsJsonString');
     try {

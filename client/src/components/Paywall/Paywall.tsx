@@ -6,7 +6,7 @@ import { Loader } from '../Loader';
 import { UserContext } from './UserProvider';
 import { auth, firestore } from '../../utils/firebase.utils';
 import { APP_RETURN_URL } from './Paywall.utils';
-import ReactGA from 'react-ga4';
+
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { addDoc, collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
 
@@ -83,11 +83,6 @@ const AddSubsciptionButton: React.FC<any> = () => {
         }
 
         try {
-            ReactGA.event({
-                category: 'Paywall',
-                action: `User pressed Subscribe`,
-            });
-
             setIsLoading(true);
 
             const product = products?.find((item) => item.active);
@@ -182,13 +177,6 @@ export const Paywall: React.FC<any> = ({ children, ...rest }) => {
             setStep(STEP_BEGIN);
         }
     }, [firebaseUser]);
-
-    React.useEffect(() => {
-        ReactGA.event({
-            category: 'Paywall',
-            action: `User went to ${StepTexts[step]} step`,
-        });
-    }, [step]);
 
     return (
         <Box

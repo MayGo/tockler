@@ -7,21 +7,11 @@ import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import { mainStore } from './store/mainStore';
 import '@fontsource/inter';
 import { theme } from './theme/theme';
-import ReactGA from 'react-ga4';
+import { setAppParams } from './useGoogleAnalytics.utils';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
-const trackingId: string = process.env.REACT_APP_TRACKING_ID || '';
-
-ReactGA.initialize(trackingId);
-
-ReactGA.set({
-    appVersion: process.env.REACT_APP_VERSION,
-    anonymizeIp: true,
-    checkProtocolTask: null,
-    checkStorageTask: null,
-    historyImportTask: null,
-});
+setAppParams();
 
 (window as any).CSPSettings = {
     nonce: 'nonce',

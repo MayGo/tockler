@@ -39,6 +39,7 @@
         "lodash": "^4.17.21",
         "menubar": "9.2.3",
         "moment": "2.29.4",
+        "node-machine-id": "^1.1.12",
         "objection": "3.0.1",
         "randomcolor": "0.6.2",
         "sqlite3": "5.1.2",

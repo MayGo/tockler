@@ -8,6 +8,7 @@ import { State } from './enums/state';
 import AppManager from './app-manager';
 import { sendToTrayWindow, sendToNotificationWindow } from './window-manager';
 import { initBackgroundJob } from './initBackgroundJob';
+import { machineId } from 'node-machine-id';
 
 const settingsActions = {
     fetchAnalyserSettingsJsonString: async () => {
@@ -43,6 +44,9 @@ const settingsActions = {
     },
     notifyUser: async (payload) => {
         sendToNotificationWindow('notifyUser', payload.message);
+    },
+    getMachineId: async () => {
+        return machineId(true);
     },
 };
 
