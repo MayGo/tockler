@@ -12,3 +12,7 @@ export function sendPageEvent(path, search) {
 export function sendOpenTrayEvent() {
     sendEvent({ name: 'open_tray', params: {} });
 }
+
+export function sendSupportLinkClickedEvent() {
+    sendEvent({ name: 'support_store', params: {} });
+}

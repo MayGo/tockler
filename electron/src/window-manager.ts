@@ -23,6 +23,18 @@ export const sendToTrayWindow = (key, message = '') => {
     }
 };
 
+function openUrlInExternalWindow(event, url) {
+    logger.info('URL', url);
+
+    if (url.startsWith('file://') || url.startsWith('http://127.0.0.1:3000')) {
+        return;
+    }
+
+    event.preventDefault();
+    // open url in a browser and prevent default
+    shell.openExternal(url);
+}
+
 export const sendToNotificationWindow = async (key, message = '') => {
     if (WindowManager.notificationWindow) {
         if (key === 'notifyUser') {
@@ -129,17 +141,7 @@ export default class WindowManager {
                 app.dock.hide();
             }
         });
-        this.mainWindow.webContents.on('new-window', (event, url) => {
-            logger.info('URL', url);
-
-            if (url.startsWith('file://') || url.startsWith('http://127.0.0.1:3000')) {
-                return;
-            }
-
-            event.preventDefault();
-            // open url in a browser and prevent default
-            shell.openExternal(url);
-        });
+        this.mainWindow.webContents.on('new-window', openUrlInExternalWindow);
 
         this.mainWindow.on('resize', throttle(WindowManager.storeWindowSize, 500));
         WindowManager.initMenus();
@@ -237,9 +239,12 @@ export default class WindowManager {
                 //   this.menubar.window.openDevTools({ mode: 'bottom' });
             }
         });
+
         this.menubar.on('ready', () => {
             console.log('app is ready');
             // your app code here
+
+            this.menubar.window.webContents.on('new-window', openUrlInExternalWindow);
         });
     }
 
