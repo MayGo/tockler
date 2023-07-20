@@ -75,10 +75,11 @@ export class LogTrackItemJob {
 
         let savedItem = await backgroundService.createOrUpdate(rawItem);
         // at midnight track item is split and new items ID should be RUNNING_LOG_ITEM
-        if (savedItem.id !== logItemMarkedAsRunning.id) {
+        if (savedItem && savedItem.id !== logItemMarkedAsRunning?.id) {
             logger.debug('RUNNING_LOG_ITEM changed.');
             await stateManager.setLogTrackItemMarkedAsRunning(savedItem);
         }
+
         return savedItem;
     }
 
