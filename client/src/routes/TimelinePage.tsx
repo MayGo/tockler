@@ -1,4 +1,4 @@
-import { Box, Flex, Stack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
+import { Box, Button, Flex, Stack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { CardBox } from '../components/CardBox';
 import { AppUsageChart } from '../components/PieCharts/AppUsageChart';
@@ -10,13 +10,17 @@ import { Timeline } from '../components/Timeline/Timeline';
 import { VisibleRange } from '../components/Timeline/VisibleRange';
 import { TrackItemTabs } from '../components/TrackItemTable/TrackItemTabs';
 import { useInterval } from '../hooks/intervalHook';
-import { useStoreActions } from '../store/easyPeasy';
+import { useStoreActions, useStoreState } from '../store/easyPeasy';
+import { getDaySummary } from '../services/openai.api';
+import { findAndAllCSVItems } from '../services/trackItem.api';
+import { TrackItemType } from '../enum/TrackItemType';
 
 const BG_SYNC_DELAY_MS = 10000;
 
 const ItemLabel = (props) => <Text fontSize="md" color={useColorModeValue('gray.700', 'gray.300')} {...props} />;
 
 export function TimelinePage() {
+    const timerange = useStoreState((state) => state.timerange);
     const fetchTimerange = useStoreActions((actions) => actions.fetchTimerange);
     const bgSyncInterval = useStoreActions((actions) => actions.bgSyncInterval);
 
@@ -34,6 +38,25 @@ export function TimelinePage() {
                 <Flex>
                     <Search />
                     <Box flex={1} />
+                    <Box mr={4}>
+                        <Button
+                            onClick={async () => {
+                                const [from, to] = timerange;
+                                const csvContent = await findAndAllCSVItems({
+                                    from,
+                                    to,
+                                    taskName: TrackItemType.AppTrackItem,
+                                    searchStr: '',
+                                });
+
+                                console.info('csvContent.....', csvContent);
+
+                                getDaySummary(csvContent);
+                            }}
+                        >
+                            QUERY
+                        </Button>
+                    </Box>
                     <Box py={1}>
                         <NewLogButton />
                     </Box>

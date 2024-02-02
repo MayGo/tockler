@@ -9,7 +9,7 @@ let root = path.join(__dirname, '..');
 let client = isDevelopment ? path.join(root, '..', 'client', 'build') : path.join(root, 'dist');
 // Load real data even when in development
 
-let useRealDataInDev = false;
+let useRealDataInDev = true;
 let userDir =
     isDevelopment && useRealDataInDev
         ? `/Users/${os.userInfo().username}/Library/Application Support/Tockler`
@@ -22,10 +22,7 @@ const isWin = os.platform() === 'win32';
 const persisted = new Config();
 
 export const getIcon = (winFileName, macFileName) => {
-    return path.join(
-        root,
-        isWin ? `shared/img/icon/win/${winFileName}` : `shared/img/icon/mac/${macFileName}`,
-    );
+    return path.join(root, isWin ? `shared/img/icon/win/${winFileName}` : `shared/img/icon/mac/${macFileName}`);
 };
 
 export const getTrayIcon = () => {

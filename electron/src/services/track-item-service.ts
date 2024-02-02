@@ -31,6 +31,59 @@ export class TrackItemService {
         return count;
     }
 
+    async findAndAllCSVItems(from, to, taskName, searchStr) {
+        const query = TrackItem.query()
+            .where('taskName', taskName)
+            .where('endDate', '>=', from)
+            .where('endDate', '<', to);
+
+        if (searchStr) {
+            query.where('title', 'like', '%' + searchStr + '%');
+        }
+
+        // const toDateStr = (timestamp) => moment(timestamp).format('YYYY-MM-DD');
+        const toDateTimeStr = (timestamp) => moment(timestamp).format('YYYY-MM-DD HH:mm:ss');
+
+        const results = await query;
+
+        const csvContent = stringify(results, {
+            delimiter: ';',
+            cast: {
+                number: function (value, { column }) {
+                    if (['endDate', 'beginDate'].includes(column.toString())) {
+                        return toDateTimeStr(value);
+                    }
+                    return value?.toString();
+                },
+            },
+            header: true,
+            columns: [
+                {
+                    key: 'app',
+                    header: 'App',
+                },
+                {
+                    key: 'taskName',
+                    header: 'Type',
+                },
+                {
+                    key: 'title',
+                    header: 'Title',
+                },
+                {
+                    key: 'beginDate',
+                    header: 'Begin',
+                },
+                {
+                    key: 'endDate',
+                    header: 'End',
+                },
+            ],
+        });
+
+        return csvContent;
+    }
+
     async findAndExportAllItems(from, to, taskName, searchStr) {
         const query = TrackItem.query()
             .where('taskName', taskName)
@@ -93,6 +146,7 @@ export class TrackItemService {
 
         return true;
     }
+
     findAllItems(from, to, taskName, searchStr, paging, sumTotal) {
         let sortByKey = paging.sortByKey || 'beginDate';
         let sortByOrder = paging.sortByOrder || 'asc';

@@ -57,6 +57,15 @@ export function exportFromItems({ from, to, taskName, searchStr }): Promise<any>
     });
 }
 
+export function findAndAllCSVItems({ from, to, taskName, searchStr }): Promise<any> {
+    return EventEmitter.emit('findAndAllCSVItems', {
+        from: from.valueOf(),
+        to: to.valueOf(),
+        taskName,
+        searchStr,
+    });
+}
+
 function createTrackItem(trackItem: ITrackItem): Promise<any> {
     return EventEmitter.emit('createTrackItem', { trackItem: trackItem });
 }

@@ -80,6 +80,10 @@ const trackItemActions = {
         const { from, to, taskName, searchStr } = payload;
         return trackItemService.findAndExportAllItems(from, to, taskName, searchStr);
     },
+    findAndAllCSVItems: async (payload) => {
+        const { from, to, taskName, searchStr } = payload;
+        return trackItemService.findAndAllCSVItems(from, to, taskName, searchStr);
+    },
     findFirstLogItems: async () => {
         return trackItemService.findFirstLogItems();
     },
