@@ -17,11 +17,6 @@ version: '{build}'
 
 install:
     - ps: Install-Product node $env:nodejs_version
-    - ps: if (Test-Path "C:\Python312") { Remove-Item -Recurse -Force "C:\Python312" }
-    - set PATH=C:\Python312;%PATH%
-    - set PATH=C:\Python312\Scripts;%PATH%
-    - choco install python --version 3.12.3
-    - python -m ensurepip
     - python -m pip install --upgrade pip
     - python -m pip install distutils
     - node --version
