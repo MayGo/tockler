@@ -4,8 +4,7 @@ platform:
     - x64
 
 environment:
-    nodejs_version: '18'
-    python_version: '3.1'
+    nodejs_version: '18's
     SIGNTOOL: C:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe
 
 branches:
@@ -18,7 +17,7 @@ version: '{build}'
 
 install:
     - ps: Install-Product node $env:nodejs_version
-    - choco install python --version %python_version%
+    - choco install python311
     - refreshenv
     - python -m pip install --upgrade pip
     - node --version
