@@ -18,7 +18,7 @@ version: '{build}'
 
 install:
     - ps: Install-Product node $env:nodejs_version
-    - choco install python --version $env:python_version
+    - choco install python --version %python_version%
     - refreshenv
     - python -m pip install --upgrade pip
     - node --version
