@@ -5,6 +5,7 @@ platform:
 
 environment:
     nodejs_version: '18'
+    python_version: '3.1'
     SIGNTOOL: C:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe
 
 branches:
@@ -17,8 +18,9 @@ version: '{build}'
 
 install:
     - ps: Install-Product node $env:nodejs_version
+    - choco install python --version $env:python_version
+    - refreshenv
     - python -m pip install --upgrade pip
-    - python -m pip install distutils
     - node --version
     - npm --version
     - echo SENTRY_DSN=%SENTRY_DSN% > .\electron\.env
