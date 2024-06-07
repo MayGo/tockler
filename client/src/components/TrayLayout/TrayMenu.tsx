@@ -6,7 +6,6 @@ import { Tooltip } from '@chakra-ui/tooltip';
 import { IconButton } from '@chakra-ui/button';
 import { HStack } from '@chakra-ui/react';
 import { Header } from '../Header/Header';
-import { SupportStoreButton } from '../../routes/SupportStoreButton';
 
 export const TrayMenuPlain = () => {
     const exitApp = () => {
@@ -20,7 +19,7 @@ export const TrayMenuPlain = () => {
     return (
         <Header brandLinkProps={{ onClick: toggleMainWindow }}>
             <Box flex="1"></Box>
-            <SupportStoreButton trayButton />
+
             <HStack spacing={3} pr={1}>
                 <Tooltip placement="bottom" label="Open main window">
                     <IconButton

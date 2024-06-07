@@ -11,7 +11,6 @@ import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import { Header } from '../Header/Header';
 import { MenuItem } from '../Header/MenuItem';
 import { Link as RouterLink } from 'react-router-dom';
-import { SupportStoreButton } from '../../routes/SupportStoreButton';
 
 export const HeaderMenu = () => (
     <Header brandLinkProps={{ to: '/timeline', as: RouterLink }}>
@@ -22,7 +21,7 @@ export const HeaderMenu = () => (
         <MenuItem to="/support" icon={<AiOutlineQuestionCircle />} title="Support" />
         {/*<MenuItem to="/trayPage" icon={<AiFillTrademarkCircle />} title="Tray" />*/}
         <Box flex="1" />
-        <SupportStoreButton />
+
         <Box>
             <ColorModeSwitcher />
         </Box>
