@@ -72,7 +72,6 @@ linux:
     category: Utility
     electronUpdaterCompatibility: '>=2.16.0'
     target:
-        - snap
         - AppImage
 snap:
     confinement: devmode
