@@ -17,9 +17,6 @@ version: '{build}'
 
 install:
     - ps: Install-Product node $env:nodejs_version
-    - choco install python311
-    - refreshenv
-    - python -m pip install --upgrade pip
     - node --version
     - npm --version
     - echo SENTRY_DSN=%SENTRY_DSN% > .\electron\.env
