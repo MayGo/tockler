@@ -1,5 +1,6 @@
 import * as log from 'electron-log';
-import * as Sentry from '@sentry/electron';
+
+import * as Sentry from '@sentry/electron/main';
 import { app } from 'electron';
 import config from './config';
 

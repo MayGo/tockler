@@ -8,7 +8,7 @@ import { logManager } from './log-manager';
 import { join } from 'path';
 import { settingsService } from './services/settings-service';
 
-import * as positioner from 'electron-traywindow-positioner';
+import positioner from 'electron-traywindow-positioner';
 
 let logger = logManager.getLogger('WindowManager');
 

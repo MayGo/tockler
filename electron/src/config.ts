@@ -1,9 +1,8 @@
 import { app } from 'electron';
 import * as path from 'path';
 import * as os from 'os';
-
-const Config = require('electron-store');
-const isDevelopment = require('electron-is-dev');
+import Store from 'electron-store';
+import isDevelopment from 'electron-is-dev';
 
 let root = path.join(__dirname, '..');
 let client = isDevelopment ? path.join(root, '..', 'client', 'build') : path.join(root, 'dist');
@@ -19,13 +18,51 @@ console.debug('User dir is:' + userDir);
 
 const isWin = os.platform() === 'win32';
 
-const persisted = new Config();
+interface ConfigStore {
+    windowsize: {
+        width: number;
+        height: number;
+    };
+    usePurpleTrayIcon: boolean;
+    isNativeThemeEnabled: boolean;
+    openAtLogin: boolean;
+    isLoggingEnabled: boolean;
+    openMaximized: boolean;
+}
+
+const schema: Store.Schema<ConfigStore> = {
+    usePurpleTrayIcon: {
+        type: 'boolean',
+    },
+    windowsize: {
+        type: 'object',
+        properties: {
+            width: {
+                type: 'number',
+            },
+            height: {
+                type: 'number',
+            },
+        },
+    },
+    isNativeThemeEnabled: {
+        type: 'boolean',
+    },
+    openAtLogin: {
+        type: 'boolean',
+    },
+    isLoggingEnabled: {
+        type: 'boolean',
+    },
+    openMaximized: {
+        type: 'boolean',
+    },
+};
+
+const persisted = new Store<ConfigStore>({ schema });
 
 export const getIcon = (winFileName, macFileName) => {
-    return path.join(
-        root,
-        isWin ? `shared/img/icon/win/${winFileName}` : `shared/img/icon/mac/${macFileName}`,
-    );
+    return path.join(root, isWin ? `shared/img/icon/win/${winFileName}` : `shared/img/icon/mac/${macFileName}`);
 };
 
 export const getTrayIcon = () => {

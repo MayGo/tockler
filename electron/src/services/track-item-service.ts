@@ -6,7 +6,7 @@ import { TrackItem } from '../models/TrackItem';
 import { dialog } from 'electron';
 import { writeFileSync } from 'fs';
 import { stringify } from 'csv-stringify/sync';
-import moment = require('moment');
+import moment from 'moment';
 import { raw } from 'objection';
 
 export class TrackItemService {
