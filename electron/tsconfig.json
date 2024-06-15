@@ -1,14 +1,16 @@
 {
     "compilerOptions": {
-        "target": "es2015",
-        "module": "commonjs",
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "moduleResolution": "node",
-        "skipLibCheck": true,
-        "sourceMap": true,
-        "outDir": "out"
+      "target": "es2020", // Updated to support ES2020 features
+      "module": "es2020", // Changed from "commonjs" to "es2020" for ES Module support
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "moduleResolution": "node",
+      "skipLibCheck": true,
+      "sourceMap": true,
+      "outDir": "out",
+      "esModuleInterop": true, // Added for better interoperability between CommonJS and ES Modules
+      "allowSyntheticDefaultImports": true // Allows default imports from modules with no default export
     },
-
+  
     "exclude": ["__e2e__", "__tests__", "node_modules", "dist", "packaged", "static"]
 }
