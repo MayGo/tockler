@@ -1,0 +1,91 @@
+appId: 'ee.trimatech.tockler'
+productName: 'Tockler'
+asar: false
+asarUnpack:
+  - resources/**
+
+npmRebuild: false
+afterSign: './scripts/notarize.js'
+
+directories:
+    output: 'packaged'
+files:
+    - '!__tests__'
+    - '!__e2e__'
+    - '!__mocks__'
+    - '!app'
+    - '!custom_typings'
+    - '!util'
+    - '!test'
+    - '!release'
+    - '!travis_wait*'
+
+publish:
+    - github
+
+mac:
+    category: public.app-category.productivity
+    hardenedRuntime: true
+    gatekeeperAssess: false
+    icon: build/icon.icns
+    entitlements: './build/entitlements.mac.plist'
+    entitlementsInherit: 'build/entitlements.mac.plist'
+    asarUnpack: '**/*.node'
+    darkModeSupport: true
+    electronUpdaterCompatibility: '>=2.16.0'
+    extendInfo:
+        LSUIElement: 1
+    target:
+        - dmg
+        - zip
+
+mas:
+    entitlements: './build/entitlements.mas.plist'
+    entitlementsInherit: './build/entitlements.mas.plist'
+    type: distribution
+    provisioningProfile: embedded.provisionprofile
+    #type: development
+    #provisioningProfile: development.provisionprofile
+
+win:
+    artifactName: ${name}-${version}-portable-${os}-${arch}.${ext}
+    electronUpdaterCompatibility: '>=2.16.0'
+    target:
+        - target: nsis
+          arch:
+              - x64
+              - ia32
+              - arm64
+        - target: portable
+          arch:
+              - x64
+              - ia32
+              - arm64
+
+nsis:
+    artifactName: ${name}-${version}-setup-${os}-${arch}.${ext}
+    oneClick: false
+    allowToChangeInstallationDirectory: true
+    differentialPackage: false
+linux:
+    category: Utility
+    electronUpdaterCompatibility: '>=2.16.0'
+    target:
+        - AppImage
+snap:
+    confinement: devmode
+    assumes:
+        - common-data-dir
+        - command-chain
+    layout:
+        /usr/bin/xprop:
+            bind-file: $SNAP/xprop
+        /usr/bin/xwininfo:
+            bind-file: $SNAP/xwininfo
+
+dmg:
+    sign: false
+protocols:
+    name: Tockler
+    schemes:
+        - tockler
