@@ -1,23 +1,23 @@
-import { logManager } from '../log-manager';
-import { stateManager } from '../state-manager';
+import { logManager } from '../log-manager.js';
+import { stateManager } from '../state-manager.js';
 import { activeWindow } from 'get-windows';
-import BackgroundUtils from '../background-utils';
-import { backgroundService } from '../background-service';
-import { TrackItemType } from '../enums/track-item-type';
-import { taskAnalyser } from '../task-analyser';
-import { TrackItem } from '../models/TrackItem';
+import BackgroundUtils from '../background-utils.js';
+import { backgroundService } from '../background-service.js';
+import { TrackItemType } from '../enums/track-item-type.js';
+import { taskAnalyser, TrackItemRaw } from '../task-analyser.js';
+import { TrackItem } from '../models/TrackItem.js';
 import { dialog } from 'electron';
 
 let logger = logManager.getLogger('AppTrackItemJob');
 
 export class AppTrackItemJob {
-    lastUpdatedItem: TrackItem;
+    lastUpdatedItem: TrackItem | null = null;
     errorDialogIsOpen = false;
 
     async run() {
         if (this.errorDialogIsOpen) {
             logger.debug('Not running appTrackItemJob. Error dialog is open.');
-            return;
+            return false;
         }
 
         try {
@@ -25,9 +25,9 @@ export class AppTrackItemJob {
                 let activeWin = await activeWindow();
                 let updatedItem: TrackItem = await this.saveActiveWindow(activeWin ? activeWin : {});
 
-                if (!BackgroundUtils.isSameItems(updatedItem, this.lastUpdatedItem)) {
+                if (!BackgroundUtils.isSameItems(updatedItem as TrackItemRaw, this.lastUpdatedItem as TrackItemRaw)) {
                     logger.debug('App and title changed. Analysing title');
-                    taskAnalyser.analyseAndNotify(updatedItem).then(
+                    taskAnalyser.analyseAndNotify(updatedItem as TrackItemRaw).then(
                         () => logger.debug('Analysing has run.'),
                         (e) => logger.error('Error in Analysing', e),
                     );
@@ -40,7 +40,7 @@ export class AppTrackItemJob {
             }
 
             return true;
-        } catch (error) {
+        } catch (error: any) {
             const activeWinError = await this.checkIfPermissionError(error);
 
             if (activeWinError) {
@@ -49,9 +49,11 @@ export class AppTrackItemJob {
                 logger.error(`Error in AppTrackItemJob: ${error.toString()}`, error);
             }
         }
+
+        return false;
     }
 
-    async checkIfPermissionError(e) {
+    async checkIfPermissionError(e: any) {
         const activeWinError = e.stdout;
 
         if (activeWinError) {
@@ -81,7 +83,7 @@ export class AppTrackItemJob {
         return true;
     }
 
-    async saveActiveWindow(result): Promise<TrackItem> {
+    async saveActiveWindow(result: any): Promise<TrackItem> {
         let rawItem: any = { taskName: TrackItemType.AppTrackItem };
 
         rawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
@@ -106,7 +108,7 @@ export class AppTrackItemJob {
         // logger.debug('Active window (parsed):', rawItem);
 
         let savedItem = await backgroundService.createOrUpdate(rawItem);
-        return savedItem;
+        return savedItem as TrackItem;
     }
 }
 

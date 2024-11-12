@@ -1,8 +1,8 @@
-import config from '../config';
+import config from '../config.js';
 import { Model } from 'objection';
 import { knex } from 'knex';
-import { logManager } from '../log-manager';
-import { WebpackMigrationSource } from './WebpackMigrationSource';
+import { logManager } from '../log-manager.js';
+import { WebpackMigrationSource } from './WebpackMigrationSource.js';
 
 let logger = logManager.getLogger('Database');
 

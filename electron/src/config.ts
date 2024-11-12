@@ -30,7 +30,7 @@ interface StoreType {
 
 const persisted = new Store<StoreType>();
 
-export const getIcon = (winFileName, macFileName) => {
+export const getIcon = (winFileName: string, macFileName: string) => {
     return path.join(root, isWin ? `shared/img/icon/win/${winFileName}` : `shared/img/icon/mac/${macFileName}`);
 };
 

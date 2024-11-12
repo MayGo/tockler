@@ -1,11 +1,10 @@
 import { powerMonitor } from 'electron';
-import { logManager } from '../log-manager';
-import { stateManager } from '../state-manager';
-import { backgroundService } from '../background-service';
-import BackgroundUtils from '../background-utils';
-import { State } from '../enums/state';
-import { appConstants } from '../app-constants';
-import { sendToTrayWindow } from '../window-manager';
+import { logManager } from '../log-manager.js';
+import { stateManager } from '../state-manager.js';
+import { backgroundService } from '../background-service.js';
+import BackgroundUtils from '../background-utils.js';
+import { State } from '../enums/state.js';
+import { sendToTrayWindow } from '../window-manager.js';
 
 let logger = logManager.getLogger('StatusTrackItemJob');
 
@@ -18,9 +17,9 @@ export class StatusTrackItemJob {
                 () => {
                     // logger.debug(`Idle saved ${seconds}`);
                 },
-                (e) => logger.error('Idle error', e),
+                (e: any) => logger.error('Idle error', e),
             );
-        } catch (error) {
+        } catch (error: any) {
             logger.error(`Error in StatusTrackItemJob: ${error.toString()}`, error);
         }
     }
@@ -55,6 +54,8 @@ export class StatusTrackItemJob {
         };
 
         await backgroundService.createOrUpdate(rawItem);
+
+        return state;
     }
 }
 

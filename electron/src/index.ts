@@ -1,17 +1,14 @@
 require('events').EventEmitter.defaultMaxListeners = 30;
 
-import { initBackgroundJob } from './initBackgroundJob';
-import { backgroundService } from './background-service';
+import { initBackgroundJob } from './initBackgroundJob.js';
+import { backgroundService } from './background-service.js';
 import { app, ipcMain, powerMonitor } from 'electron';
-import { logManager } from './log-manager';
-import AppManager from './app-manager';
-import WindowManager, { sendToMainWindow } from './window-manager';
-import { extensionsManager } from './extensions-manager';
-import AppUpdater from './app-updater';
-import config from './config';
-import { Deeplink } from 'electron-deeplink';
-
-const UrlParse = require('url-parse');
+import { logManager } from './log-manager.js';
+import AppManager from './app-manager.js';
+import WindowManager from './window-manager.js';
+import { extensionsManager } from './extensions-manager.js';
+import AppUpdater from './app-updater.js';
+import config from './config.js';
 
 let logger = logManager.getLogger('AppIndex');
 app.setAppUserModelId(process.execPath);
@@ -21,10 +18,7 @@ app.setAppUserModelId(process.execPath);
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (gotTheLock) {
-    const protocol = 'tockler';
-    const deeplink = new Deeplink({ app, mainWindow: WindowManager.mainWindow, protocol });
-
-    app.on('second-instance', (event, commandLine, workingDirectory) => {
+    app.on('second-instance', () => {
         // Someone tried to run a second instance, we should focus our window.
         logger.debug('Make single instance');
         WindowManager.openMainWindow();
@@ -91,23 +85,9 @@ if (gotTheLock) {
                     (e) => logger.error('Error in onResume', e),
                 );
             });
-        } catch (error) {
+        } catch (error: any) {
             logger.error(`App errored in ready event: ${error.toString()}`, error);
         }
-    });
-
-    deeplink.on('received', (url) => {
-        logger.debug(`Got app link (tockler://open or tockler://login), opening main window. Arrived from  ${url}`);
-        const urlParsed = new UrlParse(url, false);
-
-        if (urlParsed.host === 'login') {
-            WindowManager.openMainWindow();
-            sendToMainWindow('event-login-url', urlParsed.query);
-            logger.debug('event-login-url sent', urlParsed.query);
-            return;
-        }
-
-        WindowManager.openMainWindow();
     });
 } else {
     logger.debug('Quiting instance.');

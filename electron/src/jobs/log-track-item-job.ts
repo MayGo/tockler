@@ -1,24 +1,25 @@
-import { logManager } from '../log-manager';
-import { stateManager } from '../state-manager';
+import { logManager } from '../log-manager.js';
+import { stateManager } from '../state-manager.js';
 import moment from 'moment';
-import { TrackItemType } from '../enums/track-item-type';
-import { backgroundService } from '../background-service';
-import BackgroundUtils from '../background-utils';
-import { trackItemService } from '../services/track-item-service';
-import { settingsService } from '../services/settings-service';
-import { TrackItem } from '../models/TrackItem';
+import { TrackItemType } from '../enums/track-item-type.js';
+import { backgroundService } from '../background-service.js';
+import BackgroundUtils from '../background-utils.js';
+import { trackItemService } from '../services/track-item-service.js';
+import { settingsService } from '../services/settings-service.js';
+import { TrackItem } from '../models/TrackItem.js';
+import { TrackItemRaw } from '../task-analyser.js';
 
 let logger = logManager.getLogger('LogTrackItemJob');
 
 export class LogTrackItemJob {
-    onlineItemWhenLastSplit: TrackItem = null;
+    onlineItemWhenLastSplit: TrackItem | null = null;
 
     async run() {
         try {
             if (this.checkIfIsInCorrectState()) {
                 await this.updateRunningLogItem();
             }
-        } catch (error) {
+        } catch (error: any) {
             logger.error(`Error in LogTrackItemJob: ${error.toString()}`, error);
         }
     }
@@ -47,13 +48,13 @@ export class LogTrackItemJob {
             return null;
         }
 
-        let rawItem: any = BackgroundUtils.getRawTrackItem(logItemMarkedAsRunning);
-        rawItem.endDate = Date.now();
+        let rawItem: TrackItemRaw = BackgroundUtils.getRawTrackItem(logItemMarkedAsRunning as TrackItemRaw);
+        rawItem.endDate = new Date();
 
         let shouldTrySplitting = oldOnlineItem !== this.onlineItemWhenLastSplit;
 
         if (shouldTrySplitting) {
-            let splitEndDate: Date = await this.getTaskSplitDate();
+            let splitEndDate: Date | null = await this.getTaskSplitDate();
             if (splitEndDate) {
                 logger.debug('Splitting LogItem, new item has endDate: ', splitEndDate);
 

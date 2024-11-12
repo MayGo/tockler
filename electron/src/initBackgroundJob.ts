@@ -1,13 +1,14 @@
-import { logManager } from './log-manager';
-import { logTrackItemJob } from './jobs/log-track-item-job';
-import { statusTrackItemJob } from './jobs/status-track-item-job';
-import { appTrackItemJob } from './jobs/app-track-item-job';
-import { settingsService } from './services/settings-service';
+import { logManager } from './log-manager.js';
+import { logTrackItemJob } from './jobs/log-track-item-job.js';
+import { statusTrackItemJob } from './jobs/status-track-item-job.js';
+import { appTrackItemJob } from './jobs/app-track-item-job.js';
+import { settingsService } from './services/settings-service.js';
 
 let logger = logManager.getLogger('BackgroundJob');
 
-let bgInterval;
-async function runAll(dataSettings) {
+let bgInterval: NodeJS.Timeout | null = null;
+
+async function runAll(dataSettings: any) {
     const { idleAfterSeconds } = dataSettings;
 
     await appTrackItemJob.run();
@@ -16,7 +17,7 @@ async function runAll(dataSettings) {
 }
 
 export async function initBackgroundJob() {
-    logger.debug('Environment:' + process.env.NODE_ENV);
+    logger.debug('Environment:' + process.env['NODE_ENV']);
     const dataSettings = await settingsService.fetchDataSettings();
     logger.debug('Running background service.', dataSettings);
 

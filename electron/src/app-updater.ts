@@ -1,11 +1,11 @@
-import { stateManager } from './state-manager';
-import { app, dialog } from 'electron';
+import { stateManager } from './state-manager.js';
+import { app } from 'electron';
 import { autoUpdater, UpdateCheckResult, UpdateInfo } from 'electron-updater';
-import config from './config';
-import { showNotification } from './notification';
+import config from './config.js';
+import { showNotification } from './notification.js';
 
-import { logManager } from './log-manager';
-import WindowManager from './window-manager';
+import { logManager } from './log-manager.js';
+import WindowManager from './window-manager.js';
 
 const logger = logManager.getLogger('AppUpdater');
 
@@ -14,7 +14,7 @@ const ONE_HOUR_MS = 60 * ONE_MINUTE_MS;
 
 export const CHECK_INTERVAL_MS = ONE_HOUR_MS * 8;
 
-function isNetworkError(errorObject) {
+function isNetworkError(errorObject: any) {
     return errorObject.message.includes('net::ERR');
 }
 
@@ -56,7 +56,7 @@ export default class AppUpdater {
                 logger.error('AutoUpdater error:', e);
                 showNotification({
                     title: 'Tockler update error',
-                    body: e ? e.stack || e : 'unknown',
+                    body: e ? (e as Error).stack || '' : 'unknown',
                 });
             }
         });
@@ -66,8 +66,7 @@ export default class AppUpdater {
 
     static checkForNewVersions() {
         let isAutoUpdateEnabled = config.persisted.get('isAutoUpdateEnabled');
-        isAutoUpdateEnabled =
-            typeof isAutoUpdateEnabled !== 'undefined' ? isAutoUpdateEnabled : true;
+        isAutoUpdateEnabled = typeof isAutoUpdateEnabled !== 'undefined' ? isAutoUpdateEnabled : true;
 
         if (isAutoUpdateEnabled && !stateManager.isSystemSleeping()) {
             logger.debug('Checking for updates.');
@@ -82,7 +81,7 @@ export default class AppUpdater {
         showNotification({ body: `Checking for updates...`, silent: true });
 
         try {
-            const result: UpdateCheckResult = await autoUpdater.checkForUpdates();
+            const result: UpdateCheckResult | null = await autoUpdater.checkForUpdates();
 
             if (result?.updateInfo?.version) {
                 const latestVersion = result.updateInfo.version;
@@ -100,7 +99,7 @@ export default class AppUpdater {
             logger.error('Error checking updates', e);
             showNotification({
                 title: 'Tockler error',
-                body: e ? e.stack || e : 'unknown',
+                body: e ? (e as Error).stack || '' : 'unknown',
             });
         }
     }

@@ -1,29 +1,29 @@
 import * as log from 'electron-log';
-import Sentry, { init } from '@sentry/electron/main';
+import * as Sentry from '@sentry/electron/main';
 import { app } from 'electron';
-import config from './config';
+import config from './config.js';
 
 const version = app.getVersion();
 
-const isProd = process.env.NODE_ENV === 'production';
+const isProd = process.env['NODE_ENV'] === 'production';
 if (isProd) {
-    init({
-        dsn: process.env.SENTRY_DSN,
-        environment: process.env.NODE_ENV,
+    Sentry.init({
+        dsn: process.env['SENTRY_DSN'],
+        environment: process.env['NODE_ENV'],
         release: version,
     });
 }
 
 const origConsole = (log.transports as any).console;
 
-const isError = function (e) {
+const isError = function (e: any) {
     return e && e.stack && e.message;
 };
 
-const cachedErrors = {};
+const cachedErrors: Record<string, boolean> = {};
 
-const sentryTransportConsole = (msgObj) => {
-    const { level, data, date } = msgObj;
+const sentryTransportConsole = (msgObj: any) => {
+    const { level, data } = msgObj;
     const [message, ...rest] = data;
 
     if (!cachedErrors[message]) {
@@ -50,14 +50,14 @@ const sentryTransportConsole = (msgObj) => {
 let isLoggingEnabled = config.persisted.get('isLoggingEnabled');
 
 export class LogManager {
-    logger;
+    logger: any;
 
-    init(settings) {
+    init(_settings: any) {
         console.log('init LogManager');
     }
 
-    getLogger(name) {
-        const logObj = log.create(name);
+    getLogger(name: string) {
+        const logObj = log.create({ logId: name });
         if (isProd) {
             (logObj as any).transports.console = sentryTransportConsole;
         }

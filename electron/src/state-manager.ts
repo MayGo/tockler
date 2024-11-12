@@ -1,27 +1,28 @@
-import { State } from './enums/state';
-import { TrackItemType } from './enums/track-item-type';
+import { State } from './enums/state.js';
+import { TrackItemType } from './enums/track-item-type.js';
 import { ipcMain } from 'electron';
-import BackgroundUtils from './background-utils';
-import { trackItemService } from './services/track-item-service';
-import { logManager } from './log-manager';
-import { settingsService } from './services/settings-service';
-import { appEmitter } from './app-event-emitter';
-import { sendToTrayWindow } from './window-manager';
-import { TrackItem } from './models/TrackItem';
-import { backgroundService } from './background-service';
+import BackgroundUtils from './background-utils.js';
+import { trackItemService } from './services/track-item-service.js';
+import { logManager } from './log-manager.js';
+import { settingsService } from './services/settings-service.js';
+import { appEmitter } from './app-event-emitter.js';
+import { sendToTrayWindow } from './window-manager.js';
+import { TrackItem } from './models/TrackItem.js';
+import { backgroundService } from './background-service.js';
+import { TrackItemRaw } from './task-analyser.js';
 
 let logger = logManager.getLogger('StateManager');
 
 interface TrackItems {
-    StatusTrackItem: TrackItem;
-    AppTrackItem: TrackItem;
-    LogTrackItem: TrackItem;
+    StatusTrackItem: TrackItem | null;
+    AppTrackItem: TrackItem | null;
+    LogTrackItem: TrackItem | null;
 }
 
 export class StateManager {
     private isSleeping = false;
 
-    private logTrackItemMarkedAsRunning: TrackItem = null;
+    private logTrackItemMarkedAsRunning: TrackItem | null = null;
 
     lastTrackItems: TrackItems = {
         StatusTrackItem: null,
@@ -36,24 +37,24 @@ export class StateManager {
     initIpc() {
         ipcMain.on('start-new-log-item', this.startNewLogItem.bind(this));
 
-        ipcMain.on('end-running-log-item', event => {
+        ipcMain.on('end-running-log-item', (_event) => {
             logger.debug('end-running-log-item');
             this.stopRunningLogTrackItem().then(
                 () => logger.debug('end-running-log-item'),
-                e => logger.error('end-running-log-item', e),
+                (e) => logger.error('end-running-log-item', e),
             );
         });
 
-        appEmitter.on('start-new-log-item', rawItem => {
+        appEmitter.on('start-new-log-item', (rawItem) => {
             logger.debug('start-new-log-item event');
             this.startNewLogItem(null, rawItem).then(
                 () => logger.debug('start-new-log-item'),
-                e => logger.error('start-new-log-item', e),
+                (e) => logger.error('start-new-log-item', e),
             );
         });
     }
 
-    async startNewLogItem(event, rawItem) {
+    async startNewLogItem(_event: any, rawItem: TrackItemRaw) {
         logger.debug('start-new-log-item', rawItem);
         const item: TrackItem = await this.createNewRunningTrackItem(rawItem);
         logger.debug('log-item-started', item.toJSON());
@@ -90,17 +91,17 @@ export class StateManager {
     }
 
     async stopRunningLogTrackItem() {
-        let item = await this.updateRunningTrackItemEndDate(TrackItemType.LogTrackItem);
+        await this.updateRunningTrackItemEndDate(TrackItemType.LogTrackItem);
         this.resetLogTrackItem();
         this.logTrackItemMarkedAsRunning = null;
         await settingsService.saveRunningLogItemReference(null);
     }
 
     setCurrentTrackItem(item: TrackItem) {
-        this.lastTrackItems[item.taskName] = item;
+        this.lastTrackItems[item.taskName as TrackItemType] = item;
     }
 
-    getCurrentTrackItem(type: TrackItemType): TrackItem {
+    getCurrentTrackItem(type: TrackItemType): TrackItem | null {
         return this.lastTrackItems[type];
     }
 
@@ -108,8 +109,12 @@ export class StateManager {
         return this.getCurrentTrackItem(TrackItemType.StatusTrackItem);
     }
 
-    hasSameRunningTrackItem(rawItem): boolean {
-        return BackgroundUtils.isSameItems(rawItem, this.getCurrentTrackItem(rawItem.taskName));
+    hasSameRunningTrackItem(rawItem: TrackItemRaw): boolean {
+        if (!rawItem.taskName) {
+            return false;
+        }
+
+        return BackgroundUtils.isSameItems(rawItem, this.getCurrentTrackItem(rawItem.taskName) as TrackItemRaw);
     }
 
     resetCurrentTrackItem(type: TrackItemType) {
@@ -171,11 +176,21 @@ export class StateManager {
         await backgroundService.createOrUpdate(rawItem);
     }
 
-    async endRunningTrackItem(rawItem) {
+    async endRunningTrackItem(rawItem: TrackItemRaw) {
+        if (!rawItem.taskName) {
+            return null;
+        }
+
         let runningItem = this.getCurrentTrackItem(rawItem.taskName);
 
         if (runningItem) {
-            runningItem.endDate = rawItem.beginDate;
+            if (rawItem.beginDate) {
+                runningItem.endDate = rawItem.beginDate;
+            } else {
+                logger.debug('No beginDate, setting endDate to now');
+                runningItem.endDate = new Date();
+            }
+
             logger.debug('Ending trackItem:', runningItem.toJSON());
             this.resetCurrentTrackItem(rawItem.taskName);
             await trackItemService.updateTrackItem(runningItem, runningItem.id);
@@ -184,10 +199,10 @@ export class StateManager {
         return runningItem;
     }
 
-    async createNewRunningTrackItem(rawItem) {
+    async createNewRunningTrackItem(rawItem: TrackItemRaw) {
         await this.endRunningTrackItem(rawItem);
 
-        let item = await trackItemService.createTrackItem(rawItem);
+        let item = await trackItemService.createTrackItem(rawItem as TrackItem);
         // logger.debug('Created track item to DB and set running item:', item.toJSON());
 
         this.setCurrentTrackItem(item);
@@ -196,6 +211,10 @@ export class StateManager {
 
     async updateRunningTrackItemEndDate(type: TrackItemType) {
         let runningItem = this.getCurrentTrackItem(type);
+        if (!runningItem) {
+            return null;
+        }
+
         runningItem.endDate = new Date();
         await trackItemService.updateTrackItem(runningItem, runningItem.id);
         // logger.debug('Saved track item(endDate change) to DB:', runningItem.toJSON());

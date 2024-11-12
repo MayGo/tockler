@@ -1,6 +1,6 @@
-import { logManager } from '../log-manager';
-import * as randomcolor from 'randomcolor';
-import { AppSetting } from '../models/AppSetting';
+import { logManager } from '../log-manager.js';
+import randomcolor from 'randomcolor';
+import { AppSetting } from '../models/AppSetting.js';
 
 export class AppSettingService {
     logger = logManager.getLogger('AppSettingService');
@@ -16,16 +16,11 @@ export class AppSettingService {
         return appSetting;
     }
 
-    async retrieveAppSettings(name) {
+    async retrieveAppSettings(name: string) {
         if (this.cache[name]) {
             return this.cache[name];
         }
 
-        const params = {
-            where: {
-                name,
-            },
-        };
         const appSettings = await AppSetting.query().where('name', name);
 
         const item = appSettings.length > 0 ? appSettings[0] : null;
@@ -35,7 +30,7 @@ export class AppSettingService {
         return item;
     }
 
-    async getAppColor(appName) {
+    async getAppColor(appName: string) {
         const appSetting: AppSetting = await this.retrieveAppSettings(appName);
         if (appSetting) {
             return appSetting.color;
@@ -54,7 +49,6 @@ export class AppSettingService {
         const appSetting = await this.retrieveAppSettings(appName);
 
         if (appSetting) {
-
             await appSetting.$query().patch({
                 color,
             });

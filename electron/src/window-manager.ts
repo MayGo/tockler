@@ -1,20 +1,19 @@
 import { menubar } from 'menubar';
-import MenuBuilder from './menu-builder';
+import MenuBuilder from './menu-builder.js';
 import { throttle } from 'lodash';
-import { app, ipcMain, BrowserWindow, dialog, shell, Tray, nativeImage } from 'electron';
+import { app, ipcMain, BrowserWindow, dialog, shell, Tray } from 'electron';
 import { autoUpdater } from 'electron-updater';
-import config, { getTrayIcon } from './config';
-import { logManager } from './log-manager';
+import config, { getTrayIcon } from './config.js';
+import { logManager } from './log-manager.js';
 import { join } from 'path';
-import { settingsService } from './services/settings-service';
-
+import { settingsService } from './services/settings-service.js';
 import positioner from 'electron-traywindow-positioner';
 
 let logger = logManager.getLogger('WindowManager');
 
 const preloadScript = join(__dirname, 'preloadStuff.js');
 
-export const sendToTrayWindow = (key, message = '') => {
+export const sendToTrayWindow = (key: string, message = '') => {
     if (WindowManager.menubar.window) {
         logger.debug('Send to tray window:', key, message);
         WindowManager.menubar.window.webContents.send(key, message);
@@ -23,7 +22,7 @@ export const sendToTrayWindow = (key, message = '') => {
     }
 };
 
-function openUrlInExternalWindow(event, url) {
+function openUrlInExternalWindow(event: any, url: string) {
     logger.info('URL', url);
 
     if (url.startsWith('file://') || url.startsWith('http://127.0.0.1:3000')) {
@@ -35,16 +34,24 @@ function openUrlInExternalWindow(event, url) {
     shell.openExternal(url);
 }
 
-export const sendToNotificationWindow = async (key, message = '') => {
+export const sendToNotificationWindow = async (key: string, message = '') => {
     if (WindowManager.notificationWindow) {
         if (key === 'notifyUser') {
-            positioner.position(WindowManager.notificationWindow, WindowManager.tray.getBounds());
+            if (WindowManager.tray) {
+                positioner.position(WindowManager.notificationWindow, WindowManager.tray.getBounds());
+            } else {
+                logger.error('Tray not defined yet, not sending notifyUser');
+            }
             WindowManager.notificationWindow.showInactive();
             const workSettings = await settingsService.fetchWorkSettings();
             const { notificationDuration } = workSettings;
 
             setTimeout(() => {
-                WindowManager.notificationWindow.hide();
+                if (WindowManager.notificationWindow) {
+                    WindowManager.notificationWindow.hide();
+                } else {
+                    logger.error('NotificationWindow not created');
+                }
             }, notificationDuration * 1000);
         }
 
@@ -55,7 +62,7 @@ export const sendToNotificationWindow = async (key, message = '') => {
     }
 };
 
-export const sendToMainWindow = (key, message = '') => {
+export const sendToMainWindow = (key: string, message = '') => {
     if (WindowManager.mainWindow) {
         WindowManager.mainWindow.webContents.send(key, message);
     } else {
@@ -64,10 +71,10 @@ export const sendToMainWindow = (key, message = '') => {
 };
 
 export default class WindowManager {
-    static mainWindow;
-    static menubar;
-    static notificationWindow: BrowserWindow;
-    static tray: Tray;
+    static mainWindow: BrowserWindow | null = null;
+    static menubar: any;
+    static notificationWindow: BrowserWindow | null = null;
+    static tray: Tray | null = null;
 
     static initMenus() {
         const menuBuilder = new MenuBuilder();
@@ -102,6 +109,11 @@ export default class WindowManager {
             app.dock.show();
         }
 
+        if (!this.mainWindow) {
+            logger.error('MainWindow not created');
+            return;
+        }
+
         if (openMaximized && showOnLoad) {
             this.mainWindow.maximize();
         }
@@ -124,8 +136,12 @@ export default class WindowManager {
         this.mainWindow.webContents.on('did-finish-load', () => {
             logger.debug('did-finish-load');
             if (showOnLoad) {
-                this.mainWindow.show();
-                this.mainWindow.focus();
+                if (this.mainWindow) {
+                    this.mainWindow.show();
+                    this.mainWindow.focus();
+                } else {
+                    logger.error('MainWindow not created');
+                }
             }
         });
 
@@ -139,7 +155,7 @@ export default class WindowManager {
                 app.dock.hide();
             }
         });
-        this.mainWindow.webContents.on('new-window', openUrlInExternalWindow);
+        //   this.mainWindow.webContents.on('new-window', openUrlInExternalWindow);
 
         this.mainWindow.on('resize', throttle(WindowManager.storeWindowSize, 500));
         WindowManager.initMenus();
@@ -148,6 +164,11 @@ export default class WindowManager {
     public static openMainWindow() {
         if (!WindowManager.mainWindow) {
             WindowManager.setMainWindow();
+        }
+
+        if (!WindowManager.mainWindow) {
+            logger.error('MainWindow not created');
+            return;
         }
 
         if (WindowManager.mainWindow.isMinimized()) {
@@ -162,10 +183,15 @@ export default class WindowManager {
     static initMainWindowEvents() {
         logger.debug('Init main window events.');
 
-        ipcMain.on('toggle-main-window', (ev, name) => {
+        ipcMain.on('toggle-main-window', () => {
             if (!this.mainWindow) {
                 logger.debug('MainWindow closed, opening');
                 WindowManager.setMainWindow();
+            }
+
+            if (!this.mainWindow) {
+                logger.error('MainWindow not created');
+                return;
             }
 
             logger.debug('Toggling main window');
@@ -185,7 +211,12 @@ export default class WindowManager {
 
     static storeWindowSize() {
         try {
-            config.persisted.set('windowsize', WindowManager.mainWindow.getBounds());
+            if (!this.mainWindow) {
+                logger.error('MainWindow not created');
+                return;
+            }
+
+            config.persisted.set('windowsize', this.mainWindow.getBounds());
         } catch (e) {
             logger.error('Error saving', e);
         }
@@ -276,7 +307,11 @@ export default class WindowManager {
 
         this.menubar.on('ready', () => {
             this.menubar.tray.on('click', () => {
-                this.notificationWindow.hide();
+                if (this.notificationWindow) {
+                    this.notificationWindow.hide();
+                } else {
+                    logger.error('NotificationWindow not created');
+                }
             });
         });
     }

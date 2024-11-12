@@ -1,8 +1,8 @@
-import { logManager } from '../log-manager';
-import { settingsService } from './settings-service';
-import { State } from '../enums/state';
-import { stateManager } from '../state-manager';
-import { TrackItem } from '../models/TrackItem';
+import { logManager } from '../log-manager.js';
+import { settingsService } from './settings-service.js';
+import { State } from '../enums/state.js';
+import { stateManager } from '../state-manager.js';
+import { TrackItem } from '../models/TrackItem.js';
 import { dialog } from 'electron';
 import { writeFileSync } from 'fs';
 import { stringify } from 'csv-stringify/sync';
@@ -31,7 +31,7 @@ export class TrackItemService {
         return count;
     }
 
-    async findAndExportAllItems(from, to, taskName, searchStr) {
+    async findAndExportAllItems(from: string, to: string, taskName: string, searchStr: string) {
         const query = TrackItem.query()
             .where('taskName', taskName)
             .where('endDate', '>=', from)
@@ -41,8 +41,8 @@ export class TrackItemService {
             query.where('title', 'like', '%' + searchStr + '%');
         }
 
-        const toDateStr = (timestamp) => moment(timestamp).format('YYYY-MM-DD');
-        const toDateTimeStr = (timestamp) => moment(timestamp).format('YYYY-MM-DD HH:mm:ss');
+        const toDateStr = (timestamp: string) => moment(timestamp).format('YYYY-MM-DD');
+        const toDateTimeStr = (timestamp: string) => moment(timestamp).format('YYYY-MM-DD HH:mm:ss');
 
         const results = await query;
 
@@ -50,8 +50,8 @@ export class TrackItemService {
             delimiter: ';',
             cast: {
                 number: function (value, { column }) {
-                    if (['endDate', 'beginDate'].includes(column.toString())) {
-                        return toDateTimeStr(value);
+                    if (['endDate', 'beginDate'].includes(column?.toString() || '')) {
+                        return toDateTimeStr(value.toString());
                     }
                     return value?.toString();
                 },
@@ -93,7 +93,7 @@ export class TrackItemService {
 
         return true;
     }
-    findAllItems(from, to, taskName, searchStr, paging, sumTotal) {
+    findAllItems(from: string, to: string, taskName: string, searchStr: string, paging: any, sumTotal: boolean) {
         let sortByKey = paging.sortByKey || 'beginDate';
         let sortByOrder = paging.sortByOrder || 'asc';
 
@@ -121,7 +121,7 @@ export class TrackItemService {
         return query;
     }
 
-    async findAllDayItems(from, to, taskName) {
+    async findAllDayItems(from: string, to: string, taskName: string) {
         return TrackItem.query()
             .where('taskName', taskName)
             .where('endDate', '>=', from)
@@ -158,17 +158,17 @@ export class TrackItemService {
         return query;
     }
 
-    updateTrackItemColor(appName, color) {
+    updateTrackItemColor(appName: string, color: string) {
         this.logger.debug('Updating app color:', appName, color);
 
         return TrackItem.query().patch({ color: color }).where('app', appName);
     }
 
-    findById(id) {
+    findById(id: number) {
         return TrackItem.query().findById(id);
     }
 
-    async deleteById(id) {
+    async deleteById(id: number) {
         // TODO: not used
         await TrackItem.query().deleteById(id);
 
@@ -176,7 +176,7 @@ export class TrackItemService {
         return id;
     }
 
-    async deleteByIds(ids) {
+    async deleteByIds(ids: number[]) {
         await TrackItem.query().delete().whereIn('id', ids);
         return ids;
     }

@@ -1,6 +1,6 @@
-import { logManager } from '../log-manager';
-import { Setting } from '../models/Setting';
-import { TrackItem } from '../models/TrackItem';
+import { logManager } from '../log-manager.js';
+import { Setting } from '../models/Setting.js';
+import { TrackItem } from '../models/TrackItem.js';
 
 export class SettingsService {
     logger = logManager.getLogger('SettingsService');
@@ -86,7 +86,7 @@ export class SettingsService {
         return JSON.stringify(data);
     }
 
-    isObject(val) {
+    isObject(val: any) {
         return val instanceof Object;
     }
 
@@ -123,8 +123,8 @@ export class SettingsService {
         return null;
     }
 
-    async saveRunningLogItemReference(logItemId) {
-        const item = await this.updateByName('RUNNING_LOG_ITEM', JSON.stringify({ id: logItemId }));
+    async saveRunningLogItemReference(logItemId: number | null) {
+        await this.updateByName('RUNNING_LOG_ITEM', JSON.stringify({ id: logItemId }));
         this.logger.debug('Updated RUNNING_LOG_ITEM!', logItemId);
         return logItemId;
     }

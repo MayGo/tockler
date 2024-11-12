@@ -1,7 +1,7 @@
 import { app, Menu, shell, MenuItemConstructorOptions } from 'electron';
-import config from './config';
-import WindowManager from './window-manager';
-import AppUpdater from './app-updater';
+import config from './config.js';
+import WindowManager from './window-manager.js';
+import AppUpdater from './app-updater.js';
 
 const macOS = process.platform === 'darwin';
 
@@ -82,7 +82,9 @@ export default class MenuBuilder {
             label: 'Preferences',
             accelerator: macOS ? 'Command+,' : 'Control+',
             click() {
-                WindowManager.mainWindow.webContents.send('side:preferences');
+                if (WindowManager.mainWindow) {
+                    WindowManager.mainWindow.webContents.send('side:preferences');
+                }
             },
         };
 
@@ -150,19 +152,24 @@ export default class MenuBuilder {
     }
 
     setupDevelopmentEnvironment() {
-        WindowManager.mainWindow.openDevTools();
+        if (!WindowManager.mainWindow) {
+            console.error('No main window found, cannot setup development environment');
+            return;
+        }
 
-        WindowManager.mainWindow.webContents.on('context-menu', (e, props) => {
-            const { x, y } = props;
-            const menu = Menu.buildFromTemplate([
-                {
-                    label: 'Inspect element',
-                    click: () => {
-                        WindowManager.mainWindow.inspectElement(x, y);
-                    },
-                },
-            ]);
-            menu.popup(WindowManager.mainWindow);
-        });
+        // WindowManager.mainWindow.openDevTools();
+
+        // WindowManager.mainWindow.webContents.on('context-menu', (e, props) => {
+        //     const { x, y } = props;
+        //     const menu = Menu.buildFromTemplate([
+        //         {
+        //             label: 'Inspect element',
+        //             click: () => {
+        //                 WindowManager.mainWindow.inspectElement(x, y);
+        //             },
+        //         },
+        //     ]);
+        //     menu.popup(WindowManager.mainWindow);
+        // });
     }
 }

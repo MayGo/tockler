@@ -1,10 +1,11 @@
 import { app, ipcMain, nativeTheme } from 'electron';
-import { logManager } from './log-manager';
-import { stateManager } from './state-manager';
-import { initIpcActions } from './API';
-import config from './config';
-import { connectAndSync } from './models/db';
-import WindowManager, { sendToTrayWindow, sendToMainWindow, sendToNotificationWindow } from './window-manager';
+import { logManager } from './log-manager.js';
+import { stateManager } from './state-manager.js';
+import { initIpcActions } from './API.js';
+import config from './config.js';
+import { connectAndSync } from './models/db.js';
+import WindowManager, { sendToTrayWindow, sendToMainWindow, sendToNotificationWindow } from './window-manager.js';
+import { Knex } from 'knex';
 
 let logger = logManager.getLogger('AppManager');
 
@@ -18,7 +19,7 @@ const theThemeHasChanged = () => {
     AppManager.saveThemeAndNotify(AppManager.getNativeTheme());
 };
 export default class AppManager {
-    static knexInstance;
+    static knexInstance: Knex | null = null;
     static async init() {
         logger.info('Intializing Tockler');
         initIpcActions();
@@ -34,8 +35,10 @@ export default class AppManager {
     }
 
     static async destroy() {
-        await AppManager.knexInstance.destroy();
-        logger.info('Closed db connection');
+        if (AppManager.knexInstance) {
+            await AppManager.knexInstance.destroy();
+            logger.info('Closed db connection');
+        }
     }
 
     static initAppEvents() {
@@ -97,7 +100,7 @@ export default class AppManager {
         config.persisted.set(THEME_CONFIG_KEY, theme);
     }
 
-    static saveThemeAndNotify(theme) {
+    static saveThemeAndNotify(theme: string) {
         logger.info('Theme changed', theme);
         AppManager.saveActiveTheme(theme);
 

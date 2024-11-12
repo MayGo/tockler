@@ -1,20 +1,21 @@
-import { setupMainHandler } from './setupMainHandler';
+import { setupMainHandler } from './setupMainHandler.js';
 import { ipcMain } from 'electron';
-import { settingsService } from './services/settings-service';
-import { appSettingService } from './services/app-setting-service';
-import { trackItemService } from './services/track-item-service';
-import { stateManager } from './state-manager';
-import { State } from './enums/state';
-import AppManager from './app-manager';
-import { sendToTrayWindow, sendToNotificationWindow } from './window-manager';
-import { initBackgroundJob } from './initBackgroundJob';
+import { settingsService } from './services/settings-service.js';
+import { appSettingService } from './services/app-setting-service.js';
+import { trackItemService } from './services/track-item-service.js';
+import { stateManager } from './state-manager.js';
+import { State } from './enums/state.js';
+import AppManager from './app-manager.js';
+import { sendToTrayWindow, sendToNotificationWindow } from './window-manager.js';
+import { initBackgroundJob } from './initBackgroundJob.js';
 import { machineId } from 'node-machine-id';
+import { TrackItem } from './models/TrackItem.js';
 
 const settingsActions = {
     fetchAnalyserSettingsJsonString: async () => {
         return settingsService.fetchAnalyserSettingsJsonString();
     },
-    updateByName: async (payload) => {
+    updateByName: async (payload: { name: string; jsonData: string }) => {
         if (payload.name === 'WORK_SETTINGS') {
             setTimeout(() => {
                 sendToTrayWindow('WORK_SETTINGS_UPDATED');
@@ -26,7 +27,7 @@ const settingsActions = {
     getRunningLogItemAsJson: async () => {
         return settingsService.getRunningLogItemAsJson();
     },
-    updateByNameDataSettings: async (payload) => {
+    updateByNameDataSettings: async (payload: { name: string; jsonData: string }) => {
         const result = await settingsService.updateByName(payload.name, payload.jsonData);
         await initBackgroundJob();
         return result;
@@ -39,10 +40,10 @@ const settingsActions = {
     fetchDataSettingsJsonString: async () => {
         return settingsService.fetchDataSettingsJsonString();
     },
-    saveThemeAndNotify: async (payload) => {
-        AppManager.saveThemeAndNotify(payload);
+    saveThemeAndNotify: async (payload: { theme: string }) => {
+        AppManager.saveThemeAndNotify(payload.theme);
     },
-    notifyUser: async (payload) => {
+    notifyUser: async (payload: { message: string }) => {
         sendToNotificationWindow('notifyUser', payload.message);
     },
     getMachineId: async () => {
@@ -51,32 +52,39 @@ const settingsActions = {
 };
 
 const appSettingsActions = {
-    changeColorForApp: async (payload) => {
+    changeColorForApp: async (payload: { appName: string; color: string }) => {
         return appSettingService.changeColorForApp(payload.appName, payload.color);
     },
 };
 const trackItemActions = {
-    findAllDayItems: async (payload) => {
+    findAllDayItems: async (payload: { from: string; to: string; taskName: string }) => {
         return trackItemService.findAllDayItems(payload.from, payload.to, payload.taskName);
     },
 
-    createTrackItem: async (payload) => {
+    createTrackItem: async (payload: { trackItem: TrackItem }) => {
         return trackItemService.createTrackItem(payload.trackItem);
     },
-    updateTrackItem: async (payload) => {
-        return trackItemService.updateTrackItem(payload.trackItem, payload.trackItem.id);
+    updateTrackItem: async (payload: { trackItem: TrackItem; trackItemId: number }) => {
+        return trackItemService.updateTrackItem(payload.trackItem, payload.trackItemId);
     },
-    updateTrackItemColor: async (payload) => {
+    updateTrackItemColor: async (payload: { appName: string; color: string }) => {
         return trackItemService.updateTrackItemColor(payload.appName, payload.color);
     },
-    deleteByIds: async (payload) => {
+    deleteByIds: async (payload: { trackItemIds: number[] }) => {
         return trackItemService.deleteByIds(payload.trackItemIds);
     },
-    searchFromItems: async (payload) => {
+    searchFromItems: async (payload: {
+        from: string;
+        to: string;
+        taskName: string;
+        searchStr: string;
+        paging: boolean;
+        sumTotal: boolean;
+    }) => {
         const { from, to, taskName, searchStr, paging, sumTotal } = payload;
         return trackItemService.findAllItems(from, to, taskName, searchStr, paging, sumTotal);
     },
-    exportFromItems: async (payload) => {
+    exportFromItems: async (payload: { from: string; to: string; taskName: string; searchStr: string }) => {
         const { from, to, taskName, searchStr } = payload;
         return trackItemService.findAndExportAllItems(from, to, taskName, searchStr);
     },
