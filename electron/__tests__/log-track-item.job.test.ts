@@ -6,7 +6,7 @@ import { State } from '../app/enums/state';
 import { TrackItemType } from '../app/enums/track-item-type';
 import TrackItemTestData from './track-item-test-data';
 
-import * as moment from 'moment';
+import moment from 'moment';
 import { trackItemService } from '../app/services/track-item-service';
 import { settingsService } from '../app/services/settings-service';
 
@@ -26,9 +26,7 @@ describe('updateRunningLogItem not saving', () => {
     });
 
     it('Does not save item when sleeping', async () => {
-        let item: TrackItemInstance = TrackItem.build(
-            TrackItemTestData.getStatusTrackItem({ app: State.Online }),
-        );
+        let item: TrackItemInstance = TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
         stateManager.setCurrentTrackItem(item);
 
         stateManager.setSystemToSleep();
@@ -41,9 +39,7 @@ describe('updateRunningLogItem not saving', () => {
     });
 
     it('Does not save item when not online', async () => {
-        let item: TrackItemInstance = TrackItem.build(
-            TrackItemTestData.getStatusTrackItem({ app: State.Offline }),
-        );
+        let item: TrackItemInstance = TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Offline }));
 
         stateManager.setCurrentTrackItem(item);
 
@@ -68,9 +64,7 @@ describe('updateRunningLogItem saving', () => {
         stateManager.isSystemOnline = jest.fn().mockReturnValueOnce(true);
         stateManager.isSystemSleeping = jest.fn().mockReturnValueOnce(false);
 
-        let item: TrackItemInstance = TrackItem.build(
-            TrackItemTestData.getStatusTrackItem({ app: State.Online }),
-        );
+        let item: TrackItemInstance = TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
         stateManager.setCurrentTrackItem(item);
 
         getLogTrackItemMarkedAsRunningMock = jest.fn();
@@ -132,9 +126,7 @@ describe('updateRunningLogItem saving', () => {
 
         let minusJobIntervalDate = new Date();
 
-        BackgroundUtils.currentTimeMinusJobInterval = jest
-            .fn()
-            .mockReturnValueOnce(minusJobIntervalDate);
+        BackgroundUtils.currentTimeMinusJobInterval = jest.fn().mockReturnValueOnce(minusJobIntervalDate);
 
         createOrUpdateMock.mockReturnValueOnce(rawItem);
 
@@ -188,9 +180,7 @@ describe('getTaskSplitDate', () => {
         settingsService.fetchWorkSettings = fetchWorkSettingsMock;
         fetchWorkSettingsMock.mockReturnValueOnce({ splitTaskAfterIdlingForMinutes: 1 });
 
-        let shouldReturnDate = moment(rawItem.endDate)
-            .add(1, 'minutes')
-            .toDate();
+        let shouldReturnDate = moment(rawItem.endDate).add(1, 'minutes').toDate();
 
         let splitDate = await logTrackItemJob.getTaskSplitDate();
         expect(shouldReturnDate).toEqual(splitDate);

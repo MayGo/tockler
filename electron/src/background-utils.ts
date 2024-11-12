@@ -1,5 +1,5 @@
 import { appConstants } from './app-constants';
-import * as moment from 'moment';
+import moment from 'moment';
 
 export default class BackgroundUtils {
     static isSameItems(item1, item2) {

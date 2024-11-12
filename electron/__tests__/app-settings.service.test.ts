@@ -3,7 +3,7 @@ import { appSettingService } from '../app/services/app-setting-service';
 
 jest.autoMockOff();
 
-import * as moment from 'moment';
+import moment from 'moment';
 
 describe('getAppColor', () => {
     afterEach(async () => {

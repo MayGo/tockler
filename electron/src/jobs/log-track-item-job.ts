@@ -1,6 +1,6 @@
 import { logManager } from '../log-manager';
 import { stateManager } from '../state-manager';
-import * as moment from 'moment';
+import moment from 'moment';
 import { TrackItemType } from '../enums/track-item-type';
 import { backgroundService } from '../background-service';
 import BackgroundUtils from '../background-utils';
