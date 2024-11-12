@@ -38,7 +38,7 @@ export const sendToNotificationWindow = async (key: string, message = '') => {
     if (WindowManager.notificationWindow) {
         if (key === 'notifyUser') {
             if (WindowManager.tray) {
-                positioner.position(WindowManager.notificationWindow, WindowManager.tray.getBounds());
+                positioner.default.position(WindowManager.notificationWindow, WindowManager.tray.getBounds());
             } else {
                 logger.error('Tray not defined yet, not sending notifyUser');
             }
