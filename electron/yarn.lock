@@ -1307,13 +1307,6 @@
   dependencies:
     "@types/ms" "*"
 
-"@types/electron@^1.6.10":
-  version "1.6.12"
-  resolved "https://registry.yarnpkg.com/@types/electron/-/electron-1.6.12.tgz#0921813f95b92fdce9f642f85cb561318fcf0a04"
-  integrity sha512-NIJokDkGv9h+MStCL1IuiL1FOHYVkszoWeNxJtSI5dcEKRGbX83JcVYNAgk019qOQgJkHtz9WdP0CDXvrArrGg==
-  dependencies:
-    electron "*"
-
 "@types/eslint-scope@^3.7.7":
   version "3.7.7"
   resolved "https://registry.yarnpkg.com/@types/eslint-scope/-/eslint-scope-3.7.7.tgz#3108bd5f18b0cdb277c867b3dd449c9ed7079ac5"
@@ -3342,16 +3335,6 @@ electron-context-menu@4.0.4:
     electron-dl "^4.0.0"
     electron-is-dev "^3.0.1"
 
-electron-deeplink@^1.0.10:
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/electron-deeplink/-/electron-deeplink-1.0.10.tgz#0ad827cc84f890d4f7712b38055e92fabfc2cc8b"
-  integrity sha512-kyvjPdOtPfzNfdJYymIMPsC3N+eLv0SIobx6XYVX3j5zgwQ6XKz0P9qOCBwdlK8DhY3MX6l/jhx3gKSecOyWoA==
-  dependencies:
-    "@types/electron" "^1.6.10"
-    bindings "^1.5.0"
-    electron-log "^4.2.3"
-    node-addon-api "^2.0.0"
-
 electron-devtools-installer@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/electron-devtools-installer/-/electron-devtools-installer-3.2.0.tgz#acc48d24eb7033fe5af284a19667e73b78d406d0"
@@ -3375,11 +3358,6 @@ electron-is-dev@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/electron-is-dev/-/electron-is-dev-3.0.1.tgz#1cbc79b1dd046787903acd357efdfab6549dc17a"
   integrity sha512-8TjjAh8Ec51hUi3o4TaU0mD3GMTOESi866oRNavj9A3IQJ7pmv+MJVmdZBFGw4GFT36X7bkqnuDNYvkQgvyI8Q==
-
-electron-log@^4.2.3:
-  version "4.4.8"
-  resolved "https://registry.yarnpkg.com/electron-log/-/electron-log-4.4.8.tgz#fcb9f714dbcaefb6ac7984c4683912c74730248a"
-  integrity sha512-QQ4GvrXO+HkgqqEOYbi+DHL7hj5JM+nHi/j+qrN9zeeXVKy8ZABgbu4CnG+BBqDZ2+tbeq9tUC4DZfIWFU5AZA==
 
 electron-log@^5.2.2:
   version "5.2.2"
@@ -3436,7 +3414,7 @@ electron-updater@6.3.9:
     semver "^7.6.3"
     tiny-typed-emitter "^2.1.0"
 
-electron@*, electron@33.2.0:
+electron@33.2.0:
   version "33.2.0"
   resolved "https://registry.yarnpkg.com/electron/-/electron-33.2.0.tgz#2a7098653eaf1a53c7311a01d5636783019f2354"
   integrity sha512-PVw1ICAQDPsnnsmpNFX/b1i/49h67pbSPxuIENd9K9WpGO1tsRaQt+K2bmXqTuoMJsbzIc75Ce8zqtuwBPqawA==
@@ -5961,11 +5939,6 @@ node-addon-api@^1.6.3:
   version "1.7.2"
   resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-1.7.2.tgz#3df30b95720b53c24e59948b49532b662444f54d"
   integrity sha512-ibPK3iA+vaY1eEjESkQkM0BbCqFOaZMiXRTtdB0u7b4djtY6JnsjvPdUHVMg6xQt3B8fpTTWHI9A+ADjM9frzg==
-
-node-addon-api@^2.0.0:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-2.0.2.tgz#432cfa82962ce494b132e9d72a15b29f71ff5d32"
-  integrity sha512-Ntyt4AIXyaLIuMHF6IOoTakB3K+RWxwtsHNRxllEoA6vPwP9o4866g6YWDLUdnucilZhmkxiHwHr11gAENw+QA==
 
 node-addon-api@^4.2.0:
   version "4.3.0"

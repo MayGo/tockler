@@ -8,8 +8,9 @@ import AppManager from './app-manager.js';
 import WindowManager from './window-manager.js';
 import { extensionsManager } from './extensions-manager.js';
 import AppUpdater from './app-updater.js';
-import config from './config.js';
+import { initializeConfig } from './config.js';
 
+console.warn('index.-.............');
 let logger = logManager.getLogger('AppIndex');
 app.setAppUserModelId(process.execPath);
 
@@ -57,6 +58,7 @@ if (gotTheLock) {
 
     app.on('ready', async () => {
         try {
+            const config = await initializeConfig();
             if (config.isDev) {
                 await extensionsManager.init();
             }

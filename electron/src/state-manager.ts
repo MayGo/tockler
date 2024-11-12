@@ -37,7 +37,7 @@ export class StateManager {
     initIpc() {
         ipcMain.on('start-new-log-item', this.startNewLogItem.bind(this));
 
-        ipcMain.on('end-running-log-item', (_event) => {
+        ipcMain.on('end-running-log-item', (_event: any) => {
             logger.debug('end-running-log-item');
             this.stopRunningLogTrackItem().then(
                 () => logger.debug('end-running-log-item'),

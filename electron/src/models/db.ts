@@ -1,4 +1,4 @@
-import config from '../config.js';
+import { initializeConfig } from '../config.js';
 import { Model } from 'objection';
 import { knex } from 'knex';
 import { logManager } from '../log-manager.js';
@@ -7,7 +7,8 @@ import { WebpackMigrationSource } from './WebpackMigrationSource.js';
 let logger = logManager.getLogger('Database');
 
 export async function connectAndSync() {
-    let dbConfig = config.databaseConfig;
+    const config = await initializeConfig();
+    const dbConfig = config.databaseConfig;
     logger.debug('Database dir is:' + dbConfig.outputPath);
 
     const knexInstance = knex({

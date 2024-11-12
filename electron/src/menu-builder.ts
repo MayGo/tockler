@@ -1,12 +1,13 @@
 import { app, Menu, shell, MenuItemConstructorOptions } from 'electron';
-import config from './config.js';
+import { initializeConfig } from './config.js';
 import WindowManager from './window-manager.js';
 import AppUpdater from './app-updater.js';
 
 const macOS = process.platform === 'darwin';
 
 export default class MenuBuilder {
-    buildMenu() {
+    async buildMenu() {
+        const config = await initializeConfig();
         if (config.isDev) {
             this.setupDevelopmentEnvironment();
         }

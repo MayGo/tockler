@@ -1,9 +1,8 @@
 import { stateManager } from './state-manager.js';
 import { app } from 'electron';
 import { autoUpdater, UpdateCheckResult, UpdateInfo } from 'electron-updater';
-import config from './config.js';
+import { initializeConfig } from './config.js';
 import { showNotification } from './notification.js';
-
 import { logManager } from './log-manager.js';
 import WindowManager from './window-manager.js';
 
@@ -64,7 +63,8 @@ export default class AppUpdater {
         setInterval(() => AppUpdater.checkForNewVersions(), CHECK_INTERVAL_MS);
     }
 
-    static checkForNewVersions() {
+    static async checkForNewVersions() {
+        const config = await initializeConfig();
         let isAutoUpdateEnabled = config.persisted.get('isAutoUpdateEnabled');
         isAutoUpdateEnabled = typeof isAutoUpdateEnabled !== 'undefined' ? isAutoUpdateEnabled : true;
 

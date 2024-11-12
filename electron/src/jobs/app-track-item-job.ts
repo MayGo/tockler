@@ -1,6 +1,5 @@
 import { logManager } from '../log-manager.js';
 import { stateManager } from '../state-manager.js';
-import { activeWindow } from 'get-windows';
 import BackgroundUtils from '../background-utils.js';
 import { backgroundService } from '../background-service.js';
 import { TrackItemType } from '../enums/track-item-type.js';
@@ -9,6 +8,8 @@ import { TrackItem } from '../models/TrackItem.js';
 import { dialog } from 'electron';
 
 let logger = logManager.getLogger('AppTrackItemJob');
+
+console.warn('AppTrackItemJob.-.............');
 
 export class AppTrackItemJob {
     lastUpdatedItem: TrackItem | null = null;
@@ -22,7 +23,7 @@ export class AppTrackItemJob {
 
         try {
             if (this.checkIfIsInCorrectState()) {
-                let activeWin = await activeWindow();
+                let activeWin = await this.getActiveWindow();
                 let updatedItem: TrackItem = await this.saveActiveWindow(activeWin ? activeWin : {});
 
                 if (!BackgroundUtils.isSameItems(updatedItem as TrackItemRaw, this.lastUpdatedItem as TrackItemRaw)) {
@@ -51,6 +52,12 @@ export class AppTrackItemJob {
         }
 
         return false;
+    }
+
+    async getActiveWindow() {
+        console.warn('getActiveWindow.-.............');
+        const { activeWindow } = await import('get-windows');
+        return activeWindow();
     }
 
     async checkIfPermissionError(e: any) {

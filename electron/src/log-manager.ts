@@ -1,7 +1,7 @@
 import * as log from 'electron-log';
 import * as Sentry from '@sentry/electron/main';
 import { app } from 'electron';
-import config from './config.js';
+// import { initializeConfig } from './config.js';
 
 const version = app.getVersion();
 
@@ -47,8 +47,6 @@ const sentryTransportConsole = (msgObj: any) => {
 
 (log as any).transports.console = sentryTransportConsole;
 
-let isLoggingEnabled = config.persisted.get('isLoggingEnabled');
-
 export class LogManager {
     logger: any;
 
@@ -57,6 +55,8 @@ export class LogManager {
     }
 
     getLogger(name: string) {
+        // const config = await initializeConfig();
+        let isLoggingEnabled = false; //config.persisted.get('isLoggingEnabled');
         const logObj = log.create({ logId: name });
         if (isProd) {
             (logObj as any).transports.console = sentryTransportConsole;

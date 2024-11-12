@@ -1,11 +1,11 @@
 import { Notification } from 'electron';
 import { logManager } from './log-manager.js';
-import config from './config.js';
+import { initializeConfig } from './config.js';
 
 const isDesktopNotificationSupported = Notification.isSupported();
 const logger = logManager.getLogger('Notification');
 
-export function showNotification({
+export async function showNotification({
     body,
     title = 'Tockler',
     onClick,
@@ -16,6 +16,7 @@ export function showNotification({
     onClick?: () => void;
     silent?: boolean;
 }) {
+    const config = await initializeConfig();
     if (isDesktopNotificationSupported) {
         logger.debug('Showing notification:', body, title);
         const notification = new Notification({

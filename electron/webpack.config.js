@@ -10,14 +10,12 @@ const __dirname = path.dirname(__filename);
 export default {
     target: 'electron-main',
 
-    externals: [
-        nodeExternals({
-            allowlist: ['get-windows'],
-        }),
-    ],
-
     resolve: {
-        extensions: ['.ts', '.js'],
+        extensions: ['.ts', '.js', '.mjs'],
+        extensionAlias: {
+            '.js': ['.ts', '.js'],
+            '.mjs': ['.mts', '.mjs'],
+        },
     },
     entry: {
         index: path.resolve(__dirname, 'src', 'index.ts'),
@@ -25,9 +23,15 @@ export default {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'index.js',
-        libraryTarget: 'commonjs2',
     },
-
+    experiments: {
+        outputModule: true,
+    },
+    externals: [
+        nodeExternals({
+            allowlist: ['get-windows'],
+        }),
+    ],
     node: {
         __dirname: false,
         __filename: false,
@@ -37,11 +41,7 @@ export default {
             {
                 test: /\.ts$/i,
                 loader: 'ts-loader',
-                options: {
-                    compilerOptions: {
-                        module: 'commonjs',
-                    },
-                },
+                exclude: /node_modules/,
             },
         ],
     },

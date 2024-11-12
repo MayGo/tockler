@@ -3,7 +3,7 @@ import MenuBuilder from './menu-builder.js';
 import { throttle } from 'lodash';
 import { app, ipcMain, BrowserWindow, dialog, shell, Tray } from 'electron';
 import { autoUpdater } from 'electron-updater';
-import config, { getTrayIcon } from './config.js';
+import { initializeConfig } from './config.js';
 import { logManager } from './log-manager.js';
 import { join } from 'path';
 import { settingsService } from './services/settings-service.js';
@@ -38,7 +38,7 @@ export const sendToNotificationWindow = async (key: string, message = '') => {
     if (WindowManager.notificationWindow) {
         if (key === 'notifyUser') {
             if (WindowManager.tray) {
-                positioner.default.position(WindowManager.notificationWindow, WindowManager.tray.getBounds());
+                positioner.position(WindowManager.notificationWindow, WindowManager.tray.getBounds());
             } else {
                 logger.error('Tray not defined yet, not sending notifyUser');
             }
@@ -81,8 +81,9 @@ export default class WindowManager {
         menuBuilder.buildMenu();
     }
 
-    static createMainWindow() {
+    static async createMainWindow() {
         logger.debug('Creating main window.');
+        const config = await initializeConfig();
         const windowSize = config.persisted.get('windowsize') || { width: 1080, height: 720 };
 
         this.mainWindow = new BrowserWindow({
@@ -100,8 +101,9 @@ export default class WindowManager {
         });
     }
 
-    static setMainWindow(showOnLoad = true) {
-        WindowManager.createMainWindow();
+    static async setMainWindow(showOnLoad = true) {
+        await WindowManager.createMainWindow();
+        const config = await initializeConfig();
         const openMaximized = config.persisted.get('openMaximized') || false;
 
         if (app.dock && showOnLoad) {
@@ -209,22 +211,24 @@ export default class WindowManager {
         });
     }
 
-    static storeWindowSize() {
+    static async storeWindowSize() {
         try {
             if (!this.mainWindow) {
                 logger.error('MainWindow not created');
                 return;
             }
 
+            const config = await initializeConfig();
             config.persisted.set('windowsize', this.mainWindow.getBounds());
         } catch (e) {
             logger.error('Error saving', e);
         }
     }
 
-    static setTrayWindow() {
+    static async setTrayWindow() {
         logger.debug('Creating tray window.');
 
+        const config = await initializeConfig();
         this.tray = new Tray(config.iconTray);
         /**
          * Docs:
@@ -277,9 +281,9 @@ export default class WindowManager {
         });
     }
 
-    static setNotificationWindow() {
+    static async setNotificationWindow() {
         logger.debug('Creating notification window.');
-
+        const config = await initializeConfig();
         const url = config.isDev
             ? 'http://localhost:3000/#/notificationApp'
             : `file://${__dirname}/index.html#/notificationApp`;
@@ -316,7 +320,8 @@ export default class WindowManager {
         });
     }
 
-    static setTrayIconToUpdate() {
+    static async setTrayIconToUpdate() {
+        const config = await initializeConfig();
         WindowManager.menubar.tray.setImage(config.iconTrayUpdate);
 
         WindowManager.menubar.tray.on('click', async () => {
@@ -334,8 +339,9 @@ export default class WindowManager {
         });
     }
 
-    static toggleTrayIcon() {
-        const iconTray = getTrayIcon();
+    static async toggleTrayIcon() {
+        const config = await initializeConfig();
+        const iconTray = config.iconTray;
         WindowManager.menubar.tray.setImage(iconTray);
     }
 }

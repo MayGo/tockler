@@ -2,7 +2,7 @@ import { app, ipcMain, nativeTheme } from 'electron';
 import { logManager } from './log-manager.js';
 import { stateManager } from './state-manager.js';
 import { initIpcActions } from './API.js';
-import config from './config.js';
+import { initializeConfig } from './config.js';
 import { connectAndSync } from './models/db.js';
 import WindowManager, { sendToTrayWindow, sendToMainWindow, sendToNotificationWindow } from './window-manager.js';
 import { Knex } from 'knex';
@@ -41,7 +41,8 @@ export default class AppManager {
         }
     }
 
-    static initAppEvents() {
+    static async initAppEvents() {
+        const config = await initializeConfig();
         logger.debug('Init app events.');
 
         ipcMain.on('openAtLoginChanged', () => {
@@ -67,7 +68,8 @@ export default class AppManager {
         checkNativeThemeState();
     }
 
-    static setOpenAtLogin() {
+    static async setOpenAtLogin() {
+        const config = await initializeConfig();
         let openAtLogin = config.persisted.get('openAtLogin');
 
         const firstTime = typeof openAtLogin === 'undefined';
@@ -96,7 +98,8 @@ export default class AppManager {
         return nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
     }
 
-    static saveActiveTheme(theme: string) {
+    static async saveActiveTheme(theme: string) {
+        const config = await initializeConfig();
         config.persisted.set(THEME_CONFIG_KEY, theme);
     }
 
