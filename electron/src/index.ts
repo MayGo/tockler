@@ -17,10 +17,10 @@ let logger = logManager.getLogger('AppIndex');
 app.setAppUserModelId(process.execPath);
 
 /* Single Instance Check */
-const isMas = process.mas === true;
+
 const gotTheLock = app.requestSingleInstanceLock();
 
-if (gotTheLock || isMas) {
+if (gotTheLock) {
     const protocol = 'tockler';
     const deeplink = new Deeplink({ app, mainWindow: WindowManager.mainWindow, protocol });
 

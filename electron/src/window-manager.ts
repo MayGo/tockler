@@ -8,7 +8,7 @@ import { logManager } from './log-manager';
 import { join } from 'path';
 import { settingsService } from './services/settings-service';
 
-import * as positioner from 'electron-traywindow-positioner';
+import positioner from 'electron-traywindow-positioner';
 
 let logger = logManager.getLogger('WindowManager');
 
@@ -62,8 +62,6 @@ export const sendToMainWindow = (key, message = '') => {
         logger.debug(`MainWindow not defined yet, not sending ${key}`);
     }
 };
-
-const isMas = process.mas === true;
 
 export default class WindowManager {
     static mainWindow;
