@@ -2,6 +2,8 @@ import { resolve } from 'path';
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite';
 
 import { viteCommonjs, esbuildCommonjs } from '@originjs/vite-plugin-commonjs';
+import commonjs from '@rollup/plugin-commonjs';
+
 import { exec } from 'child_process';
 import react from '@vitejs/plugin-react';
 
@@ -26,7 +28,12 @@ function RunShellCommandPostBuild() {
 
 export default defineConfig({
     main: {
-        plugins: [externalizeDepsPlugin(), viteCommonjs(), RunShellCommandPostBuild()],
+        plugins: [
+            externalizeDepsPlugin(),
+            commonjs({ include: ['ajv', 'uri-js', 'get-windows'] }),
+            // viteCommonjs({ include: ['ajv'] }),
+            RunShellCommandPostBuild(),
+        ],
         resolve: {
             alias: {
                 'mock-aws-s3': resolve(__dirname, 'src/main/empty.ts'),

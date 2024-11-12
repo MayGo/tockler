@@ -22,14 +22,11 @@
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
-    "sqlite3": "5.1.7",
-    "get-windows": "^9.1.1"
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "get-windows": "^9.2.0",
+    "sqlite3": "5.1.7"
   },
   "devDependencies": {
-    "@originjs/vite-plugin-commonjs": "^1.0.3",
-
-    "dayjs": "^1.11.11",
-    "react-dayjs": "^0.3.2",
     "@chakra-ui/icons": "^2.0.11",
     "@chakra-ui/react": "^2.3.7",
     "@datepicker-react/hooks": "^2.8.4",
@@ -42,14 +39,16 @@
     "@emotion/styled": "^11.10.5",
     "@fontsource/inter": "^4.5.14",
     "@hookform/resolvers": "^2.9.10",
+    "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@react-hook/window-size": "^3.1.1",
     "@sentry/electron": "^5.1.0",
     "@types/node": "^18.19.9",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react": "^4.3.3",
     "@welldone-software/why-did-you-render": "^7.0.1",
     "csv-stringify": "^6.5.0",
+    "dayjs": "^1.11.11",
     "debounce-promise": "^3.1.2",
     "easy-peasy": "^5.1.0",
     "electron": "^28.2.0",
@@ -62,13 +61,12 @@
     "electron-store": "8.2.0",
     "electron-traywindow-positioner": "^1.2.0",
     "electron-updater": "6.2.1",
-    "electron-vite": "^2.0.0",
+    "electron-vite": "^2.3.0",
     "eslint": "^8.56.0",
     "eslint-plugin-react": "^7.33.2",
     "fast-deep-equal": "^3.1.3",
     "firebase": "^9.14.0",
     "framer-motion": "^7",
-  
     "humanize-duration": "^3.27.3",
     "knex": "3.1.0",
     "lodash": "^4.17.21",
@@ -85,6 +83,7 @@
     "react": "^18.3.1",
     "react-color-palette": "^6.2.0",
     "react-cool-dimensions": "^2.0.7",
+    "react-dayjs": "^0.3.2",
     "react-dom": "^18.3.1",
     "react-firebase-hooks": "^5.1.0",
     "react-ga4": "^2.1.0",
@@ -100,7 +99,7 @@
     "url-parse": "^1.5.10",
     "use-debounce": "^8.0.4",
     "victory": "^36.6.8",
-    "vite": "^5.0.12",
+    "vite": "^5.4.11",
     "yup": "^0.32.11"
   }
 }
