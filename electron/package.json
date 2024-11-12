@@ -26,7 +26,7 @@
     },
     "dependencies": {
         "@sentry/electron": "^2.5.4",
-        "active-win": "^7.7.2",
+        "get-windows": "^9.2.0",
         "csv-stringify": "^6.2.0",
         "electron-context-menu": "3.6.0",
         "electron-deeplink": "^1.0.10",

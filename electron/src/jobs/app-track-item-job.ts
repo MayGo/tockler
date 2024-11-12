@@ -1,6 +1,6 @@
 import { logManager } from '../log-manager';
 import { stateManager } from '../state-manager';
-import * as activeWin from 'active-win';
+import { activeWindow } from 'get-windows';
 import BackgroundUtils from '../background-utils';
 import { backgroundService } from '../background-service';
 import { TrackItemType } from '../enums/track-item-type';
@@ -22,10 +22,8 @@ export class AppTrackItemJob {
 
         try {
             if (this.checkIfIsInCorrectState()) {
-                let activeWindow = await activeWin();
-                let updatedItem: TrackItem = await this.saveActiveWindow(
-                    activeWindow ? activeWindow : {},
-                );
+                let activeWin = await activeWindow();
+                let updatedItem: TrackItem = await this.saveActiveWindow(activeWin ? activeWin : {});
 
                 if (!BackgroundUtils.isSameItems(updatedItem, this.lastUpdatedItem)) {
                     logger.debug('App and title changed. Analysing title');
@@ -59,7 +57,7 @@ export class AppTrackItemJob {
         if (activeWinError) {
             this.errorDialogIsOpen = true;
             await dialog.showMessageBox({
-                message: activeWinError.replace('active-win', 'Tockler'),
+                message: activeWinError.replace('get-windows', 'Tockler'),
             });
 
             this.errorDialogIsOpen = false;
