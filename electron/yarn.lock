@@ -5227,10 +5227,10 @@ math-random@^1.0.1:
   resolved "https://registry.npmjs.org/math-random/-/math-random-1.0.4.tgz"
   integrity sha512-rUxjysqif/BZQH2yhd5Aaq7vXMSx9NdEsQcyA07uEzIvxgI7zIr33gGsh+RU0/XjmQpCW7RsVof1vlkvQVCK5A==
 
-menubar@9.2.3:
-  version "9.2.3"
-  resolved "https://registry.npmjs.org/menubar/-/menubar-9.2.3.tgz"
-  integrity sha512-d+HKGlQ9lKcTWWiSQIeSlxL/puZ2Nu9IPhFVdh3D4kXB4ep4OSufUHrJ65rWrCnvpXcrjZad2U9Nov2M1WTxog==
+menubar@9.5.1:
+  version "9.5.1"
+  resolved "https://registry.yarnpkg.com/menubar/-/menubar-9.5.1.tgz#0d0e51cdab62c085ffc7ff38247348a8a4824e46"
+  integrity sha512-swfgKal+DTgJINay36X+LGBSqyFKS4d9FyJ2w0s/4MtO7/UGplEZqluLTnq4xgLNxNjMWhXycOELP+rRYpTagA==
   dependencies:
     electron-positioner "^4.1.0"
 
