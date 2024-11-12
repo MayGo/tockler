@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/button';
+import { Button } from '@chakra-ui/react';
 import {
     AlertDialog,
     AlertDialogBody,
@@ -6,7 +6,7 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogOverlay,
-} from '@chakra-ui/modal';
+} from '@chakra-ui/react';
 import React, { useRef } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 

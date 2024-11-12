@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Select } from '@chakra-ui/select';
+import { Select } from '@chakra-ui/react';
 import { ToggleColumnFilter } from './ToggleColumnFilter';
 
 export function SelectColumnFilter({ column: { filterValue, setFilter, preFilteredRows, id } }) {

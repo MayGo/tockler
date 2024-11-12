@@ -80,8 +80,9 @@ export const AppUsageChart = memo(() => {
                                         '"Gill Sans", Seravek, "Trebuchet MS", sans-serif;',
                                     );
 
-                                    const timeDiff = datum._y1 - datum._y0;
-                                    const width = scale?.y ? scale.y(timeDiff) : 0;
+                                    // const timeDiff = datum._y1 - datum._y0;
+                                    // TODO: fix this
+                                    const width = 0; // scale?.y ? scale.y(timeDiff) : 0;
                                     const canFit = textWidth + labelPadding * 2 < width;
                                     // @ts-ignore
                                     return canFit ? text : '';

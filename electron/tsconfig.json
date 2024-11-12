@@ -7,7 +7,8 @@
         "moduleResolution": "node",
         "skipLibCheck": true,
         "sourceMap": true,
-        "outDir": "out"
+        "outDir": "out",
+        "esModuleInterop": true
     },
 
     "exclude": ["__e2e__", "__tests__", "node_modules", "dist", "packaged", "static"]

@@ -9,6 +9,7 @@
         "type": "git",
         "url": "git@github.com:MayGo/tockler.git"
     },
+    "type": "commonjs",
     "scripts": {
         "tslint": "tslint --project .",
         "start": "cross-env NODE_ENV=development  webpack && electron ./dist",

@@ -1,4 +1,4 @@
-import { Input } from '@chakra-ui/input';
+import { Input } from '@chakra-ui/react';
 import React from 'react';
 import { ToggleColumnFilter } from './ToggleColumnFilter';
 
@@ -7,7 +7,7 @@ export function DefaultColumnFilter({ column: { filterValue, preFilteredRows, se
         <ToggleColumnFilter>
             <Input
                 value={filterValue || ''}
-                onChange={e => {
+                onChange={(e) => {
                     setFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
                 }}
                 placeholder={``}

@@ -6,7 +6,11 @@ const nodeExternals = require('webpack-node-externals');
 module.exports = {
     target: 'electron-main',
 
-    externals: [nodeExternals()],
+    externals: [
+        nodeExternals({
+            allowlist: ['get-windows'],
+        }),
+    ],
 
     resolve: {
         extensions: ['.ts', '.js'],
@@ -17,6 +21,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'index.js',
+        libraryTarget: 'commonjs2',
     },
 
     node: {
@@ -28,6 +33,11 @@ module.exports = {
             {
                 test: /\.ts$/i,
                 loader: 'ts-loader',
+                options: {
+                    compilerOptions: {
+                        module: 'commonjs',
+                    },
+                },
             },
         ],
     },

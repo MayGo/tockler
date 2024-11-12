@@ -5,9 +5,9 @@ import { TrackItemType } from '../enum/TrackItemType';
 import { SearchResults } from '../components/SearchResults/SearchResults';
 import { SearchOptions } from '../components/SearchResults/SearchOptions';
 
-import { Box, Flex } from '@chakra-ui/layout';
-import { Input } from '@chakra-ui/input';
-import { Button } from '@chakra-ui/button';
+import { Box, Flex } from '@chakra-ui/react';
+import { Input } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import { Loader } from '../components/Timeline/Loader';
 import { CardBox } from '../components/CardBox';
 import { TypeSelect } from '../components/TypeSelect';

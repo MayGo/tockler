@@ -1,15 +1,15 @@
 import moment from 'moment';
 import React, { useState } from 'react';
 import { Logger } from '../../logger';
-import { Box, Flex } from '@chakra-ui/layout';
-import { Button } from '@chakra-ui/button';
+import { Box, Flex } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import { OnDatesChangeProps } from '@datepicker-react/hooks';
 import { DateRangeInput } from '../Datepicker';
 import { HStack, Text, useColorModeValue } from '@chakra-ui/react';
 
-const getDayBefore = d => moment(d).subtract(1, 'days');
-const getDayAfter = d => moment(d).add(1, 'days');
+const getDayBefore = (d) => moment(d).subtract(1, 'days');
+const getDayAfter = (d) => moment(d).add(1, 'days');
 
 enum RANGE_OPTIONS {
     WEEK,
@@ -22,7 +22,7 @@ enum RANGE_OPTIONS {
 export const SearchOptions = ({ setTimerange, timerange }) => {
     const [localRange, setLocalRange] = useState(RANGE_OPTIONS.WEEK);
 
-    const selectRange = range => {
+    const selectRange = (range) => {
         const beginDate = moment().startOf('day');
         const endDate = moment().endOf('day');
 
@@ -70,7 +70,7 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
         setTimerange(newTimerange);
     };
 
-    const selectVariant = range => (localRange === range ? 'solid' : 'outline');
+    const selectVariant = (range) => (localRange === range ? 'solid' : 'outline');
 
     return (
         <Flex alignItems="center">
@@ -96,17 +96,11 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
                 Select range
             </Text>
             <HStack>
-                <Button
-                    onClick={() => selectRange(RANGE_OPTIONS.WEEK)}
-                    variant={selectVariant(RANGE_OPTIONS.WEEK)}
-                >
+                <Button onClick={() => selectRange(RANGE_OPTIONS.WEEK)} variant={selectVariant(RANGE_OPTIONS.WEEK)}>
                     Week
                 </Button>
 
-                <Button
-                    onClick={() => selectRange(RANGE_OPTIONS.MONTH)}
-                    variant={selectVariant(RANGE_OPTIONS.MONTH)}
-                >
+                <Button onClick={() => selectRange(RANGE_OPTIONS.MONTH)} variant={selectVariant(RANGE_OPTIONS.MONTH)}>
                     Month
                 </Button>
 
@@ -117,10 +111,7 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
                     3 Months
                 </Button>
 
-                <Button
-                    onClick={() => selectRange(RANGE_OPTIONS.YEAR)}
-                    variant={selectVariant(RANGE_OPTIONS.YEAR)}
-                >
+                <Button onClick={() => selectRange(RANGE_OPTIONS.YEAR)} variant={selectVariant(RANGE_OPTIONS.YEAR)}>
                     Year
                 </Button>
 

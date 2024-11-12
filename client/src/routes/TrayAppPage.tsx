@@ -8,7 +8,7 @@ import { Logger } from '../logger';
 import { useWindowFocused } from '../hooks/windowFocusedHook';
 import { throttle } from 'lodash';
 import deepEqual from 'fast-deep-equal/es6';
-import { Box } from '@chakra-ui/layout';
+import { Box } from '@chakra-ui/react';
 import { Divider } from '@chakra-ui/react';
 import { ITrackItem } from '../@types/ITrackItem';
 import { OnlineChart } from '../components/TrayLayout/OnlineChart';

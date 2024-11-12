@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Button } from '@chakra-ui/button';
-import { Box, Flex, Text } from '@chakra-ui/layout';
-import { Textarea } from '@chakra-ui/textarea';
-import { Input } from '@chakra-ui/input';
+import { Button } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
+import { Textarea } from '@chakra-ui/react';
+import { Input } from '@chakra-ui/react';
 import { CardBox } from '../components/CardBox';
 import { VStack } from '@chakra-ui/react';
 
