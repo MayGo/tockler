@@ -65,13 +65,13 @@ jobs:
             - name: Install Dependencies (Electron)
               run: |
                   cd electron
-                  yarn install --ignore-optional
+                  yarn install
                   cd ..
 
             - name: Install Dependencies (Client)
               run: |
                   cd client
-                  yarn install --ignore-optional
+                  yarn install
                   cd ..
 
             - name: Build Client
