@@ -1,7 +1,7 @@
 import { logManager } from '../log-manager';
 import { stateManager } from '../state-manager';
 import BackgroundUtils from '../background-utils';
-import * as activeWin from 'active-win';
+import activeWin from 'active-win';
 import { backgroundService } from '../background-service';
 import { TrackItemType } from '../enums/track-item-type';
 import { taskAnalyser, TrackItemRaw } from '../task-analyser';
