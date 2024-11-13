@@ -75,5 +75,6 @@
         "development": [
             "last 1 chrome version"
         ]
-    }
+    },
+    "packageManager": "yarn@4.5.1"
 }

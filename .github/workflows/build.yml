@@ -45,8 +45,8 @@ jobs:
                   node-version: ${{ matrix.node-version }}
                   cache: 'yarn'
 
-            - name: Install Yarn
-              run: npm install -g yarn@1.22.4
+            - name: Install Yarn Berry
+              run: corepack enable && corepack prepare yarn@stable --activate
 
             - name: Install Sentry CLI
               run: yarn global add @sentry/cli
