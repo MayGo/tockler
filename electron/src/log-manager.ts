@@ -57,7 +57,7 @@ export class LogManager {
     }
 
     getLogger(name: string) {
-        const logObj = log.create({ logId: name });
+        const logObj = log.create(name);
         if (isProd) {
             (logObj as any).transports.console = sentryTransportConsole;
         }
