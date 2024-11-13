@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@chakra-ui/layout';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import React, { memo } from 'react';
 import { HStack, IconButton } from '@chakra-ui/react';
 import { convertDate, DATE_TIME_FORMAT } from '../../constants';

@@ -53,7 +53,7 @@ export const AppUsageChart = memo(() => {
         },
     };
 
-    const labelPadding = 10;
+    const labelPadding = 25;
     return (
         <div ref={observe}>
             <VictoryStack height={BAR_WIDTH} padding={0} width={width} horizontal>
@@ -81,6 +81,8 @@ export const AppUsageChart = memo(() => {
                                     );
 
                                     const timeDiff = datum._y1 - datum._y0;
+
+                                    // @ts-ignore
                                     const width = scale?.y ? scale.y(timeDiff) : 0;
                                     const canFit = textWidth + labelPadding * 2 < width;
                                     // @ts-ignore

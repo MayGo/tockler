@@ -6,7 +6,7 @@ import { convertDate, TIME_FORMAT_SHORT } from '../../constants';
 import { formatDuration } from './SummaryCalendar.util';
 import { CALENDAR_MODE, DAY_MONTH_FORMAT } from '../../SummaryContext.util';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
-import { Box, Flex, VStack } from '@chakra-ui/layout';
+import { Box, Flex, VStack } from '@chakra-ui/react';
 import { IoMdSunny, IoMdMoon } from 'react-icons/io';
 import { Calendar } from '../Datepicker/Calendar';
 import { Text, useColorModeValue } from '@chakra-ui/react';

@@ -2,25 +2,21 @@ import { logManager } from './log-manager';
 
 const logger = logManager.getLogger('setupMainHandler');
 
-const isPromise = (obj) => {
-    return (
-        !!obj &&
-        (typeof obj === 'object' || typeof obj === 'function') &&
-        typeof obj.then === 'function'
-    );
+const isPromise = (obj: any) => {
+    return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
 };
 
-export const setupMainHandler = (electronModule, availableActions, enableLogs = false) => {
+export const setupMainHandler = (electronModule: any, availableActions: any, enableLogs = false) => {
     enableLogs && logger.info('setupMainHandler Logs enabled !');
 
     Object.keys(availableActions).forEach((actionName) => {
         enableLogs && logger.info(`Creating IPC handle for name = ${actionName}`);
-        electronModule.ipcMain.handle(actionName, async (event, ...args) => {
+        electronModule.ipcMain.handle(actionName, async (_event: any, ...args: any[]) => {
             enableLogs && logger.info(`Got new request with name = ${actionName}`, args);
             try {
                 const result = availableActions[actionName](...args);
                 if (isPromise(result)) {
-                    result.catch((e) => {
+                    result.catch((e: any) => {
                         //error in async code
                         logger.error(e);
                         return { error: e.toString() };
@@ -29,7 +25,7 @@ export const setupMainHandler = (electronModule, availableActions, enableLogs = 
                     return await result;
                 }
                 return result;
-            } catch (e) {
+            } catch (e: any) {
                 logger.error(e);
                 return { error: e.toString() };
             }

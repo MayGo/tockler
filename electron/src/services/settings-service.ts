@@ -86,7 +86,7 @@ export class SettingsService {
         return JSON.stringify(data);
     }
 
-    isObject(val) {
+    isObject(val: any) {
         return val instanceof Object;
     }
 
@@ -123,8 +123,8 @@ export class SettingsService {
         return null;
     }
 
-    async saveRunningLogItemReference(logItemId) {
-        const item = await this.updateByName('RUNNING_LOG_ITEM', JSON.stringify({ id: logItemId }));
+    async saveRunningLogItemReference(logItemId: number | null) {
+        await this.updateByName('RUNNING_LOG_ITEM', JSON.stringify({ id: logItemId }));
         this.logger.debug('Updated RUNNING_LOG_ITEM!', logItemId);
         return logItemId;
     }

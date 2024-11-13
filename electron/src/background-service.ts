@@ -6,11 +6,12 @@ import { stateManager } from './state-manager';
 import BackgroundUtils from './background-utils';
 import { TrackItemType } from './enums/track-item-type';
 import { TrackItem } from './models/TrackItem';
+import { TrackItemRaw } from './task-analyser';
 
 let logger = logManager.getLogger('BackgroundService');
 
 export class BackgroundService {
-    async addInactivePeriod(beginDate, endDate) {
+    async addInactivePeriod(beginDate: Date, endDate: Date) {
         let rawItem: any = { app: State.Offline, title: State.Offline.toString().toLowerCase() };
         rawItem.taskName = TrackItemType.StatusTrackItem;
         rawItem.beginDate = beginDate;
@@ -23,8 +24,8 @@ export class BackgroundService {
         return item;
     }
 
-    async createItems(items): Promise<any> {
-        const promiseArray = items.map(async newItem => {
+    async createItems(items: TrackItem[]): Promise<TrackItem[]> {
+        const promiseArray = items.map(async (newItem) => {
             const savedItem = await trackItemService.createTrackItem(newItem);
             return savedItem;
         });
@@ -33,32 +34,37 @@ export class BackgroundService {
         return await Promise.all(promiseArray);
     }
 
-    async createOrUpdate(rawItem) {
+    async createOrUpdate(rawItem: TrackItemRaw) {
         try {
-            let color = await appSettingService.getAppColor(rawItem.app);
+            let color = await appSettingService.getAppColor(rawItem.app ?? '');
             rawItem.color = color;
 
-            let item: TrackItem;
+            let item: TrackItem | null = null;
 
-            let type: TrackItemType = rawItem.taskName;
+            let type: TrackItemType = rawItem.taskName as TrackItemType;
 
             if (!type) {
                 throw new Error('TaskName not defined.');
             }
 
-            if (BackgroundUtils.shouldSplitInTwoOnMidnight(rawItem.beginDate, rawItem.endDate)) {
-                let items = BackgroundUtils.splitItemIntoDayChunks(rawItem);
+            if (
+                BackgroundUtils.shouldSplitInTwoOnMidnight(
+                    rawItem.beginDate ?? new Date(),
+                    rawItem.endDate ?? new Date(),
+                )
+            ) {
+                let items = BackgroundUtils.splitItemIntoDayChunks(rawItem as TrackItem);
 
                 if (stateManager.hasSameRunningTrackItem(rawItem)) {
                     let firstItem = items.shift();
-                    await stateManager.endRunningTrackItem(firstItem);
+                    await stateManager.endRunningTrackItem(firstItem as TrackItemRaw);
                 }
                 try {
                     let savedItems = await this.createItems(items);
 
                     let lastItem = savedItems[savedItems.length - 1];
-                    item = lastItem;
-                } catch (e) {
+                    item = lastItem ?? null;
+                } catch (e: any) {
                     logger.error('Error creating items');
                 }
             } else {
@@ -69,12 +75,15 @@ export class BackgroundService {
                 }
             }
 
-            stateManager.setCurrentTrackItem(item);
+            if (item) {
+                stateManager.setCurrentTrackItem(item);
+            }
 
             return item;
-        } catch (e) {
+        } catch (e: any) {
             logger.error('Error createOrUpdate', e);
         }
+        return null;
     }
 
     onSleep() {
@@ -84,7 +93,7 @@ export class BackgroundService {
     async onResume() {
         let statusTrackItem = stateManager.getCurrentStatusTrackItem();
         if (statusTrackItem != null) {
-            let item = await this.addInactivePeriod(statusTrackItem.endDate, new Date());
+            await this.addInactivePeriod(statusTrackItem.endDate, new Date());
             await stateManager.setAwakeFromSleep();
         } else {
             logger.debug('No lastTrackItems.StatusTrackItem for addInactivePeriod.');

@@ -1,12 +1,20 @@
-const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
-const nodeExternals = require('webpack-node-externals');
+import CopyPlugin from 'copy-webpack-plugin';
+import Dotenv from 'dotenv-webpack';
+import nodeExternals from 'webpack-node-externals';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 
-module.exports = {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default {
     target: 'electron-main',
 
-    externals: [nodeExternals()],
+    externals: [
+        nodeExternals({
+            allowlist: ['get-windows'],
+        }),
+    ],
 
     resolve: {
         extensions: ['.ts', '.js'],
@@ -28,6 +36,11 @@ module.exports = {
             {
                 test: /\.ts$/i,
                 loader: 'ts-loader',
+                options: {
+                    compilerOptions: {
+                        module: 'commonjs',
+                    },
+                },
             },
         ],
     },

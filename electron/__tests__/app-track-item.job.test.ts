@@ -5,7 +5,7 @@ import { State } from '../app/enums/state';
 import { TrackItemType } from '../app/enums/track-item-type';
 import TrackItemTestData from './track-item-test-data';
 
-import * as moment from 'moment';
+import moment from 'moment';
 
 const dateFormat = 'YYYY-MM-DD HH:mm:ss';
 
@@ -36,9 +36,7 @@ describe('checkIfIsInCorrectState', () => {
         const createOrUpdateMock = jest.fn();
         backgroundService.createOrUpdate = createOrUpdateMock;
 
-        let item: TrackItemInstance = TrackItem.build(
-            TrackItemTestData.getStatusTrackItem({ app: State.Idle }),
-        );
+        let item: TrackItemInstance = TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Idle }));
 
         stateManager.setCurrentTrackItem(item);
 
@@ -52,9 +50,7 @@ describe('checkIfIsInCorrectState', () => {
         const createOrUpdateMock = jest.fn();
         backgroundService.createOrUpdate = createOrUpdateMock;
 
-        let item: TrackItemInstance = TrackItem.build(
-            TrackItemTestData.getStatusTrackItem({ app: State.Online }),
-        );
+        let item: TrackItemInstance = TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
 
         stateManager.setCurrentTrackItem(item);
 
@@ -68,9 +64,7 @@ describe('checkIfIsInCorrectState', () => {
         const createOrUpdateMock = jest.fn();
         backgroundService.createOrUpdate = createOrUpdateMock;
 
-        let item: TrackItemInstance = TrackItem.build(
-            TrackItemTestData.getStatusTrackItem({ app: State.Offline }),
-        );
+        let item: TrackItemInstance = TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Offline }));
 
         stateManager.setCurrentTrackItem(item);
 

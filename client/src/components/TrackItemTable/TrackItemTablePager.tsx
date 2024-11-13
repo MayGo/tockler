@@ -1,16 +1,16 @@
 import React from 'react';
-import { Flex, Text } from '@chakra-ui/layout';
-import { IconButton } from '@chakra-ui/button';
+import { Flex, Text } from '@chakra-ui/react';
+import { IconButton } from '@chakra-ui/react';
 import { ArrowLeftIcon, ArrowRightIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { Tooltip } from '@chakra-ui/tooltip';
-import { Select } from '@chakra-ui/select';
+import { Tooltip } from '@chakra-ui/react';
+import { Select } from '@chakra-ui/react';
 import {
     NumberDecrementStepper,
     NumberIncrementStepper,
     NumberInput,
     NumberInputField,
     NumberInputStepper,
-} from '@chakra-ui/number-input';
+} from '@chakra-ui/react';
 
 export const TrackItemTablePager = ({
     gotoPage,
@@ -64,7 +64,7 @@ export const TrackItemTablePager = ({
                     w={28}
                     min={1}
                     max={pageOptions.length}
-                    onChange={value => {
+                    onChange={(value) => {
                         const currentPage = Number(value);
                         const page = currentPage ? currentPage - 1 : 0;
                         gotoPage(page);
@@ -80,11 +80,11 @@ export const TrackItemTablePager = ({
                 <Select
                     w={32}
                     value={pageSize}
-                    onChange={e => {
+                    onChange={(e) => {
                         setPageSize(Number(e.target.value));
                     }}
                 >
-                    {[10, 20, 30, 40, 50].map(pageSize => (
+                    {[10, 20, 30, 40, 50].map((pageSize) => (
                         <option key={pageSize} value={pageSize}>
                             Show {pageSize}
                         </option>

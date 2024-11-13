@@ -82,7 +82,9 @@ export default class MenuBuilder {
             label: 'Preferences',
             accelerator: macOS ? 'Command+,' : 'Control+',
             click() {
-                WindowManager.mainWindow.webContents.send('side:preferences');
+                if (WindowManager.mainWindow) {
+                    WindowManager.mainWindow.webContents.send('side:preferences');
+                }
             },
         };
 
@@ -150,19 +152,24 @@ export default class MenuBuilder {
     }
 
     setupDevelopmentEnvironment() {
-        WindowManager.mainWindow.openDevTools();
+        if (!WindowManager.mainWindow) {
+            console.error('No main window found, cannot setup development environment');
+            return;
+        }
 
-        WindowManager.mainWindow.webContents.on('context-menu', (e, props) => {
-            const { x, y } = props;
-            const menu = Menu.buildFromTemplate([
-                {
-                    label: 'Inspect element',
-                    click: () => {
-                        WindowManager.mainWindow.inspectElement(x, y);
-                    },
-                },
-            ]);
-            menu.popup(WindowManager.mainWindow);
-        });
+        // WindowManager.mainWindow.openDevTools();
+
+        // WindowManager.mainWindow.webContents.on('context-menu', (e, props) => {
+        //     const { x, y } = props;
+        //     const menu = Menu.buildFromTemplate([
+        //         {
+        //             label: 'Inspect element',
+        //             click: () => {
+        //                 WindowManager.mainWindow.inspectElement(x, y);
+        //             },
+        //         },
+        //     ]);
+        //     menu.popup(WindowManager.mainWindow);
+        // });
     }
 }

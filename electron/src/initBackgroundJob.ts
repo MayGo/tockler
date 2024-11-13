@@ -6,8 +6,9 @@ import { settingsService } from './services/settings-service';
 
 let logger = logManager.getLogger('BackgroundJob');
 
-let bgInterval;
-async function runAll(dataSettings) {
+let bgInterval: NodeJS.Timeout | null = null;
+
+async function runAll(dataSettings: any) {
     const { idleAfterSeconds } = dataSettings;
 
     await appTrackItemJob.run();
@@ -16,7 +17,7 @@ async function runAll(dataSettings) {
 }
 
 export async function initBackgroundJob() {
-    logger.debug('Environment:' + process.env.NODE_ENV);
+    logger.debug('Environment:' + process.env['NODE_ENV']);
     const dataSettings = await settingsService.fetchDataSettings();
     logger.debug('Running background service.', dataSettings);
 

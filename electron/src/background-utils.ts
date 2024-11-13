@@ -1,8 +1,10 @@
 import { appConstants } from './app-constants';
-import * as moment from 'moment';
+import moment from 'moment';
+import { TrackItem } from './models/TrackItem';
+import { TrackItemRaw } from './task-analyser';
 
 export default class BackgroundUtils {
-    static isSameItems(item1, item2) {
+    static isSameItems(item1: TrackItemRaw, item2: TrackItemRaw) {
         if (item1 && item2 && item1.app === item2.app && item1.title === item2.title) {
             return true;
         }
@@ -17,27 +19,27 @@ export default class BackgroundUtils {
         return now;
     }
 
-    static shouldSplitInTwoOnMidnight(beginDate, endDate) {
+    static shouldSplitInTwoOnMidnight(beginDate: Date, endDate: Date) {
         return BackgroundUtils.daysBetween(beginDate, endDate) > 0;
     }
 
-    static dateToAfterMidnight(d) {
+    static dateToAfterMidnight(d: Date) {
         return moment(d).startOf('day').add(1, 'days').toDate();
     }
 
-    static almostMidnight(d) {
+    static almostMidnight(d: Date) {
         return moment(d).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
     }
 
-    static startOfDay(d) {
+    static startOfDay(d: Date) {
         return moment(d).startOf('day').toDate();
     }
 
-    static daysBetween(beginDate, endDate) {
+    static daysBetween(beginDate: Date, endDate: Date) {
         return moment(endDate).endOf('day').diff(moment(beginDate).startOf('day'), 'days');
     }
 
-    static getRawTrackItem(savedItem) {
+    static getRawTrackItem(savedItem: TrackItemRaw) {
         let item = {
             app: savedItem.app,
             title: savedItem.title,
@@ -51,7 +53,7 @@ export default class BackgroundUtils {
         return item;
     }
 
-    static splitItemIntoDayChunks(item) {
+    static splitItemIntoDayChunks(item: TrackItem) {
         let daysBetween: number = BackgroundUtils.daysBetween(item.beginDate, item.endDate) + 1;
         if (daysBetween < 2) {
             throw new Error('begin and end date is on same day');

@@ -1,13 +1,28 @@
 {
     "compilerOptions": {
-        "target": "es2015",
-        "module": "commonjs",
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "moduleResolution": "node",
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "moduleDetection": "force",
+        "target": "ES2022", // Node.js 18
+        "lib": ["DOM", "DOM.Iterable", "ES2022"],
+        "resolveJsonModule": false, // ESM doesn't yet support JSON modules.
+        "jsx": "react",
+        "declaration": false, // Prevent generating d.ts files
+        "newLine": "lf",
+        "stripInternal": true,
+        "strict": true,
+        "noImplicitReturns": true,
+        "noImplicitOverride": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUncheckedIndexedAccess": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "noEmitOnError": true,
+        "useDefineForClassFields": true,
+        "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,
-        "sourceMap": true,
-        "outDir": "out"
+        "esModuleInterop": true
     },
 
     "exclude": ["__e2e__", "__tests__", "node_modules", "dist", "packaged", "static"]

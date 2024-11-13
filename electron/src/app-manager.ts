@@ -5,6 +5,7 @@ import { initIpcActions } from './API';
 import config from './config';
 import { connectAndSync } from './models/db';
 import WindowManager, { sendToTrayWindow, sendToMainWindow, sendToNotificationWindow } from './window-manager';
+import { Knex } from 'knex';
 
 let logger = logManager.getLogger('AppManager');
 
@@ -18,7 +19,7 @@ const theThemeHasChanged = () => {
     AppManager.saveThemeAndNotify(AppManager.getNativeTheme());
 };
 export default class AppManager {
-    static knexInstance;
+    static knexInstance: Knex | null = null;
     static async init() {
         logger.info('Intializing Tockler');
         initIpcActions();
@@ -34,8 +35,10 @@ export default class AppManager {
     }
 
     static async destroy() {
-        await AppManager.knexInstance.destroy();
-        logger.info('Closed db connection');
+        if (AppManager.knexInstance) {
+            await AppManager.knexInstance.destroy();
+            logger.info('Closed db connection');
+        }
     }
 
     static initAppEvents() {
@@ -97,7 +100,7 @@ export default class AppManager {
         config.persisted.set(THEME_CONFIG_KEY, theme);
     }
 
-    static saveThemeAndNotify(theme) {
+    static saveThemeAndNotify(theme: string) {
         logger.info('Theme changed', theme);
         AppManager.saveActiveTheme(theme);
 

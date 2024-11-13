@@ -5,25 +5,25 @@ import config from './config';
 
 const version = app.getVersion();
 
-const isProd = process.env.NODE_ENV === 'production';
+const isProd = process.env['NODE_ENV'] === 'production';
 if (isProd) {
     Sentry.init({
-        dsn: process.env.SENTRY_DSN,
-        environment: process.env.NODE_ENV,
+        dsn: process.env['SENTRY_DSN'],
+        environment: process.env['NODE_ENV'],
         release: version,
     });
 }
 
 const origConsole = (log.transports as any).console;
 
-const isError = function (e) {
+const isError = function (e: any) {
     return e && e.stack && e.message;
 };
 
-const cachedErrors = {};
+const cachedErrors: Record<string, boolean> = {};
 
-const sentryTransportConsole = (msgObj) => {
-    const { level, data, date } = msgObj;
+const sentryTransportConsole = (msgObj: any) => {
+    const { level, data } = msgObj;
     const [message, ...rest] = data;
 
     if (!cachedErrors[message]) {
@@ -51,13 +51,13 @@ const sentryTransportConsole = (msgObj) => {
 let isLoggingEnabled = config.persisted.get('isLoggingEnabled');
 
 export class LogManager {
-    logger;
+    logger: any;
 
-    init(settings) {
+    init(_settings: any) {
         console.log('init LogManager');
     }
 
-    getLogger(name) {
+    getLogger(name: string) {
         const logObj = log.create(name);
         if (isProd) {
             (logObj as any).transports.console = sentryTransportConsole;

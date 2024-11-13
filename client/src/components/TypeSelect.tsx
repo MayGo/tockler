@@ -1,11 +1,11 @@
-import { Select } from '@chakra-ui/select';
+import { Select } from '@chakra-ui/react';
 import React from 'react';
 import { ITEM_TYPES } from '../utils';
 
 export const TypeSelect = ({ value, onChange }) => {
     return (
         <Select value={value} onChange={onChange} w="200px">
-            {Object.keys(ITEM_TYPES).map(key => (
+            {Object.keys(ITEM_TYPES).map((key) => (
                 <option key={key} value={key}>
                     {ITEM_TYPES[key]}
                 </option>

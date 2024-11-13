@@ -1,7 +1,7 @@
 import React from 'react';
-import { Spinner } from '@chakra-ui/spinner';
+import { Spinner } from '@chakra-ui/react';
 import { useColorModeValue } from '@chakra-ui/react';
-import { chakra } from '@chakra-ui/system';
+import { chakra } from '@chakra-ui/react';
 
 const SpinnerContainer = chakra('div', {
     baseStyle: {

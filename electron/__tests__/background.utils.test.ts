@@ -3,7 +3,7 @@ jest.autoMockOff();
 import BackgroundUtils from '../app/background-utils';
 import { TrackItemType } from '../app/enums/track-item-type';
 
-import * as moment from 'moment';
+import moment from 'moment';
 
 const dateFormat = 'YYYY-MM-DD HH:mm:ss';
 
@@ -111,13 +111,8 @@ describe('splitItemIntoDayChunks', () => {
             app: 'WORK',
             title: 'Some work.',
             taskName: TrackItemType.LogTrackItem,
-            beginDate: moment()
-                .startOf('day')
-                .subtract(1, 'days')
-                .toDate(),
-            endDate: moment()
-                .startOf('day')
-                .toDate(),
+            beginDate: moment().startOf('day').subtract(1, 'days').toDate(),
+            endDate: moment().startOf('day').toDate(),
         };
 
         let items = BackgroundUtils.splitItemIntoDayChunks(rawItem);

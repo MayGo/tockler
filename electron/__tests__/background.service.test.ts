@@ -4,7 +4,7 @@ import { stateManager } from '../app/state-manager';
 import { TrackItemType } from '../app/enums/track-item-type';
 import TrackItemTestData from './track-item-test-data';
 
-import * as moment from 'moment';
+import moment from 'moment';
 
 const dateFormat = 'YYYY-MM-DD HH:mm:ss';
 
@@ -48,14 +48,8 @@ describe('createOrUpdate', () => {
         Setting.$queueResult(Setting.build({ jsonData: '{}' }));
 
         const rawItem: TrackItemAttributes = TrackItemTestData.getLogTrackItem({
-            beginDate: moment()
-                .startOf('day')
-                .subtract(1, 'hours')
-                .toDate(),
-            endDate: moment()
-                .startOf('day')
-                .add(1, 'hours')
-                .toDate(),
+            beginDate: moment().startOf('day').subtract(1, 'hours').toDate(),
+            endDate: moment().startOf('day').add(1, 'hours').toDate(),
         });
 
         const item = await backgroundService.createOrUpdate(rawItem);
@@ -65,12 +59,8 @@ describe('createOrUpdate', () => {
         expect(item.taskName).toEqual(TrackItemType.LogTrackItem);
 
         const dateAtMidnight = moment().startOf('day');
-        expect(moment(item.beginDate).format(dateFormat)).toEqual(
-            dateAtMidnight.format(dateFormat),
-        );
-        expect(moment(item.endDate).format(dateFormat)).toEqual(
-            moment(rawItem.endDate).format(dateFormat),
-        );
+        expect(moment(item.beginDate).format(dateFormat)).toEqual(dateAtMidnight.format(dateFormat));
+        expect(moment(item.endDate).format(dateFormat)).toEqual(moment(rawItem.endDate).format(dateFormat));
         expect(item.id).not.toBeNull;
 
         expect(item.color).toContain('#');
@@ -104,10 +94,7 @@ describe('createOrUpdate', () => {
         Setting.$queueResult(Setting.build({ jsonData: '{}' }));
 
         const firstRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({});
-        const secondRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem(
-            { app: 'Firefox' },
-            1,
-        );
+        const secondRawItem: TrackItemAttributes = TrackItemTestData.getAppTrackItem({ app: 'Firefox' }, 1);
 
         let runningItem = stateManager.getCurrentTrackItem(firstRawItem.taskName);
 
@@ -193,14 +180,8 @@ describe('addInactivePeriod', () => {
         TrackItem.$queueResult([]);
         Setting.$queueResult(Setting.build({ jsonData: '{}' }));
 
-        const beginDate = moment()
-            .startOf('day')
-            .add(5, 'hours')
-            .toDate();
-        const endDate = moment()
-            .startOf('day')
-            .add(6, 'hours')
-            .toDate();
+        const beginDate = moment().startOf('day').add(5, 'hours').toDate();
+        const endDate = moment().startOf('day').add(6, 'hours').toDate();
         const item = await backgroundService.addInactivePeriod(beginDate, endDate);
 
         expect(item.title).toEqual('offline');

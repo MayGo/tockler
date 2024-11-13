@@ -1,7 +1,7 @@
 import { Model } from 'objection';
 
 export class TrackItem extends Model {
-    static tableName = 'TrackItems';
+    static override tableName = 'TrackItems';
 
     id!: number;
     app!: string;

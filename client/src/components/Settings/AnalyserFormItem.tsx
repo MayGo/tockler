@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { testAnalyserItem } from './AnalyserForm.util';
 import { AiOutlineDelete } from 'react-icons/ai';
-import { IconButton } from '@chakra-ui/button';
-import { Input } from '@chakra-ui/input';
-import { FormControl, FormLabel } from '@chakra-ui/form-control';
-import { Switch } from '@chakra-ui/switch';
-import { Box, Flex } from '@chakra-ui/layout';
+import { IconButton } from '@chakra-ui/react';
+import { Input } from '@chakra-ui/react';
+import { FormControl, FormLabel } from '@chakra-ui/react';
+import { Switch } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { HStack, Text } from '@chakra-ui/react';
 import { BlackBox } from '../BlackBox';
@@ -66,12 +66,7 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
 
                     <Input placeholder="Title" {...register('takeTitle')} minWidth={200} />
                     <Box px={3}>
-                        <FormControl
-                            display="flex"
-                            alignItems="center"
-                            minWidth={100}
-                            maxWidth={100}
-                        >
+                        <FormControl display="flex" alignItems="center" minWidth={100} maxWidth={100}>
                             <FormLabel htmlFor="active" mb="0">
                                 Active
                             </FormLabel>
@@ -79,12 +74,7 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
                         </FormControl>
                     </Box>
                     <Box px={3}>
-                        <FormControl
-                            display="flex"
-                            alignItems="center"
-                            minWidth={160}
-                            maxWidth={160}
-                        >
+                        <FormControl display="flex" alignItems="center" minWidth={160} maxWidth={160}>
                             <FormLabel htmlFor="test" mb="0">
                                 Test mode
                             </FormLabel>
@@ -92,12 +82,7 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
                         </FormControl>
                     </Box>
 
-                    <IconButton
-                        icon={<AiOutlineDelete />}
-                        variant="ghost"
-                        onClick={removeItem}
-                        aria-label="Add Item"
-                    />
+                    <IconButton icon={<AiOutlineDelete />} variant="ghost" onClick={removeItem} aria-label="Add Item" />
                 </HStack>
             </Flex>
 

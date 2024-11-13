@@ -6,7 +6,7 @@ import { State } from '../app/enums/state';
 import { TrackItemType } from '../app/enums/track-item-type';
 import TrackItemTestData from './track-item-test-data';
 
-import * as moment from 'moment';
+import moment from 'moment';
 
 const dateFormat = 'YYYY-MM-DD HH:mm:ss';
 
@@ -37,9 +37,7 @@ describe('saveIdleTrackItem', () => {
         const createOrUpdateMock = jest.fn();
         backgroundService.createOrUpdate = createOrUpdateMock;
 
-        let item: TrackItemInstance = TrackItem.build(
-            TrackItemTestData.getStatusTrackItem({ app: State.Online }),
-        );
+        let item: TrackItemInstance = TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
 
         stateManager.setCurrentTrackItem(item);
         statusTrackItemJob.saveIdleTrackItem(appConstants.IDLE_IN_SECONDS_TO_LOG - 1);
@@ -60,10 +58,7 @@ describe('saveIdleTrackItem', () => {
 
         expect(createOrUpdateMock.mock.calls.length).toBe(1);
         let calledObj = createOrUpdateMock.mock.calls[0][0];
-        let diffInSeconds = moment(calledObj.endDate).diff(
-            moment(calledObj.beginDate),
-            'milliseconds',
-        );
+        let diffInSeconds = moment(calledObj.endDate).diff(moment(calledObj.beginDate), 'milliseconds');
         expect(diffInSeconds).toBe(appConstants.BACKGROUND_JOB_INTERVAL);
     });
 
@@ -72,9 +67,7 @@ describe('saveIdleTrackItem', () => {
         const createOrUpdateMock = jest.fn();
         backgroundService.createOrUpdate = createOrUpdateMock;
 
-        let item: TrackItemInstance = TrackItem.build(
-            TrackItemTestData.getStatusTrackItem({ app: State.Online }),
-        );
+        let item: TrackItemInstance = TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Online }));
 
         stateManager.setCurrentTrackItem(item);
 
@@ -90,9 +83,7 @@ describe('saveIdleTrackItem', () => {
         const createOrUpdateMock = jest.fn();
         backgroundService.createOrUpdate = createOrUpdateMock;
 
-        let item: TrackItemInstance = TrackItem.build(
-            TrackItemTestData.getStatusTrackItem({ app: State.Offline }),
-        );
+        let item: TrackItemInstance = TrackItem.build(TrackItemTestData.getStatusTrackItem({ app: State.Offline }));
 
         stateManager.setCurrentTrackItem(item);
 

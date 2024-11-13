@@ -1,16 +1,16 @@
 import moment from 'moment';
 import React, { memo } from 'react';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
-import { Flex } from '@chakra-ui/layout';
+import { Flex } from '@chakra-ui/react';
 import { Text, HStack, useColorModeValue } from '@chakra-ui/react';
-import { Button } from '@chakra-ui/button';
+import { Button } from '@chakra-ui/react';
 
 export const VisibleRange = memo(() => {
-    const timerange = useStoreState(state => state.timerange);
+    const timerange = useStoreState((state) => state.timerange);
 
-    const visibleTimerange = useStoreState(state => state.visibleTimerange);
+    const visibleTimerange = useStoreState((state) => state.visibleTimerange);
 
-    const setVisibleTimerange = useStoreActions(actions => actions.setVisibleTimerange);
+    const setVisibleTimerange = useStoreActions((actions) => actions.setVisibleTimerange);
     const showDay = () => {
         const beginDate = moment(timerange[0]).startOf('day');
         const endDate = moment(timerange[0]).endOf('day');
@@ -25,24 +25,18 @@ export const VisibleRange = memo(() => {
 
     const showAM = () => {
         const beginDate = moment(timerange[0]).startOf('day');
-        const endDate = moment(timerange[0])
-            .startOf('day')
-            .hour(12);
+        const endDate = moment(timerange[0]).startOf('day').hour(12);
         setVisibleTimerange([beginDate, endDate]);
     };
 
     const showPM = () => {
-        const beginDate = moment(timerange[0])
-            .startOf('day')
-            .hour(12);
+        const beginDate = moment(timerange[0]).startOf('day').hour(12);
         const endDate = moment(timerange[0]).endOf('day');
         setVisibleTimerange([beginDate, endDate]);
     };
 
     const showEvening = () => {
-        const beginDate = moment(visibleTimerange[0])
-            .startOf('day')
-            .hour(17);
+        const beginDate = moment(visibleTimerange[0]).startOf('day').hour(17);
         const endDate = moment(visibleTimerange[0]).endOf('day');
         setVisibleTimerange([beginDate, endDate]);
     };
