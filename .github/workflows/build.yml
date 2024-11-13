@@ -49,7 +49,7 @@ jobs:
               run: corepack enable && corepack prepare yarn@stable --activate
 
             - name: Install Sentry CLI
-              run: yarn global add @sentry/cli
+              run: yarn dlx @sentry/cli
 
             - name: Get Package Version
               id: package_version
