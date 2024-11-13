@@ -66,13 +66,13 @@ jobs:
             - name: Install Dependencies (Electron)
               run: |
                   cd electron
-                  yarn install --frozen-lockfile
+                  yarn install 
                   cd ..
 
             - name: Install Dependencies (Client)
               run: |
                   cd client
-                  yarn install --frozen-lockfile
+                  yarn install
                   cd ..
 
             - name: Build Client
