@@ -48,9 +48,6 @@ jobs:
             - name: Install Yarn Berry
               run: corepack enable && corepack prepare yarn@stable --activate
 
-            - name: Install Sentry CLI
-              run: yarn dlx @sentry/cli
-
             - name: Get Package Version
               id: package_version
               shell: bash
@@ -62,8 +59,8 @@ jobs:
                   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
                   SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
               run: |
-                  sentry-cli releases set-commits "${{ env.PACKAGE_VERSION }}" --commit "${{ github.repository }}@${{ github.sha }}"
-                  sentry-cli releases new "${{ env.PACKAGE_VERSION }}"
+                  yarn dlx @sentry/cli releases set-commits "${{ env.PACKAGE_VERSION }}" --commit "${{ github.repository }}@${{ github.sha }}"
+                  yarn dlx @sentry/cli releases new "${{ env.PACKAGE_VERSION }}"
 
             - name: Install Dependencies (Electron)
               run: |
