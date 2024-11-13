@@ -45,12 +45,6 @@ jobs:
                   node-version: ${{ matrix.node-version }}
                   cache: 'npm'
 
-            - name: Install Snapcraft (Linux only)
-              if: matrix.os == 'ubuntu-latest'
-              run: |
-                  sudo snap install snapcraft --classic
-                  echo "${{ secrets.SNAP_TOKEN }}" | snapcraft login --with -
-
             - name: Install Sentry CLI
               run: npm install -g @sentry/cli
 
@@ -125,6 +119,5 @@ jobs:
                   path: |
                       electron/dist/*.dmg
                       electron/dist/*.AppImage
-                      electron/dist/*.snap
                       electron/dist/*.deb
                       electron/dist/*.rpm
