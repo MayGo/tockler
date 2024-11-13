@@ -113,9 +113,9 @@ jobs:
                   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
                   SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
               run: |
-                  sentry-cli releases files "${{ env.PACKAGE_VERSION }}" upload-sourcemaps ./client/build/static/js/ --rewrite --url-prefix "~/dist/static/js"
-                  sentry-cli releases files "${{ env.PACKAGE_VERSION }}" list
-                  sentry-cli releases finalize "${{ env.PACKAGE_VERSION }}"
+                  yarn dlx @sentry/cli releases files "${{ env.PACKAGE_VERSION }}" upload-sourcemaps ./client/build/static/js/ --rewrite --url-prefix "~/dist/static/js"
+                  yarn dlx @sentry/cli releases files "${{ env.PACKAGE_VERSION }}" list
+                  yarn dlx @sentry/cli releases finalize "${{ env.PACKAGE_VERSION }}"
 
             - name: Upload Artifacts
               uses: actions/upload-artifact@v4
