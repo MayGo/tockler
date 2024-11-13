@@ -1,7 +1,7 @@
 import { logManager } from '../log-manager';
 import { stateManager } from '../state-manager';
-import { activeWindow } from 'get-windows';
 import BackgroundUtils from '../background-utils';
+import * as activeWin from 'active-win';
 import { backgroundService } from '../background-service';
 import { TrackItemType } from '../enums/track-item-type';
 import { taskAnalyser, TrackItemRaw } from '../task-analyser';
@@ -22,8 +22,8 @@ export class AppTrackItemJob {
 
         try {
             if (this.checkIfIsInCorrectState()) {
-                let activeWin = await activeWindow();
-                let updatedItem: TrackItem = await this.saveActiveWindow(activeWin ? activeWin : {});
+                let activeWindow = await activeWin();
+                let updatedItem: TrackItem = await this.saveActiveWindow(activeWindow ? activeWindow : {});
 
                 if (!BackgroundUtils.isSameItems(updatedItem as TrackItemRaw, this.lastUpdatedItem as TrackItemRaw)) {
                     logger.debug('App and title changed. Analysing title');
