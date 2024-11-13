@@ -57,6 +57,7 @@ jobs:
               run: echo "PACKAGE_VERSION=$(node -p -e "require('./electron/package.json').version")" >> $GITHUB_ENV
 
             - name: Setup Sentry Release
+              if: matrix.os == 'ubuntu-latest'
               env:
                   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
                   SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
@@ -110,6 +111,7 @@ jobs:
                   cd ..
 
             - name: Upload Sentry Sourcemaps
+              if: matrix.os == 'ubuntu-latest'
               env:
                   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
                   SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
