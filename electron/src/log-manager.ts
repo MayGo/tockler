@@ -1,5 +1,5 @@
 import * as log from 'electron-log';
-import * as Sentry from '@sentry/electron/main';
+import * as Sentry from '@sentry/electron';
 import { app } from 'electron';
 import config from './config';
 
@@ -29,17 +29,18 @@ const sentryTransportConsole = (msgObj: any) => {
     if (!cachedErrors[message]) {
         cachedErrors[message] = true;
 
-        const scope = Sentry.getCurrentScope();
-        scope.setExtra('data', rest);
-        scope.setExtra('date', msgObj.date.toLocaleTimeString());
-        scope.setLevel(level);
-        if (isError(message)) {
-            Sentry.captureException(message);
-        } else if (level === 'debug') {
-            // ignore debug for now
-        } else {
-            Sentry.captureMessage(message);
-        }
+        Sentry.withScope((scope) => {
+            scope.setExtra('data', rest);
+            scope.setExtra('date', msgObj.date.toLocaleTimeString());
+            scope.setLevel(level);
+            if (isError(message)) {
+                Sentry.captureException(message);
+            } else if (level === 'debug') {
+                // ignore debug for now
+            } else {
+                Sentry.captureMessage(message);
+            }
+        });
     }
 
     origConsole(msgObj);
