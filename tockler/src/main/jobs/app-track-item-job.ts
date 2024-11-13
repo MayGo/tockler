@@ -1,12 +1,18 @@
 import { logManager } from '../log-manager';
 import { stateManager } from '../state-manager';
-import { activeWindow } from 'get-windows';
 import BackgroundUtils from '../background-utils';
 import { backgroundService } from '../background-service';
 import { TrackItemType } from '../enums/track-item-type';
 import { taskAnalyser } from '../task-analyser';
 import { TrackItem } from '../models/TrackItem';
 import { dialog } from 'electron';
+
+// Importing the activeWindow function using dynamic import to handle ESM
+let activeWindow: () => Promise<any>;
+(async () => {
+    const module = await import('get-windows');
+    activeWindow = module.activeWindow;
+})();
 
 const logger = logManager.getLogger('AppTrackItemJob');
 

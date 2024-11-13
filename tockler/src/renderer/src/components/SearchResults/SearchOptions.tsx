@@ -1,8 +1,8 @@
 import { dayjs } from '@renderer/dayjs.config';
 import React, { useState } from 'react';
 import { Logger } from '../../logger';
-import { Box, Flex } from '@chakra-ui/layout';
-import { Button } from '@chakra-ui/button';
+import { Box, Flex } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import { OnDatesChangeProps } from '@datepicker-react/hooks';
 import { DateRangeInput } from '../Datepicker';

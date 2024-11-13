@@ -1,6 +1,6 @@
-import { FormControl, FormLabel } from '@chakra-ui/form-control';
-import { Text } from '@chakra-ui/layout';
-import { Switch } from '@chakra-ui/switch';
+import { FormControl, FormLabel } from '@chakra-ui/react';
+import { Text } from '@chakra-ui/react';
+import { Switch } from '@chakra-ui/react';
 import React from 'react';
 import {
     getOpenAtLogin,
@@ -23,24 +23,24 @@ export const AppForm = () => {
     const isLoggingEnabled = getIsLoggingEnabled();
     const usePurpleTrayIcon = getUsePurpleTrayIcon();
 
-    const onChangeNativeThemeChange = event => {
+    const onChangeNativeThemeChange = (event) => {
         saveNativeThemeChange(event.target.checked);
     };
-    const onChangeOpenAtLogin = event => {
+    const onChangeOpenAtLogin = (event) => {
         saveOpenAtLogin(event.target.checked);
     };
 
-    const onChangeAutoUpdate = event => {
+    const onChangeAutoUpdate = (event) => {
         saveIsAutoUpdateEnabled(event.target.checked);
     };
-    const onChangeLogging = event => {
+    const onChangeLogging = (event) => {
         saveIsLoggingEnabled(event.target.checked);
     };
-    const onChangeUsePurpleTrayIcon = event => {
+    const onChangeUsePurpleTrayIcon = (event) => {
         saveUsePurpleTrayIcon(event.target.checked);
     };
 
-    const appName = process.env.REACT_APP_NAME;
+    const appName = import.meta.env.RENDERER_VITE_NAME;
     const platform = (window as any).electronBridge.platform;
 
     const linuxPath = `~/.config/${appName}/logs/main.log`;

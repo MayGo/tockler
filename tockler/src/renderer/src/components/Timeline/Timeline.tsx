@@ -2,7 +2,7 @@ import React, { memo, useRef } from 'react';
 
 import { TimelineItemEdit } from './TimelineItemEdit';
 import { useStoreState } from '../../store/easyPeasy';
-import { Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger } from '@chakra-ui/popover';
+import { Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger } from '@chakra-ui/react';
 import { Box } from '@chakra-ui/react';
 import { BlackBox } from '../BlackBox';
 import { MainTimelineChart } from './MainTimelineChart';

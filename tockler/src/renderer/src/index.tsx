@@ -19,8 +19,8 @@ setAppParams();
 
 if (isDev) {
     console.info('Development!');
-    const whyDidYouRender = require('@welldone-software/why-did-you-render');
-    whyDidYouRender(React);
+    //const whyDidYouRender = require('@welldone-software/why-did-you-render');
+    //whyDidYouRender(React);
 }
 
 const domNode = document.getElementById('root') as HTMLElement;

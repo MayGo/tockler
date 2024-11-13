@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { Button } from '@chakra-ui/button';
-import { Box, Flex, Text } from '@chakra-ui/layout';
-import { Textarea } from '@chakra-ui/textarea';
-import { Input } from '@chakra-ui/input';
+import { Button } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
+import { Textarea } from '@chakra-ui/react';
+import { Input } from '@chakra-ui/react';
 import { CardBox } from '../components/CardBox';
 import { VStack } from '@chakra-ui/react';
 
-const TEMPLATE_ID = process.env.REACT_APP_TEMPLATE_ID || '';
-const SERVICE_ID = process.env.REACT_APP_SERVICE_ID || '';
-const USER_ID = process.env.REACT_APP_USER_ID || '';
+const TEMPLATE_ID = import.meta.env.RENDERER_VITE_TEMPLATE_ID || '';
+const SERVICE_ID = import.meta.env.RENDERER_VITE_SERVICE_ID || '';
+const USER_ID = import.meta.env.RENDERER_VITE_USER_ID || '';
 
 const EMAILJS_API = 'https://api.emailjs.com/api/v1.0/email/send';
 

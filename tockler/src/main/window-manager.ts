@@ -93,6 +93,9 @@ export default class WindowManager {
             title: 'Tockler',
             icon: config.iconWindow,
         });
+
+        // Open developer tools
+        this.mainWindow.webContents.openDevTools();
     }
 
     static setMainWindow(showOnLoad = true) {
@@ -110,7 +113,7 @@ export default class WindowManager {
 
         // HMR for renderer base on electron-vite cli.
         // Load the remote URL for development or the local html file for production.
-        if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+        if (!app.isPackaged && process.env['ELECTRON_RENDERER_URL']) {
             this.mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
         } else {
             this.mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
@@ -209,7 +212,7 @@ export default class WindowManager {
         // HMR for renderer base on electron-vite cli.
         // Load the remote URL for development or the local html file for production.
         const url =
-            is.dev && process.env['ELECTRON_RENDERER_URL']
+            !app.isPackaged && process.env['ELECTRON_RENDERER_URL']
                 ? process.env['ELECTRON_RENDERER_URL'] + '#/trayApp'
                 : 'file://' + join(__dirname, '../renderer/index.html#/trayApp');
 
@@ -245,7 +248,7 @@ export default class WindowManager {
 
             if (config.isDev) {
                 logger.debug('Open menubar dev tools');
-                //   this.menubar.window.openDevTools({ mode: 'bottom' });
+                this.menubar.window.openDevTools({ mode: 'bottom' });
             }
         });
 
@@ -282,7 +285,7 @@ export default class WindowManager {
 
         // HMR for renderer base on electron-vite cli.
         // Load the remote URL for development or the local html file for production.
-        if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+        if (!app.isPackaged && process.env['ELECTRON_RENDERER_URL']) {
             this.notificationWindow.loadURL(process.env['ELECTRON_RENDERER_URL'] + '/#/notificationApp');
         } else {
             this.notificationWindow.loadFile(join(__dirname, '../renderer/index.html#/notificationApp'));

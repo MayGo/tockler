@@ -1,9 +1,9 @@
 import { dayjs } from '@renderer/dayjs.config';
 import React, { memo } from 'react';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
-import { Flex } from '@chakra-ui/layout';
+import { Flex } from '@chakra-ui/react';
 import { Text, HStack, useColorModeValue } from '@chakra-ui/react';
-import { Button } from '@chakra-ui/button';
+import { Button } from '@chakra-ui/react';
 
 export const VisibleRange = memo(() => {
     const timerange = useStoreState((state) => state.timerange);

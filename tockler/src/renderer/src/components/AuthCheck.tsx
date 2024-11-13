@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Loader } from './Loader';
 import { AuthButton } from './AuthButton';
-import { Box } from '@chakra-ui/layout';
+import { Box } from '@chakra-ui/react';
 import { auth } from '../utils/firebase.utils';
 import { Logger } from '../logger';
 import { EventEmitter } from '../services/EventEmitter';

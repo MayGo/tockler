@@ -1,4 +1,4 @@
-import { Select } from '@chakra-ui/select';
+import { Select } from '@chakra-ui/react';
 
 import React from 'react';
 

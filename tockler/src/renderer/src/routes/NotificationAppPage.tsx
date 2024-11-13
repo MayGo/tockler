@@ -1,7 +1,7 @@
 import React, { useEffect, useState, memo } from 'react';
 import { EventEmitter } from '../services/EventEmitter';
 import { Logger } from '../logger';
-import { Center, Box } from '@chakra-ui/layout';
+import { Center, Box } from '@chakra-ui/react';
 import { Text } from '@chakra-ui/react';
 import { ShortTimeInterval } from '../components/TrayList/ShortTimeInterval';
 

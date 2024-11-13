@@ -1,7 +1,7 @@
 import { pageView, sendEvent, setUserProperty } from './ga-measurement-protocol';
 
 export function setAppParams() {
-    setUserProperty('app_version', process.env.REACT_APP_VERSION || '1.0.0');
+    setUserProperty('app_version', import.meta.env.RENDERER_VITE_VERSION || '1.0.0');
 }
 
 export function sendPageEvent(path, search) {

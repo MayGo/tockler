@@ -5,9 +5,9 @@ import Dayjs from 'react-dayjs';
 import { DATE_TIME_FORMAT, TIME_FORMAT } from '../../constants';
 import { diffAndFormatShort } from '../../utils';
 
-import { Box, Flex } from '@chakra-ui/layout';
-import { Button } from '@chakra-ui/button';
-import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/table';
+import { Box, Flex } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 import { useTable, useSortBy, usePagination, useFilters, useRowSelect } from 'react-table';
 

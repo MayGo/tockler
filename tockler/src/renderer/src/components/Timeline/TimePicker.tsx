@@ -1,5 +1,5 @@
-import { Input } from '@chakra-ui/input';
-import { Box } from '@chakra-ui/layout';
+import { Input } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import TimeKeeper from 'react-timekeeper';
 

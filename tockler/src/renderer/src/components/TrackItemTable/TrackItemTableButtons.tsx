@@ -4,18 +4,13 @@ import React from 'react';
 import { Logger } from '../../logger';
 import { deleteByIds } from '../../services/trackItem.api';
 import { useStoreActions } from '../../store/easyPeasy';
-import { Button } from '@chakra-ui/button';
+import { Button } from '@chakra-ui/react';
 import { HStack, Text } from '@chakra-ui/react';
 
-export const TrackItemTableButtons = ({
-    setAllFilters,
-    setSortBy,
-    selectedFlatRows,
-    selectedRowIds,
-}) => {
-    const fetchTimerange = useStoreActions(actions => actions.fetchTimerange);
+export const TrackItemTableButtons = ({ setAllFilters, setSortBy, selectedFlatRows, selectedRowIds }) => {
+    const fetchTimerange = useStoreActions((actions) => actions.fetchTimerange);
 
-    const deleteTimelineItems = async ids => {
+    const deleteTimelineItems = async (ids) => {
         Logger.debug('Delete timeline items', ids);
 
         if (ids) {

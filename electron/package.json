@@ -29,7 +29,6 @@
         "active-win": "^8.2.1",
         "csv-stringify": "^6.5.0",
         "electron-context-menu": "4.0.0",
-        "electron-deeplink": "^1.0.10",
         "electron-is-dev": "^3.0.1",
         "electron-log": "^5.1.5",
         "electron-store": "8.2.0",

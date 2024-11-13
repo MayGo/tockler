@@ -1,8 +1,8 @@
 import { stringify } from 'querystring';
 import { getMachineId } from './services/settings.api';
 
-const trackingId: string = process.env.REACT_APP_TRACKING_ID || '';
-const secretKey: string = process.env.REACT_APP_SECRET_KEY || '';
+const trackingId: string = import.meta.env.RENDERER_VITE_TRACKING_ID || '';
+const secretKey: string = import.meta.env.RENDERER_VITE_SECRET_KEY || '';
 
 const config = {
     measurementId: trackingId,

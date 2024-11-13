@@ -3,7 +3,7 @@ import '@firebase/performance';
 import React, { useState } from 'react';
 import * as yup from 'yup';
 import { Input, Button, Center, Text, Box } from '@chakra-ui/react';
-import { FormControl, FormErrorMessage } from '@chakra-ui/form-control';
+import { FormControl, FormErrorMessage } from '@chakra-ui/react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { setEmailToLocalStorage } from './Paywall/Paywall.utils';
