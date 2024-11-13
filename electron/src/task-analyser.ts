@@ -1,10 +1,10 @@
-import { logManager } from './log-manager.js';
-import { appEmitter } from './app-event-emitter.js';
-import { settingsService } from './services/settings-service.js';
-import { TrackItemType } from './enums/track-item-type.js';
-import { showNotification } from './notification.js';
+import { logManager } from './log-manager';
+import { appEmitter } from './app-event-emitter';
+import { settingsService } from './services/settings-service';
+import { TrackItemType } from './enums/track-item-type';
+import { showNotification } from './notification';
 import randomcolor from 'randomcolor';
-import { stateManager } from './state-manager.js';
+import { stateManager } from './state-manager';
 export interface TrackItemRaw {
     app?: string;
     taskName?: TrackItemType;

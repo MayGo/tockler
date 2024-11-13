@@ -1,10 +1,10 @@
 import { app, ipcMain, nativeTheme } from 'electron';
-import { logManager } from './log-manager.js';
-import { stateManager } from './state-manager.js';
-import { initIpcActions } from './API.js';
-import config from './config.js';
-import { connectAndSync } from './models/db.js';
-import WindowManager, { sendToTrayWindow, sendToMainWindow, sendToNotificationWindow } from './window-manager.js';
+import { logManager } from './log-manager';
+import { stateManager } from './state-manager';
+import { initIpcActions } from './API';
+import config from './config';
+import { connectAndSync } from './models/db';
+import WindowManager, { sendToTrayWindow, sendToMainWindow, sendToNotificationWindow } from './window-manager';
 import { Knex } from 'knex';
 
 let logger = logManager.getLogger('AppManager');

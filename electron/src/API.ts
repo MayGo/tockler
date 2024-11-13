@@ -1,15 +1,15 @@
-import { setupMainHandler } from './setupMainHandler.js';
+import { setupMainHandler } from './setupMainHandler';
 import { ipcMain } from 'electron';
-import { settingsService } from './services/settings-service.js';
-import { appSettingService } from './services/app-setting-service.js';
-import { trackItemService } from './services/track-item-service.js';
-import { stateManager } from './state-manager.js';
-import { State } from './enums/state.js';
-import AppManager from './app-manager.js';
-import { sendToTrayWindow, sendToNotificationWindow } from './window-manager.js';
-import { initBackgroundJob } from './initBackgroundJob.js';
+import { settingsService } from './services/settings-service';
+import { appSettingService } from './services/app-setting-service';
+import { trackItemService } from './services/track-item-service';
+import { stateManager } from './state-manager';
+import { State } from './enums/state';
+import AppManager from './app-manager';
+import { sendToTrayWindow, sendToNotificationWindow } from './window-manager';
+import { initBackgroundJob } from './initBackgroundJob';
 import { machineId } from 'node-machine-id';
-import { TrackItem } from './models/TrackItem.js';
+import { TrackItem } from './models/TrackItem';
 
 const settingsActions = {
     fetchAnalyserSettingsJsonString: async () => {

@@ -1,12 +1,12 @@
-import { trackItemService } from './services/track-item-service.js';
-import { appSettingService } from './services/app-setting-service.js';
-import { State } from './enums/state.js';
-import { logManager } from './log-manager.js';
-import { stateManager } from './state-manager.js';
-import BackgroundUtils from './background-utils.js';
-import { TrackItemType } from './enums/track-item-type.js';
-import { TrackItem } from './models/TrackItem.js';
-import { TrackItemRaw } from './task-analyser.js';
+import { trackItemService } from './services/track-item-service';
+import { appSettingService } from './services/app-setting-service';
+import { State } from './enums/state';
+import { logManager } from './log-manager';
+import { stateManager } from './state-manager';
+import BackgroundUtils from './background-utils';
+import { TrackItemType } from './enums/track-item-type';
+import { TrackItem } from './models/TrackItem';
+import { TrackItemRaw } from './task-analyser';
 
 let logger = logManager.getLogger('BackgroundService');
 

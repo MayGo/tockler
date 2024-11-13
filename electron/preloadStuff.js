@@ -3,7 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 const Store = require('electron-store');
 
 const log = require('electron-log');
-const Sentry = require('@sentry/electron');
+const Sentry = require('@sentry/electron/main');
 
 const config = new Store();
 

@@ -7,7 +7,7 @@
         "lib": ["DOM", "DOM.Iterable", "ES2022"],
         "resolveJsonModule": false, // ESM doesn't yet support JSON modules.
         "jsx": "react",
-        "declaration": true,
+        "declaration": false, // Prevent generating d.ts files
         "newLine": "lf",
         "stripInternal": true,
         "strict": true,

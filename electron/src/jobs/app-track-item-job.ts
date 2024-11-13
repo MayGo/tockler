@@ -1,11 +1,11 @@
-import { logManager } from '../log-manager.js';
-import { stateManager } from '../state-manager.js';
+import { logManager } from '../log-manager';
+import { stateManager } from '../state-manager';
 import { activeWindow } from 'get-windows';
-import BackgroundUtils from '../background-utils.js';
-import { backgroundService } from '../background-service.js';
-import { TrackItemType } from '../enums/track-item-type.js';
-import { taskAnalyser, TrackItemRaw } from '../task-analyser.js';
-import { TrackItem } from '../models/TrackItem.js';
+import BackgroundUtils from '../background-utils';
+import { backgroundService } from '../background-service';
+import { TrackItemType } from '../enums/track-item-type';
+import { taskAnalyser, TrackItemRaw } from '../task-analyser';
+import { TrackItem } from '../models/TrackItem';
 import { dialog } from 'electron';
 
 let logger = logManager.getLogger('AppTrackItemJob');

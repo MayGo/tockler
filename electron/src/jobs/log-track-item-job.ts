@@ -1,13 +1,13 @@
-import { logManager } from '../log-manager.js';
-import { stateManager } from '../state-manager.js';
+import { logManager } from '../log-manager';
+import { stateManager } from '../state-manager';
 import moment from 'moment';
-import { TrackItemType } from '../enums/track-item-type.js';
-import { backgroundService } from '../background-service.js';
-import BackgroundUtils from '../background-utils.js';
-import { trackItemService } from '../services/track-item-service.js';
-import { settingsService } from '../services/settings-service.js';
-import { TrackItem } from '../models/TrackItem.js';
-import { TrackItemRaw } from '../task-analyser.js';
+import { TrackItemType } from '../enums/track-item-type';
+import { backgroundService } from '../background-service';
+import BackgroundUtils from '../background-utils';
+import { trackItemService } from '../services/track-item-service';
+import { settingsService } from '../services/settings-service';
+import { TrackItem } from '../models/TrackItem';
+import { TrackItemRaw } from '../task-analyser';
 
 let logger = logManager.getLogger('LogTrackItemJob');
 

@@ -1,7 +1,7 @@
-import { appConstants } from './app-constants.js';
+import { appConstants } from './app-constants';
 import moment from 'moment';
-import { TrackItem } from './models/TrackItem.js';
-import { TrackItemRaw } from './task-analyser.js';
+import { TrackItem } from './models/TrackItem';
+import { TrackItemRaw } from './task-analyser';
 
 export default class BackgroundUtils {
     static isSameItems(item1: TrackItemRaw, item2: TrackItemRaw) {

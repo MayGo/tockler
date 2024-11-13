@@ -1,12 +1,12 @@
 import { menubar } from 'menubar';
-import MenuBuilder from './menu-builder.js';
+import MenuBuilder from './menu-builder';
 import { throttle } from 'lodash';
 import { app, ipcMain, BrowserWindow, dialog, shell, Tray } from 'electron';
 import { autoUpdater } from 'electron-updater';
-import config, { getTrayIcon } from './config.js';
-import { logManager } from './log-manager.js';
+import config, { getTrayIcon } from './config';
+import { logManager } from './log-manager';
 import { join } from 'path';
-import { settingsService } from './services/settings-service.js';
+import { settingsService } from './services/settings-service';
 import positioner from 'electron-traywindow-positioner';
 
 let logger = logManager.getLogger('WindowManager');
@@ -83,6 +83,7 @@ export default class WindowManager {
 
     static createMainWindow() {
         logger.debug('Creating main window.');
+        logger.debug('Preload script path:', preloadScript);
         const windowSize = config.persisted.get('windowsize') || { width: 1080, height: 720 };
 
         this.mainWindow = new BrowserWindow({
@@ -97,6 +98,10 @@ export default class WindowManager {
             },
             title: 'Tockler',
             icon: config.iconWindow,
+        });
+
+        this.mainWindow.webContents.on('did-fail-load', (_event, errorCode, errorDescription) => {
+            logger.error('Failed to load:', errorCode, errorDescription);
         });
     }
 
@@ -265,7 +270,7 @@ export default class WindowManager {
 
             if (config.isDev) {
                 logger.debug('Open menubar dev tools');
-                //   this.menubar.window.openDevTools({ mode: 'bottom' });
+                this.menubar.window.openDevTools({ mode: 'bottom' });
             }
         });
 

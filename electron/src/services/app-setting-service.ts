@@ -1,6 +1,6 @@
-import { logManager } from '../log-manager.js';
+import { logManager } from '../log-manager';
 import randomcolor from 'randomcolor';
-import { AppSetting } from '../models/AppSetting.js';
+import { AppSetting } from '../models/AppSetting';
 
 export class AppSettingService {
     logger = logManager.getLogger('AppSettingService');

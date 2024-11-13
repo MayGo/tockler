@@ -1,11 +1,11 @@
-import { stateManager } from './state-manager.js';
+import { stateManager } from './state-manager';
 import { app } from 'electron';
 import { autoUpdater, UpdateCheckResult, UpdateInfo } from 'electron-updater';
-import config from './config.js';
-import { showNotification } from './notification.js';
+import config from './config';
+import { showNotification } from './notification';
 
-import { logManager } from './log-manager.js';
-import WindowManager from './window-manager.js';
+import { logManager } from './log-manager';
+import WindowManager from './window-manager';
 
 const logger = logManager.getLogger('AppUpdater');
 

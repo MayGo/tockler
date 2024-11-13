@@ -1,6 +1,6 @@
-import { logManager } from '../log-manager.js';
-import { Setting } from '../models/Setting.js';
-import { TrackItem } from '../models/TrackItem.js';
+import { logManager } from '../log-manager';
+import { Setting } from '../models/Setting';
+import { TrackItem } from '../models/TrackItem';
 
 export class SettingsService {
     logger = logManager.getLogger('SettingsService');

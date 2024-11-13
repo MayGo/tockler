@@ -1,10 +1,10 @@
 import { powerMonitor } from 'electron';
-import { logManager } from '../log-manager.js';
-import { stateManager } from '../state-manager.js';
-import { backgroundService } from '../background-service.js';
-import BackgroundUtils from '../background-utils.js';
-import { State } from '../enums/state.js';
-import { sendToTrayWindow } from '../window-manager.js';
+import { logManager } from '../log-manager';
+import { stateManager } from '../state-manager';
+import { backgroundService } from '../background-service';
+import BackgroundUtils from '../background-utils';
+import { State } from '../enums/state';
+import { sendToTrayWindow } from '../window-manager';
 
 let logger = logManager.getLogger('StatusTrackItemJob');
 

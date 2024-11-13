@@ -1,4 +1,4 @@
-import { logManager } from './log-manager.js';
+import { logManager } from './log-manager';
 
 const logger = logManager.getLogger('setupMainHandler');
 

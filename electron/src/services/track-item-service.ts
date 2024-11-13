@@ -1,8 +1,8 @@
-import { logManager } from '../log-manager.js';
-import { settingsService } from './settings-service.js';
-import { State } from '../enums/state.js';
-import { stateManager } from '../state-manager.js';
-import { TrackItem } from '../models/TrackItem.js';
+import { logManager } from '../log-manager';
+import { settingsService } from './settings-service';
+import { State } from '../enums/state';
+import { stateManager } from '../state-manager';
+import { TrackItem } from '../models/TrackItem';
 import { dialog } from 'electron';
 import { writeFileSync } from 'fs';
 import { stringify } from 'csv-stringify/sync';

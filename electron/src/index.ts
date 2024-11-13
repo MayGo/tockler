@@ -1,14 +1,14 @@
 require('events').EventEmitter.defaultMaxListeners = 30;
 
-import { initBackgroundJob } from './initBackgroundJob.js';
-import { backgroundService } from './background-service.js';
+import { initBackgroundJob } from './initBackgroundJob';
+import { backgroundService } from './background-service';
 import { app, ipcMain, powerMonitor } from 'electron';
-import { logManager } from './log-manager.js';
-import AppManager from './app-manager.js';
-import WindowManager from './window-manager.js';
-import { extensionsManager } from './extensions-manager.js';
-import AppUpdater from './app-updater.js';
-import config from './config.js';
+import { logManager } from './log-manager';
+import AppManager from './app-manager';
+import WindowManager from './window-manager';
+import { extensionsManager } from './extensions-manager';
+import AppUpdater from './app-updater';
+import config from './config';
 
 let logger = logManager.getLogger('AppIndex');
 app.setAppUserModelId(process.execPath);

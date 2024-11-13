@@ -1,8 +1,8 @@
-import { logManager } from './log-manager.js';
-import { logTrackItemJob } from './jobs/log-track-item-job.js';
-import { statusTrackItemJob } from './jobs/status-track-item-job.js';
-import { appTrackItemJob } from './jobs/app-track-item-job.js';
-import { settingsService } from './services/settings-service.js';
+import { logManager } from './log-manager';
+import { logTrackItemJob } from './jobs/log-track-item-job';
+import { statusTrackItemJob } from './jobs/status-track-item-job';
+import { appTrackItemJob } from './jobs/app-track-item-job';
+import { settingsService } from './services/settings-service';
 
 let logger = logManager.getLogger('BackgroundJob');
 

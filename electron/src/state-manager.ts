@@ -1,15 +1,15 @@
-import { State } from './enums/state.js';
-import { TrackItemType } from './enums/track-item-type.js';
+import { State } from './enums/state';
+import { TrackItemType } from './enums/track-item-type';
 import { ipcMain } from 'electron';
-import BackgroundUtils from './background-utils.js';
-import { trackItemService } from './services/track-item-service.js';
-import { logManager } from './log-manager.js';
-import { settingsService } from './services/settings-service.js';
-import { appEmitter } from './app-event-emitter.js';
-import { sendToTrayWindow } from './window-manager.js';
-import { TrackItem } from './models/TrackItem.js';
-import { backgroundService } from './background-service.js';
-import { TrackItemRaw } from './task-analyser.js';
+import BackgroundUtils from './background-utils';
+import { trackItemService } from './services/track-item-service';
+import { logManager } from './log-manager';
+import { settingsService } from './services/settings-service';
+import { appEmitter } from './app-event-emitter';
+import { sendToTrayWindow } from './window-manager';
+import { TrackItem } from './models/TrackItem';
+import { backgroundService } from './background-service';
+import { TrackItemRaw } from './task-analyser';
 
 let logger = logManager.getLogger('StateManager');
 
