@@ -1,9 +1,11 @@
 require('dotenv').config();
 const { notarize } = require('@electron/notarize');
+const { join } = require('path');
+const { existsSync } = require('fs');
 
-exports.default = async function notarizing(context) {
-    const { electronPlatformName, appOutDir } = context;
-    const { appId, productFilename } = context.packager.config;
+exports.default = async function notarizing(params) {
+    const { electronPlatformName } = params;
+    const { appId } = params.packager.appInfo;
 
     // Skip notarization for pull requests and non-macOS builds
     if (process.env.GITHUB_EVENT_NAME === 'pull_request' || electronPlatformName !== 'darwin') {
@@ -11,16 +13,21 @@ exports.default = async function notarizing(context) {
     }
 
     // Skip for local builds
-    if (context.packager.config.extraMetadata?.irccloud?.local_build) {
+    if (params.packager.config.extraMetadata?.irccloud?.local_build) {
         return;
     }
 
-    const appPath = `${appOutDir}/${productFilename}.app`;
+    const appPath = join(params.appOutDir, `${params.packager.appInfo.productFilename}.app`);
+    console.log('App Path:', appPath);
+    console.log('appId', appId);
+    if (!existsSync(appPath)) {
+        throw new Error(`Cannot find application at: ${appPath}`);
+    }
 
     console.info('Notarizing application...', {
         appBundleId: appId,
         appPath: appPath,
-        teamId: process.env.TEAM_ID,
+        teamId: process.env.APPLE_TEAM_ID,
     });
 
     try {
