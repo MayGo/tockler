@@ -46,7 +46,7 @@ jobs:
                   cache: 'yarn'
 
             - name: Install Yarn
-              run: npm install -g yarn
+              run: npm install -g yarn@1.22.4
 
             - name: Install Sentry CLI
               run: yarn global add @sentry/cli
@@ -54,7 +54,7 @@ jobs:
             - name: Get Package Version
               id: package_version
               shell: bash
-              run: echo "PACKAGE_VERSION=$(node -p -e "require('./electron/package.json').version")" >> $GITHUB_ENV
+              run: echo "PACKAGE_VERSION=$(node -p -e \"require('./electron/package.json').version\")" >> $GITHUB_ENV
 
             - name: Setup Sentry Release
               if: matrix.os == 'ubuntu-latest'
@@ -68,13 +68,13 @@ jobs:
             - name: Install Dependencies (Electron)
               run: |
                   cd electron
-                  yarn install 
+                  yarn install --ignore-optional
                   cd ..
 
             - name: Install Dependencies (Client)
               run: |
                   cd client
-                  yarn install
+                  yarn install --ignore-optional
                   cd ..
 
             - name: Build Client
