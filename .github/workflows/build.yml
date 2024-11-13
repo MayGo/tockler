@@ -85,20 +85,20 @@ jobs:
               run: |
                   cd electron
                   echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> .env
-                  echo "APPLEID=${{ secrets.APPLEID }}" >> .env
-                  echo "APPLEIDPASS=${{ secrets.APPLEIDPASS }}" >> .env
-                  echo "TEAM_ID=${{ secrets.TEAM_ID }}" >> .env
+                  echo "APPLE_ID=${{ secrets.APPLE_ID }}" >> .env
+                  echo "APPLE_ID_PASSWORD=${{ secrets.APPLE_ID_PASSWORD }}" >> .env
+                  echo "APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}" >> .env
                   cd ..
 
             - name: Build and Release Electron App
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   DEBUG: electron-builder,electron-builder:*
-                  CSC_LINK: ${{ secrets.MAC_CERT_BASE64 }}
-                  CSC_KEY_PASSWORD: ${{ secrets.MAC_CERT_PASSWORD }}
-                  APPLE_ID: ${{ secrets.APPLEID }}
-                  APPLE_ID_PASSWORD: ${{ secrets.APPLEIDPASS }}
-                  APPLE_TEAM_ID: ${{ secrets.TEAM_ID }}
+                  CSC_LINK: ${{ secrets.CSC_LINK }}
+                  CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+                  APPLE_ID: ${{ secrets.APPLE_ID }}
+                  APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+                  APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
               run: |
                   cd electron
                   yarn build
