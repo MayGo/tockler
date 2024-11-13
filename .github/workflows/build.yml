@@ -43,10 +43,13 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node-version }}
-                  cache: 'npm'
+                  cache: 'yarn'
+
+            - name: Install Yarn
+              run: npm install -g yarn
 
             - name: Install Sentry CLI
-              run: npm install -g @sentry/cli
+              run: yarn global add @sentry/cli
 
             - name: Get Package Version
               id: package_version
@@ -63,19 +66,19 @@ jobs:
             - name: Install Dependencies (Electron)
               run: |
                   cd electron
-                  npm install
+                  yarn install --frozen-lockfile
                   cd ..
 
             - name: Install Dependencies (Client)
               run: |
                   cd client
-                  npm install
+                  yarn install --frozen-lockfile
                   cd ..
 
             - name: Build Client
               run: |
                   cd client
-                  npm run build
+                  yarn build
                   cd ..
 
             - name: Create .env file
@@ -98,9 +101,9 @@ jobs:
                   APPLE_TEAM_ID: ${{ secrets.TEAM_ID }}
               run: |
                   cd electron
-                  npm run build
-                  npm run prepare_client
-                  npm run release
+                  yarn build
+                  yarn prepare_client
+                  yarn release
                   cd ..
 
             - name: Upload Sentry Sourcemaps
