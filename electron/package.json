@@ -24,6 +24,9 @@
         "prepare_client": "cpx \"../client/build/**/*\" dist",
         "release": "electron-builder -c electron-builder.yml"
     },
+    "resolutions": {
+        "cliui": "^8.0.1"
+    },
     "dependencies": {
         "@sentry/electron": "^2.5.4",
         "csv-stringify": "^6.2.0",
