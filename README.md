@@ -144,7 +144,7 @@ yarn install            # Install dependencies
 yarn start
 ```
 
-Build scripts samples are in travis/appveyor files.
+Build scripts samples are in .github/workflows files.
 
 ### Testing MAS build
 

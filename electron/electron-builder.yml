@@ -19,7 +19,6 @@ files:
     - '!util'
     - '!test'
     - '!release'
-    - '!travis_wait*'
 
 publish:
     - github

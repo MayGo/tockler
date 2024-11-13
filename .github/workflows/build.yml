@@ -33,7 +33,7 @@ jobs:
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
-                os: [ubuntu-latest, macos-latest]
+                os: [ubuntu-latest, macos-latest, windows-latest]
                 node-version: [22.x]
 
         steps:
@@ -53,6 +53,7 @@ jobs:
 
             - name: Get Package Version
               id: package_version
+              shell: bash
               run: echo "PACKAGE_VERSION=$(node -p -e "require('./electron/package.json').version")" >> $GITHUB_ENV
 
             - name: Setup Sentry Release
@@ -82,6 +83,7 @@ jobs:
                   cd ..
 
             - name: Create .env file
+              shell: bash
               run: |
                   cd electron
                   echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> .env
@@ -99,6 +101,7 @@ jobs:
                   APPLE_ID: ${{ secrets.APPLE_ID }}
                   APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
                   APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+                  CSC_IDENTITY_AUTO_DISCOVERY: ${{ matrix.os != 'windows-latest' }}
               run: |
                   cd electron
                   yarn build
@@ -124,3 +127,5 @@ jobs:
                       electron/dist/*.AppImage
                       electron/dist/*.deb
                       electron/dist/*.rpm
+                      electron/dist/*.exe
+                      electron/dist/*.msi
