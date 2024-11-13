@@ -1,0 +1,11 @@
+{
+  "name": "tockler",
+  "description": "Automatically track applications usage and working time",
+  "author": "Maigo Erit <maigo.erit@gmail.com>",
+  "license": "GPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:MayGo/tockler.git"
+  },
+  "packageManager": "yarn@4.5.1"
+}
