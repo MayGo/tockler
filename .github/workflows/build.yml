@@ -10,20 +10,121 @@ jobs:
         name: SonarCloud
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
               with:
-                  fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+                  fetch-depth: 0
             - name: SonarCloud Scan Electron
               uses: SonarSource/sonarcloud-github-action@master
               with:
                   projectBaseDir: electron
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
             - name: SonarCloud Scan Client
               uses: SonarSource/sonarcloud-github-action@master
               with:
                   projectBaseDir: client
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+    build:
+        name: Build (${{ matrix.os }})
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os: [ubuntu-latest, macos-latest]
+                node-version: [21.x]
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'npm'
+
+            - name: Install Snapcraft (Linux only)
+              if: matrix.os == 'ubuntu-latest'
+              run: |
+                  sudo snap install snapcraft --classic
+                  echo "${{ secrets.SNAP_TOKEN }}" | snapcraft login --with -
+
+            - name: Install Sentry CLI
+              run: npm install -g @sentry/cli
+
+            - name: Get Package Version
+              id: package_version
+              run: echo "PACKAGE_VERSION=$(node -p -e "require('./electron/package.json').version")" >> $GITHUB_ENV
+
+            - name: Setup Sentry Release
+              env:
+                  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+                  SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+              run: |
+                  sentry-cli releases set-commits "${{ env.PACKAGE_VERSION }}" --commit "${{ github.repository }}@${{ github.sha }}"
+                  sentry-cli releases new "${{ env.PACKAGE_VERSION }}"
+
+            - name: Install Dependencies (Electron)
+              run: |
+                  cd electron
+                  npm install
+                  cd ..
+
+            - name: Install Dependencies (Client)
+              run: |
+                  cd client
+                  npm install
+                  cd ..
+
+            - name: Build Client
+              run: |
+                  cd client
+                  npm run build
+                  cd ..
+
+            - name: Create .env file
+              run: |
+                  cd electron
+                  echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> .env
+                  echo "APPLEID=${{ secrets.APPLEID }}" >> .env
+                  echo "APPLEIDPASS=${{ secrets.APPLEIDPASS }}" >> .env
+                  echo "TEAM_ID=${{ secrets.TEAM_ID }}" >> .env
+                  cd ..
+
+            - name: Build and Release Electron App
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  DEBUG: electron-builder,electron-builder:*
+                  CSC_LINK: ${{ secrets.MAC_CERT_BASE64 }}
+                  CSC_KEY_PASSWORD: ${{ secrets.MAC_CERT_PASSWORD }}
+                  APPLE_ID: ${{ secrets.APPLEID }}
+                  APPLE_ID_PASSWORD: ${{ secrets.APPLEIDPASS }}
+                  APPLE_TEAM_ID: ${{ secrets.TEAM_ID }}
+              run: |
+                  cd electron
+                  npm run build
+                  npm run prepare_client
+                  npm run release
+                  cd ..
+
+            - name: Upload Sentry Sourcemaps
+              env:
+                  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+                  SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+              run: |
+                  sentry-cli releases files "${{ env.PACKAGE_VERSION }}" upload-sourcemaps ./client/build/static/js/ --rewrite --url-prefix "~/dist/static/js"
+                  sentry-cli releases files "${{ env.PACKAGE_VERSION }}" list
+                  sentry-cli releases finalize "${{ env.PACKAGE_VERSION }}"
+
+            - name: Upload Artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: ${{ matrix.os }}-build
+                  path: |
+                      electron/dist/*.dmg
+                      electron/dist/*.AppImage
+                      electron/dist/*.snap
+                      electron/dist/*.deb
+                      electron/dist/*.rpm

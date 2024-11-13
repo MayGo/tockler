@@ -2,39 +2,39 @@ require('dotenv').config();
 const { notarize } = require('@electron/notarize');
 
 exports.default = async function notarizing(context) {
-    const { electronPlatformName, appOutDir, outDir, packager } = context;
+    const { electronPlatformName, appOutDir } = context;
+    const { appId, productFilename } = context.packager.config;
 
-    // Don't notarize on pull requests
-    if (
-        process.env.GITHUB_EVENT_NAME == 'pull_request' ||
-        process.env.TRAVIS_EVENT_TYPE == 'pull_request' ||
-        process.env.APPVEYOR_PULL_REQUEST_NUMBER > 0
-    ) {
+    // Skip notarization for pull requests and non-macOS builds
+    if (process.env.GITHUB_EVENT_NAME === 'pull_request' || electronPlatformName !== 'darwin') {
         return;
     }
 
-    if (electronPlatformName !== 'darwin') {
+    // Skip for local builds
+    if (context.packager.config.extraMetadata?.irccloud?.local_build) {
         return;
     }
 
-    if (
-        packager.config.extraMetadata &&
-        packager.config.extraMetadata.irccloud &&
-        packager.config.extraMetadata.irccloud.local_build
-    ) {
-        return;
-    }
+    const appPath = `${appOutDir}/${productFilename}.app`;
 
-    const appName = packager.appInfo.productFilename;
-    const appPath = `${appOutDir}/${appName}.app`;
-    const appBundleId = packager.config.appId;
-
-    console.info('notarizing', { appBundleId: appBundleId, appPath: appPath });
-
-    return await notarize({
-        appBundleId: appBundleId,
+    console.info('Notarizing application...', {
+        appBundleId: appId,
         appPath: appPath,
-        appleId: process.env.APPLEID,
-        appleIdPassword: process.env.APPLEIDPASS,
+        teamId: process.env.TEAM_ID,
     });
+
+    try {
+        await notarize({
+            tool: 'notarytool',
+            appPath,
+            teamId: process.env.TEAM_ID,
+            appleId: process.env.APPLEID,
+            appleIdPassword: process.env.APPLEIDPASS,
+        });
+
+        console.info('Notarization completed successfully');
+    } catch (error) {
+        console.error('Notarization failed:', error);
+        throw error;
+    }
 };
