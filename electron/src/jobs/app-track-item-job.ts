@@ -6,9 +6,28 @@ import { backgroundService } from '../background-service';
 import { TrackItemType } from '../enums/track-item-type';
 import { taskAnalyser, TrackItemRaw } from '../task-analyser';
 import { TrackItem } from '../models/TrackItem';
-import { dialog } from 'electron';
+import activeWindow from 'active-win';
 
 let logger = logManager.getLogger('AppTrackItemJob');
+
+const errorWindowItem: activeWindow.Result = {
+    platform: 'macos',
+    title: 'Active Window undefined',
+    owner: {
+        name: 'PERMISSION_ERROR',
+        processId: 0,
+        path: '',
+        bundleId: '',
+    },
+    id: 0,
+    bounds: {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+    },
+    memoryUsage: 0,
+};
 
 export class AppTrackItemJob {
     lastUpdatedItem: TrackItem | null = null;
@@ -23,7 +42,7 @@ export class AppTrackItemJob {
         try {
             if (this.checkIfIsInCorrectState()) {
                 let activeWindow = await activeWin();
-                let updatedItem: TrackItem = await this.saveActiveWindow(activeWindow ? activeWindow : {});
+                let updatedItem: TrackItem = await this.saveActiveWindow(activeWindow ?? errorWindowItem);
 
                 if (!BackgroundUtils.isSameItems(updatedItem as TrackItemRaw, this.lastUpdatedItem as TrackItemRaw)) {
                     logger.debug('App and title changed. Analysing title');
@@ -41,31 +60,12 @@ export class AppTrackItemJob {
 
             return true;
         } catch (error: any) {
-            const activeWinError = await this.checkIfPermissionError(error);
-
-            if (activeWinError) {
-                logger.debug('Permission error: ' + activeWinError);
-            } else {
-                logger.error(`Error in AppTrackItemJob: ${error.toString()}`, error);
-            }
+            logger.error(`Error in AppTrackItemJob: ${error.toString()}`, error);
+            let updatedItem: TrackItem = await this.saveActiveWindow({ ...errorWindowItem, title: error.toString() });
+            this.lastUpdatedItem = updatedItem;
         }
 
         return false;
-    }
-
-    async checkIfPermissionError(e: any) {
-        const activeWinError = e.stdout;
-
-        if (activeWinError) {
-            this.errorDialogIsOpen = true;
-            await dialog.showMessageBox({
-                message: activeWinError.replace('get-windows', 'Tockler'),
-            });
-
-            this.errorDialogIsOpen = false;
-            return activeWinError;
-        }
-        return;
     }
 
     checkIfIsInCorrectState() {
@@ -83,7 +83,7 @@ export class AppTrackItemJob {
         return true;
     }
 
-    async saveActiveWindow(result: any): Promise<TrackItem> {
+    async saveActiveWindow(result: activeWindow.Result): Promise<TrackItem> {
         let rawItem: any = { taskName: TrackItemType.AppTrackItem };
 
         rawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
@@ -102,8 +102,6 @@ export class AppTrackItemJob {
         } else {
             rawItem.title = result.title.replace(/\n$/, '').replace(/^\s/, '');
         }
-
-        rawItem.url = result.url;
 
         // logger.debug('Active window (parsed):', rawItem);
 
