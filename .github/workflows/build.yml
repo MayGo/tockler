@@ -122,9 +122,9 @@ jobs:
               with:
                   name: ${{ matrix.os }}-build
                   path: |
-                      electron/dist/*.dmg
-                      electron/dist/*.AppImage
-                      electron/dist/*.deb
-                      electron/dist/*.rpm
-                      electron/dist/*.exe
-                      electron/dist/*.msi
+                      electron/packaged/*.dmg
+                      electron/packaged/*.AppImage
+                      electron/packaged/*.deb
+                      electron/packaged/*.rpm
+                      electron/packaged/*.exe
+                      electron/packaged/*.msi
