@@ -7,10 +7,6 @@
   </a>
 </p>
 
-<p align="center">
- <a  href="https://trimatechdesigns.etsy.com/">Support Tockler by visiting my Etsy Store</a>
-</p>
-
 **Automatically track applications usage and working time.**
 
 > With Tockler you can go back in time and see what you were working on. You can get information on what apps were used - exactly at what time - and what title the application had at that moment. This is enough to determine how much you did something.
