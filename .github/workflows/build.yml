@@ -33,7 +33,7 @@ jobs:
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
-                os: [ubuntu-latest, macos-14, macos-latest, windows-latest]
+                os: [ubuntu-latest, macos-15, macos-latest, windows-latest]
                 node-version: [22.x]
 
         steps:
@@ -66,8 +66,8 @@ jobs:
               shell: bash
               run: |
                   cd electron
-                  if [ "${{ matrix.os }}" = "macos-14" ]; then
-                    # Force x64 architecture for macos-14
+                  if [ "${{ matrix.os }}" = "macos-15" ]; then
+                    # Force x64 architecture for macos-15
                     export npm_config_arch=x64
                   elif [ "${{ matrix.os }}" = "macos-latest" ]; then
                     # Force arm64 architecture for macos-latest
@@ -114,7 +114,7 @@ jobs:
                   yarn build
                   yarn prepare_client
                   # Determine the architecture to build
-                  if [ "${{ matrix.os }}" = "macos-14" ]; then
+                  if [ "${{ matrix.os }}" = "macos-15" ]; then
                     ARCH="x64"
                   elif [ "${{ matrix.os }}" = "macos-latest" ]; then
                     ARCH="arm64"
