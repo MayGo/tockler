@@ -38,10 +38,12 @@ mac:
     target:
         - target: dmg
           arch:
-              - ${{ matrix.os == 'macos-14' && 'x64' || 'arm64' }}
+              - x64
+              - arm64
         - target: zip
           arch:
-              - ${{ matrix.os == 'macos-14' && 'x64' || 'arm64' }}
+              - x64
+              - arm64
 
 mas:
     entitlements: './build/entitlements.mas.plist'

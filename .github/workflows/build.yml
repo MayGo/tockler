@@ -112,7 +112,13 @@ jobs:
                   cd electron
                   yarn build
                   yarn prepare_client
-                  yarn release
+                  # Determine the architecture to build
+                  if [ "${{ matrix.os }}" = "macos-14" ]; then
+                    ARCH="x64"
+                  elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+                    ARCH="arm64"
+                  fi
+                  yarn release -- --mac --${ARCH}
                   cd ..
 
             - name: Upload Sentry Sourcemaps
