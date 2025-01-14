@@ -99,6 +99,7 @@ jobs:
                   cd ..
 
             - name: Build and Release Electron App
+              shell: bash
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   DEBUG: electron-builder,electron-builder:*
