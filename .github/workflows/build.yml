@@ -63,6 +63,7 @@ jobs:
                   yarn dlx @sentry/cli releases new "${{ env.PACKAGE_VERSION }}"
 
             - name: Install Dependencies (Electron)
+              shell: bash
               run: |
                   cd electron
                   if [ "${{ matrix.os }}" = "macos-14" ]; then
