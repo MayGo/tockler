@@ -40,7 +40,7 @@ export const AppForm = () => {
         saveUsePurpleTrayIcon(event.target.checked);
     };
 
-    const appName = process.env.REACT_APP_NAME;
+    const appName = import.meta.env.VITE_NAME;
     const platform = (window as any).electronBridge.platform;
 
     const linuxPath = `~/.config/${appName}/logs/main.log`;

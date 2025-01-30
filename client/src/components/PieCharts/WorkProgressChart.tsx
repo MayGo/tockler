@@ -1,12 +1,10 @@
-import React from 'react';
-
 import _ from 'lodash';
-import moment from 'moment';
 import { VictoryContainer, VictoryPie } from 'victory';
 import { convertDate } from '../../constants';
 import { PieLabel } from './PieLabel';
 import { colorProp } from '../charts.utils';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
+import { formatDurationInternal } from '../../utils';
 
 const sumApp = (p, c) => {
     return _.extend(p, {
@@ -31,21 +29,20 @@ export const WorkProgressChart = ({ items, width, hoursToWork }) => {
         .valueOf();
 
     if (pieData.length) {
-        const workDay = moment.duration(Number(hoursToWork), 'hours');
+        const workDayMs = hoursToWork * 60 * 60 * 1000;
 
         const workedMs = pieData[0].timeDiffInMs;
 
         // pauses must be 10% of worked time
         const pausesInHour = 0.1;
-        const worked = moment.duration(workedMs);
-        const pauses = moment.duration(workedMs * pausesInHour);
+        const pausesMs = workedMs * pausesInHour;
 
-        const undone = workDay.subtract(worked).subtract(pauses);
+        const undoneMs = workDayMs - workedMs - pausesMs;
 
         const undoneItem = {
             app: 'Work to be done',
             title: 'Work to be done',
-            timeDiffInMs: undone.asMilliseconds(),
+            timeDiffInMs: undoneMs,
             color: 'lightgray',
         };
         pieData.push(undoneItem);
@@ -53,7 +50,7 @@ export const WorkProgressChart = ({ items, width, hoursToWork }) => {
         const pausesItem = {
             app: 'Pauses',
             title: 'Pauses',
-            timeDiffInMs: pauses.asMilliseconds(),
+            timeDiffInMs: pausesMs,
             color: 'gray',
         };
         pieData.push(pausesItem);
@@ -78,10 +75,7 @@ export const WorkProgressChart = ({ items, width, hoursToWork }) => {
             containerComponent={<VictoryContainer responsive={false} />}
             style={style}
             labels={({ datum }) => {
-                const dur = moment.duration(datum.timeDiffInMs);
-                const formattedDuration = dur.format();
-
-                return `${datum[groupByField]} [${formattedDuration}]`;
+                return `${datum[groupByField]} [${formatDurationInternal(datum.timeDiffInMs)}]`;
             }}
             labelComponent={<PieLabel width={width} theme={chartTheme} innerWidth={0} />}
             x="app"

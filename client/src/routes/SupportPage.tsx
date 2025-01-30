@@ -6,9 +6,9 @@ import { Input } from '@chakra-ui/react';
 import { CardBox } from '../components/CardBox';
 import { VStack } from '@chakra-ui/react';
 
-const TEMPLATE_ID = process.env.REACT_APP_TEMPLATE_ID || '';
-const SERVICE_ID = process.env.REACT_APP_SERVICE_ID || '';
-const USER_ID = process.env.REACT_APP_USER_ID || '';
+const TEMPLATE_ID = import.meta.env.VITE_TEMPLATE_ID || '';
+const SERVICE_ID = import.meta.env.VITE_SERVICE_ID || '';
+const USER_ID = import.meta.env.VITE_USER_ID || '';
 
 const EMAILJS_API = 'https://api.emailjs.com/api/v1.0/email/send';
 

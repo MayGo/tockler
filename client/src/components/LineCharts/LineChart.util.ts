@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { convertDate } from '../../constants';
 import { toInteger } from 'lodash';
+import { intervalToDuration } from 'date-fns';
 
 export const generateTickValues = (date, ticks, unit, startOf) => {
     const day = convertDate(date).startOf(startOf);
@@ -22,26 +23,26 @@ export const addToTimeDuration = (from, duration) => {
     return moment(moment(from).diff(start) + duration);
 };
 
-export const isOddHour = date => moment(date).get('hour') % 2;
+export const isOddHour = (date) => moment(date).get('hour') % 2;
 
-export const formatToTime = t => moment(t).format('HH:mm');
+export const formatToTime = (t) => moment(t).format('HH:mm');
 
-export const formatToTimeEveryOther = t => {
+export const formatToTimeEveryOther = (t) => {
     const hour = moment(t).startOf('hour');
     return formatToTime(hour);
 };
 
-export const formatToHours = max => t => {
-    const hour = moment.duration(t * max).hours();
-    return `${hour} h`;
+export const formatToHours = (max) => (t) => {
+    const duration = intervalToDuration({ start: 0, end: t * max });
+    return `${duration.hours} h`;
 };
 
-export const formatToDay = t => toInteger(t.format('DD'));
-export const dateToDayLabel = short => date => {
+export const formatToDay = (t) => toInteger(t.format('DD'));
+export const dateToDayLabel = (short) => (date) => {
     return moment(date).format(short ? 'DD' : 'DD ddd');
 };
 
-export const timeTickValues = t => {
+export const timeTickValues = (t) => {
     const ticks = 36;
     const day = moment();
     const dates = [...Array(ticks)].map((__, i) => {
@@ -51,4 +52,4 @@ export const timeTickValues = t => {
     return dates;
 };
 
-export const dayTickValues = t => generateTickValues(t, 31, 'day', 'month');
+export const dayTickValues = (t) => generateTickValues(t, 31, 'day', 'month');

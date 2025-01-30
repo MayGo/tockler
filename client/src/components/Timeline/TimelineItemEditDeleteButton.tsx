@@ -29,7 +29,7 @@ export function TimelineItemEditDeleteButton({ deleteItem }) {
                 <AlertDialogOverlay>
                     <AlertDialogContent>
                         <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                            Delete Customer
+                            Delete Timeline Item
                         </AlertDialogHeader>
 
                         <AlertDialogBody>Are you sure? You can't undo this action afterwards.</AlertDialogBody>

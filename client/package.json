@@ -1,26 +1,34 @@
 {
     "name": "tockler",
-    "version": "3.19.22",
     "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc -b && vite build",
+        "lint": "eslint .",
+        "preview": "vite preview"
+    },
     "dependencies": {
         "@chakra-ui/icons": "^2.2.4",
         "@chakra-ui/react": "^2.3.7",
+        "@chakra-ui/theme-tools": "^2.2.6",
         "@datepicker-react/hooks": "^2.8.4",
         "@emotion/react": "^11.10.5",
         "@emotion/styled": "^11.10.5",
         "@fontsource/inter": "^4.5.14",
         "@hookform/resolvers": "^2.9.10",
         "@react-hook/window-size": "^3.1.1",
+        "date-fns": "^4.1.0",
         "debounce-promise": "^3.1.2",
         "easy-peasy": "^5.1.0",
         "fast-deep-equal": "^3.1.3",
         "framer-motion": "^7",
         "humanize-duration": "^3.32.1",
         "lodash": "4.17.21",
-        "match-sorter": "^6.3.1",
+        "match-sorter": "^8.0.0",
         "moment": "^2.29.4",
         "moment-duration-format": "2.3.2",
-        "querystring": "^0.2.1",
         "randomcolor": "^0.6.2",
         "react": "^19.0.0",
         "react-color-palette": "^6.2.0",
@@ -37,40 +45,17 @@
         "victory": "^36.6.8",
         "yup": "^0.32.11"
     },
-    "scripts": {
-        "start": "cross-env ELECTRON_ENABLE_SECURITY_WARNINGS=false BROWSER=none LOG_LEVEL=debug react-scripts start",
-        "build": "cross-env GENERATE_SOURCEMAP=false PUBLIC_URL=./ react-scripts build",
-        "test": "yarn jest",
-        "eject": "react-scripts eject",
-        "lint": "eslint 'src/**/*{.ts,.tsx}' --fix"
-    },
     "devDependencies": {
-        "@testing-library/jest-dom": "^5.16.5",
-        "@testing-library/react": "^13.4.0",
-        "@testing-library/user-event": "^14.4.3",
-        "@types/jest": "^29.2.2",
-        "@types/lodash.throttle": "^4.1.7",
-        "@types/node": "^20.4.2",
-        "@types/react": "^18.0.25",
-        "@types/react-dom": "^18.0.8",
-        "@types/webpack-env": "1.18.0",
-        "babel-plugin-react-compiler": "19.0.0-beta-27714ef-20250124",
-        "cross-env": "7.0.3",
-        "eslint-plugin-react-compiler": "19.0.0-beta-27714ef-20250124",
-        "prettier": "^2.7.1",
-        "ts-jest": "^29.0.3",
-        "typescript": "4.8.4"
-    },
-    "eslintConfig": {
-        "extends": "react-app"
-    },
-    "browserslist": {
-        "production": [
-            "last 1 chrome version"
-        ],
-        "development": [
-            "last 1 chrome version"
-        ]
-    },
-    "packageManager": "yarn@4.5.1"
+        "@eslint/js": "^9.17.0",
+        "@types/react": "^18.3.18",
+        "@types/react-dom": "^18.3.5",
+        "@vitejs/plugin-react": "^4.3.4",
+        "eslint": "^9.17.0",
+        "eslint-plugin-react-hooks": "^5.0.0",
+        "eslint-plugin-react-refresh": "^0.4.16",
+        "globals": "^15.14.0",
+        "typescript": "~5.6.2",
+        "typescript-eslint": "^8.18.2",
+        "vite": "^6.0.5"
+    }
 }
