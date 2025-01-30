@@ -33,6 +33,4 @@ const NotificationAppPageTemp = () => {
     );
 };
 
-NotificationAppPageTemp.whyDidYouRender = true;
-
 export const NotificationAppPage = memo(NotificationAppPageTemp);

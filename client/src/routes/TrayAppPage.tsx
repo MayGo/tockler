@@ -134,6 +134,4 @@ const TrayAppPageTemp = () => {
     );
 };
 
-TrayAppPageTemp.whyDidYouRender = true;
-
 export const TrayAppPage = memo(TrayAppPageTemp);

@@ -46,6 +46,4 @@ export function TrayListPlain({ lastLogItems, loading, runningLogItem, stopRunni
     );
 }
 
-TrayListPlain.whyDidYouRender = true;
-
 export const TrayList = memo(TrayListPlain);

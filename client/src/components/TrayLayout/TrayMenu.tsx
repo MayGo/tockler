@@ -45,6 +45,4 @@ export const TrayMenuPlain = () => {
     );
 };
 
-TrayMenuPlain.whyDidYouRender = true;
-
 export const TrayMenu = memo(TrayMenuPlain);

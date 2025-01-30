@@ -58,6 +58,4 @@ export function TrayListItemPlain({ item, startNewLogItemFromOld, stopRunningLog
     );
 }
 
-TrayListItemPlain.whyDidYouRender = true;
-
 export const TrayListItem = memo(TrayListItemPlain);
