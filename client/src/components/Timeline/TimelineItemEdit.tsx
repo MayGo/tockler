@@ -1,5 +1,4 @@
 import React, { useState, useEffect, memo } from 'react';
-import { TimeOutput } from 'react-timekeeper';
 import randomcolor from 'randomcolor';
 import { ColorPicker } from './ColorPicker';
 import { Logger } from '../../logger';
@@ -12,7 +11,7 @@ import { Select } from '@chakra-ui/react';
 import { AiOutlineClose, AiOutlineSave } from 'react-icons/ai';
 import { TimelineItemEditDeleteButton } from './TimelineItemEditDeleteButton';
 import { TIME_FORMAT_SHORT } from '../../constants';
-import { TimePicker } from './TimePicker';
+
 import { HStack, VStack } from '@chakra-ui/react';
 import { ITEM_TYPES } from '../../utils';
 import { changeColorForApp } from '../../services/appSettings.api';
@@ -106,10 +105,11 @@ export const TimelineItemEdit = memo(() => {
         }));
     };
 
-    const changeTime = (attr) => (value: TimeOutput) => {
-        Logger.debug('Changed app time:', value);
+    const changeTime = (attr) => (timeStr: string) => {
+        Logger.debug('Changed app time:', timeStr);
+        const [hours, minutes] = timeStr.split(':').map(Number);
         const oldDate = moment(state.trackItem[attr]);
-        const newDate = oldDate.startOf('day').set('hours', value.hour).set('minutes', value.minute);
+        const newDate = oldDate.startOf('day').set('hours', hours).set('minutes', minutes);
 
         setState((oldState) => ({
             ...oldState,
@@ -179,17 +179,19 @@ export const TimelineItemEdit = memo(() => {
                     <Box flex="2">
                         <Input value={trackItem.app} placeholder="App" onChange={changeAppName} readOnly={readOnly} />
                     </Box>
-                    <Box flex="1" maxWidth="100px">
-                        <TimePicker
-                            time={moment(trackItem.beginDate).format(TIME_FORMAT_SHORT)}
-                            onChange={changeTime('beginDate')}
+                    <Box flex="1" maxWidth="120px">
+                        <Input
+                            type="time"
+                            value={moment(trackItem.beginDate).format(TIME_FORMAT_SHORT)}
+                            onChange={(e) => changeTime('beginDate')(e.target.value)}
                             readOnly={readOnly}
                         />
                     </Box>
-                    <Box flex="1" maxWidth="100px">
-                        <TimePicker
-                            time={moment(trackItem.endDate).format(TIME_FORMAT_SHORT)}
-                            onChange={changeTime('endDate')}
+                    <Box flex="1" maxWidth="120px">
+                        <Input
+                            type="time"
+                            value={moment(trackItem.endDate).format(TIME_FORMAT_SHORT)}
+                            onChange={(e) => changeTime('endDate')(e.target.value)}
                             readOnly={readOnly}
                         />
                     </Box>
