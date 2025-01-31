@@ -1,4 +1,4 @@
-import React, { createContext, FC, useContext } from 'react';
+import { createContext, FC, useContext } from 'react';
 import { DatepickerStyles } from '../types';
 import merge from '../utils/deepmerge';
 import pick from '../utils/pick';

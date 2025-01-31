@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React, { useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { SummaryContext } from '../../SummaryContext';
 import { Logger } from '../../logger';
 import { convertDate, TIME_FORMAT_SHORT } from '../../constants';

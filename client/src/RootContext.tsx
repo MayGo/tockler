@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createContext, useCallback } from 'react';
+import { useEffect, useState, createContext, useCallback } from 'react';
 import { EventEmitter } from './services/EventEmitter';
 import { Logger } from './logger';
 import { fetchDataSettings, fetchWorkSettings, saveDataSettings, saveWorkSettings } from './services/settings.api';

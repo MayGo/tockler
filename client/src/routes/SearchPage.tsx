@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { searchFromItems, exportFromItems } from '../services/trackItem.api';
 import moment from 'moment';
 import { TrackItemType } from '../enum/TrackItemType';
@@ -25,7 +25,7 @@ export function SearchPage() {
     const [total, setTotal] = useState(0);
     const [timerange, setTimerange] = useState([moment().startOf('day').subtract(10, 'days'), moment().endOf('day')]);
 
-    const loadItems = async (searchStr, firstPage = false) => {
+    const loadItems = async (searchStr: string) => {
         const fetchId = ++fetchIdRef.current;
         setIsLoading(true);
         const [from, to] = timerange;

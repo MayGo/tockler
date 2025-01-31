@@ -1,4 +1,3 @@
-import React from 'react';
 import { Logger } from '../logger';
 
 export const NotFound = () => {

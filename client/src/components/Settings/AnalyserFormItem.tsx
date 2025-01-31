@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { testAnalyserItem } from './AnalyserForm.util';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { IconButton } from '@chakra-ui/react';

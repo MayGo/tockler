@@ -7,7 +7,7 @@ import {
     InputProps as ChakraInputProps,
 } from '@chakra-ui/react';
 import { parseDate } from '@datepicker-react/hooks';
-import React, { forwardRef, Ref, useEffect, useRef, useState } from 'react';
+import { forwardRef, Ref, useEffect, useRef, useState } from 'react';
 import { useStyleProps } from '../context/StylesContext';
 import { InputComponentStyles, InputDate } from '../types';
 import { defaultDisplayFormat } from '../utils/formatters';
@@ -106,12 +106,7 @@ export const Input = forwardRef((props: BaseProps, inputRef: Ref<any>) => {
             {showCalendarIcon && (
                 <InputRightElement
                     {...getStateStyle(styleProps.inputComponentInputAddon, isActive)}
-                    children={
-                        <Icon
-                            as={iconComponent}
-                            {...getStateStyle(styleProps.inputComponentIcon, isActive)}
-                        />
-                    }
+                    children={<Icon as={iconComponent} {...getStateStyle(styleProps.inputComponentIcon, isActive)} />}
                 />
             )}
             <ChakraInput

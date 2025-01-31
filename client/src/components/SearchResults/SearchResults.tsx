@@ -1,6 +1,6 @@
 import { IconButton, Tooltip } from '@chakra-ui/react';
 import moment from 'moment';
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { AiOutlineUnorderedList } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 

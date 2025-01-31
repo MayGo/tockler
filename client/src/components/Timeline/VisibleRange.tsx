@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { Flex } from '@chakra-ui/react';
 import { Text, HStack, useColorModeValue } from '@chakra-ui/react';

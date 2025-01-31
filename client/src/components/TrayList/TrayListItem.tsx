@@ -1,5 +1,5 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { HStack, IconButton } from '@chakra-ui/react';
 import { convertDate, DATE_TIME_FORMAT } from '../../constants';
 import { FaPlay, FaStop } from 'react-icons/fa';

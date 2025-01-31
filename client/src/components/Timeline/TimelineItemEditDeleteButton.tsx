@@ -7,7 +7,7 @@ import {
     AlertDialogHeader,
     AlertDialogOverlay,
 } from '@chakra-ui/react';
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 
 export function TimelineItemEditDeleteButton({ deleteItem }) {

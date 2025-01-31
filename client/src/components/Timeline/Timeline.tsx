@@ -1,4 +1,4 @@
-import React, { memo, useRef } from 'react';
+import { memo, useRef } from 'react';
 import 'moment-duration-format';
 import { TimelineItemEdit } from './TimelineItemEdit';
 import { useStoreState } from '../../store/easyPeasy';

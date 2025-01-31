@@ -1,4 +1,3 @@
-import React from 'react';
 import { SummaryCalendar } from '../components/SummaryCalendar/SummaryCalendar';
 import { SummaryProvider } from '../SummaryContext';
 import { LineChart } from '../components/LineCharts/LineChart';

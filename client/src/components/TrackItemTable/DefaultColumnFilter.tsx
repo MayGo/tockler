@@ -1,8 +1,7 @@
 import { Input } from '@chakra-ui/react';
-import React from 'react';
 import { ToggleColumnFilter } from './ToggleColumnFilter';
 
-export function DefaultColumnFilter({ column: { filterValue, preFilteredRows, setFilter } }) {
+export function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
     return (
         <ToggleColumnFilter>
             <Input

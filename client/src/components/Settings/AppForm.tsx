@@ -1,7 +1,7 @@
 import { FormControl, FormLabel } from '@chakra-ui/react';
 import { Text } from '@chakra-ui/react';
 import { Switch } from '@chakra-ui/react';
-import React from 'react';
+
 import {
     getOpenAtLogin,
     getIsAutoUpdateEnabled,

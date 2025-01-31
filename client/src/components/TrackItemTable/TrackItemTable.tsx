@@ -1,6 +1,6 @@
 // tslint:disable-next-line: no-submodule-imports
 
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { filterItems } from '../Timeline/timeline.utils';
 import { checkIfOneDay } from '../../timeline.util';

@@ -1,13 +1,7 @@
 import { CalendarIcon } from '@chakra-ui/icons';
 import { Box, Stack, StackDivider, useBreakpointValue, Icon } from '@chakra-ui/react';
-import {
-    END_DATE,
-    FocusedInput,
-    getInputValue,
-    OnDatesChangeProps,
-    START_DATE,
-} from '@datepicker-react/hooks';
-import React, { Ref, useEffect, useRef, useState } from 'react';
+import { END_DATE, FocusedInput, getInputValue, OnDatesChangeProps, START_DATE } from '@datepicker-react/hooks';
+import { Ref, useEffect, useRef, useState } from 'react';
 import { AiOutlineSwapRight } from 'react-icons/ai';
 import { Input, InputProps } from './components';
 import { StylesProvider, StylesProviderProps, useStyleProps } from './context/StylesContext';
@@ -16,9 +10,7 @@ import { dateRangeInputPhrases, DateRangeInputPhrases } from './phrases';
 import { DateRangeInputStyles, InputDate } from './types';
 import { defaultDisplayFormat } from './utils/formatters';
 
-export interface DateRangeInputProps
-    extends Partial<StylesProviderProps>,
-        Partial<DatepickerProps> {
+export interface DateRangeInputProps extends Partial<StylesProviderProps>, Partial<DatepickerProps> {
     startDateInputProps?: Partial<InputProps>;
     endDateInputProps?: Partial<InputProps>;
     phrases?: DateRangeInputPhrases;
@@ -40,7 +32,7 @@ export interface DateRangeInputProps
     allowEditableInputs?: boolean;
 }
 
-export const DateRangeInput: React.FC<DateRangeInputProps> = props => {
+export const DateRangeInput: React.FC<DateRangeInputProps> = (props) => {
     const {
         endDate: endDateProp = null,
         startDate: startDateProp = null,
@@ -160,13 +152,7 @@ export const DateRangeInput: React.FC<DateRangeInputProps> = props => {
                     isInline={!isMobile}
                     {...styleProps.dateRangeInputContainer}
                     data-testid="DateRangeInputGrid"
-                    divider={
-                        showDivider ? (
-                            <StackDivider {...styleProps.dateRangeInputDivider} />
-                        ) : (
-                            undefined
-                        )
-                    }
+                    divider={showDivider ? <StackDivider {...styleProps.dateRangeInputDivider} /> : undefined}
                     alignItems="center"
                 >
                     <Input

@@ -1,11 +1,7 @@
 import moment from 'moment';
-import React, { createContext, useState, useCallback, useEffect } from 'react';
+import { createContext, useState, useCallback, useEffect } from 'react';
 import { findAllDayItemsForEveryTrack } from './services/trackItem.api';
-import {
-    summariseLog,
-    summariseOnline,
-    summariseTimeOnline,
-} from './components/SummaryCalendar/SummaryCalendar.util';
+import { summariseLog, summariseOnline, summariseTimeOnline } from './components/SummaryCalendar/SummaryCalendar.util';
 import { Logger } from './logger';
 import { CALENDAR_MODE } from './SummaryContext.util';
 
@@ -31,10 +27,7 @@ export const SummaryProvider = ({ children }) => {
                 endDate.add(1, 'day');
             }
 
-            const { statusItems, logItems } = await findAllDayItemsForEveryTrack(
-                beginDate,
-                endDate,
-            );
+            const { statusItems, logItems } = await findAllDayItemsForEveryTrack(beginDate, endDate);
             setLogSummary(summariseLog(logItems, selectedMode));
             setOnlineSummary(summariseOnline(statusItems, selectedMode));
             setOnlineTimesSummary(summariseTimeOnline(statusItems, selectedMode, beginDate));

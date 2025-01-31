@@ -1,5 +1,5 @@
 import { FocusedInput, FormatFunction, useDatepicker } from '@datepicker-react/hooks';
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { datepickerPhrases, DatepickerPhrases } from '../phrases';
 import { InputDate } from '../types';
 import { dayLabelFormatFn, defaultDisplayFormat, monthLabelFormatFn, weekdayLabelFormatFn } from '../utils/formatters';

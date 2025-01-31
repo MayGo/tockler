@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Flex, Text, useColorModeValue } from '@chakra-ui/react';
 import { shortTime } from '../../time.util';
 

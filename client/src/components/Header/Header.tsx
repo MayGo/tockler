@@ -1,4 +1,3 @@
-import React from 'react';
 import { Flex, Box, Center, Link } from '@chakra-ui/react';
 import { useColorModeValue } from '@chakra-ui/react';
 import { TocklerLogo } from './TocklerLogo';

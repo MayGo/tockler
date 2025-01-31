@@ -1,8 +1,6 @@
 // tslint:disable-next-line: no-submodule-imports
 
-import React, { useEffect, useMemo } from 'react';
-
-import { DATE_TIME_FORMAT, TIME_FORMAT } from '../../constants';
+import { useEffect, useMemo } from 'react';
 import { diffAndFormatShort, formatDurationInternal } from '../../utils';
 
 import { Box, Flex } from '@chakra-ui/react';
@@ -19,7 +17,6 @@ import { Portal } from '@chakra-ui/react';
 import { TrackItemTableButtons } from './TrackItemTableButtons';
 import { TrackItemTablePager } from './TrackItemTablePager';
 import { OverflowTextCell } from './OverflowText';
-import { matchSorter } from 'match-sorter';
 
 interface ItemsTableProps {
     data: any[];
@@ -37,7 +34,6 @@ interface ItemsTableProps {
 export const ItemsTable = ({
     data,
     resetButtonsRef,
-    isOneDay,
     isSearchTable,
     pageCount: controlledPageCount,
     pageIndex: controlledPageIndex,

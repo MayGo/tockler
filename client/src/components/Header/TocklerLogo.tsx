@@ -1,8 +1,6 @@
-import React from 'react';
-
 import { Icon } from '@chakra-ui/icons';
 
-export const TocklerLogo = props => (
+export const TocklerLogo = (props) => (
     <Icon viewBox="0 0 180 180" {...props}>
         <defs>
             <path

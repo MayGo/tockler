@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { debounce } from 'lodash';
 import moment from 'moment';
 import 'moment-duration-format';

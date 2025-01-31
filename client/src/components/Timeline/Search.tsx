@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { getTodayTimerange } from './timeline.utils';
 import { Logger } from '../../logger';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';

@@ -104,7 +104,7 @@ const mainStore = createStore<StoreModel>({
         },
     ),
 
-    fetchTimerange: thunk(async (actions, payload, { getState, getStoreState }) => {
+    fetchTimerange: thunk(async (actions, _, { getState }) => {
         const { timerange, visibleTimerange } = getState();
         Logger.debug('Loading timerange:', JSON.stringify(timerange));
         actions.setIsLoading(true);

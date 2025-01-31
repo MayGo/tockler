@@ -1,7 +1,7 @@
 import { VStack } from '@chakra-ui/react';
 import { StackDivider } from '@chakra-ui/react';
 import { groupBy, map, orderBy, sortBy, sumBy } from 'lodash';
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { convertDate } from '../../constants';
 import { Loader } from '../Timeline/Loader';
 

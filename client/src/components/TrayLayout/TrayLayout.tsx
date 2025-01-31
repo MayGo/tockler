@@ -1,6 +1,5 @@
 import { Box } from '@chakra-ui/react';
 import { useColorModeValue } from '@chakra-ui/react';
-import React from 'react';
 import { TrayMenu } from './TrayMenu';
 
 export function TrayLayout({ children }: any) {

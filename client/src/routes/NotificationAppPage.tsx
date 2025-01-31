@@ -1,4 +1,4 @@
-import React, { useEffect, useState, memo } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { EventEmitter } from '../services/EventEmitter';
 import { Logger } from '../logger';
 import { Center, Box } from '@chakra-ui/react';

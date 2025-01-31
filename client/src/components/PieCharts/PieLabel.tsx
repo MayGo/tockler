@@ -1,4 +1,3 @@
-import React from 'react';
 import { VictoryTooltip } from 'victory';
 import { gray900 } from '../Timeline/ChartTheme';
 

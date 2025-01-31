@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import randomcolor from 'randomcolor';
 import { Logger } from '../../logger';
 import { Box } from '@chakra-ui/react';

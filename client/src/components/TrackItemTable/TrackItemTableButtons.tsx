@@ -1,6 +1,5 @@
 // tslint:disable-next-line: no-submodule-imports
 
-import React from 'react';
 import { Logger } from '../../logger';
 import { deleteByIds } from '../../services/trackItem.api';
 import { useStoreActions } from '../../store/easyPeasy';

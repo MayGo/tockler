@@ -1,12 +1,5 @@
-import React, { useRef } from 'react';
-import {
-    Popover,
-    PopoverTrigger,
-    useDisclosure,
-    IconButton,
-    PopoverContent,
-    PopoverArrow,
-} from '@chakra-ui/react';
+import { useRef } from 'react';
+import { Popover, PopoverTrigger, useDisclosure, IconButton, PopoverContent, PopoverArrow } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
 
 export function ToggleColumnFilter({ children }) {
@@ -24,12 +17,7 @@ export function ToggleColumnFilter({ children }) {
             closeOnBlur={true}
         >
             <PopoverTrigger>
-                <IconButton
-                    variant="ghost"
-                    aria-label="open search"
-                    size="sm"
-                    icon={<SearchIcon />}
-                />
+                <IconButton variant="ghost" aria-label="open search" size="sm" icon={<SearchIcon />} />
             </PopoverTrigger>
             <PopoverContent>
                 <PopoverArrow />

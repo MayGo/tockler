@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { RootProvider } from './RootContext';
 import { MainAppPage } from './routes/MainAppPage';

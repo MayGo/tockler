@@ -1,11 +1,6 @@
-import {
-    ChevronDownIcon,
-    ChevronLeftIcon,
-    ChevronRightIcon,
-    ChevronUpIcon,
-} from '@chakra-ui/icons';
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { IconButton, IconButtonProps, Tooltip } from '@chakra-ui/react';
-import React from 'react';
+
 import { useStyleProps } from '../context/StylesContext';
 import { ActionButtonStyles } from '../types';
 
@@ -14,11 +9,7 @@ export interface ActionButtonProps extends Omit<IconButtonProps, 'aria-label'> {
     tooltipLabel;
 }
 
-export const ActionButton: React.FC<ActionButtonProps> = ({
-    direction,
-    tooltipLabel,
-    ...props
-}) => {
+export const ActionButton: React.FC<ActionButtonProps> = ({ direction, tooltipLabel, ...props }) => {
     let IconComponent = ChevronLeftIcon;
 
     const styleProps = useStyleProps<ActionButtonStyles>({

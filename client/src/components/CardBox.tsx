@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Box, Flex, Text, useColorModeValue } from '@chakra-ui/react';
 
 export const CardBox: React.FC<any> = ({ title, children, extra, p = 4, divider, ...rest }) => {

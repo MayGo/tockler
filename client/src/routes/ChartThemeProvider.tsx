@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext, useEffect } from 'react';
+import { useState, createContext, useContext, useEffect } from 'react';
 import { Logger } from '../logger';
 import { getChartTheme } from '../components/Timeline/ChartTheme';
 import { THEMES } from '../store/theme.util';
@@ -20,9 +20,7 @@ export const ChartThemeProvider = ({ children }) => {
 
         setChartTheme(colorMode === THEMES.DARK ? getChartTheme(true) : getChartTheme(false));
     }, [colorMode]);
-    return (
-        <ChartThemeContext.Provider value={defaultContext}>{children}</ChartThemeContext.Provider>
-    );
+    return <ChartThemeContext.Provider value={defaultContext}>{children}</ChartThemeContext.Provider>;
 };
 
 export const useChartThemeState = () => {

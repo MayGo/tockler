@@ -11,7 +11,6 @@ import { getThemeFromStorage } from '../services/settings.api';
 import { THEMES } from '../store/theme.util';
 import { ColorPickerStyle } from './components/colorPicker';
 import { mode } from '@chakra-ui/theme-tools';
-import { PaywallStyle } from './components/paywall';
 
 const savedTheme = getThemeFromStorage();
 const initialColorMode = savedTheme || THEMES.LIGHT;
@@ -28,7 +27,7 @@ export const MAIN_THEME_COLOR = '#7C3AED';
 export const theme = extendTheme({
     config,
     styles: {
-        global: props => ({
+        global: (props) => ({
             'html, body': {
                 // color: mode('gray.600', 'white')(props),
                 bg: mode('gray.50', 'gray.800')(props),
@@ -53,6 +52,5 @@ export const theme = extendTheme({
         Select: SelectStyle,
         FormLabel: FormLabelStyle,
         ColorPicker: ColorPickerStyle,
-        Paywall: PaywallStyle,
     },
 });

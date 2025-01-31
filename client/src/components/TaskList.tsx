@@ -1,4 +1,3 @@
-import React from 'react';
 import _ from 'lodash';
 
 import { useStoreState } from '../store/easyPeasy';
@@ -9,8 +8,8 @@ import { Box, HStack, Text } from '@chakra-ui/react';
 import { shortTime } from '../time.util';
 
 export const TaskList = () => {
-    const timeItems = useStoreState(state => state.timeItems);
-    const timerange = useStoreState(state => state.timerange);
+    const timeItems = useStoreState((state) => state.timeItems);
+    const timerange = useStoreState((state) => state.timerange);
 
     const logItems = filterItems(timeItems.logItems, timerange);
 
@@ -18,7 +17,7 @@ export const TaskList = () => {
 
     const data = _(logItems)
         .groupBy(groupByField)
-        .map(b => {
+        .map((b) => {
             return b.reduce(sumAppObject(timerange), {
                 app: b[0].app,
                 title: b[0].title,
@@ -32,13 +31,7 @@ export const TaskList = () => {
         <>
             {data.map(({ app, title, color, timeDiffInMs }) => {
                 return (
-                    <HStack
-                        alignItems="center"
-                        pb={2}
-                        minWidth="0"
-                        spacing={4}
-                        key={`${app}_${title}`}
-                    >
+                    <HStack alignItems="center" pb={2} minWidth="0" spacing={4} key={`${app}_${title}`}>
                         <Box bg={color} w="8px" h="8px" minWidth="8px" borderRadius="full" />
 
                         <Text fontWeight="bold" fontSize="md">

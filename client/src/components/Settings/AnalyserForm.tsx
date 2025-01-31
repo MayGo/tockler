@@ -1,5 +1,5 @@
 import { AiOutlineInfoCircle } from 'react-icons/ai';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { AnalyserFormItem } from './AnalyserFormItem';
 import { fetchAnalyserSettings, saveAnalyserSettings } from '../../services/settings.api';
 import { useStoreState } from '../../store/easyPeasy';

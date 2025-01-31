@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { EventEmitter } from '../../services/EventEmitter';
 import { Box } from '@chakra-ui/react';
 import { AiOutlineArrowsAlt, AiOutlinePoweroff } from 'react-icons/ai';

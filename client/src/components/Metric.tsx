@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 
 export const Metric: React.FC<any> = ({ title, value }) => {
