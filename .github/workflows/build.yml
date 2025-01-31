@@ -35,6 +35,7 @@ jobs:
             matrix:
                 os: [ubuntu-latest, macos-latest, windows-latest]
                 node-version: [22.x]
+                arch: [none]
                 include:
                     - os: macos-latest
                       arch: x64
@@ -92,7 +93,7 @@ jobs:
                   if [ "${{ matrix.os }}" = "macos-latest" ] && [ "${{ matrix.arch }}" = "x64" ]; then
                     export npm_config_arch=x64
                   elif [ "${{ matrix.os }}" = "macos-latest" ] && [ "${{ matrix.arch }}" = "arm64" ]; then
-                    export npm_config_arch=x64  # Force x64 for arm64 machines
+                    export npm_config_arch=arm64
                   fi
                   echo "npm_config_arch is set to $npm_config_arch"
                   # Attempt to install fsevents separately
@@ -135,9 +136,7 @@ jobs:
                   pnpm build
                   pnpm prepare_client
                   # Determine the architecture to build
-                  if [ "${{ matrix.os }}" = "macos-15" ]; then
-                    ARCH="x64"
-                  elif [ "${{ matrix.os }}" = "macos-latest" ] && [ "${{ matrix.arch }}" = "x64" ]; then
+                  if [ "${{ matrix.os }}" = "macos-latest" ] && [ "${{ matrix.arch }}" = "x64" ]; then
                     ARCH="x64"
                   elif [ "${{ matrix.os }}" = "macos-latest" ] && [ "${{ matrix.arch }}" = "arm64" ]; then
                     ARCH="arm64"
