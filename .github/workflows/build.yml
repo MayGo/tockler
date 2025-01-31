@@ -73,13 +73,13 @@ jobs:
                     # Force arm64 architecture for macos-latest
                     export npm_config_arch=arm64
                   fi
-                  yarn install
+                  yarn install --no-lockfile
                   cd ..
 
             - name: Install Dependencies (Client)
               run: |
                   cd client
-                  yarn install
+                  yarn install --no-lockfile
                   cd ..
 
             - name: Build Client
