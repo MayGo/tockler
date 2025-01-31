@@ -5,7 +5,7 @@ import { app, ipcMain, BrowserWindow, dialog, shell, Tray } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import { config, getTrayIcon } from './config';
 import { logManager } from './log-manager';
-import { join } from 'path';
+import path, { join } from 'path';
 import { settingsService } from './services/settings-service';
 import positioner from 'electron-traywindow-positioner';
 
@@ -13,9 +13,9 @@ let logger = logManager.getLogger('WindowManager');
 
 const preloadScript = join(__dirname, 'preloadStuff.js');
 
-// const devUrl = `file://${path.join(__dirname, '..', '..', 'client', 'dist', 'index.html')}`;
 const devUrl = `http://127.0.0.1:3000`;
-const prodUrl = `file://${__dirname}/index.html`;
+// const devUrl = `file://${path.join(__dirname, '..', '..', 'client', 'dist', 'index.html')}`;
+const prodUrl = `file://${path.join(__dirname, 'index.html')}`;
 
 const pageUrl = config.isDev ? devUrl : prodUrl;
 
