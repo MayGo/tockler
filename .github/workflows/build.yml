@@ -33,8 +33,13 @@ jobs:
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
-                os: [ubuntu-latest, macos-15, macos-latest, windows-latest]
+                os: [ubuntu-latest, macos-15, macos-latest, macos-latest, windows-latest]
                 node-version: [22.x]
+                include:
+                    - os: macos-latest
+                      arch: x64
+                    - os: macos-latest
+                      arch: arm64
 
         steps:
             - uses: actions/checkout@v4
@@ -84,11 +89,12 @@ jobs:
               shell: bash
               run: |
                   cd electron
-                  if [ "${{ matrix.os }}" = "macos-15" ]; then
+                  if [ "${{ matrix.os }}" = "macos-latest" ] && [ "${{ matrix.arch }}" = "x64" ]; then
                     export npm_config_arch=x64
-                  elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+                  elif [ "${{ matrix.os }}" = "macos-latest" ] && [ "${{ matrix.arch }}" = "arm64" ]; then
                     export npm_config_arch=arm64
                   fi
+                  echo "npm_config_arch is set to $npm_config_arch"
                   pnpm install --no-frozen-lockfile
                   cd ..
 
@@ -129,9 +135,12 @@ jobs:
                   # Determine the architecture to build
                   if [ "${{ matrix.os }}" = "macos-15" ]; then
                     ARCH="x64"
-                  elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+                  elif [ "${{ matrix.os }}" = "macos-latest" ] && [ "${{ matrix.arch }}" = "x64" ]; then
+                    ARCH="x64"
+                  elif [ "${{ matrix.os }}" = "macos-latest" ] && [ "${{ matrix.arch }}" = "arm64" ]; then
                     ARCH="arm64"
                   fi
+                  echo "Building for architecture: $ARCH"
                   pnpm release -- --mac --${ARCH}
                   cd ..
 
