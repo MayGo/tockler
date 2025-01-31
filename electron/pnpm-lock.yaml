@@ -40,7 +40,7 @@ importers:
         version: 5.3.0
       knex:
         specifier: 2.3.0
-        version: 2.3.0(sqlite3@5.1.2(encoding@0.1.13))
+        version: 2.3.0(sqlite3@5.1.5(encoding@0.1.13))
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -55,13 +55,13 @@ importers:
         version: 1.1.12
       objection:
         specifier: 3.0.1
-        version: 3.0.1(knex@2.3.0(sqlite3@5.1.2(encoding@0.1.13)))
+        version: 3.0.1(knex@2.3.0(sqlite3@5.1.5(encoding@0.1.13)))
       randomcolor:
         specifier: 0.6.2
         version: 0.6.2
       sqlite3:
-        specifier: 5.1.2
-        version: 5.1.2(encoding@0.1.13)
+        specifier: 5.1.5
+        version: 5.1.5(encoding@0.1.13)
       url-parse:
         specifier: ^1.5.10
         version: 1.5.10
@@ -3752,8 +3752,8 @@ packages:
   sprintf-js@1.1.3:
     resolution: {integrity: sha512-Oo+0REFV59/rz3gfJNKQiBlwfHaSESl1pcGyABQsnnIfWOFt6JNj5gCog2U6MLZ//IGYD+nA8nI+mTShREReaA==}
 
-  sqlite3@5.1.2:
-    resolution: {integrity: sha512-D0Reg6pRWAFXFUnZKsszCI67tthFD8fGPewRddDCX6w4cYwz3MbvuwRICbL+YQjBAh9zbw+lJ/V9oC8nG5j6eg==}
+  sqlite3@5.1.5:
+    resolution: {integrity: sha512-7sP16i4wI+yKnGOO2q2ijze7EjQ9US+Vw7DYYwxfFtqNZDGgBcEw0oeDaDvUTq66uJOzVd/z6MkIg+c9erSJKg==}
 
   ssri@10.0.6:
     resolution: {integrity: sha512-MGrFH9Z4NP9Iyhqn16sDtBpRRNJ0Y2hNa6D65h736fVSaPCHr4DM4sWUNvVaSuC+0OBGhwsrydQwmgfg5LncqQ==}
@@ -7668,7 +7668,7 @@ snapshots:
 
   kleur@3.0.3: {}
 
-  knex@2.3.0(sqlite3@5.1.2(encoding@0.1.13)):
+  knex@2.3.0(sqlite3@5.1.5(encoding@0.1.13)):
     dependencies:
       colorette: 2.0.19
       commander: 9.5.0
@@ -7685,7 +7685,7 @@ snapshots:
       tarn: 3.0.2
       tildify: 2.0.0
     optionalDependencies:
-      sqlite3: 5.1.2(encoding@0.1.13)
+      sqlite3: 5.1.5(encoding@0.1.13)
     transitivePeerDependencies:
       - supports-color
 
@@ -8207,11 +8207,11 @@ snapshots:
     dependencies:
       isobject: 3.0.1
 
-  objection@3.0.1(knex@2.3.0(sqlite3@5.1.2(encoding@0.1.13))):
+  objection@3.0.1(knex@2.3.0(sqlite3@5.1.5(encoding@0.1.13))):
     dependencies:
       ajv: 8.17.1
       db-errors: 0.2.3
-      knex: 2.3.0(sqlite3@5.1.2(encoding@0.1.13))
+      knex: 2.3.0(sqlite3@5.1.5(encoding@0.1.13))
 
   once@1.4.0:
     dependencies:
@@ -8777,7 +8777,7 @@ snapshots:
 
   sprintf-js@1.1.3: {}
 
-  sqlite3@5.1.2(encoding@0.1.13):
+  sqlite3@5.1.5(encoding@0.1.13):
     dependencies:
       '@mapbox/node-pre-gyp': 1.0.11(encoding@0.1.13)
       node-addon-api: 4.3.0
