@@ -32,7 +32,7 @@ export interface DateRangeInputProps extends Partial<StylesProviderProps>, Parti
     allowEditableInputs?: boolean;
 }
 
-export const DateRangeInput: React.FC<DateRangeInputProps> = (props) => {
+export const DateRangeInput = (props: DateRangeInputProps) => {
     const {
         endDate: endDateProp = null,
         startDate: startDateProp = null,

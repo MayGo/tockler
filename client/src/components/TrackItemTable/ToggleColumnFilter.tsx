@@ -1,11 +1,11 @@
-import { useRef } from 'react';
+import { cloneElement, useRef } from 'react';
 import { Popover, PopoverTrigger, useDisclosure, IconButton, PopoverContent, PopoverArrow } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
 
 export function ToggleColumnFilter({ children }) {
     const { onOpen, onClose, isOpen } = useDisclosure();
     const firstFieldRef = useRef(null);
-    const form = React.cloneElement(children, { ref: firstFieldRef, onCancel: onClose });
+    const form = cloneElement(children, { ref: firstFieldRef, onCancel: onClose });
 
     return (
         <Popover

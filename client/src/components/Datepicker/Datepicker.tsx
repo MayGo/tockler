@@ -1,7 +1,7 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Box, Flex, HStack, Stack, useBreakpointValue, useColorModeValue } from '@chakra-ui/react';
 import { END_DATE, MonthType, START_DATE, useDatepicker, UseDatepickerProps } from '@datepicker-react/hooks';
-import { Ref, useImperativeHandle, useRef } from 'react';
+import { forwardRef, ReactNode, Ref, useImperativeHandle, useRef } from 'react';
 import { ActionButton, CloseButton, Month, ResetDatesButton, SelectedDate } from './components';
 import { DatepickerFormatProps, DatepickerProvider } from './context/DatepickerContext';
 import { StylesProvider, StylesProviderProps, useStyleProps } from './context/StylesContext';
@@ -19,7 +19,7 @@ export interface DatepickerProps
         Partial<UseDatepickerProps> {
     displayFormat?: string;
     onClose?(): void;
-    onDayRender?(date: Date): React.ReactNode;
+    onDayRender?(date: Date): ReactNode;
     phrases?: DatepickerPhrases;
     showClose?: boolean;
     showResetDates?: boolean;
@@ -27,7 +27,7 @@ export interface DatepickerProps
     vertical?: boolean;
 }
 
-export const Datepicker = React.forwardRef((props: DatepickerProps, ref: Ref<DatepickerElement>) => {
+export const Datepicker = forwardRef((props: DatepickerProps, ref: Ref<DatepickerElement>) => {
     const {
         changeActiveMonthOnSelect,
         dayLabelFormat,

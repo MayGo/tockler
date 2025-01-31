@@ -7,11 +7,11 @@ import {
     AlertDialogHeader,
     AlertDialogOverlay,
 } from '@chakra-ui/react';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 
 export function TimelineItemEditDeleteButton({ deleteItem }) {
-    const [isOpen, setIsOpen] = React.useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const onClose = () => setIsOpen(false);
     const onDelete = () => {
         deleteItem();

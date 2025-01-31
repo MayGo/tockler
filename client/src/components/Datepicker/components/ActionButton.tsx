@@ -9,7 +9,7 @@ export interface ActionButtonProps extends Omit<IconButtonProps, 'aria-label'> {
     tooltipLabel;
 }
 
-export const ActionButton: React.FC<ActionButtonProps> = ({ direction, tooltipLabel, ...props }) => {
+export const ActionButton = ({ direction, tooltipLabel, ...props }: ActionButtonProps) => {
     let IconComponent = ChevronLeftIcon;
 
     const styleProps = useStyleProps<ActionButtonStyles>({

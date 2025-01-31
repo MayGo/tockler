@@ -1,6 +1,6 @@
 import { Box, Flex, Text, useColorModeValue } from '@chakra-ui/react';
 
-export const CardBox: React.FC<any> = ({ title, children, extra, p = 4, divider, ...rest }) => {
+export const CardBox = ({ title, children, extra, p = 4, divider, ...rest }) => {
     const titleColor = useColorModeValue('gray.900', 'white');
     const dividerColor = useColorModeValue('gray.200', 'gray.500');
 

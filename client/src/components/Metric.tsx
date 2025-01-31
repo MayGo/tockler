@@ -1,6 +1,6 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 
-export const Metric: React.FC<any> = ({ title, value }) => {
+export const Metric = ({ title, value }) => {
     return (
         <Box flex={1}>
             <Box pb={1}>
