@@ -1,7 +1,6 @@
 import { memo, useRef } from 'react';
 import { debounce } from 'lodash';
 import moment from 'moment';
-import 'moment-duration-format';
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryZoomContainer, VictoryBrushLine } from 'victory';
 import { convertDate, TIME_FORMAT } from '../../constants';
 import { TrackItemType } from '../../enum/TrackItemType';

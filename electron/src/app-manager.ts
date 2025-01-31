@@ -2,7 +2,7 @@ import { app, ipcMain, nativeTheme } from 'electron';
 import { logManager } from './log-manager';
 import { stateManager } from './state-manager';
 import { initIpcActions } from './API';
-import config from './config';
+import { config } from './config';
 import { connectAndSync } from './models/db';
 import WindowManager, { sendToTrayWindow, sendToMainWindow, sendToNotificationWindow } from './window-manager';
 import { Knex } from 'knex';

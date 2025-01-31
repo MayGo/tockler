@@ -6,7 +6,7 @@ import Store from 'electron-store';
 import isDevelopment from 'electron-is-dev';
 
 let root = path.join(__dirname, '..');
-let client = isDevelopment ? path.join(root, '..', 'client', 'build') : path.join(root, 'dist');
+let client = isDevelopment ? path.join(root, '..', 'client', 'dist') : path.join(root, 'dist');
 // Load real data even when in development
 
 let useRealDataInDev = false;
@@ -42,7 +42,7 @@ export const getTrayIcon = () => {
     );
 };
 
-export default {
+export const config = {
     // root directory
     root: root,
     client: client,

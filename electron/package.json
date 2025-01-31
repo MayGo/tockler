@@ -21,7 +21,7 @@
         "build_linux": "electron-builder -c electron-builder.yml --linux",
         "build_windows": "electron-builder -c electron-builder.yml --win",
         "build": "webpack --progress --mode=production",
-        "prepare_client": "cpx \"../client/build/**/*\" dist",
+        "prepare_client": "cpx \"../client/dist/**/*\" dist",
         "release": "electron-builder -c electron-builder.yml"
     },
     "resolutions": {

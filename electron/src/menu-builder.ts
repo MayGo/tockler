@@ -1,5 +1,5 @@
 import { app, Menu, shell, MenuItemConstructorOptions } from 'electron';
-import config from './config';
+import { config } from './config';
 import WindowManager from './window-manager';
 import AppUpdater from './app-updater';
 

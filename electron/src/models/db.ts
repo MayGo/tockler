@@ -1,4 +1,4 @@
-import config from '../config';
+import { config } from '../config';
 import { Model } from 'objection';
 import { knex } from 'knex';
 import { logManager } from '../log-manager';

@@ -128,7 +128,7 @@ jobs:
                   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
                   SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
               run: |
-                  yarn dlx @sentry/cli releases files "${{ env.PACKAGE_VERSION }}" upload-sourcemaps ./client/build/static/js/ --rewrite --url-prefix "~/dist/static/js"
+                  yarn dlx @sentry/cli releases files "${{ env.PACKAGE_VERSION }}" upload-sourcemaps ./client/dist/assets/ --rewrite --url-prefix "~/dist/assets"
                   yarn dlx @sentry/cli releases files "${{ env.PACKAGE_VERSION }}" list
                   yarn dlx @sentry/cli releases finalize "${{ env.PACKAGE_VERSION }}"
 

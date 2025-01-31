@@ -1,5 +1,4 @@
 import { memo, useRef } from 'react';
-import 'moment-duration-format';
 import { TimelineItemEdit } from './TimelineItemEdit';
 import { useStoreState } from '../../store/easyPeasy';
 import { Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger } from '@chakra-ui/react';
