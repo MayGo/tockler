@@ -44,8 +44,8 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
 
-            - name: Install pnpm
-              run: corepack enable && corepack prepare pnpm@stable --activate
+            - name: Install Yarn Berry
+              run: corepack enable && corepack prepare pnpm@latest --activate
 
             - name: Get Package Version
               id: package_version
