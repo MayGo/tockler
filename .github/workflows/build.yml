@@ -109,9 +109,6 @@ jobs:
               run: |
                   cd electron
                   echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> .env
-                  echo "APPLE_ID=${{ secrets.APPLE_ID }}" >> .env
-                  echo "APPLE_APP_SPECIFIC_PASSWORD=${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}" >> .env
-                  echo "APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}" >> .env
                   cd ..
 
             - name: Build and Release Electron App
