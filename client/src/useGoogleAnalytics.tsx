@@ -9,6 +9,6 @@ export function useGoogleAnalytics() {
     useEffect(() => {
         console.info('Setting page', location.pathname);
 
-        sendPageEvent(location.pathname, location.search);
+        sendPageEvent(location.pathname);
     }, [location]);
 }

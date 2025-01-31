@@ -1,12 +1,10 @@
 import moment from 'moment';
 import { sumApp } from './MetricTiles.utils';
+import { describe, expect, it } from 'vitest';
 
 describe('MetricTiles utils', () => {
     it('sumApp in range items', () => {
-        const visibleTimerange = [
-            moment('2021-06-19T17:00:00.000Z'),
-            moment('2021-06-19T19:00:00.000Z'),
-        ];
+        const visibleTimerange = [moment('2021-06-19T17:00:00.000Z'), moment('2021-06-19T19:00:00.000Z')];
         const items = [
             {
                 beginDate: moment('2021-06-19T17:00:00.000Z').valueOf(),
@@ -25,10 +23,7 @@ describe('MetricTiles utils', () => {
         expect(actual).toEqual(30 * 60 * 1000);
     });
     it('sumApp does not include out of range items', () => {
-        const visibleTimerange = [
-            moment('2021-06-19T17:00:00.000Z'),
-            moment('2021-06-19T19:00:00.000Z'),
-        ];
+        const visibleTimerange = [moment('2021-06-19T17:00:00.000Z'), moment('2021-06-19T19:00:00.000Z')];
         const items = [
             {
                 beginDate: moment('2021-06-19T16:50:00.000Z').valueOf(),
@@ -48,10 +43,7 @@ describe('MetricTiles utils', () => {
     });
 
     it('sumApp uses only in range time', () => {
-        const visibleTimerange = [
-            moment('2021-06-19T17:00:00.000Z'),
-            moment('2021-06-19T19:00:00.000Z'),
-        ];
+        const visibleTimerange = [moment('2021-06-19T17:00:00.000Z'), moment('2021-06-19T19:00:00.000Z')];
         const items = [
             {
                 beginDate: moment('2021-06-19T16:50:00.000Z').valueOf(),
@@ -73,4 +65,4 @@ describe('MetricTiles utils', () => {
 
 export // Use an empty export to please Babel's single file emit.
 // https://github.com/Microsoft/TypeScript/issues/15230
-{};
+ {};

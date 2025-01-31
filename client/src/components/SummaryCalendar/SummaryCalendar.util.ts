@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { convertDate, TIME_FORMAT, BREAKPOINT_TIME, DURATION_FORMAT, DURATION_SETTINGS } from '../../constants';
+import { convertDate, TIME_FORMAT, BREAKPOINT_TIME } from '../../constants';
 import moment from 'moment';
 import { DAY_MONTH_FORMAT, CALENDAR_MODE } from '../../SummaryContext.util';
 
@@ -51,7 +51,7 @@ export const summariseTimeOnline = (items, mode, beginDate) => {
     const data = _(items)
         .filter((item) => item.app === 'ONLINE')
         .groupBy(groupByActualDay)
-        .map((value, key) => {
+        .map((value) => {
             return {
                 beginDate: _.minBy(value, (c) => convertDate(c.beginDate)).beginDate,
                 endDate: _.maxBy(value, (c) => convertDate(c.endDate)).endDate,

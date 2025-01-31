@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-import moment from 'moment';
 import { values } from 'lodash';
 import {
     VictoryBar,

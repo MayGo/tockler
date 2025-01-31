@@ -42,7 +42,7 @@ export const dateToDayLabel = (short) => (date) => {
     return moment(date).format(short ? 'DD' : 'DD ddd');
 };
 
-export const timeTickValues = (t) => {
+export const timeTickValues = () => {
     const ticks = 36;
     const day = moment();
     const dates = [...Array(ticks)].map((__, i) => {
