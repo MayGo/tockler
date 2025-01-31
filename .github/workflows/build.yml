@@ -36,6 +36,9 @@ jobs:
                 os: [ubuntu-latest, macos-latest, windows-latest]
                 node-version: [22.x]
                 arch: [none]
+                exclude:
+                    - os: macos-latest
+                      arch: none
                 include:
                     - os: macos-latest
                       arch: x64
@@ -44,6 +47,15 @@ jobs:
 
         steps:
             - uses: actions/checkout@v4
+
+            - name: Set npm_config_arch for macOS
+              if: startsWith(matrix.os, 'macos')
+              run: |
+                  if [ "${{ matrix.arch }}" = "x64" ]; then
+                    echo "npm_config_arch=x64" >> $GITHUB_ENV
+                  elif [ "${{ matrix.arch }}" = "arm64" ]; then
+                    echo "npm_config_arch=arm64" >> $GITHUB_ENV
+                  fi
 
             - name: Setup Node.js
               uses: actions/setup-node@v4
@@ -90,14 +102,7 @@ jobs:
               shell: bash
               run: |
                   cd electron
-                  if [ "${{ matrix.os }}" = "macos-latest" ] && [ "${{ matrix.arch }}" = "x64" ]; then
-                    export npm_config_arch=x64
-                  elif [ "${{ matrix.os }}" = "macos-latest" ] && [ "${{ matrix.arch }}" = "arm64" ]; then
-                    export npm_config_arch=arm64
-                  fi
                   echo "npm_config_arch is set to $npm_config_arch"
-                  # Attempt to install fsevents separately
-                  npm install fsevents --arch=x64 || true
                   pnpm install --no-frozen-lockfile
                   cd ..
 
