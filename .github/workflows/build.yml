@@ -72,13 +72,13 @@ jobs:
                     # Force arm64 architecture for macos-latest
                     export npm_config_arch=arm64
                   fi
-                  yarn install --immutable  --check-cache
+                  yarn install
                   cd ..
 
             - name: Install Dependencies (Client)
               run: |
                   cd client
-                  yarn install --immutable  --check-cache
+                  yarn install 
                   cd ..
 
             - name: Build Client
