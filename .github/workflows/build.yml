@@ -44,8 +44,11 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
 
-            - name: Install Yarn Berry
-              run: corepack enable && corepack prepare pnpm@latest --activate
+            - name: Install pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: 8
+                  run_install: false
 
             - name: Get Package Version
               id: package_version
