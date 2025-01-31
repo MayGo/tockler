@@ -64,6 +64,10 @@ jobs:
                   pnpm dlx @sentry/cli releases set-commits "${{ env.PACKAGE_VERSION }}" --commit "${{ github.repository }}@${{ github.sha }}"
                   pnpm dlx @sentry/cli releases new "${{ env.PACKAGE_VERSION }}"
 
+            - name: Install setuptools
+              if: matrix.os != 'windows-latest'
+              run: pip install setuptools
+
             - name: Install Dependencies (Electron)
               shell: bash
               run: |
