@@ -13,12 +13,18 @@ let logger = logManager.getLogger('WindowManager');
 
 const preloadScript = join(__dirname, 'preloadStuff.js');
 
+// const devUrl = `file://${path.join(__dirname, '..', '..', 'client', 'dist', 'index.html')}`;
+const devUrl = `http://127.0.0.1:3000`;
+const prodUrl = `file://${__dirname}/index.html`;
+
+const pageUrl = config.isDev ? devUrl : prodUrl;
+
 export const sendToTrayWindow = (key: string, message = '') => {
-    if (WindowManager.menubar.window) {
+    if (WindowManager.menubar.window && !WindowManager.menubar.window.webContents.isDestroyed()) {
         logger.debug('Send to tray window:', key, message);
         WindowManager.menubar.window.webContents.send(key, message);
     } else {
-        logger.debug(`Menubar not defined yet, not sending ${key}`);
+        logger.debug(`Menubar not defined or window destroyed, not sending ${key}`);
     }
 };
 
@@ -123,9 +129,7 @@ export default class WindowManager {
             this.mainWindow.maximize();
         }
 
-        const url = config.isDev ? 'http://127.0.0.1:3000' : `file://${__dirname}/index.html`;
-
-        this.mainWindow.loadURL(url);
+        this.mainWindow.loadURL(pageUrl);
 
         this.mainWindow.on('closed', () => {
             this.mainWindow = null;
@@ -236,10 +240,8 @@ export default class WindowManager {
          * https://github.com/maxogden/menubar
          */
 
-        const url = config.isDev ? 'http://localhost:3000/#/trayApp' : `file://${__dirname}/index.html#/trayApp`;
-
         this.menubar = menubar({
-            index: url,
+            index: pageUrl + '#/trayApp',
             tray: this.tray,
             //  preloadWindow: false, in MAS build shows white tray only
             preloadWindow: true,
@@ -275,19 +277,22 @@ export default class WindowManager {
         });
 
         this.menubar.on('ready', () => {
-            console.log('app is ready');
-            // your app code here
+            logger.debug('Menubar is ready');
+            if (this.menubar.window) {
+                this.menubar.window.webContents.on(
+                    'did-fail-load',
+                    (_event: any, errorCode: any, errorDescription: any) => {
+                        logger.error('Menubar failed to load:', errorCode, errorDescription);
+                    },
+                );
 
-            this.menubar.window.webContents.on('new-window', openUrlInExternalWindow);
+                this.menubar.window.webContents.on('new-window', openUrlInExternalWindow);
+            }
         });
     }
 
     static setNotificationWindow() {
         logger.debug('Creating notification window.');
-
-        const url = config.isDev
-            ? 'http://localhost:3000/#/notificationApp'
-            : `file://${__dirname}/index.html#/notificationApp`;
 
         this.notificationWindow = new BrowserWindow({
             focusable: false,
@@ -308,7 +313,7 @@ export default class WindowManager {
             width: 70,
             height: 27,
         });
-        this.notificationWindow.loadURL(url);
+        this.notificationWindow.loadURL(pageUrl + '#/notificationApp');
 
         this.menubar.on('ready', () => {
             this.menubar.tray.on('click', () => {
