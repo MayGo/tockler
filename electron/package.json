@@ -92,6 +92,5 @@
         },
         "testRegex": "/__tests__/.*\\.test\\.ts$",
         "testEnvironment": "node"
-    },
-    "packageManager": "yarn@4.5.1"
+    }
 }

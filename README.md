@@ -117,7 +117,7 @@ Windows: `%USERPROFILE%\AppData\Roaming\tockler\logs\main.log`
 ```bash
 git clone https://github.com/Maygo/tockler.git  # Download this project
 
-npm install yarn -g     # install yarn or binary from https://yarnpkg.com
+corepack enable pnpm     # install pnpm https://pnpm.io/installation
 ```
 
 ### Start application
@@ -128,16 +128,16 @@ Renderer and main process builds have been separated. It's easier to boilerplate
 
 ```
 cd client/
-yarn install            # Install dependencies
-yarn start
+pnpm install            # Install dependencies
+pnpm start
 ```
 
 #### Electron (main)
 
 ```
 cd electron/
-yarn install            # Install dependencies
-yarn start
+pnpm install            # Install dependencies
+pnpm start
 ```
 
 Build scripts samples are in .github/workflows files.
