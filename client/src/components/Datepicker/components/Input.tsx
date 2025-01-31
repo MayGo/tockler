@@ -7,7 +7,7 @@ import {
     InputProps as ChakraInputProps,
 } from '@chakra-ui/react';
 import { parseDate } from '@datepicker-react/hooks';
-import React, { forwardRef, Ref, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, FocusEvent, forwardRef, Ref, useEffect, useRef, useState } from 'react';
 import { useStyleProps } from '../context/StylesContext';
 import { InputComponentStyles, InputDate } from '../types';
 import { defaultDisplayFormat } from '../utils/formatters';
@@ -76,7 +76,7 @@ export const Input = forwardRef((props: BaseProps, inputRef: Ref<any>) => {
         setSearchString(value);
     }, [value]);
 
-    function handleOnChange(e: React.ChangeEvent<HTMLInputElement>) {
+    function handleOnChange(e: ChangeEvent<HTMLInputElement>) {
         const dateValue = e.target.value;
         setSearchString(dateValue);
 
@@ -97,7 +97,7 @@ export const Input = forwardRef((props: BaseProps, inputRef: Ref<any>) => {
         }, 1000);
     }
 
-    function handleOnFocus(_e: React.FocusEvent<HTMLInputElement>) {
+    function handleOnFocus(_e: FocusEvent<HTMLInputElement>) {
         onClick();
     }
 
@@ -106,12 +106,7 @@ export const Input = forwardRef((props: BaseProps, inputRef: Ref<any>) => {
             {showCalendarIcon && (
                 <InputRightElement
                     {...getStateStyle(styleProps.inputComponentInputAddon, isActive)}
-                    children={
-                        <Icon
-                            as={iconComponent}
-                            {...getStateStyle(styleProps.inputComponentIcon, isActive)}
-                        />
-                    }
+                    children={<Icon as={iconComponent} {...getStateStyle(styleProps.inputComponentIcon, isActive)} />}
                 />
             )}
             <ChakraInput

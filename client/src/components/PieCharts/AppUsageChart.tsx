@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { filterItems } from '../Timeline/timeline.utils';
 import _ from 'lodash';
 import { useStoreState } from '../../store/easyPeasy';
@@ -7,12 +7,11 @@ import useDimensions from 'react-cool-dimensions';
 import { BAR_WIDTH } from '../Timeline/timeline.constants';
 import { sumAppObject } from './MetricTiles.utils';
 
-import moment from 'moment';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
 import { BarWithTooltip } from '../Timeline/BarWithTooltip';
 import { colorProp } from '../charts.utils';
-import { secondsToClock } from '../../time.util';
 import { getTextWidth } from './AppUsageChart.utils';
+import { formatDurationInternal } from '../../utils';
 
 export const AppUsageChart = memo(() => {
     const { observe, width } = useDimensions();
@@ -39,9 +38,7 @@ export const AppUsageChart = memo(() => {
         .valueOf();
 
     const getTooltipLabel = (datum) => {
-        const dur = moment.duration(datum.timeDiffInMs).asSeconds();
-
-        return `${datum[groupByField]}\r\n${secondsToClock(dur)}`;
+        return `${datum[groupByField]}\r\n${formatDurationInternal(datum.timeDiffInMs)}`;
     };
 
     const style: any = {
@@ -71,9 +68,7 @@ export const AppUsageChart = memo(() => {
                                 verticalAnchor="end"
                                 textAnchor="end"
                                 text={({ datum, scale }) => {
-                                    const dur = moment.duration(datum.timeDiffInMs).asSeconds();
-
-                                    const text = `${datum.app} - ${secondsToClock(dur)}`;
+                                    const text = `${datum.app} - ${formatDurationInternal(datum.timeDiffInMs)}`;
                                     const textWidth = getTextWidth(
                                         text,
                                         14,

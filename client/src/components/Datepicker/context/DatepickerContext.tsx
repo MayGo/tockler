@@ -1,5 +1,5 @@
 import { FocusedInput, FormatFunction, useDatepicker } from '@datepicker-react/hooks';
-import React, { useContext } from 'react';
+import { createContext, ReactNode, useContext } from 'react';
 import { datepickerPhrases, DatepickerPhrases } from '../phrases';
 import { InputDate } from '../types';
 import { dayLabelFormatFn, defaultDisplayFormat, monthLabelFormatFn, weekdayLabelFormatFn } from '../utils/formatters';
@@ -27,8 +27,8 @@ export interface DatepickerContextBaseProps {
     endDate: InputDate;
     phrases: DatepickerPhrases;
     focusedInput: FocusedInput;
-    onDayRender?(date: Date, state: OnDayRenderType): React.ReactNode;
-    children?: React.ReactNode;
+    onDayRender?(date: Date, state: OnDayRenderType): ReactNode;
+    children?: ReactNode;
 }
 
 export interface DatepickerContextProps
@@ -85,11 +85,11 @@ export const datepickerContextDefaultValue: DatepickerContextProps = {
     ...defaultUseDatepicker,
 };
 
-export const DatepickerContext = React.createContext(datepickerContextDefaultValue);
+export const DatepickerContext = createContext(datepickerContextDefaultValue);
 
 export const useDatepickerContext = () => useContext(DatepickerContext);
 
-export const DatepickerProvider: React.FC<DatepickerProviderProps> = ({ children, ...props }) => (
+export const DatepickerProvider = ({ children, ...props }: DatepickerProviderProps) => (
     <DatepickerContext.Provider value={{ ...datepickerContextDefaultValue, ...props }}>
         {children}
     </DatepickerContext.Provider>

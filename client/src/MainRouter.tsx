@@ -1,10 +1,10 @@
-import React, { useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { RootProvider } from './RootContext';
 import { MainAppPage } from './routes/MainAppPage';
 import { TrayAppPage } from './routes/TrayAppPage';
 import moment from 'moment';
-import 'moment/min/locales';
+import 'moment/locale/en-gb';
 import { EventEmitter } from './services/EventEmitter';
 import { Logger } from './logger';
 import { ChartThemeProvider } from './routes/ChartThemeProvider';

@@ -1,6 +1,5 @@
 import { Select } from '@chakra-ui/react';
 import { range } from 'lodash';
-import React from 'react';
 
 export const YearSelect = ({ value, onChange }) => {
     var currentYear = new Date().getFullYear();

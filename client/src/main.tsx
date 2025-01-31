@@ -1,5 +1,4 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { HashRouter as Router } from 'react-router-dom';
 import { MainRouter } from './MainRouter';
 import { StoreProvider } from 'easy-peasy';
@@ -9,21 +8,15 @@ import '@fontsource/inter';
 import { theme } from './theme/theme';
 import { setAppParams } from './useGoogleAnalytics.utils';
 
-const isDev = process.env.NODE_ENV !== 'production';
-
 setAppParams();
 
 (window as any).CSPSettings = {
     nonce: 'nonce',
 };
 
-if (isDev) {
-    console.info('Development!');
-    const whyDidYouRender = require('@welldone-software/why-did-you-render');
-    whyDidYouRender(React);
-}
+const root = createRoot(document.getElementById('root') as HTMLElement);
 
-ReactDOM.render(
+root.render(
     <>
         <ColorModeScript initialColorMode={theme.config.initialColorMode} />
         <StoreProvider store={mainStore}>
@@ -34,5 +27,4 @@ ReactDOM.render(
             </ChakraProvider>
         </StoreProvider>
     </>,
-    document.getElementById('root') as HTMLElement,
 );

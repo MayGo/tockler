@@ -1,8 +1,7 @@
-import { stringify } from 'querystring';
 import { getMachineId } from './services/settings.api';
 
-const trackingId: string = process.env.REACT_APP_TRACKING_ID || '';
-const secretKey: string = process.env.REACT_APP_SECRET_KEY || '';
+const trackingId: string = import.meta.env.VITE_TRACKING_ID || '';
+const secretKey: string = import.meta.env.VITE_SECRET_KEY || '';
 
 const config = {
     measurementId: trackingId,
@@ -13,13 +12,13 @@ const config = {
     clientId: null,
 };
 
-const getUrl = () =>
-    new URL(
-        `${config.measurementUrl}?${stringify({
-            measurement_id: config.measurementId,
-            api_secret: config.measurementSecret,
-        })}`,
-    );
+const getUrl = () => {
+    const params = new URLSearchParams({
+        measurement_id: config.measurementId,
+        api_secret: config.measurementSecret,
+    });
+    return new URL(`${config.measurementUrl}?${params}`);
+};
 
 /**
  * Tracks an analytics event via measurement protocol,

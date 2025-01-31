@@ -1,3 +1,5 @@
+import { expect, it } from 'vitest';
+import { describe } from 'vitest';
 import { summariseTimeOnline } from './SummaryCalendar.util';
 import { TEST_INPUT } from './SummaryCalendar.util.testdata';
 import moment from 'moment';
@@ -93,4 +95,4 @@ describe('summariseTimeOnline', () => {
 
 export // Use an empty export to please Babel's single file emit.
 // https://github.com/Microsoft/TypeScript/issues/15230
-{};
+ {};

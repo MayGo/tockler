@@ -1,9 +1,8 @@
 import moment from 'moment';
-import React, { useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { SummaryContext } from '../../SummaryContext';
 import { Logger } from '../../logger';
 import { convertDate, TIME_FORMAT_SHORT } from '../../constants';
-import { formatDuration } from './SummaryCalendar.util';
 import { CALENDAR_MODE, DAY_MONTH_FORMAT } from '../../SummaryContext.util';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { Box, Flex, VStack } from '@chakra-ui/react';
@@ -13,6 +12,7 @@ import { Text, useColorModeValue } from '@chakra-ui/react';
 import { Loader } from '../Timeline/Loader';
 import { ItemIcon } from './ItemIcon';
 import { useNavigate } from 'react-router-dom';
+import { formatDurationInternal } from '../../utils';
 
 const icons = {
     wakeTime: (
@@ -101,12 +101,12 @@ export const SummaryCalendar = () => {
 
         const online = onlineSummary[day];
         if (online) {
-            listData.push({ type: 'online', time: formatDuration(online), title: `Online` });
+            listData.push({ type: 'online', time: formatDurationInternal(online), title: `Online` });
         }
 
         const worked = logSummary[day];
         if (worked) {
-            listData.push({ type: 'tasks', time: formatDuration(worked), title: `Tasks` });
+            listData.push({ type: 'tasks', time: formatDurationInternal(worked), title: `Tasks` });
         }
         return listData || [];
     };

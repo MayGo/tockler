@@ -3,7 +3,7 @@ import MenuBuilder from './menu-builder';
 import { throttle } from 'lodash';
 import { app, ipcMain, BrowserWindow, dialog, shell, Tray } from 'electron';
 import { autoUpdater } from 'electron-updater';
-import config, { getTrayIcon } from './config';
+import { config, getTrayIcon } from './config';
 import { logManager } from './log-manager';
 import { join } from 'path';
 import { settingsService } from './services/settings-service';

@@ -1,20 +1,17 @@
 // tslint:disable-next-line: no-submodule-imports
 
 import { sumBy } from 'lodash';
-import moment from 'moment';
-import { convertDate } from '../../constants';
-
-// A great library for fuzzy filtering/sorting items
+import { differenceInMilliseconds } from 'date-fns';
 import { matchSorter } from 'match-sorter';
+import { formatDurationInternal } from '../../utils';
 
 export const calculateTotal = (filteredData) => {
-    const totalMs = sumBy(filteredData, (c: any) => convertDate(c.endDate).diff(convertDate(c.beginDate)));
-    const dur = moment.duration(totalMs);
+    const totalMs = sumBy(filteredData, (c: any) => {
+        return differenceInMilliseconds(c.endDate, c.beginDate);
+    });
 
-    return dur.format();
+    return formatDurationInternal(totalMs);
 };
-
-export const totalToDuration = (totalMs) => moment.duration(totalMs).format();
 
 export function fuzzyTextFilterFn(rows, id, filterValue) {
     return matchSorter(rows, filterValue, { keys: [(row: any) => row.values[id]] });

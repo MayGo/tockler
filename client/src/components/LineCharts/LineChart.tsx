@@ -1,5 +1,4 @@
-import React, { useContext } from 'react';
-import moment from 'moment';
+import { useContext } from 'react';
 import { values } from 'lodash';
 import {
     VictoryBar,
@@ -17,6 +16,7 @@ import { useChartThemeState } from '../../routes/ChartThemeProvider';
 import { BAR_WIDTH } from '../Timeline/timeline.constants';
 import { BlackBox } from '../BlackBox';
 import useDimensions from 'react-cool-dimensions';
+import { formatDurationInternal } from '../../utils';
 
 const scale: any = { x: 'time', y: 'linear' };
 const padding: any = { left: 25, top: 20, bottom: 30, right: 10 };
@@ -104,9 +104,7 @@ export const LineChart = () => {
                                 return `End time: ${formatToTime(endDate)}`;
                             }
                             if (childName === 'online') {
-                                return `${formatToLong(datum.beginDate)}\r\nWorked: ${moment
-                                    .duration(online)
-                                    .format()}`;
+                                return `${formatToLong(datum.beginDate)}\r\nWorked: ${formatDurationInternal(online)}`;
                             }
                             return '';
                         }}

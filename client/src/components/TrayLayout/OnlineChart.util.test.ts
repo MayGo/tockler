@@ -1,4 +1,4 @@
-import { last, orderBy } from 'lodash';
+import { last } from 'lodash';
 import moment from 'moment';
 import {
     getClampHours,
@@ -8,6 +8,7 @@ import {
     isLessThanHours,
     groupByBreaks,
 } from './OnlineChart.util';
+import { describe, expect, it, test } from 'vitest';
 
 const ONLINE = 'ONLINE';
 const OFFLINE = 'OFFLINE';
@@ -29,6 +30,7 @@ const beginDate4 = moment('2021-06-19T23:50:00').valueOf();
 const endDate4 = moment('2021-06-20T00:10:00').valueOf();
 
 const realDate = moment('2021-06-19T10:10:00').valueOf();
+
 describe('OnlineChart getOnlineTimesForChart', () => {
     it('uses only ONLINE items', () => {
         const beginDate = moment('2021-06-19T18:00:00').valueOf();

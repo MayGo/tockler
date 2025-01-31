@@ -19,6 +19,7 @@ export class TrackItemService {
     }
 
     async updateTrackItem(itemData: TrackItem, id: number) {
+        this.logger.debug('Updating track item:', id, itemData);
         let count = await TrackItem.query().findById(id).patch({
             app: itemData.app,
             title: itemData.title,

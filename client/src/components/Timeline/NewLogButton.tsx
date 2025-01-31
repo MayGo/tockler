@@ -1,5 +1,5 @@
 import randomcolor from 'randomcolor';
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { Button } from '@chakra-ui/react';
 import { Tooltip } from '@chakra-ui/react';

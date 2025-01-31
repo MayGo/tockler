@@ -1,13 +1,12 @@
-import React, { memo, useRef } from 'react';
+import { memo, useRef } from 'react';
 import { debounce } from 'lodash';
 import moment from 'moment';
-import 'moment-duration-format';
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryZoomContainer, VictoryBrushLine } from 'victory';
 import { convertDate, TIME_FORMAT } from '../../constants';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { BarWithTooltip } from './BarWithTooltip';
 import { Logger } from '../../logger';
-import { formatDuration } from '../SummaryCalendar/SummaryCalendar.util';
+
 import { colorProp } from '../charts.utils';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
@@ -15,6 +14,7 @@ import { rangeToDate } from '../../timeline.util';
 import { BrushHandle } from './BrushHandle';
 import { BAR_WIDTH, CHART_PADDING, CHART_SCALE } from './timeline.constants';
 import useDimensions from 'react-cool-dimensions';
+import { formatDurationInternal } from '../../utils';
 
 const getTrackItemOrder = (type: string) => {
     if (type === TrackItemType.AppTrackItem) {
@@ -96,7 +96,7 @@ export const MainTimelineChart = memo(() => {
         const endTime = convertDate(d.endDate).format(TIME_FORMAT);
 
         const url = d.url ? `${d.url}\r\n` : '';
-        return `${type}\r\n${d.title}\r\n${url}${beginTime} - ${endTime}\r\n${formatDuration(moment.duration(diff))}`;
+        return `${type}\r\n${d.title}\r\n${url}${beginTime} - ${endTime}\r\n${formatDurationInternal(diff)}`;
     };
 
     const { appItems, logItems, statusItems } = timeItems;

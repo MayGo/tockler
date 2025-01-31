@@ -1,6 +1,6 @@
 import { Box, Button, Flex, HStack, Spacer, StylesProvider, useMultiStyleConfig } from '@chakra-ui/react';
 import { useDatepicker } from '@datepicker-react/hooks';
-import React from 'react';
+
 import { ActionButton } from './components';
 import { CalendarMonth } from './CalendarMonth';
 import { YearSelect } from './YearSelect';

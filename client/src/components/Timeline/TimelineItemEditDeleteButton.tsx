@@ -7,11 +7,11 @@ import {
     AlertDialogHeader,
     AlertDialogOverlay,
 } from '@chakra-ui/react';
-import React, { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 
 export function TimelineItemEditDeleteButton({ deleteItem }) {
-    const [isOpen, setIsOpen] = React.useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const onClose = () => setIsOpen(false);
     const onDelete = () => {
         deleteItem();
@@ -29,7 +29,7 @@ export function TimelineItemEditDeleteButton({ deleteItem }) {
                 <AlertDialogOverlay>
                     <AlertDialogContent>
                         <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                            Delete Customer
+                            Delete Timeline Item
                         </AlertDialogHeader>
 
                         <AlertDialogBody>Are you sure? You can't undo this action afterwards.</AlertDialogBody>

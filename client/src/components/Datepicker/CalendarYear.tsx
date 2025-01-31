@@ -1,5 +1,5 @@
 import { Box, SimpleGrid, useStyles } from '@chakra-ui/react';
-import React from 'react';
+
 import { useDatepickerContext } from './context/DatepickerContext';
 import moment, { Moment } from 'moment';
 import { MonthBox } from './components/MonthBox';
@@ -10,11 +10,11 @@ export interface YearProps {
     onDateClicked: any;
 }
 
-export const CalendarYear = ({ year, dateCellRender, onDateClicked }: YearProps) => {
+export const CalendarYear = ({ dateCellRender, onDateClicked }: YearProps) => {
     const styles = useStyles();
     const { monthLabelFormat } = useDatepickerContext();
 
-    const months = Array.apply(0, Array(12)).map(function(_, i) {
+    const months = Array.apply(0, Array(12)).map(function (_, i) {
         return moment().month(i);
     });
 
@@ -23,7 +23,7 @@ export const CalendarYear = ({ year, dateCellRender, onDateClicked }: YearProps)
             <Box __css={styles.separator} />
             <Box __css={styles.grid}>
                 <SimpleGrid rowGap="1px" columnGap="1px" columns={7}>
-                    {months.map((month: Moment, index: number) => (
+                    {months.map((month: Moment) => (
                         <MonthBox
                             date={month.toDate()}
                             key={month.month()}

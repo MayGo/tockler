@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Select } from '@chakra-ui/react';
 import { ToggleColumnFilter } from './ToggleColumnFilter';
 

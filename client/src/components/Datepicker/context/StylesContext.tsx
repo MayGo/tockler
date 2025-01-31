@@ -1,4 +1,4 @@
-import React, { createContext, FC, useContext } from 'react';
+import { createContext, FC, ReactNode, useContext } from 'react';
 import { DatepickerStyles } from '../types';
 import merge from '../utils/deepmerge';
 import pick from '../utils/pick';
@@ -11,7 +11,7 @@ export interface StylesContextProps {
 export interface StylesProviderProps {
     overwriteDefaultStyles?: boolean;
     styles?: Partial<DatepickerStyles>;
-    children: React.ReactNode;
+    children: ReactNode;
 }
 
 export const emptyStylesObject: DatepickerStyles = {

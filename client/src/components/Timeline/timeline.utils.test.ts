@@ -1,12 +1,10 @@
 import moment from 'moment';
 import { filterItems } from './timeline.utils';
+import { describe, expect, it } from 'vitest';
 
 describe('Timeline utils', () => {
     it('filterItems in range items', () => {
-        const visibleTimerange = [
-            moment('2021-06-19T17:00:00.000Z'),
-            moment('2021-06-19T19:00:00.000Z'),
-        ];
+        const visibleTimerange = [moment('2021-06-19T17:00:00.000Z'), moment('2021-06-19T19:00:00.000Z')];
         const items = [
             {
                 beginDate: moment('2021-06-19T17:00:00.000Z').valueOf(),
@@ -25,10 +23,7 @@ describe('Timeline utils', () => {
         expect(actual).toEqual(items);
     });
     it('filterItems does not include out of range items', () => {
-        const visibleTimerange = [
-            moment('2021-06-19T17:00:00.000Z'),
-            moment('2021-06-19T19:00:00.000Z'),
-        ];
+        const visibleTimerange = [moment('2021-06-19T17:00:00.000Z'), moment('2021-06-19T19:00:00.000Z')];
         const items = [
             {
                 beginDate: moment('2021-06-19T18:00:00.000Z').valueOf(),
@@ -51,10 +46,7 @@ describe('Timeline utils', () => {
     });
 
     it('filterItems returns items that are partly in', () => {
-        const visibleTimerange = [
-            moment('2021-06-19T17:00:00.000Z'),
-            moment('2021-06-19T19:00:00.000Z'),
-        ];
+        const visibleTimerange = [moment('2021-06-19T17:00:00.000Z'), moment('2021-06-19T19:00:00.000Z')];
         const items = [
             {
                 beginDate: moment('2021-06-19T16:50:00.000Z').valueOf(),
@@ -76,4 +68,4 @@ describe('Timeline utils', () => {
 
 export // Use an empty export to please Babel's single file emit.
 // https://github.com/Microsoft/TypeScript/issues/15230
-{};
+ {};

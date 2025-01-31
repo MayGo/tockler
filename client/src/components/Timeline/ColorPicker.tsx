@@ -7,7 +7,7 @@ import {
     useMultiStyleConfig,
     useColorMode,
 } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { ColorPicker as ReactPicker, useColor, toColor } from 'react-color-palette';
 import 'react-color-palette/lib/css/styles.css';
 import { THEMES } from '../../store/theme.util';
@@ -32,7 +32,7 @@ export const ColorPicker = ({ color = defaultColor, onChange }: IProps) => {
         }
     }, [setPickerColor, color]);
 
-    const handleChange = value => {
+    const handleChange = (value) => {
         setPickerColor(value);
         onChange(value.hex);
     };

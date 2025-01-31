@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import { isEndDate, isStartDate, useDay } from '@datepicker-react/hooks';
 import { useDatepickerContext } from '../context/DatepickerContext';
@@ -48,14 +47,7 @@ export function MonthBox({ month, date, onDateClicked, children }: DayProps) {
         onDateHover,
     });
 
-    const {
-        onKeyDown,
-        onMouseEnter,
-        tabIndex,
-        isSelected,
-        isWithinHoverRange,
-        disabledDate,
-    } = dayProps;
+    const { onKeyDown, onMouseEnter, tabIndex, isSelected, isWithinHoverRange, disabledDate } = dayProps;
 
     const isFirst = isStartDate(date, startDate);
     const isLast = isEndDate(date, endDate);

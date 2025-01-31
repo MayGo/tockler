@@ -1,5 +1,4 @@
 import { Select } from '@chakra-ui/react';
-import React from 'react';
 import { ITEM_TYPES } from '../utils';
 
 export const TypeSelect = ({ value, onChange }) => {

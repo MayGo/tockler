@@ -8,7 +8,7 @@ import AppManager from './app-manager';
 import WindowManager from './window-manager';
 import { extensionsManager } from './extensions-manager';
 import AppUpdater from './app-updater';
-import config from './config';
+import { config } from './config';
 
 let logger = logManager.getLogger('AppIndex');
 app.setAppUserModelId(process.execPath);

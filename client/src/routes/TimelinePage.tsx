@@ -1,5 +1,5 @@
 import { Box, Flex, Stack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { CardBox } from '../components/CardBox';
 import { AppUsageChart } from '../components/PieCharts/AppUsageChart';
 import { MetricTiles } from '../components/PieCharts/MetricTiles';

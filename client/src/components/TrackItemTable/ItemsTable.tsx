@@ -1,9 +1,7 @@
 // tslint:disable-next-line: no-submodule-imports
 
-import React, { useEffect, useMemo } from 'react';
-import Moment from 'react-moment';
-import { DATE_TIME_FORMAT, TIME_FORMAT } from '../../constants';
-import { diffAndFormatShort } from '../../utils';
+import { useEffect, useMemo } from 'react';
+import { diffAndFormatShort, formatDurationInternal } from '../../utils';
 
 import { Box, Flex } from '@chakra-ui/react';
 import { Button } from '@chakra-ui/react';
@@ -11,7 +9,7 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 import { useTable, useSortBy, usePagination, useFilters, useRowSelect } from 'react-table';
 
-import { calculateTotal, fuzzyTextFilterFn, totalToDuration } from './TrackItemTable.utils';
+import { calculateTotal, fuzzyTextFilterFn } from './TrackItemTable.utils';
 import { SelectColumnFilter } from './SelectColumnFilter';
 import { DefaultColumnFilter } from './DefaultColumnFilter';
 import { IndeterminateCheckbox } from './IndeterminateCheckbox';
@@ -36,7 +34,6 @@ interface ItemsTableProps {
 export const ItemsTable = ({
     data,
     resetButtonsRef,
-    isOneDay,
     isSearchTable,
     pageCount: controlledPageCount,
     pageIndex: controlledPageIndex,
@@ -46,7 +43,7 @@ export const ItemsTable = ({
     manualSortBy = false,
 }: ItemsTableProps) => {
     const dateToValue = ({ value }) => {
-        return <Moment format={isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT}>{value}</Moment>;
+        return value;
     };
 
     const defaultColumn = useMemo(
@@ -224,47 +221,50 @@ export const ItemsTable = ({
 
             <Table {...getTableProps()}>
                 <Thead>
-                    {headerGroups.map((headerGroup) => (
-                        <Tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map((column) => (
-                                <Th
-                                    {...column.getHeaderProps({
-                                        style: {
-                                            minWidth: column.minWidth,
-                                            width: column.width,
-                                            maxWidth: column.maxWidth,
-                                        },
-                                    })}
-                                    isNumeric={column.isNumeric}
-                                >
-                                    {column.name}
-                                    {column.id === 'selection' && column.render('Header')}
-                                    {column.id !== 'selection' && (
-                                        <Flex alignItems="center">
-                                            <Button
-                                                variant="ghost"
-                                                fontWeight="bold"
-                                                {...column.getSortByToggleProps()}
-                                            >
-                                                {column.render('Header')}
-                                                <Box pl="4">
-                                                    {column.isSorted ? (
-                                                        column.isSortedDesc ? (
-                                                            <TriangleDownIcon aria-label="sorted descending" />
-                                                        ) : (
-                                                            <TriangleUpIcon aria-label="sorted ascending" />
-                                                        )
-                                                    ) : null}
-                                                </Box>
-                                            </Button>
-                                            <Box flex={1} />
-                                            {column.canFilter ? column.render('Filter') : null}
-                                        </Flex>
-                                    )}
-                                </Th>
-                            ))}
-                        </Tr>
-                    ))}
+                    {headerGroups.map((headerGroup) => {
+                        const { key, ...rest } = headerGroup.getHeaderGroupProps();
+                        return (
+                            <Tr key={key} {...rest}>
+                                {headerGroup.headers.map((column) => (
+                                    <Th
+                                        {...column.getHeaderProps({
+                                            style: {
+                                                minWidth: column.minWidth,
+                                                width: column.width,
+                                                maxWidth: column.maxWidth,
+                                            },
+                                        })}
+                                        isNumeric={column.isNumeric}
+                                    >
+                                        {column.name}
+                                        {column.id === 'selection' && column.render('Header')}
+                                        {column.id !== 'selection' && (
+                                            <Flex alignItems="center">
+                                                <Button
+                                                    variant="ghost"
+                                                    fontWeight="bold"
+                                                    {...column.getSortByToggleProps()}
+                                                >
+                                                    {column.render('Header')}
+                                                    <Box pl="4">
+                                                        {column.isSorted ? (
+                                                            column.isSortedDesc ? (
+                                                                <TriangleDownIcon aria-label="sorted descending" />
+                                                            ) : (
+                                                                <TriangleUpIcon aria-label="sorted ascending" />
+                                                            )
+                                                        ) : null}
+                                                    </Box>
+                                                </Button>
+                                                <Box flex={1} />
+                                                {column.canFilter ? column.render('Filter') : null}
+                                            </Flex>
+                                        )}
+                                    </Th>
+                                ))}
+                            </Tr>
+                        );
+                    })}
                 </Thead>
                 <Tbody {...getTableBodyProps()}>
                     {page.map((row) => {
@@ -283,7 +283,7 @@ export const ItemsTable = ({
             </Table>
             <Box display="flex" justifyContent="end" pt={5}>
                 <Box pr={5} whiteSpace={'nowrap'}>
-                    Total: {subTotal} / <b>{totalToDuration(total)}</b>
+                    Total: {subTotal} / <b>{formatDurationInternal(total)}</b>
                 </Box>
             </Box>
 

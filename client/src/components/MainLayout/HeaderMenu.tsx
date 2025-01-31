@@ -5,7 +5,7 @@ import {
     AiOutlineSetting,
     AiOutlineQuestionCircle,
 } from 'react-icons/ai';
-import React from 'react';
+
 import { Box } from '@chakra-ui/react';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import { Header } from '../Header/Header';

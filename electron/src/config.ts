@@ -6,8 +6,6 @@ import Store from 'electron-store';
 import isDevelopment from 'electron-is-dev';
 
 let root = path.join(__dirname, '..');
-let client = isDevelopment ? path.join(root, '..', 'client', 'build') : path.join(root, 'dist');
-// Load real data even when in development
 
 let useRealDataInDev = false;
 let userDir =
@@ -42,30 +40,17 @@ export const getTrayIcon = () => {
     );
 };
 
-export default {
-    // root directory
-    root: root,
-    client: client,
-    userDir: userDir,
-
+export const config = {
     iconTray: getTrayIcon(),
     iconTrayUpdate: getIcon('tockler_icon_big_update.ico', 'tockler_icon_tray_updateTemplate.png'),
     iconNotification: getIcon('tockler_icon_big.ico', 'tockler_icon_big.png'),
     iconWindow: getIcon('tockler_icon_big.ico', 'tockler_icon_big.png'),
 
-    // plugins directory
-    pluginsPath: root,
-
     // a flag to whether the app is running in development mode
     isDev: isDevelopment,
-    isTest: (<any>global).__TEST__, // process.env.NODE_ENV === 'test',
 
     // enable tray icon for dev mode
-
     trayEnabledInDev: true,
-
-    // name of the main window
-    mainAppName: 'main-window',
 
     databaseConfig: {
         database: 'bdgt',

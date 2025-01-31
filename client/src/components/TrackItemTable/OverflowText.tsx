@@ -1,4 +1,3 @@
-import React from 'react';
 import { Tooltip, Text, TextProps } from '@chakra-ui/react';
 
 interface IProps extends TextProps {

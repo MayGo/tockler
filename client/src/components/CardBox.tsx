@@ -1,7 +1,14 @@
-import * as React from 'react';
-import { Box, Flex, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, BoxProps, Flex, Text, useColorModeValue } from '@chakra-ui/react';
+import { ReactNode } from 'react';
 
-export const CardBox: React.FC<any> = ({ title, children, extra, p = 4, divider, ...rest }) => {
+interface CardBoxProps extends BoxProps {
+    title?: string;
+    extra?: ReactNode;
+    p?: number;
+    divider?: boolean;
+}
+
+export const CardBox = ({ title, children, extra, p = 4, divider, ...rest }: CardBoxProps) => {
     const titleColor = useColorModeValue('gray.900', 'white');
     const dividerColor = useColorModeValue('gray.200', 'gray.500');
 

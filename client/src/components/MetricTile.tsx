@@ -1,8 +1,7 @@
-import { Flex } from '@chakra-ui/react';
-import React from 'react';
+import { BoxProps, Flex } from '@chakra-ui/react';
 import { TileBox } from './TileBox';
 
-export const MetricTile: React.FC<any> = ({ title, children, extra, ...rest }) => {
+export const MetricTile = ({ children, ...rest }: BoxProps) => {
     return (
         <TileBox {...rest}>
             <Flex>{children}</Flex>

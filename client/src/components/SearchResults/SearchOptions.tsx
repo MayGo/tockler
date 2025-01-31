@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Logger } from '../../logger';
 import { Box, Flex } from '@chakra-ui/react';
 import { Button } from '@chakra-ui/react';

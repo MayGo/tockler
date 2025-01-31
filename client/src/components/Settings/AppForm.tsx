@@ -1,7 +1,7 @@
 import { FormControl, FormLabel } from '@chakra-ui/react';
 import { Text } from '@chakra-ui/react';
 import { Switch } from '@chakra-ui/react';
-import React from 'react';
+
 import {
     getOpenAtLogin,
     getIsAutoUpdateEnabled,
@@ -40,7 +40,7 @@ export const AppForm = () => {
         saveUsePurpleTrayIcon(event.target.checked);
     };
 
-    const appName = process.env.REACT_APP_NAME;
+    const appName = import.meta.env.VITE_NAME;
     const platform = (window as any).electronBridge.platform;
 
     const linuxPath = `~/.config/${appName}/logs/main.log`;

@@ -1,4 +1,3 @@
-import React from 'react';
 import { TrayAppPage } from './TrayAppPage';
 /*
  * This Page is for testing purposes only

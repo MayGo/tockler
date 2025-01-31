@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, useStyleConfig } from '@chakra-ui/react';
 
 export const DayWrapper = ({ variant, ...rest }) => {

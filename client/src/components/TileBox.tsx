@@ -1,7 +1,6 @@
-import * as React from 'react';
 import { Box, useColorModeValue } from '@chakra-ui/react';
 
-export const TileBox: React.FC<any> = ({ children, ...rest }) => (
+export const TileBox = ({ children, ...rest }) => (
     <Box
         width="100%"
         borderWidth={1}

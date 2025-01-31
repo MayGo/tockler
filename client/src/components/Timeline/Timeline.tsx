@@ -1,5 +1,4 @@
-import React, { memo, useRef } from 'react';
-import 'moment-duration-format';
+import { memo, useRef } from 'react';
 import { TimelineItemEdit } from './TimelineItemEdit';
 import { useStoreState } from '../../store/easyPeasy';
 import { Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger } from '@chakra-ui/react';
@@ -25,8 +24,8 @@ export const Timeline = memo(() => {
                 </BlackBox>
                 <Popover isOpen={!!selectedTimelineItem}>
                     <PopoverTrigger>{popoverTriggerRef.current || <div />}</PopoverTrigger>
-                    <PopoverContent p={4} w="fit-content" boxShadow="lg">
-                        <PopoverArrow />
+                    <PopoverContent p={4} w="fit-content" boxShadow="lg" bg="gray.50">
+                        <PopoverArrow bg="gray.50" />
                         <PopoverBody p={0}>
                             <TimelineItemEdit />
                         </PopoverBody>

@@ -1,7 +1,6 @@
 import { Box } from '@chakra-ui/react';
-import React from 'react';
 
-export const ItemIcon = props => (
+export const ItemIcon = (props) => (
     <Box
         display="inline-flex"
         w={'16px'}

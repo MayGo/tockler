@@ -1,6 +1,6 @@
-import React from 'react';
 import { VictoryTooltip } from 'victory';
 import { gray900 } from '../Timeline/ChartTheme';
+import { PureComponent } from 'react';
 
 interface IProps {
     text?: string;
@@ -11,7 +11,7 @@ interface IProps {
     theme: any;
 }
 
-export class PieLabel extends React.PureComponent<IProps> {
+export class PieLabel extends PureComponent<IProps> {
     public static defaultEvents = VictoryTooltip.defaultEvents;
 
     public render() {

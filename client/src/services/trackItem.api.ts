@@ -61,8 +61,8 @@ function createTrackItem(trackItem: ITrackItem): Promise<any> {
     return EventEmitter.emit('createTrackItem', { trackItem: trackItem });
 }
 
-function updateTrackItem(trackItem: ITrackItem): Promise<any> {
-    return EventEmitter.emit('updateTrackItem', { trackItem });
+function updateTrackItem(trackItem: ITrackItem, trackItemId: number): Promise<any> {
+    return EventEmitter.emit('updateTrackItem', { trackItem, trackItemId });
 }
 
 function getRawTrackItem(savedItem) {
@@ -89,7 +89,7 @@ export async function saveTrackItem(inputItem): Promise<any> {
     }
 
     if (trackItem.id) {
-        const item = await updateTrackItem(trackItem);
+        const item = await updateTrackItem(trackItem, trackItem.id);
         Logger.debug('Updated trackitem to DB:', item);
         return item;
     }
