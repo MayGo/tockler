@@ -43,18 +43,10 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node-version }}
+                  cache: 'yarn'
 
-            - name: Install pnpm
-              uses: pnpm/action-setup@v2
-              with:
-                  version: latest
-                  run_install: false
-
-            - name: Setup Windows Build Tools
-              if: matrix.os == 'windows-latest'
-              run: |
-                  npm config set msvs_version 2019
-                  npm config set python python3
+            - name: Install Yarn Berry
+              run: corepack enable && corepack prepare yarn@stable --activate
 
             - name: Get Package Version
               id: package_version
@@ -67,31 +59,33 @@ jobs:
                   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
                   SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
               run: |
-                  pnpm dlx @sentry/cli releases set-commits "${{ env.PACKAGE_VERSION }}" --commit "${{ github.repository }}@${{ github.sha }}"
-                  pnpm dlx @sentry/cli releases new "${{ env.PACKAGE_VERSION }}"
+                  yarn dlx @sentry/cli releases set-commits "${{ env.PACKAGE_VERSION }}" --commit "${{ github.repository }}@${{ github.sha }}"
+                  yarn dlx @sentry/cli releases new "${{ env.PACKAGE_VERSION }}"
 
             - name: Install Dependencies (Electron)
               shell: bash
               run: |
                   cd electron
                   if [ "${{ matrix.os }}" = "macos-15" ]; then
+                    # Force x64 architecture for macos-15
                     export npm_config_arch=x64
                   elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+                    # Force arm64 architecture for macos-latest
                     export npm_config_arch=arm64
                   fi
-                  pnpm install --no-frozen-lockfile
+                  yarn install
                   cd ..
 
             - name: Install Dependencies (Client)
               run: |
                   cd client
-                  pnpm install --no-frozen-lockfile
+                  yarn install
                   cd ..
 
             - name: Build Client
               run: |
                   cd client
-                  pnpm build
+                  yarn build
                   cd ..
 
             - name: Create .env file
@@ -117,15 +111,15 @@ jobs:
                   CSC_IDENTITY_AUTO_DISCOVERY: ${{ matrix.os != 'windows-latest' }}
               run: |
                   cd electron
-                  pnpm build
-                  pnpm prepare_client
+                  yarn build
+                  yarn prepare_client
                   # Determine the architecture to build
                   if [ "${{ matrix.os }}" = "macos-15" ]; then
                     ARCH="x64"
                   elif [ "${{ matrix.os }}" = "macos-latest" ]; then
                     ARCH="arm64"
                   fi
-                  pnpm release -- --mac --${ARCH}
+                  yarn release -- --mac --${ARCH}
                   cd ..
 
             - name: Upload Sentry Sourcemaps
@@ -134,9 +128,9 @@ jobs:
                   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
                   SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
               run: |
-                  pnpm dlx @sentry/cli releases files "${{ env.PACKAGE_VERSION }}" upload-sourcemaps ./client/dist/assets/ --rewrite --url-prefix "~/dist/assets"
-                  pnpm dlx @sentry/cli releases files "${{ env.PACKAGE_VERSION }}" list
-                  pnpm dlx @sentry/cli releases finalize "${{ env.PACKAGE_VERSION }}"
+                  yarn dlx @sentry/cli releases files "${{ env.PACKAGE_VERSION }}" upload-sourcemaps ./client/build/static/js/ --rewrite --url-prefix "~/dist/static/js"
+                  yarn dlx @sentry/cli releases files "${{ env.PACKAGE_VERSION }}" list
+                  yarn dlx @sentry/cli releases finalize "${{ env.PACKAGE_VERSION }}"
 
             - name: Upload Artifacts
               uses: actions/upload-artifact@v4
