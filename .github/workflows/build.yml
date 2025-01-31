@@ -47,7 +47,14 @@ jobs:
             - name: Install pnpm
               uses: pnpm/action-setup@v2
               with:
-                  version: 9.15.3
+                  version: latest
+                  run_install: false
+
+            - name: Setup Windows Build Tools
+              if: matrix.os == 'windows-latest'
+              run: |
+                  npm config set msvs_version 2019
+                  npm config set python python3
 
             - name: Get Package Version
               id: package_version
@@ -68,19 +75,17 @@ jobs:
               run: |
                   cd electron
                   if [ "${{ matrix.os }}" = "macos-15" ]; then
-                    # Force x64 architecture for macos-15
                     export npm_config_arch=x64
                   elif [ "${{ matrix.os }}" = "macos-latest" ]; then
-                    # Force arm64 architecture for macos-latest
                     export npm_config_arch=arm64
                   fi
-                  pnpm install
+                  pnpm install --no-frozen-lockfile
                   cd ..
 
             - name: Install Dependencies (Client)
               run: |
                   cd client
-                  pnpm install
+                  pnpm install --no-frozen-lockfile
                   cd ..
 
             - name: Build Client
