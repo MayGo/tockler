@@ -98,6 +98,9 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install setuptools
 
+            - name: Verify npm_config_arch
+              run: echo "npm_config_arch is set to $npm_config_arch"
+
             - name: Install Dependencies (Electron)
               shell: bash
               run: |
@@ -105,7 +108,7 @@ jobs:
                   echo "npm_config_arch is set to $npm_config_arch"
                   # Force architecture for node-gyp
                   export npm_config_arch=$npm_config_arch
-                  pnpm install --no-frozen-lockfile
+                  npm_config_arch=$npm_config_arch pnpm install --no-frozen-lockfile
                   cd ..
 
             - name: Install Dependencies (Client)
