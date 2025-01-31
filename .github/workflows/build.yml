@@ -79,13 +79,13 @@ jobs:
             - name: Install Dependencies (Client)
               run: |
                   cd client
-                  yarn install
+                  pnpm install
                   cd ..
 
             - name: Build Client
               run: |
                   cd client
-                  yarn build
+                  pnpm build
                   cd ..
 
             - name: Create .env file
