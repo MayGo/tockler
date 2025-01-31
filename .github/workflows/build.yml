@@ -45,10 +45,7 @@ jobs:
                   node-version: ${{ matrix.node-version }}
 
             - name: Install pnpm
-              uses: pnpm/action-setup@v2
-              with:
-                  version: latest
-                  run_install: false
+              run: corepack enable && corepack prepare pnpm@stable --activate
 
             - name: Get Package Version
               id: package_version
