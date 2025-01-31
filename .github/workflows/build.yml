@@ -29,7 +29,7 @@ jobs:
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     build:
-        name: Build (${{ matrix.os }})
+        name: Build (${{ matrix.os }} - ${{ matrix.arch }})
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
