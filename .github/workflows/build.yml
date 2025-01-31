@@ -43,8 +43,6 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node-version }}
-                  cache: 'yarn'
-                  cache-dependency-path: 'client/yarn.lock,electron/yarn.lock'
 
             - name: Install Yarn Berry
               run: corepack enable && corepack prepare yarn@stable --activate
