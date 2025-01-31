@@ -103,6 +103,8 @@ jobs:
               run: |
                   cd electron
                   echo "npm_config_arch is set to $npm_config_arch"
+                  # Force architecture for node-gyp
+                  export npm_config_arch=$npm_config_arch
                   pnpm install --no-frozen-lockfile
                   cd ..
 
