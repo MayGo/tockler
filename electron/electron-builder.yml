@@ -6,7 +6,6 @@ asarUnpack:
     - shared
 
 npmRebuild: false
-afterSign: './scripts/notarize.js'
 
 directories:
     output: 'packaged'
