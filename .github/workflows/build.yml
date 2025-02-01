@@ -109,7 +109,7 @@ jobs:
                   SKIP_POSTINSTALL=true pnpm install --no-frozen-lockfile
 
                   if [ "${{ matrix.arch }}" != "none" ]; then
-                    pnpm postinstall --arch=$npm_config_target_arch
+                    pnpm postinstall --arch=${{ matrix.arch }}
                   else
                     pnpm postinstall
                   fi
