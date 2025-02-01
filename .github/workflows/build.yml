@@ -39,9 +39,9 @@ jobs:
                 # exclude:
                 #     - os: macos-latest
                 #       arch: none
-                # include:
-                #     - os: macos-latest
-                #       arch: x64
+                include:
+                    - os: macos-latest
+                      arch: x64
                 #     - os: macos-latest
                 #       arch: arm64
 
