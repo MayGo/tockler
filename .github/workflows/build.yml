@@ -48,14 +48,14 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Set npm_config_target_arch for macOS
-              if: startsWith(matrix.os, 'macos')
-              run: |
-                  if [ "${{ matrix.arch }}" = "x64" ]; then
-                    echo "npm_config_target_arch=x64" >> $GITHUB_ENV
-                  elif [ "${{ matrix.arch }}" = "arm64" ]; then
-                    echo "npm_config_target_arch=arm64" >> $GITHUB_ENV
-                  fi
+            # - name: Set npm_config_target_arch for macOS
+            #   if: startsWith(matrix.os, 'macos')
+            #   run: |
+            #       if [ "${{ matrix.arch }}" = "x64" ]; then
+            #         echo "npm_config_target_arch=x64" >> $GITHUB_ENV
+            #       elif [ "${{ matrix.arch }}" = "arm64" ]; then
+            #         echo "npm_config_target_arch=arm64" >> $GITHUB_ENV
+            #       fi
 
             - name: Setup Node.js
               uses: actions/setup-node@v4
@@ -98,8 +98,8 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install setuptools
 
-            - name: Verify npm_config_target_arch
-              run: echo "npm_config_target_arch is set to $npm_config_target_arch"
+            # - name: Verify npm_config_target_arch
+            #   run: echo "npm_config_target_arch is set to $npm_config_target_arch"
 
             - name: Install Dependencies (Electron)
               shell: bash
