@@ -48,13 +48,13 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Set npm_config_arch for macOS
+            - name: Set npm_config_target_arch for macOS
               if: startsWith(matrix.os, 'macos')
               run: |
                   if [ "${{ matrix.arch }}" = "x64" ]; then
-                    echo "npm_config_arch=x64" >> $GITHUB_ENV
+                    echo "npm_config_target_arch=x64" >> $GITHUB_ENV
                   elif [ "${{ matrix.arch }}" = "arm64" ]; then
-                    echo "npm_config_arch=arm64" >> $GITHUB_ENV
+                    echo "npm_config_target_arch=arm64" >> $GITHUB_ENV
                   fi
 
             - name: Setup Node.js
@@ -98,17 +98,20 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install setuptools
 
-            - name: Verify npm_config_arch
-              run: echo "npm_config_arch is set to $npm_config_arch"
+            - name: Verify npm_config_target_arch
+              run: echo "npm_config_target_arch is set to $npm_config_target_arch"
 
             - name: Install Dependencies (Electron)
               shell: bash
               run: |
                   cd electron
-                  echo "npm_config_arch is set to $npm_config_arch"
-                  # Force architecture for node-gyp
-                  export npm_config_arch=$npm_config_arch
-                  npm_config_arch=$npm_config_arch pnpm install --no-frozen-lockfile
+                  echo "npm_config_target_arch is set to $npm_config_target_arch"
+                  SKIP_POSTINSTALL=true pnpm install --no-frozen-lockfile
+                  if [ ! -z "$npm_config_target_arch" ]; then
+                    pnpm postinstall --arch=$npm_config_target_arch
+                  else
+                    pnpm postinstall
+                  fi
                   cd ..
 
             - name: Install Dependencies (Client)
