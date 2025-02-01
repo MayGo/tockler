@@ -108,9 +108,9 @@ jobs:
                   echo "npm_config_target_arch is set to $npm_config_target_arch"
                   SKIP_POSTINSTALL=true pnpm install --no-frozen-lockfile
                   if [ ! -z "$npm_config_target_arch" ]; then
-                    pnpm postinstall --arch=$npm_config_target_arch
+                    pnpm install-deps --arch=$npm_config_target_arch
                   else
-                    pnpm postinstall
+                    pnpm install-deps
                   fi
                   cd ..
 
