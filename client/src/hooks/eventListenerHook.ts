@@ -27,9 +27,9 @@ function App(){
 }*/
 
 // Hook
-export function useEventListener(eventName, handler, element = window) {
+export function useEventListener(eventName: string, handler: any, element = window) {
     // Create a ref that stores handler
-    const savedHandler: any = useRef();
+    const savedHandler: any = useRef(null);
 
     // Update ref.current value if handler changes.
     // This allows our effect below to always get latest handler ...
@@ -47,7 +47,7 @@ export function useEventListener(eventName, handler, element = window) {
             if (!isSupported) return;
 
             // Create event listener that calls handler function stored in ref
-            const eventListener = event => savedHandler.current(event);
+            const eventListener = (event) => savedHandler.current(event);
 
             // Add event listener
             element.addEventListener(eventName, eventListener);

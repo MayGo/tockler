@@ -28,7 +28,7 @@ export const BarWithTooltip = ({
     centerTime = false,
     ...rest
 }: PropsI) => {
-    const barRef = useRef();
+    const barRef = useRef(null);
     const [hover, setHover] = useState(false);
 
     const onMouseEnter = () => {
@@ -47,6 +47,7 @@ export const BarWithTooltip = ({
 
             if (onClickBarItem && popoverTriggerRef) {
                 console.info('barRef.current', barRef.current);
+                // eslint-disable-next-line react-compiler/react-compiler
                 popoverTriggerRef.current = barRef.current;
                 onClickBarItem(datum);
             }

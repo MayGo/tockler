@@ -26,7 +26,7 @@ const TrayAppPageTemp = () => {
 
     useInterval(() => {
         bgSyncInterval();
-    }, [BG_SYNC_DELAY_MS]);
+    }, BG_SYNC_DELAY_MS);
 
     useEffect(() => {
         fetchTimerange();
