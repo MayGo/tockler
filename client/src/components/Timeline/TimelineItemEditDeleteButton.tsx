@@ -17,7 +17,7 @@ export function TimelineItemEditDeleteButton({ deleteItem }) {
         deleteItem();
         onClose();
     };
-    const cancelRef = useRef(null);
+    const cancelRef = useRef<HTMLButtonElement>(null!);
 
     return (
         <>

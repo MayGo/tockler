@@ -4,13 +4,14 @@ import { SearchIcon } from '@chakra-ui/icons';
 
 export function ToggleColumnFilter({ children }) {
     const { onOpen, onClose, isOpen } = useDisclosure();
-    const firstFieldRef = useRef(null);
+    const firstFieldRef = useRef<HTMLInputElement>(null!);
+
     const form = cloneElement(children, { ref: firstFieldRef, onCancel: onClose });
 
     return (
         <Popover
             isOpen={isOpen}
-            initialFocusRef={firstFieldRef}
+            initialFocusRef={firstFieldRef as React.RefObject<{ focus(): void }>}
             onOpen={onOpen}
             onClose={onClose}
             placement="right"

@@ -9,7 +9,7 @@ import { SmallTimelineChart } from './SmallTimelineChart';
 import { Loader } from './Loader';
 
 export const Timeline = memo(() => {
-    const popoverTriggerRef = useRef();
+    const popoverTriggerRef = useRef<HTMLDivElement>(null);
 
     const isLoading = useStoreState((state) => state.isLoading);
 
@@ -23,7 +23,9 @@ export const Timeline = memo(() => {
                     <MainTimelineChart />
                 </BlackBox>
                 <Popover isOpen={!!selectedTimelineItem}>
-                    <PopoverTrigger>{popoverTriggerRef.current || <div />}</PopoverTrigger>
+                    <PopoverTrigger>
+                        <div ref={popoverTriggerRef} />
+                    </PopoverTrigger>
                     <PopoverContent p={4} w="fit-content" boxShadow="lg" bg="gray.50">
                         <PopoverArrow bg="gray.50" />
                         <PopoverBody p={0}>
