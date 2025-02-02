@@ -44,7 +44,7 @@
         "node-machine-id": "^1.1.12",
         "objection": "3.0.1",
         "randomcolor": "0.6.2",
-        "sqlite3": "5.1.2",
+        "sqlite3": "5.1.5",
         "url-parse": "^1.5.10"
     },
     "devDependencies": {
