@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-export const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+export const DATE_TIME_FORMAT = 'yyyy-MM-dd HH:mm:ss';
 export const INPUT_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss ZZ';
 export const TIME_FORMAT = 'HH:mm:ss';
 export const DAY_MONTH_LONG_FORMAT = 'D MMM';
