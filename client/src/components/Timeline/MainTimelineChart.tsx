@@ -120,7 +120,7 @@ export const MainTimelineChart = memo(() => {
 
             Logger.debug('EditBrush changed:', beginDate, endDate);
 
-            if (selectedTimelineItem && selectedTimelineItem.id) {
+            if (selectedTimelineItem) {
                 setSelectedTimelineItem({ ...selectedTimelineItem, beginDate, endDate });
             } else {
                 Logger.error('No item selected');
@@ -162,7 +162,7 @@ export const MainTimelineChart = memo(() => {
         <div ref={ref}>
             <Box
                 position="absolute"
-                top={2}
+                bottom={2}
                 right={2}
                 display="flex"
                 zIndex={1000}

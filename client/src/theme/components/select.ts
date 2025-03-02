@@ -8,7 +8,7 @@ export const SelectStyle = {
     variants: {
         outline: (props) => ({
             field: {
-                bg: mode('gray.100', 'gray.900')(props),
+                bg: mode('white', 'gray.900')(props),
                 borderColor: mode('gray.300', 'gray.400')(props),
             },
         }),

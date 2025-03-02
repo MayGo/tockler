@@ -191,11 +191,13 @@ export const TimelineItemEdit = memo(() => {
     const colorChanged = selectedTimelineItem.color !== trackItem.color;
     const isCreating = !selectedTimelineItem.id;
 
+    console.log('trackItem', trackItem);
+
     return (
         <Box width={600}>
             <VStack alignItems="flex-start" spacing={4}>
                 <Heading fontSize="xl" pb={2}>
-                    {ITEM_TYPES[trackItem.taskName || ''] || 'New Task'}
+                    {trackItem.id && trackItem.taskName ? ITEM_TYPES[trackItem.taskName] : 'New Task'}
                 </Heading>
                 <HStack width="100%" spacing={4}>
                     <Box flex="2">
