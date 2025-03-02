@@ -1,21 +1,30 @@
-import { memo, useRef } from 'react';
 import { debounce } from 'lodash';
-import moment from 'moment';
-import { VictoryAxis, VictoryBar, VictoryChart, VictoryZoomContainer, VictoryBrushLine } from 'victory';
+import { DateTime } from 'luxon';
+import { memo, useRef } from 'react';
+import {
+    DomainPaddingPropType,
+    DomainTuple,
+    ForAxes,
+    VictoryAxis,
+    VictoryBar,
+    VictoryBrushLine,
+    VictoryChart,
+    VictoryStyleInterface,
+} from 'victory';
 import { convertDate, TIME_FORMAT } from '../../constants';
 import { TrackItemType } from '../../enum/TrackItemType';
-import { BarWithTooltip } from './BarWithTooltip';
 import { Logger } from '../../logger';
+import { BarWithTooltip } from './BarWithTooltip';
 
-import { colorProp } from '../charts.utils';
+import useDimensions from 'react-cool-dimensions';
+import { ITrackItem } from '../../@types/ITrackItem';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { rangeToDate } from '../../timeline.util';
+import { formatDurationInternal } from '../../utils';
+import { colorProp } from '../charts.utils';
 import { BrushHandle } from './BrushHandle';
 import { BAR_WIDTH, CHART_PADDING, CHART_SCALE } from './timeline.constants';
-import useDimensions from 'react-cool-dimensions';
-import { formatDurationInternal } from '../../utils';
-
 const getTrackItemOrder = (type: string) => {
     if (type === TrackItemType.AppTrackItem) {
         return 1;
@@ -31,9 +40,9 @@ const getTrackItemOrder = (type: string) => {
 
 const getTrackItemOrderFn = (d) => getTrackItemOrder(d.taskName);
 
-const domainPadding: any = { y: 35, x: 10 };
+const domainPadding: DomainPaddingPropType = { y: 35, x: 10 };
 
-export const barStyle: any = (isDark) => ({
+export const barStyle = (isDark: boolean): VictoryStyleInterface => ({
     data: {
         width: BAR_WIDTH,
         fill: colorProp,
@@ -42,6 +51,8 @@ export const barStyle: any = (isDark) => ({
         fillOpacity: 1,
     },
 });
+
+const EMPTY_ARRAY: ITrackItem[] = [];
 
 export const MainTimelineChart = memo(() => {
     const { observe, width } = useDimensions();
@@ -68,7 +79,7 @@ export const MainTimelineChart = memo(() => {
     };
 
     const changeVisibleTimerange = (range) => {
-        setVisibleTimerange([moment(range[0]), moment(range[1])]);
+        setVisibleTimerange([DateTime.fromMillis(range[0]), DateTime.fromMillis(range[1])]);
     };
 
     const handleZoom = (domain) => {
@@ -84,7 +95,11 @@ export const MainTimelineChart = memo(() => {
 
             Logger.debug('EditBrush changed:', beginDate, endDate);
 
-            setSelectedTimelineItem({ ...selectedTimelineItem, beginDate, endDate });
+            if (selectedTimelineItem && selectedTimelineItem.id) {
+                setSelectedTimelineItem({ ...selectedTimelineItem, beginDate, endDate });
+            } else {
+                Logger.error('No item selected');
+            }
         }
     };
 
@@ -92,20 +107,24 @@ export const MainTimelineChart = memo(() => {
         const diff = convertDate(d.endDate).diff(convertDate(d.beginDate));
 
         const type = d.taskName === TrackItemType.StatusTrackItem ? 'STATUS' : d.app;
-        const beginTime = convertDate(d.beginDate).format(TIME_FORMAT);
-        const endTime = convertDate(d.endDate).format(TIME_FORMAT);
+        const beginTime = convertDate(d.beginDate).toFormat(TIME_FORMAT);
+        const endTime = convertDate(d.endDate).toFormat(TIME_FORMAT);
 
         const url = d.url ? `${d.url}\r\n` : '';
-        return `${type}\r\n${d.title}\r\n${url}${beginTime} - ${endTime}\r\n${formatDurationInternal(diff)}`;
+        return `${type}\r\n${d.title}\r\n${url}${beginTime} - ${endTime}\r\n${formatDurationInternal(
+            diff.milliseconds,
+        )}`;
     };
 
-    const { appItems, logItems, statusItems } = timeItems;
+    const appItems = timeItems[TrackItemType.AppTrackItem] || EMPTY_ARRAY;
+    const logItems = timeItems[TrackItemType.LogTrackItem] || EMPTY_ARRAY;
+    const statusItems = timeItems[TrackItemType.StatusTrackItem] || EMPTY_ARRAY;
 
-    if (!timerange && !appItems && appItems.length === 0) {
+    if (!timerange && appItems.length === 0) {
         return <div>No data</div>;
     }
 
-    let timelineData = [...statusItems, ...logItems, ...appItems];
+    const timelineData = [...statusItems, ...logItems, ...appItems];
 
     Logger.debug(`Rendering ${timelineData.length} items`);
 
@@ -116,8 +135,8 @@ export const MainTimelineChart = memo(() => {
 
     const handleEditBrushDebounced = debounce(handleEditBrush, 300);
 
-    const domain: any = {
-        y: [timerange[0], timerange[1]],
+    const domain: ForAxes<DomainTuple> = {
+        y: rangeToDate(timerange),
         x: [1, 3],
     };
 
@@ -132,15 +151,15 @@ export const MainTimelineChart = memo(() => {
                 scale={CHART_SCALE}
                 horizontal
                 domain={domain}
-                containerComponent={
-                    <VictoryZoomContainer
-                        responsive={false}
-                        zoomDimension="y"
-                        zoomDomain={{ y: rangeToDate(visibleTimerange) }}
-                        key={selectedTimelineItem && selectedTimelineItem.id}
-                        onZoomDomainChange={debounce(handleZoom, 300)}
-                    />
-                }
+                // containerComponent={
+                //     <VictoryZoomContainer
+                //         responsive={false}
+                //         zoomDimension="y"
+                //         zoomDomain={{ y: rangeToDate(visibleTimerange) }}
+                //         key={selectedTimelineItem && selectedTimelineItem.id}
+                //         onZoomDomainChange={debounce(handleZoom, 300)}
+                //     />
+                // }
             >
                 <VictoryAxis dependentAxis tickCount={20} />
 

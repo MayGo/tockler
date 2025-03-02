@@ -1,44 +1,37 @@
+import { DateTime } from 'luxon';
 import { ITimelineState } from './@types/ITimelineState';
+import { ITrackItem } from './@types/ITrackItem';
 import { TrackItemType } from './enum/TrackItemType';
 
-export const handleTimelineItems = (
-    state: ITimelineState,
-    payload: {
-        appItems: object;
-        logItems: object;
-        statusItems: object;
-    },
-): ITimelineState => {
-    return {
-        ...state,
-        [TrackItemType.AppTrackItem]: payload.appItems,
-        [TrackItemType.LogTrackItem]: payload.logItems,
-        [TrackItemType.StatusTrackItem]: payload.statusItems,
-    };
+interface TimeItemsPayload {
+    appItems: ITrackItem[];
+    logItems: ITrackItem[];
+    statusItems: ITrackItem[];
+}
+
+export const checkIfOneDay = (visibleTimerange: DateTime[]) => visibleTimerange[0].hasSame(visibleTimerange[1], 'day');
+
+export const rangeToDate = (range: DateTime[]): [number, number] => {
+    return [range[0].toMillis(), range[1].toMillis()];
 };
 
-export const checkIfOneDay = visibleTimerange =>
-    visibleTimerange[0].isSame(visibleTimerange[1], 'day');
-
-export const rangeToDate = (range): [Date, Date] => [range[0].toDate(), range[1].toDate()];
-
-export const addToTimelineItems = (state, payload): ITimelineState => {
-    const appIds = payload.appItems.map(item => item.id);
-    const logIds = payload.logItems.map(item => item.id);
-    const statusIds = payload.statusItems.map(item => item.id);
+export const addToTimelineItems = (state: ITimelineState, payload: TimeItemsPayload): ITimelineState => {
+    const appIds = payload.appItems.map((item) => item.id);
+    const logIds = payload.logItems.map((item) => item.id);
+    const statusIds = payload.statusItems.map((item) => item.id);
 
     return {
         ...state,
-        appItems: [
-            ...state.appItems.filter(item => !appIds.includes(item.id)),
+        [TrackItemType.AppTrackItem]: [
+            ...(state[TrackItemType.AppTrackItem] || []).filter((item) => !appIds.includes(item.id)),
             ...payload.appItems,
         ],
-        logItems: [
-            ...state.logItems.filter(item => !logIds.includes(item.id)),
+        [TrackItemType.LogTrackItem]: [
+            ...(state[TrackItemType.LogTrackItem] || []).filter((item) => !logIds.includes(item.id)),
             ...payload.logItems,
         ],
-        statusItems: [
-            ...state.statusItems.filter(item => !statusIds.includes(item.id)),
+        [TrackItemType.StatusTrackItem]: [
+            ...(state[TrackItemType.StatusTrackItem] || []).filter((item) => !statusIds.includes(item.id)),
             ...payload.statusItems,
         ],
     };

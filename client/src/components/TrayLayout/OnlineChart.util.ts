@@ -1,21 +1,22 @@
 import { first, orderBy } from 'lodash';
-import moment from 'moment';
+import { DateTime } from 'luxon';
+import { ITrackItem } from '../../@types/ITrackItem';
 import { MAIN_THEME_COLOR } from '../../theme/theme';
 
 const clampItem =
-    ({ beginClamp, endClamp }) =>
-    (item) => {
-        const beginDate = Math.max(beginClamp, item.beginDate);
-        const endDate = Math.min(endClamp, item.endDate);
+    ({ beginClamp, endClamp }: { beginClamp: DateTime; endClamp: DateTime }) =>
+    (item: ITrackItem) => {
+        const beginDate = Math.max(beginClamp.toMillis(), item.beginDate);
+        const endDate = Math.min(endClamp.toMillis(), item.endDate);
 
         return { ...item, beginDate, endDate };
     };
 
-export const roundTo = (start) => {
+export const roundTo = (start: DateTime) => {
     const roundToMin = 3;
-    const remainder = roundToMin - (start.hour() % roundToMin);
+    const remainder = roundToMin - (start.hour % roundToMin);
 
-    return moment(start).add(remainder, 'hour');
+    return start.plus({ hours: remainder });
 };
 
 export enum CLOCK_MODE {
@@ -23,40 +24,55 @@ export enum CLOCK_MODE {
     HOURS_24 = 24,
 }
 
-export const getQuarters = (date, mode) => {
+export const getQuarters = (date: DateTime, mode: CLOCK_MODE) => {
     const startDate =
-        mode === CLOCK_MODE.HOURS_12
-            ? roundTo(moment(date)).subtract(mode, 'hours').set('minutes', 0).set('seconds', 0)
-            : moment(date).startOf('day');
+        mode === CLOCK_MODE.HOURS_12 ? roundTo(date).minus({ hours: mode }).startOf('hour') : date.startOf('day');
 
     const quarter = mode / 4;
     return [
         startDate,
-        moment(startDate).add(quarter, 'hours'),
-        moment(startDate).add(quarter * 2, 'hours'),
-        moment(startDate).add(quarter * 3, 'hours'),
-        moment(startDate).add(quarter * 4, 'hours'),
+        startDate.plus({ hours: quarter }),
+        startDate.plus({ hours: quarter * 2 }),
+        startDate.plus({ hours: quarter * 3 }),
+        startDate.plus({ hours: quarter * 4 }),
     ];
 };
 
-export const getClampHours = ({ realDate, startHour, endHour }) => {
-    let beginClamp = moment(realDate).startOf('day').set('hour', startHour);
-    let endClamp = moment(realDate).startOf('day').set('hour', endHour);
+export const getClampHours = ({
+    realDate,
+    startHour,
+    endHour,
+}: {
+    realDate: DateTime;
+    startHour: number;
+    endHour: number;
+}) => {
+    const beginClamp = realDate.startOf('day').set({ hour: startHour });
+    const endClamp = realDate.startOf('day').set({ hour: endHour });
     return { beginClamp, endClamp };
 };
 
 export const isBetweenHours =
-    ({ beginClamp, endClamp }) =>
-    (item) => {
-        return (
-            moment(item.beginDate).isBetween(beginClamp, endClamp) ||
-            moment(item.endDate).isBetween(beginClamp, endClamp)
-        );
+    ({ beginClamp, endClamp }: { beginClamp: DateTime; endClamp: DateTime }) =>
+    (item: ITrackItem) => {
+        const itemBegin = DateTime.fromMillis(item.beginDate);
+        const itemEnd = DateTime.fromMillis(item.endDate);
+
+        return (itemBegin >= beginClamp && itemBegin <= endClamp) || (itemEnd >= beginClamp && itemEnd <= endClamp);
     };
 
-export const isLessThanHours = (now) => (item) => {
-    return moment(item.endDate) <= moment(now);
+export const isLessThanHours = (now: DateTime) => (item: ITrackItem) => {
+    return DateTime.fromMillis(item.endDate) <= now;
 };
+
+export interface IOnlineChartItem {
+    beginDate: number;
+    id?: number;
+    endDate: number;
+    color: string;
+    diff: number;
+    x: number;
+}
 
 export const getOnlineTimesForChart = ({
     beginClamp,
@@ -64,13 +80,13 @@ export const getOnlineTimesForChart = ({
     items,
     mode,
 }: {
-    beginClamp: moment.Moment;
-    endClamp: moment.Moment;
-    items: any[];
+    beginClamp: DateTime;
+    endClamp: DateTime;
+    items: ITrackItem[];
     mode?: CLOCK_MODE;
 }) => {
-    const pieData: any[] = [];
-    const arr: any[] = [];
+    const pieData: IOnlineChartItem[] = [];
+    const arr: { beginDate: number; endDate: number; diff: number; color?: string }[] = [];
 
     const filtered = items.filter((item) => item.app === 'ONLINE').filter(isBetweenHours({ beginClamp, endClamp }));
 
@@ -78,9 +94,13 @@ export const getOnlineTimesForChart = ({
         return [];
     }
 
+    console.log('beginClamp', beginClamp);
+
     filtered.forEach((item) => {
         const clampedItem = clampItem({ beginClamp, endClamp })(item);
-        const diff = moment(clampedItem.endDate).diff(moment(clampedItem.beginDate), 'minutes');
+        const itemBegin = DateTime.fromMillis(clampedItem.beginDate);
+        const itemEnd = DateTime.fromMillis(clampedItem.endDate);
+        const diff = itemEnd.diff(itemBegin).as('minutes');
         arr.push({ ...clampedItem, diff });
     });
 
@@ -90,12 +110,13 @@ export const getOnlineTimesForChart = ({
         const next = arr.length - 1 !== idx ? arr[idx + 1] : null;
 
         if (!prev) {
-            const diff = moment(moment(item.beginDate)).diff(beginClamp, 'minutes');
+            const itemBegin = DateTime.fromMillis(item.beginDate);
+            const diff = itemBegin.diff(beginClamp).as('minutes');
 
             if (diff > 0) {
                 pieData.push({
-                    beginDate: beginClamp.valueOf(),
-                    endDate: item.beginDate,
+                    beginDate: beginClamp.toMillis(),
+                    endDate: itemBegin.toMillis(),
                     color: 'transparent',
                     diff,
                     x: nr++,
@@ -103,15 +124,17 @@ export const getOnlineTimesForChart = ({
             }
         }
 
-        pieData.push({ ...item, x: nr++ });
+        pieData.push({ ...item, x: nr++, color: item.color || 'transparent' });
 
         if (next) {
-            const diff = moment(next.beginDate).diff(moment(item.endDate), 'minutes');
+            const itemEnd = DateTime.fromMillis(item.endDate);
+            const nextBegin = DateTime.fromMillis(next.beginDate);
+            const diff = nextBegin.diff(itemEnd).as('minutes');
 
             if (diff > 0) {
                 pieData.push({
-                    beginDate: item.endDate,
-                    endDate: next.beginDate,
+                    beginDate: itemEnd.toMillis(),
+                    endDate: nextBegin.toMillis(),
                     color: 'transparent',
                     diff,
                     x: nr++,
@@ -121,9 +144,9 @@ export const getOnlineTimesForChart = ({
 
         if (!next) {
             if (mode) {
-                const currentTimeItem = {
-                    beginDate: moment(),
-                    endDate: moment(),
+                const currentTimeItem: IOnlineChartItem = {
+                    beginDate: DateTime.now().toMillis(),
+                    endDate: DateTime.now().toMillis(),
                     color: MAIN_THEME_COLOR,
                     diff: mode === CLOCK_MODE.HOURS_12 ? 2 : 4,
                     x: nr++,
@@ -131,12 +154,13 @@ export const getOnlineTimesForChart = ({
                 pieData.push(currentTimeItem);
             }
 
-            const diff = moment(moment(endClamp)).diff(item.endDate, 'minutes');
+            const itemEnd = DateTime.fromMillis(item.endDate);
+            const diff = endClamp.diff(itemEnd).as('minutes');
 
             if (diff > 0) {
                 pieData.push({
-                    beginDate: item.endDate,
-                    endDate: endClamp.valueOf(),
+                    beginDate: itemEnd.toMillis(),
+                    endDate: endClamp.toMillis(),
                     color: 'transparent',
                     diff,
                     x: nr++,
@@ -155,21 +179,26 @@ export const getOnlineTimesForChart = ({
 -On20-Br4-On20-Br4-0n-20 = On60
 */
 
-const getBeginEndDiff = (beginDate, endDate) => {
-    return moment(moment(endDate)).diff(moment(beginDate));
+const getBeginEndDiff = (beginDate: DateTime, endDate: DateTime) => {
+    return endDate.diff(beginDate).as('milliseconds');
 };
 
 const MINUTES = 60 * 1000;
 
-export const groupByBreaks = (items, minBreakTime) => {
-    let newItems: any[] = [];
-    let olderItem;
+export const groupByBreaks = (items: IOnlineChartItem[], minBreakTime: number) => {
+    let newItems: IOnlineChartItem[] = [];
+    let olderItem: IOnlineChartItem;
 
-    const groups: any[][] = [];
+    const groups: IOnlineChartItem[][] = [];
 
     items.forEach((currentItem) => {
         if (olderItem) {
-            const diff = getBeginEndDiff(currentItem.endDate, olderItem.beginDate);
+            console.log('currentItem', currentItem.endDate);
+            console.log('olderItem', olderItem);
+            const diff = getBeginEndDiff(
+                DateTime.fromMillis(currentItem.endDate),
+                DateTime.fromMillis(olderItem.beginDate),
+            );
             const hasHadBreak = diff / MINUTES > minBreakTime;
 
             if (hasHadBreak) {
@@ -184,7 +213,7 @@ export const groupByBreaks = (items, minBreakTime) => {
     return groups;
 };
 
-export const getTotalOnlineDuration = (now, items, minBreakTime) => {
+export const getTotalOnlineDuration = (now: DateTime, items: ITrackItem[], minBreakTime: number) => {
     const filtered = items.filter((item) => item.app === 'ONLINE').filter(isLessThanHours(now));
 
     if (filtered.length === 0) {
@@ -193,7 +222,7 @@ export const getTotalOnlineDuration = (now, items, minBreakTime) => {
 
     const sorted = orderBy(filtered, ['beginDate'], ['desc']);
 
-    if (getBeginEndDiff(first(sorted).endDate, now) / MINUTES >= minBreakTime) {
+    if (getBeginEndDiff(DateTime.fromMillis(first(sorted).endDate), now) / MINUTES >= minBreakTime) {
         return [0];
     }
 
@@ -204,7 +233,9 @@ export const getTotalOnlineDuration = (now, items, minBreakTime) => {
     }
 
     return onlyNeeded.map((group) => {
-        const diffs = group.map(({ beginDate, endDate }) => getBeginEndDiff(beginDate, endDate));
+        const diffs = group.map(({ beginDate, endDate }) =>
+            getBeginEndDiff(DateTime.fromMillis(beginDate), DateTime.fromMillis(endDate)),
+        );
         return diffs.reduce((a, b) => a + b, 0);
     });
 };

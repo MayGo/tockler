@@ -1,9 +1,6 @@
-import moment from 'moment';
+import { Button, Flex, HStack, Text, useColorModeValue } from '@chakra-ui/react';
 import { memo } from 'react';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
-import { Flex } from '@chakra-ui/react';
-import { Text, HStack, useColorModeValue } from '@chakra-ui/react';
-import { Button } from '@chakra-ui/react';
 
 export const VisibleRange = memo(() => {
     const timerange = useStoreState((state) => state.timerange);
@@ -12,32 +9,32 @@ export const VisibleRange = memo(() => {
 
     const setVisibleTimerange = useStoreActions((actions) => actions.setVisibleTimerange);
     const showDay = () => {
-        const beginDate = moment(timerange[0]).startOf('day');
-        const endDate = moment(timerange[0]).endOf('day');
+        const beginDate = timerange[0].startOf('day');
+        const endDate = timerange[0].endOf('day');
         setVisibleTimerange([beginDate, endDate]);
     };
 
     const showHour = () => {
-        const beginDate = moment(visibleTimerange[1]).startOf('hour');
-        const endDate = moment(visibleTimerange[1]).endOf('hour');
+        const beginDate = visibleTimerange[1].startOf('hour');
+        const endDate = visibleTimerange[1].endOf('hour');
         setVisibleTimerange([beginDate, endDate]);
     };
 
     const showAM = () => {
-        const beginDate = moment(timerange[0]).startOf('day');
-        const endDate = moment(timerange[0]).startOf('day').hour(12);
+        const beginDate = timerange[0].startOf('day');
+        const endDate = timerange[0].startOf('day').set({ hour: 12 });
         setVisibleTimerange([beginDate, endDate]);
     };
 
     const showPM = () => {
-        const beginDate = moment(timerange[0]).startOf('day').hour(12);
-        const endDate = moment(timerange[0]).endOf('day');
+        const beginDate = timerange[0].startOf('day').set({ hour: 12 });
+        const endDate = timerange[0].endOf('day');
         setVisibleTimerange([beginDate, endDate]);
     };
 
     const showEvening = () => {
-        const beginDate = moment(visibleTimerange[0]).startOf('day').hour(17);
-        const endDate = moment(visibleTimerange[0]).endOf('day');
+        const beginDate = visibleTimerange[0].startOf('day').set({ hour: 17 });
+        const endDate = visibleTimerange[0].endOf('day');
         setVisibleTimerange([beginDate, endDate]);
     };
 

@@ -1,26 +1,29 @@
-import { useContext } from 'react';
 import { values } from 'lodash';
+import { useContext } from 'react';
+import useDimensions from 'react-cool-dimensions';
+import { IoMdMoon, IoMdSunny } from 'react-icons/io';
 import {
+    DomainPaddingPropType,
+    DomainTuple,
+    ForAxes,
+    VictoryAxis,
     VictoryBar,
     VictoryChart,
-    VictoryAxis,
+    VictoryScatter,
     VictoryTooltip,
     VictoryVoronoiContainer,
-    VictoryScatter,
 } from 'victory';
-import { convertDate, DAY_MONTH_LONG_FORMAT, COLORS, TIME_FORMAT } from '../../constants';
-import { IoMdSunny, IoMdMoon } from 'react-icons/io';
-import { SummaryContext } from '../../SummaryContext';
-import { dateToDayLabel, formatToHours } from './LineChart.util';
+import { COLORS, convertDate, DAY_MONTH_LONG_FORMAT, TIME_FORMAT } from '../../constants';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
-import { BAR_WIDTH } from '../Timeline/timeline.constants';
-import { BlackBox } from '../BlackBox';
-import useDimensions from 'react-cool-dimensions';
+import { SummaryContext } from '../../SummaryContext';
 import { formatDurationInternal } from '../../utils';
+import { BlackBox } from '../BlackBox';
+import { BAR_WIDTH } from '../Timeline/timeline.constants';
+import { dateToDayLabel, formatToHours } from './LineChart.util';
 
-const scale: any = { x: 'time', y: 'linear' };
-const padding: any = { left: 25, top: 20, bottom: 30, right: 10 };
-const domainPadding: any = { y: 0, x: [BAR_WIDTH, 0] };
+const scale: { x: 'time'; y: 'linear' } = { x: 'time', y: 'linear' };
+const padding = { left: 25, top: 20, bottom: 30, right: 10 };
+const domainPadding: DomainPaddingPropType = { y: 0, x: [BAR_WIDTH, 0] };
 
 const labelComponent = (theme) => (
     <VictoryTooltip
@@ -33,12 +36,12 @@ const labelComponent = (theme) => (
     />
 );
 
-const formatToTime = (d) => convertDate(d).format(TIME_FORMAT);
-const formatToLong = (d) => convertDate(d).format(DAY_MONTH_LONG_FORMAT);
+const formatToTime = (d) => convertDate(d).toFormat(TIME_FORMAT);
+const formatToLong = (d) => convertDate(d).toFormat(DAY_MONTH_LONG_FORMAT);
 
 const dateToMinutes = (max, useStartDate) => (d) => {
     const m = convertDate(useStartDate ? d.beginDate : d.endDate);
-    const minutes = m.hour() * 60 + m.minute();
+    const minutes = m.hour + m.minute;
 
     return minutes / 60 / max;
 };
@@ -62,10 +65,10 @@ export const LineChart = () => {
 
     const onlineTimesValues = values(onlineTimesSummary);
 
-    const daysInMonth = selectedDate.daysInMonth();
+    const daysInMonth = selectedDate?.daysInMonth;
 
-    const domain: any = {
-        x: [selectedDate.startOf('month').toDate(), selectedDate.endOf('month').toDate()],
+    const domain: ForAxes<DomainTuple> = {
+        x: [selectedDate.startOf('month').toJSDate(), selectedDate.endOf('month').toJSDate()],
         y: [0, 1],
     };
 

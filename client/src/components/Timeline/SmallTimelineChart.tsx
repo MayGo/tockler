@@ -1,24 +1,35 @@
-import { memo } from 'react';
 import { debounce } from 'lodash';
-import moment from 'moment';
-import { VictoryAxis, VictoryBar, VictoryBrushContainer, VictoryChart } from 'victory';
+import { DateTime } from 'luxon';
+import { memo } from 'react';
+import {
+    DomainPaddingPropType,
+    DomainTuple,
+    ForAxes,
+    VictoryAxis,
+    VictoryBar,
+    VictoryBrushContainer,
+    VictoryChart,
+    VictoryStyleInterface,
+} from 'victory';
 
 import { Logger } from '../../logger';
 
-import { colorProp } from '../charts.utils';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { rangeToDate } from '../../timeline.util';
+import { colorProp } from '../charts.utils';
 
-import { BrushHandle } from './BrushHandle';
-import { getTrackItemOrderFn } from './timeline.utils';
-import { CHART_PADDING, CHART_SCALE } from './timeline.constants';
 import useDimensions from 'react-cool-dimensions';
+import { ITrackItem } from '../../@types/ITrackItem';
+import { TrackItemType } from '../../enum/TrackItemType';
 import { clampRange } from '../PieCharts/MetricTiles.utils';
+import { BrushHandle } from './BrushHandle';
+import { CHART_PADDING, CHART_SCALE } from './timeline.constants';
+import { getTrackItemOrderFn } from './timeline.utils';
 
-const domainPaddingBrush: any = { y: 35, x: 5 };
+const domainPaddingBrush: DomainPaddingPropType = { y: 35, x: 5 };
 
-const brushChartBarStyle: any = (isDark) => ({
+const brushChartBarStyle = (isDark: boolean): VictoryStyleInterface => ({
     data: {
         width: 7,
         fill: colorProp,
@@ -28,7 +39,9 @@ const brushChartBarStyle: any = (isDark) => ({
     },
 });
 
-const xDomain: [number, number] = [1, 3];
+const xDomain: DomainTuple = [1, 3];
+
+const EMPTY_ARRAY: ITrackItem[] = [];
 
 export const SmallTimelineChart = memo(() => {
     const { chartTheme } = useChartThemeState();
@@ -40,28 +53,30 @@ export const SmallTimelineChart = memo(() => {
     const timeItems = useStoreState((state) => state.timeItems);
     const setVisibleTimerange = useStoreActions((actions) => actions.setVisibleTimerange);
 
-    const changeVisibleTimerange = (range) => {
-        setVisibleTimerange(clampRange(timerange, [moment(range[0]), moment(range[1])]));
+    const changeVisibleTimerange = (range: [Date, Date]) => {
+        setVisibleTimerange(clampRange(timerange, [DateTime.fromJSDate(range[0]), DateTime.fromJSDate(range[1])]));
     };
 
-    const handleBrush = (domain) => {
+    const handleBrush = (domain: { y: [Date, Date] }) => {
         Logger.debug('Selected with brush:', domain.y);
 
         changeVisibleTimerange(domain.y);
     };
 
-    const { appItems, logItems, statusItems } = timeItems;
+    const appTrackItems = timeItems[TrackItemType.AppTrackItem] || EMPTY_ARRAY;
+    const logTrackItems = timeItems[TrackItemType.LogTrackItem] || EMPTY_ARRAY;
+    const statusTrackItems = timeItems[TrackItemType.StatusTrackItem] || EMPTY_ARRAY;
 
-    if (!timerange && !appItems && appItems.length === 0) {
+    if (!timerange && appTrackItems.length === 0) {
         return <div>No data</div>;
     }
 
-    let brushData = [...statusItems, ...logItems];
+    const brushData = [...statusTrackItems, ...logTrackItems];
 
     const handleBrushDebounced = debounce(handleBrush, 300);
 
-    const domain: any = {
-        y: [timerange[0], timerange[1]],
+    const domain: ForAxes<DomainTuple> = {
+        y: [timerange[0].toMillis(), timerange[1].toMillis()],
         x: xDomain,
     };
 

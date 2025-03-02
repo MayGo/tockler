@@ -1,10 +1,10 @@
-import moment from 'moment';
-import { ITrackItem } from '../@types/ITrackItem';
+import { DateTime } from 'luxon';
+import { ITrackItem, NewTrackItem } from '../@types/ITrackItem';
 import { TrackItemType } from '../enum/TrackItemType';
 import { Logger } from '../logger';
 import { EventEmitter } from './EventEmitter';
 
-async function findAllDayItems(from: moment.Moment, to: moment.Moment, taskName: string): Promise<any> {
+async function findAllDayItems(from: DateTime, to: DateTime, taskName: string): Promise<any> {
     //Logger.debug('findAllDayItems', JSON.stringify({ from, to, taskName }));
     const data = await EventEmitter.emit('findAllDayItems', {
         from: from.valueOf(),
@@ -15,7 +15,7 @@ async function findAllDayItems(from: moment.Moment, to: moment.Moment, taskName:
     return data;
 }
 
-export async function findAllDayItemsForEveryTrack(from: moment.Moment, to: moment.Moment) {
+export async function findAllDayItemsForEveryTrack(from: DateTime, to: DateTime) {
     // TODO, query all at async
     const appItems: ITrackItem[] = await findAllDayItems(from, to, TrackItemType.AppTrackItem);
 
@@ -25,19 +25,24 @@ export async function findAllDayItemsForEveryTrack(from: moment.Moment, to: mome
     return { appItems, statusItems, logItems };
 }
 
-export function findFirstLogItems(): Promise<any> {
+export function findFirstLogItems(): Promise<ITrackItem[]> {
     return EventEmitter.emit('findFirstLogItems');
 }
 
-export function findFirstTrackItem(): Promise<any> {
+export function findFirstTrackItem(): Promise<ITrackItem> {
     return EventEmitter.emit('findFirstTrackItem');
 }
 
-export function getOnlineStartTime(): Promise<any> {
+export function getOnlineStartTime(): Promise<ITrackItem> {
     return EventEmitter.emit('getOnlineStartTime');
 }
 
-export function searchFromItems({ from, to, taskName, searchStr, paging, sumTotal = false }): Promise<any> {
+export interface SearchResultI {
+    results: Array<{ [key: string]: number }>;
+    total: number;
+}
+
+export function searchFromItems({ from, to, taskName, searchStr, paging, sumTotal = false }): Promise<SearchResultI> {
     Logger.debug('Searching items:', { from, to, taskName, searchStr, paging });
     return EventEmitter.emit('searchFromItems', {
         from: from.valueOf(),
@@ -48,7 +53,7 @@ export function searchFromItems({ from, to, taskName, searchStr, paging, sumTota
         sumTotal,
     });
 }
-export function exportFromItems({ from, to, taskName, searchStr }): Promise<any> {
+export function exportFromItems({ from, to, taskName, searchStr }): Promise<ITrackItem[]> {
     return EventEmitter.emit('exportFromItems', {
         from: from.valueOf(),
         to: to.valueOf(),
@@ -57,16 +62,16 @@ export function exportFromItems({ from, to, taskName, searchStr }): Promise<any>
     });
 }
 
-function createTrackItem(trackItem: ITrackItem): Promise<any> {
+function createTrackItem(trackItem: ITrackItem): Promise<ITrackItem> {
     return EventEmitter.emit('createTrackItem', { trackItem: trackItem });
 }
 
-function updateTrackItem(trackItem: ITrackItem, trackItemId: number): Promise<any> {
+function updateTrackItem(trackItem: ITrackItem, trackItemId: number): Promise<ITrackItem> {
     return EventEmitter.emit('updateTrackItem', { trackItem, trackItemId });
 }
 
-function getRawTrackItem(savedItem) {
-    let item = {
+function getRawTrackItem(savedItem: ITrackItem): ITrackItem {
+    const item = {
         id: savedItem.id,
         app: savedItem.app,
         title: savedItem.title,
@@ -80,7 +85,7 @@ function getRawTrackItem(savedItem) {
     return item;
 }
 
-export async function saveTrackItem(inputItem): Promise<any> {
+export async function saveTrackItem(inputItem: ITrackItem): Promise<ITrackItem> {
     const trackItem = getRawTrackItem(inputItem);
     Logger.debug('Saving trackitem.', trackItem);
 
@@ -103,22 +108,24 @@ export async function saveTrackItem(inputItem): Promise<any> {
     return item;
 }
 
-export function deleteByIds(trackItemIds: number[]) {
+export function deleteByIds(trackItemIds: number[]): Promise<void> {
     return EventEmitter.emit('deleteByIds', { trackItemIds });
 }
 
-export function startNewLogItem(oldItem: any) {
+export function startNewLogItem(oldItem: ITrackItem): Promise<void> {
     Logger.debug('startNewLogItem', oldItem);
 
-    const newItem: any = {};
-    newItem.app = oldItem.app || 'WORK';
-    newItem.taskName = 'LogTrackItem';
-    newItem.color = oldItem.color;
-    newItem.title = oldItem.title;
-    newItem.beginDate = moment().valueOf();
-    newItem.endDate = moment().add(60, 'seconds').valueOf();
+    const newItem: NewTrackItem = {
+        app: oldItem.app || 'WORK',
+        taskName: 'LogTrackItem',
+        color: oldItem.color,
+        title: oldItem.title,
+        beginDate: DateTime.now().toMillis(),
+        endDate: DateTime.now().plus({ seconds: 60 }).toMillis(),
+    };
 
     EventEmitter.send('start-new-log-item', newItem);
+    return Promise.resolve();
 }
 
 export function stopRunningLogItem(runningLogItemId: number) {

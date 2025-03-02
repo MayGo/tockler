@@ -1,16 +1,23 @@
 import _ from 'lodash';
-import moment from 'moment';
+import { DateTime } from 'luxon';
+import { ITrackItem } from '../../@types/ITrackItem';
 import { convertDate } from '../../constants';
 import { TrackItemType } from '../../enum/TrackItemType';
 
-export const filterItems = (timeItems, visibleTimerange) =>
-    timeItems.filter((item) => {
+export const filterItems = (timeItems: ITrackItem[], visibleTimerange: DateTime[]) => {
+    if (!timeItems) {
+        console.warn('No time items found');
+        return [] as ITrackItem[];
+    }
+
+    return timeItems.filter((item) => {
         const itemBegin = convertDate(item.beginDate);
         const itemEnd = convertDate(item.endDate);
         const [visBegin, visEnd] = visibleTimerange;
 
-        return itemBegin.isBetween(visBegin, visEnd) || itemEnd.isBetween(visBegin, visEnd);
+        return (itemBegin >= visBegin && itemBegin <= visEnd) || (itemEnd >= visBegin && itemEnd <= visEnd);
     });
+};
 
 export const aggregateappItems = (items) => {
     _.reduce(
@@ -23,42 +30,46 @@ export const aggregateappItems = (items) => {
     );
 };
 
-export const copyTime = (from, to) =>
-    moment(from).set({
-        hour: to.hour(),
-        minute: to.minute(),
+export const copyTime = (from: DateTime, to: DateTime): DateTime =>
+    DateTime.fromJSDate(from.toJSDate()).set({
+        hour: to.hour,
+        minute: to.minute,
     });
 
-export const setDayFromTimerange = (visibleTimerange, timerange) => [
+export const setDayFromTimerange = (visibleTimerange: DateTime[], timerange: DateTime[]): DateTime[] => [
     copyTime(timerange[0], visibleTimerange[0]),
     copyTime(timerange[1], visibleTimerange[1]),
 ];
 
-export const getTodayTimerange = () => [moment().startOf('day'), moment().endOf('day')];
+export const getTodayTimerange = (): DateTime[] => [DateTime.now().startOf('day'), DateTime.now().endOf('day')];
 
-export const getCenteredTimerange = (timerange, visibleTimerange, middleTime) => {
-    const timeBetweenMs = moment(visibleTimerange[1]).diff(visibleTimerange[0]);
+export const getCenteredTimerange = (
+    timerange: DateTime[],
+    visibleTimerange: DateTime[],
+    middleTime: DateTime,
+): DateTime[] => {
+    const timeBetweenMs = visibleTimerange[1].diff(visibleTimerange[0]).milliseconds;
     const middlePoint = timeBetweenMs / 5;
 
-    let beginDate = moment(middleTime).subtract(timeBetweenMs - middlePoint, 'milliseconds');
-    let endDate = moment(middleTime).add(middlePoint, 'milliseconds');
+    let beginDate = middleTime.minus({ milliseconds: timeBetweenMs - middlePoint });
+    let endDate = middleTime.plus({ milliseconds: middlePoint });
 
     // if new beginDate is smaller than actual timerange, then cap it with timeranges beginDate
-    const underTime = moment(timerange[0]).diff(beginDate);
+    const underTime = timerange[0].diff(beginDate).milliseconds;
     if (underTime > 0) {
-        beginDate = moment(timerange[0]);
-        endDate = moment(endDate).add(underTime, 'milliseconds');
+        beginDate = timerange[0];
+        endDate = endDate.plus({ milliseconds: underTime });
     }
 
     // if new endDate is bigger than actual timeranges endDate, then cap it with timeranges endDate
-    const overTime = moment(endDate).diff(timerange[1]);
+    const overTime = endDate.diff(timerange[1]).milliseconds;
     if (overTime > 0) {
-        endDate = moment(timerange[1]);
-        beginDate = moment(beginDate).subtract(overTime, 'milliseconds');
+        endDate = timerange[1];
+        beginDate = beginDate.minus({ milliseconds: overTime });
 
         //edge case, if we have 23h visible timerange, then cap it with timeranges beginDate
-        if (moment(timerange[0]).diff(beginDate) > 0) {
-            beginDate = moment(timerange[0]);
+        if (timerange[0].diff(beginDate).milliseconds > 0) {
+            beginDate = timerange[0];
         }
     }
 

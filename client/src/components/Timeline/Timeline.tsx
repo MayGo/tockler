@@ -1,12 +1,11 @@
+import { Box, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger } from '@chakra-ui/react';
 import { memo, useRef } from 'react';
-import { TimelineItemEdit } from './TimelineItemEdit';
 import { useStoreState } from '../../store/easyPeasy';
-import { Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger } from '@chakra-ui/react';
-import { Box } from '@chakra-ui/react';
 import { BlackBox } from '../BlackBox';
+import { Loader } from './Loader';
 import { MainTimelineChart } from './MainTimelineChart';
 import { SmallTimelineChart } from './SmallTimelineChart';
-import { Loader } from './Loader';
+import { TimelineItemEdit } from './TimelineItemEdit';
 
 export const Timeline = memo(() => {
     const popoverTriggerRef = useRef<HTMLDivElement>(null);

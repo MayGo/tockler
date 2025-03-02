@@ -1,32 +1,34 @@
-import { useState, useEffect, memo } from 'react';
+import { Box, Button, Divider, Heading, Input, Select, Tooltip } from '@chakra-ui/react';
+import { DateTime } from 'luxon';
 import randomcolor from 'randomcolor';
-import { ColorPicker } from './ColorPicker';
-import { Logger } from '../../logger';
-import moment from 'moment';
-import { Box, Divider, Heading } from '@chakra-ui/react';
-import { Input } from '@chakra-ui/react';
-import { Button } from '@chakra-ui/react';
-import { Tooltip } from '@chakra-ui/react';
-import { Select } from '@chakra-ui/react';
+import { memo, useEffect, useState } from 'react';
 import { AiOutlineClose, AiOutlineSave } from 'react-icons/ai';
-import { TimelineItemEditDeleteButton } from './TimelineItemEditDeleteButton';
 import { TIME_FORMAT_SHORT } from '../../constants';
+import { Logger } from '../../logger';
+import { ColorPicker } from './ColorPicker';
+import { TimelineItemEditDeleteButton } from './TimelineItemEditDeleteButton';
 
 import { HStack, VStack } from '@chakra-ui/react';
-import { ITEM_TYPES } from '../../utils';
-import { changeColorForApp } from '../../services/appSettings.api';
-import { saveTrackItem, deleteByIds, updateTrackItemColor } from '../../services/trackItem.api';
-import { useStoreActions, useStoreState } from '../../store/easyPeasy';
+import { ITrackItem } from '../../@types/ITrackItem';
 import { TrackItemType } from '../../enum/TrackItemType';
+import { changeColorForApp } from '../../services/appSettings.api';
+import { deleteByIds, saveTrackItem, updateTrackItemColor } from '../../services/trackItem.api';
+import { useStoreActions, useStoreState } from '../../store/easyPeasy';
+import { ITEM_TYPES } from '../../utils';
 
-const COLOR_SCOPE_ONLY_THIS = 'ONLY_THIS';
+type ColorScope = 'ONLY_THIS' | 'NEW_ITEMS' | 'ALL_ITEMS';
+
+const COLOR_SCOPE_ONLY_THIS: ColorScope = 'ONLY_THIS';
 
 export const TimelineItemEdit = memo(() => {
     const selectedTimelineItem = useStoreState((state) => state.selectedTimelineItem);
     const setSelectedTimelineItem = useStoreActions((actions) => actions.setSelectedTimelineItem);
     const fetchTimerange = useStoreActions((actions) => actions.fetchTimerange);
 
-    const [state, setState] = useState<any>({
+    const [state, setState] = useState<{
+        trackItem: ITrackItem | null;
+        colorScope: ColorScope;
+    }>({
         trackItem: selectedTimelineItem,
         colorScope: COLOR_SCOPE_ONLY_THIS,
     });
@@ -34,7 +36,7 @@ export const TimelineItemEdit = memo(() => {
     const { trackItem, colorScope } = state;
 
     const deleteTimelineItem = async () => {
-        const id = trackItem.id;
+        const id = trackItem?.id;
         Logger.debug('Delete timeline trackItem', id);
 
         if (id) {
@@ -51,12 +53,17 @@ export const TimelineItemEdit = memo(() => {
 
     const saveTimelineItem = async () => {
         Logger.debug('Updating color for trackItem', trackItem, colorScope);
+        if (!trackItem) {
+            Logger.error('No trackItem');
+            return;
+        }
         try {
+            const color = trackItem.color || randomcolor();
             if (colorScope === 'ALL_ITEMS') {
-                await changeColorForApp(trackItem.app, trackItem.color);
-                await updateTrackItemColor(trackItem.app, trackItem.color);
+                await changeColorForApp(trackItem.app, color);
+                await updateTrackItemColor(trackItem.app, color);
             } else if (colorScope === 'NEW_ITEMS') {
-                await changeColorForApp(trackItem.app, trackItem.color);
+                await changeColorForApp(trackItem.app, color);
                 await saveTrackItem(trackItem);
             } else {
                 await saveTrackItem(trackItem);
@@ -83,54 +90,66 @@ export const TimelineItemEdit = memo(() => {
     const changeColorHandler = (color) => {
         Logger.debug('Changed color:', color);
 
-        setState((oldState) => ({
-            ...oldState,
-            trackItem: {
-                ...oldState.trackItem,
-                color,
-            },
-        }));
+        setState((oldState) => {
+            if (!oldState.trackItem) return oldState;
+            return {
+                ...oldState,
+                trackItem: {
+                    ...oldState.trackItem,
+                    color,
+                } as ITrackItem,
+            };
+        });
     };
 
     const changeAppName = (e) => {
-        const { value } = e.target;
+        const { value }: { value: string } = e.target;
         Logger.debug('Changed app name:', value);
 
-        setState((oldState) => ({
-            ...oldState,
-            trackItem: {
-                ...oldState.trackItem,
-                app: value,
-            },
-        }));
+        setState((oldState) => {
+            if (!oldState.trackItem) return oldState;
+            return {
+                ...oldState,
+                trackItem: {
+                    ...oldState.trackItem,
+                    app: value,
+                } as ITrackItem,
+            };
+        });
     };
 
     const changeTime = (attr) => (timeStr: string) => {
         Logger.debug('Changed app time:', timeStr);
         const [hours, minutes] = timeStr.split(':').map(Number);
-        const oldDate = moment(state.trackItem[attr]);
-        const newDate = oldDate.startOf('day').set('hours', hours).set('minutes', minutes);
+        const oldDate = DateTime.fromJSDate(new Date(state.trackItem?.[attr] || 0));
+        const newDate = oldDate.startOf('day').set({ hour: hours, minute: minutes });
 
-        setState((oldState) => ({
-            ...oldState,
-            trackItem: {
-                ...oldState.trackItem,
-                [attr]: newDate.valueOf(),
-            },
-        }));
+        setState((oldState) => {
+            if (!oldState.trackItem) return oldState;
+            return {
+                ...oldState,
+                trackItem: {
+                    ...oldState.trackItem,
+                    [attr]: newDate.toMillis(),
+                } as ITrackItem,
+            };
+        });
     };
 
     const changeAppTitle = (e) => {
         const { value } = e.target;
         Logger.debug('Changed app title:', value);
 
-        setState((oldState) => ({
-            ...oldState,
-            trackItem: {
-                ...oldState.trackItem,
-                title: value,
-            },
-        }));
+        setState((oldState) => {
+            if (!oldState.trackItem) return oldState;
+            return {
+                ...oldState,
+                trackItem: {
+                    ...oldState.trackItem,
+                    title: value,
+                } as ITrackItem,
+            };
+        });
     };
 
     const closeEdit = () => {
@@ -150,15 +169,18 @@ export const TimelineItemEdit = memo(() => {
 
     const saveBasedOnColorOptionHandler = () => {
         saveTimelineItem();
-        setState((oldState) => ({
-            ...oldState,
-            trackItem: {
-                ...oldState.trackItem,
-                app: '',
-                title: '',
-                color: randomcolor(),
-            },
-        }));
+        setState((oldState) => {
+            if (!oldState.trackItem) return oldState;
+            return {
+                ...oldState,
+                trackItem: {
+                    ...oldState.trackItem,
+                    app: '',
+                    title: '',
+                    color: randomcolor(),
+                } as ITrackItem,
+            };
+        });
     };
 
     if (!selectedTimelineItem || !trackItem) {
@@ -173,7 +195,7 @@ export const TimelineItemEdit = memo(() => {
         <Box width={600}>
             <VStack alignItems="flex-start" spacing={4}>
                 <Heading fontSize="xl" pb={2}>
-                    {ITEM_TYPES[trackItem.taskName] || 'New Task'}
+                    {ITEM_TYPES[trackItem.taskName || ''] || 'New Task'}
                 </Heading>
                 <HStack width="100%" spacing={4}>
                     <Box flex="2">
@@ -182,7 +204,7 @@ export const TimelineItemEdit = memo(() => {
                     <Box flex="1" maxWidth="120px">
                         <Input
                             type="time"
-                            value={moment(trackItem.beginDate).format(TIME_FORMAT_SHORT)}
+                            value={DateTime.fromJSDate(new Date(trackItem.beginDate)).toFormat(TIME_FORMAT_SHORT)}
                             onChange={(e) => changeTime('beginDate')(e.target.value)}
                             readOnly={readOnly}
                         />
@@ -190,7 +212,7 @@ export const TimelineItemEdit = memo(() => {
                     <Box flex="1" maxWidth="120px">
                         <Input
                             type="time"
-                            value={moment(trackItem.endDate).format(TIME_FORMAT_SHORT)}
+                            value={DateTime.fromJSDate(new Date(trackItem.endDate)).toFormat(TIME_FORMAT_SHORT)}
                             onChange={(e) => changeTime('endDate')(e.target.value)}
                             readOnly={readOnly}
                         />

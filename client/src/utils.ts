@@ -1,14 +1,14 @@
+import { formatDuration, intervalToDuration } from 'date-fns';
 import { convertDate } from './constants';
 import { TrackItemType } from './enum/TrackItemType';
-import { formatDuration, intervalToDuration } from 'date-fns';
 
-export const diffAndFormatShort = (beginDate, endDate) => {
+export const diffAndFormatShort = (beginDate: number, endDate: number) => {
     const diff = convertDate(endDate).diff(convertDate(beginDate));
-    const duration = intervalToDuration({ start: 0, end: diff });
+    const duration = intervalToDuration({ start: 0, end: diff.toMillis() });
     return formatDuration(duration);
 };
 
-export const formatDurationInternal = (dur) => {
+export const formatDurationInternal = (dur: number) => {
     const formattedDuration = formatDuration(intervalToDuration({ start: 0, end: dur }), { zero: false });
 
     return formattedDuration

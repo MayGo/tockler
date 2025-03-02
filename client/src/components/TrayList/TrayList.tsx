@@ -1,15 +1,23 @@
-import { VStack } from '@chakra-ui/react';
-import { StackDivider } from '@chakra-ui/react';
+import { StackDivider, VStack } from '@chakra-ui/react';
 import { groupBy, map, orderBy, sortBy, sumBy } from 'lodash';
 import { memo } from 'react';
 import { convertDate } from '../../constants';
 import { Loader } from '../Timeline/Loader';
 
+import { ITrackItem } from '../../@types/ITrackItem';
 import { TrayListItem } from './TrayListItem';
 
-const sumDiff = (data) => sumBy(data, (c: any) => convertDate(c.endDate).diff(convertDate(c.beginDate)));
+const sumDiff = (data: ITrackItem[]) =>
+    sumBy(data, (c: ITrackItem) => convertDate(c.endDate).diff(convertDate(c.beginDate)));
 
-const aggregateSameAppAndName = (lastLogItems, runningLogItem) => {
+export interface AggregatedTrackItem extends ITrackItem {
+    isRunning: boolean;
+    beginDate: number;
+    endDate: number;
+    totalMs: number;
+}
+
+const aggregateSameAppAndName = (lastLogItems: ITrackItem[], runningLogItem: ITrackItem | undefined) => {
     const grouped = groupBy(lastLogItems, (item) => `${item.app}_${item.title}`);
 
     const mapped = map(grouped, (items) => {
@@ -27,9 +35,21 @@ const aggregateSameAppAndName = (lastLogItems, runningLogItem) => {
     return mapped;
 };
 
-export function TrayListPlain({ lastLogItems, loading, runningLogItem, stopRunningLogItem, startNewLogItem }: any) {
+export function TrayListPlain({
+    lastLogItems,
+    loading,
+    runningLogItem,
+    stopRunningLogItem,
+    startNewLogItem,
+}: {
+    lastLogItems: ITrackItem[];
+    loading: boolean;
+    runningLogItem: ITrackItem | undefined;
+    stopRunningLogItem: () => void;
+    startNewLogItem: (item: ITrackItem) => void;
+}) {
     const aggrItems = aggregateSameAppAndName(lastLogItems, runningLogItem);
-    let items = orderBy(aggrItems, ['isRunning', 'endDate'], ['desc', 'desc']);
+    const items: AggregatedTrackItem[] = orderBy(aggrItems, ['isRunning', 'endDate'], ['desc', 'desc']);
 
     return (
         <VStack spacing={1} align="stretch" divider={<StackDivider borderColor="gray.200" />} position="relative">

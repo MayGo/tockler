@@ -1,6 +1,9 @@
+import { DateTime } from 'luxon';
+import { ITrackItem } from './ITrackItem';
+
 export interface ITimelineState {
-    AppTrackItem: any | null;
-    StatusTrackItem: any | null;
-    LogTrackItem: any | null;
-    timerange: any | null;
+    AppTrackItem: ITrackItem[] | null;
+    StatusTrackItem: ITrackItem[] | null;
+    LogTrackItem: ITrackItem[] | null;
+    timerange: DateTime[] | null;
 }
