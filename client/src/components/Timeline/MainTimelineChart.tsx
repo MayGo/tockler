@@ -13,7 +13,6 @@ import { Logger } from '../../logger';
 import { BarWithTooltip } from './BarWithTooltip';
 
 import { Box, IconButton, Tooltip } from '@chakra-ui/react';
-import useDimensions from 'react-cool-dimensions';
 import { RxZoomIn, RxZoomOut } from 'react-icons/rx';
 import { useDebouncedCallback } from 'use-debounce';
 import { ITrackItem } from '../../@types/ITrackItem';
@@ -26,6 +25,8 @@ import { BrushHandle } from './BrushHandle';
 import { BAR_WIDTH, CHART_PADDING, CHART_SCALE } from './timeline.constants';
 import { getDynamicTimeFormat } from './timeline.format.utils';
 import { getTrackItemOrderFn } from './timeline.utils';
+
+import { useMeasure } from '@uidotdev/usehooks';
 
 const domainPadding: DomainPaddingPropType = { y: 35, x: 10 };
 
@@ -46,7 +47,7 @@ const EMPTY_ARRAY: ITrackItem[] = [];
 const MIN_TIMERANGE_DURATION_MS = 5 * 60 * 1000;
 
 export const MainTimelineChart = memo(() => {
-    const { observe, width } = useDimensions();
+    const [ref, { width }] = useMeasure();
 
     const { chartTheme } = useChartThemeState();
     const popoverTriggerRef = useRef(null);
@@ -156,7 +157,7 @@ export const MainTimelineChart = memo(() => {
     };
 
     return (
-        <div ref={observe}>
+        <div ref={ref}>
             <Box
                 position="absolute"
                 top={2}
@@ -190,7 +191,7 @@ export const MainTimelineChart = memo(() => {
             <VictoryChart
                 theme={chartTheme}
                 height={100}
-                width={width}
+                width={width ?? 0}
                 domainPadding={domainPadding}
                 padding={CHART_PADDING}
                 scale={CHART_SCALE}

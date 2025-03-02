@@ -19,7 +19,7 @@ import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { rangeToDate } from '../../timeline.util';
 import { colorProp } from '../charts.utils';
 
-import useDimensions from 'react-cool-dimensions';
+import { useMeasure } from '@uidotdev/usehooks';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { clampRange } from '../PieCharts/MetricTiles.utils';
@@ -47,7 +47,7 @@ const EMPTY_ARRAY: ITrackItem[] = [];
 export const SmallTimelineChart = memo(() => {
     const { chartTheme } = useChartThemeState();
 
-    const { observe, width } = useDimensions();
+    const [ref, { width }] = useMeasure();
 
     const timerange = useStoreState((state) => state.timerange);
     const visibleTimerange = useStoreState((state) => state.visibleTimerange);
@@ -84,11 +84,11 @@ export const SmallTimelineChart = memo(() => {
     const formatTimeTick = (timestamp: number) => getDynamicTimeFormat(timestamp, timerange);
 
     return (
-        <div ref={observe}>
+        <div ref={ref}>
             <VictoryChart
                 theme={chartTheme}
                 height={50}
-                width={width}
+                width={width ?? 0}
                 domainPadding={domainPaddingBrush}
                 padding={CHART_PADDING}
                 horizontal

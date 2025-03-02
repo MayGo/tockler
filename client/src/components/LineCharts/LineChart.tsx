@@ -1,6 +1,7 @@
 import { values } from 'lodash';
 import { useContext } from 'react';
-import useDimensions from 'react-cool-dimensions';
+
+import { useMeasure } from '@uidotdev/usehooks';
 import { IoMdMoon, IoMdSunny } from 'react-icons/io';
 import {
     DomainPaddingPropType,
@@ -60,7 +61,7 @@ const getXAxisDay = (d) => convertDate(d.beginDate).startOf('day').valueOf();
 
 export const LineChart = () => {
     const { chartTheme } = useChartThemeState();
-    const { observe, width } = useDimensions();
+    const [ref, { width }] = useMeasure();
     const { onlineTimesSummary, selectedDate } = useContext(SummaryContext);
 
     const onlineTimesValues = values(onlineTimesSummary);
@@ -80,16 +81,16 @@ export const LineChart = () => {
         ticks: { stroke: 'gray', size: 5 },
     };
 
-    const isNarrow = width < 1400;
+    const isNarrow = width ? width < 1400 : false;
 
     return (
-        <div ref={observe}>
-            <BlackBox position="absolute" width={width - 34} height={770} right={0} mr="25px" />
+        <div ref={ref}>
+            <BlackBox position="absolute" width={(width ?? 0) - 34} height={770} right={0} mr="25px" />
             <VictoryChart
                 theme={chartTheme}
                 scale={scale}
                 domain={domain}
-                width={width}
+                width={width ?? 0}
                 height={800}
                 padding={padding}
                 domainPadding={domainPadding}

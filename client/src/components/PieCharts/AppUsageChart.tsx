@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { memo } from 'react';
-import useDimensions from 'react-cool-dimensions';
+
+import { useMeasure } from '@uidotdev/usehooks';
 import { VictoryBar, VictoryLabel, VictoryStack, VictoryStyleInterface } from 'victory';
 import { useStoreState } from '../../store/easyPeasy';
 import { BAR_WIDTH } from '../Timeline/timeline.constants';
@@ -15,7 +16,7 @@ import { colorProp } from '../charts.utils';
 import { getTextWidth } from './AppUsageChart.utils';
 
 export const AppUsageChart = memo(() => {
-    const { observe, width } = useDimensions();
+    const [ref, { width }] = useMeasure();
     const { chartTheme } = useChartThemeState();
     const timeItems = useStoreState((state) => state.timeItems);
     const visibleTimerange = useStoreState((state) => state.visibleTimerange);
@@ -53,8 +54,8 @@ export const AppUsageChart = memo(() => {
 
     const labelPadding = 25;
     return (
-        <div ref={observe}>
-            <VictoryStack height={BAR_WIDTH} padding={0} width={width} horizontal>
+        <div ref={ref}>
+            <VictoryStack height={BAR_WIDTH} padding={0} width={width ?? 0} horizontal>
                 {data.map((item) => (
                     <VictoryBar
                         key={item.app}
