@@ -55,6 +55,9 @@ export const barStyle = (isDark: boolean): VictoryStyleInterface => ({
 
 const EMPTY_ARRAY: ITrackItem[] = [];
 
+// Minimum timerange duration in milliseconds (5 minutes)
+const MIN_TIMERANGE_DURATION_MS = 5 * 60 * 1000;
+
 export const MainTimelineChart = memo(() => {
     const { observe, width } = useDimensions();
 
@@ -83,9 +86,12 @@ export const MainTimelineChart = memo(() => {
     const zoomIn = () => {
         if (visibleTimerange) {
             const [start, end] = visibleTimerange;
-            const midpoint = start.plus({ milliseconds: end.diff(start).milliseconds / 2 });
-            const newDuration = end.diff(start).milliseconds / 2;
+            const currentDuration = end.diff(start).milliseconds;
 
+            // Calculate the new duration, but don't go below minimum
+            const newDuration = Math.max(currentDuration / 2, MIN_TIMERANGE_DURATION_MS);
+
+            const midpoint = start.plus({ milliseconds: currentDuration / 2 });
             const newStart = midpoint.minus({ milliseconds: newDuration / 2 });
             const newEnd = midpoint.plus({ milliseconds: newDuration / 2 });
 
