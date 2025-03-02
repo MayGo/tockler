@@ -38,7 +38,7 @@ export function getOnlineStartTime(): Promise<ITrackItem> {
 }
 
 export interface SearchResultI {
-    results: Array<{ [key: string]: number }>;
+    results: Array<ITrackItem>;
     total: number;
 }
 

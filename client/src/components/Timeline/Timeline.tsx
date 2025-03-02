@@ -1,4 +1,12 @@
-import { Box, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger } from '@chakra-ui/react';
+import {
+    Box,
+    Popover,
+    PopoverArrow,
+    PopoverBody,
+    PopoverContent,
+    PopoverTrigger,
+    useColorModeValue,
+} from '@chakra-ui/react';
 import { memo, useRef } from 'react';
 import { useStoreState } from '../../store/easyPeasy';
 import { BlackBox } from '../BlackBox';
@@ -25,8 +33,13 @@ export const Timeline = memo(() => {
                     <PopoverTrigger>
                         <div ref={popoverTriggerRef} />
                     </PopoverTrigger>
-                    <PopoverContent p={4} w="fit-content" boxShadow="lg" bg="gray.50">
-                        <PopoverArrow bg="gray.50" />
+                    <PopoverContent
+                        p={4}
+                        w="fit-content"
+                        boxShadow="2xl"
+                        bg={useColorModeValue('gray.200', 'gray.700')}
+                    >
+                        <PopoverArrow bg={useColorModeValue('gray.200', 'gray.700')} />
                         <PopoverBody p={0}>
                             <TimelineItemEdit />
                         </PopoverBody>

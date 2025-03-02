@@ -81,8 +81,6 @@ export const SmallTimelineChart = memo(() => {
         x: xDomain,
     };
 
-    const formatTimeTick = (timestamp: number) => getDynamicTimeFormat(timestamp, timerange);
-
     return (
         <div ref={ref}>
             <VictoryChart
@@ -109,7 +107,11 @@ export const SmallTimelineChart = memo(() => {
                     />
                 }
             >
-                <VictoryAxis dependentAxis tickCount={20} tickFormat={formatTimeTick} />
+                <VictoryAxis
+                    dependentAxis
+                    tickCount={20}
+                    tickFormat={(timestamp: number) => getDynamicTimeFormat(timestamp, visibleTimerange)}
+                />
 
                 <VictoryBar
                     animate={false}

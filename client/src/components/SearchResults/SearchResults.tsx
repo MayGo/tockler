@@ -57,6 +57,7 @@ interface SearchResultsProps {
 }
 
 const SearchResultsPlain = ({ searchResult, fetchData, pageIndex, total }: SearchResultsProps) => {
+    console.log('searchResult....', searchResult);
     return (
         <ItemsTable
             data={searchResult.results || []}

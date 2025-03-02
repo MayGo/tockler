@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Heading, Input, Select, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Divider, Heading, Input, Select, Text, Tooltip } from '@chakra-ui/react';
 import { DateTime } from 'luxon';
 import randomcolor from 'randomcolor';
 import { memo, useEffect, useState } from 'react';
@@ -191,11 +191,13 @@ export const TimelineItemEdit = memo(() => {
     const colorChanged = selectedTimelineItem.color !== trackItem.color;
     const isCreating = !selectedTimelineItem.id;
 
+    console.log('trackItem', trackItem);
+
     return (
         <Box width={600}>
             <VStack alignItems="flex-start" spacing={4}>
                 <Heading fontSize="xl" pb={2}>
-                    {ITEM_TYPES[trackItem.taskName || ''] || 'New Task'}
+                    {trackItem.id && trackItem.taskName ? ITEM_TYPES[trackItem.taskName] : 'New Task'}
                 </Heading>
                 <HStack width="100%" spacing={4}>
                     <Box flex="2">
@@ -209,6 +211,7 @@ export const TimelineItemEdit = memo(() => {
                             readOnly={readOnly}
                         />
                     </Box>
+                    <Text fontSize="md">➜</Text>
                     <Box flex="1" maxWidth="120px">
                         <Input
                             type="time"

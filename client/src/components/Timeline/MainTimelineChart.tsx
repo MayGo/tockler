@@ -1,4 +1,4 @@
-import { memo, useMemo, useRef } from 'react';
+import { memo, useRef } from 'react';
 import {
     DomainPaddingPropType,
     VictoryAxis,
@@ -61,9 +61,7 @@ export const MainTimelineChart = memo(() => {
     const selectedTimelineItem = useStoreState((state) => state.selectedTimelineItem);
     const setSelectedTimelineItem = useStoreActions((actions) => actions.setSelectedTimelineItem);
 
-    const getDynamicTimeFormatWrapper = useMemo(() => {
-        return (timestamp: number) => getDynamicTimeFormat(timestamp, visibleTimerange);
-    }, [visibleTimerange]);
+    console.log('selectedTimelineItem....', selectedTimelineItem);
 
     const handleSelectionChanged = (item) => {
         if (item) {
@@ -118,7 +116,7 @@ export const MainTimelineChart = memo(() => {
 
             Logger.debug('EditBrush changed:', beginDate, endDate);
 
-            if (selectedTimelineItem && selectedTimelineItem.id) {
+            if (selectedTimelineItem) {
                 setSelectedTimelineItem({ ...selectedTimelineItem, beginDate, endDate });
             } else {
                 Logger.error('No item selected');
@@ -160,7 +158,7 @@ export const MainTimelineChart = memo(() => {
         <div ref={ref}>
             <Box
                 position="absolute"
-                top={2}
+                bottom={2}
                 right={2}
                 display="flex"
                 zIndex={1000}
@@ -201,7 +199,11 @@ export const MainTimelineChart = memo(() => {
                     x: [1, 3],
                 }}
             >
-                <VictoryAxis dependentAxis tickCount={20} tickFormat={getDynamicTimeFormatWrapper} />
+                <VictoryAxis
+                    dependentAxis
+                    tickCount={20}
+                    tickFormat={(timestamp: number) => getDynamicTimeFormat(timestamp, visibleTimerange)}
+                />
 
                 <VictoryBar
                     style={barStyle(chartTheme.isDark)}
