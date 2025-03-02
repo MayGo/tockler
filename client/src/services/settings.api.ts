@@ -1,7 +1,8 @@
-import { EventEmitter } from './EventEmitter';
 import { Logger } from '../logger';
+import { EventEmitter } from './EventEmitter';
 
-const { electronBridge } = window as any;
+// Use the Window interface extension from global declarations
+const { electronBridge } = window;
 const { configGet, configSet } = electronBridge;
 
 const THEME_CONFIG_KEY = 'selectedTheme';

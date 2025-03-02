@@ -1,9 +1,9 @@
 import { app } from 'electron';
-import * as path from 'path';
 import * as os from 'os';
+import * as path from 'path';
 
-import Store from 'electron-store';
 import isDevelopment from 'electron-is-dev';
+import Store from 'electron-store';
 
 let root = path.join(__dirname, '..');
 
@@ -22,8 +22,13 @@ interface StoreType {
     openAtLogin: boolean;
     isLoggingEnabled: boolean;
     isAutoUpdateEnabled: boolean;
-    windowsize: { width: number; height: number };
-    openMaximized: boolean;
+    windowsize: {
+        width: number;
+        height: number;
+        x?: number;
+        y?: number;
+    };
+    wasMaximizedOrFullScreen: boolean;
 }
 
 const persisted = new Store<StoreType>();
