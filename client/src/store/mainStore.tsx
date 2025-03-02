@@ -7,13 +7,18 @@ import { TrackItemType } from '../enum/TrackItemType';
 import { Logger } from '../logger';
 import { findAllDayItemsForEveryTrack } from '../services/trackItem.api';
 import { addToTimelineItems } from '../timeline.util';
+import { loadVisibleRange, saveVisibleRange } from '../utils';
 
 const defaultTimerange = getTodayTimerange();
-const defaultVisibleTimerange = getCenteredTimerange(
-    defaultTimerange,
-    [DateTime.now().minus({ hours: 1 }), DateTime.now().plus({ hours: 1 })],
-    DateTime.now(),
-);
+// Try to load saved visible range from localStorage, fall back to default if not found
+const savedVisibleTimerange = loadVisibleRange();
+const defaultVisibleTimerange =
+    savedVisibleTimerange ||
+    getCenteredTimerange(
+        defaultTimerange,
+        [DateTime.now().minus({ hours: 1 }), DateTime.now().plus({ hours: 1 })],
+        DateTime.now(),
+    );
 
 export const TIMERANGE_MODE_TODAY = 'TODAY';
 
@@ -76,6 +81,8 @@ const mainStore = createStore<StoreModel>({
     visibleTimerange: defaultVisibleTimerange,
     setVisibleTimerange: action((state, payload) => {
         state.visibleTimerange = payload;
+        // Save to localStorage whenever visible range changes
+        saveVisibleRange(payload);
     }),
 
     timerangeMode: TIMERANGE_MODE_TODAY,
