@@ -1,5 +1,4 @@
-import { debounce } from 'lodash';
-import { memo, useCallback, useMemo, useRef } from 'react';
+import { memo, useMemo, useRef } from 'react';
 import {
     DomainPaddingPropType,
     VictoryAxis,
@@ -16,6 +15,7 @@ import { BarWithTooltip } from './BarWithTooltip';
 import { Box, IconButton, Tooltip } from '@chakra-ui/react';
 import useDimensions from 'react-cool-dimensions';
 import { RxZoomIn, RxZoomOut } from 'react-icons/rx';
+import { useDebouncedCallback } from 'use-debounce';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
@@ -108,30 +108,22 @@ export const MainTimelineChart = memo(() => {
         }
     };
 
-    const handleEditBrush = useCallback(
-        (domain, props) => {
-            if (domain) {
-                console.info('EditBrush event received:', domain, props);
+    const handleEditBrush = useDebouncedCallback((domain, brushProps) => {
+        if (domain) {
+            console.info('EditBrush event received:', domain, brushProps);
 
-                const beginDate = convertDate(domain[0]).valueOf();
-                const endDate = convertDate(domain[1]).valueOf();
+            const beginDate = convertDate(domain[0]).valueOf();
+            const endDate = convertDate(domain[1]).valueOf();
 
-                Logger.debug('EditBrush changed:', beginDate, endDate);
+            Logger.debug('EditBrush changed:', beginDate, endDate);
 
-                if (selectedTimelineItem && selectedTimelineItem.id) {
-                    setSelectedTimelineItem({ ...selectedTimelineItem, beginDate, endDate });
-                } else {
-                    Logger.error('No item selected');
-                }
+            if (selectedTimelineItem && selectedTimelineItem.id) {
+                setSelectedTimelineItem({ ...selectedTimelineItem, beginDate, endDate });
+            } else {
+                Logger.error('No item selected');
             }
-        },
-        [selectedTimelineItem, setSelectedTimelineItem],
-    );
-
-    const handleEditBrushDebounced = useCallback(
-        debounce((domain, props) => handleEditBrush(domain, props), 200),
-        [handleEditBrush],
-    );
+        }
+    }, 200);
 
     const getTooltipLabel = (d) => {
         const diff = convertDate(d.endDate).diff(convertDate(d.beginDate));
@@ -232,10 +224,9 @@ export const MainTimelineChart = memo(() => {
                     tickValues={[3]}
                     tickFormat={['']}
                     style={axisStyle}
-                    key={`axis-${selectedTimelineItem ? selectedTimelineItem.id : 'no-item'}`}
+                    name={`brush-${selectedTimelineItem ? selectedTimelineItem.id : 'no-item'}`}
                     gridComponent={
                         <VictoryBrushLine
-                            key={`brush-${selectedTimelineItem ? selectedTimelineItem.id : 'no-item'}`}
                             disable={
                                 !selectedTimelineItem || selectedTimelineItem.taskName !== TrackItemType.LogTrackItem
                             }
@@ -246,7 +237,7 @@ export const MainTimelineChart = memo(() => {
                                 selectedTimelineItem ? selectedTimelineItem.beginDate : 0,
                                 selectedTimelineItem ? selectedTimelineItem.endDate : 0,
                             ]}
-                            onBrushDomainChange={handleEditBrushDebounced}
+                            onBrushDomainChange={handleEditBrush}
                             brushStyle={{
                                 fill: chartTheme.isDark ? '#7C3AED' : '#A78BFA',
                                 opacity: ({ active }) => (active ? 0.7 : 0.5),
@@ -265,6 +256,7 @@ export const MainTimelineChart = memo(() => {
                             }}
                             allowDrag={true}
                             allowResize={true}
+                            allowDraw={true}
                         />
                     }
                 />
