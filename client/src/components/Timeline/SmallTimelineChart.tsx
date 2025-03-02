@@ -101,7 +101,7 @@ export const SmallTimelineChart = memo(() => {
                             fill: chartTheme.isDark ? '#7C3AED' : '#7C3AED',
                             fillOpacity: 0.5,
                         }}
-                        handleComponent={<BrushHandle viewBox="-0.5 -2 8 30" />}
+                        handleComponent={<BrushHandle />}
                         onBrushDomainChange={handleBrushDebounced}
                     />
                 }

@@ -1,6 +1,6 @@
 import { debounce } from 'lodash';
 import { DateTime } from 'luxon';
-import { memo, useRef } from 'react';
+import { memo, useCallback, useRef } from 'react';
 import {
     DomainPaddingPropType,
     DomainTuple,
@@ -25,6 +25,7 @@ import { formatDurationInternal } from '../../utils';
 import { colorProp } from '../charts.utils';
 import { BrushHandle } from './BrushHandle';
 import { BAR_WIDTH, CHART_PADDING, CHART_SCALE } from './timeline.constants';
+
 const getTrackItemOrder = (type: string) => {
     if (type === TrackItemType.AppTrackItem) {
         return 1;
@@ -86,22 +87,30 @@ export const MainTimelineChart = memo(() => {
         changeVisibleTimerange(domain.y);
     };
 
-    const handleEditBrush = (domain, props) => {
-        if (domain) {
-            console.info('props', props);
+    const handleEditBrush = useCallback(
+        (domain, props) => {
+            if (domain) {
+                console.info('EditBrush event received:', domain, props);
 
-            const beginDate = convertDate(domain[0]).valueOf();
-            const endDate = convertDate(domain[1]).valueOf();
+                const beginDate = convertDate(domain[0]).valueOf();
+                const endDate = convertDate(domain[1]).valueOf();
 
-            Logger.debug('EditBrush changed:', beginDate, endDate);
+                Logger.debug('EditBrush changed:', beginDate, endDate);
 
-            if (selectedTimelineItem && selectedTimelineItem.id) {
-                setSelectedTimelineItem({ ...selectedTimelineItem, beginDate, endDate });
-            } else {
-                Logger.error('No item selected');
+                if (selectedTimelineItem && selectedTimelineItem.id) {
+                    setSelectedTimelineItem({ ...selectedTimelineItem, beginDate, endDate });
+                } else {
+                    Logger.error('No item selected');
+                }
             }
-        }
-    };
+        },
+        [selectedTimelineItem, setSelectedTimelineItem],
+    );
+
+    const handleEditBrushDebounced = useCallback(
+        debounce((domain, props) => handleEditBrush(domain, props), 200),
+        [handleEditBrush],
+    );
 
     const getTooltipLabel = (d) => {
         const diff = convertDate(d.endDate).diff(convertDate(d.beginDate));
@@ -132,8 +141,6 @@ export const MainTimelineChart = memo(() => {
         grid: { strokeWidth: 0 },
         ticks: { stroke: 'gray', size: 5 },
     };
-
-    const handleEditBrushDebounced = debounce(handleEditBrush, 300);
 
     const domain: ForAxes<DomainTuple> = {
         y: rangeToDate(timerange),
@@ -183,12 +190,15 @@ export const MainTimelineChart = memo(() => {
                     tickValues={[3]}
                     tickFormat={['']}
                     style={axisStyle}
+                    key={`axis-${selectedTimelineItem ? selectedTimelineItem.id : 'no-item'}`}
                     gridComponent={
                         <VictoryBrushLine
+                            key={`brush-${selectedTimelineItem ? selectedTimelineItem.id : 'no-item'}`}
                             disable={
                                 !selectedTimelineItem || selectedTimelineItem.taskName !== TrackItemType.LogTrackItem
                             }
                             width={BAR_WIDTH}
+                            brushWidth={BAR_WIDTH}
                             dimension="y"
                             brushDomain={[
                                 selectedTimelineItem ? selectedTimelineItem.beginDate : 0,
@@ -196,17 +206,23 @@ export const MainTimelineChart = memo(() => {
                             ]}
                             onBrushDomainChange={handleEditBrushDebounced}
                             brushStyle={{
-                                pointerEvents: 'none',
-                                stroke: chartTheme.isDark ? 'white' : 'black',
-                                fill: chartTheme.isDark ? 'white' : 'black',
-                                opacity: ({ active }) => (active ? 0.5 : 0.4),
+                                fill: chartTheme.isDark ? '#7C3AED' : '#A78BFA',
+                                opacity: ({ active }) => (active ? 0.7 : 0.5),
+                                cursor: 'move',
+                                strokeWidth: 1.5,
                             }}
-                            handleComponent={<BrushHandle viewBox="0 -2 8 30" />}
+                            handleComponent={<BrushHandle smaller={true} />}
+                            handleWidth={10}
+                            brushAreaWidth={BAR_WIDTH * 2}
                             brushAreaStyle={{
                                 stroke: 'none',
                                 fill: 'transparent',
-                                opacity: 0,
+                                opacity: 0.4,
+                                cursor: 'move',
+                                pointerEvents: 'all',
                             }}
+                            allowDrag={true}
+                            allowResize={true}
                         />
                     }
                 />
