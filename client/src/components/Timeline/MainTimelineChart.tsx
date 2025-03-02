@@ -1,4 +1,4 @@
-import { memo, useMemo, useRef } from 'react';
+import { memo, useRef } from 'react';
 import {
     DomainPaddingPropType,
     VictoryAxis,
@@ -62,10 +62,6 @@ export const MainTimelineChart = memo(() => {
     const setSelectedTimelineItem = useStoreActions((actions) => actions.setSelectedTimelineItem);
 
     console.log('selectedTimelineItem....', selectedTimelineItem);
-
-    const getDynamicTimeFormatWrapper = useMemo(() => {
-        return (timestamp: number) => getDynamicTimeFormat(timestamp, visibleTimerange);
-    }, [visibleTimerange]);
 
     const handleSelectionChanged = (item) => {
         if (item) {
@@ -203,7 +199,11 @@ export const MainTimelineChart = memo(() => {
                     x: [1, 3],
                 }}
             >
-                <VictoryAxis dependentAxis tickCount={20} tickFormat={getDynamicTimeFormatWrapper} />
+                <VictoryAxis
+                    dependentAxis
+                    tickCount={20}
+                    tickFormat={(timestamp: number) => getDynamicTimeFormat(timestamp, visibleTimerange)}
+                />
 
                 <VictoryBar
                     style={barStyle(chartTheme.isDark)}

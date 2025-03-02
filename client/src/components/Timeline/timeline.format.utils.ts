@@ -25,7 +25,7 @@ export const getDynamicTimeFormat = (timestamp: number, visibleTimerange?: DateT
     // Adjust format based on zoom level
     if (rangeDuration > 24 * 60 * 60 * 1000) {
         // More than 24 hours - show date and time
-        return dateTime.setLocale(locale).toLocaleString(DateTime.DATE_FULL);
+        return dateTime.setLocale(locale).toLocaleString({ ...DateTime.DATE_MED_WITH_WEEKDAY, year: undefined });
     } else if (rangeDuration > 60 * 60 * 1000) {
         // More than 1 hour - show hours and minutes
         return dateTime.setLocale(locale).toLocaleString(DateTime.TIME_SIMPLE);
