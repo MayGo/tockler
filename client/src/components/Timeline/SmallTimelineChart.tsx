@@ -25,6 +25,7 @@ import { TrackItemType } from '../../enum/TrackItemType';
 import { clampRange } from '../PieCharts/MetricTiles.utils';
 import { BrushHandle } from './BrushHandle';
 import { CHART_PADDING, CHART_SCALE } from './timeline.constants';
+import { getDynamicTimeFormat } from './timeline.format.utils';
 import { getTrackItemOrderFn } from './timeline.utils';
 
 const domainPaddingBrush: DomainPaddingPropType = { y: 35, x: 5 };
@@ -80,6 +81,8 @@ export const SmallTimelineChart = memo(() => {
         x: xDomain,
     };
 
+    const formatTimeTick = (timestamp: number) => getDynamicTimeFormat(timestamp, timerange);
+
     return (
         <div ref={observe}>
             <VictoryChart
@@ -106,7 +109,7 @@ export const SmallTimelineChart = memo(() => {
                     />
                 }
             >
-                <VictoryAxis dependentAxis tickCount={20} />
+                <VictoryAxis dependentAxis tickCount={20} tickFormat={formatTimeTick} />
 
                 <VictoryBar
                     animate={false}

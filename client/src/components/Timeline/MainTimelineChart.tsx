@@ -1,5 +1,5 @@
 import { debounce } from 'lodash';
-import { memo, useCallback, useRef } from 'react';
+import { memo, useCallback, useMemo, useRef } from 'react';
 import {
     DomainPaddingPropType,
     VictoryAxis,
@@ -24,21 +24,8 @@ import { formatDurationInternal } from '../../utils';
 import { colorProp } from '../charts.utils';
 import { BrushHandle } from './BrushHandle';
 import { BAR_WIDTH, CHART_PADDING, CHART_SCALE } from './timeline.constants';
-
-const getTrackItemOrder = (type: string) => {
-    if (type === TrackItemType.AppTrackItem) {
-        return 1;
-    }
-    if (type === TrackItemType.StatusTrackItem) {
-        return 2;
-    }
-    if (type === TrackItemType.LogTrackItem) {
-        return 3;
-    }
-    return 0;
-};
-
-const getTrackItemOrderFn = (d) => getTrackItemOrder(d.taskName);
+import { getDynamicTimeFormat } from './timeline.format.utils';
+import { getTrackItemOrderFn } from './timeline.utils';
 
 const domainPadding: DomainPaddingPropType = { y: 35, x: 10 };
 
@@ -72,6 +59,10 @@ export const MainTimelineChart = memo(() => {
 
     const selectedTimelineItem = useStoreState((state) => state.selectedTimelineItem);
     const setSelectedTimelineItem = useStoreActions((actions) => actions.setSelectedTimelineItem);
+
+    const getDynamicTimeFormatWrapper = useMemo(() => {
+        return (timestamp: number) => getDynamicTimeFormat(timestamp, visibleTimerange);
+    }, [visibleTimerange]);
 
     const handleSelectionChanged = (item) => {
         if (item) {
@@ -217,7 +208,7 @@ export const MainTimelineChart = memo(() => {
                     x: [1, 3],
                 }}
             >
-                <VictoryAxis dependentAxis tickCount={20} />
+                <VictoryAxis dependentAxis tickCount={20} tickFormat={getDynamicTimeFormatWrapper} />
 
                 <VictoryBar
                     style={barStyle(chartTheme.isDark)}
