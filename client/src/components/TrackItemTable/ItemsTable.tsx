@@ -223,10 +223,7 @@ export const ItemsTable = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchData, sortBy, manualSortBy]);
 
-    const subTotal = useMemo(() => calculateTotal(data), [data]);
-
-    console.log('data....', data);
-    console.log('selectedRowIds....', selectedRowIds);
+    const subTotal = calculateTotal(data);
 
     return (
         <>

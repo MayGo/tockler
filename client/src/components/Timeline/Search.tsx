@@ -18,8 +18,8 @@ export const Search = memo(() => {
 
     const timerangeMode = useStoreState((state) => state.timerangeMode);
     const liveView = useStoreState((state) => state.liveView);
-    const loadTimerange = useStoreActions((actions) => actions.loadTimerange);
     const setLiveView = useStoreActions((actions) => actions.setLiveView);
+    const loadTimerange = useStoreActions((actions) => actions.loadTimerange);
 
     const showLiveViewButton = timerangeMode === TIMERANGE_MODE_TODAY;
     const toggleLiveView = () => {
