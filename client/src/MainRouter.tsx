@@ -1,19 +1,18 @@
-import { useEffect, useCallback } from 'react';
-import { Route, Routes } from 'react-router-dom';
-import { RootProvider } from './RootContext';
-import { MainAppPage } from './routes/MainAppPage';
-import { TrayAppPage } from './routes/TrayAppPage';
-import moment from 'moment';
-import 'moment/locale/en-gb';
-import { EventEmitter } from './services/EventEmitter';
-import { Logger } from './logger';
-import { ChartThemeProvider } from './routes/ChartThemeProvider';
-import { useGoogleAnalytics } from './useGoogleAnalytics';
 import { useColorMode } from '@chakra-ui/react';
-import { TrayPage } from './routes/TrayPage';
+import { Settings } from 'luxon';
+import { useCallback, useEffect } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import { Logger } from './logger';
+import { RootProvider } from './RootContext';
+import { ChartThemeProvider } from './routes/ChartThemeProvider';
+import { MainAppPage } from './routes/MainAppPage';
 import { NotificationAppPage } from './routes/NotificationAppPage';
+import { TrayAppPage } from './routes/TrayAppPage';
+import { TrayPage } from './routes/TrayPage';
+import { EventEmitter } from './services/EventEmitter';
+import { useGoogleAnalytics } from './useGoogleAnalytics';
 
-moment.locale('en-gb');
+Settings.defaultLocale = 'en-GB';
 
 export function MainRouter() {
     useGoogleAnalytics();
@@ -33,7 +32,7 @@ export function MainRouter() {
             Logger.debug('Clearing eventEmitter');
             EventEmitter.off('activeThemeChanged', changeActiveTheme);
         };
-    }, [changeActiveTheme]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [changeActiveTheme]);
 
     return (
         <ChartThemeProvider>

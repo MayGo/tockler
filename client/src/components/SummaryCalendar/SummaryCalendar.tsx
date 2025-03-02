@@ -1,18 +1,17 @@
-import moment from 'moment';
+import { Box, Flex, Text, useColorModeValue, VStack } from '@chakra-ui/react';
+import { DateTime } from 'luxon';
 import { useContext, useEffect } from 'react';
+import { IoMdMoon, IoMdSunny } from 'react-icons/io';
+import { useNavigate } from 'react-router-dom';
 import { SummaryContext } from '../../SummaryContext';
-import { Logger } from '../../logger';
-import { convertDate, TIME_FORMAT_SHORT } from '../../constants';
 import { CALENDAR_MODE, DAY_MONTH_FORMAT } from '../../SummaryContext.util';
+import { convertDate, TIME_FORMAT_SHORT } from '../../constants';
+import { Logger } from '../../logger';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
-import { Box, Flex, VStack } from '@chakra-ui/react';
-import { IoMdSunny, IoMdMoon } from 'react-icons/io';
+import { formatDurationInternal } from '../../utils';
 import { Calendar } from '../Datepicker/Calendar';
-import { Text, useColorModeValue } from '@chakra-ui/react';
 import { Loader } from '../Timeline/Loader';
 import { ItemIcon } from './ItemIcon';
-import { useNavigate } from 'react-router-dom';
-import { formatDurationInternal } from '../../utils';
 
 const icons = {
     wakeTime: (
@@ -65,36 +64,34 @@ export const SummaryCalendar = () => {
 
     const navigate = useNavigate();
 
-    const onDateClicked = (date: any) => {
+    const onDateClicked = (date: DateTime) => {
         if (!date) {
             Logger.error('No date');
             return;
         }
 
-        const d = moment(date);
-        loadTimerange([d.clone().startOf('day'), d.clone().endOf('day')]);
-
+        loadTimerange([date.startOf('day'), date.endOf('day')]);
         navigate('/timeline');
     };
 
     useEffect(() => {
-        setSelectedDate(timerange[0].clone());
+        setSelectedDate(timerange[0]);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const getListData = (day) => {
-        const listData: any[] = [];
+    const getListData = (day: string) => {
+        const listData: Array<{ type: string; time: string; title: string }> = [];
 
         const times = onlineTimesSummary[day];
         if (times) {
             listData.push({
                 type: 'wakeTime',
-                time: convertDate(times.beginDate).format(TIME_FORMAT_SHORT),
+                time: convertDate(times.beginDate).toFormat(TIME_FORMAT_SHORT),
                 title: `Wake time`,
             });
             listData.push({
                 type: 'sleepTime',
-                time: convertDate(times.endDate).format(TIME_FORMAT_SHORT),
+                time: convertDate(times.endDate).toFormat(TIME_FORMAT_SHORT),
                 title: `Sleep time`,
             });
         }
@@ -111,15 +108,15 @@ export const SummaryCalendar = () => {
         return listData || [];
     };
 
-    const dateCellRender = (value) => {
+    const dateCellRender = (value: DateTime) => {
         if (selectedMode === CALENDAR_MODE.MONTH) {
-            if (value.month() === selectedDate.month()) {
-                const listData = getListData(value.format(DAY_MONTH_FORMAT));
+            if (value.month === selectedDate.month) {
+                const listData = getListData(value.toFormat(DAY_MONTH_FORMAT));
                 return <DayContent listData={listData} />;
             }
             return null;
         } else if (selectedMode === CALENDAR_MODE.YEAR) {
-            const listData = getListData(value.month());
+            const listData = getListData(value.month.toString());
             return <DayContent listData={listData} />;
         } else {
             Logger.error('Unknown mode for calendar');
@@ -137,7 +134,7 @@ export const SummaryCalendar = () => {
                 setSelectedDate={setSelectedDate}
                 selectedMode={selectedMode}
                 setSelectedMode={setSelectedMode}
-                focusedDate={timerange[0].toDate()}
+                focusedDate={timerange[0].toJSDate()}
             />
         </>
     );

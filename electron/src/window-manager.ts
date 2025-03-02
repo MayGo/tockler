@@ -1,13 +1,13 @@
-import { menubar } from 'menubar';
-import MenuBuilder from './menu-builder';
-import { throttle } from 'lodash';
-import { app, ipcMain, BrowserWindow, dialog, shell, Tray } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, shell, Tray } from 'electron';
+import positioner from 'electron-traywindow-positioner';
 import { autoUpdater } from 'electron-updater';
+import { throttle } from 'lodash';
+import { menubar } from 'menubar';
+import path, { join } from 'path';
 import { config, getTrayIcon } from './config';
 import { logManager } from './log-manager';
-import path, { join } from 'path';
+import MenuBuilder from './menu-builder';
 import { settingsService } from './services/settings-service';
-import positioner from 'electron-traywindow-positioner';
 
 let logger = logManager.getLogger('WindowManager');
 
@@ -18,6 +18,14 @@ const devUrl = `http://127.0.0.1:3000`;
 const prodUrl = `file://${path.join(__dirname, 'index.html')}`;
 
 const pageUrl = config.isDev ? devUrl : prodUrl;
+
+// Define window bounds interface
+interface WindowBounds {
+    width: number;
+    height: number;
+    x?: number;
+    y?: number;
+}
 
 export const sendToTrayWindow = (key: string, message = '') => {
     if (WindowManager.menubar.window && !WindowManager.menubar.window.webContents.isDestroyed()) {
@@ -90,11 +98,55 @@ export default class WindowManager {
     static createMainWindow() {
         logger.debug('Creating main window.');
         logger.debug('Preload script path:', preloadScript);
-        const windowSize = config.persisted.get('windowsize') || { width: 1080, height: 720 };
 
+        const hasWindowSize = config.persisted.has('windowsize');
+        const windowSize = (config.persisted.get('windowsize') as WindowBounds) || { width: 1080, height: 720 };
+        const wasMaximizedOrFullScreen = (config.persisted.get('wasMaximizedOrFullScreen') as boolean) || false;
+
+        logger.debug('Restoring window size:', windowSize);
+        logger.debug('Previous window was maximized or full screen:', wasMaximizedOrFullScreen);
+
+        // Ensure window is created with valid dimensions
+        // Check if we have a reasonable window size (sometimes can be corrupted)
+        if (windowSize.width < 100 || windowSize.height < 100) {
+            logger.debug('Window size is too small, using default size');
+            windowSize.width = 1080;
+            windowSize.height = 720;
+        }
+
+        // Check if the saved position is on a visible screen
+        let isPositionValid = false;
+        if (windowSize.x !== undefined && windowSize.y !== undefined) {
+            try {
+                const { screen } = require('electron');
+                const displays = screen.getAllDisplays();
+                for (const display of displays) {
+                    // Check if the window is at least partially visible on this display
+                    const { x, y, width, height } = display.bounds;
+                    if (
+                        windowSize.x < x + width &&
+                        windowSize.x + windowSize.width > x &&
+                        windowSize.y < y + height &&
+                        windowSize.y + windowSize.height > y
+                    ) {
+                        isPositionValid = true;
+                        break;
+                    }
+                }
+            } catch (e) {
+                logger.error('Error checking display bounds', e);
+                isPositionValid = false;
+            }
+        }
+
+        // Create window with saved dimensions
         this.mainWindow = new BrowserWindow({
             width: windowSize.width,
             height: windowSize.height,
+            // Only set x & y if they are defined in saved configuration and valid
+            ...(windowSize.x !== undefined && windowSize.y !== undefined && isPositionValid
+                ? { x: windowSize.x, y: windowSize.y }
+                : {}),
             show: true,
             webPreferences: {
                 zoomFactor: 1.0,
@@ -109,11 +161,17 @@ export default class WindowManager {
         this.mainWindow.webContents.on('did-fail-load', (_event, errorCode, errorDescription) => {
             logger.error('Failed to load:', errorCode, errorDescription);
         });
+
+        // Return information about window state for setMainWindow to use
+        return { hasWindowSize, wasMaximizedOrFullScreen };
     }
 
     static setMainWindow(showOnLoad = true) {
-        WindowManager.createMainWindow();
-        const openMaximized = config.persisted.get('openMaximized') || false;
+        const { hasWindowSize, wasMaximizedOrFullScreen } = WindowManager.createMainWindow();
+
+        // Determine if window should be maximized based on previous state
+        // If it's a first run (no window size) or the window was previously maximized
+        const shouldMaximize = !hasWindowSize || wasMaximizedOrFullScreen;
 
         if (app.dock && showOnLoad) {
             logger.debug('Show dock window.');
@@ -123,10 +181,6 @@ export default class WindowManager {
         if (!this.mainWindow) {
             logger.error('MainWindow not created');
             return;
-        }
-
-        if (openMaximized && showOnLoad) {
-            this.mainWindow.maximize();
         }
 
         this.mainWindow.loadURL(pageUrl);
@@ -147,6 +201,21 @@ export default class WindowManager {
             if (showOnLoad) {
                 if (this.mainWindow) {
                     this.mainWindow.show();
+                    if (shouldMaximize) {
+                        // Set a small delay to ensure the window is visible before maximizing
+                        setTimeout(() => {
+                            if (this.mainWindow) {
+                                if (!hasWindowSize) {
+                                    logger.debug('Opening window maximized (no saved size)');
+                                } else {
+                                    logger.debug('Restoring maximized state');
+                                }
+
+                                this.mainWindow.maximize();
+                                // Never use full screen mode, only maximize
+                            }
+                        }, 200);
+                    }
                     this.mainWindow.focus();
                 } else {
                     logger.error('MainWindow not created');
@@ -154,8 +223,48 @@ export default class WindowManager {
             }
         });
 
+        // Add more events to ensure window size is saved
+        this.mainWindow.on('maximize', () => {
+            logger.debug('Window maximized');
+            // Save current state before maximizing
+            WindowManager.storeWindowSize();
+        });
+
+        this.mainWindow.on('unmaximize', () => {
+            logger.debug('Window unmaximized');
+            // Save the restored size
+            WindowManager.storeWindowSize();
+        });
+
+        this.mainWindow.on('enter-full-screen', () => {
+            logger.debug('Window entered full screen');
+            // Save current state before going full screen
+            WindowManager.storeWindowSize();
+        });
+
+        this.mainWindow.on('leave-full-screen', () => {
+            logger.debug('Window left full screen');
+            // When leaving full screen, check if we should maximize
+            const wasMaximized = config.persisted.get('wasMaximizedOrFullScreen') as boolean;
+            if (wasMaximized && this.mainWindow) {
+                setTimeout(() => {
+                    if (this.mainWindow) {
+                        logger.debug('Restoring maximized state after leaving full screen');
+                        this.mainWindow.maximize();
+                    }
+                }, 200);
+            }
+            // Save the restored size
+            WindowManager.storeWindowSize();
+        });
+
+        // Always save window size right before closing
         this.mainWindow.on('close', () => {
             if (this.mainWindow) {
+                logger.debug('Window closing, saving final size');
+                // Always try to save the window size - storeWindowSize will now handle different states
+                WindowManager.storeWindowSize();
+
                 logger.debug('Closing window');
                 this.mainWindow = null;
             }
@@ -164,15 +273,19 @@ export default class WindowManager {
                 app.dock.hide();
             }
         });
-        //   this.mainWindow.webContents.on('new-window', openUrlInExternalWindow);
 
-        this.mainWindow.on('resize', throttle(WindowManager.storeWindowSize, 500));
+        // Also save on other events that might change window state
+        // Reduce throttle time to be more responsive
+        this.mainWindow.on('resize', throttle(WindowManager.storeWindowSize, 300));
+        this.mainWindow.on('move', throttle(WindowManager.storeWindowSize, 300));
+
         WindowManager.initMenus();
     }
 
     public static openMainWindow() {
         if (!WindowManager.mainWindow) {
             WindowManager.setMainWindow();
+            return; // setMainWindow will handle maximizing if needed
         }
 
         if (!WindowManager.mainWindow) {
@@ -225,9 +338,25 @@ export default class WindowManager {
                 return;
             }
 
-            config.persisted.set('windowsize', this.mainWindow.getBounds());
+            // Get the complete window bounds including position and size
+            const bounds = this.mainWindow.getBounds() as WindowBounds;
+
+            // Always store the current bounds regardless of window state
+            logger.debug('Saving window bounds:', bounds);
+            config.persisted.set('windowsize', bounds);
+
+            // Also save the maximized state
+            const isMaximized = this.mainWindow.isMaximized();
+            logger.debug(`Window state - maximized: ${isMaximized}`);
+
+            // Store a flag indicating if the window was maximized
+            config.persisted.set('wasMaximizedOrFullScreen', isMaximized);
+
+            // Verify the config was actually saved
+            const savedBounds = config.persisted.get('windowsize');
+            logger.debug('Verified saved bounds:', savedBounds);
         } catch (e) {
-            logger.error('Error saving', e);
+            logger.error('Error saving window bounds', e);
         }
     }
 

@@ -1,9 +1,8 @@
+import { Button, Tooltip } from '@chakra-ui/react';
 import randomcolor from 'randomcolor';
 import { memo } from 'react';
-import { useStoreActions, useStoreState } from '../../store/easyPeasy';
-import { Button } from '@chakra-ui/react';
-import { Tooltip } from '@chakra-ui/react';
 import { TrackItemType } from '../../enum/TrackItemType';
+import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 
 export const NewLogButton = memo(() => {
     const visibleTimerange = useStoreState((state) => state.visibleTimerange);
@@ -19,6 +18,7 @@ export const NewLogButton = memo(() => {
             color: randomcolor(),
             beginDate: selectedTimelineItem?.beginDate || visibleTimerange[0].valueOf(),
             endDate: selectedTimelineItem?.endDate || visibleTimerange[1].valueOf(),
+            id: 0,
         });
     };
 

@@ -1,21 +1,20 @@
 import { Box, SimpleGrid, useStyles } from '@chakra-ui/react';
-
-import { useDatepickerContext } from './context/DatepickerContext';
-import moment, { Moment } from 'moment';
+import { DateTime } from 'luxon';
 import { MonthBox } from './components/MonthBox';
+import { useDatepickerContext } from './context/DatepickerContext';
 
 export interface YearProps {
     year: number;
-    dateCellRender: any;
-    onDateClicked: any;
+    dateCellRender: (date: DateTime) => React.ReactNode;
+    onDateClicked: (date: DateTime) => void;
 }
 
 export const CalendarYear = ({ dateCellRender, onDateClicked }: YearProps) => {
     const styles = useStyles();
     const { monthLabelFormat } = useDatepickerContext();
 
-    const months = Array.apply(0, Array(12)).map(function (_, i) {
-        return moment().month(i);
+    const months = Array.from({ length: 12 }, (_, i) => {
+        return DateTime.now().set({ month: i + 1 });
     });
 
     return (
@@ -23,11 +22,11 @@ export const CalendarYear = ({ dateCellRender, onDateClicked }: YearProps) => {
             <Box __css={styles.separator} />
             <Box __css={styles.grid}>
                 <SimpleGrid rowGap="1px" columnGap="1px" columns={7}>
-                    {months.map((month: Moment) => (
+                    {months.map((month: DateTime) => (
                         <MonthBox
-                            date={month.toDate()}
-                            key={month.month()}
-                            month={monthLabelFormat(month.toDate())}
+                            date={month.toJSDate()}
+                            key={month.month}
+                            month={monthLabelFormat(month.toJSDate())}
                             onDateClicked={onDateClicked}
                         >
                             {dateCellRender(month)}

@@ -1,17 +1,18 @@
 import _ from 'lodash';
 
-import { useStoreState } from '../store/easyPeasy';
-import { filterItems } from './Timeline/timeline.utils';
-import { sumAppObject } from './PieCharts/MetricTiles.utils';
 import { Box, HStack, Text } from '@chakra-ui/react';
+import { useStoreState } from '../store/easyPeasy';
+import { sumAppObject } from './PieCharts/MetricTiles.utils';
+import { filterItems } from './Timeline/timeline.utils';
 
+import { TrackItemType } from '../enum/TrackItemType';
 import { shortTime } from '../time.util';
 
 export const TaskList = () => {
     const timeItems = useStoreState((state) => state.timeItems);
     const timerange = useStoreState((state) => state.timerange);
 
-    const logItems = filterItems(timeItems.logItems, timerange);
+    const logItems = filterItems(timeItems[TrackItemType.LogTrackItem] || [], timerange);
 
     const groupByField = 'app';
 

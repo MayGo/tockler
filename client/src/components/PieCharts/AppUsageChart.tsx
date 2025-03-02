@@ -1,25 +1,27 @@
-import { memo } from 'react';
-import { filterItems } from '../Timeline/timeline.utils';
 import _ from 'lodash';
+import { memo } from 'react';
+
+import { useMeasure } from '@uidotdev/usehooks';
+import { VictoryBar, VictoryLabel, VictoryStack, VictoryStyleInterface } from 'victory';
 import { useStoreState } from '../../store/easyPeasy';
-import { VictoryBar, VictoryLabel, VictoryStack } from 'victory';
-import useDimensions from 'react-cool-dimensions';
 import { BAR_WIDTH } from '../Timeline/timeline.constants';
+import { filterItems } from '../Timeline/timeline.utils';
 import { sumAppObject } from './MetricTiles.utils';
 
+import { TrackItemType } from '../../enum/TrackItemType';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
+import { formatDurationInternal } from '../../utils';
 import { BarWithTooltip } from '../Timeline/BarWithTooltip';
 import { colorProp } from '../charts.utils';
 import { getTextWidth } from './AppUsageChart.utils';
-import { formatDurationInternal } from '../../utils';
 
 export const AppUsageChart = memo(() => {
-    const { observe, width } = useDimensions();
+    const [ref, { width }] = useMeasure();
     const { chartTheme } = useChartThemeState();
     const timeItems = useStoreState((state) => state.timeItems);
     const visibleTimerange = useStoreState((state) => state.visibleTimerange);
 
-    const appItems = filterItems(timeItems.appItems, visibleTimerange);
+    const appItems = filterItems(timeItems[TrackItemType.AppTrackItem] || [], visibleTimerange);
 
     const groupByField = 'app';
 
@@ -41,7 +43,7 @@ export const AppUsageChart = memo(() => {
         return `${datum[groupByField]}\r\n${formatDurationInternal(datum.timeDiffInMs)}`;
     };
 
-    const style: any = {
+    const style: VictoryStyleInterface = {
         data: {
             fill: colorProp,
             stroke: colorProp,
@@ -52,8 +54,8 @@ export const AppUsageChart = memo(() => {
 
     const labelPadding = 25;
     return (
-        <div ref={observe}>
-            <VictoryStack height={BAR_WIDTH} padding={0} width={width} horizontal>
+        <div ref={ref}>
+            <VictoryStack height={BAR_WIDTH} padding={0} width={width ?? 0} horizontal>
                 {data.map((item) => (
                     <VictoryBar
                         key={item.app}
@@ -77,10 +79,13 @@ export const AppUsageChart = memo(() => {
 
                                     const timeDiff = datum._y1 - datum._y0;
 
-                                    // @ts-ignore
-                                    const width = scale?.y ? scale.y(timeDiff) : 0;
+                                    const width =
+                                        typeof scale === 'object' && typeof scale.y === 'function'
+                                            ? scale.y(timeDiff)
+                                            : 0;
+
                                     const canFit = textWidth + labelPadding * 2 < width;
-                                    // @ts-ignore
+
                                     return canFit ? text : '';
                                 }}
                                 dx={-labelPadding}

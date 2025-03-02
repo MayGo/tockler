@@ -1,10 +1,10 @@
 import _ from 'lodash';
-import { VictoryContainer, VictoryPie } from 'victory';
+import { VictoryContainer, VictoryPie, VictoryStyleInterface } from 'victory';
 import { convertDate } from '../../constants';
-import { PieLabel } from './PieLabel';
-import { colorProp } from '../charts.utils';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
 import { formatDurationInternal } from '../../utils';
+import { colorProp } from '../charts.utils';
+import { PieLabel } from './PieLabel';
 
 const sumApp = (p, c) => {
     return _.extend(p, {
@@ -29,7 +29,7 @@ export const PieChart = ({ items, taskName, width }) => {
         })
         .valueOf();
 
-    const style: any = {
+    const style: VictoryStyleInterface = {
         data: {
             fill: colorProp,
             stroke: colorProp,

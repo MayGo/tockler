@@ -1,9 +1,10 @@
 import { IconButton, Tooltip } from '@chakra-ui/react';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import { memo } from 'react';
 import { AiOutlineUnorderedList } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 
+import { SearchResultI } from '../../services/trackItem.api';
 import { useStoreActions } from '../../store/easyPeasy';
 import { ItemsTable } from '../TrackItemTable/ItemsTable';
 
@@ -16,10 +17,11 @@ const ActionCell = ({ cell }) => {
     const navigate = useNavigate();
 
     const goToTimelinePage = (record) => {
-        loadTimerange([moment(record.beginDate).startOf('day'), moment(record.beginDate).endOf('day')]);
+        const beginDateTime = DateTime.fromMillis(record.beginDate);
+        loadTimerange([beginDateTime.startOf('day'), beginDateTime.endOf('day')]);
         setVisibleTimerange([
-            moment(record.beginDate).subtract(15, 'minutes'),
-            moment(record.endDate).add(15, 'minutes'),
+            DateTime.fromMillis(record.beginDate).minus({ minutes: 15 }),
+            DateTime.fromMillis(record.endDate).plus({ minutes: 15 }),
         ]);
         navigate('/timeline');
     };
@@ -47,7 +49,14 @@ const extraColumns = [
     },
 ];
 
-const SearchResultsPlain = ({ searchResult, fetchData, pageIndex, total }) => {
+interface SearchResultsProps {
+    searchResult: SearchResultI;
+    fetchData: (params: { pageSize: number; pageIndex: number; sortBy: { id: string; desc: boolean }[] }) => void;
+    pageIndex: number;
+    total: number;
+}
+
+const SearchResultsPlain = ({ searchResult, fetchData, pageIndex, total }: SearchResultsProps) => {
     return (
         <ItemsTable
             data={searchResult.results || []}

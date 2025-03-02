@@ -1,17 +1,14 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { searchFromItems, exportFromItems } from '../services/trackItem.api';
-import moment from 'moment';
-import { TrackItemType } from '../enum/TrackItemType';
-import { SearchResults } from '../components/SearchResults/SearchResults';
+import { DateTime } from 'luxon';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { SearchOptions } from '../components/SearchResults/SearchOptions';
+import { SearchResults } from '../components/SearchResults/SearchResults';
+import { TrackItemType } from '../enum/TrackItemType';
+import { exportFromItems, searchFromItems, SearchResultI } from '../services/trackItem.api';
 
-import { Box, Flex } from '@chakra-ui/react';
-import { Input } from '@chakra-ui/react';
-import { Button } from '@chakra-ui/react';
-import { Loader } from '../components/Timeline/Loader';
+import { Box, Button, Flex, HStack, Input } from '@chakra-ui/react';
 import { CardBox } from '../components/CardBox';
+import { Loader } from '../components/Timeline/Loader';
 import { TypeSelect } from '../components/TypeSelect';
-import { HStack } from '@chakra-ui/react';
 
 export function SearchPage() {
     const fetchIdRef = useRef(0);
@@ -21,9 +18,12 @@ export function SearchPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [searchPaging, setSearchPaging] = useState({ pageSize: 20, pageIndex: 0 });
 
-    const [searchResult, setSearchResult] = useState([]);
+    const [searchResult, setSearchResult] = useState<SearchResultI>({ results: [], total: 0 });
     const [total, setTotal] = useState(0);
-    const [timerange, setTimerange] = useState([moment().startOf('day').subtract(10, 'days'), moment().endOf('day')]);
+    const [timerange, setTimerange] = useState([
+        DateTime.now().startOf('day').minus({ days: 10 }),
+        DateTime.now().endOf('day'),
+    ]);
 
     const loadItems = async (searchStr: string) => {
         const fetchId = ++fetchIdRef.current;
@@ -37,6 +37,7 @@ export function SearchPage() {
             paging: searchPaging,
         });
 
+        // When sumTotal is true, the API returns a different format
         const sum = await searchFromItems({
             from,
             to,
@@ -52,7 +53,7 @@ export function SearchPage() {
         // Only update the data if this is the latest fetch
         if (fetchId === fetchIdRef.current) {
             setSearchResult(items);
-            setTotal(sum.results.length > 0 ? sum.results[0][sumColumn] : 0);
+            setTotal(sum.results?.length > 0 ? sum.results[0][sumColumn] : 0);
             console.info('searching with paging', searchPaging, timerange, items);
         }
 
@@ -61,18 +62,28 @@ export function SearchPage() {
         return;
     };
 
-    const fetchData = useCallback(({ pageSize, pageIndex, sortBy }) => {
-        const pageProps = { pageSize, pageIndex };
-        if (sortBy && sortBy.length > 0) {
-            const [sort] = sortBy;
+    const fetchData = useCallback(
+        ({
+            pageSize,
+            pageIndex,
+            sortBy,
+        }: {
+            pageSize: number;
+            pageIndex: number;
+            sortBy: { id: string; desc: boolean }[];
+        }) => {
+            const pageProps = { pageSize, pageIndex };
+            if (sortBy && sortBy.length > 0) {
+                const [sort] = sortBy;
 
-            pageProps['sortByKey'] = sort.id;
-            pageProps['sortByOrder'] = sort.desc ? 'desc' : 'asc';
-        }
+                pageProps['sortByKey'] = sort.id;
+                pageProps['sortByOrder'] = sort.desc ? 'desc' : 'asc';
+            }
 
-        setSearchPaging(pageProps);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+            setSearchPaging(pageProps);
+        },
+        [],
+    );
 
     const exportItems = async (searchStr) => {
         setIsLoading(true);

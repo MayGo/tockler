@@ -1,15 +1,13 @@
-import moment from 'moment';
-import { useState } from 'react';
-import { Logger } from '../../logger';
-import { Box, Flex } from '@chakra-ui/react';
-import { Button } from '@chakra-ui/react';
-import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
+import { Box, Button, Flex, HStack, Text, useColorModeValue } from '@chakra-ui/react';
 import { OnDatesChangeProps } from '@datepicker-react/hooks';
+import { DateTime } from 'luxon';
+import { useState } from 'react';
+import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
+import { Logger } from '../../logger';
 import { DateRangeInput } from '../Datepicker';
-import { HStack, Text, useColorModeValue } from '@chakra-ui/react';
 
-const getDayBefore = (d) => moment(d).subtract(1, 'days');
-const getDayAfter = (d) => moment(d).add(1, 'days');
+const getDayBefore = (d: DateTime) => d.minus({ days: 1 });
+const getDayAfter = (d: DateTime) => d.plus({ days: 1 });
 
 enum RANGE_OPTIONS {
     WEEK,
@@ -23,24 +21,24 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
     const [localRange, setLocalRange] = useState(RANGE_OPTIONS.WEEK);
 
     const selectRange = (range) => {
-        const beginDate = moment().startOf('day');
-        const endDate = moment().endOf('day');
+        const beginDate = DateTime.now().startOf('day');
+        const endDate = DateTime.now().endOf('day');
 
         if (range === RANGE_OPTIONS.WEEK) {
-            beginDate.subtract(7, 'days');
+            beginDate.minus({ days: 7 });
         }
 
         if (range === RANGE_OPTIONS.MONTH) {
-            beginDate.subtract(1, 'month');
+            beginDate.minus({ months: 1 });
         }
         if (range === RANGE_OPTIONS.MONTHS_3) {
-            beginDate.subtract(3, 'month');
+            beginDate.minus({ months: 3 });
         }
         if (range === RANGE_OPTIONS.YEAR) {
-            beginDate.subtract(1, 'year');
+            beginDate.minus({ years: 1 });
         }
         if (range === RANGE_OPTIONS.YEARS_3) {
-            beginDate.subtract(3, 'year');
+            beginDate.minus({ years: 3 });
         }
         setTimerange([beginDate, endDate]);
 
@@ -48,14 +46,14 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
     };
 
     const goBackOneDay = () => {
-        const beginDate = getDayBefore(moment(timerange[0]));
-        const endDate = getDayBefore(moment(timerange[1]));
+        const beginDate = getDayBefore(timerange[0]);
+        const endDate = getDayBefore(timerange[1]);
         setTimerange([beginDate, endDate]);
     };
 
     const goForwardOneDay = () => {
-        const beginDate = getDayAfter(moment(timerange[0]));
-        const endDate = getDayAfter(moment(timerange[1]));
+        const beginDate = getDayAfter(timerange[0]);
+        const endDate = getDayAfter(timerange[1]);
         setTimerange([beginDate, endDate]);
     };
 
@@ -65,7 +63,10 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
         Logger.debug('TIMERANGE:', data);
 
         const { startDate, endDate } = data;
-        const newTimerange = [moment(startDate).startOf('day'), moment(endDate).endOf('day')];
+        if (!startDate || !endDate) {
+            return;
+        }
+        const newTimerange = [DateTime.fromJSDate(startDate).startOf('day'), DateTime.fromJSDate(endDate).endOf('day')];
 
         setTimerange(newTimerange);
     };
@@ -80,8 +81,8 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
                 </Button>
 
                 <DateRangeInput
-                    startDate={timerange[0].toDate()}
-                    endDate={timerange[1].toDate()}
+                    startDate={timerange[0].toJSDate()}
+                    endDate={timerange[1].toJSDate()}
                     onDatesChange={handleOnDatesChange}
                 />
 

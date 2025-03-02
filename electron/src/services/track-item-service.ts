@@ -1,13 +1,13 @@
-import { logManager } from '../log-manager';
-import { settingsService } from './settings-service';
-import { State } from '../enums/state';
-import { stateManager } from '../state-manager';
-import { TrackItem } from '../models/TrackItem';
+import { stringify } from 'csv-stringify/sync';
 import { dialog } from 'electron';
 import { writeFileSync } from 'fs';
-import { stringify } from 'csv-stringify/sync';
 import moment from 'moment';
 import { raw } from 'objection';
+import { State } from '../enums/state';
+import { logManager } from '../log-manager';
+import { TrackItem } from '../models/TrackItem';
+import { stateManager } from '../state-manager';
+import { settingsService } from './settings-service';
 
 export class TrackItemService {
     logger = logManager.getLogger('TrackItemService');
@@ -143,7 +143,10 @@ export class TrackItemService {
         let currentStatusItem = stateManager.getCurrentStatusTrackItem();
 
         if (currentStatusItem && currentStatusItem.app !== State.Online) {
-            throw new Error('Not online 2.');
+            // Instead of throwing an error, return the last online item
+            // This allows log task items to be properly processed when status changes
+            // from online to offline/idle
+            this.logger.debug('Current status is not online, searching for last online item');
         }
 
         const query = TrackItem.query()
@@ -151,7 +154,7 @@ export class TrackItemService {
             .where('taskName', 'StatusTrackItem')
             .orderBy('endDate', 'desc');
 
-        if (currentStatusItem) {
+        if (currentStatusItem && currentStatusItem.app === State.Online) {
             //  this.logger.debug('Find by excluding currentStatus item id:', currentStatusItem.toJSON());
             query.whereNot('id', currentStatusItem.id);
         }

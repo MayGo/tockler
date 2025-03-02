@@ -1,6 +1,6 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 // @ts-expect-error - no TS types yet for beta test.
 import PluginObject from 'babel-plugin-react-compiler';
 

@@ -1,20 +1,33 @@
-import { FormControl, FormLabel } from '@chakra-ui/react';
-import { Text } from '@chakra-ui/react';
-import { Switch } from '@chakra-ui/react';
+import { FormControl, FormLabel, Switch, Text } from '@chakra-ui/react';
+import { ChangeEvent } from 'react';
 
 import {
-    getOpenAtLogin,
     getIsAutoUpdateEnabled,
-    saveOpenAtLogin,
-    saveIsAutoUpdateEnabled,
     getIsLoggingEnabled,
-    saveIsLoggingEnabled,
     getNativeThemeChange,
-    saveNativeThemeChange,
+    getOpenAtLogin,
     getUsePurpleTrayIcon,
+    saveIsAutoUpdateEnabled,
+    saveIsLoggingEnabled,
+    saveNativeThemeChange,
+    saveOpenAtLogin,
     saveUsePurpleTrayIcon,
 } from '../../services/settings.api';
 import { CardBox } from '../CardBox';
+
+// Define type for electron bridge
+interface ElectronBridge {
+    platform: string;
+    configGet: (key: string) => unknown;
+    configSet: (key: string, value: unknown) => void;
+}
+
+// Extend Window interface to include electronBridge
+declare global {
+    interface Window {
+        electronBridge: ElectronBridge;
+    }
+}
 
 export const AppForm = () => {
     const isNativeThemeEnabled = getNativeThemeChange();
@@ -23,25 +36,25 @@ export const AppForm = () => {
     const isLoggingEnabled = getIsLoggingEnabled();
     const usePurpleTrayIcon = getUsePurpleTrayIcon();
 
-    const onChangeNativeThemeChange = (event) => {
+    const onChangeNativeThemeChange = (event: ChangeEvent<HTMLInputElement>) => {
         saveNativeThemeChange(event.target.checked);
     };
-    const onChangeOpenAtLogin = (event) => {
+    const onChangeOpenAtLogin = (event: ChangeEvent<HTMLInputElement>) => {
         saveOpenAtLogin(event.target.checked);
     };
 
-    const onChangeAutoUpdate = (event) => {
+    const onChangeAutoUpdate = (event: ChangeEvent<HTMLInputElement>) => {
         saveIsAutoUpdateEnabled(event.target.checked);
     };
-    const onChangeLogging = (event) => {
+    const onChangeLogging = (event: ChangeEvent<HTMLInputElement>) => {
         saveIsLoggingEnabled(event.target.checked);
     };
-    const onChangeUsePurpleTrayIcon = (event) => {
+    const onChangeUsePurpleTrayIcon = (event: ChangeEvent<HTMLInputElement>) => {
         saveUsePurpleTrayIcon(event.target.checked);
     };
 
     const appName = import.meta.env.VITE_NAME;
-    const platform = (window as any).electronBridge.platform;
+    const platform = window.electronBridge.platform;
 
     const linuxPath = `~/.config/${appName}/logs/main.log`;
     const macOSPath = `~/Library/Logs/${appName}/main.log`;

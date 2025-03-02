@@ -3,21 +3,22 @@
 import { useEffect, useMemo } from 'react';
 import { diffAndFormatShort, formatDurationInternal } from '../../utils';
 
-import { Box, Flex } from '@chakra-ui/react';
-import { Button } from '@chakra-ui/react';
-import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
-import { useTable, useSortBy, usePagination, useFilters, useRowSelect } from 'react-table';
+import { Box, Button, Flex, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { useFilters, usePagination, useRowSelect, useSortBy, useTable } from 'react-table';
 
-import { calculateTotal, fuzzyTextFilterFn } from './TrackItemTable.utils';
-import { SelectColumnFilter } from './SelectColumnFilter';
+import { Portal } from '@chakra-ui/react';
+import { DATE_TIME_FORMAT } from '../../constants';
 import { DefaultColumnFilter } from './DefaultColumnFilter';
 import { IndeterminateCheckbox } from './IndeterminateCheckbox';
-import { Portal } from '@chakra-ui/react';
+import { OverflowTextCell } from './OverflowText';
+import { SelectColumnFilter } from './SelectColumnFilter';
+import { calculateTotal, fuzzyTextFilterFn } from './TrackItemTable.utils';
 import { TrackItemTableButtons } from './TrackItemTableButtons';
 import { TrackItemTablePager } from './TrackItemTablePager';
-import { OverflowTextCell } from './OverflowText';
 
+import { format } from 'date-fns';
+import { TIME_FORMAT } from '../../constants';
 interface ItemsTableProps {
     data: any[];
     resetButtonsRef?: any;
@@ -41,9 +42,10 @@ export const ItemsTable = ({
     extraColumns = [],
     total,
     manualSortBy = false,
+    isOneDay,
 }: ItemsTableProps) => {
     const dateToValue = ({ value }) => {
-        return value;
+        return format(value, isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT);
     };
 
     const defaultColumn = useMemo(

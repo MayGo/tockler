@@ -1,21 +1,21 @@
-import { useEffect, useState, useCallback, memo } from 'react';
-import { TrayLayout } from '../components/TrayLayout/TrayLayout';
-import { TrayList } from '../components/TrayList/TrayList';
-import { EventEmitter } from '../services/EventEmitter';
-import { getRunningLogItem } from '../services/settings.api';
-import { startNewLogItem, findFirstLogItems, stopRunningLogItem } from '../services/trackItem.api';
-import { Logger } from '../logger';
-import { useWindowFocused } from '../hooks/windowFocusedHook';
-import { throttle } from 'lodash';
+import { Box, Divider } from '@chakra-ui/react';
 import deepEqual from 'fast-deep-equal/es6';
-import { Box } from '@chakra-ui/react';
-import { Divider } from '@chakra-ui/react';
+import { throttle } from 'lodash';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { ITrackItem } from '../@types/ITrackItem';
 import { OnlineChart } from '../components/TrayLayout/OnlineChart';
-import { useStoreActions, useStoreState } from '../store/easyPeasy';
+import { TrayLayout } from '../components/TrayLayout/TrayLayout';
+import { TrayList } from '../components/TrayList/TrayList';
+import { TrackItemType } from '../enum/TrackItemType';
 import { useInterval } from '../hooks/intervalHook';
-import { TrayItemEdit } from './tray/TrayItemEdit';
+import { useWindowFocused } from '../hooks/windowFocusedHook';
+import { Logger } from '../logger';
+import { EventEmitter } from '../services/EventEmitter';
+import { getRunningLogItem } from '../services/settings.api';
+import { findFirstLogItems, startNewLogItem, stopRunningLogItem } from '../services/trackItem.api';
+import { useStoreActions, useStoreState } from '../store/easyPeasy';
 import { sendOpenTrayEvent } from '../useGoogleAnalytics.utils';
+import { TrayItemEdit } from './tray/TrayItemEdit';
 
 const EMPTY_ARRAY = [];
 const BG_SYNC_DELAY_MS = 10000;
@@ -34,7 +34,7 @@ const TrayAppPageTemp = () => {
 
     const [loading, setLoading] = useState(true);
 
-    const [runningLogItem, setRunningLogItem] = useState<any>();
+    const [runningLogItem, setRunningLogItem] = useState<ITrackItem>();
     const [lastLogItems, setLastLogItems] = useState<ITrackItem[]>(EMPTY_ARRAY);
 
     const { windowIsActive } = useWindowFocused();
@@ -64,7 +64,6 @@ const TrayAppPageTemp = () => {
 
             sendOpenTrayEvent();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [windowIsActive]);
 
     useEffect(() => {
@@ -80,7 +79,6 @@ const TrayAppPageTemp = () => {
         return () => {
             EventEmitter.off('log-item-started', eventLogItemStarted);
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -92,7 +90,7 @@ const TrayAppPageTemp = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const startNewLogItemEvent = useCallback((trackItem: any) => {
+    const startNewLogItemEvent = useCallback((trackItem: ITrackItem) => {
         startNewLogItem(trackItem);
         loadLastLogItemsThrottled();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -103,7 +101,7 @@ const TrayAppPageTemp = () => {
             if (runningLogItem) {
                 stopRunningLogItem(runningLogItem.id);
                 loadLastLogItemsThrottled();
-                setRunningLogItem(null);
+                setRunningLogItem(undefined);
             } else {
                 Logger.error('No running log trackItem to stop');
             }
@@ -113,14 +111,13 @@ const TrayAppPageTemp = () => {
     );
 
     const timeItems = useStoreState((state) => state.timeItems);
-    const { statusItems } = timeItems;
     return (
         <TrayLayout>
             <Box p={4}>
                 <TrayItemEdit saveTimelineItem={startNewLogItem} />
             </Box>
             <Box px={4} pb={4}>
-                <OnlineChart items={statusItems} />
+                <OnlineChart items={timeItems[TrackItemType.StatusTrackItem] || EMPTY_ARRAY} />
             </Box>
             <Divider borderColor="gray.200" />
             <TrayList

@@ -1,29 +1,30 @@
-import { createStore, Action, action, Thunk, thunk, thunkOn, ThunkOn } from 'easy-peasy';
-import moment, { Moment } from 'moment';
-import { ITrackItem } from '../@types/ITrackItem';
-import { getTodayTimerange, getCenteredTimerange, setDayFromTimerange } from '../components/Timeline/timeline.utils';
+import { Action, action, createStore, Thunk, thunk, thunkOn, ThunkOn } from 'easy-peasy';
+import { DateTime } from 'luxon';
+import { ITimelineState } from '../@types/ITimelineState';
+import { SelectedTrackItem } from '../@types/ITrackItem';
+import { getCenteredTimerange, getTodayTimerange, setDayFromTimerange } from '../components/Timeline/timeline.utils';
+import { TrackItemType } from '../enum/TrackItemType';
 import { Logger } from '../logger';
 import { findAllDayItemsForEveryTrack } from '../services/trackItem.api';
 import { addToTimelineItems } from '../timeline.util';
-
-const emptyTimeItems = {
-    appItems: [],
-    logItems: [],
-    statusItems: [],
-};
+import { loadVisibleRange, saveVisibleRange } from '../utils';
 
 const defaultTimerange = getTodayTimerange();
-const defaultVisibleTimerange = getCenteredTimerange(
-    defaultTimerange,
-    [moment().subtract(1, 'hour'), moment().add(1, 'hour')],
-    moment(),
-);
+// Try to load saved visible range from localStorage, fall back to default if not found
+const savedVisibleTimerange = loadVisibleRange();
+const defaultVisibleTimerange =
+    savedVisibleTimerange ||
+    getCenteredTimerange(
+        defaultTimerange,
+        [DateTime.now().minus({ hours: 1 }), DateTime.now().plus({ hours: 1 })],
+        DateTime.now(),
+    );
 
 export const TIMERANGE_MODE_TODAY = 'TODAY';
 
 export interface StoreModel {
-    selectedTimelineItem: null | ITrackItem;
-    setSelectedTimelineItem: Action<StoreModel, ITrackItem | null>;
+    selectedTimelineItem: null | SelectedTrackItem;
+    setSelectedTimelineItem: Action<StoreModel, SelectedTrackItem | null>;
 
     liveView: boolean;
     setLiveView: Action<StoreModel, boolean>;
@@ -31,28 +32,28 @@ export interface StoreModel {
     isLoading: boolean;
     setIsLoading: Action<StoreModel, boolean>;
 
-    timerange: Moment[];
-    setTimerange: Action<StoreModel, Moment[]>;
+    timerange: DateTime[];
+    setTimerange: Action<StoreModel, DateTime[]>;
 
-    visibleTimerange: Moment[];
-    setVisibleTimerange: Action<StoreModel, Moment[]>;
+    visibleTimerange: DateTime[];
+    setVisibleTimerange: Action<StoreModel, DateTime[]>;
 
     timerangeMode: string | null;
     setTimerangeMode: Action<StoreModel, string | null>;
 
-    lastRequestTime: Moment;
-    setLastRequestTime: Action<StoreModel, Moment>;
+    lastRequestTime: DateTime;
+    setLastRequestTime: Action<StoreModel, DateTime>;
 
-    timeItems: any;
-    setTimeItems: Action<StoreModel, any>;
+    timeItems: ITimelineState;
+    setTimeItems: Action<StoreModel, ITimelineState>;
 
     onSetTimerange: ThunkOn<StoreModel>;
 
     fetchTimerange: Thunk<StoreModel>;
 
-    loadTimerange: Thunk<StoreModel, Moment[]>;
+    loadTimerange: Thunk<StoreModel, DateTime[]>;
 
-    bgSync: Thunk<StoreModel, Moment>;
+    bgSync: Thunk<StoreModel, DateTime>;
     bgSyncInterval: Thunk<StoreModel>;
 }
 
@@ -80,6 +81,8 @@ const mainStore = createStore<StoreModel>({
     visibleTimerange: defaultVisibleTimerange,
     setVisibleTimerange: action((state, payload) => {
         state.visibleTimerange = payload;
+        // Save to localStorage whenever visible range changes
+        saveVisibleRange(payload);
     }),
 
     timerangeMode: TIMERANGE_MODE_TODAY,
@@ -87,12 +90,17 @@ const mainStore = createStore<StoreModel>({
         state.timerangeMode = payload;
     }),
 
-    lastRequestTime: moment(),
+    lastRequestTime: DateTime.now(),
     setLastRequestTime: action((state, payload) => {
         state.lastRequestTime = payload;
     }),
 
-    timeItems: emptyTimeItems,
+    timeItems: {
+        [TrackItemType.AppTrackItem]: [],
+        [TrackItemType.StatusTrackItem]: [],
+        [TrackItemType.LogTrackItem]: [],
+        timerange: null,
+    },
     setTimeItems: action((state, payload) => {
         state.timeItems = payload;
     }),
@@ -110,13 +118,20 @@ const mainStore = createStore<StoreModel>({
         actions.setIsLoading(true);
         const { appItems, statusItems, logItems } = await findAllDayItemsForEveryTrack(timerange[0], timerange[1]);
 
-        actions.setTimeItems({ appItems, statusItems, logItems });
+        const updatedTimeItems = {
+            [TrackItemType.AppTrackItem]: appItems,
+            [TrackItemType.StatusTrackItem]: statusItems,
+            [TrackItemType.LogTrackItem]: logItems,
+            timerange: null,
+        };
+
+        actions.setTimeItems(updatedTimeItems);
         actions.setVisibleTimerange(setDayFromTimerange(visibleTimerange, timerange));
         actions.setIsLoading(false);
     }),
     loadTimerange: thunk(async (actions, range) => {
         let mode;
-        if (moment().isBetween(range[0], range[1])) {
+        if (DateTime.now() >= range[0] && DateTime.now() <= range[1]) {
             mode = TIMERANGE_MODE_TODAY;
         }
         Logger.debug('loadTimerange:', JSON.stringify(range));
@@ -129,22 +144,28 @@ const mainStore = createStore<StoreModel>({
         const { timeItems } = getState();
         const { appItems, statusItems, logItems } = await findAllDayItemsForEveryTrack(
             requestFrom,
-            moment(requestFrom).add(1, 'days'),
+            requestFrom.plus({ days: 1 }),
         );
         Logger.debug('Returned updated items:', appItems);
 
-        actions.setTimeItems(addToTimelineItems(timeItems, { appItems, statusItems, logItems }));
+        const payload = {
+            appItems,
+            statusItems,
+            logItems,
+        };
+
+        actions.setTimeItems(addToTimelineItems(timeItems, payload));
     }),
     bgSyncInterval: thunk(async (actions, _, { getState }) => {
         const { isLoading, timerange, visibleTimerange, timerangeMode, lastRequestTime, liveView } = getState();
         if (!isLoading) {
             if (timerangeMode === TIMERANGE_MODE_TODAY && liveView) {
                 actions.bgSync(lastRequestTime);
-                actions.setLastRequestTime(moment());
+                actions.setLastRequestTime(DateTime.now());
 
                 actions.setVisibleTimerange(getCenteredTimerange(timerange, visibleTimerange, lastRequestTime));
 
-                if (lastRequestTime.day() !== timerange[1].day()) {
+                if (lastRequestTime.day !== timerange[1].day) {
                     Logger.debug('Day changed. Setting today as timerange.');
                     actions.setTimerange(getTodayTimerange());
                 }

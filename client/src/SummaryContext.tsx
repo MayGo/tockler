@@ -1,30 +1,56 @@
-import moment from 'moment';
-import { createContext, useState, useCallback, useEffect } from 'react';
-import { findAllDayItemsForEveryTrack } from './services/trackItem.api';
-import { summariseLog, summariseOnline, summariseTimeOnline } from './components/SummaryCalendar/SummaryCalendar.util';
+import { DateTime } from 'luxon';
+import { createContext, useCallback, useEffect, useState } from 'react';
+import {
+    ISummary,
+    ISummaryOnlineTime,
+    summariseLog,
+    summariseOnline,
+    summariseTimeOnline,
+} from './components/SummaryCalendar/SummaryCalendar.util';
 import { Logger } from './logger';
+import { findAllDayItemsForEveryTrack } from './services/trackItem.api';
 import { CALENDAR_MODE } from './SummaryContext.util';
 
-export const SummaryContext = createContext<any>({});
+interface SummaryContextType {
+    selectedDate: DateTime;
+    setSelectedDate: (date: DateTime) => void;
+    selectedMode: CALENDAR_MODE;
+    setSelectedMode: (mode: CALENDAR_MODE) => void;
+    logSummary: ISummary;
+    onlineSummary: ISummary;
+    onlineTimesSummary: ISummaryOnlineTime;
+    isLoading: boolean;
+}
 
-export const SummaryProvider = ({ children }) => {
-    const [isLoading, setIsLoading] = useState<any>(false);
-    const [selectedDate, setSelectedDate] = useState<any>(moment());
+export const SummaryContext = createContext<SummaryContextType>({
+    selectedDate: DateTime.now(),
+    setSelectedDate: () => {},
+    selectedMode: CALENDAR_MODE.MONTH,
+    setSelectedMode: () => {},
+    logSummary: {},
+    onlineSummary: {},
+    onlineTimesSummary: {},
+    isLoading: false,
+});
+
+export const SummaryProvider = ({ children }: { children: React.ReactNode }) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(DateTime.now());
     const [selectedMode, setSelectedMode] = useState<CALENDAR_MODE>(CALENDAR_MODE.MONTH);
 
-    const [logSummary, setLogSummary] = useState<any>([]);
-    const [onlineSummary, setOnlineSummary] = useState<any>([]);
-    const [onlineTimesSummary, setOnlineTimesSummary] = useState<any>([]);
+    const [logSummary, setLogSummary] = useState<ISummary>({});
+    const [onlineSummary, setOnlineSummary] = useState<ISummary>({});
+    const [onlineTimesSummary, setOnlineTimesSummary] = useState<ISummaryOnlineTime>({});
 
     const loadData = useCallback(async () => {
         setIsLoading(true);
         try {
             // TODO, query month +1 day for sleep time
-            const beginDate = moment.utc(selectedDate).startOf(selectedMode);
-            const endDate = moment.utc(selectedDate).endOf(selectedMode);
+            const beginDate = selectedDate.startOf(selectedMode.toLowerCase() as 'month' | 'week' | 'day');
+            let endDate = selectedDate.endOf(selectedMode.toLowerCase() as 'month' | 'week' | 'day');
 
             if (selectedMode === CALENDAR_MODE.MONTH) {
-                endDate.add(1, 'day');
+                endDate = endDate.plus({ days: 1 });
             }
 
             const { statusItems, logItems } = await findAllDayItemsForEveryTrack(beginDate, endDate);
@@ -32,7 +58,7 @@ export const SummaryProvider = ({ children }) => {
             setOnlineSummary(summariseOnline(statusItems, selectedMode));
             setOnlineTimesSummary(summariseTimeOnline(statusItems, selectedMode, beginDate));
         } catch (e) {
-            Logger.error('Errod loading summary data.', e);
+            Logger.error('Error loading summary data.', e);
         } finally {
             setIsLoading(false);
         }

@@ -1,15 +1,15 @@
 import { Box, Flex, SimpleGrid, useStyles } from '@chakra-ui/react';
 import { CalendarDay as DatepickerCalendarDay, useMonth } from '@datepicker-react/hooks';
+import { DateTime } from 'luxon';
 
-import { useDatepickerContext } from './context/DatepickerContext';
 import { DayBox } from './components/DayBox';
-import moment from 'moment';
+import { useDatepickerContext } from './context/DatepickerContext';
 
 export interface MonthProps {
     year: number;
     month: number;
-    dateCellRender: any;
-    onDateClicked: any;
+    dateCellRender: (date: DateTime) => React.ReactNode;
+    onDateClicked: (date: DateTime) => void;
 }
 
 export const CalendarMonth = ({ year, month, dateCellRender, onDateClicked }: MonthProps) => {
@@ -44,7 +44,7 @@ export const CalendarMonth = ({ year, month, dateCellRender, onDateClicked }: Mo
                                 day={day.dayLabel}
                                 onDateClicked={onDateClicked}
                             >
-                                {dateCellRender(moment(day.date))}
+                                {dateCellRender(DateTime.fromJSDate(day.date))}
                             </DayBox>
                         ) : (
                             <Box key={index} __css={styles.emptyDay} />

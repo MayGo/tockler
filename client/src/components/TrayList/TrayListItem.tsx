@@ -1,21 +1,38 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, HStack, IconButton, Text } from '@chakra-ui/react';
 import { memo } from 'react';
-import { HStack, IconButton } from '@chakra-ui/react';
-import { convertDate, DATE_TIME_FORMAT } from '../../constants';
 import { FaPlay, FaStop } from 'react-icons/fa';
+import { convertDate, DATE_TIME_FORMAT } from '../../constants';
 import { shortTime } from '../../time.util';
 import { OverflowText } from '../TrackItemTable/OverflowText';
 import { ShortTimeInterval } from './ShortTimeInterval';
+import { AggregatedTrackItem } from './TrayList';
 
-const formatDate = (date) => convertDate(date).format(DATE_TIME_FORMAT);
+const formatDate = (date: number) => convertDate(date).toFormat(DATE_TIME_FORMAT);
 
-const FormattedTime = ({ beginDate, endDate, isRunning }: any) => {
+const FormattedTime = ({
+    beginDate,
+    endDate,
+    isRunning,
+}: {
+    beginDate: number;
+    endDate: number;
+    isRunning: boolean;
+}) => {
+    console.log('FormattedTime', beginDate, endDate, isRunning);
     const full = isRunning ? `${formatDate(beginDate)}` : `${formatDate(beginDate)} - ${formatDate(endDate)}`;
 
     return <span>{full}</span>;
 };
 
-export function TrayListItemPlain({ item, startNewLogItemFromOld, stopRunningLogItem }: any) {
+export function TrayListItemPlain({
+    item,
+    startNewLogItemFromOld,
+    stopRunningLogItem,
+}: {
+    item: AggregatedTrackItem;
+    startNewLogItemFromOld: (item: AggregatedTrackItem) => void;
+    stopRunningLogItem: () => void;
+}) {
     const { isRunning, totalMs, title, app, color } = item;
     return (
         <Box p={4}>
