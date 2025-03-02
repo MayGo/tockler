@@ -18,7 +18,6 @@ const FormattedTime = ({
     endDate: number;
     isRunning: boolean;
 }) => {
-    console.log('FormattedTime', beginDate, endDate, isRunning);
     const full = isRunning ? `${formatDate(beginDate)}` : `${formatDate(beginDate)} - ${formatDate(endDate)}`;
 
     return <span>{full}</span>;

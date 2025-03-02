@@ -5,7 +5,17 @@ import { diffAndFormatShort, formatDurationInternal } from '../../utils';
 
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import { useFilters, usePagination, useRowSelect, useSortBy, useTable } from 'react-table';
+import {
+    Column,
+    FilterTypes,
+    Row,
+    SortingRule,
+    useFilters,
+    usePagination,
+    useRowSelect,
+    useSortBy,
+    useTable,
+} from 'react-table';
 
 import { Portal } from '@chakra-ui/react';
 import { DATE_TIME_FORMAT } from '../../constants';
@@ -18,16 +28,18 @@ import { TrackItemTableButtons } from './TrackItemTableButtons';
 import { TrackItemTablePager } from './TrackItemTablePager';
 
 import { format } from 'date-fns';
+import { ITrackItem } from '../../@types/ITrackItem';
 import { TIME_FORMAT } from '../../constants';
+
 interface ItemsTableProps {
-    data: any[];
-    resetButtonsRef?: any;
+    data: ITrackItem[];
+    resetButtonsRef?: React.RefObject<HTMLDivElement>;
     isOneDay: boolean;
     isSearchTable: boolean;
     pageCount?: number;
     pageIndex?: number;
-    fetchData?: any;
-    extraColumns?: any[];
+    fetchData?: (options: { pageIndex: number; pageSize: number; sortBy: SortingRule<ITrackItem>[] }) => void;
+    extraColumns?: Column<ITrackItem>[];
     total: number;
     manualSortBy: boolean;
 }
@@ -44,7 +56,7 @@ export const ItemsTable = ({
     manualSortBy = false,
     isOneDay,
 }: ItemsTableProps) => {
-    const dateToValue = ({ value }) => {
+    const dateToValue = ({ value }: { value: number }) => {
         return format(value, isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT);
     };
 
@@ -56,7 +68,7 @@ export const ItemsTable = ({
         [],
     );
 
-    const columns = useMemo(
+    const columns = useMemo<Column<ITrackItem>[]>(
         () => [
             {
                 Header: 'App',
@@ -102,7 +114,7 @@ export const ItemsTable = ({
             {
                 Header: 'Duration',
                 disableSortBy: manualSortBy,
-                accessor: (record) => diffAndFormatShort(record.beginDate, record.endDate),
+                accessor: (record: ITrackItem) => diffAndFormatShort(record.beginDate, record.endDate),
                 width: 80,
                 minWidth: 80,
                 maxWidth: 80,
@@ -113,13 +125,13 @@ export const ItemsTable = ({
         [],
     );
 
-    const filterTypes = useMemo(
+    const filterTypes = useMemo<FilterTypes<ITrackItem>>(
         () => ({
             // Add a new fuzzyTextFilterFn filter type.
             fuzzyText: fuzzyTextFilterFn,
             // Or, override the default text filter to use
             // "startWith"
-            text: (rows, id, filterValue) => {
+            text: (rows: Row<ITrackItem>[], id: string, filterValue: string) => {
                 return rows.filter((row) => {
                     const rowValue = row.values[id];
                     return rowValue !== undefined
@@ -158,7 +170,7 @@ export const ItemsTable = ({
         setSortBy,
         selectedFlatRows,
         state: { pageIndex, pageSize, selectedRowIds, sortBy },
-    } = useTable(
+    } = useTable<ITrackItem>(
         {
             columns,
             defaultColumn,
@@ -199,19 +211,22 @@ export const ItemsTable = ({
     useEffect(() => {
         if (isSearchTable) {
             console.info('Change paging', { pageIndex, pageSize, sortBy });
-            fetchData({ pageIndex, pageSize, sortBy });
+            fetchData?.({ pageIndex, pageSize, sortBy });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pageIndex, pageSize]);
 
     useEffect(() => {
         if (manualSortBy) {
-            fetchData({ pageIndex, pageSize, sortBy });
+            fetchData?.({ pageIndex, pageSize, sortBy });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchData, sortBy, manualSortBy]);
 
     const subTotal = useMemo(() => calculateTotal(data), [data]);
+
+    console.log('data....', data);
+    console.log('selectedRowIds....', selectedRowIds);
 
     return (
         <>

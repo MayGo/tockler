@@ -18,7 +18,6 @@ export const NewLogButton = memo(() => {
             color: randomcolor(),
             beginDate: selectedTimelineItem?.beginDate || visibleTimerange[0].valueOf(),
             endDate: selectedTimelineItem?.endDate || visibleTimerange[1].valueOf(),
-            id: 0,
         });
     };
 

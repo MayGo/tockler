@@ -61,6 +61,8 @@ export const MainTimelineChart = memo(() => {
     const selectedTimelineItem = useStoreState((state) => state.selectedTimelineItem);
     const setSelectedTimelineItem = useStoreActions((actions) => actions.setSelectedTimelineItem);
 
+    console.log('selectedTimelineItem....', selectedTimelineItem);
+
     const getDynamicTimeFormatWrapper = useMemo(() => {
         return (timestamp: number) => getDynamicTimeFormat(timestamp, visibleTimerange);
     }, [visibleTimerange]);
