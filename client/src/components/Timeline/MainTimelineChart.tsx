@@ -1,10 +1,7 @@
 import { debounce } from 'lodash';
-import { DateTime } from 'luxon';
 import { memo, useCallback, useRef } from 'react';
 import {
     DomainPaddingPropType,
-    DomainTuple,
-    ForAxes,
     VictoryAxis,
     VictoryBar,
     VictoryBrushLine,
@@ -16,7 +13,9 @@ import { TrackItemType } from '../../enum/TrackItemType';
 import { Logger } from '../../logger';
 import { BarWithTooltip } from './BarWithTooltip';
 
+import { Box, IconButton, Tooltip } from '@chakra-ui/react';
 import useDimensions from 'react-cool-dimensions';
+import { RxZoomIn, RxZoomOut } from 'react-icons/rx';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
@@ -50,6 +49,7 @@ export const barStyle = (isDark: boolean): VictoryStyleInterface => ({
         stroke: isDark ? 'black' : 'white',
         strokeWidth: 0.5,
         fillOpacity: 1,
+        clipPath: 'none',
     },
 });
 
@@ -79,12 +79,36 @@ export const MainTimelineChart = memo(() => {
         }
     };
 
-    const changeVisibleTimerange = (range) => {
-        setVisibleTimerange([DateTime.fromMillis(range[0]), DateTime.fromMillis(range[1])]);
+    // Zoom handlers for manual zoom buttons
+    const zoomIn = () => {
+        if (visibleTimerange) {
+            const [start, end] = visibleTimerange;
+            const midpoint = start.plus({ milliseconds: end.diff(start).milliseconds / 2 });
+            const newDuration = end.diff(start).milliseconds / 2;
+
+            const newStart = midpoint.minus({ milliseconds: newDuration / 2 });
+            const newEnd = midpoint.plus({ milliseconds: newDuration / 2 });
+
+            setVisibleTimerange([newStart, newEnd]);
+        }
     };
 
-    const handleZoom = (domain) => {
-        changeVisibleTimerange(domain.y);
+    const zoomOut = () => {
+        if (visibleTimerange && timerange) {
+            const [start, end] = visibleTimerange;
+            const midpoint = start.plus({ milliseconds: end.diff(start).milliseconds / 2 });
+            const newDuration = end.diff(start).milliseconds * 2;
+
+            // Constrain to original timerange
+            const [fullStart, fullEnd] = timerange;
+            const maxDuration = fullEnd.diff(fullStart).milliseconds;
+            const actualDuration = Math.min(newDuration, maxDuration);
+
+            const newStart = midpoint.minus({ milliseconds: actualDuration / 2 });
+            const newEnd = midpoint.plus({ milliseconds: actualDuration / 2 });
+
+            setVisibleTimerange([newStart, newEnd]);
+        }
     };
 
     const handleEditBrush = useCallback(
@@ -142,13 +166,38 @@ export const MainTimelineChart = memo(() => {
         ticks: { stroke: 'gray', size: 5 },
     };
 
-    const domain: ForAxes<DomainTuple> = {
-        y: rangeToDate(timerange),
-        x: [1, 3],
-    };
-
     return (
         <div ref={observe}>
+            <Box
+                position="absolute"
+                top={2}
+                right={2}
+                display="flex"
+                zIndex={1000}
+                backgroundColor={chartTheme.isDark ? 'gray.800' : 'white'}
+                borderRadius={5}
+            >
+                <Tooltip label="Zoom In" placement="top">
+                    <IconButton
+                        aria-label="Zoom In"
+                        icon={<RxZoomIn />}
+                        onClick={zoomIn}
+                        size="sm"
+                        colorScheme="gray"
+                        variant="ghost"
+                    />
+                </Tooltip>
+                <Tooltip label="Zoom Out" placement="top">
+                    <IconButton
+                        aria-label="Zoom Out"
+                        icon={<RxZoomOut />}
+                        onClick={zoomOut}
+                        size="sm"
+                        colorScheme="gray"
+                        variant="ghost"
+                    />
+                </Tooltip>
+            </Box>
             <VictoryChart
                 theme={chartTheme}
                 height={100}
@@ -157,16 +206,10 @@ export const MainTimelineChart = memo(() => {
                 padding={CHART_PADDING}
                 scale={CHART_SCALE}
                 horizontal
-                domain={domain}
-                // containerComponent={
-                //     <VictoryZoomContainer
-                //         responsive={false}
-                //         zoomDimension="y"
-                //         zoomDomain={{ y: rangeToDate(visibleTimerange) }}
-                //         key={selectedTimelineItem && selectedTimelineItem.id}
-                //         onZoomDomainChange={debounce(handleZoom, 300)}
-                //     />
-                // }
+                domain={{
+                    y: rangeToDate(visibleTimerange || timerange),
+                    x: [1, 3],
+                }}
             >
                 <VictoryAxis dependentAxis tickCount={20} />
 
@@ -176,6 +219,8 @@ export const MainTimelineChart = memo(() => {
                     y={(d) => d.beginDate}
                     y0={(d) => d.endDate}
                     data={timelineData}
+                    barWidth={BAR_WIDTH}
+                    horizontal={true}
                     dataComponent={
                         <BarWithTooltip
                             popoverTriggerRef={popoverTriggerRef}
