@@ -4,6 +4,12 @@ export const BrushHandle = ({ smaller = false, ...rest }) => {
 
     const y = smaller ? 1 : 2;
 
+    // Add functions to handle pointer capture
+    const handlePointerDown = (e) => {
+        // Set pointer capture on the handle
+        e.target.setPointerCapture(e.pointerId);
+    };
+
     return (
         <g>
             {/* Simple rectangle handle */}
@@ -20,6 +26,7 @@ export const BrushHandle = ({ smaller = false, ...rest }) => {
                 style={{
                     cursor: 'ew-resize',
                 }}
+                onPointerDown={handlePointerDown}
             />
 
             {/* Invisible larger hit area to make handle easier to grab */}
@@ -33,6 +40,7 @@ export const BrushHandle = ({ smaller = false, ...rest }) => {
                 style={{
                     cursor: 'ew-resize',
                 }}
+                onPointerDown={handlePointerDown}
             />
         </g>
     );
