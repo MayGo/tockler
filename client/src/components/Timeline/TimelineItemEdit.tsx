@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Heading, Input, Select, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Divider, Heading, Input, Select, Text, Tooltip } from '@chakra-ui/react';
 import { DateTime } from 'luxon';
 import randomcolor from 'randomcolor';
 import { memo, useEffect, useState } from 'react';
@@ -211,6 +211,7 @@ export const TimelineItemEdit = memo(() => {
                             readOnly={readOnly}
                         />
                     </Box>
+                    <Text fontSize="md">➜</Text>
                     <Box flex="1" maxWidth="120px">
                         <Input
                             type="time"
