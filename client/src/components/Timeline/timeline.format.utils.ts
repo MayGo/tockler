@@ -1,9 +1,6 @@
 import { DateTime } from 'luxon';
 import { convertDate } from '../../constants';
 
-// Get the current system locale for date/time formatting
-export const locale = DateTime.local().resolvedLocaleOptions().locale;
-
 /**
  * Gets a dynamic time format function based on the visible time range
  *
@@ -12,6 +9,8 @@ export const locale = DateTime.local().resolvedLocaleOptions().locale;
  * @returns Formatted time string appropriate for the current zoom level
  */
 export const getDynamicTimeFormat = (timestamp: number, visibleTimerange?: DateTime[]) => {
+    // Get the current system locale for date/time formatting
+    const locale = DateTime.local().resolvedLocaleOptions().locale;
     const dateTime = convertDate(timestamp);
 
     // If no visible timerange is set yet, use the default format
