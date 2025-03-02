@@ -4,7 +4,7 @@ import { TrackItemType } from '../enum/TrackItemType';
 import { Logger } from '../logger';
 import { EventEmitter } from './EventEmitter';
 
-async function findAllDayItems(from: DateTime, to: DateTime, taskName: string): Promise<any> {
+async function findAllDayItems(from: DateTime, to: DateTime, taskName: string): Promise<ITrackItem[]> {
     //Logger.debug('findAllDayItems', JSON.stringify({ from, to, taskName }));
     const data = await EventEmitter.emit('findAllDayItems', {
         from: from.valueOf(),

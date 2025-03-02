@@ -1,7 +1,7 @@
 import { Action, action, createStore, Thunk, thunk, thunkOn, ThunkOn } from 'easy-peasy';
 import { DateTime } from 'luxon';
 import { ITimelineState } from '../@types/ITimelineState';
-import { ITrackItem } from '../@types/ITrackItem';
+import { SelectedTrackItem } from '../@types/ITrackItem';
 import { getCenteredTimerange, getTodayTimerange, setDayFromTimerange } from '../components/Timeline/timeline.utils';
 import { TrackItemType } from '../enum/TrackItemType';
 import { Logger } from '../logger';
@@ -18,8 +18,8 @@ const defaultVisibleTimerange = getCenteredTimerange(
 export const TIMERANGE_MODE_TODAY = 'TODAY';
 
 export interface StoreModel {
-    selectedTimelineItem: null | ITrackItem;
-    setSelectedTimelineItem: Action<StoreModel, ITrackItem | null>;
+    selectedTimelineItem: null | SelectedTrackItem;
+    setSelectedTimelineItem: Action<StoreModel, SelectedTrackItem | null>;
 
     liveView: boolean;
     setLiveView: Action<StoreModel, boolean>;

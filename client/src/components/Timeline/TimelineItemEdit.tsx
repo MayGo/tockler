@@ -9,7 +9,7 @@ import { ColorPicker } from './ColorPicker';
 import { TimelineItemEditDeleteButton } from './TimelineItemEditDeleteButton';
 
 import { HStack, VStack } from '@chakra-ui/react';
-import { ITrackItem } from '../../@types/ITrackItem';
+import { ITrackItem, SelectedTrackItem } from '../../@types/ITrackItem';
 import { TrackItemType } from '../../enum/TrackItemType';
 import { changeColorForApp } from '../../services/appSettings.api';
 import { deleteByIds, saveTrackItem, updateTrackItemColor } from '../../services/trackItem.api';
@@ -26,7 +26,7 @@ export const TimelineItemEdit = memo(() => {
     const fetchTimerange = useStoreActions((actions) => actions.fetchTimerange);
 
     const [state, setState] = useState<{
-        trackItem: ITrackItem | null;
+        trackItem: SelectedTrackItem | null;
         colorScope: ColorScope;
     }>({
         trackItem: selectedTimelineItem,
@@ -64,9 +64,9 @@ export const TimelineItemEdit = memo(() => {
                 await updateTrackItemColor(trackItem.app, color);
             } else if (colorScope === 'NEW_ITEMS') {
                 await changeColorForApp(trackItem.app, color);
-                await saveTrackItem(trackItem);
+                await saveTrackItem(trackItem as ITrackItem);
             } else {
-                await saveTrackItem(trackItem);
+                await saveTrackItem(trackItem as ITrackItem);
             }
         } catch (error) {
             Logger.error('Saving track item failed', error);

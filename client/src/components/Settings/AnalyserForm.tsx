@@ -1,25 +1,30 @@
+import { Button, Flex, HStack, Tooltip } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
-import { useState, useEffect } from 'react';
-import { AnalyserFormItem } from './AnalyserFormItem';
+import { TrackItemType } from '../../enum/TrackItemType';
 import { fetchAnalyserSettings, saveAnalyserSettings } from '../../services/settings.api';
 import { useStoreState } from '../../store/easyPeasy';
-import { Tooltip } from '@chakra-ui/react';
-import { Flex } from '@chakra-ui/react';
-import { HStack } from '@chakra-ui/react';
-import { Button } from '@chakra-ui/react';
 import { CardBox } from '../CardBox';
+import { AnalyserFormItem } from './AnalyserFormItem';
 
-const defaultAnalyserSettings = [
+interface AnalyserItem {
+    findRe: string;
+    takeTitle: string;
+    takeGroup: string;
+    enabled: boolean;
+}
+
+const defaultAnalyserSettings: AnalyserItem[] = [
     { findRe: '\\w+-\\d+.*JIRA', takeTitle: '', takeGroup: '\\w+-\\d+', enabled: true },
     { findRe: '9GAG', takeTitle: '', takeGroup: '9GAG', enabled: true },
 ];
 
-const emptyItem = { findRe: '', takeTitle: '', takeGroup: '', enabled: false };
+const emptyItem: AnalyserItem = { findRe: '', takeTitle: '', takeGroup: '', enabled: false };
 
 export const AnalyserForm = () => {
     const timeItems = useStoreState((state) => state.timeItems);
-    const { appItems } = timeItems;
-    const [analyserItems, setAnalyserItems] = useState<any>([]);
+    const appItems = timeItems[TrackItemType.AppTrackItem];
+    const [analyserItems, setAnalyserItems] = useState<AnalyserItem[]>([]);
 
     useEffect(() => {
         async function fetchSettings() {
@@ -30,12 +35,12 @@ export const AnalyserForm = () => {
         fetchSettings();
     }, []);
 
-    const removeItem = (index) => () => {
+    const removeItem = (index: number) => () => {
         analyserItems.splice(index, 1);
         setAnalyserItems([...analyserItems]);
         saveAnalyserSettings([...analyserItems]);
     };
-    const saveItem = (index) => (data) => {
+    const saveItem = (index: number) => (data: AnalyserItem) => {
         analyserItems[index] = data;
         setAnalyserItems([...analyserItems]);
         saveAnalyserSettings([...analyserItems]);
