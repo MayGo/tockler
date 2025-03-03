@@ -1,5 +1,3 @@
-# Tockler
-
 <p align="center">
   <a href="https://tockler.io/#gh-light-mode-only">
     <img src="https://github.com/MayGo/tockler/raw/master/screenshots/tockler-logo-light.svg" width="318px" alt="Tockler logo" />
