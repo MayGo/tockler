@@ -13,21 +13,8 @@ import {
     saveOpenAtLogin,
     saveUsePurpleTrayIcon,
 } from '../../services/settings.api';
+import '../../types/electron-bridge';
 import { CardBox } from '../CardBox';
-
-// Define type for electron bridge
-interface ElectronBridge {
-    platform: string;
-    configGet: (key: string) => unknown;
-    configSet: (key: string, value: unknown) => void;
-}
-
-// Extend Window interface to include electronBridge
-declare global {
-    interface Window {
-        electronBridge: ElectronBridge;
-    }
-}
 
 export const AppForm = () => {
     const isNativeThemeEnabled = getNativeThemeChange();

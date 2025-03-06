@@ -1,12 +1,12 @@
-import { useEffect, useState, createContext, useCallback } from 'react';
-import { EventEmitter } from './services/EventEmitter';
-import { Logger } from './logger';
-import { fetchDataSettings, fetchWorkSettings, saveDataSettings, saveWorkSettings } from './services/settings.api';
-import { WorkSettingsI } from './components/Settings/WorkForm.util';
+import { ReactNode, createContext, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DataSettingsI } from './components/Settings/DataForm.util';
+import { WorkSettingsI } from './components/Settings/WorkForm.util';
+import { Logger } from './logger';
+import { EventEmitter } from './services/EventEmitter';
+import { fetchDataSettings, fetchWorkSettings, saveDataSettings, saveWorkSettings } from './services/settings.api';
 
-const defaultWorkSettings = {
+const defaultWorkSettings: WorkSettingsI = {
     workDayStartTime: '08:30', // not used
     workDayEndTime: '17:00', // not used
     splitTaskAfterIdlingForMinutes: 3, // not used in client, put used in backend
@@ -17,14 +17,30 @@ const defaultWorkSettings = {
     reNotifyInterval: 5,
     smallNotificationsEnabled: true,
 };
-const defaultDataSettings = {
+const defaultDataSettings: DataSettingsI = {
     idleAfterSeconds: 60,
     backgroundJobInterval: 3,
 };
 
-export const RootContext = createContext<any>({});
+interface RootContextType {
+    workSettings: WorkSettingsI;
+    updateWorkSettings: (settings: WorkSettingsI) => void;
+    dataSettings: DataSettingsI;
+    updateDataSettings: (settings: DataSettingsI) => void;
+}
 
-export const RootProvider = ({ children }) => {
+export const RootContext = createContext<RootContextType>({
+    workSettings: defaultWorkSettings,
+    updateWorkSettings: () => {},
+    dataSettings: defaultDataSettings,
+    updateDataSettings: () => {},
+});
+
+interface RootProviderProps {
+    children: ReactNode;
+}
+
+export const RootProvider = ({ children }: RootProviderProps) => {
     const navigate = useNavigate();
 
     const gotoSettingsPage = useCallback(() => {
@@ -35,12 +51,12 @@ export const RootProvider = ({ children }) => {
     const [workSettings, setWorkSettings] = useState<WorkSettingsI>(defaultWorkSettings);
     const [dataSettings, setDataSettings] = useState<DataSettingsI>(defaultDataSettings);
 
-    const updateWorkSettings = useCallback((newWorkSettings) => {
+    const updateWorkSettings = useCallback((newWorkSettings: WorkSettingsI) => {
         setWorkSettings(newWorkSettings);
         saveWorkSettings(newWorkSettings);
     }, []);
 
-    const updateDataSettings = useCallback((newDataSettings) => {
+    const updateDataSettings = useCallback((newDataSettings: DataSettingsI) => {
         setDataSettings(newDataSettings);
         saveDataSettings(newDataSettings);
     }, []);
@@ -80,7 +96,7 @@ export const RootProvider = ({ children }) => {
         };
     }, [gotoSettingsPage]);
 
-    const defaultContext = {
+    const defaultContext: RootContextType = {
         workSettings,
         updateWorkSettings,
         dataSettings,

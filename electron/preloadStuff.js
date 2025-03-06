@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === 'production') {
     Sentry.init({
         dsn: process.env.SENTRY_DSN,
         environment: process.env.NODE_ENV,
-        release: version,
+        release: appVersion,
         beforeSend(event) {
             // Check if it is an exception, if so, show the report dialog
             if (event.exception) {
@@ -80,6 +80,7 @@ contextBridge.exposeInMainWorld('electronBridge', {
     logger: log,
     platform: process.platform,
     isMas: process.mas === true,
+    appVersion: () => ipcRenderer.invoke('get-app-version'),
 
     invokeIpc: async (actionName, payload) => {
         return await ipcRenderer.invoke(actionName, payload);
