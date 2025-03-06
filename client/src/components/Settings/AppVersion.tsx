@@ -8,7 +8,7 @@ export const AppVersion = () => {
 
     return (
         <Box width="100%" pt={2}>
-            <Text fontSize="sm" color="gray.500">
+            <Text fontSize="sm" color="gray.500" textAlign="right">
                 Version: {appVersion}
             </Text>
         </Box>
