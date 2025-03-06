@@ -99,6 +99,10 @@ jobs:
                   cd ..
 
             - name: Build Client
+              env:
+                  VITE_TEMPLATE_ID: ${{ secrets.VITE_TEMPLATE_ID }}
+                  VITE_SERVICE_ID: ${{ secrets.VITE_SERVICE_ID }}
+                  VITE_USER_ID: ${{ secrets.VITE_USER_ID }}
               run: |
                   cd client
                   pnpm build
@@ -122,9 +126,7 @@ jobs:
                   APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
                   APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
                   CSC_IDENTITY_AUTO_DISCOVERY: ${{ matrix.os != 'windows-latest' }}
-                  VITE_TEMPLATE_ID: ${{ secrets.VITE_TEMPLATE_ID }}
-                  VITE_SERVICE_ID: ${{ secrets.VITE_SERVICE_ID }}
-                  VITE_USER_ID: ${{ secrets.VITE_USER_ID }}
+
               run: |
                   cd electron
                   pnpm build
