@@ -1,15 +1,15 @@
+import { ipcMain } from 'electron';
+import { appEmitter } from './app-event-emitter';
+import { backgroundService } from './background-service';
+import BackgroundUtils from './background-utils';
 import { State } from './enums/state';
 import { TrackItemType } from './enums/track-item-type';
-import { ipcMain } from 'electron';
-import BackgroundUtils from './background-utils';
-import { trackItemService } from './services/track-item-service';
 import { logManager } from './log-manager';
-import { settingsService } from './services/settings-service';
-import { appEmitter } from './app-event-emitter';
-import { sendToTrayWindow } from './window-manager';
 import { TrackItem } from './models/TrackItem';
-import { backgroundService } from './background-service';
+import { settingsService } from './services/settings-service';
+import { trackItemService } from './services/track-item-service';
 import { TrackItemRaw } from './task-analyser';
+import { sendToTrayWindow } from './window-manager';
 
 let logger = logManager.getLogger('StateManager');
 
@@ -178,6 +178,7 @@ export class StateManager {
 
     async endRunningTrackItem(rawItem: TrackItemRaw) {
         if (!rawItem.taskName) {
+            logger.error('No taskName, not ending track item');
             return null;
         }
 

@@ -35,12 +35,14 @@ export const STORAGE_KEYS = {
  */
 export const saveVisibleRange = (visibleTimerange: DateTime[]): void => {
     if (!visibleTimerange || visibleTimerange.length !== 2) {
+        console.error('Invalid visible range found in localStorage');
         return;
     }
 
     try {
         const serialized = JSON.stringify(visibleTimerange.map((dt) => dt.toISO()));
         localStorage.setItem(STORAGE_KEYS.VISIBLE_RANGE, serialized);
+        console.log('Saved visible range to localStorage:', serialized);
     } catch (error) {
         console.error('Failed to save visible range to localStorage:', error);
     }
@@ -54,14 +56,17 @@ export const loadVisibleRange = (): DateTime[] | null => {
     try {
         const serialized = localStorage.getItem(STORAGE_KEYS.VISIBLE_RANGE);
         if (!serialized) {
+            console.error('No visible range found in localStorage');
             return null;
         }
 
         const parsed = JSON.parse(serialized);
         if (!Array.isArray(parsed) || parsed.length !== 2) {
+            console.error('Invalid visible range found in localStorage');
             return null;
         }
 
+        console.log('Loaded visible range from localStorage:', parsed);
         return parsed.map((isoString) => DateTime.fromISO(isoString));
     } catch (error) {
         console.error('Failed to load visible range from localStorage:', error);

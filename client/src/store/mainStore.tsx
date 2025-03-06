@@ -12,6 +12,7 @@ import { loadVisibleRange, saveVisibleRange } from '../utils';
 const defaultTimerange = getTodayTimerange();
 // Try to load saved visible range from localStorage, fall back to default if not found
 const savedVisibleTimerange = loadVisibleRange();
+
 const defaultVisibleTimerange =
     savedVisibleTimerange ||
     getCenteredTimerange(
