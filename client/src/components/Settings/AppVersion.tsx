@@ -1,10 +1,24 @@
 import { Box, Text } from '@chakra-ui/react';
-import { use } from 'react';
+import { useEffect, useState } from 'react';
 import '../../types/electron-bridge';
 
 export const AppVersion = () => {
-    // Get app version from the electron bridge
-    const appVersion = use(window?.electronBridge?.appVersion?.()) || '-';
+    const [appVersion, setAppVersion] = useState('-');
+
+    useEffect(() => {
+        const fetchVersion = async () => {
+            try {
+                if (window?.electronBridge?.appVersion) {
+                    const version = await window.electronBridge.appVersion();
+                    setAppVersion(version);
+                }
+            } catch (error) {
+                console.error('Error fetching app version:', error);
+            }
+        };
+
+        fetchVersion();
+    }, []);
 
     return (
         <Box width="100%" pt={2}>

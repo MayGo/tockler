@@ -1,5 +1,4 @@
 import { Divider, VStack } from '@chakra-ui/react';
-import { Suspense } from 'react';
 import '../../types/electron-bridge';
 import { AnalyserForm } from './AnalyserForm';
 import { AppForm } from './AppForm';
@@ -17,9 +16,7 @@ export const SettingsForm = () => {
 
             <Divider my={2} />
 
-            <Suspense fallback={<div>...</div>}>
-                <AppVersion />
-            </Suspense>
+            <AppVersion />
         </VStack>
     );
 };

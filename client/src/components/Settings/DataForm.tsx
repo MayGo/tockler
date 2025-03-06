@@ -1,11 +1,11 @@
-import { useForm } from 'react-hook-form';
-import { useContext, useEffect } from 'react';
-import { FormErrorMessage, FormLabel, FormControl, Input, Box, Text } from '@chakra-ui/react';
+import { Box, FormControl, FormErrorMessage, FormLabel, Input, Text } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { CardBox } from '../CardBox';
-import { RootContext } from '../../RootContext';
+import { useContext, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { useDebouncedCallback } from 'use-debounce';
+import * as yup from 'yup';
+import { RootContext } from '../../RootContext';
+import { CardBox } from '../CardBox';
 import { DataSettingsI } from './DataForm.util';
 
 const schema = yup
@@ -35,7 +35,6 @@ export const DataForm = () => {
         1000,
         { leading: false, trailing: true },
     );
-    console.warn('render');
 
     useEffect(() => {
         if (isDirty && isValid) {
