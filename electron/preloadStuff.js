@@ -1,5 +1,5 @@
 'use strict';
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, shell } = require('electron');
 const Store = require('electron-store');
 
 const log = require('electron-log');
@@ -81,6 +81,17 @@ contextBridge.exposeInMainWorld('electronBridge', {
     platform: process.platform,
     isMas: process.mas === true,
     appVersion: () => ipcRenderer.invoke('get-app-version'),
+
+    openUrlInExternalWindow: (url) => {
+        log.info('URL', url);
+
+        if (url.startsWith('file://') || url.startsWith('http://127.0.0.1:3000')) {
+            return;
+        }
+
+        // open url in a browser and prevent default
+        shell.openExternal(url);
+    },
 
     invokeIpc: async (actionName, payload) => {
         return await ipcRenderer.invoke(actionName, payload);

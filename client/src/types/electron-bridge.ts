@@ -1,4 +1,5 @@
 // Define interface for electron bridge
+
 export interface ElectronBridge {
     platform: string;
     configGet: (key: string) => unknown;
@@ -15,11 +16,12 @@ export interface ElectronBridge {
     sendIpc: (key: string, ...args: unknown[]) => void;
     onIpc: (key: string, fn: (...args: unknown[]) => void) => void;
     removeListenerIpc: (key: string) => void;
+    openUrlInExternalWindow: (url: string) => void;
 }
 
 // Extend Window interface to include electronBridge
 declare global {
     interface Window {
-        electronBridge: ElectronBridge;
+        electronBridge?: ElectronBridge;
     }
 }

@@ -1,5 +1,6 @@
-import { Box, Button, Flex, Input, Text, Textarea, VStack } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Icon, Input, Text, Textarea, VStack } from '@chakra-ui/react';
 import { useState } from 'react';
+import { FaDonate, FaGithub } from 'react-icons/fa';
 import { CardBox } from '../components/CardBox';
 import { sendEmail } from '../services/email.service';
 
@@ -86,6 +87,36 @@ export function SupportPage() {
                         <Text color="red">{sendError}</Text>
                     </Flex>
                 )}
+            </CardBox>
+
+            <CardBox title="Support Project" width={['100%', '100%', '100%', '100%', '50%']} divider>
+                <VStack spacing={3} alignItems="flex-start">
+                    <Paragraph>
+                        Start supporting this project by starring it on GitHub, contributing code, or making a donation.
+                    </Paragraph>
+
+                    <HStack spacing={5}>
+                        <Button
+                            leftIcon={<Icon as={FaGithub} />}
+                            colorScheme="gray"
+                            onClick={() =>
+                                window.electronBridge?.openUrlInExternalWindow('https://github.com/MayGo/tockler')
+                            }
+                        >
+                            GitHub
+                        </Button>
+
+                        <Button
+                            leftIcon={<Icon as={FaDonate} />}
+                            colorScheme="blue"
+                            onClick={() =>
+                                window.electronBridge?.openUrlInExternalWindow('https://github.com/sponsors/MayGo')
+                            }
+                        >
+                            Donate
+                        </Button>
+                    </HStack>
+                </VStack>
             </CardBox>
         </VStack>
     );

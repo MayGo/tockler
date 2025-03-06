@@ -37,14 +37,21 @@ Tockler is a free application that automatically tracks your computer usage and 
 -   **Interactive Timeline**: Visualize your computer usage with an interactive chart
 -   **Cross-Platform**: Available for Windows, macOS, and Linux
 
-## Technologies
+## Support Tockler
 
-Tockler is built with modern web technologies:
+Tockler is free and open-source software. If you find it useful, please consider supporting its development:
 
--   **Framework**: [Electron](https://electron.atom.io/) with [Webpack](https://webpack.github.io/) and [TypeScript](https://www.typescriptlang.org/)
--   **Frontend**: [React](https://reactjs.org/) with [Chakra UI](https://chakra-ui.com/)
--   **Data Visualization**: [D3.js](https://d3js.org/) and [Victory Chart](http://formidable.com/open-source/victory/docs/victory-chart/)
--   **Package Manager**: [pnpm](https://pnpm.io/)
+<p align="center">
+  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAHHBZZCZVDMA">
+    <img src="https://github.com/MayGo/tockler/raw/master/badges/Donate-PayPal-green.svg" alt="Donate using PayPal" />
+  </a>
+  <a href="https://github.com/sponsors/maygo/">
+    <img src="https://github.com/MayGo/tockler/raw/master/badges/GitHub-Badge.svg" alt="Sponsor on GitHub" />
+  </a>
+  <a href="https://www.patreon.com/Tockler">
+    <img src="https://github.com/MayGo/tockler/raw/master/badges/Patreon-Badge.svg" alt="Become a patron" />
+  </a>
+</p>
 
 ## Download
 
@@ -73,6 +80,15 @@ Tockler is built with modern web technologies:
 ![Summary](https://github.com/MayGo/tockler/raw/master/screenshots/dark/tockler-summary-chart.png 'Summary')
 ![Search](https://github.com/MayGo/tockler/raw/master/screenshots/dark/tockler-search.png 'Search')
 ![Tray window](https://github.com/MayGo/tockler/raw/master/screenshots/dark/tockler-tray.png 'Tray window')
+
+## Technologies
+
+Tockler is built with modern web technologies:
+
+-   **Framework**: [Electron](https://electron.atom.io/) with [Webpack](https://webpack.github.io/) and [TypeScript](https://www.typescriptlang.org/)
+-   **Frontend**: [React](https://reactjs.org/) with [Chakra UI](https://chakra-ui.com/)
+-   **Data Visualization**: [D3.js](https://d3js.org/) and [Victory Chart](http://formidable.com/open-source/victory/docs/victory-chart/)
+-   **Package Manager**: [pnpm](https://pnpm.io/)
 
 ## Development
 
@@ -122,22 +138,6 @@ Logs are stored in the following locations:
 -   Linux: `~/.config/tockler/logs/main.log`
 -   macOS: `~/Library/Logs/tockler/main.log`
 -   Windows: `%USERPROFILE%\AppData\Roaming\tockler\logs\main.log`
-
-## Support Tockler
-
-Tockler is free and open-source software. If you find it useful, please consider supporting its development:
-
-<p align="center">
-  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAHHBZZCZVDMA">
-    <img src="https://github.com/MayGo/tockler/raw/master/badges/Donate-PayPal-green.svg" alt="Donate using PayPal" />
-  </a>
-  <a href="https://github.com/sponsors/maygo/">
-    <img src="https://github.com/MayGo/tockler/raw/master/badges/GitHub-Badge.svg" alt="Sponsor on GitHub" />
-  </a>
-  <a href="https://www.patreon.com/Tockler">
-    <img src="https://github.com/MayGo/tockler/raw/master/badges/Patreon-Badge.svg" alt="Become a patron" />
-  </a>
-</p>
 
 ## Feedback
 

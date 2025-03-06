@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain, shell, Tray } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, Tray } from 'electron';
 import positioner from 'electron-traywindow-positioner';
 import { autoUpdater } from 'electron-updater';
 import { throttle } from 'lodash';
@@ -35,18 +35,6 @@ export const sendToTrayWindow = (key: string, message = '') => {
         logger.debug(`Menubar not defined or window destroyed, not sending ${key}`);
     }
 };
-
-function openUrlInExternalWindow(event: any, url: string) {
-    logger.info('URL', url);
-
-    if (url.startsWith('file://') || url.startsWith('http://127.0.0.1:3000')) {
-        return;
-    }
-
-    event.preventDefault();
-    // open url in a browser and prevent default
-    shell.openExternal(url);
-}
 
 export const sendToNotificationWindow = async (key: string, message = '') => {
     if (WindowManager.notificationWindow) {
@@ -414,8 +402,6 @@ export default class WindowManager {
                         logger.error('Menubar failed to load:', errorCode, errorDescription);
                     },
                 );
-
-                this.menubar.window.webContents.on('new-window', openUrlInExternalWindow);
             }
         });
     }
