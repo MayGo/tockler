@@ -98,11 +98,16 @@ jobs:
                   pnpm install --no-frozen-lockfile
                   cd ..
 
+            - name: Create .env file
+              shell: bash
+              run: |
+                  cd client
+                  echo "VITE_TEMPLATE_ID=${{ secrets.VITE_TEMPLATE_ID }}" >> .env
+                  echo "VITE_SERVICE_ID=${{ secrets.VITE_SERVICE_ID }}" >> .env
+                  echo "VITE_USER_ID=${{ secrets.VITE_USER_ID }}" >> .env
+                  cd ..
+
             - name: Build Client
-              env:
-                  VITE_TEMPLATE_ID: ${{ secrets.VITE_TEMPLATE_ID }}
-                  VITE_SERVICE_ID: ${{ secrets.VITE_SERVICE_ID }}
-                  VITE_USER_ID: ${{ secrets.VITE_USER_ID }}
               run: |
                   cd client
                   pnpm build
