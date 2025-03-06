@@ -13,7 +13,7 @@ import { Logger } from '../logger';
 import { EventEmitter } from '../services/EventEmitter';
 import { getRunningLogItem } from '../services/settings.api';
 import { findFirstLogItems, startNewLogItem, stopRunningLogItem } from '../services/trackItem.api';
-import { useStoreActions, useStoreState } from '../store/easyPeasy';
+import { useTrayStoreActions, useTrayStoreState } from '../store/easyPeasy';
 import { sendOpenTrayEvent } from '../useGoogleAnalytics.utils';
 import { TrayItemEdit } from './tray/TrayItemEdit';
 
@@ -21,8 +21,8 @@ const EMPTY_ARRAY = [];
 const BG_SYNC_DELAY_MS = 10000;
 
 const TrayAppPageTemp = () => {
-    const fetchTimerange = useStoreActions((actions) => actions.fetchTimerange);
-    const bgSyncInterval = useStoreActions((actions) => actions.bgSyncInterval);
+    const fetchTimerange = useTrayStoreActions((actions) => actions.fetchTimerange);
+    const bgSyncInterval = useTrayStoreActions((actions) => actions.bgSyncInterval);
 
     useInterval(() => {
         bgSyncInterval();
@@ -110,7 +110,7 @@ const TrayAppPageTemp = () => {
         [runningLogItem, setRunningLogItem],
     );
 
-    const timeItems = useStoreState((state) => state.timeItems);
+    const timeItems = useTrayStoreState((state) => state.timeItems);
     return (
         <TrayLayout>
             <Box p={4}>

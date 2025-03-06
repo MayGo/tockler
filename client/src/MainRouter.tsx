@@ -1,7 +1,8 @@
 import { useColorMode } from '@chakra-ui/react';
+import { StoreProvider } from 'easy-peasy';
 import { Settings } from 'luxon';
 import { useCallback, useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { Logger } from './logger';
 import { RootProvider } from './RootContext';
 import { ChartThemeProvider } from './routes/ChartThemeProvider';
@@ -10,6 +11,8 @@ import { NotificationAppPage } from './routes/NotificationAppPage';
 import { TrayAppPage } from './routes/TrayAppPage';
 import { TrayPage } from './routes/TrayPage';
 import { EventEmitter } from './services/EventEmitter';
+import { mainStore } from './store/mainStore';
+import { trayStore } from './store/trayStore';
 import { useGoogleAnalytics } from './useGoogleAnalytics';
 
 Settings.defaultLocale = 'en-GB';
@@ -38,11 +41,34 @@ export function MainRouter() {
         <ChartThemeProvider>
             <RootProvider>
                 <Routes>
-                    <Route path="*" element={<MainAppPage />} />
+                    {/* Main App with main store */}
+                    <Route
+                        path="/app/*"
+                        element={
+                            <StoreProvider store={mainStore}>
+                                <MainAppPage />
+                            </StoreProvider>
+                        }
+                    />
 
-                    <Route path="/trayApp" element={<TrayAppPage />} />
+                    {/* Redirect from root to /app */}
+                    <Route path="/" element={<Navigate to="/app" replace />} />
+
+                    {/* Tray App with tray store */}
+                    <Route
+                        path="/trayApp"
+                        element={
+                            <StoreProvider store={trayStore}>
+                                <TrayAppPage />
+                            </StoreProvider>
+                        }
+                    />
+
                     <Route path="/notificationApp" element={<NotificationAppPage />} />
                     <Route path="/trayPage" element={<TrayPage />} />
+
+                    {/* Fallback redirect to /app */}
+                    <Route path="*" element={<Navigate to="/app" replace />} />
                 </Routes>
             </RootProvider>
         </ChartThemeProvider>

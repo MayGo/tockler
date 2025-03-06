@@ -71,7 +71,7 @@ export const SummaryCalendar = () => {
         }
 
         loadTimerange([date.startOf('day'), date.endOf('day')]);
-        navigate('/timeline');
+        navigate('/app/timeline');
     };
 
     useEffect(() => {

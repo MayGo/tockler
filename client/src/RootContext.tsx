@@ -45,7 +45,7 @@ export const RootProvider = ({ children }: RootProviderProps) => {
 
     const gotoSettingsPage = useCallback(() => {
         Logger.debug('Navigating to settings page');
-        navigate('/settings');
+        navigate('/app/settings');
     }, [navigate]);
 
     const [workSettings, setWorkSettings] = useState<WorkSettingsI>(defaultWorkSettings);
