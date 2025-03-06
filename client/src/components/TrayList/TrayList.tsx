@@ -2,7 +2,6 @@ import { StackDivider, VStack } from '@chakra-ui/react';
 import { groupBy, map, orderBy, sortBy, sumBy } from 'lodash';
 import { memo } from 'react';
 import { convertDate } from '../../constants';
-import { Loader } from '../Timeline/Loader';
 
 import { ITrackItem } from '../../@types/ITrackItem';
 import { TrayListItem } from './TrayListItem';
@@ -37,13 +36,11 @@ const aggregateSameAppAndName = (lastLogItems: ITrackItem[], runningLogItem: ITr
 
 export function TrayListPlain({
     lastLogItems,
-    loading,
     runningLogItem,
     stopRunningLogItem,
     startNewLogItem,
 }: {
     lastLogItems: ITrackItem[];
-    loading: boolean;
     runningLogItem: ITrackItem | undefined;
     stopRunningLogItem: () => void;
     startNewLogItem: (item: ITrackItem) => void;
@@ -53,10 +50,9 @@ export function TrayListPlain({
 
     return (
         <VStack spacing={1} align="stretch" divider={<StackDivider borderColor="gray.200" />} position="relative">
-            {loading && <Loader />}
-            {items.map((item) => (
+            {items.map((item, index) => (
                 <TrayListItem
-                    key={item.title}
+                    key={index}
                     item={item}
                     startNewLogItemFromOld={startNewLogItem}
                     stopRunningLogItem={stopRunningLogItem}

@@ -12,7 +12,6 @@ import { TrayAppPage } from './routes/TrayAppPage';
 import { TrayPage } from './routes/TrayPage';
 import { EventEmitter } from './services/EventEmitter';
 import { mainStore } from './store/mainStore';
-import { trayStore } from './store/trayStore';
 import { useGoogleAnalytics } from './useGoogleAnalytics';
 
 Settings.defaultLocale = 'en-GB';
@@ -54,15 +53,8 @@ export function MainRouter() {
                     {/* Redirect from root to /app */}
                     <Route path="/" element={<Navigate to="/app" replace />} />
 
-                    {/* Tray App with tray store */}
-                    <Route
-                        path="/trayApp"
-                        element={
-                            <StoreProvider store={trayStore}>
-                                <TrayAppPage />
-                            </StoreProvider>
-                        }
-                    />
+                    {/* Tray App - No longer needs trayStore */}
+                    <Route path="/trayApp" element={<TrayAppPage />} />
 
                     <Route path="/notificationApp" element={<NotificationAppPage />} />
                     <Route path="/trayPage" element={<TrayPage />} />

@@ -1,31 +1,40 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useWindowFocused = () => {
     const [windowIsActive, setWindowIsActive] = useState(true);
 
-    function handleActivity(forcedFlag) {
+    // Use useCallback to ensure stable reference across renders
+    const handleActivity = useCallback((forcedFlag?: boolean) => {
         if (typeof forcedFlag === 'boolean') {
-            return forcedFlag ? setWindowIsActive(true) : setWindowIsActive(false);
+            setWindowIsActive(forcedFlag);
+            return;
         }
 
-        return document.hidden ? setWindowIsActive(false) : setWindowIsActive(true);
-    }
+        setWindowIsActive(!document.hidden);
+    }, []);
 
     useEffect(() => {
-        document.addEventListener('visibilitychange', handleActivity);
-        document.addEventListener('blur', () => handleActivity(false));
-        window.addEventListener('blur', () => handleActivity(false));
-        window.addEventListener('focus', () => handleActivity(true));
-        document.addEventListener('focus', () => handleActivity(true));
+        // Initial state
+        handleActivity();
+
+        const handleVisibilityChange = () => handleActivity();
+        const handleBlur = () => handleActivity(false);
+        const handleFocus = () => handleActivity(true);
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        document.addEventListener('blur', handleBlur);
+        window.addEventListener('blur', handleBlur);
+        window.addEventListener('focus', handleFocus);
+        document.addEventListener('focus', handleFocus);
 
         return () => {
-            window.removeEventListener('blur', handleActivity);
-            document.removeEventListener('blur', handleActivity);
-            window.removeEventListener('focus', handleActivity);
-            document.removeEventListener('focus', handleActivity);
-            document.removeEventListener('visibilitychange', handleActivity);
+            window.removeEventListener('blur', handleBlur);
+            document.removeEventListener('blur', handleBlur);
+            window.removeEventListener('focus', handleFocus);
+            document.removeEventListener('focus', handleFocus);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
         };
-    }, []);
+    }, [handleActivity]);
 
     return { windowIsActive };
 };

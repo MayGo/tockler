@@ -1,77 +1,53 @@
 import { Box, Divider } from '@chakra-ui/react';
-import deepEqual from 'fast-deep-equal/es6';
-import { throttle } from 'lodash';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { ITrackItem } from '../@types/ITrackItem';
+import { LoadingLine } from '../components/LoadingLine';
 import { OnlineChart } from '../components/TrayLayout/OnlineChart';
 import { TrayLayout } from '../components/TrayLayout/TrayLayout';
 import { TrayList } from '../components/TrayList/TrayList';
-import { TrackItemType } from '../enum/TrackItemType';
-import { useInterval } from '../hooks/intervalHook';
+import { useTrayData } from '../hooks/useTrayData';
 import { useWindowFocused } from '../hooks/windowFocusedHook';
 import { Logger } from '../logger';
 import { EventEmitter } from '../services/EventEmitter';
 import { getRunningLogItem } from '../services/settings.api';
-import { findFirstLogItems, startNewLogItem, stopRunningLogItem } from '../services/trackItem.api';
-import { useTrayStoreActions, useTrayStoreState } from '../store/easyPeasy';
+import { startNewLogItem, stopRunningLogItem } from '../services/trackItem.api';
 import { sendOpenTrayEvent } from '../useGoogleAnalytics.utils';
 import { TrayItemEdit } from './tray/TrayItemEdit';
 
 const EMPTY_ARRAY = [];
-const BG_SYNC_DELAY_MS = 10000;
 
 const TrayAppPageTemp = () => {
-    const fetchTimerange = useTrayStoreActions((actions) => actions.fetchTimerange);
-    const bgSyncInterval = useTrayStoreActions((actions) => actions.bgSyncInterval);
-
-    useInterval(() => {
-        bgSyncInterval();
-    }, BG_SYNC_DELAY_MS);
-
-    useEffect(() => {
-        fetchTimerange();
-    }, [fetchTimerange]);
-
-    const [loading, setLoading] = useState(true);
-
+    const { isLoading, statusItems, logItems, refreshData } = useTrayData();
     const [runningLogItem, setRunningLogItem] = useState<ITrackItem>();
-    const [lastLogItems, setLastLogItems] = useState<ITrackItem[]>(EMPTY_ARRAY);
-
     const { windowIsActive } = useWindowFocused();
 
-    const loadLastLogItems = async () => {
-        setLoading(true);
-        try {
-            const items = await findFirstLogItems();
-            const areEqual = deepEqual(items, lastLogItems);
+    // Initial data load
+    useEffect(() => {
+        refreshData();
 
-            if (!areEqual) {
-                console.info('setLastLogItems', items);
-                setLastLogItems(items);
-            }
-        } catch (e) {
-            Logger.error('Error  loading first last items', e);
-        }
-        setLoading(false);
-    };
+        // Get running log item
+        getRunningLogItem().then((logItem) => {
+            setRunningLogItem(logItem);
+        });
+    }, []);
 
-    const loadLastLogItemsThrottled = throttle(loadLastLogItems, 1000);
-
+    // Refresh data when window becomes active
     useEffect(() => {
         if (windowIsActive) {
-            Logger.debug('Window active:', windowIsActive);
-            // loadLastLogItemsThrottled();
-
+            Logger.debug('Window active, refreshing data');
+            refreshData();
             sendOpenTrayEvent();
         }
+        // Intentionally omitting refreshData from dependencies as it would cause a refresh loop
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [windowIsActive]);
 
+    // Listen for log item events
     useEffect(() => {
         const eventLogItemStarted = (logItem) => {
             const newItem: ITrackItem = JSON.parse(logItem);
             Logger.debug('log-trackItem-started:', newItem);
             setRunningLogItem(newItem);
-            setLastLogItems((items) => [...items, newItem]);
         };
 
         EventEmitter.on('log-item-started', eventLogItemStarted);
@@ -81,51 +57,39 @@ const TrayAppPageTemp = () => {
         };
     }, []);
 
-    useEffect(() => {
-        // loadLastLogItemsThrottled();
-        loadLastLogItems();
-        getRunningLogItem().then((logItem) => {
-            setRunningLogItem(logItem);
-        });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    const startNewLogItemEvent = useCallback((trackItem: ITrackItem) => {
+    function startNewLogItemEvent(trackItem: ITrackItem) {
         startNewLogItem(trackItem);
-        loadLastLogItemsThrottled();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        refreshData();
+    }
 
-    const stopRunningLogItemEvent = useCallback(
-        () => {
-            if (runningLogItem) {
-                stopRunningLogItem(runningLogItem.id);
-                loadLastLogItemsThrottled();
-                setRunningLogItem(undefined);
-            } else {
-                Logger.error('No running log trackItem to stop');
-            }
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [runningLogItem, setRunningLogItem],
-    );
+    function stopRunningLogItemEvent() {
+        if (runningLogItem) {
+            stopRunningLogItem(runningLogItem.id);
+            refreshData();
+            setRunningLogItem(undefined);
+        } else {
+            Logger.error('No running log trackItem to stop');
+        }
+    }
 
-    const timeItems = useTrayStoreState((state) => state.timeItems);
     return (
         <TrayLayout>
+            <Box position="relative" overflow="hidden" width="100%" height="2px">
+                {isLoading && <LoadingLine />}
+            </Box>
+
             <Box p={4}>
                 <TrayItemEdit saveTimelineItem={startNewLogItem} />
             </Box>
             <Box px={4} pb={4}>
-                <OnlineChart items={timeItems[TrackItemType.StatusTrackItem] || EMPTY_ARRAY} />
+                <OnlineChart items={statusItems || EMPTY_ARRAY} />
             </Box>
             <Divider borderColor="gray.200" />
             <TrayList
-                lastLogItems={lastLogItems}
+                lastLogItems={logItems || EMPTY_ARRAY}
                 runningLogItem={runningLogItem}
                 stopRunningLogItem={stopRunningLogItemEvent}
                 startNewLogItem={startNewLogItemEvent}
-                loading={loading}
             />
         </TrayLayout>
     );
