@@ -23,7 +23,7 @@ const ActionCell = ({ cell }) => {
             DateTime.fromMillis(record.beginDate).minus({ minutes: 15 }),
             DateTime.fromMillis(record.endDate).plus({ minutes: 15 }),
         ]);
-        navigate('/timeline');
+        navigate('/app/timeline');
     };
 
     return (

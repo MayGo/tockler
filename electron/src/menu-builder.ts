@@ -1,7 +1,7 @@
-import { app, Menu, shell, MenuItemConstructorOptions } from 'electron';
+import { app, Menu, MenuItemConstructorOptions, shell } from 'electron';
+import AppUpdater from './app-updater';
 import { config } from './config';
 import WindowManager from './window-manager';
-import AppUpdater from './app-updater';
 
 const macOS = process.platform === 'darwin';
 

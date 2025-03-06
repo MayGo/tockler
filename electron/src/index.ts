@@ -1,14 +1,14 @@
 require('events').EventEmitter.defaultMaxListeners = 30;
 
-import { initBackgroundJob } from './initBackgroundJob';
-import { backgroundService } from './background-service';
 import { app, ipcMain, powerMonitor } from 'electron';
-import { logManager } from './log-manager';
 import AppManager from './app-manager';
-import WindowManager from './window-manager';
-import { extensionsManager } from './extensions-manager';
 import AppUpdater from './app-updater';
+import { backgroundService } from './background-service';
 import { config } from './config';
+import { extensionsManager } from './extensions-manager';
+import { initBackgroundJob } from './initBackgroundJob';
+import { logManager } from './log-manager';
+import WindowManager from './window-manager';
 
 let logger = logManager.getLogger('AppIndex');
 app.setAppUserModelId(process.execPath);
@@ -42,6 +42,11 @@ if (gotTheLock) {
     app.on('window-all-closed', function () {
         logger.debug('window-all-closed');
         // app.quit();
+    });
+
+    // Handle get-app-version IPC event
+    ipcMain.handle('get-app-version', () => {
+        return app.getVersion();
     });
 
     // User want's to open main window when reopened app. (But not open main window on application launch)

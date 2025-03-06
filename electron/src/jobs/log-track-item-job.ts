@@ -1,15 +1,26 @@
-import { logManager } from '../log-manager';
-import { stateManager } from '../state-manager';
 import moment from 'moment';
-import { TrackItemType } from '../enums/track-item-type';
 import { backgroundService } from '../background-service';
 import BackgroundUtils from '../background-utils';
-import { trackItemService } from '../services/track-item-service';
-import { settingsService } from '../services/settings-service';
+import { TrackItemType } from '../enums/track-item-type';
+import { logManager } from '../log-manager';
 import { TrackItem } from '../models/TrackItem';
+import { settingsService } from '../services/settings-service';
+import { trackItemService } from '../services/track-item-service';
+import { stateManager } from '../state-manager';
 import { TrackItemRaw } from '../task-analyser';
 
 let logger = logManager.getLogger('LogTrackItemJob');
+
+/**
+ *
+ *    - Running log item is created manually by user through the tray window
+ *    - Running log item can only be stopped by user action
+ *    - Running log item is split into new items when system state changes (online/offline/idle)
+ *    - Properties (app, title, color) copied from last log item for continuity
+ *
+ *    Splitting behavior:
+ *     - When system state changes (e.g., goes idle), current log item is ended and new log item is created. Running log item id is updated to the new log item.
+ */
 
 export class LogTrackItemJob {
     onlineItemWhenLastSplit: TrackItem | null = null;

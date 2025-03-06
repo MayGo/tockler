@@ -94,8 +94,6 @@ export const getOnlineTimesForChart = ({
         return [];
     }
 
-    console.log('beginClamp', beginClamp);
-
     filtered.forEach((item) => {
         const clampedItem = clampItem({ beginClamp, endClamp })(item);
         const itemBegin = DateTime.fromMillis(clampedItem.beginDate);
@@ -193,8 +191,6 @@ export const groupByBreaks = (items: IOnlineChartItem[], minBreakTime: number) =
 
     items.forEach((currentItem) => {
         if (olderItem) {
-            console.log('currentItem', currentItem.endDate);
-            console.log('olderItem', olderItem);
             const diff = getBeginEndDiff(
                 DateTime.fromMillis(currentItem.endDate),
                 DateTime.fromMillis(olderItem.beginDate),
