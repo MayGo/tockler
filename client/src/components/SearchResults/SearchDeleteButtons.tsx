@@ -5,7 +5,6 @@ import { Row, SortingState } from '@tanstack/react-table';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { Logger } from '../../logger';
 import { deleteByIds } from '../../services/trackItem.api';
-import { useStoreActions } from '../../store/easyPeasy';
 
 export interface TableButtonsProps {
     selectedFlatRows: Row<ITrackItem>[];
@@ -14,33 +13,31 @@ export interface TableButtonsProps {
     setSortBy: (sortBy: SortingState) => void;
     pageIndex: number;
     pageSize: number;
-    fetchData?: (options: { pageIndex: number; pageSize: number; sortBy: SortingState }) => void;
+    refreshData: () => void;
 }
 
 export const SearchDeleteButtons: React.FC<TableButtonsProps> = (props) => {
-    const { selectedFlatRows, selectedRowIds } = props;
-
-    const fetchTimerange = useStoreActions((actions) => actions.fetchTimerange);
+    const { selectedFlatRows, selectedRowIds, refreshData } = props;
 
     const deleteTimelineItems = async (ids: number[]) => {
-        Logger.debug('Delete timeline items', ids);
+        console.log('Delete timeline items', ids);
 
         if (ids) {
             await deleteByIds(ids);
             Logger.debug('Deleted timeline items', ids);
-            fetchTimerange();
         } else {
             Logger.error('No ids, not deleting from DB');
         }
     };
 
     const deleteSelectedItems = () => {
-        deleteTimelineItems(selectedFlatRows.map(({ original }) => original.id));
+        console.log('selectedFlatRows...', selectedFlatRows);
+        deleteTimelineItems(selectedFlatRows.map(({ original }) => original.id)).then(() => {
+            refreshData();
+        });
     };
 
     const hasSelected = Object.keys(selectedRowIds).length > 0;
-
-    console.log('selectedRowIds.......', selectedRowIds);
 
     return (
         <HStack pb={4}>

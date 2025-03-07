@@ -56,11 +56,17 @@ interface SearchResultsProps {
     pageIndex: number;
     total: number;
     resetButtonsRef: React.RefObject<HTMLDivElement>;
+    refreshData: () => void;
 }
 
-const SearchResultsPlain = ({ searchResult, fetchData, pageIndex, total, resetButtonsRef }: SearchResultsProps) => {
-    console.log('searchResult....', searchResult);
-
+const SearchResultsPlain = ({
+    searchResult,
+    fetchData,
+    pageIndex,
+    total,
+    resetButtonsRef,
+    refreshData,
+}: SearchResultsProps) => {
     return (
         <ItemsTable
             data={searchResult.results || []}
@@ -73,7 +79,7 @@ const SearchResultsPlain = ({ searchResult, fetchData, pageIndex, total, resetBu
             total={total}
             manualSortBy
             resetButtonsRef={resetButtonsRef}
-            customTableButtons={<SearchDeleteButtons />}
+            customTableButtons={<SearchDeleteButtons refreshData={refreshData} />}
         />
     );
 };

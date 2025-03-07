@@ -40,8 +40,6 @@ export const TrackItemTableButtons: React.FC<TableButtonsProps> = (props) => {
 
     const hasSelected = Object.keys(selectedRowIds).length > 0;
 
-    console.log('selectedRowIds.......', selectedRowIds);
-
     return (
         <HStack pb={4}>
             {hasSelected && (

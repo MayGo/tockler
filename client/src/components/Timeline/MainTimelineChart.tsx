@@ -61,8 +61,6 @@ export const MainTimelineChart = memo(() => {
     const selectedTimelineItem = useStoreState((state) => state.selectedTimelineItem);
     const setSelectedTimelineItem = useStoreActions((actions) => actions.setSelectedTimelineItem);
 
-    console.log('selectedTimelineItem....', selectedTimelineItem);
-
     const handleSelectionChanged = (item) => {
         if (item) {
             Logger.debug('Selected item:', item);

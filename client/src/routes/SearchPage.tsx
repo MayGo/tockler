@@ -100,6 +100,12 @@ export function SearchPage() {
         return;
     };
 
+    const refreshData = useCallback(() => {
+        // Reset to first page and reload items
+        setSearchPaging({ ...searchPaging, pageIndex: 0 });
+        // loadItems will be called via the useEffect that depends on searchPaging
+    }, [searchPaging]);
+
     useEffect(() => {
         console.info('searchPaging in page changed');
         loadItems(searchText);
@@ -147,6 +153,7 @@ export function SearchPage() {
                         pageIndex={searchPaging.pageIndex}
                         total={total}
                         resetButtonsRef={resetButtonsRef}
+                        refreshData={refreshData}
                     />
                 </CardBox>
             </Flex>
