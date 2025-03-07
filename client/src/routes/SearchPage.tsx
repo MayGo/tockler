@@ -11,6 +11,7 @@ import { Loader } from '../components/Timeline/Loader';
 import { TypeSelect } from '../components/TypeSelect';
 
 export function SearchPage() {
+    const resetButtonsRef = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
     const fetchIdRef = useRef(0);
     const [searchText, setSearchText] = useState('');
     const [taskName, setTaskName] = useState(TrackItemType.AppTrackItem);
@@ -139,11 +140,13 @@ export function SearchPage() {
                             Export to CSV
                         </Button>
                     </HStack>
+                    <Box px={4} ref={resetButtonsRef} />
                     <SearchResults
                         searchResult={searchResult}
                         fetchData={fetchData}
                         pageIndex={searchPaging.pageIndex}
                         total={total}
+                        resetButtonsRef={resetButtonsRef}
                     />
                 </CardBox>
             </Flex>

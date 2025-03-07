@@ -6,7 +6,7 @@ import { ITrackItem } from '../../@types/ITrackItem';
 import { Logger } from '../../logger';
 import { deleteByIds } from '../../services/trackItem.api';
 import { useStoreActions } from '../../store/easyPeasy';
-import { useTrackItemContext } from './TrackItemContext';
+import { useTrackItemContext } from '../TrackItemTable/TrackItemContext';
 
 export interface TableButtonsProps {
     selectedFlatRows?: Row<ITrackItem>[];
@@ -18,14 +18,12 @@ export interface TableButtonsProps {
     fetchData?: (options: { pageIndex: number; pageSize: number; sortBy: SortingRule<ITrackItem>[] }) => void;
 }
 
-export const TrackItemTableButtons: React.FC<TableButtonsProps> = (props) => {
+export const SearchDeleteButtons: React.FC<TableButtonsProps> = (props) => {
     const contextValues = useTrackItemContext();
 
     // Use props if provided, otherwise use context values
     const selectedFlatRows = props.selectedFlatRows || contextValues.selectedFlatRows;
     const selectedRowIds = props.selectedRowIds || contextValues.selectedRowIds;
-    const setAllFilters = props.setAllFilters || contextValues.setAllFilters;
-    const setSortBy = props.setSortBy || contextValues.setSortBy;
 
     const fetchTimerange = useStoreActions((actions) => actions.fetchTimerange);
 
@@ -60,20 +58,6 @@ export const TrackItemTableButtons: React.FC<TableButtonsProps> = (props) => {
                     items
                 </Button>
             )}
-
-            <Button variant="outline" onClick={() => setAllFilters([])}>
-                Clear filters
-            </Button>
-
-            <Button
-                variant="outline"
-                onClick={() => {
-                    setSortBy([]);
-                    setAllFilters([]);
-                }}
-            >
-                Clear filters and sorters
-            </Button>
         </HStack>
     );
 };

@@ -4,6 +4,7 @@ import { useStoreState } from '../../store/easyPeasy';
 import { checkIfOneDay } from '../../timeline.util';
 import { filterItems } from '../Timeline/timeline.utils';
 import { ItemsTable } from './ItemsTable';
+import { TrackItemTableButtons } from './TrackItemTableButtons';
 
 export const TrackItemTable = ({ type, resetButtonsRef }) => {
     const timeItems = useStoreState((state) => state.timeItems);
@@ -21,6 +22,7 @@ export const TrackItemTable = ({ type, resetButtonsRef }) => {
             isSearchTable={false}
             total={0}
             manualSortBy={false}
+            customTableButtons={<TrackItemTableButtons />}
         />
     );
 };

@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { SearchResultI } from '../../services/trackItem.api';
 import { useStoreActions } from '../../store/easyPeasy';
 import { ItemsTable } from '../TrackItemTable/ItemsTable';
+import { SearchDeleteButtons } from './SearchDeleteButtons';
 
 const ActionCell = ({ cell }) => {
     const { beginDate, endDate } = cell.row.original;
@@ -54,10 +55,12 @@ interface SearchResultsProps {
     fetchData: (params: { pageSize: number; pageIndex: number; sortBy: { id: string; desc: boolean }[] }) => void;
     pageIndex: number;
     total: number;
+    resetButtonsRef: React.RefObject<HTMLDivElement>;
 }
 
-const SearchResultsPlain = ({ searchResult, fetchData, pageIndex, total }: SearchResultsProps) => {
+const SearchResultsPlain = ({ searchResult, fetchData, pageIndex, total, resetButtonsRef }: SearchResultsProps) => {
     console.log('searchResult....', searchResult);
+
     return (
         <ItemsTable
             data={searchResult.results || []}
@@ -69,6 +72,8 @@ const SearchResultsPlain = ({ searchResult, fetchData, pageIndex, total }: Searc
             extraColumns={extraColumns}
             total={total}
             manualSortBy
+            resetButtonsRef={resetButtonsRef}
+            customTableButtons={<SearchDeleteButtons />}
         />
     );
 };

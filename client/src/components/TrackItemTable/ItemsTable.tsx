@@ -1,6 +1,6 @@
 // tslint:disable-next-line: no-submodule-imports
 
-import { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { diffAndFormatShort, formatDurationInternal } from '../../utils';
 
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
@@ -24,12 +24,13 @@ import { IndeterminateCheckbox } from './IndeterminateCheckbox';
 import { OverflowTextCell } from './OverflowText';
 import { SelectColumnFilter } from './SelectColumnFilter';
 import { calculateTotal, fuzzyTextFilterFn } from './TrackItemTable.utils';
-import { TrackItemTableButtons } from './TrackItemTableButtons';
 import { TrackItemTablePager } from './TrackItemTablePager';
 
 import { format } from 'date-fns';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { TIME_FORMAT } from '../../constants';
+import { TrackItemProvider } from './TrackItemContext';
+import { TableButtonsProps } from './TrackItemTableButtons';
 
 interface ItemsTableProps {
     data: ITrackItem[];
@@ -42,6 +43,7 @@ interface ItemsTableProps {
     extraColumns?: Column<ITrackItem>[];
     total: number;
     manualSortBy: boolean;
+    customTableButtons?: React.ReactElement<TableButtonsProps>;
 }
 
 export const ItemsTable = ({
@@ -55,6 +57,7 @@ export const ItemsTable = ({
     total,
     manualSortBy = false,
     isOneDay,
+    customTableButtons,
 }: ItemsTableProps) => {
     const dateToValue = ({ value }: { value: number }) => {
         return format(value, isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT);
@@ -230,94 +233,113 @@ export const ItemsTable = ({
 
     return (
         <>
-            <Portal containerRef={resetButtonsRef}>
-                {!isSearchTable && (
-                    <TrackItemTableButtons {...{ setAllFilters, setSortBy, selectedFlatRows, selectedRowIds }} />
-                )}
-            </Portal>
-
-            <Table {...getTableProps()}>
-                <Thead>
-                    {headerGroups.map((headerGroup) => {
-                        const { key, ...rest } = headerGroup.getHeaderGroupProps();
-                        return (
-                            <Tr key={key} {...rest}>
-                                {headerGroup.headers.map((column) => (
-                                    <Th
-                                        {...column.getHeaderProps({
-                                            style: {
-                                                minWidth: column.minWidth,
-                                                width: column.width,
-                                                maxWidth: column.maxWidth,
-                                            },
-                                        })}
-                                        isNumeric={column.isNumeric}
-                                    >
-                                        {column.name}
-                                        {column.id === 'selection' && column.render('Header')}
-                                        {column.id !== 'selection' && (
-                                            <Flex alignItems="center">
-                                                <Button
-                                                    variant="ghost"
-                                                    fontWeight="bold"
-                                                    {...column.getSortByToggleProps()}
-                                                >
-                                                    {column.render('Header')}
-                                                    <Box pl="4">
-                                                        {column.isSorted ? (
-                                                            column.isSortedDesc ? (
-                                                                <TriangleDownIcon aria-label="sorted descending" />
-                                                            ) : (
-                                                                <TriangleUpIcon aria-label="sorted ascending" />
-                                                            )
-                                                        ) : null}
-                                                    </Box>
-                                                </Button>
-                                                <Box flex={1} />
-                                                {column.canFilter ? column.render('Filter') : null}
-                                            </Flex>
-                                        )}
-                                    </Th>
-                                ))}
-                            </Tr>
-                        );
-                    })}
-                </Thead>
-                <Tbody {...getTableBodyProps()}>
-                    {page.map((row) => {
-                        prepareRow(row);
-                        return (
-                            <Tr {...row.getRowProps()}>
-                                {row.cells.map((cell) => (
-                                    <Td {...cell.getCellProps()} isNumeric={cell.column.isNumeric}>
-                                        {cell.render('Cell')}
-                                    </Td>
-                                ))}
-                            </Tr>
-                        );
-                    })}
-                </Tbody>
-            </Table>
-            <Box display="flex" justifyContent="end" pt={5}>
-                <Box pr={5} whiteSpace={'nowrap'}>
-                    Total: {subTotal} / <b>{formatDurationInternal(total)}</b>
-                </Box>
-            </Box>
-
-            <TrackItemTablePager
-                {...{
-                    gotoPage,
-                    canPreviousPage,
-                    previousPage,
+            <TrackItemProvider
+                value={{
+                    selectedFlatRows,
+                    selectedRowIds,
+                    setAllFilters,
+                    setSortBy,
                     pageIndex,
-                    pageOptions,
                     pageSize,
-                    nextPage,
-                    canNextPage,
-                    pageCount,
-                    setPageSize,
+                    fetchData,
                 }}
-            />
+            >
+                <Portal containerRef={resetButtonsRef}>
+                    {customTableButtons &&
+                        React.cloneElement(customTableButtons, {
+                            selectedFlatRows,
+                            selectedRowIds,
+                            setAllFilters,
+                            setSortBy,
+                            pageIndex,
+                            pageSize,
+                            fetchData,
+                        })}
+                </Portal>
+
+                <Table {...getTableProps()}>
+                    <Thead>
+                        {headerGroups.map((headerGroup) => {
+                            const { key, ...rest } = headerGroup.getHeaderGroupProps();
+                            return (
+                                <Tr key={key} {...rest}>
+                                    {headerGroup.headers.map((column) => (
+                                        <Th
+                                            {...column.getHeaderProps({
+                                                style: {
+                                                    minWidth: column.minWidth,
+                                                    width: column.width,
+                                                    maxWidth: column.maxWidth,
+                                                },
+                                            })}
+                                            isNumeric={column.isNumeric}
+                                        >
+                                            {column.name}
+                                            {column.id === 'selection' && column.render('Header')}
+                                            {column.id !== 'selection' && (
+                                                <Flex alignItems="center">
+                                                    <Button
+                                                        variant="ghost"
+                                                        fontWeight="bold"
+                                                        {...column.getSortByToggleProps()}
+                                                    >
+                                                        {column.render('Header')}
+                                                        <Box pl="4">
+                                                            {column.isSorted ? (
+                                                                column.isSortedDesc ? (
+                                                                    <TriangleDownIcon aria-label="sorted descending" />
+                                                                ) : (
+                                                                    <TriangleUpIcon aria-label="sorted ascending" />
+                                                                )
+                                                            ) : null}
+                                                        </Box>
+                                                    </Button>
+                                                    <Box flex={1} />
+                                                    {column.canFilter ? column.render('Filter') : null}
+                                                </Flex>
+                                            )}
+                                        </Th>
+                                    ))}
+                                </Tr>
+                            );
+                        })}
+                    </Thead>
+                    <Tbody {...getTableBodyProps()}>
+                        {page.map((row) => {
+                            prepareRow(row);
+                            return (
+                                <Tr {...row.getRowProps()}>
+                                    {row.cells.map((cell) => (
+                                        <Td {...cell.getCellProps()} isNumeric={cell.column.isNumeric}>
+                                            {cell.render('Cell')}
+                                        </Td>
+                                    ))}
+                                </Tr>
+                            );
+                        })}
+                    </Tbody>
+                </Table>
+                <Box display="flex" justifyContent="end" pt={5}>
+                    <Box pr={5} whiteSpace={'nowrap'}>
+                        Total: {subTotal} / <b>{formatDurationInternal(total)}</b>
+                    </Box>
+                </Box>
+
+                <TrackItemTablePager
+                    {...{
+                        gotoPage,
+                        canPreviousPage,
+                        previousPage,
+                        pageIndex,
+                        pageOptions,
+                        pageSize,
+                        nextPage,
+                        canNextPage,
+                        pageCount,
+                        setPageSize,
+                    }}
+                />
+            </TrackItemProvider>
         </>
     );
 };
