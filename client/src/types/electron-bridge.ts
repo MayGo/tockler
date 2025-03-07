@@ -22,6 +22,6 @@ export interface ElectronBridge {
 // Extend Window interface to include electronBridge
 declare global {
     interface Window {
-        electronBridge?: ElectronBridge;
+        electronBridge: ElectronBridge;
     }
 }
