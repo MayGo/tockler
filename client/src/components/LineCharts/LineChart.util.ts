@@ -31,6 +31,11 @@ export const formatToTimeEveryOther = (t: number) => {
     return formatToTime(hour.toMillis());
 };
 
+export const toHours = (t: number) => {
+    const duration = intervalToDuration({ start: 0, end: t });
+    return duration.hours ?? 0;
+};
+
 export const formatToHours = (max: number) => (t: number) => {
     const duration = intervalToDuration({ start: 0, end: t * max });
     return `${duration.hours} h`;

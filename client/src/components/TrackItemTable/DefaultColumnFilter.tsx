@@ -1,13 +1,15 @@
 import { Input } from '@chakra-ui/react';
 import { ToggleColumnFilter } from './ToggleColumnFilter';
 
-export function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
+export function DefaultColumnFilter({ column }) {
+    const filterValue = column.getFilterValue() || '';
+
     return (
         <ToggleColumnFilter>
             <Input
-                value={filterValue || ''}
+                value={filterValue}
                 onChange={(e) => {
-                    setFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
+                    column.setFilterValue(e.target.value || undefined); // Set undefined to remove the filter entirely
                 }}
                 placeholder={``}
             />

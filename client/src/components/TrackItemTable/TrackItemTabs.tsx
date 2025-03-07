@@ -1,13 +1,12 @@
 // tslint:disable-next-line: no-submodule-imports
 
+import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
 import { useRef } from 'react';
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
-import { TrackItemTable } from './TrackItemTable';
 import { TrackItemType } from '../../enum/TrackItemType';
-import { Box } from '@chakra-ui/react';
+import { TrackItemTable } from './TrackItemTable';
 
 export const TrackItemTabs = () => {
-    const tableResetRef = useRef(null);
+    const resetButtonsRef = useRef(null);
 
     return (
         <Tabs variant="enclosed" isLazy>
@@ -15,14 +14,14 @@ export const TrackItemTabs = () => {
                 <Tab borderBottomWidth={0}>Apps</Tab>
                 <Tab borderBottomWidth={0}>Logs</Tab>
                 <Box flex={1} />
-                <Box ref={tableResetRef} />
+                <Box ref={resetButtonsRef} />
             </TabList>
             <TabPanels>
                 <TabPanel p={0}>
-                    <TrackItemTable type={TrackItemType.AppTrackItem} resetButtonsRef={tableResetRef} />
+                    <TrackItemTable type={TrackItemType.AppTrackItem} resetButtonsRef={resetButtonsRef} />
                 </TabPanel>
                 <TabPanel p={0}>
-                    <TrackItemTable type={TrackItemType.LogTrackItem} resetButtonsRef={tableResetRef} />
+                    <TrackItemTable type={TrackItemType.LogTrackItem} resetButtonsRef={resetButtonsRef} />
                 </TabPanel>
             </TabPanels>
         </Tabs>

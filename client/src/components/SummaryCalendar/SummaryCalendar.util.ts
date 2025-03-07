@@ -72,8 +72,8 @@ export const summariseTimeOnline = (
         .groupBy(groupByActualDay)
         .map((value) => {
             return {
-                beginDate: _.minBy(value, (c) => convertDate(c.beginDate)).beginDate,
-                endDate: _.maxBy(value, (c) => convertDate(c.endDate)).endDate,
+                beginDate: _.minBy(value, (c) => convertDate(c.beginDate).toMillis())?.beginDate,
+                endDate: _.maxBy(value, (c) => convertDate(c.endDate).toMillis())?.endDate,
                 online: _.sumBy(value, (c) => convertDate(c.endDate).diff(convertDate(c.beginDate)).milliseconds),
             };
         })
@@ -88,5 +88,6 @@ export const summariseTimeOnline = (
             return result;
         }, {});
 
+    console.log('data', data);
     return data;
 };

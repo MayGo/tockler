@@ -61,8 +61,6 @@ export const MainTimelineChart = memo(() => {
     const selectedTimelineItem = useStoreState((state) => state.selectedTimelineItem);
     const setSelectedTimelineItem = useStoreActions((actions) => actions.setSelectedTimelineItem);
 
-    console.log('selectedTimelineItem....', selectedTimelineItem);
-
     const handleSelectionChanged = (item) => {
         if (item) {
             Logger.debug('Selected item:', item);
@@ -161,7 +159,7 @@ export const MainTimelineChart = memo(() => {
                 bottom={2}
                 right={2}
                 display="flex"
-                zIndex={1000}
+                zIndex={2}
                 backgroundColor={chartTheme.isDark ? 'gray.800' : 'white'}
                 borderRadius={5}
             >

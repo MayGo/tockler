@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import { Box, HStack, Text } from '@chakra-ui/react';
 import { useStoreState } from '../store/easyPeasy';
-import { sumAppObject } from './PieCharts/MetricTiles.utils';
+import { sumAppObject, SumItem } from './PieCharts/MetricTiles.utils';
 import { filterItems } from './Timeline/timeline.utils';
 
 import { TrackItemType } from '../enum/TrackItemType';
@@ -24,7 +24,7 @@ export const TaskList = () => {
                 title: b[0].title,
                 timeDiffInMs: 0,
                 color: b[0].color,
-            });
+            } as SumItem);
         })
         .valueOf();
 

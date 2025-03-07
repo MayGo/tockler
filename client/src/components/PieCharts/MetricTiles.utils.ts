@@ -2,6 +2,13 @@ import { DateTime } from 'luxon';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { convertDate } from '../../constants';
 
+export type SumItem = {
+    app: string;
+    title?: string;
+    timeDiffInMs: number;
+    color?: string;
+};
+
 export const clampRange = (clampToRange: DateTime[], range: DateTime[]) => {
     const begin = DateTime.max(clampToRange[0], convertDate(range[0]));
     const end = DateTime.min(clampToRange[1], convertDate(range[1]));

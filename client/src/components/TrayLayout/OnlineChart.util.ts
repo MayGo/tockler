@@ -183,11 +183,11 @@ const getBeginEndDiff = (beginDate: DateTime, endDate: DateTime) => {
 
 const MINUTES = 60 * 1000;
 
-export const groupByBreaks = (items: IOnlineChartItem[], minBreakTime: number) => {
-    let newItems: IOnlineChartItem[] = [];
-    let olderItem: IOnlineChartItem;
+export const groupByBreaks = (items: ITrackItem[], minBreakTime: number) => {
+    let newItems: ITrackItem[] = [];
+    let olderItem: ITrackItem;
 
-    const groups: IOnlineChartItem[][] = [];
+    const groups: ITrackItem[][] = [];
 
     items.forEach((currentItem) => {
         if (olderItem) {
@@ -218,7 +218,11 @@ export const getTotalOnlineDuration = (now: DateTime, items: ITrackItem[], minBr
 
     const sorted = orderBy(filtered, ['beginDate'], ['desc']);
 
-    if (getBeginEndDiff(DateTime.fromMillis(first(sorted).endDate), now) / MINUTES >= minBreakTime) {
+    if (sorted.length === 0) {
+        return [0];
+    }
+
+    if (getBeginEndDiff(DateTime.fromMillis(first(sorted)?.endDate || 0), now) / MINUTES >= minBreakTime) {
         return [0];
     }
 
