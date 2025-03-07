@@ -7,14 +7,12 @@ import { useInterval } from '../../hooks/intervalHook';
 import { RootContext } from '../../RootContext';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
 import { notifyUser } from '../../services/settings.api';
-import { shortTime } from '../../time.util';
 import { colorProp } from '../charts.utils';
-import { formatToTime } from '../LineCharts/LineChart.util';
 import { getOnlineTime } from '../PieCharts/MetricTiles.utils';
-import { PieLabel } from '../PieCharts/PieLabel';
 import { ShortTimeInterval } from '../TrayList/ShortTimeInterval';
 import { ChartCircles } from './ChartCircles';
 import { CLOCK_MODE, getOnlineTimesForChart, getQuarters, getTotalOnlineDuration } from './OnlineChart.util';
+import { OnlineChartTooltipLabel } from './OnlineChartTooltipLabel';
 
 const QuarterLabel = (props) => (
     <Box width="20px" height="20px">
@@ -106,7 +104,7 @@ export const OnlineChart = ({ items }: { items: ITrackItem[] }) => {
             <QuarterLabel>{startDate.hour}</QuarterLabel>
 
             <HStack>
-                <QuarterLabel>{thirdQuarter.hour} </QuarterLabel>
+                <QuarterLabel>{thirdQuarter.hour}</QuarterLabel>
 
                 <Box>
                     <ChartCircles
@@ -124,14 +122,9 @@ export const OnlineChart = ({ items }: { items: ITrackItem[] }) => {
                         innerRadius={innerWidth / 2}
                         containerComponent={<VictoryContainer responsive={false} />}
                         style={style}
-                        labels={({ datum }) => {
-                            const { beginDate, endDate, diff } = datum;
-
-                            return `${shortTime(diff * 1000 * 60)}\r\n${formatToTime(beginDate)} - ${formatToTime(
-                                endDate,
-                            )}`;
-                        }}
-                        labelComponent={<PieLabel width={width} innerWidth={innerWidth - 10} theme={chartTheme} />}
+                        labelComponent={
+                            <OnlineChartTooltipLabel width={width} innerWidth={innerWidth - 10} theme={chartTheme} />
+                        }
                         y={(datum) => datum.diff}
                         data={pieData}
                     />
