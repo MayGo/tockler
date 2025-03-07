@@ -27,6 +27,7 @@ import { getDynamicTimeFormat } from './timeline.format.utils';
 import { getTrackItemOrderFn } from './timeline.utils';
 
 import { useMeasure } from '@uidotdev/usehooks';
+import { shortTime } from '../../time.util';
 
 const domainPadding: DomainPaddingPropType = { y: 35, x: 10 };
 
@@ -124,15 +125,18 @@ export const MainTimelineChart = memo(() => {
 
     const getTooltipLabel = (d) => {
         const diff = convertDate(d.endDate).diff(convertDate(d.beginDate));
+        const now = convertDate(new Date());
+        const ago = now.diff(convertDate(d.endDate));
 
         const type = d.taskName === TrackItemType.StatusTrackItem ? 'STATUS' : d.app;
         const beginTime = convertDate(d.beginDate).toFormat(TIME_FORMAT);
         const endTime = convertDate(d.endDate).toFormat(TIME_FORMAT);
+        const agoText = `${shortTime(ago.milliseconds, { largest: 2 })} ago`;
 
         const url = d.url ? `${d.url}\r\n` : '';
         return `${type}\r\n${d.title}\r\n${url}${beginTime} - ${endTime}\r\n${formatDurationInternal(
             diff.milliseconds,
-        )}`;
+        )}\r\n${agoText}`;
     };
 
     const appItems = timeItems[TrackItemType.AppTrackItem] || EMPTY_ARRAY;
