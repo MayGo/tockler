@@ -177,6 +177,9 @@ export const ItemsTable = ({
             filterTypes,
             data,
             manualSortBy,
+            getRowId: (row, relativeIndex) => {
+                return row.id ? row.id.toString() : relativeIndex.toString();
+            },
             ...pagingProps,
         },
         useFilters,
