@@ -24,8 +24,20 @@ export const shortTime = humanizeDuration.humanizer({
     },
 });
 
-export const secondsToClock = (seconds: number, minPos = 0, maxPos = 0) => {
-    let timeLeft: any = {};
+interface TimeLeft {
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+}
+
+export const secondsToClock = (seconds: number, minPos = 0, maxPos = 0): string => {
+    let timeLeft: TimeLeft = {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+    };
 
     if (seconds > 0) {
         timeLeft = {
@@ -36,7 +48,7 @@ export const secondsToClock = (seconds: number, minPos = 0, maxPos = 0) => {
         };
     }
 
-    let timerParts: string[] = [];
+    const timerParts: string[] = [];
 
     if (timeLeft.days > 0 || minPos >= 4) {
         timerParts.push(`${zeroPad(timeLeft.days, 1)}d`);
