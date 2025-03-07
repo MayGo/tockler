@@ -159,7 +159,7 @@ export const MainTimelineChart = memo(() => {
                 bottom={2}
                 right={2}
                 display="flex"
-                zIndex={1000}
+                zIndex={2}
                 backgroundColor={chartTheme.isDark ? 'gray.800' : 'white'}
                 borderRadius={5}
             >

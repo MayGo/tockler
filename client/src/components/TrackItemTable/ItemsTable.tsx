@@ -228,15 +228,6 @@ export const ItemsTable = ({
         fetchData,
     };
 
-    // Log row selection changes for debugging
-    useEffect(() => {
-        console.log('Row selection state:', rowSelection);
-        console.log('Selected rows count:', Object.keys(rowSelection).length);
-        console.log('Selected rows from table model:', table.getSelectedRowModel().rows);
-        console.log('All rows selected?', table.getIsAllRowsSelected());
-        console.log('Some rows selected?', table.getIsSomeRowsSelected());
-    }, [rowSelection, table]);
-
     return (
         <>
             <Portal containerRef={resetButtonsRef}>
