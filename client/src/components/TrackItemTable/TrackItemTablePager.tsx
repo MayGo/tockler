@@ -1,28 +1,42 @@
-import { Flex, Text } from '@chakra-ui/react';
-import { IconButton } from '@chakra-ui/react';
 import { ArrowLeftIcon, ArrowRightIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { Tooltip } from '@chakra-ui/react';
-import { Select } from '@chakra-ui/react';
 import {
+    Flex,
+    IconButton,
     NumberDecrementStepper,
     NumberIncrementStepper,
     NumberInput,
     NumberInputField,
     NumberInputStepper,
+    Select,
+    Text,
+    Tooltip,
 } from '@chakra-ui/react';
+
+interface TrackItemTablePagerProps {
+    gotoPage: (page: number) => void;
+    canPreviousPage: boolean;
+    previousPage: () => void;
+    pageIndex: number;
+    pageSize: number;
+    nextPage: () => void;
+    canNextPage: boolean;
+    pageCount: number;
+    setPageSize: (size: number) => void;
+}
 
 export const TrackItemTablePager = ({
     gotoPage,
     canPreviousPage,
     previousPage,
     pageIndex,
-    pageOptions,
     pageSize,
     nextPage,
     canNextPage,
     pageCount,
     setPageSize,
-}) => {
+}: TrackItemTablePagerProps) => {
+    if (pageCount === 0) return null;
+
     return (
         <Flex justifyContent="space-between" m={4} alignItems="center">
             <Flex>
@@ -53,7 +67,7 @@ export const TrackItemTablePager = ({
                     </Text>{' '}
                     of{' '}
                     <Text fontWeight="bold" as="span">
-                        {pageOptions.length}
+                        {Math.max(pageCount, 1)}
                     </Text>
                 </Text>
                 <Text flexShrink={0}>Go to page:</Text>{' '}
@@ -62,13 +76,14 @@ export const TrackItemTablePager = ({
                     mr={8}
                     w={28}
                     min={1}
-                    max={pageOptions.length}
+                    max={Math.max(pageCount, 1)}
                     onChange={(value) => {
                         const currentPage = Number(value);
                         const page = currentPage ? currentPage - 1 : 0;
                         gotoPage(page);
                     }}
                     defaultValue={pageIndex + 1}
+                    value={pageIndex + 1}
                 >
                     <NumberInputField />
                     <NumberInputStepper>
@@ -83,9 +98,9 @@ export const TrackItemTablePager = ({
                         setPageSize(Number(e.target.value));
                     }}
                 >
-                    {[10, 20, 30, 40, 50].map((pageSize) => (
-                        <option key={pageSize} value={pageSize}>
-                            Show {pageSize}
+                    {[10, 20, 30, 40, 50].map((size) => (
+                        <option key={size} value={size}>
+                            Show {size}
                         </option>
                     ))}
                 </Select>
@@ -103,7 +118,7 @@ export const TrackItemTablePager = ({
                 <Tooltip label="Last Page">
                     <IconButton
                         aria-label="Last Page"
-                        onClick={() => gotoPage(pageCount - 1)}
+                        onClick={() => gotoPage(Math.max(pageCount - 1, 0))}
                         isDisabled={!canNextPage}
                         icon={<ArrowRightIcon h={3} w={3} />}
                         ml={4}

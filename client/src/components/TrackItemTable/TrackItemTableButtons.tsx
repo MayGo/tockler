@@ -1,31 +1,24 @@
 // tslint:disable-next-line: no-submodule-imports
 
 import { Button, HStack, Text } from '@chakra-ui/react';
-import { Row, SortingRule } from 'react-table';
+import { Row, SortingState } from '@tanstack/react-table';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { Logger } from '../../logger';
 import { deleteByIds } from '../../services/trackItem.api';
 import { useStoreActions } from '../../store/easyPeasy';
-import { useTrackItemContext } from './TrackItemContext';
 
 export interface TableButtonsProps {
-    selectedFlatRows?: Row<ITrackItem>[];
-    selectedRowIds?: Record<string, boolean>;
-    setAllFilters?: (filters: unknown[]) => void;
-    setSortBy?: (sortBy: SortingRule<ITrackItem>[]) => void;
-    pageIndex?: number;
-    pageSize?: number;
-    fetchData?: (options: { pageIndex: number; pageSize: number; sortBy: SortingRule<ITrackItem>[] }) => void;
+    selectedFlatRows: Row<ITrackItem>[];
+    selectedRowIds: Record<string, boolean>;
+    setAllFilters: () => void;
+    setSortBy: (sortBy: SortingState) => void;
+    pageIndex: number;
+    pageSize: number;
+    fetchData?: (options: { pageIndex: number; pageSize: number; sortBy: SortingState }) => void;
 }
 
 export const TrackItemTableButtons: React.FC<TableButtonsProps> = (props) => {
-    const contextValues = useTrackItemContext();
-
-    // Use props if provided, otherwise use context values
-    const selectedFlatRows = props.selectedFlatRows || contextValues.selectedFlatRows;
-    const selectedRowIds = props.selectedRowIds || contextValues.selectedRowIds;
-    const setAllFilters = props.setAllFilters || contextValues.setAllFilters;
-    const setSortBy = props.setSortBy || contextValues.setSortBy;
+    const { selectedFlatRows, selectedRowIds, setAllFilters, setSortBy } = props;
 
     const fetchTimerange = useStoreActions((actions) => actions.fetchTimerange);
 
@@ -61,7 +54,7 @@ export const TrackItemTableButtons: React.FC<TableButtonsProps> = (props) => {
                 </Button>
             )}
 
-            <Button variant="outline" onClick={() => setAllFilters([])}>
+            <Button variant="outline" onClick={() => setAllFilters()}>
                 Clear filters
             </Button>
 
@@ -69,7 +62,7 @@ export const TrackItemTableButtons: React.FC<TableButtonsProps> = (props) => {
                 variant="outline"
                 onClick={() => {
                     setSortBy([]);
-                    setAllFilters([]);
+                    setAllFilters();
                 }}
             >
                 Clear filters and sorters

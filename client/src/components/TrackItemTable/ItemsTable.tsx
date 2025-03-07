@@ -1,21 +1,23 @@
 // tslint:disable-next-line: no-submodule-imports
 
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { diffAndFormatShort, formatDurationInternal } from '../../utils';
 
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import {
-    Column,
-    FilterTypes,
-    Row,
-    SortingRule,
-    useFilters,
-    usePagination,
-    useRowSelect,
-    useSortBy,
-    useTable,
-} from 'react-table';
+    ColumnDef,
+    ColumnFiltersState,
+    FilterFn,
+    PaginationState,
+    SortingState,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    useReactTable,
+} from '@tanstack/react-table';
 
 import { Portal } from '@chakra-ui/react';
 import { DATE_TIME_FORMAT } from '../../constants';
@@ -29,7 +31,6 @@ import { TrackItemTablePager } from './TrackItemTablePager';
 import { format } from 'date-fns';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { TIME_FORMAT } from '../../constants';
-import { TrackItemProvider } from './TrackItemContext';
 import { TableButtonsProps } from './TrackItemTableButtons';
 
 interface ItemsTableProps {
@@ -39,8 +40,8 @@ interface ItemsTableProps {
     isSearchTable: boolean;
     pageCount?: number;
     pageIndex?: number;
-    fetchData?: (options: { pageIndex: number; pageSize: number; sortBy: SortingRule<ITrackItem>[] }) => void;
-    extraColumns?: Column<ITrackItem>[];
+    fetchData?: (options: { pageIndex: number; pageSize: number; sortBy: SortingState }) => void;
+    extraColumns?: ColumnDef<ITrackItem>[];
     total: number;
     manualSortBy: boolean;
     customTableButtons?: React.ReactElement<TableButtonsProps>;
@@ -59,287 +60,266 @@ export const ItemsTable = ({
     isOneDay,
     customTableButtons,
 }: ItemsTableProps) => {
-    const dateToValue = ({ value }: { value: number }) => {
+    const dateToValue = ({ cell }) => {
+        const value = cell.getValue() as number;
         return format(value, isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT);
     };
 
-    const defaultColumn = useMemo(
-        () => ({
-            // Let's set up our default Filter UI
-            Filter: DefaultColumnFilter,
-        }),
-        [],
-    );
-
-    const columns = useMemo<Column<ITrackItem>[]>(
+    const columns = useMemo<ColumnDef<ITrackItem>[]>(
         () => [
             {
-                Header: 'App',
-                accessor: 'app',
-                Filter: SelectColumnFilter,
-                filter: 'includes',
-                width: 100,
-                minWidth: 100,
-                maxWidth: 120,
+                id: 'selection',
+                header: ({ table }) => (
+                    <IndeterminateCheckbox
+                        checked={table.getIsAllRowsSelected()}
+                        indeterminate={table.getIsSomeRowsSelected()}
+                        onChange={(e) => table.toggleAllRowsSelected(e.target.checked)}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <IndeterminateCheckbox
+                        checked={row.getIsSelected()}
+                        disabled={!row.getCanSelect()}
+                        indeterminate={row.getIsSomeSelected()}
+                        onChange={(e) => row.toggleSelected(e.target.checked)}
+                    />
+                ),
+                enableSorting: false,
+                size: 10,
             },
             {
-                Header: 'Title',
-                accessor: 'title',
-                Cell: OverflowTextCell,
-                width: 250,
-                minWidth: 100,
-                maxWidth: 500,
+                header: 'App',
+                accessorKey: 'app',
+                filterFn: 'includesString',
+                meta: {
+                    Filter: SelectColumnFilter,
+                },
+                size: 100,
+                minSize: 100,
+                maxSize: 120,
             },
             {
-                Header: 'URL',
-                accessor: 'url',
-                Cell: OverflowTextCell,
-                width: 150,
-                minWidth: 70,
-                maxWidth: 400,
+                header: 'Title',
+                accessorKey: 'title',
+                cell: (info) => <OverflowTextCell value={info.getValue() as string} />,
+                size: 250,
+                minSize: 100,
+                maxSize: 500,
             },
             {
-                Header: 'Begin',
-                accessor: 'beginDate',
-                Cell: dateToValue,
-                width: 80,
-                minWidth: 80,
-                maxWidth: 120,
+                header: 'URL',
+                accessorKey: 'url',
+                cell: (info) => <OverflowTextCell value={info.getValue() as string} />,
+                size: 150,
+                minSize: 70,
+                maxSize: 400,
             },
             {
-                Header: 'End',
-                accessor: 'endDate',
-                Cell: dateToValue,
-                width: 80,
-                minWidth: 80,
-                maxWidth: 120,
+                header: 'Begin',
+                accessorKey: 'beginDate',
+                cell: dateToValue,
+                size: 80,
+                minSize: 80,
+                maxSize: 120,
             },
             {
-                Header: 'Duration',
-                disableSortBy: manualSortBy,
-                accessor: (record: ITrackItem) => diffAndFormatShort(record.beginDate, record.endDate),
-                width: 80,
-                minWidth: 80,
-                maxWidth: 80,
+                header: 'End',
+                accessorKey: 'endDate',
+                cell: dateToValue,
+                size: 80,
+                minSize: 80,
+                maxSize: 120,
+            },
+            {
+                header: 'Duration',
+                accessorFn: (record: ITrackItem) => diffAndFormatShort(record.beginDate, record.endDate),
+                enableSorting: !manualSortBy,
+                size: 80,
+                minSize: 80,
+                maxSize: 80,
             },
             ...extraColumns,
         ],
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [],
+        [extraColumns, dateToValue, manualSortBy],
     );
 
-    const filterTypes = useMemo<FilterTypes<ITrackItem>>(
-        () => ({
-            // Add a new fuzzyTextFilterFn filter type.
-            fuzzyText: fuzzyTextFilterFn,
-            // Or, override the default text filter to use
-            // "startWith"
-            text: (rows: Row<ITrackItem>[], id: string, filterValue: string) => {
-                return rows.filter((row) => {
-                    const rowValue = row.values[id];
-                    return rowValue !== undefined
-                        ? String(rowValue).toLowerCase().startsWith(String(filterValue).toLowerCase())
-                        : true;
-                });
-            },
-        }),
-        [],
-    );
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const [rowSelection, setRowSelection] = useState({});
+    const [pagination, setPagination] = useState<PaginationState>({
+        pageIndex: controlledPageIndex || 0,
+        pageSize: 10,
+    });
 
-    const pagingProps = isSearchTable
-        ? {
-              initialState: { pageIndex: controlledPageIndex },
-              disableFilters: true,
-              manualPagination: true,
-              pageCount: controlledPageCount,
-          }
-        : {};
+    // Use the state of the pagination when it is controlled from outside
+    useEffect(() => {
+        if (isSearchTable && typeof controlledPageIndex === 'number') {
+            setPagination((prev) => ({
+                ...prev,
+                pageIndex: controlledPageIndex,
+            }));
+        }
+    }, [isSearchTable, controlledPageIndex]);
 
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        prepareRow,
-        page,
-        canPreviousPage,
-        canNextPage,
-        pageOptions,
-        pageCount,
-        gotoPage,
-        nextPage,
-        previousPage,
-        setPageSize,
-        setAllFilters,
-        setSortBy,
-        selectedFlatRows,
-        state: { pageIndex, pageSize, selectedRowIds, sortBy },
-    } = useTable<ITrackItem>(
-        {
-            columns,
-            defaultColumn,
-            filterTypes,
-            data,
-            manualSortBy,
-            getRowId: (row, relativeIndex) => {
-                return row.id ? row.id.toString() : relativeIndex.toString();
-            },
-            ...pagingProps,
+    // Configure the table
+    const table = useReactTable({
+        data,
+        columns,
+        filterFns: {
+            fuzzyText: fuzzyTextFilterFn as FilterFn<ITrackItem>,
         },
-        useFilters,
-        useSortBy,
-        usePagination,
-        useRowSelect,
-        (hooks) => {
-            hooks.visibleColumns.push((columns) => [
-                {
-                    id: 'selection',
-                    width: 10,
-                    minWidth: 10,
-                    maxWidth: 10,
-
-                    Header: ({ getToggleAllRowsSelectedProps }) => (
-                        <div>
-                            <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
-                        </div>
-                    ),
-
-                    Cell: ({ row }) => (
-                        <div>
-                            <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-                        </div>
-                    ),
-                },
-                ...columns,
-            ]);
+        state: {
+            sorting,
+            columnFilters,
+            rowSelection,
+            pagination,
         },
-    );
+        enableRowSelection: true,
+        enableMultiRowSelection: true,
+        getRowId: (row: ITrackItem) => row.id.toString(),
+        onRowSelectionChange: setRowSelection,
+        onSortingChange: setSorting,
+        onColumnFiltersChange: setColumnFilters,
+        onPaginationChange: setPagination,
+        getCoreRowModel: getCoreRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        manualPagination: isSearchTable,
+        manualSorting: manualSortBy,
+        manualFiltering: isSearchTable,
+        pageCount: isSearchTable ? controlledPageCount || -1 : undefined,
+    });
 
+    // Reset row selection when data changes
+    useEffect(() => {
+        setRowSelection({});
+    }, [data]);
+
+    // Handle server-side pagination
     useEffect(() => {
         if (isSearchTable) {
-            console.info('Change paging', { pageIndex, pageSize, sortBy });
-            fetchData?.({ pageIndex, pageSize, sortBy });
+            console.info('Change paging', {
+                pageIndex: pagination.pageIndex,
+                pageSize: pagination.pageSize,
+                sortBy: sorting,
+            });
+            fetchData?.({ pageIndex: pagination.pageIndex, pageSize: pagination.pageSize, sortBy: sorting });
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pageIndex, pageSize]);
+    }, [isSearchTable, fetchData, pagination, sorting]);
 
+    // Handle server-side sorting
     useEffect(() => {
-        if (manualSortBy) {
-            fetchData?.({ pageIndex, pageSize, sortBy });
+        if (manualSortBy && !isSearchTable) {
+            fetchData?.({ pageIndex: pagination.pageIndex, pageSize: pagination.pageSize, sortBy: sorting });
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fetchData, sortBy, manualSortBy]);
+    }, [manualSortBy, fetchData, sorting, pagination, isSearchTable]);
 
     const subTotal = calculateTotal(data);
 
+    // Get the selected rows information for buttons/actions
+    const selectedRowsInfo = {
+        selectedFlatRows: table.getSelectedRowModel().rows,
+        selectedRowIds: table.getState().rowSelection,
+        setAllFilters: () => setColumnFilters([]),
+        setSortBy: (sortByState: SortingState) => setSorting(sortByState),
+        pageIndex: pagination.pageIndex,
+        pageSize: pagination.pageSize,
+        fetchData,
+    };
+
+    // Log row selection changes for debugging
+    useEffect(() => {
+        console.log('Row selection state:', rowSelection);
+        console.log('Selected rows count:', Object.keys(rowSelection).length);
+        console.log('Selected rows from table model:', table.getSelectedRowModel().rows);
+        console.log('All rows selected?', table.getIsAllRowsSelected());
+        console.log('Some rows selected?', table.getIsSomeRowsSelected());
+    }, [rowSelection, table]);
+
     return (
         <>
-            <TrackItemProvider
-                value={{
-                    selectedFlatRows,
-                    selectedRowIds,
-                    setAllFilters,
-                    setSortBy,
-                    pageIndex,
-                    pageSize,
-                    fetchData,
-                }}
-            >
-                <Portal containerRef={resetButtonsRef}>
-                    {customTableButtons &&
-                        React.cloneElement(customTableButtons, {
-                            selectedFlatRows,
-                            selectedRowIds,
-                            setAllFilters,
-                            setSortBy,
-                            pageIndex,
-                            pageSize,
-                            fetchData,
-                        })}
-                </Portal>
+            <Portal containerRef={resetButtonsRef}>
+                {customTableButtons && React.cloneElement(customTableButtons, selectedRowsInfo)}
+            </Portal>
 
-                <Table {...getTableProps()}>
-                    <Thead>
-                        {headerGroups.map((headerGroup) => {
-                            const { key, ...rest } = headerGroup.getHeaderGroupProps();
-                            return (
-                                <Tr key={key} {...rest}>
-                                    {headerGroup.headers.map((column) => (
-                                        <Th
-                                            {...column.getHeaderProps({
-                                                style: {
-                                                    minWidth: column.minWidth,
-                                                    width: column.width,
-                                                    maxWidth: column.maxWidth,
-                                                },
-                                            })}
-                                            isNumeric={column.isNumeric}
-                                        >
-                                            {column.name}
-                                            {column.id === 'selection' && column.render('Header')}
-                                            {column.id !== 'selection' && (
-                                                <Flex alignItems="center">
-                                                    <Button
-                                                        variant="ghost"
-                                                        fontWeight="bold"
-                                                        {...column.getSortByToggleProps()}
-                                                    >
-                                                        {column.render('Header')}
-                                                        <Box pl="4">
-                                                            {column.isSorted ? (
-                                                                column.isSortedDesc ? (
-                                                                    <TriangleDownIcon aria-label="sorted descending" />
-                                                                ) : (
-                                                                    <TriangleUpIcon aria-label="sorted ascending" />
-                                                                )
-                                                            ) : null}
-                                                        </Box>
-                                                    </Button>
-                                                    <Box flex={1} />
-                                                    {column.canFilter ? column.render('Filter') : null}
-                                                </Flex>
+            <Table>
+                <Thead>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                        <Tr key={headerGroup.id}>
+                            {headerGroup.headers.map((header) => (
+                                <Th
+                                    key={header.id}
+                                    style={{
+                                        minWidth: header.column.getSize(),
+                                        width: header.column.getSize(),
+                                        maxWidth: header.column.columnDef.maxSize,
+                                    }}
+                                    isNumeric={false} // Set this based on column type if needed
+                                >
+                                    {header.column.id === 'selection' ? (
+                                        flexRender(header.column.columnDef.header, header.getContext())
+                                    ) : (
+                                        <Flex alignItems="center">
+                                            {header.column.getCanSort() ? (
+                                                <Button
+                                                    variant="ghost"
+                                                    fontWeight="bold"
+                                                    onClick={header.column.getToggleSortingHandler()}
+                                                >
+                                                    {flexRender(header.column.columnDef.header, header.getContext())}
+                                                    <Box pl="4">
+                                                        {{
+                                                            asc: <TriangleUpIcon aria-label="sorted ascending" />,
+                                                            desc: <TriangleDownIcon aria-label="sorted descending" />,
+                                                        }[header.column.getIsSorted() as string] ?? null}
+                                                    </Box>
+                                                </Button>
+                                            ) : (
+                                                flexRender(header.column.columnDef.header, header.getContext())
                                             )}
-                                        </Th>
-                                    ))}
-                                </Tr>
-                            );
-                        })}
-                    </Thead>
-                    <Tbody {...getTableBodyProps()}>
-                        {page.map((row) => {
-                            prepareRow(row);
-                            return (
-                                <Tr {...row.getRowProps()}>
-                                    {row.cells.map((cell) => (
-                                        <Td {...cell.getCellProps()} isNumeric={cell.column.isNumeric}>
-                                            {cell.render('Cell')}
-                                        </Td>
-                                    ))}
-                                </Tr>
-                            );
-                        })}
-                    </Tbody>
-                </Table>
-                <Box display="flex" justifyContent="end" pt={5}>
-                    <Box pr={5} whiteSpace={'nowrap'}>
-                        Total: {subTotal} / <b>{formatDurationInternal(total)}</b>
-                    </Box>
+                                            <Box flex={1} />
+                                            {header.column.getCanFilter() ? (
+                                                <DefaultColumnFilter column={header.column} />
+                                            ) : null}
+                                        </Flex>
+                                    )}
+                                </Th>
+                            ))}
+                        </Tr>
+                    ))}
+                </Thead>
+                <Tbody>
+                    {table.getRowModel().rows.map((row) => (
+                        <Tr key={row.id}>
+                            {row.getVisibleCells().map((cell) => (
+                                <Td key={cell.id} isNumeric={false}>
+                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                </Td>
+                            ))}
+                        </Tr>
+                    ))}
+                </Tbody>
+            </Table>
+            <Box display="flex" justifyContent="end" pt={5}>
+                <Box pr={5} whiteSpace={'nowrap'}>
+                    Total: {subTotal} / <b>{formatDurationInternal(total)}</b>
                 </Box>
+            </Box>
 
-                <TrackItemTablePager
-                    {...{
-                        gotoPage,
-                        canPreviousPage,
-                        previousPage,
-                        pageIndex,
-                        pageOptions,
-                        pageSize,
-                        nextPage,
-                        canNextPage,
-                        pageCount,
-                        setPageSize,
-                    }}
-                />
-            </TrackItemProvider>
+            <TrackItemTablePager
+                {...{
+                    gotoPage: table.setPageIndex,
+                    canPreviousPage: table.getCanPreviousPage(),
+                    previousPage: table.previousPage,
+                    pageIndex: pagination.pageIndex,
+                    pageSize: pagination.pageSize,
+                    nextPage: table.nextPage,
+                    canNextPage: table.getCanNextPage(),
+                    pageCount: table.getPageCount(),
+                    setPageSize: table.setPageSize,
+                }}
+            />
         </>
     );
 };

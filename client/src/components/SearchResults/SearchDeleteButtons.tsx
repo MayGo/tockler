@@ -1,29 +1,24 @@
 // tslint:disable-next-line: no-submodule-imports
 
 import { Button, HStack, Text } from '@chakra-ui/react';
-import { Row, SortingRule } from 'react-table';
+import { Row, SortingState } from '@tanstack/react-table';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { Logger } from '../../logger';
 import { deleteByIds } from '../../services/trackItem.api';
 import { useStoreActions } from '../../store/easyPeasy';
-import { useTrackItemContext } from '../TrackItemTable/TrackItemContext';
 
 export interface TableButtonsProps {
-    selectedFlatRows?: Row<ITrackItem>[];
-    selectedRowIds?: Record<string, boolean>;
-    setAllFilters?: (filters: unknown[]) => void;
-    setSortBy?: (sortBy: SortingRule<ITrackItem>[]) => void;
-    pageIndex?: number;
-    pageSize?: number;
-    fetchData?: (options: { pageIndex: number; pageSize: number; sortBy: SortingRule<ITrackItem>[] }) => void;
+    selectedFlatRows: Row<ITrackItem>[];
+    selectedRowIds: Record<string, boolean>;
+    setAllFilters: () => void;
+    setSortBy: (sortBy: SortingState) => void;
+    pageIndex: number;
+    pageSize: number;
+    fetchData?: (options: { pageIndex: number; pageSize: number; sortBy: SortingState }) => void;
 }
 
 export const SearchDeleteButtons: React.FC<TableButtonsProps> = (props) => {
-    const contextValues = useTrackItemContext();
-
-    // Use props if provided, otherwise use context values
-    const selectedFlatRows = props.selectedFlatRows || contextValues.selectedFlatRows;
-    const selectedRowIds = props.selectedRowIds || contextValues.selectedRowIds;
+    const { selectedFlatRows, selectedRowIds } = props;
 
     const fetchTimerange = useStoreActions((actions) => actions.fetchTimerange);
 
