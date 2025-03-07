@@ -7,7 +7,7 @@ export function SelectColumnFilter({ column }) {
     // using the preFilteredRows
     const options = useMemo(() => {
         const options = new Set();
-        column.getFacetedUniqueValues().forEach((count, value) => {
+        column.getFacetedUniqueValues().forEach((_, value) => {
             options.add(value);
         });
         return [...options.values()] as string[];

@@ -7,7 +7,7 @@ import { ITrackItem } from '../../@types/ITrackItem';
 import { TrayListItem } from './TrayListItem';
 
 const sumDiff = (data: ITrackItem[]) =>
-    sumBy(data, (c: ITrackItem) => convertDate(c.endDate).diff(convertDate(c.beginDate)));
+    sumBy(data, (c: ITrackItem) => convertDate(c.endDate).diff(convertDate(c.beginDate)).as('milliseconds'));
 
 export interface AggregatedTrackItem extends ITrackItem {
     isRunning: boolean;
@@ -21,6 +21,7 @@ const aggregateSameAppAndName = (lastLogItems: ITrackItem[], runningLogItem: ITr
 
     const mapped = map(grouped, (items) => {
         return {
+            id: items[0].id,
             app: items[0].app,
             title: items[0].title,
             color: items[0].color,

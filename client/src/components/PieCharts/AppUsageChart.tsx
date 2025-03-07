@@ -6,7 +6,7 @@ import { VictoryBar, VictoryLabel, VictoryStack, VictoryStyleInterface } from 'v
 import { useStoreState } from '../../store/easyPeasy';
 import { BAR_WIDTH } from '../Timeline/timeline.constants';
 import { filterItems } from '../Timeline/timeline.utils';
-import { sumAppObject } from './MetricTiles.utils';
+import { sumAppObject, SumItem } from './MetricTiles.utils';
 
 import { TrackItemType } from '../../enum/TrackItemType';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
@@ -33,7 +33,7 @@ export const AppUsageChart = memo(() => {
                 title: b[0].title,
                 timeDiffInMs: 0,
                 color: b[0].color,
-            });
+            } as SumItem);
         })
         .sortBy('timeDiffInMs')
         .reverse()

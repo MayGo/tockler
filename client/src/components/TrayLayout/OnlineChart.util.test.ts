@@ -469,7 +469,7 @@ describe('OnlineChart getTotalOnlineDuration', () => {
                 endDate: getMillisFromTime('08:25:00'),
             },
         ];
-        const now = last(items)?.endDate;
+        const now = DateTime.fromMillis(last(items)?.endDate || 0);
         const duration = getTotalOnlineDuration(now, items, minBreakTime);
 
         expect(duration).toEqual([25 * MINUTES]);
@@ -490,7 +490,7 @@ describe('OnlineChart getTotalOnlineDuration', () => {
                 endDate: getMillisFromTime('08:25:00'),
             },
         ];
-        const now = last(items)?.endDate;
+        const now = DateTime.fromMillis(last(items)?.endDate || 0);
         const duration = getTotalOnlineDuration(now, items, minBreakTime);
 
         expect(duration).toEqual([0]);
@@ -511,7 +511,7 @@ describe('OnlineChart getTotalOnlineDuration', () => {
                 endDate: getMillisFromTime('08:14:00'),
             },
         ];
-        const now = last(items)?.endDate;
+        const now = DateTime.fromMillis(last(items)?.endDate || 0);
         const duration = getTotalOnlineDuration(now, items, minBreakTime);
 
         expect(duration).toEqual([10 * MINUTES]);
@@ -546,7 +546,7 @@ describe('OnlineChart getTotalOnlineDuration', () => {
             },
         ];
 
-        const now = last(items)?.endDate;
+        const now = DateTime.fromMillis(last(items)?.endDate || 0);
         const duration = getTotalOnlineDuration(now, items, minBreakTime);
 
         expect(duration).toEqual([34 * MINUTES, 10 * MINUTES]);

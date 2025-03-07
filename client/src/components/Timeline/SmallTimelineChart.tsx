@@ -103,7 +103,10 @@ export const SmallTimelineChart = memo(() => {
                             fillOpacity: 0.5,
                         }}
                         handleComponent={<BrushHandle />}
-                        onBrushDomainChange={handleBrushDebounced}
+                        onBrushDomainChange={(domain) => {
+                            // Convert domain.y from numbers to Dates before passing to handler
+                            handleBrushDebounced({ y: [new Date(domain.y[0]), new Date(domain.y[1])] });
+                        }}
                     />
                 }
             >

@@ -40,11 +40,14 @@ const labelComponent = (theme) => (
 const formatToTime = (d) => convertDate(d).toFormat(TIME_FORMAT);
 const formatToLong = (d) => convertDate(d).toFormat(DAY_MONTH_LONG_FORMAT);
 
-const dateToMinutes = (max, useStartDate) => (d) => {
+const dateToMinutes = (useStartDate) => (d) => {
     const m = convertDate(useStartDate ? d.beginDate : d.endDate);
-    const minutes = m.hour + m.minute;
+    const hours = m.hour + m.minute / 60;
 
-    return minutes / 60 / max;
+    // Convert minutes to a 0-max scale
+
+    console.log('hours', hours);
+    return hours / 24;
 };
 
 const ScatterPoint = ({ x = 0, y = 0, showMoon = false, showSun = false }) => {
@@ -68,13 +71,12 @@ export const LineChart = () => {
 
     const daysInMonth = selectedDate?.daysInMonth;
 
+    const maxOnline = Math.max(...onlineTimesValues.map((d) => d.online));
+
     const domain: ForAxes<DomainTuple> = {
         x: [selectedDate.startOf('month').toJSDate(), selectedDate.endOf('month').toJSDate()],
         y: [0, 1],
     };
-
-    const maxOnline = Math.max(...onlineTimesValues.map((d) => d.online));
-    const maxHours = 24;
 
     const axisStyle = {
         grid: { strokeWidth: 0 },
@@ -138,14 +140,14 @@ export const LineChart = () => {
                     name="beginDate"
                     data={onlineTimesValues}
                     x={getXAxisDay}
-                    y={dateToMinutes(maxHours, true)}
+                    y={dateToMinutes(true)}
                     dataComponent={<ScatterPoint showSun />}
                 />
                 <VictoryScatter
                     name="endDate"
                     data={onlineTimesValues}
                     x={getXAxisDay}
-                    y={dateToMinutes(maxHours, false)}
+                    y={dateToMinutes(false)}
                     dataComponent={<ScatterPoint showMoon />}
                 />
             </VictoryChart>
