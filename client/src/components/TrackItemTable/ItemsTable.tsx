@@ -9,13 +9,13 @@ import {
     ColumnDef,
     ColumnFiltersState,
     FilterFn,
-    PaginationState,
-    SortingState,
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
+    PaginationState,
+    SortingState,
     useReactTable,
 } from '@tanstack/react-table';
 
@@ -25,13 +25,12 @@ import { DefaultColumnFilter } from './DefaultColumnFilter';
 import { IndeterminateCheckbox } from './IndeterminateCheckbox';
 import { OverflowTextCell } from './OverflowText';
 import { SelectColumnFilter } from './SelectColumnFilter';
-import { calculateTotal, fuzzyTextFilterFn } from './TrackItemTable.utils';
+import { calculateTotal, fuzzyTextFilterFn, TableButtonsProps } from './TrackItemTable.utils';
 import { TrackItemTablePager } from './TrackItemTablePager';
 
 import { format } from 'date-fns';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { TIME_FORMAT } from '../../constants';
-import { TableButtonsProps } from './TrackItemTableButtons';
 
 interface ItemsTableProps {
     data: ITrackItem[];
@@ -218,7 +217,7 @@ export const ItemsTable = ({
     const subTotal = calculateTotal(data);
 
     // Get the selected rows information for buttons/actions
-    const selectedRowsInfo = {
+    const tableButtonsProps: TableButtonsProps = {
         selectedFlatRows: table.getSelectedRowModel().rows,
         selectedRowIds: table.getState().rowSelection,
         setAllFilters: () => setColumnFilters([]),
@@ -231,7 +230,7 @@ export const ItemsTable = ({
     return (
         <>
             <Portal containerRef={resetButtonsRef}>
-                {customTableButtons && React.cloneElement(customTableButtons, selectedRowsInfo)}
+                {customTableButtons && React.cloneElement(customTableButtons, tableButtonsProps)}
             </Portal>
 
             <Table>

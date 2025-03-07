@@ -44,9 +44,6 @@ const dateToMinutes = (useStartDate) => (d) => {
     const m = convertDate(useStartDate ? d.beginDate : d.endDate);
     const hours = m.hour + m.minute / 60;
 
-    // Convert minutes to a 0-max scale
-
-    console.log('hours', hours);
     return hours / 24;
 };
 

@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { SearchResultI } from '../../services/trackItem.api';
 import { useStoreActions } from '../../store/easyPeasy';
 import { ItemsTable } from '../TrackItemTable/ItemsTable';
+import { defaultTableButtonsProps } from '../TrackItemTable/TrackItemTable.utils';
 import { SearchDeleteButtons } from './SearchDeleteButtons';
 
 const ActionCell = ({ cell }) => {
@@ -79,7 +80,7 @@ const SearchResultsPlain = ({
             total={total}
             manualSortBy
             resetButtonsRef={resetButtonsRef}
-            customTableButtons={<SearchDeleteButtons refreshData={refreshData} />}
+            customTableButtons={<SearchDeleteButtons refreshData={refreshData} {...defaultTableButtonsProps} />}
         />
     );
 };

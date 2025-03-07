@@ -1,22 +1,15 @@
 // tslint:disable-next-line: no-submodule-imports
 
 import { Button, HStack, Text } from '@chakra-ui/react';
-import { Row, SortingState } from '@tanstack/react-table';
-import { ITrackItem } from '../../@types/ITrackItem';
 import { Logger } from '../../logger';
 import { deleteByIds } from '../../services/trackItem.api';
+import { TableButtonsProps } from '../TrackItemTable/TrackItemTable.utils';
 
-export interface TableButtonsProps {
-    selectedFlatRows: Row<ITrackItem>[];
-    selectedRowIds: Record<string, boolean>;
-    setAllFilters: () => void;
-    setSortBy: (sortBy: SortingState) => void;
-    pageIndex: number;
-    pageSize: number;
+interface Props extends TableButtonsProps {
     refreshData: () => void;
 }
 
-export const SearchDeleteButtons: React.FC<TableButtonsProps> = (props) => {
+export const SearchDeleteButtons: React.FC<Props> = (props) => {
     const { selectedFlatRows, selectedRowIds, refreshData } = props;
 
     const deleteTimelineItems = async (ids: number[]) => {

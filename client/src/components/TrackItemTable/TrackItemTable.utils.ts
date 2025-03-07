@@ -1,6 +1,6 @@
 // tslint:disable-next-line: no-submodule-imports
 
-import { FilterFn, Row } from '@tanstack/react-table';
+import { FilterFn, Row, SortingState } from '@tanstack/react-table';
 import { differenceInMilliseconds } from 'date-fns';
 import { sumBy } from 'lodash';
 import { matchSorter } from 'match-sorter';
@@ -25,3 +25,23 @@ export const fuzzyTextFilterFn: FilterFn<ITrackItem> = (row: Row<ITrackItem>, co
 
 // Let the table remove the filter if the string is empty
 fuzzyTextFilterFn.autoRemove = (val: string) => !val;
+
+export interface TableButtonsProps {
+    selectedFlatRows: Row<ITrackItem>[];
+    selectedRowIds: Record<string, boolean>;
+    setAllFilters: () => void;
+    setSortBy: (sortBy: SortingState) => void;
+    pageIndex: number;
+    pageSize: number;
+    fetchData?: (options: { pageIndex: number; pageSize: number; sortBy: SortingState }) => void;
+}
+
+export const defaultTableButtonsProps: TableButtonsProps = {
+    selectedFlatRows: [],
+    selectedRowIds: {},
+    setAllFilters: () => {},
+    setSortBy: () => {},
+    pageIndex: 0,
+    pageSize: 10,
+    fetchData: () => {},
+};
