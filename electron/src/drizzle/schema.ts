@@ -7,12 +7,9 @@ export const trackItems = sqliteTable('TrackItems', {
     title: text('title'),
     url: text('url'),
     color: text('color'),
-    beginDate: integer('beginDate', { mode: 'timestamp_ms' }).notNull(),
-    endDate: integer('endDate', { mode: 'timestamp_ms' }).notNull(),
-    //timestamp_ms= 1741535559759.0
-    //timestamp= 1741536018.0
-    //1741535559759.0
-    //1511555755000
+    beginDate: integer('beginDate').notNull(),
+    endDate: integer('endDate').notNull(),
+    // beginDate and endDate are timestamp_ms= 1741535559759, but FE, it is easier to use timestamp than Date
 });
 
 export const appSettings = sqliteTable('AppSettings', {

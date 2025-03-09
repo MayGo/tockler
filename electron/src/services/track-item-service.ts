@@ -38,8 +38,8 @@ export class TrackItemService {
     async findAndExportAllItems(from: string, to: string, taskName: string, searchStr: string) {
         const conditions = [
             eq(trackItems.taskName, taskName),
-            gte(trackItems.endDate, new Date(from)),
-            lt(trackItems.endDate, new Date(to)),
+            gte(trackItems.endDate, new Date(from).getTime()),
+            lt(trackItems.endDate, new Date(to).getTime()),
         ];
 
         if (searchStr) {
@@ -90,8 +90,8 @@ export class TrackItemService {
     async findAllItems(from: string, to: string, taskName: string, searchStr: string, paging: any, sumTotal: boolean) {
         const conditions = [
             eq(trackItems.taskName, taskName),
-            gte(trackItems.endDate, new Date(from)),
-            lt(trackItems.endDate, new Date(to)),
+            gte(trackItems.endDate, new Date(from).getTime()),
+            lt(trackItems.endDate, new Date(to).getTime()),
         ];
 
         if (searchStr) {
@@ -134,8 +134,8 @@ export class TrackItemService {
             .where(
                 and(
                     eq(trackItems.taskName, taskName),
-                    gte(trackItems.endDate, new Date(from)),
-                    lt(trackItems.endDate, new Date(to)),
+                    gte(trackItems.endDate, new Date(from).getTime()),
+                    lt(trackItems.endDate, new Date(to).getTime()),
                 ),
             );
 
@@ -199,7 +199,7 @@ export class TrackItemService {
             .where(
                 and(
                     eq(trackItems.taskName, 'LogTrackItem'),
-                    eq(trackItems.endDate, new Date('9999-12-31T23:59:59.999Z')),
+                    eq(trackItems.endDate, new Date('9999-12-31T23:59:59.999Z').getTime()),
                 ),
             );
 

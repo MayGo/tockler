@@ -176,12 +176,12 @@ export class StateManager {
     }
 
     async createOnlineTrackItem() {
-        let rawItem: any = {
-            taskName: 'StatusTrackItem',
+        let rawItem: TrackItemRaw = {
+            taskName: TrackItemType.StatusTrackItem,
             app: State.Online,
             title: State.Online.toString().toLowerCase(),
-            beginDate: new Date(),
-            endDate: new Date(),
+            beginDate: new Date().getTime(),
+            endDate: new Date().getTime(),
         };
         await backgroundService.createOrUpdate(rawItem);
     }
@@ -199,7 +199,7 @@ export class StateManager {
                 runningItem.endDate = rawItem.beginDate;
             } else {
                 logger.debug('No beginDate, setting endDate to now');
-                runningItem.endDate = new Date();
+                runningItem.endDate = new Date().getTime();
             }
 
             logger.debug('Ending trackItem:', toPlainObject(runningItem));
@@ -236,7 +236,7 @@ export class StateManager {
             return null;
         }
 
-        runningItem.endDate = new Date();
+        runningItem.endDate = new Date().getTime();
         await trackItemService.updateTrackItem(runningItem, runningItem.id);
         // logger.debug('Saved track item(endDate change) to DB:', runningItem.toJSON());
         return runningItem;

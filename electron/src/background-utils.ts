@@ -1,6 +1,8 @@
 import moment from 'moment';
 import { appConstants } from './app-constants';
 import { TrackItem } from './drizzle/schema';
+import { TrackItemType } from './enums/track-item-type';
+import { TrackItemRaw } from './task-analyser';
 
 export default class BackgroundUtils {
     static isSameItems(item1: any, item2: any) {
@@ -15,15 +17,11 @@ export default class BackgroundUtils {
         let now = new Date();
         // Begin date is always BACKGROUND_JOB_INTERVAL before current date
         now.setMilliseconds(now.getMilliseconds() - appConstants.BACKGROUND_JOB_INTERVAL);
-        return now;
+        return now.getTime();
     }
 
-    static shouldSplitInTwoOnMidnight(beginDate: Date, endDate: Date) {
+    static shouldSplitInTwoOnMidnight(beginDate: number, endDate: number) {
         return BackgroundUtils.daysBetween(beginDate, endDate) > 0;
-    }
-
-    static dateToAfterMidnight(d: Date) {
-        return moment(d).startOf('day').add(1, 'days').toDate();
     }
 
     static almostMidnight(d: Date) {
@@ -34,18 +32,18 @@ export default class BackgroundUtils {
         return moment(d).startOf('day').toDate();
     }
 
-    static daysBetween(beginDate: Date, endDate: Date) {
+    static daysBetween(beginDate: number, endDate: number) {
         return moment(endDate).endOf('day').diff(moment(beginDate).startOf('day'), 'days');
     }
 
-    static getRawTrackItem(savedItem: any) {
-        let item = {
-            app: savedItem.app,
-            title: savedItem.title,
-            taskName: savedItem.taskName,
-            color: savedItem.color,
+    static getRawTrackItem(savedItem: TrackItem) {
+        let item: TrackItemRaw = {
+            app: savedItem.app || undefined,
+            title: savedItem.title || undefined,
+            taskName: (savedItem.taskName as TrackItemType) || undefined,
+            color: savedItem.color || undefined,
             beginDate: savedItem.beginDate,
-            url: savedItem.url,
+            url: savedItem.url || undefined,
             endDate: savedItem.endDate,
         };
 
@@ -67,19 +65,19 @@ export default class BackgroundUtils {
         let items = [];
 
         for (let i = 0; i < daysBetween; i++) {
-            let newItem = Object.assign({}, item);
+            let newItem: TrackItem = Object.assign({}, item);
 
             let currentDate = moment(beginDate).add(i, 'days').toDate();
             let almostMidnight = BackgroundUtils.almostMidnight(currentDate);
             let startOfDay = BackgroundUtils.startOfDay(currentDate);
 
             if (firstDayIndex === i) {
-                newItem.endDate = almostMidnight;
+                newItem.endDate = almostMidnight.getTime();
             } else if (lastDayIndex === i) {
-                newItem.beginDate = startOfDay;
+                newItem.beginDate = startOfDay.getTime();
             } else {
-                newItem.beginDate = startOfDay;
-                newItem.endDate = almostMidnight;
+                newItem.beginDate = startOfDay.getTime();
+                newItem.endDate = almostMidnight.getTime();
             }
 
             items.push(newItem);

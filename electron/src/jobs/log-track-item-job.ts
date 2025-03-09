@@ -67,17 +67,17 @@ export class LogTrackItemJob {
 
         // Use the helper for converting Drizzle TrackItem to TrackItemRaw
         let rawItem: TrackItemRaw = BackgroundUtils.getRawTrackItem(logItemMarkedAsRunning);
-        rawItem.endDate = new Date();
+        rawItem.endDate = new Date().getTime();
 
         let shouldTrySplitting = oldOnlineItem !== this.onlineItemWhenLastSplit;
 
         if (shouldTrySplitting) {
-            let splitEndDate: Date | null = await this.getTaskSplitDate();
+            let splitEndDate: number | null = await this.getTaskSplitDate();
             if (splitEndDate) {
                 logger.debug('Splitting LogItem, new item has endDate: ', splitEndDate);
 
                 // Convert string date to Date object before comparison
-                const beginDate = new Date(logItemMarkedAsRunning.beginDate);
+                const beginDate = logItemMarkedAsRunning.beginDate;
                 if (beginDate > splitEndDate) {
                     logger.error('BeginDate is after endDate. Not saving RUNNING_LOG_ITEM');
                     return;
@@ -119,7 +119,7 @@ export class LogTrackItemJob {
 
             if (minutesFromNow >= minutesAfterToSplit) {
                 let endDate = moment(onlineItem.endDate).add(minutesAfterToSplit, 'minutes').toDate();
-                return endDate;
+                return endDate.getTime();
             }
         } else {
             logger.error('No Online items found.');

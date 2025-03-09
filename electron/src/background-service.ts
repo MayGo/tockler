@@ -12,10 +12,10 @@ let logger = logManager.getLogger('BackgroundService');
 
 export class BackgroundService {
     async addInactivePeriod(beginDate: Date, endDate: Date) {
-        let rawItem: any = { app: State.Offline, title: State.Offline.toString().toLowerCase() };
+        let rawItem: Partial<TrackItemRaw> = { app: State.Offline, title: State.Offline.toString().toLowerCase() };
         rawItem.taskName = TrackItemType.StatusTrackItem;
-        rawItem.beginDate = beginDate;
-        rawItem.endDate = endDate;
+        rawItem.beginDate = beginDate.getTime();
+        rawItem.endDate = endDate.getTime();
         logger.debug('Adding inactive trackitem', rawItem);
 
         stateManager.resetStatusTrackItem();

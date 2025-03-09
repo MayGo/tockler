@@ -4,7 +4,7 @@ import BackgroundUtils from '../background-utils';
 import { TrackItemType } from '../enums/track-item-type';
 import { logManager } from '../log-manager';
 import { stateManager } from '../state-manager';
-import { taskAnalyser } from '../task-analyser';
+import { taskAnalyser, TrackItemRaw } from '../task-analyser';
 
 import activeWindow from 'active-win';
 import { TrackItem } from '../drizzle/schema';
@@ -92,12 +92,11 @@ export class AppTrackItemJob {
     }
 
     async saveActiveWindow(result: activeWindow.Result): Promise<TrackItem> {
-        let rawItem: any = { taskName: TrackItemType.AppTrackItem };
+        let rawItem: Partial<TrackItemRaw> = { taskName: TrackItemType.AppTrackItem };
 
         rawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
-        rawItem.endDate = new Date();
+        rawItem.endDate = new Date().getTime();
 
-        // logger.debug('rawitem has no app', result);
         if (result.owner && result.owner.name) {
             rawItem.app = result.owner.name;
         } else {
@@ -105,13 +104,10 @@ export class AppTrackItemJob {
         }
 
         if (!result.title) {
-            // logger.error('rawitem has no title', result);
             rawItem.title = 'NO_TITLE';
         } else {
             rawItem.title = result.title.replace(/\n$/, '').replace(/^\s/, '');
         }
-
-        // logger.debug('Active window (parsed):', rawItem);
 
         let savedItem = await backgroundService.createOrUpdate(rawItem);
         return savedItem as TrackItem;
