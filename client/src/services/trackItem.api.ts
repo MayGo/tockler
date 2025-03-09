@@ -70,7 +70,7 @@ function updateTrackItem(trackItem: ITrackItem, trackItemId: number): Promise<IT
     return EventEmitter.emit('updateTrackItem', { trackItem, trackItemId });
 }
 
-function getRawTrackItem(savedItem: ITrackItem): ITrackItem {
+function getRawTrackItem2(savedItem: ITrackItem): ITrackItem {
     const item = {
         id: savedItem.id,
         app: savedItem.app,
@@ -86,7 +86,7 @@ function getRawTrackItem(savedItem: ITrackItem): ITrackItem {
 }
 
 export async function saveTrackItem(inputItem: ITrackItem): Promise<ITrackItem> {
-    const trackItem = getRawTrackItem(inputItem);
+    const trackItem = getRawTrackItem2(inputItem);
     Logger.debug('Saving trackitem.', trackItem);
 
     if (!trackItem.taskName) {

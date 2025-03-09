@@ -119,10 +119,12 @@ export class StateManager {
             return false;
         }
 
-        return BackgroundUtils.isSameItems(
-            rawItem,
-            BackgroundUtils.getRawTrackItem(this.getCurrentTrackItem(rawItem.taskName)),
-        );
+        let currentItem = this.getCurrentTrackItem(rawItem.taskName);
+        if (!currentItem) {
+            return false;
+        }
+
+        return BackgroundUtils.isSameItems(rawItem, BackgroundUtils.getRawTrackItem(currentItem));
     }
 
     resetCurrentTrackItem(type: TrackItemType) {

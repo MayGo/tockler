@@ -45,17 +45,19 @@ export class AppTrackItemJob {
                 let activeWindow = await activeWin();
                 let updatedItem: TrackItem = await this.saveActiveWindow(activeWindow ?? errorWindowItem);
 
-                if (
-                    !BackgroundUtils.isSameItems(
-                        BackgroundUtils.getRawTrackItem(updatedItem),
-                        BackgroundUtils.getRawTrackItem(this.lastUpdatedItem),
-                    )
-                ) {
-                    logger.debug('App and title changed. Analysing title');
-                    taskAnalyser.analyseAndNotify(BackgroundUtils.getRawTrackItem(updatedItem)).then(
-                        () => logger.debug('Analysing has run.'),
-                        (e) => logger.error('Error in Analysing', e),
-                    );
+                if (this.lastUpdatedItem && updatedItem) {
+                    if (
+                        !BackgroundUtils.isSameItems(
+                            BackgroundUtils.getRawTrackItem(updatedItem),
+                            BackgroundUtils.getRawTrackItem(this.lastUpdatedItem),
+                        )
+                    ) {
+                        logger.debug('App and title changed. Analysing title');
+                        taskAnalyser.analyseAndNotify(BackgroundUtils.getRawTrackItem(updatedItem)).then(
+                            () => logger.debug('Analysing has run.'),
+                            (e) => logger.error('Error in Analysing', e),
+                        );
+                    }
                 }
 
                 this.lastUpdatedItem = updatedItem;

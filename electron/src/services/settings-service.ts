@@ -3,6 +3,11 @@ import { db } from '../drizzle/db';
 import { Setting, settings } from '../drizzle/schema';
 import { logManager } from '../log-manager';
 
+const defaultSettings = {
+    recentDaysCount: 7,
+    backgroundJobInterval: 3,
+};
+
 export class SettingsService {
     logger = logManager.getLogger('SettingsService');
     cache: Record<string, Setting | null> = {};
@@ -74,16 +79,14 @@ export class SettingsService {
         let item = await this.findByName('DATA_SETTINGS');
         if (!item || !item.jsonData) {
             // Default settings
-            return {
-                recentDaysCount: 7,
-            };
+            return defaultSettings;
         }
 
         try {
             return JSON.parse(item.jsonData);
         } catch (e) {
             this.logger.error('Error parsing data settings:', e);
-            return { recentDaysCount: 7 };
+            return defaultSettings;
         }
     }
 
@@ -104,14 +107,14 @@ export class SettingsService {
     async fetchAnalyserSettings() {
         let item = await this.findByName('ANALYSER_SETTINGS');
         if (!item || !item.jsonData) {
-            return {};
+            return [];
         }
 
         try {
             return JSON.parse(item.jsonData);
         } catch (e) {
             this.logger.error('Error parsing analyser settings:', e);
-            return {};
+            return [];
         }
     }
 
