@@ -11,7 +11,6 @@ import { VisibleRange } from '../components/Timeline/VisibleRange';
 import { TrackItemTabs } from '../components/TrackItemTable/TrackItemTabs';
 import { useInterval } from '../hooks/intervalHook';
 import { useStoreActions } from '../store/easyPeasy';
-import { LiveViewOverlay } from './LiveViewOverlay';
 
 const BG_SYNC_DELAY_MS = 10000;
 
@@ -62,8 +61,6 @@ export function TimelinePage() {
             <CardBox>
                 <TrackItemTabs />
             </CardBox>
-
-            <LiveViewOverlay />
         </VStack>
     );
 }
