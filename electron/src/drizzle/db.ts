@@ -49,9 +49,6 @@ export async function connectAndSync() {
     // Create a better-sqlite3 database instance
     const sqlite = new Database(dbConfig.outputPath);
 
-    // Create a drizzle instance using the database connection
-    const db = drizzle(sqlite, { schema });
-
     // Run migrations (if needed)
     try {
         // Use the default migrations folder location

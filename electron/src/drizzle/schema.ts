@@ -7,8 +7,8 @@ export const trackItems = sqliteTable('TrackItems', {
     title: text('title'),
     url: text('url'),
     color: text('color'),
-    beginDate: text('beginDate').notNull(),
-    endDate: text('endDate').notNull(),
+    beginDate: integer({ mode: 'timestamp_ms' }).notNull(),
+    endDate: integer({ mode: 'timestamp_ms' }).notNull(),
 });
 
 export const appSettings = sqliteTable('AppSettings', {

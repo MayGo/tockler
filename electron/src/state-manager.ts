@@ -196,13 +196,10 @@ export class StateManager {
 
         if (runningItem) {
             if (rawItem.beginDate) {
-                runningItem.endDate =
-                    rawItem.beginDate instanceof Date
-                        ? rawItem.beginDate.toISOString()
-                        : new Date(rawItem.beginDate).toISOString();
+                runningItem.endDate = rawItem.beginDate;
             } else {
                 logger.debug('No beginDate, setting endDate to now');
-                runningItem.endDate = new Date().toISOString();
+                runningItem.endDate = new Date();
             }
 
             logger.debug('Ending trackItem:', toPlainObject(runningItem));
@@ -245,7 +242,7 @@ export class StateManager {
             return null;
         }
 
-        runningItem.endDate = new Date().toISOString();
+        runningItem.endDate = new Date();
         await trackItemService.updateTrackItem(runningItem, runningItem.id);
         // logger.debug('Saved track item(endDate change) to DB:', runningItem.toJSON());
         return runningItem;

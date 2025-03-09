@@ -3,7 +3,6 @@ import { and, eq, gte, like, lt, or, sql } from 'drizzle-orm';
 import { dialog } from 'electron';
 import { writeFileSync } from 'fs';
 import moment from 'moment';
-
 import { db } from '../drizzle/db';
 import { NewTrackItem, TrackItem, trackItems } from '../drizzle/schema';
 import { State } from '../enums/state';
@@ -39,8 +38,8 @@ export class TrackItemService {
     async findAndExportAllItems(from: string, to: string, taskName: string, searchStr: string) {
         const conditions = [
             eq(trackItems.taskName, taskName),
-            gte(trackItems.endDate, from),
-            lt(trackItems.endDate, to),
+            gte(trackItems.endDate, new Date(from)),
+            lt(trackItems.endDate, new Date(to)),
         ];
 
         if (searchStr) {
@@ -91,8 +90,8 @@ export class TrackItemService {
     async findAllItems(from: string, to: string, taskName: string, searchStr: string, paging: any, sumTotal: boolean) {
         const conditions = [
             eq(trackItems.taskName, taskName),
-            gte(trackItems.endDate, from),
-            lt(trackItems.endDate, to),
+            gte(trackItems.endDate, new Date(from)),
+            lt(trackItems.endDate, new Date(to)),
         ];
 
         if (searchStr) {
@@ -124,10 +123,21 @@ export class TrackItemService {
     }
 
     async findAllDayItems(from: string, to: string, taskName: string) {
+        console.log('findAllDayItems', from, to, taskName);
+
+        const data2 = await db.select().from(trackItems);
+        console.log('data2', data2);
+
         const data = await db
             .select()
             .from(trackItems)
-            .where(and(eq(trackItems.taskName, taskName), gte(trackItems.endDate, from), lt(trackItems.endDate, to)));
+            .where(
+                and(
+                    eq(trackItems.taskName, taskName),
+                    gte(trackItems.endDate, new Date(from)),
+                    lt(trackItems.endDate, new Date(to)),
+                ),
+            );
 
         return data;
     }
@@ -186,7 +196,12 @@ export class TrackItemService {
         const results = await db
             .select()
             .from(trackItems)
-            .where(and(eq(trackItems.taskName, 'LogTrackItem'), eq(trackItems.endDate, '9999-12-31T23:59:59.999Z')));
+            .where(
+                and(
+                    eq(trackItems.taskName, 'LogTrackItem'),
+                    eq(trackItems.endDate, new Date('9999-12-31T23:59:59.999Z')),
+                ),
+            );
 
         return results[0];
     }
