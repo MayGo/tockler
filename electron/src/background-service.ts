@@ -47,12 +47,11 @@ export class BackgroundService {
                 throw new Error('TaskName not defined.');
             }
 
-            if (
-                BackgroundUtils.shouldSplitInTwoOnMidnight(
-                    rawItem.beginDate ?? new Date(),
-                    rawItem.endDate ?? new Date(),
-                )
-            ) {
+            if (!rawItem.beginDate || !rawItem.endDate) {
+                throw new Error('beginDate or endDate not defined.');
+            }
+
+            if (BackgroundUtils.shouldSplitInTwoOnMidnight(rawItem.beginDate, rawItem.endDate)) {
                 let items = BackgroundUtils.splitItemIntoDayChunks(rawItem as unknown as TrackItem);
 
                 if (stateManager.hasSameRunningTrackItem(rawItem)) {

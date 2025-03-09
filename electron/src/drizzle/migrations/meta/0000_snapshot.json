@@ -1,7 +1,7 @@
 {
-  "version": "5",
+  "version": "6",
   "dialect": "sqlite",
-  "id": "9e784e0a-3b9e-4d4b-8956-ab7db6bc49e3",
+  "id": "e0300c31-a5a9-4cbd-bd3e-e7cc56898b12",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "AppSettings": {
@@ -32,7 +32,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "Settings": {
       "name": "Settings",
@@ -62,7 +63,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "TrackItems": {
       "name": "TrackItems",
@@ -111,14 +113,14 @@
         },
         "beginDate": {
           "name": "beginDate",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "endDate": {
           "name": "endDate",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -127,13 +129,18 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     }
   },
+  "views": {},
   "enums": {},
   "_meta": {
     "schemas": {},
     "tables": {},
     "columns": {}
+  },
+  "internal": {
+    "indexes": {}
   }
 }

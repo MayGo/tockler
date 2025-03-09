@@ -18,23 +18,23 @@ export default class BackgroundUtils {
         return now;
     }
 
-    static shouldSplitInTwoOnMidnight(beginDate: Date | string, endDate: Date | string) {
+    static shouldSplitInTwoOnMidnight(beginDate: Date, endDate: Date) {
         return BackgroundUtils.daysBetween(beginDate, endDate) > 0;
     }
 
-    static dateToAfterMidnight(d: Date | string) {
+    static dateToAfterMidnight(d: Date) {
         return moment(d).startOf('day').add(1, 'days').toDate();
     }
 
-    static almostMidnight(d: Date | string) {
+    static almostMidnight(d: Date) {
         return moment(d).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
     }
 
-    static startOfDay(d: Date | string) {
+    static startOfDay(d: Date) {
         return moment(d).startOf('day').toDate();
     }
 
-    static daysBetween(beginDate: Date | string, endDate: Date | string) {
+    static daysBetween(beginDate: Date, endDate: Date) {
         return moment(endDate).endOf('day').diff(moment(beginDate).startOf('day'), 'days');
     }
 
@@ -44,9 +44,9 @@ export default class BackgroundUtils {
             title: savedItem.title,
             taskName: savedItem.taskName,
             color: savedItem.color,
-            beginDate: savedItem.beginDate instanceof Date ? savedItem.beginDate : new Date(savedItem.beginDate),
+            beginDate: savedItem.beginDate,
             url: savedItem.url,
-            endDate: savedItem.endDate instanceof Date ? savedItem.endDate : new Date(savedItem.endDate),
+            endDate: savedItem.endDate,
         };
 
         return item;
@@ -54,8 +54,8 @@ export default class BackgroundUtils {
 
     static splitItemIntoDayChunks(item: TrackItem | any) {
         // Convert dates to Date objects if they're strings
-        const beginDate = item.beginDate instanceof Date ? item.beginDate : new Date(item.beginDate);
-        const endDate = item.endDate instanceof Date ? item.endDate : new Date(item.endDate);
+        const beginDate = item.beginDate;
+        const endDate = item.endDate;
 
         let daysBetween: number = BackgroundUtils.daysBetween(beginDate, endDate) + 1;
         if (daysBetween < 2) {

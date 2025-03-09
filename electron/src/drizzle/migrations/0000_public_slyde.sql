@@ -17,6 +17,6 @@ CREATE TABLE `TrackItems` (
 	`title` text,
 	`url` text,
 	`color` text,
-	`beginDate` text NOT NULL,
-	`endDate` text NOT NULL
+	`beginDate` integer NOT NULL,
+	`endDate` integer NOT NULL
 );

@@ -220,14 +220,8 @@ export class StateManager {
             title: rawItem.title || null,
             color: rawItem.color || null,
             url: rawItem.url || null,
-            beginDate:
-                rawItem.beginDate instanceof Date
-                    ? rawItem.beginDate.toISOString()
-                    : rawItem.beginDate || new Date().toISOString(),
-            endDate:
-                rawItem.endDate instanceof Date
-                    ? rawItem.endDate.toISOString()
-                    : rawItem.endDate || new Date().toISOString(),
+            beginDate: rawItem.beginDate,
+            endDate: rawItem.endDate,
         };
 
         let item = await trackItemService.createTrackItem(trackItemData as any);
