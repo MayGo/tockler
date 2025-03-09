@@ -11,7 +11,8 @@ import { appSettings } from './schema';
 
 const logger = logManager.getLogger('Database');
 
-export const db = drizzle(new Database(config.databaseConfig.outputPath), { schema });
+const sqlite = new Database(config.databaseConfig.outputPath);
+export const db = drizzle(sqlite, { schema });
 
 // Function to insert default data if it doesn't exist
 async function insertDefaultData(db: ReturnType<typeof drizzle>) {
@@ -41,13 +42,78 @@ async function insertDefaultData(db: ReturnType<typeof drizzle>) {
     logger.debug('Default data check complete');
 }
 
+// Check if knex migration tables exist
+function checkForKnexMigrationTables(): boolean {
+    logger.debug('Checking for knex migration tables');
+
+    try {
+        // Check if knex_migrations table exists
+        const knexMigrationsExist = sqlite
+            .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='knex_migrations'")
+            .get();
+
+        // Check if knex_migrations_lock table exists
+        const knexMigrationsLockExist = sqlite
+            .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='knex_migrations_lock'")
+            .get();
+
+        const tablesExist = !!knexMigrationsExist && !!knexMigrationsLockExist;
+        logger.debug(`Knex migration tables exist: ${tablesExist}`);
+
+        return tablesExist;
+    } catch (error) {
+        logger.error('Error checking for knex migration tables:', error);
+        return false;
+    }
+}
+
+// Function to check if application tables already exist
+function checkIfAppTablesExist(): boolean {
+    logger.debug('Checking if application tables already exist');
+
+    try {
+        // Check for essential tables
+        const trackItemsExist = sqlite
+            .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='TrackItems'")
+            .get();
+
+        const appSettingsExist = sqlite
+            .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='AppSettings'")
+            .get();
+
+        const settingsExist = sqlite
+            .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='Settings'")
+            .get();
+
+        const tablesExist = !!trackItemsExist && !!appSettingsExist && !!settingsExist;
+        logger.debug(`Application tables exist: ${tablesExist}`);
+
+        return tablesExist;
+    } catch (error) {
+        logger.error('Error checking for application tables:', error);
+        return false;
+    }
+}
+
+// Function to remove knex migration tables
+function removeKnexMigrationTables(): void {
+    logger.debug('Removing knex migration tables');
+
+    try {
+        sqlite.prepare('DROP TABLE IF EXISTS knex_migrations').run();
+        sqlite.prepare('DROP TABLE IF EXISTS knex_migrations_lock').run();
+        logger.debug('Knex migration tables removed successfully');
+    } catch (error) {
+        logger.error('Error removing knex migration tables:', error);
+    }
+}
+
 // Initialize the database connection
 export async function connectAndSync() {
     const dbConfig = config.databaseConfig;
     logger.debug('Database dir is:' + dbConfig.outputPath);
 
     // Create a better-sqlite3 database instance
-    const sqlite = new Database(dbConfig.outputPath);
 
     // Run migrations (if needed)
     try {
@@ -67,8 +133,63 @@ export async function connectAndSync() {
             mkdirSync(metaDir, { recursive: true });
         }
 
+        // Check for knex migration tables
+        const hasKnexTables = checkForKnexMigrationTables();
+        const hasAppTables = checkIfAppTablesExist();
+
         // Apply migrations with the default settings
         logger.debug('Running migrations from:', migrationsFolder);
+
+        if (hasKnexTables && hasAppTables) {
+            logger.info('Knex migration tables found and app tables already exist. Skipping initial migration.');
+
+            // Create drizzle_migrations table if it doesn't exist
+            sqlite
+                .prepare(
+                    `
+                CREATE TABLE IF NOT EXISTS drizzle_migrations (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    hash TEXT NOT NULL,
+                    created_at INTEGER
+                )
+            `,
+                )
+                .run();
+
+            // Get migration file names from the migrations folder
+            const fs = require('fs');
+            const initialMigrationFiles = fs
+                .readdirSync(migrationsFolder)
+                .filter((file: string) => file.endsWith('.sql'))
+                .sort();
+
+            // Get the initial migration file name (0000_*.sql)
+            const initialMigrationFile = initialMigrationFiles.find((file: string) => file.startsWith('0000_'));
+
+            if (initialMigrationFile) {
+                // Extract migration tag (without .sql extension)
+                const migrationTag = initialMigrationFile.replace('.sql', '');
+
+                // Check if this migration is already marked as applied
+                const existingMigration = sqlite
+                    .prepare('SELECT * FROM drizzle_migrations WHERE hash = ?')
+                    .get(migrationTag);
+
+                if (!existingMigration) {
+                    // Mark the initial migration as applied
+                    sqlite
+                        .prepare('INSERT INTO drizzle_migrations (hash, created_at) VALUES (?, ?)')
+                        .run(migrationTag, Date.now());
+
+                    logger.debug(`Marked initial migration "${migrationTag}" as applied`);
+                }
+            }
+
+            // Remove knex tables as they're no longer needed
+            removeKnexMigrationTables();
+        }
+
+        // Run migrations - this will skip already applied migrations
         migrate(db, {
             migrationsFolder,
             migrationsTable: 'drizzle_migrations',
