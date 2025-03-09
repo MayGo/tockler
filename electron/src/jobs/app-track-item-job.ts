@@ -1,12 +1,13 @@
-import { logManager } from '../log-manager';
-import { stateManager } from '../state-manager';
-import BackgroundUtils from '../background-utils';
 import activeWin from 'active-win';
 import { backgroundService } from '../background-service';
+import BackgroundUtils from '../background-utils';
 import { TrackItemType } from '../enums/track-item-type';
-import { taskAnalyser, TrackItemRaw } from '../task-analyser';
-import { TrackItem } from '../models/TrackItem';
+import { logManager } from '../log-manager';
+import { stateManager } from '../state-manager';
+import { taskAnalyser } from '../task-analyser';
+
 import activeWindow from 'active-win';
+import { TrackItem } from '../drizzle/schema';
 
 let logger = logManager.getLogger('AppTrackItemJob');
 
@@ -44,9 +45,14 @@ export class AppTrackItemJob {
                 let activeWindow = await activeWin();
                 let updatedItem: TrackItem = await this.saveActiveWindow(activeWindow ?? errorWindowItem);
 
-                if (!BackgroundUtils.isSameItems(updatedItem as TrackItemRaw, this.lastUpdatedItem as TrackItemRaw)) {
+                if (
+                    !BackgroundUtils.isSameItems(
+                        BackgroundUtils.getRawTrackItem(updatedItem),
+                        BackgroundUtils.getRawTrackItem(this.lastUpdatedItem),
+                    )
+                ) {
                     logger.debug('App and title changed. Analysing title');
-                    taskAnalyser.analyseAndNotify(updatedItem as TrackItemRaw).then(
+                    taskAnalyser.analyseAndNotify(BackgroundUtils.getRawTrackItem(updatedItem)).then(
                         () => logger.debug('Analysing has run.'),
                         (e) => logger.error('Error in Analysing', e),
                     );

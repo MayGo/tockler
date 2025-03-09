@@ -1,8 +1,8 @@
 import CopyPlugin from 'copy-webpack-plugin';
 import Dotenv from 'dotenv-webpack';
-import nodeExternals from 'webpack-node-externals';
-import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import nodeExternals from 'webpack-node-externals';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,5 +44,10 @@ export default {
             },
         ],
     },
-    plugins: [new Dotenv(), new CopyPlugin({ patterns: ['preloadStuff.js'] })],
+    plugins: [
+        new Dotenv(),
+        new CopyPlugin({
+            patterns: ['preloadStuff.js', { from: 'src/drizzle/migrations', to: 'drizzle/migrations' }],
+        }),
+    ],
 };

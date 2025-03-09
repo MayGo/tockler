@@ -37,7 +37,7 @@ if (gotTheLock) {
 
     app.on('will-quit', async () => {
         logger.debug('will-quit');
-        await AppManager.destroy();
+        // await AppManager.destroy();
     });
     app.on('window-all-closed', function () {
         logger.debug('window-all-closed');

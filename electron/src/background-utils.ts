@@ -1,10 +1,9 @@
-import { appConstants } from './app-constants';
 import moment from 'moment';
-import { TrackItem } from './models/TrackItem';
-import { TrackItemRaw } from './task-analyser';
+import { appConstants } from './app-constants';
+import { TrackItem } from './drizzle/schema';
 
 export default class BackgroundUtils {
-    static isSameItems(item1: TrackItemRaw, item2: TrackItemRaw) {
+    static isSameItems(item1: any, item2: any) {
         if (item1 && item2 && item1.app === item2.app && item1.title === item2.title) {
             return true;
         }
@@ -19,42 +18,46 @@ export default class BackgroundUtils {
         return now;
     }
 
-    static shouldSplitInTwoOnMidnight(beginDate: Date, endDate: Date) {
+    static shouldSplitInTwoOnMidnight(beginDate: Date | string, endDate: Date | string) {
         return BackgroundUtils.daysBetween(beginDate, endDate) > 0;
     }
 
-    static dateToAfterMidnight(d: Date) {
+    static dateToAfterMidnight(d: Date | string) {
         return moment(d).startOf('day').add(1, 'days').toDate();
     }
 
-    static almostMidnight(d: Date) {
+    static almostMidnight(d: Date | string) {
         return moment(d).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
     }
 
-    static startOfDay(d: Date) {
+    static startOfDay(d: Date | string) {
         return moment(d).startOf('day').toDate();
     }
 
-    static daysBetween(beginDate: Date, endDate: Date) {
+    static daysBetween(beginDate: Date | string, endDate: Date | string) {
         return moment(endDate).endOf('day').diff(moment(beginDate).startOf('day'), 'days');
     }
 
-    static getRawTrackItem(savedItem: TrackItemRaw) {
+    static getRawTrackItem(savedItem: any) {
         let item = {
             app: savedItem.app,
             title: savedItem.title,
             taskName: savedItem.taskName,
             color: savedItem.color,
-            beginDate: savedItem.beginDate,
+            beginDate: savedItem.beginDate instanceof Date ? savedItem.beginDate : new Date(savedItem.beginDate),
             url: savedItem.url,
-            endDate: savedItem.endDate,
+            endDate: savedItem.endDate instanceof Date ? savedItem.endDate : new Date(savedItem.endDate),
         };
 
         return item;
     }
 
-    static splitItemIntoDayChunks(item: TrackItem) {
-        let daysBetween: number = BackgroundUtils.daysBetween(item.beginDate, item.endDate) + 1;
+    static splitItemIntoDayChunks(item: TrackItem | any) {
+        // Convert dates to Date objects if they're strings
+        const beginDate = item.beginDate instanceof Date ? item.beginDate : new Date(item.beginDate);
+        const endDate = item.endDate instanceof Date ? item.endDate : new Date(item.endDate);
+
+        let daysBetween: number = BackgroundUtils.daysBetween(beginDate, endDate) + 1;
         if (daysBetween < 2) {
             throw new Error('begin and end date is on same day');
         }
@@ -66,7 +69,7 @@ export default class BackgroundUtils {
         for (let i = 0; i < daysBetween; i++) {
             let newItem = Object.assign({}, item);
 
-            let currentDate = moment(item.beginDate).add(i, 'days').toDate();
+            let currentDate = moment(beginDate).add(i, 'days').toDate();
             let almostMidnight = BackgroundUtils.almostMidnight(currentDate);
             let startOfDay = BackgroundUtils.startOfDay(currentDate);
 

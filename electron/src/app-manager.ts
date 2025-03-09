@@ -1,11 +1,11 @@
 import { app, ipcMain, nativeTheme } from 'electron';
-import { logManager } from './log-manager';
-import { stateManager } from './state-manager';
 import { initIpcActions } from './API';
 import { config } from './config';
-import { connectAndSync } from './models/db';
-import WindowManager, { sendToTrayWindow, sendToMainWindow, sendToNotificationWindow } from './window-manager';
-import { Knex } from 'knex';
+
+import { connectAndSync } from './drizzle/db';
+import { logManager } from './log-manager';
+import { stateManager } from './state-manager';
+import WindowManager, { sendToMainWindow, sendToNotificationWindow, sendToTrayWindow } from './window-manager';
 
 let logger = logManager.getLogger('AppManager');
 
@@ -19,26 +19,20 @@ const theThemeHasChanged = () => {
     AppManager.saveThemeAndNotify(AppManager.getNativeTheme());
 };
 export default class AppManager {
-    static knexInstance: Knex | null = null;
     static async init() {
         logger.info('Intializing Tockler');
         initIpcActions();
 
         logger.debug('Database syncing....');
-        AppManager.knexInstance = await connectAndSync();
+
+        await connectAndSync();
+
         logger.debug('Database synced.');
 
         AppManager.initAppEvents();
         AppManager.setOpenAtLogin();
 
         await stateManager.restoreState();
-    }
-
-    static async destroy() {
-        if (AppManager.knexInstance) {
-            await AppManager.knexInstance.destroy();
-            logger.info('Closed db connection');
-        }
     }
 
     static initAppEvents() {

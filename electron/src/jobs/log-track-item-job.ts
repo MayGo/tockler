@@ -3,13 +3,19 @@ import { backgroundService } from '../background-service';
 import BackgroundUtils from '../background-utils';
 import { TrackItemType } from '../enums/track-item-type';
 import { logManager } from '../log-manager';
-import { TrackItem } from '../models/TrackItem';
+
+import { TrackItem } from '../drizzle/schema';
 import { settingsService } from '../services/settings-service';
 import { trackItemService } from '../services/track-item-service';
 import { stateManager } from '../state-manager';
 import { TrackItemRaw } from '../task-analyser';
 
 let logger = logManager.getLogger('LogTrackItemJob');
+
+// Helper function to create TrackItemRaw safely
+function createTrackItemRaw(properties: Partial<TrackItemRaw>): TrackItemRaw {
+    return properties as unknown as TrackItemRaw;
+}
 
 /**
  *
@@ -59,7 +65,8 @@ export class LogTrackItemJob {
             return null;
         }
 
-        let rawItem: TrackItemRaw = BackgroundUtils.getRawTrackItem(logItemMarkedAsRunning as TrackItemRaw);
+        // Use the helper for converting Drizzle TrackItem to TrackItemRaw
+        let rawItem: TrackItemRaw = BackgroundUtils.getRawTrackItem(logItemMarkedAsRunning);
         rawItem.endDate = new Date();
 
         let shouldTrySplitting = oldOnlineItem !== this.onlineItemWhenLastSplit;
@@ -69,15 +76,19 @@ export class LogTrackItemJob {
             if (splitEndDate) {
                 logger.debug('Splitting LogItem, new item has endDate: ', splitEndDate);
 
-                if (logItemMarkedAsRunning.beginDate > splitEndDate) {
+                // Convert string date to Date object before comparison
+                const beginDate = new Date(logItemMarkedAsRunning.beginDate);
+                if (beginDate > splitEndDate) {
                     logger.error('BeginDate is after endDate. Not saving RUNNING_LOG_ITEM');
                     return;
                 }
 
-                await stateManager.endRunningTrackItem({
-                    endDate: splitEndDate,
-                    taskName: TrackItemType.LogTrackItem,
-                });
+                await stateManager.endRunningTrackItem(
+                    createTrackItemRaw({
+                        endDate: splitEndDate,
+                        taskName: TrackItemType.LogTrackItem,
+                    }),
+                );
 
                 rawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
             } else {
@@ -96,12 +107,11 @@ export class LogTrackItemJob {
     }
 
     async getTaskSplitDate() {
-        let onlineItems = await trackItemService.findLastOnlineItem();
-        if (onlineItems && onlineItems.length > 0) {
+        let onlineItem = await trackItemService.findLastOnlineItem();
+        if (onlineItem) {
             let settings = await settingsService.fetchWorkSettings();
 
-            let onlineItem: any = onlineItems[0];
-            logger.debug('Online item found:', onlineItem.toJSON());
+            logger.debug('Online item found:', onlineItem);
             let minutesAfterToSplit = settings.splitTaskAfterIdlingForMinutes || 3;
             let minutesFromNow = moment().diff(onlineItem.endDate, 'minutes');
 

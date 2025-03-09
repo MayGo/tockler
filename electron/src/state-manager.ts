@@ -2,10 +2,10 @@ import { ipcMain } from 'electron';
 import { appEmitter } from './app-event-emitter';
 import { backgroundService } from './background-service';
 import BackgroundUtils from './background-utils';
+import { TrackItem } from './drizzle/schema';
 import { State } from './enums/state';
 import { TrackItemType } from './enums/track-item-type';
 import { logManager } from './log-manager';
-import { TrackItem } from './models/TrackItem';
 import { settingsService } from './services/settings-service';
 import { trackItemService } from './services/track-item-service';
 import { TrackItemRaw } from './task-analyser';
@@ -17,6 +17,11 @@ interface TrackItems {
     StatusTrackItem: TrackItem | null;
     AppTrackItem: TrackItem | null;
     LogTrackItem: TrackItem | null;
+}
+
+function toPlainObject(item: any) {
+    if (!item) return null;
+    return { ...item };
 }
 
 export class StateManager {
@@ -57,10 +62,10 @@ export class StateManager {
     async startNewLogItem(_event: any, rawItem: TrackItemRaw) {
         logger.debug('start-new-log-item', rawItem);
         const item: TrackItem = await this.createNewRunningTrackItem(rawItem);
-        logger.debug('log-item-started', item.toJSON());
+        logger.debug('log-item-started', toPlainObject(item));
         await this.setLogTrackItemMarkedAsRunning(item);
 
-        sendToTrayWindow('log-item-started', JSON.stringify(item.toJSON()));
+        sendToTrayWindow('log-item-started', JSON.stringify(toPlainObject(item)));
     }
 
     async restoreState() {
@@ -70,7 +75,7 @@ export class StateManager {
             this.logTrackItemMarkedAsRunning = logItem;
             this.setCurrentTrackItem(logItem);
 
-            logger.debug('Restored running LogTrackItem:', logItem.toJSON());
+            logger.debug('Restored running LogTrackItem:', toPlainObject(logItem));
 
             return logItem;
         } else {
@@ -86,7 +91,7 @@ export class StateManager {
     async setLogTrackItemMarkedAsRunning(item: TrackItem) {
         await settingsService.saveRunningLogItemReference(item.id);
         this.setCurrentTrackItem(item);
-        logger.debug('Mark new LogTrackItem as running:', item.toJSON());
+        logger.debug('Mark new LogTrackItem as running:', toPlainObject(item));
         this.logTrackItemMarkedAsRunning = item;
     }
 
@@ -110,11 +115,14 @@ export class StateManager {
     }
 
     hasSameRunningTrackItem(rawItem: TrackItemRaw): boolean {
-        if (!rawItem.taskName) {
+        if (!rawItem || !rawItem.taskName) {
             return false;
         }
 
-        return BackgroundUtils.isSameItems(rawItem, this.getCurrentTrackItem(rawItem.taskName) as TrackItemRaw);
+        return BackgroundUtils.isSameItems(
+            rawItem,
+            BackgroundUtils.getRawTrackItem(this.getCurrentTrackItem(rawItem.taskName)),
+        );
     }
 
     resetCurrentTrackItem(type: TrackItemType) {
@@ -186,13 +194,16 @@ export class StateManager {
 
         if (runningItem) {
             if (rawItem.beginDate) {
-                runningItem.endDate = rawItem.beginDate;
+                runningItem.endDate =
+                    rawItem.beginDate instanceof Date
+                        ? rawItem.beginDate.toISOString()
+                        : new Date(rawItem.beginDate).toISOString();
             } else {
                 logger.debug('No beginDate, setting endDate to now');
-                runningItem.endDate = new Date();
+                runningItem.endDate = new Date().toISOString();
             }
 
-            logger.debug('Ending trackItem:', runningItem.toJSON());
+            logger.debug('Ending trackItem:', toPlainObject(runningItem));
             this.resetCurrentTrackItem(rawItem.taskName);
             await trackItemService.updateTrackItem(runningItem, runningItem.id);
         }
@@ -203,8 +214,24 @@ export class StateManager {
     async createNewRunningTrackItem(rawItem: TrackItemRaw) {
         await this.endRunningTrackItem(rawItem);
 
-        let item = await trackItemService.createTrackItem(rawItem as TrackItem);
-        // logger.debug('Created track item to DB and set running item:', item.toJSON());
+        // Convert TrackItemRaw to match Drizzle schema
+        const trackItemData = {
+            app: rawItem.app || null,
+            taskName: rawItem.taskName || null,
+            title: rawItem.title || null,
+            color: rawItem.color || null,
+            url: rawItem.url || null,
+            beginDate:
+                rawItem.beginDate instanceof Date
+                    ? rawItem.beginDate.toISOString()
+                    : rawItem.beginDate || new Date().toISOString(),
+            endDate:
+                rawItem.endDate instanceof Date
+                    ? rawItem.endDate.toISOString()
+                    : rawItem.endDate || new Date().toISOString(),
+        };
+
+        let item = await trackItemService.createTrackItem(trackItemData as any);
 
         this.setCurrentTrackItem(item);
         return item;
@@ -216,7 +243,7 @@ export class StateManager {
             return null;
         }
 
-        runningItem.endDate = new Date();
+        runningItem.endDate = new Date().toISOString();
         await trackItemService.updateTrackItem(runningItem, runningItem.id);
         // logger.debug('Saved track item(endDate change) to DB:', runningItem.toJSON());
         return runningItem;
