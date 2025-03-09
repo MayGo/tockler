@@ -11,8 +11,36 @@ import { appSettings } from './schema';
 
 const logger = logManager.getLogger('Database');
 
-const sqlite = new Database(config.databaseConfig.outputPath);
+// Create SQLite connection with performance optimizations
+const sqlite = new Database(config.databaseConfig.outputPath, {
+    verbose: process.env['NODE_ENV'] === 'development' ? console.log : undefined,
+});
+
+// Apply performance optimizations
+sqlite.pragma('journal_mode = WAL'); // Use Write-Ahead Logging for better concurrency
+sqlite.pragma('synchronous = NORMAL'); // Reduce synchronous disk writes (balance between safety and speed)
+sqlite.pragma('cache_size = -64000'); // 64MB page cache (negative means kibibytes)
+sqlite.pragma('foreign_keys = ON'); // Ensure data integrity
+sqlite.pragma('temp_store = MEMORY'); // Store temporary tables and indices in memory
+sqlite.pragma('mmap_size = 1000000000'); // 1GB memory-mapped I/O (more reasonable for desktop applications)
+
 export const db = drizzle(sqlite, { schema });
+
+// Prepared statements for common queries to improve performance
+export const preparedStatements = {
+    // TrackItems prepared statements
+    getTrackItemById: sqlite.prepare('SELECT * FROM TrackItems WHERE id = ?'),
+    getLatestTrackItems: sqlite.prepare('SELECT * FROM TrackItems ORDER BY beginDate DESC LIMIT ?'),
+    deleteTrackItemById: sqlite.prepare('DELETE FROM TrackItems WHERE id = ?'),
+    deleteTrackItemsByApp: sqlite.prepare('DELETE FROM TrackItems WHERE app = ?'),
+    updateTrackItemColor: sqlite.prepare('UPDATE TrackItems SET color = ? WHERE app = ?'),
+
+    // AppSettings prepared statements
+    getAppSettingByName: sqlite.prepare('SELECT * FROM AppSettings WHERE name = ? LIMIT 1'),
+
+    // Settings prepared statements
+    getSettingByName: sqlite.prepare('SELECT * FROM Settings WHERE name = ? LIMIT 1'),
+};
 
 // Function to insert default data if it doesn't exist
 async function insertDefaultData(db: ReturnType<typeof drizzle>) {
@@ -105,6 +133,26 @@ function removeKnexMigrationTables(): void {
         logger.debug('Knex migration tables removed successfully');
     } catch (error) {
         logger.error('Error removing knex migration tables:', error);
+    }
+}
+
+// Helper function for efficient transactions
+export function runInTransaction<T>(callback: () => T): T {
+    // Start transaction
+    sqlite.prepare('BEGIN').run();
+
+    try {
+        // Run callback function within transaction
+        const result = callback();
+
+        // If we've made it this far without errors, commit the transaction
+        sqlite.prepare('COMMIT').run();
+
+        return result;
+    } catch (error) {
+        // If there's an error, roll back the transaction
+        sqlite.prepare('ROLLBACK').run();
+        throw error;
     }
 }
 

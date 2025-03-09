@@ -1,9 +1,9 @@
 import { stringify } from 'csv-stringify/sync';
-import { and, eq, gte, like, lt, or, sql } from 'drizzle-orm';
+import { and, eq, gte, like, lt, sql } from 'drizzle-orm';
 import { dialog } from 'electron';
 import { writeFileSync } from 'fs';
 import moment from 'moment';
-import { db } from '../drizzle/db';
+import { db, preparedStatements, runInTransaction } from '../drizzle/db';
 import { NewTrackItem, TrackItem, trackItems } from '../drizzle/schema';
 import { State } from '../enums/state';
 import { logManager } from '../log-manager';
@@ -164,18 +164,18 @@ export class TrackItemService {
     }
 
     async updateTrackItemColor(appName: string, color: string) {
-        await db.update(trackItems).set({ color }).where(eq(trackItems.app, appName));
+        preparedStatements.updateTrackItemColor.run(color, appName);
     }
 
     async findById(id: number) {
-        const results = await db.select().from(trackItems).where(eq(trackItems.id, id));
-        return results[0];
+        const row = preparedStatements.getTrackItemById.get(id);
+        return row as TrackItem | undefined;
     }
 
     async deleteById(id: number) {
         this.logger.debug('Deleting track item:', id);
 
-        await db.delete(trackItems).where(eq(trackItems.id, id));
+        preparedStatements.deleteTrackItemById.run(id);
 
         return id;
     }
@@ -183,11 +183,15 @@ export class TrackItemService {
     async deleteByIds(ids: number[]) {
         this.logger.debug('Deleting track items:', ids);
 
-        await db.delete(trackItems).where(
-            ids.map((id) => eq(trackItems.id, id)).length > 0
-                ? or(...ids.map((id) => eq(trackItems.id, id)))
-                : eq(trackItems.id, -1), // Provide a false condition if ids array is empty
-        );
+        if (ids.length === 0) {
+            return ids;
+        }
+
+        // Use transaction for better performance with bulk operations
+        runInTransaction(() => {
+            const stmt = preparedStatements.deleteTrackItemById;
+            ids.forEach((id) => stmt.run(id));
+        });
 
         return ids;
     }

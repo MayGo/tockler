@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "5bb369d8-e932-4d42-9a2a-137a611552c0",
+  "id": "7406d888-487d-4df1-a7f6-a9a922d47fd4",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "AppSettings": {
@@ -18,7 +18,7 @@
           "name": "name",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "color": {
@@ -29,7 +29,22 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "AppSettings_name_unique": {
+          "name": "AppSettings_name_unique",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        },
+        "app_settings_name": {
+          "name": "app_settings_name",
+          "columns": [
+            "name"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
@@ -49,7 +64,7 @@
           "name": "name",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "jsonData": {
@@ -60,7 +75,22 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "Settings_name_unique": {
+          "name": "Settings_name_unique",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        },
+        "settings_name": {
+          "name": "settings_name",
+          "columns": [
+            "name"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
@@ -80,7 +110,7 @@
           "name": "app",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "taskName": {
@@ -126,7 +156,29 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "track_items_begin_date": {
+          "name": "track_items_begin_date",
+          "columns": [
+            "beginDate"
+          ],
+          "isUnique": false
+        },
+        "track_items_end_date": {
+          "name": "track_items_end_date",
+          "columns": [
+            "endDate"
+          ],
+          "isUnique": false
+        },
+        "track_items_task_name": {
+          "name": "track_items_task_name",
+          "columns": [
+            "taskName"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},

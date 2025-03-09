@@ -56,6 +56,7 @@ Generate migrations from schema changes:
 
 ```bash
 pnpm run db:generate
+npx drizzle-kit generate
 ```
 
 Apply schema changes directly to the database:
