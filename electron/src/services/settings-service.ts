@@ -8,6 +8,15 @@ const defaultSettings = {
     backgroundJobInterval: 3,
 };
 
+const defaultWorkSettings = {
+    hoursToWork: 8,
+    sessionLength: 60,
+    minBreakTime: 5,
+    notificationDuration: 10,
+    reNotifyInterval: 5,
+    smallNotificationsEnabled: true,
+};
+
 export class SettingsService {
     logger = logManager.getLogger('SettingsService');
     cache: Record<string, Setting | null> = {};
@@ -64,14 +73,14 @@ export class SettingsService {
     async fetchWorkSettings() {
         let item = await this.findByName('WORK_SETTINGS');
         if (!item || !item.jsonData) {
-            return {};
+            return defaultWorkSettings;
         }
 
         try {
             return JSON.parse(item.jsonData);
         } catch (e) {
             this.logger.error('Error parsing work settings:', e);
-            return {};
+            return defaultWorkSettings;
         }
     }
 

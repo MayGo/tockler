@@ -1,9 +1,9 @@
 import { stringify } from 'csv-stringify/sync';
-import { and, eq, gte, like, lt, sql } from 'drizzle-orm';
+import { and, eq, gte, inArray, like, lt, sql } from 'drizzle-orm';
 import { dialog } from 'electron';
 import { writeFileSync } from 'fs';
 import moment from 'moment';
-import { db, preparedStatements, runInTransaction } from '../drizzle/db';
+import { db } from '../drizzle/db';
 import { NewTrackItem, TrackItem, trackItems } from '../drizzle/schema';
 import { State } from '../enums/state';
 import { logManager } from '../log-manager';
@@ -170,18 +170,18 @@ export class TrackItemService {
     }
 
     async updateTrackItemColor(appName: string, color: string) {
-        preparedStatements.updateTrackItemColor.run(color, appName);
+        await db.update(trackItems).set({ color }).where(eq(trackItems.app, appName));
     }
 
     async findById(id: number) {
-        const row = preparedStatements.getTrackItemById.get(id);
-        return row as TrackItem | undefined;
+        const row = await db.select().from(trackItems).where(eq(trackItems.id, id));
+        return row[0] as TrackItem | undefined;
     }
 
     async deleteById(id: number) {
         this.logger.debug('Deleting track item:', id);
 
-        preparedStatements.deleteTrackItemById.run(id);
+        await db.delete(trackItems).where(eq(trackItems.id, id));
 
         return id;
     }
@@ -194,10 +194,7 @@ export class TrackItemService {
         }
 
         // Use transaction for better performance with bulk operations
-        runInTransaction(() => {
-            const stmt = preparedStatements.deleteTrackItemById;
-            ids.forEach((id) => stmt.run(id));
-        });
+        await db.delete(trackItems).where(inArray(trackItems.id, ids));
 
         return ids;
     }
