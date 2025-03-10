@@ -29,3 +29,11 @@ export async function initBackgroundJob() {
 
     bgInterval = setInterval(() => runAll(dataSettings), backgroundJobInterval * 1000);
 }
+
+export function cleanupBackgroundJob() {
+    logger.debug('Cleaning up background job');
+    if (bgInterval) {
+        clearInterval(bgInterval);
+        bgInterval = null;
+    }
+}
