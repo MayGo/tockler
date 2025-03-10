@@ -21,7 +21,7 @@ export const TrackItemTable = ({ type, resetButtonsRef }) => {
             resetButtonsRef={resetButtonsRef}
             isOneDay={isOneDay}
             isSearchTable={false}
-            total={0}
+            sumTotal={0}
             manualSortBy={false}
             customTableButtons={<TrackItemTableButtons {...defaultTableButtonsProps} />}
         />
