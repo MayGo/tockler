@@ -20,7 +20,10 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true,
-        "noUncheckedSideEffectImports": true
+        "noUncheckedSideEffectImports": true,
+
+        /* Testing */
+        "types": ["vitest/globals", "node"]
     },
-    "include": ["src"]
+    "include": ["src", "__tests__", "vitest.config.ts", "src/setupTests.ts"]
 }
