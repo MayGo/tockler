@@ -18,11 +18,6 @@ const TrayAppPageTemp = () => {
     const { isLoading, statusItems, logItems, refreshData, runningLogItem, setRunningLogItem } = useTrayData();
     const { windowIsActive } = useWindowFocused();
 
-    // Initial data load
-    useEffect(() => {
-        refreshData();
-    }, []);
-
     // Refresh data when window becomes active
     useEffect(() => {
         if (windowIsActive) {
@@ -41,9 +36,8 @@ const TrayAppPageTemp = () => {
 
     function stopRunningLogItemEvent() {
         if (runningLogItem) {
-            stopRunningLogItem(runningLogItem.id);
-            refreshData();
             setRunningLogItem(undefined);
+            stopRunningLogItem(runningLogItem.id);
         } else {
             Logger.error('No running log trackItem to stop');
         }
