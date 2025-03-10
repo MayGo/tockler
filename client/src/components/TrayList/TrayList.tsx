@@ -16,8 +16,10 @@ export interface AggregatedTrackItem extends ITrackItem {
     totalMs: number;
 }
 
+const getKey = (item: ITrackItem) => `${item.app}_${item.title}`;
+
 const aggregateSameAppAndName = (lastLogItems: ITrackItem[], runningLogItem: ITrackItem | undefined) => {
-    const grouped = groupBy(lastLogItems, (item) => `${item.app}_${item.title}`);
+    const grouped = groupBy(lastLogItems, getKey);
 
     const mapped = map(grouped, (items) => {
         return {
@@ -25,7 +27,7 @@ const aggregateSameAppAndName = (lastLogItems: ITrackItem[], runningLogItem: ITr
             app: items[0].app,
             title: items[0].title,
             color: items[0].color,
-            isRunning: runningLogItem ? !!items.find((item) => item.id === runningLogItem.id) : false,
+            isRunning: runningLogItem ? !!items.find((item) => getKey(item) === getKey(runningLogItem)) : false,
             beginDate: sortBy(items, ['beginDate'])[0].beginDate,
             endDate: sortBy(items, ['endDate'])[items.length - 1].endDate,
             totalMs: sumDiff(items),
