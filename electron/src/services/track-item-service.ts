@@ -114,7 +114,6 @@ export class TrackItemService {
                 })
                 .from(trackItems)
                 .where(and(...conditions));
-
             const total = totalResult[0]?.totalMs || 0;
             return { data, total: parseInt(total as string) * 1000 }; // Convert seconds to milliseconds
         }
@@ -124,9 +123,6 @@ export class TrackItemService {
 
     async findAllDayItems(from: string, to: string, taskName: string) {
         console.log('findAllDayItems', from, to, taskName);
-
-        const data2 = await db.select().from(trackItems);
-        console.log('data2', data2);
 
         const data = await db
             .select()
