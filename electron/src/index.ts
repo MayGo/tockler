@@ -11,6 +11,7 @@ import { logManager } from './log-manager';
 import WindowManager from './window-manager';
 
 let logger = logManager.getLogger('AppIndex');
+
 app.setAppUserModelId(process.execPath);
 
 /* Single Instance Check */

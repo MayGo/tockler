@@ -100,13 +100,13 @@ export class SettingsService {
     }
 
     async fetchWorkSettingsJsonString() {
-        let item = await this.findByName('WORK_SETTINGS');
-        return item && item.jsonData ? item.jsonData : '{}';
+        let jsonData = await this.fetchWorkSettings();
+        return JSON.stringify(jsonData);
     }
 
     async fetchDataSettingsJsonString() {
-        let item = await this.findByName('DATA_SETTINGS');
-        return item && item.jsonData ? item.jsonData : '{}';
+        let jsonData = await this.fetchDataSettings();
+        return JSON.stringify(jsonData);
     }
 
     isObject(val: any) {
@@ -128,8 +128,8 @@ export class SettingsService {
     }
 
     async fetchAnalyserSettingsJsonString() {
-        let item = await this.findByName('ANALYSER_SETTINGS');
-        return item && item.jsonData ? item.jsonData : '{}';
+        let jsonData = await this.fetchAnalyserSettings();
+        return JSON.stringify(jsonData);
     }
 
     async getRunningLogItemAsJson() {

@@ -137,7 +137,7 @@ export function saveAnalyserSettings(data) {
 
 export async function fetchAnalyserSettings() {
     const jsonStr = await EventEmitter.emit('fetchAnalyserSettingsJsonString');
-    Logger.debug('fetchAnalyserSettings', jsonStr);
+
     try {
         return JSON.parse(jsonStr);
     } catch (e) {

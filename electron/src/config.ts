@@ -5,6 +5,15 @@ import * as path from 'path';
 import isDevelopment from 'electron-is-dev';
 import Store from 'electron-store';
 
+// Set a different app name in development mode
+if (isDevelopment) {
+    const appName = 'TocklerDev';
+    app.setName(appName);
+    const appData = app.getPath('appData');
+    app.setPath('userData', path.join(appData, appName));
+    console.warn(`App name set to: ${app.name}`);
+}
+
 let root = path.join(__dirname, '..');
 
 let useRealDataInDev = false;
