@@ -14,6 +14,9 @@ const logger = logManager.getLogger('Database');
 // Create SQLite connection with performance optimizations
 const sqlite = new Database(config.databaseConfig.outputPath, {
     verbose: process.env['NODE_ENV'] === 'development' ? console.log : undefined,
+    // Add additional performance options
+    fileMustExist: false, // Allow creation of new database
+    timeout: 5000, // Increase timeout for busy database
 });
 
 // Apply performance optimizations
@@ -24,6 +27,10 @@ sqlite.pragma('foreign_keys = ON'); // Ensure data integrity
 sqlite.pragma('temp_store = MEMORY'); // Store temporary tables and indices in memory
 sqlite.pragma('mmap_size = 1000000000'); // 1GB memory-mapped I/O (more reasonable for desktop applications)
 
+// Additional performance optimizations
+sqlite.pragma('page_size = 8192'); // Larger page size for better read performance (default is 4096)
+sqlite.pragma('auto_vacuum = INCREMENTAL'); // Use incremental vacuum for better space management
+sqlite.pragma('busy_timeout = 5000'); // Set busy timeout to prevent SQLITE_BUSY errors
 export const db = drizzle(sqlite, { schema });
 
 // Prepared statements for common queries to improve performance
