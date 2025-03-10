@@ -148,13 +148,13 @@ export class TrackItemService {
 
         return data;
     }
-    async findFirstLogItems() {
+    async findFirstChunkLogItems() {
         return await db
             .select()
             .from(trackItems)
             .where(eq(trackItems.taskName, TrackItemType.LogTrackItem))
             .orderBy(trackItems.beginDate)
-            .limit(1);
+            .limit(100);
     }
 
     async findFirstTrackItem() {

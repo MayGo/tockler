@@ -25,8 +25,8 @@ export async function findAllDayItemsForEveryTrack(from: DateTime, to: DateTime)
     return { appItems, statusItems, logItems };
 }
 
-export function findFirstLogItems(): Promise<ITrackItem[]> {
-    return EventEmitter.emit('findFirstLogItems');
+export function findFirstChunkLogItems(): Promise<ITrackItem[]> {
+    return EventEmitter.emit('findFirstChunkLogItems');
 }
 
 export function findFirstTrackItem(): Promise<ITrackItem> {

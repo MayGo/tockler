@@ -88,8 +88,8 @@ const trackItemActions = {
         const { from, to, taskName, searchStr } = payload;
         return trackItemService.findAndExportAllItems(from, to, taskName, searchStr);
     },
-    findFirstLogItems: async () => {
-        return trackItemService.findFirstLogItems();
+    findFirstChunkLogItems: async () => {
+        return trackItemService.findFirstChunkLogItems();
     },
     findFirstTrackItem: async () => {
         return trackItemService.findFirstTrackItem();

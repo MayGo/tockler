@@ -47,7 +47,7 @@ export const useTrayData = () => {
         Logger.debug('TrayApp - Loading log items');
 
         try {
-            const items = await findFirstLogItems();
+            const items = await findFirstChunkLogItems();
             setLogItems(items);
             return items;
         } catch (error) {
