@@ -1,17 +1,17 @@
-import { logManager } from './log-manager';
-import { appEmitter } from './app-event-emitter';
-import { settingsService } from './services/settings-service';
-import { TrackItemType } from './enums/track-item-type';
-import { showNotification } from './notification';
 import randomcolor from 'randomcolor';
+import { appEmitter } from './app-event-emitter';
+import { TrackItemType } from './enums/track-item-type';
+import { logManager } from './log-manager';
+import { showNotification } from './notification';
+import { settingsService } from './services/settings-service';
 import { stateManager } from './state-manager';
 export interface TrackItemRaw {
     app?: string;
     taskName?: TrackItemType;
     title?: string;
     color?: string;
-    beginDate?: Date;
-    endDate?: Date;
+    beginDate?: number;
+    endDate?: number;
     url?: string;
 }
 
@@ -82,8 +82,8 @@ export class TaskAnalyser {
                         app: app,
                         title: title,
                         taskName: TrackItemType.LogTrackItem,
-                        beginDate: new Date(),
-                        endDate: new Date(),
+                        beginDate: new Date().getTime(),
+                        endDate: new Date().getTime(),
                         color: randomcolor(),
                     };
                     showNotification({

@@ -1,21 +1,21 @@
-import { trackItemService } from './services/track-item-service';
-import { appSettingService } from './services/app-setting-service';
-import { State } from './enums/state';
-import { logManager } from './log-manager';
-import { stateManager } from './state-manager';
 import BackgroundUtils from './background-utils';
+import { TrackItem } from './drizzle/schema';
+import { State } from './enums/state';
 import { TrackItemType } from './enums/track-item-type';
-import { TrackItem } from './models/TrackItem';
+import { logManager } from './log-manager';
+import { appSettingService } from './services/app-setting-service';
+import { trackItemService } from './services/track-item-service';
+import { stateManager } from './state-manager';
 import { TrackItemRaw } from './task-analyser';
 
 let logger = logManager.getLogger('BackgroundService');
 
 export class BackgroundService {
     async addInactivePeriod(beginDate: Date, endDate: Date) {
-        let rawItem: any = { app: State.Offline, title: State.Offline.toString().toLowerCase() };
+        let rawItem: Partial<TrackItemRaw> = { app: State.Offline, title: State.Offline.toString().toLowerCase() };
         rawItem.taskName = TrackItemType.StatusTrackItem;
-        rawItem.beginDate = beginDate;
-        rawItem.endDate = endDate;
+        rawItem.beginDate = beginDate.getTime();
+        rawItem.endDate = endDate.getTime();
         logger.debug('Adding inactive trackitem', rawItem);
 
         stateManager.resetStatusTrackItem();
@@ -47,17 +47,16 @@ export class BackgroundService {
                 throw new Error('TaskName not defined.');
             }
 
-            if (
-                BackgroundUtils.shouldSplitInTwoOnMidnight(
-                    rawItem.beginDate ?? new Date(),
-                    rawItem.endDate ?? new Date(),
-                )
-            ) {
-                let items = BackgroundUtils.splitItemIntoDayChunks(rawItem as TrackItem);
+            if (!rawItem.beginDate || !rawItem.endDate) {
+                throw new Error('beginDate or endDate not defined.');
+            }
+
+            if (BackgroundUtils.shouldSplitInTwoOnMidnight(rawItem.beginDate, rawItem.endDate)) {
+                let items = BackgroundUtils.splitItemIntoDayChunks(rawItem as unknown as TrackItem);
 
                 if (stateManager.hasSameRunningTrackItem(rawItem)) {
                     let firstItem = items.shift();
-                    await stateManager.endRunningTrackItem(firstItem as TrackItemRaw);
+                    await stateManager.endRunningTrackItem(firstItem as unknown as TrackItemRaw);
                 }
                 try {
                     let savedItems = await this.createItems(items);
@@ -91,9 +90,10 @@ export class BackgroundService {
     }
 
     async onResume() {
+        logger.debug('App resumed from sleep.', this);
         let statusTrackItem = stateManager.getCurrentStatusTrackItem();
         if (statusTrackItem != null) {
-            await this.addInactivePeriod(statusTrackItem.endDate, new Date());
+            await this.addInactivePeriod(new Date(statusTrackItem.endDate), new Date());
             await stateManager.setAwakeFromSleep();
         } else {
             logger.debug('No lastTrackItems.StatusTrackItem for addInactivePeriod.');

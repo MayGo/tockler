@@ -1,36 +1,46 @@
+import { eq } from 'drizzle-orm';
+import { db } from '../drizzle/db';
+import { Setting, settings } from '../drizzle/schema';
 import { logManager } from '../log-manager';
-import { Setting } from '../models/Setting';
-import { TrackItem } from '../models/TrackItem';
+
+const defaultSettings = {
+    recentDaysCount: 7,
+    backgroundJobInterval: 3,
+};
+
+const defaultWorkSettings = {
+    hoursToWork: 8,
+    sessionLength: 60,
+    minBreakTime: 5,
+    notificationDuration: 10,
+    reNotifyInterval: 5,
+    smallNotificationsEnabled: true,
+};
 
 export class SettingsService {
     logger = logManager.getLogger('SettingsService');
+    cache: Record<string, Setting | null> = {};
 
-    cache: any = {};
+    async findCreateFind(name: string): Promise<Setting> {
+        const rows = await db.select().from(settings).where(eq(settings.name, name));
 
-    async findCreateFind(name: string) {
-        return Setting.query()
-            .where('name', name)
-            .then(function (rows) {
-                if (rows.length === 0) {
-                    return Setting.query().insert({ name });
-                } else {
-                    return rows[0];
-                }
-            });
+        if (rows.length === 0) {
+            const [newSetting] = (await db.insert(settings).values({ name }).returning()) || [null];
+            return newSetting!;
+        } else {
+            return rows[0]!;
+        }
     }
 
-    async findByName(name: string) {
+    async findByName(name: string): Promise<Setting | null> {
         if (this.cache[name]) {
-            // this.logger.debug(`Returning ${name} from cache:`, this.cache[name].toJSON());
             return this.cache[name];
         }
 
         const item = await this.findCreateFind(name);
 
-        //  this.logger.debug(`Setting ${name} to cache:`, item && item.toJSON());
-        this.cache[name] = item;
-
-        return item;
+        this.cache[name] = item || null;
+        return item || null;
     }
 
     async updateByName(name: string, jsonDataStr: any) {
@@ -42,91 +52,111 @@ export class SettingsService {
             let item = await this.findByName(name);
 
             if (item) {
-                const savedItem = await item.$query().patchAndFetch({ jsonData });
+                const [updated] = (await db
+                    .update(settings)
+                    .set({ jsonData: JSON.stringify(jsonData) })
+                    .where(eq(settings.id, item.id))
+                    .returning()) || [null];
 
                 delete this.cache[name];
-                return savedItem;
+                return updated!;
             } else {
                 this.logger.error(`No item with ${name} found to update.`);
+                return null;
             }
         } catch (e) {
             this.logger.error('Parsing jsonData failed:', e, jsonDataStr);
+            return null;
         }
     }
 
     async fetchWorkSettings() {
         let item = await this.findByName('WORK_SETTINGS');
         if (!item || !item.jsonData) {
-            return {};
+            return defaultWorkSettings;
         }
 
-        return item.jsonData;
+        try {
+            return JSON.parse(item.jsonData);
+        } catch (e) {
+            this.logger.error('Error parsing work settings:', e);
+            return defaultWorkSettings;
+        }
     }
 
     async fetchDataSettings() {
         let item = await this.findByName('DATA_SETTINGS');
         if (!item || !item.jsonData) {
-            return { idleAfterSeconds: 60, backgroundJobInterval: 3 };
+            // Default settings
+            return defaultSettings;
         }
 
-        const { idleAfterSeconds, backgroundJobInterval } = item.jsonData;
-
-        return { idleAfterSeconds: +idleAfterSeconds, backgroundJobInterval: +backgroundJobInterval };
+        try {
+            return JSON.parse(item.jsonData);
+        } catch (e) {
+            this.logger.error('Error parsing data settings:', e);
+            return defaultSettings;
+        }
     }
 
     async fetchWorkSettingsJsonString() {
-        const data = await this.fetchWorkSettings();
-
-        return JSON.stringify(data);
+        let item = await this.findByName('WORK_SETTINGS');
+        return item && item.jsonData ? item.jsonData : '{}';
     }
 
     async fetchDataSettingsJsonString() {
-        const data = await this.fetchDataSettings();
-
-        return JSON.stringify(data);
+        let item = await this.findByName('DATA_SETTINGS');
+        return item && item.jsonData ? item.jsonData : '{}';
     }
 
     isObject(val: any) {
-        return val instanceof Object;
+        return typeof val === 'object';
     }
 
     async fetchAnalyserSettings() {
-        // this.logger.debug('Fetching ANALYSER_SETTINGS:');
         let item = await this.findByName('ANALYSER_SETTINGS');
-        // this.logger.debug('Fetched ANALYSER_SETTINGS:', item.toJSON());
-        if (!item || !Array.isArray(item.jsonData)) {
-            // db default is object but this is initialized with array (when is initialized)
+        if (!item || !item.jsonData) {
             return [];
         }
-        return item.jsonData;
+
+        try {
+            return JSON.parse(item.jsonData);
+        } catch (e) {
+            this.logger.error('Error parsing analyser settings:', e);
+            return [];
+        }
     }
 
     async fetchAnalyserSettingsJsonString() {
-        const data = await this.fetchAnalyserSettings();
-
-        return JSON.stringify(data);
+        let item = await this.findByName('ANALYSER_SETTINGS');
+        return item && item.jsonData ? item.jsonData : '{}';
     }
 
     async getRunningLogItemAsJson() {
-        let settingsItem = await this.findByName('RUNNING_LOG_ITEM');
-
-        if (settingsItem && settingsItem.jsonData && settingsItem.jsonData.id) {
-            let logItem = await TrackItem.query().findById(settingsItem.jsonData.id);
-            if (!logItem) {
-                this.logger.error(`No Track item found by pk: ${settingsItem.jsonData.id}`);
-                return null;
-            }
-
-            return logItem.toJSON();
+        let item = await this.findByName('RUNNING_LOG_ITEM');
+        if (!item || !item.jsonData) {
+            // this.logger.debug('No RUNNING_LOG_ITEM');
+            return null;
         }
 
-        return null;
+        try {
+            return JSON.parse(item.jsonData);
+        } catch (e) {
+            this.logger.error('Error parsing RUNNING_LOG_ITEM:', e);
+            return null;
+        }
     }
 
     async saveRunningLogItemReference(logItemId: number | null) {
-        await this.updateByName('RUNNING_LOG_ITEM', JSON.stringify({ id: logItemId }));
-        this.logger.debug('Updated RUNNING_LOG_ITEM!', logItemId);
-        return logItemId;
+        if (!logItemId) {
+            this.logger.debug('Clearing running log item');
+            await this.updateByName('RUNNING_LOG_ITEM', '{}');
+            return null;
+        }
+
+        this.logger.debug('Creating running log item: ', logItemId);
+
+        return this.updateByName('RUNNING_LOG_ITEM', JSON.stringify({ id: logItemId }));
     }
 }
 
