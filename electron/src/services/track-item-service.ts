@@ -8,6 +8,8 @@ import { NewTrackItem, TrackItem, trackItems } from '../drizzle/schema';
 import { State } from '../enums/state';
 import { logManager } from '../log-manager';
 
+const DEFAULT_PAGE_SIZE = 20;
+
 export class TrackItemService {
     logger = logManager.getLogger('TrackItemService');
 
@@ -87,7 +89,14 @@ export class TrackItemService {
         return results;
     }
 
-    async findAllItems(from: string, to: string, taskName: string, searchStr: string, paging: any, sumTotal: boolean) {
+    async findAllItems(
+        from: string,
+        to: string,
+        taskName: string,
+        searchStr: string,
+        paging: { limit: number; offset: number },
+        sumTotal: boolean,
+    ) {
         const conditions = [
             eq(trackItems.taskName, taskName),
             gte(trackItems.endDate, new Date(from).getTime()),
@@ -103,18 +112,19 @@ export class TrackItemService {
             .from(trackItems)
             .where(and(...conditions))
             .orderBy(trackItems.beginDate)
-            .limit(paging.limit)
-            .offset(paging.offset);
+            .limit(paging.limit || DEFAULT_PAGE_SIZE)
+            .offset(paging.offset || 0);
 
         if (sumTotal) {
             // Calculate total duration using sql template literal
             const totalResult = await db
                 .select({
-                    totalMs: sql`SUM(strftime('%s', ${trackItems.endDate}) - strftime('%s', ${trackItems.beginDate}))`,
+                    totalMs: sql`SUM(${trackItems.endDate}/1000 - ${trackItems.beginDate}/1000)`,
                 })
                 .from(trackItems)
                 .where(and(...conditions));
             const total = totalResult[0]?.totalMs || 0;
+
             return { data, total: parseInt(total as string) * 1000 }; // Convert seconds to milliseconds
         }
 

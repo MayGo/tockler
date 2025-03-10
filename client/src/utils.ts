@@ -10,6 +10,10 @@ export const diffAndFormatShort = (beginDate: number, endDate: number) => {
 };
 
 export const formatDurationInternal = (dur: number) => {
+    if (!dur) {
+        return '0s';
+    }
+
     const formattedDuration = formatDuration(intervalToDuration({ start: 0, end: dur }), { zero: false });
 
     return formattedDuration

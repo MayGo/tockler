@@ -78,7 +78,7 @@ const trackItemActions = {
         to: string;
         taskName: string;
         searchStr: string;
-        paging: boolean;
+        paging: { limit: number; offset: number };
         sumTotal: boolean;
     }) => {
         const { from, to, taskName, searchStr, paging, sumTotal } = payload;

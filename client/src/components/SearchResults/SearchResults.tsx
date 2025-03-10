@@ -55,7 +55,6 @@ interface SearchResultsProps {
     searchResult: SearchResultI;
     fetchData: (params: { pageSize: number; pageIndex: number; sortBy: { id: string; desc: boolean }[] }) => void;
     pageIndex: number;
-    total: number;
     resetButtonsRef: React.RefObject<HTMLDivElement>;
     refreshData: () => void;
 }
@@ -64,20 +63,19 @@ const SearchResultsPlain = ({
     searchResult,
     fetchData,
     pageIndex,
-    total,
     resetButtonsRef,
     refreshData,
 }: SearchResultsProps) => {
     return (
         <ItemsTable
-            data={searchResult.results || []}
+            data={searchResult.data || []}
             isOneDay={false}
             isSearchTable
             fetchData={fetchData}
             pageCount={searchResult.total}
             pageIndex={pageIndex}
             extraColumns={extraColumns}
-            total={total}
+            sumTotal={searchResult.total}
             manualSortBy
             resetButtonsRef={resetButtonsRef}
             customTableButtons={<SearchDeleteButtons refreshData={refreshData} {...defaultTableButtonsProps} />}

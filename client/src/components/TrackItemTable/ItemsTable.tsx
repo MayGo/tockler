@@ -41,7 +41,7 @@ interface ItemsTableProps {
     pageIndex?: number;
     fetchData?: (options: { pageIndex: number; pageSize: number; sortBy: SortingState }) => void;
     extraColumns?: ColumnDef<ITrackItem>[];
-    total: number;
+    sumTotal: number;
     manualSortBy: boolean;
     customTableButtons?: React.ReactElement<TableButtonsProps>;
 }
@@ -54,7 +54,7 @@ export const ItemsTable = ({
     pageIndex: controlledPageIndex,
     fetchData,
     extraColumns = [],
-    total,
+    sumTotal,
     manualSortBy = false,
     isOneDay,
     customTableButtons,
@@ -293,7 +293,7 @@ export const ItemsTable = ({
             </Table>
             <Box display="flex" justifyContent="end" pt={5}>
                 <Box pr={5} whiteSpace={'nowrap'}>
-                    Total: {subTotal} / <b>{formatDurationInternal(total)}</b>
+                    Total: {subTotal} / <b>{formatDurationInternal(sumTotal)}</b>
                 </Box>
             </Box>
 
