@@ -1,64 +1,76 @@
-import { logManager } from '../log-manager';
+import { eq } from 'drizzle-orm';
 import randomcolor from 'randomcolor';
-import { AppSetting } from '../models/AppSetting';
+import { db } from '../drizzle/db';
+import { AppSetting, appSettings, NewAppSetting } from '../drizzle/schema';
+import { logManager } from '../log-manager';
 
 export class AppSettingService {
     logger = logManager.getLogger('AppSettingService');
 
-    cache: any = {};
+    cache: Record<string, AppSetting | null> = {};
 
-    async createAppSetting(appSettingAttributes: any): Promise<AppSetting> {
-        const appSetting: AppSetting = await AppSetting.query().insert(appSettingAttributes);
+    async createAppSetting(appSettingAttributes: NewAppSetting): Promise<AppSetting> {
+        const [appSetting] = (await db.insert(appSettings).values(appSettingAttributes).returning()) || [null];
 
         const { name } = appSettingAttributes;
-        this.cache[name] = appSetting;
+        if (name) {
+            this.cache[name] = appSetting || null;
+        }
+
         this.logger.debug(`Created appSetting with title ${appSettingAttributes.name}.`);
-        return appSetting;
+        return appSetting!;
     }
 
-    async retrieveAppSettings(name: string) {
+    async retrieveAppSettings(name: string): Promise<AppSetting | null> {
         if (this.cache[name]) {
             return this.cache[name];
         }
 
-        const appSettings = await AppSetting.query().where('name', name);
+        const results = await db.select().from(appSettings).where(eq(appSettings.name, name));
 
-        const item = appSettings.length > 0 ? appSettings[0] : null;
-        this.cache[name] = item;
-        this.logger.debug('Retrieved all appSettings.');
+        const item = results.length > 0 ? results[0] : null;
+        this.cache[name] = item || null;
+        this.logger.debug('Retrieved appSetting:', name);
 
-        return item;
+        return item || null;
     }
 
-    async getAppColor(appName: string) {
-        const appSetting: AppSetting = await this.retrieveAppSettings(appName);
-        if (appSetting) {
+    async getAppColor(appName: string): Promise<string> {
+        const appSetting = await this.retrieveAppSettings(appName);
+
+        if (appSetting?.color) {
             return appSetting.color;
         } else {
-            let color = randomcolor();
-            let item = await this.createAppSetting({ name: appName, color: color });
-            this.logger.debug('Created color item to DB:', item.toJSON());
+            const color = randomcolor();
+            const item = await this.createAppSetting({ name: appName, color: color });
+            this.logger.debug('Created color item to DB:', item);
 
             return color;
         }
     }
 
     async changeColorForApp(appName: string, color: string) {
-        this.logger.debug('Quering color with params:', appName, color);
+        this.logger.debug('Changing color with params:', appName, color);
 
         const appSetting = await this.retrieveAppSettings(appName);
 
         if (appSetting) {
-            await appSetting.$query().patch({
-                color,
-            });
+            const [updated] = await db
+                .update(appSettings)
+                .set({ color })
+                .where(eq(appSettings.id, appSetting.id))
+                .returning();
 
-            this.logger.debug('Saved color item to DB:', appSetting.toJSON());
+            // Update cache
+            if (updated) {
+                this.cache[appName] = updated;
+            }
 
-            return appSetting;
+            this.logger.debug('Saved color item to DB:', updated);
+            return updated;
         } else {
             const item = await this.createAppSetting({ name: appName, color: color });
-            this.logger.debug('Created color item to DB:', item.toJSON());
+            this.logger.debug('Created color item to DB:', item);
             return item;
         }
     }

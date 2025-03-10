@@ -19,8 +19,8 @@ export function SearchPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [searchPaging, setSearchPaging] = useState({ pageSize: 20, pageIndex: 0 });
 
-    const [searchResult, setSearchResult] = useState<SearchResultI>({ results: [], total: 0 });
-    const [total, setTotal] = useState(0);
+    const [searchResult, setSearchResult] = useState<SearchResultI>({ data: [], total: 0 });
+
     const [timerange, setTimerange] = useState([
         DateTime.now().startOf('day').minus({ days: 10 }),
         DateTime.now().endOf('day'),
@@ -30,32 +30,24 @@ export function SearchPage() {
         const fetchId = ++fetchIdRef.current;
         setIsLoading(true);
         const [from, to] = timerange;
-        const items = await searchFromItems({
-            from,
-            to,
-            taskName,
-            searchStr,
-            paging: searchPaging,
-        });
 
         // When sumTotal is true, the API returns a different format
-        const sum = await searchFromItems({
+        const results = await searchFromItems({
             from,
             to,
             taskName,
             searchStr,
-            paging: {},
+            paging: { limit: searchPaging.pageSize, offset: searchPaging.pageIndex * searchPaging.pageSize },
             sumTotal: true,
         });
 
-        console.info('Sum data', sum);
-        const sumColumn = 'sum(endDate-beginDate)';
+        console.info('Sum data', results);
 
         // Only update the data if this is the latest fetch
         if (fetchId === fetchIdRef.current) {
-            setSearchResult(items);
-            setTotal(sum.results?.length > 0 ? sum.results[0][sumColumn] : 0);
-            console.info('searching with paging', searchPaging, timerange, items);
+            setSearchResult(results);
+
+            console.info('searching with paging', searchPaging, timerange, results);
         }
 
         setIsLoading(false);
@@ -151,7 +143,6 @@ export function SearchPage() {
                         searchResult={searchResult}
                         fetchData={fetchData}
                         pageIndex={searchPaging.pageIndex}
-                        total={total}
                         resetButtonsRef={resetButtonsRef}
                         refreshData={refreshData}
                     />

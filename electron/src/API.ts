@@ -1,15 +1,15 @@
-import { setupMainHandler } from './setupMainHandler';
 import { ipcMain } from 'electron';
-import { settingsService } from './services/settings-service';
-import { appSettingService } from './services/app-setting-service';
-import { trackItemService } from './services/track-item-service';
-import { stateManager } from './state-manager';
-import { State } from './enums/state';
-import AppManager from './app-manager';
-import { sendToTrayWindow, sendToNotificationWindow } from './window-manager';
-import { initBackgroundJob } from './initBackgroundJob';
 import { machineId } from 'node-machine-id';
-import { TrackItem } from './models/TrackItem';
+import AppManager from './app-manager';
+import { TrackItem } from './drizzle/schema';
+import { State } from './enums/state';
+import { initBackgroundJob } from './initBackgroundJob';
+import { appSettingService } from './services/app-setting-service';
+import { settingsService } from './services/settings-service';
+import { trackItemService } from './services/track-item-service';
+import { setupMainHandler } from './setupMainHandler';
+import { stateManager } from './state-manager';
+import { sendToNotificationWindow, sendToTrayWindow } from './window-manager';
 
 const settingsActions = {
     fetchAnalyserSettingsJsonString: async () => {
@@ -78,7 +78,7 @@ const trackItemActions = {
         to: string;
         taskName: string;
         searchStr: string;
-        paging: boolean;
+        paging: { limit: number; offset: number };
         sumTotal: boolean;
     }) => {
         const { from, to, taskName, searchStr, paging, sumTotal } = payload;

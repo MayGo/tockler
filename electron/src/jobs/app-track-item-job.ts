@@ -1,12 +1,13 @@
-import { logManager } from '../log-manager';
-import { stateManager } from '../state-manager';
-import BackgroundUtils from '../background-utils';
 import activeWin from 'active-win';
 import { backgroundService } from '../background-service';
+import BackgroundUtils from '../background-utils';
 import { TrackItemType } from '../enums/track-item-type';
+import { logManager } from '../log-manager';
+import { stateManager } from '../state-manager';
 import { taskAnalyser, TrackItemRaw } from '../task-analyser';
-import { TrackItem } from '../models/TrackItem';
+
 import activeWindow from 'active-win';
+import { TrackItem } from '../drizzle/schema';
 
 let logger = logManager.getLogger('AppTrackItemJob');
 
@@ -44,12 +45,19 @@ export class AppTrackItemJob {
                 let activeWindow = await activeWin();
                 let updatedItem: TrackItem = await this.saveActiveWindow(activeWindow ?? errorWindowItem);
 
-                if (!BackgroundUtils.isSameItems(updatedItem as TrackItemRaw, this.lastUpdatedItem as TrackItemRaw)) {
-                    logger.debug('App and title changed. Analysing title');
-                    taskAnalyser.analyseAndNotify(updatedItem as TrackItemRaw).then(
-                        () => logger.debug('Analysing has run.'),
-                        (e) => logger.error('Error in Analysing', e),
-                    );
+                if (this.lastUpdatedItem && updatedItem) {
+                    if (
+                        !BackgroundUtils.isSameItems(
+                            BackgroundUtils.getRawTrackItem(updatedItem),
+                            BackgroundUtils.getRawTrackItem(this.lastUpdatedItem),
+                        )
+                    ) {
+                        logger.debug('App and title changed. Analysing title');
+                        taskAnalyser.analyseAndNotify(BackgroundUtils.getRawTrackItem(updatedItem)).then(
+                            () => logger.debug('Analysing has run.'),
+                            (e) => logger.error('Error in Analysing', e),
+                        );
+                    }
                 }
 
                 this.lastUpdatedItem = updatedItem;
@@ -84,12 +92,11 @@ export class AppTrackItemJob {
     }
 
     async saveActiveWindow(result: activeWindow.Result): Promise<TrackItem> {
-        let rawItem: any = { taskName: TrackItemType.AppTrackItem };
+        let rawItem: Partial<TrackItemRaw> = { taskName: TrackItemType.AppTrackItem };
 
         rawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
-        rawItem.endDate = new Date();
+        rawItem.endDate = new Date().getTime();
 
-        // logger.debug('rawitem has no app', result);
         if (result.owner && result.owner.name) {
             rawItem.app = result.owner.name;
         } else {
@@ -97,13 +104,10 @@ export class AppTrackItemJob {
         }
 
         if (!result.title) {
-            // logger.error('rawitem has no title', result);
             rawItem.title = 'NO_TITLE';
         } else {
             rawItem.title = result.title.replace(/\n$/, '').replace(/^\s/, '');
         }
-
-        // logger.debug('Active window (parsed):', rawItem);
 
         let savedItem = await backgroundService.createOrUpdate(rawItem);
         return savedItem as TrackItem;

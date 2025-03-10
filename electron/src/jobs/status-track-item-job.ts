@@ -1,9 +1,11 @@
 import { powerMonitor } from 'electron';
-import { logManager } from '../log-manager';
-import { stateManager } from '../state-manager';
 import { backgroundService } from '../background-service';
 import BackgroundUtils from '../background-utils';
 import { State } from '../enums/state';
+import { TrackItemType } from '../enums/track-item-type';
+import { logManager } from '../log-manager';
+import { stateManager } from '../state-manager';
+import { TrackItemRaw } from '../task-analyser';
 import { sendToTrayWindow } from '../window-manager';
 
 let logger = logManager.getLogger('StatusTrackItemJob');
@@ -45,12 +47,12 @@ export class StatusTrackItemJob {
             sendToTrayWindow('system-is-not-online');
         }
 
-        let rawItem: any = {
-            taskName: 'StatusTrackItem',
+        let rawItem: Partial<TrackItemRaw> = {
+            taskName: TrackItemType.StatusTrackItem,
             app: state,
             title: state.toString().toLowerCase(),
             beginDate: BackgroundUtils.currentTimeMinusJobInterval(),
-            endDate: new Date(),
+            endDate: new Date().getTime(),
         };
 
         await backgroundService.createOrUpdate(rawItem);
