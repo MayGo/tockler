@@ -1,5 +1,5 @@
 import { Box, Divider } from '@chakra-ui/react';
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect } from 'react';
 import { ITrackItem } from '../@types/ITrackItem';
 import { LoadingLine } from '../components/LoadingLine';
 import { OnlineChart } from '../components/TrayLayout/OnlineChart';
@@ -8,8 +8,6 @@ import { TrayList } from '../components/TrayList/TrayList';
 import { useTrayData } from '../hooks/useTrayData';
 import { useWindowFocused } from '../hooks/windowFocusedHook';
 import { Logger } from '../logger';
-import { EventEmitter } from '../services/EventEmitter';
-import { getRunningLogItem } from '../services/settings.api';
 import { startNewLogItem, stopRunningLogItem } from '../services/trackItem.api';
 import { sendOpenTrayEvent } from '../useGoogleAnalytics.utils';
 import { TrayItemEdit } from './tray/TrayItemEdit';
@@ -17,18 +15,12 @@ import { TrayItemEdit } from './tray/TrayItemEdit';
 const EMPTY_ARRAY = [];
 
 const TrayAppPageTemp = () => {
-    const { isLoading, statusItems, logItems, refreshData } = useTrayData();
-    const [runningLogItem, setRunningLogItem] = useState<ITrackItem>();
+    const { isLoading, statusItems, logItems, refreshData, runningLogItem, setRunningLogItem } = useTrayData();
     const { windowIsActive } = useWindowFocused();
 
     // Initial data load
     useEffect(() => {
         refreshData();
-
-        // Get running log item
-        getRunningLogItem().then((logItem) => {
-            setRunningLogItem(logItem);
-        });
     }, []);
 
     // Refresh data when window becomes active
@@ -41,21 +33,6 @@ const TrayAppPageTemp = () => {
         // Intentionally omitting refreshData from dependencies as it would cause a refresh loop
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [windowIsActive]);
-
-    // Listen for log item events
-    useEffect(() => {
-        const eventLogItemStarted = (logItem) => {
-            const newItem: ITrackItem = JSON.parse(logItem);
-            Logger.debug('log-trackItem-started:', newItem);
-            setRunningLogItem(newItem);
-        };
-
-        EventEmitter.on('log-item-started', eventLogItemStarted);
-
-        return () => {
-            EventEmitter.off('log-item-started', eventLogItemStarted);
-        };
-    }, []);
 
     function startNewLogItemEvent(trackItem: ITrackItem) {
         startNewLogItem(trackItem);
@@ -79,7 +56,12 @@ const TrayAppPageTemp = () => {
             </Box>
 
             <Box p={4}>
-                <TrayItemEdit saveTimelineItem={startNewLogItem} />
+                <TrayItemEdit
+                    saveTimelineItem={(trackItem: ITrackItem) => {
+                        startNewLogItem(trackItem);
+                        refreshData();
+                    }}
+                />
             </Box>
             <Box px={4} pb={4}>
                 <OnlineChart items={statusItems || EMPTY_ARRAY} />
