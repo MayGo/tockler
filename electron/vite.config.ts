@@ -11,22 +11,7 @@ export default {
                     build: {
                         rollupOptions: {
                             // Here are some C/C++ modules them can't be built properly
-                            external: [
-                                'node-gyp',
-                                'sqlite3',
-                                'electron-builder',
-                                'electron',
-                                'mock-aws-s3',
-                                'aws-sdk',
-                                'nock',
-                                'better-sqlite3',
-                                'tedious',
-                                'mysql',
-                                'mysql2',
-                                'oracledb',
-                                'pg',
-                                'pg-query-stream',
-                            ],
+                            external: ['better-sqlite3', 'active-win', 'node-machine-id'],
                         },
                     },
                 },
