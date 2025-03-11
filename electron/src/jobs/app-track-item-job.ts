@@ -95,7 +95,7 @@ export class AppTrackItemJob {
         let rawItem: Partial<TrackItemRaw> = { taskName: TrackItemType.AppTrackItem };
 
         rawItem.beginDate = BackgroundUtils.currentTimeMinusJobInterval();
-        rawItem.endDate = new Date().getTime();
+        rawItem.endDate = Date.now();
 
         if (result.owner && result.owner.name) {
             rawItem.app = result.owner.name;

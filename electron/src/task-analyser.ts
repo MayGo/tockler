@@ -82,8 +82,8 @@ export class TaskAnalyser {
                         app: app,
                         title: title,
                         taskName: TrackItemType.LogTrackItem,
-                        beginDate: new Date().getTime(),
-                        endDate: new Date().getTime(),
+                        beginDate: Date.now(),
+                        endDate: Date.now(),
                         color: randomcolor(),
                     };
                     showNotification({
