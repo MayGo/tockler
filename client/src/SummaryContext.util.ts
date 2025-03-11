@@ -3,5 +3,5 @@ export enum CALENDAR_MODE {
     YEAR = 'year',
 }
 
-export const DAY_MONTH_FORMAT = 'MM-DD';
+export const DAY_MONTH_FORMAT = 'MM-dd';
 export const MONTH_FORMAT = 'MM';
