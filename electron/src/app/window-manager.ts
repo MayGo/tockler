@@ -4,9 +4,9 @@ import { autoUpdater } from 'electron-updater';
 import { throttle } from 'lodash';
 import { menubar } from 'menubar';
 import path, { join } from 'path';
-import { config, getTrayIcon } from './config';
-import { settingsService } from './drizzle/queries/settings-service';
-import { logManager } from './log-manager';
+import { settingsService } from '../drizzle/queries/settings-service';
+import { config, getTrayIcon } from '../utils/config';
+import { logManager } from '../utils/log-manager';
 import MenuBuilder from './menu-builder';
 
 let logger = logManager.getLogger('WindowManager');

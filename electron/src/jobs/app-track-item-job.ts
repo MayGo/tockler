@@ -1,10 +1,10 @@
 import activeWin from 'active-win';
-import { backgroundService } from '../background-service';
-import BackgroundUtils from '../background-utils';
+import { taskAnalyser, TrackItemRaw } from '../app/task-analyser';
+import { backgroundService } from '../background/background-service';
+import BackgroundUtils from '../background/background-utils';
+import { stateManager } from '../background/state-manager';
 import { TrackItemType } from '../enums/track-item-type';
-import { logManager } from '../log-manager';
-import { stateManager } from '../state-manager';
-import { taskAnalyser, TrackItemRaw } from '../task-analyser';
+import { logManager } from '../utils/log-manager';
 
 import activeWindow from 'active-win';
 import { TrackItem } from '../drizzle/schema';

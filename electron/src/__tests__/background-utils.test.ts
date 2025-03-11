@@ -1,9 +1,9 @@
 import moment from 'moment';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { appConstants } from '../app-constants';
-import BackgroundUtils from '../background-utils';
+import BackgroundUtils from '../background/background-utils';
 import { TrackItem } from '../drizzle/schema';
 import { TrackItemType } from '../enums/track-item-type';
+import { appConstants } from '../utils/app-constants';
 
 describe('BackgroundUtils', () => {
     describe('isSameItems', () => {

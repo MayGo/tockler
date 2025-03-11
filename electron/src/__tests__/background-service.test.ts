@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Client } from '@libsql/client';
 import { drizzle } from 'drizzle-orm/libsql';
 
-import { BackgroundService } from '../background-service';
+import { BackgroundService } from '../background/background-service';
 import { trackItems } from '../drizzle/schema';
 import { State } from '../enums/state';
 import { TrackItemType } from '../enums/track-item-type';
@@ -43,8 +43,8 @@ describe('BackgroundService with real implementation', () => {
         ({ db, client } = await setupTestDb());
 
         // Import the services after we've mocked the database
-        const stateManagerModule = await import('../state-manager');
-        const bgServiceModule = await import('../background-service');
+        const stateManagerModule = await import('../background/state-manager');
+        const bgServiceModule = await import('../background/background-service');
 
         // Make sure stateManager is initialized with test DB
         await stateManagerModule.stateManager.restoreState();
@@ -168,7 +168,7 @@ describe('BackgroundService with real implementation', () => {
             expect(createdItem).not.toBeNull();
 
             // Get the state manager
-            const stateManagerModule = await import('../state-manager');
+            const stateManagerModule = await import('../background/state-manager');
 
             // Assert that the item is in state manager's current items
             expect(stateManagerModule.stateManager.getCurrentTrackItem(TrackItemType.AppTrackItem)).toEqual(
@@ -271,7 +271,7 @@ describe('BackgroundService with real implementation', () => {
 
     describe('onSleep and onResume', () => {
         it('should set system to sleep when onSleep is called', async () => {
-            const stateManagerModule = await import('../state-manager');
+            const stateManagerModule = await import('../background/state-manager');
 
             const spySetSystemToSleep = vi.spyOn(stateManagerModule.stateManager, 'setSystemToSleep');
 

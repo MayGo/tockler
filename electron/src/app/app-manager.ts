@@ -1,10 +1,10 @@
 import { app, ipcMain, nativeTheme } from 'electron';
-import { initIpcActions } from './API';
-import { config } from './config';
+import { initIpcActions } from '../API';
+import { config } from '../utils/config';
 
-import { connectAndSync, db } from './drizzle/db';
-import { logManager } from './log-manager';
-import { stateManager } from './state-manager';
+import { stateManager } from '../background/state-manager';
+import { connectAndSync, db } from '../drizzle/db';
+import { logManager } from '../utils/log-manager';
 import WindowManager, { sendToMainWindow, sendToNotificationWindow, sendToTrayWindow } from './window-manager';
 
 let logger = logManager.getLogger('AppManager');

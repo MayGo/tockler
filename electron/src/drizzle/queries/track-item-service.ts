@@ -5,7 +5,7 @@ import { writeFileSync } from 'fs';
 import moment from 'moment';
 import { State } from '../../enums/state';
 import { TrackItemType } from '../../enums/track-item-type';
-import { logManager } from '../../log-manager';
+import { logManager } from '../../utils/log-manager';
 import { db } from '../db';
 import { NewTrackItem, TrackItem, trackItems } from '../schema';
 

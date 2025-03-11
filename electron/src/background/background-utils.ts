@@ -1,8 +1,8 @@
 import moment from 'moment';
-import { appConstants } from './app-constants';
-import { TrackItem } from './drizzle/schema';
-import { TrackItemType } from './enums/track-item-type';
-import { TrackItemRaw } from './task-analyser';
+import { TrackItemRaw } from '../app/task-analyser';
+import { TrackItem } from '../drizzle/schema';
+import { TrackItemType } from '../enums/track-item-type';
+import { appConstants } from '../utils/app-constants';
 
 export default class BackgroundUtils {
     static isSameItems(item1: any, item2: any) {

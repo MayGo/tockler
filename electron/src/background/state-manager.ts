@@ -1,15 +1,15 @@
 import { ipcMain } from 'electron';
-import { appEmitter } from './app-event-emitter';
+import { TrackItemRaw } from '../app/task-analyser';
+import { sendToTrayWindow } from '../app/window-manager';
+import { settingsService } from '../drizzle/queries/settings-service';
+import { trackItemService } from '../drizzle/queries/track-item-service';
+import { TrackItem } from '../drizzle/schema';
+import { State } from '../enums/state';
+import { TrackItemType } from '../enums/track-item-type';
+import { appEmitter } from '../utils/app-event-emitter';
+import { logManager } from '../utils/log-manager';
 import { backgroundService } from './background-service';
 import BackgroundUtils from './background-utils';
-import { TrackItem } from './drizzle/schema';
-import { State } from './enums/state';
-import { TrackItemType } from './enums/track-item-type';
-import { logManager } from './log-manager';
-import { settingsService } from './queries/settings-service';
-import { trackItemService } from './queries/track-item-service';
-import { TrackItemRaw } from './task-analyser';
-import { sendToTrayWindow } from './window-manager';
 
 let logger = logManager.getLogger('StateManager');
 

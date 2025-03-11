@@ -1,6 +1,6 @@
 import { Notification } from 'electron';
-import { logManager } from './log-manager';
-import { config } from './config';
+import { config } from '../utils/config';
+import { logManager } from '../utils/log-manager';
 
 const isDesktopNotificationSupported = Notification.isSupported();
 const logger = logManager.getLogger('Notification');

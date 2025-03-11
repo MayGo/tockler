@@ -1,12 +1,12 @@
+import { TrackItemRaw } from '../app/task-analyser';
+import { appSettingService } from '../drizzle/queries/app-setting-service';
+import { trackItemService } from '../drizzle/queries/track-item-service';
+import { TrackItem } from '../drizzle/schema';
+import { State } from '../enums/state';
+import { TrackItemType } from '../enums/track-item-type';
+import { logManager } from '../utils/log-manager';
 import BackgroundUtils from './background-utils';
-import { appSettingService } from './drizzle/queries/app-setting-service';
-import { trackItemService } from './drizzle/queries/track-item-service';
-import { TrackItem } from './drizzle/schema';
-import { State } from './enums/state';
-import { TrackItemType } from './enums/track-item-type';
-import { logManager } from './log-manager';
 import { stateManager } from './state-manager';
-import { TrackItemRaw } from './task-analyser';
 
 let logger = logManager.getLogger('BackgroundService');
 

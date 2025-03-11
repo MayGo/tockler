@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm';
-import { logManager } from '../../log-manager';
+import { logManager } from '../../utils/log-manager';
 import { db } from '../db';
 import { Setting, settings } from '../schema';
 

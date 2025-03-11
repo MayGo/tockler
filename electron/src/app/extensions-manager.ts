@@ -1,4 +1,4 @@
-import { logManager } from './log-manager';
+import { logManager } from '../utils/log-manager';
 let logger = logManager.getLogger('ExtensionsManager');
 
 export class ExtensionsManager {
