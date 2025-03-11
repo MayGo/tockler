@@ -1,77 +1,26 @@
-import Database from 'better-sqlite3';
 import { eq } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Import the real implementations directly to reduce dynamic imports
-import { BackgroundService } from '../src/background-service';
-import * as schema from '../src/drizzle/schema';
-import { appSettings, trackItems } from '../src/drizzle/schema';
-import { State } from '../src/enums/state';
-import { TrackItemType } from '../src/enums/track-item-type';
+import Database from 'better-sqlite3';
+import { drizzle } from 'drizzle-orm/better-sqlite3';
+import { BackgroundService } from '../background-service';
+import { trackItems } from '../drizzle/schema';
+import { State } from '../enums/state';
+import { TrackItemType } from '../enums/track-item-type';
+import { setupTestDb } from './db.testUtils';
+import { getTimestamp } from './time.testUtils';
 
-// Utility function to convert readable date to timestamp
-function getTimestamp(dateString: string): number {
-    return new Date(dateString).getTime();
-}
+// Mocked in __mocks__
+vi.mock('electron');
+vi.mock('../log-manager');
+vi.mock('../config');
 
 // Setup in-memory database
 let sqlite: Database.Database;
 let db: ReturnType<typeof drizzle>;
 
-// Mocked in __mocks__
-vi.mock('electron');
-vi.mock('../src/log-manager');
-vi.mock('../src/config');
-
-// Setup test DB
-async function setupTestDb() {
-    // Create in-memory database
-    sqlite = new Database(':memory:');
-
-    // Set up database with schema
-    db = drizzle(sqlite, { schema });
-
-    // Apply schema to in-memory database
-    sqlite.exec(`
-    CREATE TABLE IF NOT EXISTS TrackItems (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      app TEXT NOT NULL,
-      taskName TEXT,
-      title TEXT,
-      url TEXT,
-      color TEXT,
-      beginDate INTEGER NOT NULL,
-      endDate INTEGER NOT NULL
-    );
-    
-    CREATE TABLE IF NOT EXISTS AppSettings (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL UNIQUE,
-      color TEXT
-    );
-    
-    CREATE TABLE IF NOT EXISTS Settings (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL UNIQUE,
-      jsonData TEXT
-    );
-  `);
-
-    // Insert default app settings that are needed
-    await db.insert(appSettings).values({ name: 'ONLINE', color: '#7ed321' });
-    await db.insert(appSettings).values({ name: 'OFFLINE', color: '#f31b1b' });
-    await db.insert(appSettings).values({ name: 'IDLE', color: '#f5a623' });
-
-    // Mock the database in the db module
-    vi.doMock('../src/drizzle/db', () => ({
-        db,
-        connectAndSync: vi.fn().mockResolvedValue(undefined),
-    }));
-}
-
 async function cleanupTestDb() {
-    // Close SQLite connection
     if (sqlite) {
         sqlite.close();
     }
@@ -90,11 +39,11 @@ describe('BackgroundService with real implementation', () => {
         vi.spyOn(Date, 'now').mockImplementation(() => NOW);
 
         // Setup test database
-        await setupTestDb();
+        ({ db, sqlite } = await setupTestDb());
 
         // Import the services after we've mocked the database
-        const stateManagerModule = await import('../src/state-manager');
-        const bgServiceModule = await import('../src/background-service');
+        const stateManagerModule = await import('../state-manager');
+        const bgServiceModule = await import('../background-service');
 
         // Make sure stateManager is initialized with test DB
         await stateManagerModule.stateManager.restoreState();
@@ -218,7 +167,7 @@ describe('BackgroundService with real implementation', () => {
             expect(createdItem).not.toBeNull();
 
             // Get the state manager
-            const stateManagerModule = await import('../src/state-manager');
+            const stateManagerModule = await import('../state-manager');
 
             // Assert that the item is in state manager's current items
             expect(stateManagerModule.stateManager.getCurrentTrackItem(TrackItemType.AppTrackItem)).toEqual(
@@ -322,7 +271,7 @@ describe('BackgroundService with real implementation', () => {
     describe('onSleep and onResume', () => {
         it('should set system to sleep when onSleep is called', async () => {
             // Import state manager
-            const stateManagerModule = await import('../src/state-manager');
+            const stateManagerModule = await import('../state-manager');
 
             // Spy on state manager methods
             const spySetSystemToSleep = vi.spyOn(stateManagerModule.stateManager, 'setSystemToSleep');
@@ -349,7 +298,7 @@ describe('BackgroundService with real implementation', () => {
             expect(createdItem).not.toBeNull();
 
             // Import state manager
-            const stateManagerModule = await import('../src/state-manager');
+            const stateManagerModule = await import('../state-manager');
 
             // Mock Date.now() to return a predictable value for testing
             const resumeTime = getTimestamp('2023-01-10T11:30:00');
@@ -375,7 +324,7 @@ describe('BackgroundService with real implementation', () => {
             await db.delete(trackItems);
 
             // Import state manager
-            const stateManagerModule = await import('../src/state-manager');
+            const stateManagerModule = await import('../state-manager');
 
             // Spy on addInactivePeriod to check it's not called
             const addInactivePeriodSpy = vi.spyOn(backgroundService, 'addInactivePeriod');

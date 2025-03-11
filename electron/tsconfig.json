@@ -25,5 +25,5 @@
         /* Testing */
         "types": ["vitest/globals", "node"]
     },
-    "include": ["src", "__tests__", "vitest.config.ts", "src/setupTests.ts"]
+    "include": ["src", "vitest.config.ts", "__mocks__/electron", "__mocks__/electron-is-dev"]
 }
