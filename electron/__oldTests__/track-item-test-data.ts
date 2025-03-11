@@ -1,4 +1,3 @@
-import { TrackItemType } from '../app/enums/track-item-type';
 import moment from 'moment';
 
 export default class TrackItemTestData {

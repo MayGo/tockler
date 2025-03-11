@@ -6,11 +6,12 @@ import AppUpdater from './app-updater';
 import { backgroundService } from './background-service';
 import { config } from './config';
 import { extensionsManager } from './extensions-manager';
-import { initBackgroundJob } from './initBackgroundJob';
+import { cleanupBackgroundJob, initBackgroundJob } from './initBackgroundJob';
 import { logManager } from './log-manager';
 import WindowManager from './window-manager';
 
 let logger = logManager.getLogger('AppIndex');
+
 app.setAppUserModelId(process.execPath);
 
 /* Single Instance Check */
@@ -37,11 +38,13 @@ if (gotTheLock) {
 
     app.on('will-quit', async () => {
         logger.debug('will-quit');
-        // await AppManager.destroy();
+        // Clean up any resources here that need to be terminated
+        cleanupBackgroundJob();
+        await AppManager.destroy();
     });
     app.on('window-all-closed', function () {
         logger.debug('window-all-closed');
-        // app.quit();
+        app.quit();
     });
 
     // Handle get-app-version IPC event

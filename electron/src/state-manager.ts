@@ -180,8 +180,8 @@ export class StateManager {
             taskName: TrackItemType.StatusTrackItem,
             app: State.Online,
             title: State.Online.toString().toLowerCase(),
-            beginDate: new Date().getTime(),
-            endDate: new Date().getTime(),
+            beginDate: Date.now(),
+            endDate: Date.now(),
         };
         await backgroundService.createOrUpdate(rawItem);
     }
@@ -199,7 +199,7 @@ export class StateManager {
                 runningItem.endDate = rawItem.beginDate;
             } else {
                 logger.debug('No beginDate, setting endDate to now');
-                runningItem.endDate = new Date().getTime();
+                runningItem.endDate = Date.now();
             }
 
             logger.debug('Ending trackItem:', toPlainObject(runningItem));
@@ -236,7 +236,7 @@ export class StateManager {
             return null;
         }
 
-        runningItem.endDate = new Date().getTime();
+        runningItem.endDate = Date.now();
         await trackItemService.updateTrackItem(runningItem, runningItem.id);
         // logger.debug('Saved track item(endDate change) to DB:', runningItem.toJSON());
         return runningItem;

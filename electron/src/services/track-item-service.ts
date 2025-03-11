@@ -6,6 +6,7 @@ import moment from 'moment';
 import { db } from '../drizzle/db';
 import { NewTrackItem, TrackItem, trackItems } from '../drizzle/schema';
 import { State } from '../enums/state';
+import { TrackItemType } from '../enums/track-item-type';
 import { logManager } from '../log-manager';
 
 const DEFAULT_PAGE_SIZE = 20;
@@ -147,13 +148,22 @@ export class TrackItemService {
 
         return data;
     }
-
-    async findFirstLogItems() {
-        return await db.select().from(trackItems).orderBy(trackItems.beginDate).limit(1);
+    async findFirstChunkLogItems() {
+        return await db
+            .select()
+            .from(trackItems)
+            .where(eq(trackItems.taskName, TrackItemType.LogTrackItem))
+            .orderBy(trackItems.beginDate)
+            .limit(100);
     }
 
     async findFirstTrackItem() {
-        return await db.select().from(trackItems).orderBy(trackItems.beginDate).limit(1);
+        return await db
+            .select()
+            .from(trackItems)
+            .where(eq(trackItems.taskName, TrackItemType.AppTrackItem))
+            .orderBy(trackItems.beginDate)
+            .limit(1);
     }
 
     async findLastOnlineItem() {
@@ -162,7 +172,7 @@ export class TrackItemService {
         const results = await db
             .select()
             .from(trackItems)
-            .where(and(eq(trackItems.app, appName), eq(trackItems.taskName, 'StatusTrackItem')))
+            .where(and(eq(trackItems.app, appName), eq(trackItems.taskName, TrackItemType.StatusTrackItem)))
             .orderBy(trackItems.endDate)
             .limit(1);
 
@@ -205,7 +215,7 @@ export class TrackItemService {
             .from(trackItems)
             .where(
                 and(
-                    eq(trackItems.taskName, 'LogTrackItem'),
+                    eq(trackItems.taskName, TrackItemType.LogTrackItem),
                     eq(trackItems.endDate, new Date('9999-12-31T23:59:59.999Z').getTime()),
                 ),
             );

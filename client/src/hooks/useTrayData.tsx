@@ -5,7 +5,7 @@ import { TrackItemType } from '../enum/TrackItemType';
 import { Logger } from '../logger';
 import { EventEmitter } from '../services/EventEmitter';
 import { getRunningLogItem } from '../services/settings.api';
-import { findAllDayItems, findFirstLogItems } from '../services/trackItem.api';
+import { findAllDayItems, findFirstChunkLogItems } from '../services/trackItem.api';
 
 export const useTrayData = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +47,7 @@ export const useTrayData = () => {
         Logger.debug('TrayApp - Loading log items');
 
         try {
-            const items = await findFirstLogItems();
+            const items = await findFirstChunkLogItems();
             setLogItems(items);
             return items;
         } catch (error) {

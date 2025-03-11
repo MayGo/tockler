@@ -1,7 +1,7 @@
 import { first, orderBy } from 'lodash';
 import { DateTime } from 'luxon';
 import { ITrackItem } from '../../@types/ITrackItem';
-import { MAIN_THEME_COLOR } from '../../theme/theme';
+import { MAIN_THEME_COLOR } from '../../theme/theme.utils';
 
 const clampItem =
     ({ beginClamp, endClamp }: { beginClamp: DateTime; endClamp: DateTime }) =>
@@ -178,7 +178,7 @@ export const getOnlineTimesForChart = ({
 */
 
 const getBeginEndDiff = (beginDate: DateTime, endDate: DateTime) => {
-    return endDate.diff(beginDate).as('milliseconds');
+    return endDate.diff(beginDate).milliseconds;
 };
 
 const MINUTES = 60 * 1000;

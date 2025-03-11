@@ -52,7 +52,7 @@ export class StatusTrackItemJob {
             app: state,
             title: state.toString().toLowerCase(),
             beginDate: BackgroundUtils.currentTimeMinusJobInterval(),
-            endDate: new Date().getTime(),
+            endDate: Date.now(),
         };
 
         await backgroundService.createOrUpdate(rawItem);

@@ -1,6 +1,6 @@
-import * as log from 'electron-log';
 import * as Sentry from '@sentry/electron';
 import { app } from 'electron';
+import * as log from 'electron-log';
 import { config } from './config';
 
 const version = app.getVersion();

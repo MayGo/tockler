@@ -67,7 +67,7 @@ export class LogTrackItemJob {
 
         // Use the helper for converting Drizzle TrackItem to TrackItemRaw
         let rawItem: TrackItemRaw = BackgroundUtils.getRawTrackItem(logItemMarkedAsRunning);
-        rawItem.endDate = new Date().getTime();
+        rawItem.endDate = Date.now();
 
         let shouldTrySplitting = oldOnlineItem !== this.onlineItemWhenLastSplit;
 

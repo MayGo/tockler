@@ -2,7 +2,7 @@ import { app, ipcMain, nativeTheme } from 'electron';
 import { initIpcActions } from './API';
 import { config } from './config';
 
-import { connectAndSync } from './drizzle/db';
+import { connectAndSync, db } from './drizzle/db';
 import { logManager } from './log-manager';
 import { stateManager } from './state-manager';
 import WindowManager, { sendToMainWindow, sendToNotificationWindow, sendToTrayWindow } from './window-manager';
@@ -33,6 +33,13 @@ export default class AppManager {
         AppManager.setOpenAtLogin();
 
         await stateManager.restoreState();
+    }
+
+    static async destroy() {
+        if (db) {
+            db.$client.close();
+            logger.info('Closed db connection');
+        }
     }
 
     static initAppEvents() {
