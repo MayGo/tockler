@@ -33,7 +33,6 @@
         "active-win": "8.2.1",
         "better-sqlite3": "^11.8.1",
         "csv-stringify": "^6.2.0",
-        "drizzle-orm": "^0.40.0",
         "electron-context-menu": "3.6.0",
         "electron-is-dev": "^2.0.0",
         "electron-log": "^4.4.8",
@@ -50,6 +49,7 @@
     "devDependencies": {
         "@electron/notarize": "^2.5.0",
         "@eslint/js": "^9.17.0",
+        "@libsql/client": "^0.14.0",
         "@types/better-sqlite3": "^7.6.12",
         "@types/fs-extra": "^11.0.4",
         "@types/lodash": "^4.14.188",
@@ -59,6 +59,7 @@
         "cpx": "^1.5.0",
         "cross-env": "7.0.3",
         "drizzle-kit": "^0.30.5",
+        "drizzle-orm": "^0.40.0",
         "electron": "16.2.8",
         "electron-builder": "25.1.8",
         "electron-devtools-installer": "^3.2.0",

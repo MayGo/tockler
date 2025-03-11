@@ -1,6 +1,7 @@
 'use strict';
 import { ErrorEvent } from '@sentry/core';
 import * as Sentry from '@sentry/electron';
+// import { showReportDialog } from '@sentry/electron';
 import { contextBridge, ipcRenderer, shell } from 'electron';
 import log from 'electron-log';
 import Store from 'electron-store';
@@ -14,9 +15,9 @@ if (process.env.NODE_ENV === 'production') {
         release: process.env.npm_package_version,
         beforeSend(event: ErrorEvent) {
             // Check if it is an exception, if so, show the report dialog
-            if (event.exception) {
-                Sentry.showReportDialog();
-            }
+            // if (event.exception) {
+            //     showReportDialog();
+            // }
             return event;
         },
     });
