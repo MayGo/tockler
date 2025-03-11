@@ -7,8 +7,8 @@
         "dev": "vite",
         "build": "tsc -b && vite build",
         "lint": "eslint .",
-        "test": "vitest",
-        "coverage": "vitest run --coverage",
+        "test": "TZ=Europe/Tallinn vitest",
+        "coverage": "TZ=Europe/Tallinn vitest run --coverage",
         "preview": "vite preview"
     },
     "dependencies": {
