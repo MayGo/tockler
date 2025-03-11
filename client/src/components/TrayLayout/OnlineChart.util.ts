@@ -178,7 +178,7 @@ export const getOnlineTimesForChart = ({
 */
 
 const getBeginEndDiff = (beginDate: DateTime, endDate: DateTime) => {
-    return endDate.diff(beginDate).as('milliseconds');
+    return endDate.diff(beginDate).milliseconds;
 };
 
 const MINUTES = 60 * 1000;

@@ -14,73 +14,93 @@ const ONLINE = 'ONLINE';
 const OFFLINE = 'OFFLINE';
 const IDLE = 'IDLE';
 
-const beginDate0 = DateTime.fromISO('2021-06-18T23:50:00').toMillis();
-const endDate0 = DateTime.fromISO('2021-06-19T00:10:00').toMillis();
+const beginDate18_23_50 = DateTime.fromISO('2021-06-18T23:50:00').toMillis();
+const endDate19_00_10 = DateTime.fromISO('2021-06-19T00:10:00').toMillis();
 
-const beginDate1 = DateTime.fromISO('2021-06-19T10:00:00').toMillis();
-const endDate1 = DateTime.fromISO('2021-06-19T10:10:00').toMillis();
+const beginDate19_10_00 = DateTime.fromISO('2021-06-19T10:00:00').toMillis();
+const endDate19_10_10 = DateTime.fromISO('2021-06-19T10:10:00').toMillis();
 
-const beginDate2 = DateTime.fromISO('2021-06-19T11:50:00').toMillis();
-const endDate2 = DateTime.fromISO('2021-06-19T12:10:00').toMillis();
+const beginDate19_11_50 = DateTime.fromISO('2021-06-19T11:50:00').toMillis();
+const endDate_19_12_10 = DateTime.fromISO('2021-06-19T12:10:00').toMillis();
 
-const beginDate3 = DateTime.fromISO('2021-06-19T18:50:00').toMillis();
-const endDate3 = DateTime.fromISO('2021-06-19T19:10:00').toMillis();
+const beginDate19_18_50 = DateTime.fromISO('2021-06-19T18:50:00').toMillis();
+const endDate19_19_10 = DateTime.fromISO('2021-06-19T19:10:00').toMillis();
 
-const beginDate4 = DateTime.fromISO('2021-06-19T23:50:00').toMillis();
-const endDate4 = DateTime.fromISO('2021-06-20T00:10:00').toMillis();
+const beginDate_19_23_50 = DateTime.fromISO('2021-06-19T23:50:00').toMillis();
+const endDate20_00_10 = DateTime.fromISO('2021-06-20T00:10:00').toMillis();
 
 const realDate = DateTime.fromISO('2021-06-19T10:10:00');
 
 describe('OnlineChart getOnlineTimesForChart', () => {
     it('uses only ONLINE items', () => {
-        const beginDate = DateTime.fromISO('2021-06-19T18:00:00').toMillis();
-        const otherItems = [
-            {
-                id: 1,
-                app: OFFLINE,
-                beginDate: DateTime.fromISO('2021-06-19T16:00:00').toMillis(),
-                endDate: DateTime.fromISO('2021-06-19T17:10:00').toMillis(),
-            },
+        const onlineItem = {
+            id: 1,
+            app: ONLINE,
+            beginDate: beginDate19_10_00,
+            endDate: endDate19_10_10,
+        };
+
+        const offlineItems = [
             {
                 id: 2,
                 app: OFFLINE,
-                beginDate: beginDate,
-                endDate: DateTime.fromISO('2021-06-19T18:10:00').toMillis(),
+                beginDate: beginDate19_11_50,
+                endDate: endDate_19_12_10,
             },
-        ];
-
-        const items = [
             {
                 id: 3,
-                app: ONLINE,
-                beginDate: beginDate1,
-                endDate: endDate1,
+                app: OFFLINE,
+                beginDate: beginDate19_18_50,
+                endDate: endDate19_19_10,
             },
         ];
 
         const actual = getOnlineTimesForChart({
             ...getClampHours({ realDate, startHour: 0, endHour: 24 }),
-            items: [...items, ...otherItems],
+            items: [onlineItem, ...offlineItems],
         });
 
-        expect(actual.find((item) => item.beginDate === beginDate)).toBeUndefined();
-        expect(actual.find((item) => item.beginDate === beginDate2)).toBeUndefined();
-        expect(actual.find((item) => item.beginDate === beginDate3)).not.toBeUndefined();
+        expect(actual).toEqual([
+            {
+                beginDate: realDate.startOf('day').toMillis(),
+                endDate: beginDate19_10_00,
+                color: 'transparent',
+                diff: 600,
+                x: 0,
+            },
+            {
+                id: 1,
+                app: ONLINE,
+                beginDate: beginDate19_10_00,
+                endDate: endDate19_10_10,
+                diff: 10,
+                x: 1,
+                color: 'transparent',
+            },
+            {
+                beginDate: endDate19_10_10,
+                endDate: realDate.endOf('day').plus({ milliseconds: 1 }).toMillis(),
+                color: 'transparent',
+                diff: 830,
+                x: 2,
+            },
+        ]);
     });
+
     it('Sets first, last and in between empty items hours 0 to 24', () => {
         const items = [
             {
                 id: 1,
                 app: ONLINE,
-                beginDate: beginDate1,
-                endDate: endDate1,
+                beginDate: beginDate19_10_00,
+                endDate: endDate19_10_10,
             },
 
             {
                 id: 2,
                 app: ONLINE,
-                beginDate: beginDate3,
-                endDate: endDate3,
+                beginDate: beginDate19_18_50,
+                endDate: endDate19_19_10,
             },
         ];
 
@@ -91,22 +111,24 @@ describe('OnlineChart getOnlineTimesForChart', () => {
         expect(actual).toEqual([
             {
                 beginDate: DateTime.fromISO('2021-06-19T00:00:00').toMillis(),
-                endDate: beginDate1,
+                endDate: beginDate19_10_00,
                 color: 'transparent',
                 diff: 600,
                 x: 0,
             },
             {
                 app: ONLINE,
-                beginDate: beginDate1,
-                endDate: endDate1,
+                beginDate: beginDate19_10_00,
+                color: 'transparent',
+                endDate: endDate19_10_10,
                 diff: 10,
                 x: 1,
+                id: 1,
             },
 
             {
-                beginDate: endDate1,
-                endDate: beginDate3,
+                beginDate: endDate19_10_10,
+                endDate: beginDate19_18_50,
                 diff: 520,
                 color: 'transparent',
                 x: 2,
@@ -114,13 +136,15 @@ describe('OnlineChart getOnlineTimesForChart', () => {
 
             {
                 app: ONLINE,
-                beginDate: beginDate3,
-                endDate: endDate3,
+                beginDate: beginDate19_18_50,
+                endDate: endDate19_19_10,
                 diff: 20,
+                color: 'transparent',
                 x: 3,
+                id: 2,
             },
             {
-                beginDate: endDate3,
+                beginDate: endDate19_19_10,
                 endDate: DateTime.fromISO('2021-06-19T24:00:00').toMillis(),
                 color: 'transparent',
                 diff: 290,
@@ -134,15 +158,15 @@ describe('OnlineChart getOnlineTimesForChart', () => {
             {
                 id: 1,
                 app: ONLINE,
-                beginDate: beginDate1,
-                endDate: endDate1,
+                beginDate: beginDate19_10_00,
+                endDate: endDate19_10_10,
             },
 
             {
                 id: 2,
                 app: ONLINE,
-                beginDate: beginDate3,
-                endDate: endDate3,
+                beginDate: beginDate19_18_50,
+                endDate: endDate19_19_10,
             },
         ];
 
@@ -155,7 +179,7 @@ describe('OnlineChart getOnlineTimesForChart', () => {
         expect(actual).toEqual([
             {
                 beginDate: DateTime.fromISO('2021-06-19T12:00:00').toMillis(),
-                endDate: beginDate3,
+                endDate: beginDate19_18_50,
                 color: 'transparent',
                 diff: 410,
                 x: 0,
@@ -163,13 +187,15 @@ describe('OnlineChart getOnlineTimesForChart', () => {
 
             {
                 app: ONLINE,
-                beginDate: beginDate3,
-                endDate: endDate3,
+                beginDate: beginDate19_18_50,
+                endDate: endDate19_19_10,
+                color: 'transparent',
                 diff: 20,
                 x: 1,
+                id: 2,
             },
             {
-                beginDate: endDate3,
+                beginDate: endDate19_19_10,
                 endDate: DateTime.fromISO('2021-06-19T24:00:00').toMillis(),
                 color: 'transparent',
                 diff: 290,
@@ -183,8 +209,8 @@ describe('OnlineChart getOnlineTimesForChart', () => {
             {
                 id: 1,
                 app: ONLINE,
-                beginDate: beginDate2,
-                endDate: endDate2,
+                beginDate: beginDate19_11_50,
+                endDate: endDate_19_12_10,
             },
         ];
 
@@ -198,12 +224,14 @@ describe('OnlineChart getOnlineTimesForChart', () => {
             {
                 app: ONLINE,
                 beginDate: DateTime.fromISO('2021-06-19T12:00:00').toMillis(),
-                endDate: endDate2,
+                color: 'transparent',
+                endDate: endDate_19_12_10,
                 diff: 10,
                 x: 0,
+                id: 1,
             },
             {
-                beginDate: endDate2,
+                beginDate: endDate_19_12_10,
                 endDate: DateTime.fromISO('2021-06-19T24:00:00').toMillis(),
                 color: 'transparent',
                 diff: 710,
@@ -217,8 +245,8 @@ describe('OnlineChart getOnlineTimesForChart', () => {
             {
                 id: 1,
                 app: ONLINE,
-                beginDate: beginDate2,
-                endDate: endDate2,
+                beginDate: beginDate19_11_50,
+                endDate: endDate_19_12_10,
             },
         ];
 
@@ -230,16 +258,18 @@ describe('OnlineChart getOnlineTimesForChart', () => {
         expect(actual).toEqual([
             {
                 beginDate: DateTime.fromISO('2021-06-19T00:00:00').toMillis(),
-                endDate: beginDate2,
+                endDate: beginDate19_11_50,
                 color: 'transparent',
                 diff: 710,
                 x: 0,
             },
             {
                 app: ONLINE,
-                beginDate: beginDate2,
+                beginDate: beginDate19_11_50,
+                color: 'transparent',
                 endDate: DateTime.fromISO('2021-06-19T12:00:00').toMillis(),
                 diff: 10,
+                id: 1,
                 x: 1,
             },
         ]);
@@ -249,8 +279,8 @@ describe('OnlineChart getOnlineTimesForChart', () => {
             {
                 id: 1,
                 app: ONLINE,
-                beginDate: beginDate4,
-                endDate: endDate4,
+                beginDate: beginDate_19_23_50,
+                endDate: endDate20_00_10,
             },
         ];
 
@@ -262,16 +292,18 @@ describe('OnlineChart getOnlineTimesForChart', () => {
         expect(actual).toEqual([
             {
                 beginDate: DateTime.fromISO('2021-06-19T12:00:00').toMillis(),
-                endDate: beginDate4,
+                endDate: beginDate_19_23_50,
                 color: 'transparent',
                 diff: 710,
                 x: 0,
             },
             {
                 app: ONLINE,
-                beginDate: beginDate4,
+                beginDate: beginDate_19_23_50,
+                color: 'transparent',
                 endDate: DateTime.fromISO('2021-06-19T24:00:00').toMillis(),
                 diff: 10,
+                id: 1,
                 x: 1,
             },
         ]);
@@ -282,8 +314,8 @@ describe('OnlineChart getOnlineTimesForChart', () => {
             {
                 id: 1,
                 app: ONLINE,
-                beginDate: beginDate0,
-                endDate: endDate0,
+                beginDate: beginDate18_23_50,
+                endDate: endDate19_00_10,
             },
         ];
 
@@ -296,12 +328,14 @@ describe('OnlineChart getOnlineTimesForChart', () => {
             {
                 app: ONLINE,
                 beginDate: DateTime.fromISO('2021-06-19T00:00:00').toMillis(),
-                endDate: endDate0,
+                endDate: endDate19_00_10,
+                color: 'transparent',
                 diff: 10,
+                id: 1,
                 x: 0,
             },
             {
-                beginDate: endDate0,
+                beginDate: endDate19_00_10,
                 endDate: DateTime.fromISO('2021-06-19T12:00:00').toMillis(),
                 color: 'transparent',
                 diff: 710,
@@ -514,7 +548,7 @@ describe('OnlineChart getTotalOnlineDuration', () => {
         const now = DateTime.fromMillis(last(items)?.endDate || 0);
         const duration = getTotalOnlineDuration(now, items, minBreakTime);
 
-        expect(duration).toEqual([10 * MINUTES]);
+        expect(duration).toEqual([13 * MINUTES]);
     });
 
     it('getTotalOnlineDuration take items until finds minimal break time.', () => {
@@ -613,8 +647,8 @@ describe('OnlineChart isBetweenHours', () => {
             isBetweenHours({ beginClamp, endClamp })({
                 id: 1,
                 app: ONLINE,
-                beginDate: beginDate4,
-                endDate: endDate4,
+                beginDate: beginDate_19_23_50,
+                endDate: endDate20_00_10,
             }),
         ).toBeTruthy();
     });
@@ -629,8 +663,8 @@ describe('OnlineChart isBetweenHours', () => {
             isBetweenHours({ beginClamp, endClamp })({
                 id: 1,
                 app: ONLINE,
-                beginDate: beginDate2,
-                endDate: beginDate2,
+                beginDate: beginDate19_11_50,
+                endDate: beginDate19_11_50,
             }),
         ).toBeTruthy();
     });
@@ -645,8 +679,8 @@ describe('OnlineChart isBetweenHours', () => {
             isBetweenHours({ beginClamp, endClamp })({
                 id: 1,
                 app: ONLINE,
-                beginDate: beginDate4,
-                endDate: endDate4,
+                beginDate: beginDate_19_23_50,
+                endDate: endDate20_00_10,
             }),
         ).toBeFalsy();
     });
@@ -661,8 +695,8 @@ describe('OnlineChart isBetweenHours', () => {
             isBetweenHours({ beginClamp, endClamp })({
                 id: 1,
                 app: ONLINE,
-                beginDate: beginDate2,
-                endDate: beginDate2,
+                beginDate: beginDate19_11_50,
+                endDate: beginDate19_11_50,
             }),
         ).toBeFalsy();
     });
