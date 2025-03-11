@@ -2,8 +2,9 @@ import { eq } from 'drizzle-orm';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Import the real implementations directly to reduce dynamic imports
-import Database from 'better-sqlite3';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
+import { Client } from '@libsql/client';
+import { drizzle } from 'drizzle-orm/libsql';
+
 import { BackgroundService } from '../background-service';
 import { trackItems } from '../drizzle/schema';
 import { State } from '../enums/state';
@@ -17,12 +18,12 @@ vi.mock('../log-manager');
 vi.mock('../config');
 
 // Setup in-memory database
-let sqlite: Database.Database;
+let client: Client;
 let db: ReturnType<typeof drizzle>;
 
 async function cleanupTestDb() {
-    if (sqlite) {
-        sqlite.close();
+    if (client) {
+        client.close();
     }
 }
 
@@ -39,7 +40,7 @@ describe('BackgroundService with real implementation', () => {
         vi.spyOn(Date, 'now').mockImplementation(() => NOW);
 
         // Setup test database
-        ({ db, sqlite } = await setupTestDb());
+        ({ db, client } = await setupTestDb());
 
         // Import the services after we've mocked the database
         const stateManagerModule = await import('../state-manager');
