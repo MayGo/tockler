@@ -6,8 +6,8 @@ import { TrackItem } from './drizzle/schema';
 import { State } from './enums/state';
 import { TrackItemType } from './enums/track-item-type';
 import { logManager } from './log-manager';
-import { settingsService } from './services/settings-service';
-import { trackItemService } from './services/track-item-service';
+import { settingsService } from './queries/settings-service';
+import { trackItemService } from './queries/track-item-service';
 import { TrackItemRaw } from './task-analyser';
 import { sendToTrayWindow } from './window-manager';
 

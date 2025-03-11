@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
-import { db } from '../drizzle/db';
-import { Setting, settings } from '../drizzle/schema';
-import { logManager } from '../log-manager';
+import { logManager } from '../../log-manager';
+import { db } from '../db';
+import { Setting, settings } from '../schema';
 
 const defaultSettings = {
     recentDaysCount: 7,

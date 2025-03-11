@@ -4,9 +4,9 @@ import BackgroundUtils from '../background-utils';
 import { TrackItemType } from '../enums/track-item-type';
 import { logManager } from '../log-manager';
 
+import { settingsService } from '../drizzle/queries/settings-service';
+import { trackItemService } from '../drizzle/queries/track-item-service';
 import { TrackItem } from '../drizzle/schema';
-import { settingsService } from '../services/settings-service';
-import { trackItemService } from '../services/track-item-service';
 import { stateManager } from '../state-manager';
 import { TrackItemRaw } from '../task-analyser';
 

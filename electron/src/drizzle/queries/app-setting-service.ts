@@ -1,8 +1,8 @@
 import { eq } from 'drizzle-orm';
 import randomcolor from 'randomcolor';
-import { db } from '../drizzle/db';
-import { AppSetting, appSettings, NewAppSetting } from '../drizzle/schema';
-import { logManager } from '../log-manager';
+import { logManager } from '../../log-manager';
+import { db } from '../db';
+import { AppSetting, appSettings, NewAppSetting } from '../schema';
 
 export class AppSettingService {
     logger = logManager.getLogger('AppSettingService');

@@ -3,11 +3,11 @@ import { and, desc, eq, gte, inArray, like, lt, sql } from 'drizzle-orm';
 import { dialog } from 'electron';
 import { writeFileSync } from 'fs';
 import moment from 'moment';
-import { db } from '../drizzle/db';
-import { NewTrackItem, TrackItem, trackItems } from '../drizzle/schema';
-import { State } from '../enums/state';
-import { TrackItemType } from '../enums/track-item-type';
-import { logManager } from '../log-manager';
+import { State } from '../../enums/state';
+import { TrackItemType } from '../../enums/track-item-type';
+import { logManager } from '../../log-manager';
+import { db } from '../db';
+import { NewTrackItem, TrackItem, trackItems } from '../schema';
 
 const DEFAULT_PAGE_SIZE = 20;
 

@@ -1,8 +1,8 @@
+import { settingsService } from './drizzle/queries/settings-service';
 import { appTrackItemJob } from './jobs/app-track-item-job';
 import { logTrackItemJob } from './jobs/log-track-item-job';
 import { statusTrackItemJob } from './jobs/status-track-item-job';
 import { logManager } from './log-manager';
-import { settingsService } from './services/settings-service';
 
 let logger = logManager.getLogger('BackgroundJob');
 

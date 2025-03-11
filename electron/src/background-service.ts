@@ -1,10 +1,10 @@
 import BackgroundUtils from './background-utils';
+import { appSettingService } from './drizzle/queries/app-setting-service';
+import { trackItemService } from './drizzle/queries/track-item-service';
 import { TrackItem } from './drizzle/schema';
 import { State } from './enums/state';
 import { TrackItemType } from './enums/track-item-type';
 import { logManager } from './log-manager';
-import { appSettingService } from './services/app-setting-service';
-import { trackItemService } from './services/track-item-service';
 import { stateManager } from './state-manager';
 import { TrackItemRaw } from './task-analyser';
 

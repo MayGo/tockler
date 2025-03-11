@@ -5,9 +5,9 @@ import { throttle } from 'lodash';
 import { menubar } from 'menubar';
 import path, { join } from 'path';
 import { config, getTrayIcon } from './config';
+import { settingsService } from './drizzle/queries/settings-service';
 import { logManager } from './log-manager';
 import MenuBuilder from './menu-builder';
-import { settingsService } from './services/settings-service';
 
 let logger = logManager.getLogger('WindowManager');
 
