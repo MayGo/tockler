@@ -13,6 +13,42 @@ jobs:
             - uses: actions/checkout@v4
               with:
                   fetch-depth: 0
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22.x
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: 9
+                  run_install: false
+
+            - name: Install Dependencies (Electron)
+              run: |
+                  cd electron
+                  pnpm install --no-frozen-lockfile
+                  cd ..
+
+            - name: Run Electron Tests with Coverage
+              run: |
+                  cd electron
+                  pnpm coverage
+                  cd ..
+
+            - name: Install Dependencies (Client)
+              run: |
+                  cd client
+                  pnpm install --no-frozen-lockfile
+                  cd ..
+
+            - name: Run Client Tests with Coverage
+              run: |
+                  cd client
+                  pnpm coverage
+                  cd ..
+
             - name: SonarCloud Scan Electron
               uses: SonarSource/sonarcloud-github-action@master
               with:
@@ -20,6 +56,7 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
             - name: SonarCloud Scan Client
               uses: SonarSource/sonarcloud-github-action@master
               with:
