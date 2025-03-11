@@ -10,14 +10,8 @@ npmRebuild: false
 directories:
     output: 'packaged'
 files:
-    - '!__tests__'
-    - '!__e2e__'
-    - '!__mocks__'
-    - '!app'
-    - '!custom_typings'
-    - '!util'
-    - '!test'
-    - '!release'
+    - 'dist-electron/**/*'
+    - 'package.json'
 
 publish:
     - github
