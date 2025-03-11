@@ -270,16 +270,12 @@ describe('BackgroundService with real implementation', () => {
 
     describe('onSleep and onResume', () => {
         it('should set system to sleep when onSleep is called', async () => {
-            // Import state manager
             const stateManagerModule = await import('../state-manager');
 
-            // Spy on state manager methods
             const spySetSystemToSleep = vi.spyOn(stateManagerModule.stateManager, 'setSystemToSleep');
 
-            // Execute
-            backgroundService.onSleep();
+            await backgroundService.onSleep();
 
-            // Verify
             expect(spySetSystemToSleep).toHaveBeenCalled();
         });
 
@@ -297,9 +293,6 @@ describe('BackgroundService with real implementation', () => {
             const createdItem = await backgroundService.createOrUpdate(statusItem);
             expect(createdItem).not.toBeNull();
 
-            // Import state manager
-            const stateManagerModule = await import('../state-manager');
-
             // Mock Date.now() to return a predictable value for testing
             const resumeTime = getTimestamp('2023-01-10T11:30:00');
             vi.spyOn(Date, 'now').mockImplementation(() => resumeTime);
@@ -307,10 +300,8 @@ describe('BackgroundService with real implementation', () => {
             // Spy on addInactivePeriod to check it's called
             const addInactivePeriodSpy = vi.spyOn(backgroundService, 'addInactivePeriod');
 
-            // Execute onResume
             await backgroundService.onResume();
 
-            // Verify addInactivePeriod was called
             expect(addInactivePeriodSpy).toHaveBeenCalled();
 
             // Check for the newly created offline item
@@ -320,19 +311,12 @@ describe('BackgroundService with real implementation', () => {
         });
 
         it('should not add inactive period when resuming with no status track item', async () => {
-            // Clear any existing items
             await db.delete(trackItems);
 
-            // Import state manager
-            const stateManagerModule = await import('../state-manager');
-
-            // Spy on addInactivePeriod to check it's not called
             const addInactivePeriodSpy = vi.spyOn(backgroundService, 'addInactivePeriod');
 
-            // Execute onResume
             await backgroundService.onResume();
 
-            // Verify addInactivePeriod was not called
             expect(addInactivePeriodSpy).not.toHaveBeenCalled();
         });
     });

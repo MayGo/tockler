@@ -1,9 +1,9 @@
 'use strict';
-const { contextBridge, ipcRenderer, shell } = require('electron');
-const Store = require('electron-store');
-
-const log = require('electron-log');
-const Sentry = require('@sentry/electron');
+import { ErrorEvent } from '@sentry/core';
+import * as Sentry from '@sentry/electron';
+import { contextBridge, ipcRenderer, shell } from 'electron';
+import log from 'electron-log';
+import Store from 'electron-store';
 
 const config = new Store();
 
@@ -11,8 +11,8 @@ if (process.env.NODE_ENV === 'production') {
     Sentry.init({
         dsn: process.env.SENTRY_DSN,
         environment: process.env.NODE_ENV,
-        release: appVersion,
-        beforeSend(event) {
+        release: process.env.npm_package_version,
+        beforeSend(event: ErrorEvent) {
             // Check if it is an exception, if so, show the report dialog
             if (event.exception) {
                 Sentry.showReportDialog();
@@ -24,20 +24,30 @@ if (process.env.NODE_ENV === 'production') {
 
 const origConsole = log.transports.console;
 
-const isError = function (e) {
-    return e && e.stack && e.message;
+const isError = function (e: unknown): boolean {
+    return Boolean(e && typeof e === 'object' && 'stack' in e && 'message' in e);
 };
 
-const cachedErrors = {};
+interface CachedErrors {
+    [key: string]: boolean;
+}
 
-const sentryTransportConsole = (msgObj) => {
+const cachedErrors: CachedErrors = {};
+
+interface MessageObject {
+    level: Sentry.SeverityLevel;
+    data: unknown[];
+    date: Date;
+}
+
+const sentryTransportConsole = (msgObj: MessageObject) => {
     const { level, data, date } = msgObj;
     const [message, ...rest] = data;
 
-    if (!cachedErrors[message]) {
+    if (typeof message === 'string' && !cachedErrors[message]) {
         cachedErrors[message] = true;
 
-        Sentry.withScope((scope) => {
+        Sentry.withScope((scope: Sentry.Scope) => {
             scope.setExtra('data', rest);
             scope.setExtra('date', msgObj.date.toLocaleTimeString());
             scope.setLevel(level);
@@ -51,10 +61,10 @@ const sentryTransportConsole = (msgObj) => {
         });
     }
 
-    origConsole(msgObj);
+    origConsole(msgObj as log.LogMessage);
 };
 
-log.transports.console = sentryTransportConsole;
+log.transports.console = sentryTransportConsole as log.ConsoleTransport;
 
 const isProd = false;
 log.transports.console.level = isProd ? 'warn' : 'debug';
@@ -68,13 +78,17 @@ if (isLoggingEnabled) {
     log.transports.file.level = false;
 }
 
-const listeners = {};
+interface Listeners {
+    [key: string]: (...args: unknown[]) => void;
+}
+
+const listeners: Listeners = {};
 
 contextBridge.exposeInMainWorld('electronBridge', {
-    configGet: (key) => {
+    configGet: (key: string) => {
         return config.get(key);
     },
-    configSet: (key, value) => {
+    configSet: (key: string, value: unknown) => {
         return config.set(key, value);
     },
     logger: log,
@@ -82,7 +96,7 @@ contextBridge.exposeInMainWorld('electronBridge', {
     isMas: process.mas === true,
     appVersion: () => ipcRenderer.invoke('get-app-version'),
 
-    openUrlInExternalWindow: (url) => {
+    openUrlInExternalWindow: (url: string) => {
         log.info('URL', url);
 
         if (url.startsWith('file://') || url.startsWith('http://127.0.0.1:3000')) {
@@ -93,26 +107,32 @@ contextBridge.exposeInMainWorld('electronBridge', {
         shell.openExternal(url);
     },
 
-    invokeIpc: async (actionName, payload) => {
+    invokeIpc: async (actionName: string, payload: unknown) => {
         return await ipcRenderer.invoke(actionName, payload);
     },
-    sendIpc: (key, ...args) => {
+    sendIpc: (key: string, ...args: unknown[]) => {
         log.debug('Send message with key: ' + key, args);
         ipcRenderer.send(key, ...args);
     },
-    onIpc: (key, fn) => {
-        const saferFn = (event, ...args) => fn(...args);
+    onIpc: (key: string, fn: (...args: unknown[]) => void) => {
+        const saferFn = (_event: unknown, ...args: unknown[]) => fn(...args);
         // Deliberately strip event as it includes `sender`
         log.debug('Add listener with key: ' + key);
         ipcRenderer.on(key, saferFn);
         listeners[key] = saferFn;
     },
-    removeListenerIpc: (key) => {
+    removeListenerIpc: (key: string) => {
         log.debug('Remove listener with key: ' + key);
         const fn = listeners[key];
         ipcRenderer.removeListener(key, fn);
         delete listeners[key];
     },
 });
+
+declare global {
+    interface Window {
+        Sentry: typeof Sentry;
+    }
+}
 
 window.Sentry = Sentry;
