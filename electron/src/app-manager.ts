@@ -37,7 +37,7 @@ export default class AppManager {
 
     static async destroy() {
         if (db) {
-            await db.$client.close();
+            db.$client.close();
             logger.info('Closed db connection');
         }
     }
