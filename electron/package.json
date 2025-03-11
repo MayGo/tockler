@@ -29,7 +29,7 @@
         "release": "electron-builder -c electron-builder.yml"
     },
     "dependencies": {
-        "@sentry/electron": "6.1.0",
+        "@sentry/electron": "^2.5.4",
         "active-win": "8.2.1",
         "better-sqlite3": "^11.8.1",
         "csv-stringify": "^6.2.0",

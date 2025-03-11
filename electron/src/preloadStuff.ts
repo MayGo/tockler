@@ -1,10 +1,10 @@
 'use strict';
-import { ErrorEvent } from '@sentry/core';
-import * as Sentry from '@sentry/electron';
-// import { showReportDialog } from '@sentry/electron';
-import { contextBridge, ipcRenderer, shell } from 'electron';
-import log from 'electron-log';
-import Store from 'electron-store';
+
+const { contextBridge, ipcRenderer, shell } = require('electron');
+const Store = require('electron-store');
+
+const log = require('electron-log');
+const Sentry = require('@sentry/electron');
 
 const config = new Store();
 
@@ -13,11 +13,11 @@ if (process.env.NODE_ENV === 'production') {
         dsn: process.env.SENTRY_DSN,
         environment: process.env.NODE_ENV,
         release: process.env.npm_package_version,
-        beforeSend(event: ErrorEvent) {
+        beforeSend(event: any) {
             // Check if it is an exception, if so, show the report dialog
-            // if (event.exception) {
-            //     showReportDialog();
-            // }
+            if (event.exception) {
+                Sentry.showReportDialog();
+            }
             return event;
         },
     });
@@ -36,7 +36,7 @@ interface CachedErrors {
 const cachedErrors: CachedErrors = {};
 
 interface MessageObject {
-    level: Sentry.SeverityLevel;
+    level: any;
     data: unknown[];
     date: Date;
 }
@@ -48,7 +48,7 @@ const sentryTransportConsole = (msgObj: MessageObject) => {
     if (typeof message === 'string' && !cachedErrors[message]) {
         cachedErrors[message] = true;
 
-        Sentry.withScope((scope: Sentry.Scope) => {
+        Sentry.withScope((scope: any) => {
             scope.setExtra('data', rest);
             scope.setExtra('date', msgObj.date.toLocaleTimeString());
             scope.setLevel(level);
@@ -62,10 +62,10 @@ const sentryTransportConsole = (msgObj: MessageObject) => {
         });
     }
 
-    origConsole(msgObj as log.LogMessage);
+    origConsole(msgObj as any);
 };
 
-log.transports.console = sentryTransportConsole as log.ConsoleTransport;
+log.transports.console = sentryTransportConsole as any;
 
 const isProd = false;
 log.transports.console.level = isProd ? 'warn' : 'debug';
