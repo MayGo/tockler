@@ -12,6 +12,7 @@ directories:
 files:
     - 'dist-electron/**/*'
     - 'package.json'
+    - 'shared/**/*'
 
 publish:
     - github

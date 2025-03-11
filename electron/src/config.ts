@@ -43,6 +43,7 @@ interface StoreType {
 const persisted = new Store<StoreType>();
 
 export const getIcon = (winFileName: string, macFileName: string) => {
+    // TODO: think something better. So we can remove - 'shared/**/*' from electron-builder.yml
     return path.join(root, isWin ? `shared/img/icon/win/${winFileName}` : `shared/img/icon/mac/${macFileName}`);
 };
 
