@@ -41,7 +41,7 @@ interface MessageObject {
 }
 
 const sentryTransportConsole = (msgObj: MessageObject) => {
-    const { level, data, date } = msgObj;
+    const { level, data } = msgObj;
     const [message, ...rest] = data;
 
     if (typeof message === 'string' && !cachedErrors[message]) {
