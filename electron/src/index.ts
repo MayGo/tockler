@@ -12,7 +12,7 @@ import WindowManager from './window-manager';
 
 let logger = logManager.getLogger('AppIndex');
 
-app.setAppUserModelId(process.execPath);
+app.setAppUserModelId('ee.trimatech.tockler');
 
 /* Single Instance Check */
 
