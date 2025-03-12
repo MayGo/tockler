@@ -3,7 +3,6 @@ import { memo, useEffect } from 'react';
 import { ITrackItem } from '../@types/ITrackItem';
 import { LoadingLine } from '../components/LoadingLine';
 import { OnlineChart } from '../components/TrayLayout/OnlineChart';
-import { TrayLayout } from '../components/TrayLayout/TrayLayout';
 import { TrayList } from '../components/TrayList/TrayList';
 import { useTrayData } from '../hooks/useTrayData';
 import { useWindowFocused } from '../hooks/windowFocusedHook';
@@ -44,7 +43,7 @@ const TrayAppPageTemp = () => {
     }
 
     return (
-        <TrayLayout>
+        <>
             <Box position="relative" overflow="hidden" width="100%" height="2px">
                 {isLoading && <LoadingLine />}
             </Box>
@@ -67,7 +66,7 @@ const TrayAppPageTemp = () => {
                 stopRunningLogItem={stopRunningLogItemEvent}
                 startNewLogItem={startNewLogItemEvent}
             />
-        </TrayLayout>
+        </>
     );
 };
 
