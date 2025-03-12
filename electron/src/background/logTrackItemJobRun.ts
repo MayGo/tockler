@@ -1,14 +1,14 @@
 import moment from 'moment';
-import { backgroundService } from '../background/background-service';
-import BackgroundUtils from '../background/background-utils';
 import { TrackItemType } from '../enums/track-item-type';
 import { logManager } from '../utils/log-manager';
+import { backgroundService } from './background-service';
+import BackgroundUtils from './background-utils';
 
 import { TrackItemRaw } from '../app/task-analyser';
-import { stateManager } from '../background/state-manager';
 import { settingsService } from '../drizzle/queries/settings-service';
 import { trackItemService } from '../drizzle/queries/track-item-service';
 import { TrackItem } from '../drizzle/schema';
+import { stateManager } from './state-manager';
 
 let logger = logManager.getLogger('LogTrackItemJob');
 

@@ -1,12 +1,12 @@
 import { powerMonitor } from 'electron';
 import { TrackItemRaw } from '../app/task-analyser';
 import { sendToTrayWindow } from '../app/window-manager';
-import { backgroundService } from '../background/background-service';
-import BackgroundUtils from '../background/background-utils';
-import { stateManager } from '../background/state-manager';
 import { State } from '../enums/state';
 import { TrackItemType } from '../enums/track-item-type';
 import { logManager } from '../utils/log-manager';
+import { backgroundService } from './background-service';
+import BackgroundUtils from './background-utils';
+import { stateManager } from './state-manager';
 
 const logger = logManager.getLogger('StatusTrackItemJob');
 

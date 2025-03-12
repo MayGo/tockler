@@ -1,8 +1,8 @@
 import { settingsService } from '../drizzle/queries/settings-service';
-import { appTrackItemJobRun } from '../jobs/appTrackItemJobRun';
-import { logTrackItemJobRun } from '../jobs/logTrackItemJobRun';
-import { statusTrackItemJobRun } from '../jobs/statusTrackItemJobRun';
 import { logManager } from '../utils/log-manager';
+import { appTrackItemJobRun } from './appTrackItemJobRun';
+import { logTrackItemJobRun } from './logTrackItemJobRun';
+import { statusTrackItemJobRun } from './statusTrackItemJobRun';
 
 let logger = logManager.getLogger('BackgroundJob');
 
