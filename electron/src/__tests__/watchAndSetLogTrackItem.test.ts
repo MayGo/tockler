@@ -202,17 +202,17 @@ describe('watchAndSetLogTrackItem', () => {
         appEmitter.emit('state-changed', State.Idle);
         await expectNrOfItems(3);
 
-        const updatedItems = await selectLogItem('TestApp');
+        const items = await selectLogItem('TestApp');
 
-        expect(updatedItems.length).toBe(4);
-        expect(updatedItems[0]).toStrictEqual({
+        expect(items.length).toBe(4);
+        expect(items[0]).toStrictEqual({
             ...emptyData,
             ...testData,
             id: 1,
             beginDate: NOW,
             endDate: NOW + 1000,
         });
-        expect(updatedItems[1]).toStrictEqual({
+        expect(items[1]).toStrictEqual({
             ...emptyData,
             ...testData,
             id: 2,
@@ -220,14 +220,14 @@ describe('watchAndSetLogTrackItem', () => {
             endDate: NOW + 2000,
         });
 
-        expect(updatedItems[2]).toStrictEqual({
+        expect(items[2]).toStrictEqual({
             ...emptyData,
             ...testData,
             id: 3,
             beginDate: NOW + 2000,
             endDate: NOW + 3000,
         });
-        expect(updatedItems[3]).toStrictEqual({
+        expect(items[3]).toStrictEqual({
             ...emptyData,
             ...testData,
             id: 4,
