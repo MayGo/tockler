@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm';
 import { logManager } from '../../utils/log-manager';
 import { db } from '../db';
 import { Setting, settings } from '../schema';
+import { trackItemService } from './track-item-service';
 
 const defaultSettings = {
     recentDaysCount: 7,
@@ -140,7 +141,9 @@ export class SettingsService {
         }
 
         try {
-            return JSON.parse(item.jsonData);
+            const id = JSON.parse(item.jsonData).id;
+            const trackItem = await trackItemService.findById(id);
+            return trackItem;
         } catch (e) {
             this.logger.error('Error parsing RUNNING_LOG_ITEM:', e);
             return null;

@@ -1,23 +1,73 @@
 import { Route, Routes } from 'react-router-dom';
+import { ErrorBoundary } from '../components/ErrorBoundary/ErrorBoundary';
+import { MainLayout } from '../components/MainLayout/MainLayout';
+import { SearchPage } from './SearchPage';
 import { SettingsPage } from './SettingsPage';
 import { SummaryPage } from './SummaryPage';
+import { SupportPage } from './SupportPage';
 import { TimelinePage } from './TimelinePage';
 import { TrayAppPage } from './TrayAppPage';
-import { SearchPage } from './SearchPage';
-import { SupportPage } from './SupportPage';
-import { MainLayout } from '../components/MainLayout/MainLayout';
 
 export function MainAppPage() {
     return (
         <Routes>
             <Route path="/" element={<MainLayout />}>
-                <Route index element={<TimelinePage />} />
-                <Route path="timeline" element={<TimelinePage />} />
-                <Route path="settings" element={<SettingsPage />} />
-                <Route path="summary" element={<SummaryPage />} />
-                <Route path="support" element={<SupportPage />} />
-                <Route path="search" element={<SearchPage />} />
-                <Route path="trayApp" element={<TrayAppPage />} />
+                <Route
+                    index
+                    element={
+                        <ErrorBoundary key="index">
+                            <TimelinePage />
+                        </ErrorBoundary>
+                    }
+                />
+                <Route
+                    path="timeline"
+                    element={
+                        <ErrorBoundary key="timeline">
+                            <TimelinePage />
+                        </ErrorBoundary>
+                    }
+                />
+                <Route
+                    path="settings"
+                    element={
+                        <ErrorBoundary key="settings">
+                            <SettingsPage />
+                        </ErrorBoundary>
+                    }
+                />
+                <Route
+                    path="summary"
+                    element={
+                        <ErrorBoundary key="summary">
+                            <SummaryPage />
+                        </ErrorBoundary>
+                    }
+                />
+                <Route
+                    path="support"
+                    element={
+                        <ErrorBoundary key="support">
+                            <SupportPage />
+                        </ErrorBoundary>
+                    }
+                />
+                <Route
+                    path="search"
+                    element={
+                        <ErrorBoundary key="search">
+                            <SearchPage />
+                        </ErrorBoundary>
+                    }
+                />
+                <Route
+                    path="trayApp"
+                    element={
+                        <ErrorBoundary key="trayApp">
+                            <TrayAppPage />
+                        </ErrorBoundary>
+                    }
+                />
             </Route>
         </Routes>
     );

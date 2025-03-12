@@ -3,13 +3,14 @@ import { StoreProvider } from 'easy-peasy';
 import { Settings } from 'luxon';
 import { useCallback, useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
+import { TrayLayout } from './components/TrayLayout/TrayLayout';
 import { Logger } from './logger';
 import { RootProvider } from './RootContext';
 import { ChartThemeProvider } from './routes/ChartThemeProvider';
 import { MainAppPage } from './routes/MainAppPage';
 import { NotificationAppPage } from './routes/NotificationAppPage';
 import { TrayAppPage } from './routes/TrayAppPage';
-import { TrayPage } from './routes/TrayPage';
 import { EventEmitter } from './services/EventEmitter';
 import { mainStore } from './store/mainStore';
 import { useGoogleAnalytics } from './useGoogleAnalytics';
@@ -54,10 +55,18 @@ export function MainRouter() {
                     <Route path="/" element={<Navigate to="/app" replace />} />
 
                     {/* Tray App - No longer needs trayStore */}
-                    <Route path="/trayApp" element={<TrayAppPage />} />
+                    <Route
+                        path="/trayApp"
+                        element={
+                            <TrayLayout>
+                                <ErrorBoundary>
+                                    <TrayAppPage />
+                                </ErrorBoundary>
+                            </TrayLayout>
+                        }
+                    />
 
                     <Route path="/notificationApp" element={<NotificationAppPage />} />
-                    <Route path="/trayPage" element={<TrayPage />} />
 
                     {/* Fallback redirect to /app */}
                     <Route path="*" element={<Navigate to="/app" replace />} />

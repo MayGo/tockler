@@ -2,6 +2,7 @@ import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import '@fontsource/inter';
 import { createRoot } from 'react-dom/client';
 import { HashRouter as Router } from 'react-router-dom';
+import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
 import { MainRouter } from './MainRouter';
 import { theme } from './theme/theme';
 import { setAppParams } from './useGoogleAnalytics.utils';
@@ -20,9 +21,11 @@ root.render(
     <>
         <ColorModeScript initialColorMode={theme.config.initialColorMode} />
         <ChakraProvider theme={theme}>
-            <Router>
-                <MainRouter />
-            </Router>
+            <ErrorBoundary>
+                <Router>
+                    <MainRouter />
+                </Router>
+            </ErrorBoundary>
         </ChakraProvider>
     </>,
 );
