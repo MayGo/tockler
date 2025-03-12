@@ -1,5 +1,6 @@
 {
     "name": "tockler",
+    "productName": "Tockler",
     "version": "3.23.3",
     "description": "Automatically track applications usage and working time",
     "author": "Maigo Erit <maigo.erit@gmail.com>",
