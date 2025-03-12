@@ -1,7 +1,7 @@
 import { settingsService } from '../drizzle/queries/settings-service';
-import { appTrackItemJob } from '../jobs/app-track-item-job';
-import { logTrackItemJob } from '../jobs/log-track-item-job';
-import { statusTrackItemJob } from '../jobs/status-track-item-job';
+import { appTrackItemJobRun } from '../jobs/appTrackItemJobRun';
+import { logTrackItemJobRun } from '../jobs/logTrackItemJobRun';
+import { statusTrackItemJobRun } from '../jobs/statusTrackItemJobRun';
 import { logManager } from '../utils/log-manager';
 
 let logger = logManager.getLogger('BackgroundJob');
@@ -11,9 +11,9 @@ let bgInterval: NodeJS.Timeout | null = null;
 async function runAll(dataSettings: any) {
     const { idleAfterSeconds } = dataSettings;
 
-    await appTrackItemJob.run();
-    await statusTrackItemJob.run(idleAfterSeconds);
-    await logTrackItemJob.run();
+    await appTrackItemJobRun();
+    await statusTrackItemJobRun(idleAfterSeconds);
+    await logTrackItemJobRun();
 }
 
 export async function initBackgroundJob() {
