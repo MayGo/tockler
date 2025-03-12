@@ -2,7 +2,7 @@ import randomcolor from 'randomcolor';
 import { stateManager } from '../background/state-manager';
 import { settingsService } from '../drizzle/queries/settings-service';
 import { TrackItemType } from '../enums/track-item-type';
-import { appEmitter } from '../utils/app-event-emitter';
+import { appEmitter } from '../utils/appEmitter';
 import { logManager } from '../utils/log-manager';
 import { showNotification } from './notification';
 
@@ -44,7 +44,7 @@ export class TaskAnalyser {
 
         logger.debug('Clicked. Creating new task', taskAnalyser.newItem);
 
-        appEmitter.emit('start-new-log-item', taskAnalyser.newItem);
+        appEmitter.emit('start-new-log-item2', taskAnalyser.newItem);
 
         showNotification({
             title: 'New task created!',

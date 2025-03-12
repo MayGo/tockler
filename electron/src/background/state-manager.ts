@@ -6,7 +6,7 @@ import { trackItemService } from '../drizzle/queries/track-item-service';
 import { TrackItem } from '../drizzle/schema';
 import { State } from '../enums/state';
 import { TrackItemType } from '../enums/track-item-type';
-import { appEmitter } from '../utils/app-event-emitter';
+import { appEmitter } from '../utils/appEmitter';
 import { logManager } from '../utils/log-manager';
 import { backgroundService } from './background-service';
 import BackgroundUtils from './background-utils';
@@ -50,8 +50,8 @@ export class StateManager {
             );
         });
 
-        appEmitter.on('start-new-log-item', (rawItem) => {
-            logger.debug('start-new-log-item event');
+        appEmitter.on('start-new-log-item2', (rawItem) => {
+            logger.debug('start-new-log-item2 event');
             this.startNewLogItem(null, rawItem).then(
                 () => logger.debug('start-new-log-item'),
                 (e) => logger.error('start-new-log-item', e),
