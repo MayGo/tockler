@@ -1,11 +1,10 @@
 require('events').EventEmitter.defaultMaxListeners = 30;
 
-import { app, ipcMain, powerMonitor } from 'electron';
+import { app, ipcMain } from 'electron';
 import AppManager from './app/app-manager';
 import AppUpdater from './app/app-updater';
 import { extensionsManager } from './app/extensions-manager';
 import WindowManager from './app/window-manager';
-import { backgroundService } from './background/background-service';
 import { cleanupBackgroundJob, initBackgroundJob } from './background/initBackgroundJob';
 import { config } from './utils/config';
 import { logManager } from './utils/log-manager';
@@ -80,19 +79,6 @@ if (gotTheLock) {
             await AppManager.init();
 
             await initBackgroundJob();
-
-            powerMonitor.on('suspend', function () {
-                logger.debug('The system is going to sleep');
-                backgroundService.onSleep();
-            });
-
-            powerMonitor.on('resume', function () {
-                logger.debug('The system is going to resume');
-                backgroundService.onResume().then(
-                    () => logger.debug('Resumed'),
-                    (e) => logger.error('Error in onResume', e),
-                );
-            });
         } catch (error: any) {
             logger.error(`App errored in ready event: ${error.toString()}`, error);
         }

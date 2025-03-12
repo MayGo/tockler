@@ -3,6 +3,8 @@ import { logManager } from '../utils/log-manager';
 import { appTrackItemJobRun } from './appTrackItemJobRun';
 import { logTrackItemJobRun } from './logTrackItemJobRun';
 import { statusTrackItemJobRun } from './statusTrackItemJobRun';
+import { startIdleStateWatcher } from './watchForIdleState';
+import { startWatchForPowerState } from './watchForPowerState';
 
 let logger = logManager.getLogger('BackgroundJob');
 
@@ -26,6 +28,11 @@ export async function initBackgroundJob() {
     if (bgInterval) {
         clearInterval(bgInterval);
     }
+    const { idleAfterSeconds } = dataSettings;
+
+    startIdleStateWatcher(idleAfterSeconds);
+
+    startWatchForPowerState();
 
     bgInterval = setInterval(() => runAll(dataSettings), backgroundJobInterval * 1000);
 }
