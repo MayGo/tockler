@@ -62,6 +62,7 @@ export const useTrayData = () => {
         try {
             const logItem = await getRunningLogItem();
             setRunningLogItem(logItem);
+            Logger.debug('TrayApp - Running log item loaded:', logItem);
             return logItem;
         } catch (error) {
             Logger.error('Error fetching running log item:', error);

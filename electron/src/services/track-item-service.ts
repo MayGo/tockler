@@ -1,5 +1,5 @@
 import { stringify } from 'csv-stringify/sync';
-import { and, eq, gte, inArray, like, lt, sql } from 'drizzle-orm';
+import { and, desc, eq, gte, inArray, like, lt, sql } from 'drizzle-orm';
 import { dialog } from 'electron';
 import { writeFileSync } from 'fs';
 import moment from 'moment';
@@ -153,7 +153,7 @@ export class TrackItemService {
             .select()
             .from(trackItems)
             .where(eq(trackItems.taskName, TrackItemType.LogTrackItem))
-            .orderBy(trackItems.beginDate)
+            .orderBy(desc(trackItems.beginDate))
             .limit(100);
     }
 
@@ -173,7 +173,7 @@ export class TrackItemService {
             .select()
             .from(trackItems)
             .where(and(eq(trackItems.app, appName), eq(trackItems.taskName, TrackItemType.StatusTrackItem)))
-            .orderBy(trackItems.endDate)
+            .orderBy(desc(trackItems.endDate))
             .limit(1);
 
         return results[0];
