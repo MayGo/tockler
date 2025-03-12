@@ -21,6 +21,10 @@ function setCurrentState(state: State) {
     appEmitter.emit('state-changed', currentState);
 }
 
+export function getCurrentState() {
+    return currentState;
+}
+
 export function watchAndPropagateState() {
     appEmitter.on('system-is-idling', () => {
         logger.debug('System is idling');
@@ -28,7 +32,7 @@ export function watchAndPropagateState() {
     });
 
     appEmitter.on('system-is-engaged', () => {
-        logger.debug('System is engaged');
+        // logger.debug('System is engaged');
         setCurrentState(State.Online);
     });
 

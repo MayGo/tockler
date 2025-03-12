@@ -6,6 +6,24 @@ import { vi } from 'vitest';
 // Import the real implementations directly to reduce dynamic imports
 import * as schema from '../drizzle/schema';
 import { appSettings } from '../drizzle/schema';
+import { logManager } from '../utils/log-manager';
+
+const logger = logManager.getLogger('LibSQL');
+
+// Custom logger for LibSQL client
+class LibSQLLogger {
+    logQuery(query: string, params: any[]) {
+        const stringifiedParams = params.map((p) => {
+            try {
+                return JSON.stringify(p);
+            } catch {
+                return String(p);
+            }
+        });
+        const paramsStr = stringifiedParams.length ? ` -- params: [${stringifiedParams.join(', ')}]` : '';
+        console.info(`query: ${query}${paramsStr}`);
+    }
+}
 
 export async function setupTestDb() {
     // Create in-memory database client
@@ -14,7 +32,10 @@ export async function setupTestDb() {
     });
 
     // Set up database with schema
-    const db = drizzle(client, { schema });
+    const db = drizzle(client, {
+        schema,
+        logger: new LibSQLLogger(),
+    });
 
     // Create tables from schema
     await migrate(db, { migrationsFolder: './src/drizzle/migrations' });

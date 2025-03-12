@@ -23,9 +23,10 @@ async function checkActiveWindow() {
 }
 
 export async function watchForActiveWindow(backgroundJobInterval: number) {
-    const time = backgroundJobInterval || ACTIVE_WINDOW_CHECK_INTERVAL;
+    const timeInSeconds = backgroundJobInterval || ACTIVE_WINDOW_CHECK_INTERVAL;
+    const timeInMs = timeInSeconds * 1000;
 
-    interval = setInterval(() => checkActiveWindow(), time);
+    interval = setInterval(() => checkActiveWindow(), timeInMs);
 }
 
 export function watchForActiveWindowRemove() {

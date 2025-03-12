@@ -3,12 +3,10 @@ import { machineId } from 'node-machine-id';
 import AppManager from './app/app-manager';
 import { sendToNotificationWindow, sendToTrayWindow } from './app/window-manager';
 import { initBackgroundJob } from './background/initBackgroundJob';
-import { stateManager } from './background/state-manager';
 import { appSettingService } from './drizzle/queries/app-setting-service';
 import { settingsService } from './drizzle/queries/settings-service';
 import { trackItemService } from './drizzle/queries/track-item-service';
 import { TrackItem } from './drizzle/schema';
-import { State } from './enums/state';
 import { setupMainHandler } from './utils/setupMainHandler';
 
 const settingsActions = {
@@ -93,11 +91,6 @@ const trackItemActions = {
     },
     findFirstTrackItem: async () => {
         return trackItemService.findFirstTrackItem();
-    },
-    getOnlineStartTime: async () => {
-        const statusItem = stateManager.getCurrentStatusTrackItem();
-
-        return statusItem && statusItem.app === State.Online ? statusItem.beginDate : null;
     },
 };
 

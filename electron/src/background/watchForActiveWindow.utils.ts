@@ -3,7 +3,7 @@ import { logManager } from '../utils/log-manager';
 
 const logger = logManager.getLogger('checkActiveWindow');
 
-export const ACTIVE_WINDOW_CHECK_INTERVAL = 3000;
+export const ACTIVE_WINDOW_CHECK_INTERVAL = 3;
 
 const errorWindowItem: activeWin.Result = {
     platform: 'macos',

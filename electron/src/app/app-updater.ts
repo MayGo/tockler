@@ -1,9 +1,10 @@
 import { app } from 'electron';
 import { autoUpdater, UpdateCheckResult, UpdateInfo } from 'electron-updater';
-import { stateManager } from '../background/state-manager';
 import { config } from '../utils/config';
 import { showNotification } from './notification';
 
+import { getCurrentState } from '../background/watchAndPropagateState';
+import { State } from '../enums/state';
 import { logManager } from '../utils/log-manager';
 import WindowManager from './window-manager';
 
@@ -68,7 +69,7 @@ export default class AppUpdater {
         let isAutoUpdateEnabled = config.persisted.get('isAutoUpdateEnabled');
         isAutoUpdateEnabled = typeof isAutoUpdateEnabled !== 'undefined' ? isAutoUpdateEnabled : true;
 
-        if (isAutoUpdateEnabled && !stateManager.isSystemSleeping()) {
+        if (isAutoUpdateEnabled && getCurrentState() !== State.Offline) {
             logger.debug('Checking for updates.');
             autoUpdater.checkForUpdates();
         } else {

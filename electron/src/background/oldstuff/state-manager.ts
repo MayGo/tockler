@@ -1,13 +1,13 @@
 import { ipcMain } from 'electron';
-import { TrackItemRaw } from '../app/task-analyser';
-import { sendToTrayWindow } from '../app/window-manager';
-import { settingsService } from '../drizzle/queries/settings-service';
-import { trackItemService } from '../drizzle/queries/track-item-service';
-import { TrackItem } from '../drizzle/schema';
-import { State } from '../enums/state';
-import { TrackItemType } from '../enums/track-item-type';
-import { appEmitter } from '../utils/appEmitter';
-import { logManager } from '../utils/log-manager';
+import { TrackItemRaw } from '../../app/task-analyser';
+import { sendToTrayWindow } from '../../app/window-manager';
+import { settingsService } from '../../drizzle/queries/settings-service';
+import { trackItemService } from '../../drizzle/queries/track-item-service';
+import { TrackItem } from '../../drizzle/schema';
+import { State } from '../../enums/state';
+import { TrackItemType } from '../../enums/track-item-type';
+import { appEmitter } from '../../utils/appEmitter';
+import { logManager } from '../../utils/log-manager';
 import { backgroundService } from './background-service';
 import BackgroundUtils from './background-utils';
 
@@ -24,7 +24,7 @@ function toPlainObject(item: any) {
     return { ...item };
 }
 
-export class StateManager {
+class StateManager {
     private isSleeping = false;
 
     private logTrackItemMarkedAsRunning: TrackItem | null = null;
@@ -70,7 +70,7 @@ export class StateManager {
 
     async restoreState() {
         logger.debug('Restoring state.');
-        let logItem = await trackItemService.findRunningLogItem();
+        let logItem = await settingsService.getRunningLogItemAsJson();
         if (logItem) {
             this.logTrackItemMarkedAsRunning = logItem;
             this.setCurrentTrackItem(logItem);

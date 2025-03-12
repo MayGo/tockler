@@ -1,13 +1,13 @@
 import moment from 'moment';
-import { TrackItemType } from '../enums/track-item-type';
-import { logManager } from '../utils/log-manager';
+import { TrackItemType } from '../../enums/track-item-type';
+import { logManager } from '../../utils/log-manager';
 import { backgroundService } from './background-service';
 import BackgroundUtils from './background-utils';
 
-import { TrackItemRaw } from '../app/task-analyser';
-import { settingsService } from '../drizzle/queries/settings-service';
-import { trackItemService } from '../drizzle/queries/track-item-service';
-import { TrackItem } from '../drizzle/schema';
+import { TrackItemRaw } from '../../app/task-analyser';
+import { settingsService } from '../../drizzle/queries/settings-service';
+import { trackItemService } from '../../drizzle/queries/track-item-service';
+import { TrackItem } from '../../drizzle/schema';
 import { stateManager } from './state-manager';
 
 let logger = logManager.getLogger('LogTrackItemJob');
@@ -25,31 +25,7 @@ let logger = logManager.getLogger('LogTrackItemJob');
 
 let onlineItemWhenLastSplit: TrackItem | null = null;
 
-export async function logTrackItemJobRun() {
-    try {
-        if (checkIfIsInCorrectState()) {
-            await updateRunningLogItem();
-        }
-    } catch (error: any) {
-        logger.error(`Error in LogTrackItemJob: ${error.toString()}`, error);
-    }
-}
-
-function checkIfIsInCorrectState() {
-    // saveRunningLogItem can be run before app comes back ONLINE and running log item have to be split.
-    if (!stateManager.isSystemOnline()) {
-        logger.debug('Not online');
-        return false;
-    }
-
-    if (stateManager.isSystemSleeping()) {
-        logger.debug('Computer is sleeping');
-        return false;
-    }
-    return true;
-}
-
-async function updateRunningLogItem() {
+export async function updateRunningLogItem() {
     let oldOnlineItem = onlineItemWhenLastSplit;
     onlineItemWhenLastSplit = stateManager.getCurrentStatusTrackItem();
 
@@ -98,7 +74,7 @@ async function updateRunningLogItem() {
     return savedItem;
 }
 
-async function getTaskSplitDate() {
+export async function getTaskSplitDate() {
     let onlineItem = await trackItemService.findLastOnlineItem();
     if (onlineItem) {
         let settings = await settingsService.fetchWorkSettings();

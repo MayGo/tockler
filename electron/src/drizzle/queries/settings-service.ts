@@ -133,6 +133,7 @@ export class SettingsService {
         return JSON.stringify(jsonData);
     }
 
+    // TODO: cache this
     async getRunningLogItemAsJson() {
         let item = await this.findByName('RUNNING_LOG_ITEM');
         if (!item || !item.jsonData) {

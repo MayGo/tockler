@@ -1,13 +1,13 @@
 import activeWin from 'active-win';
-import { taskAnalyser, TrackItemRaw } from '../app/task-analyser';
-import { TrackItemType } from '../enums/track-item-type';
-import { logManager } from '../utils/log-manager';
+import { taskAnalyser, TrackItemRaw } from '../../app/task-analyser';
+import { TrackItemType } from '../../enums/track-item-type';
+import { logManager } from '../../utils/log-manager';
 import { backgroundService } from './background-service';
 import BackgroundUtils from './background-utils';
 import { stateManager } from './state-manager';
 
 import activeWindow from 'active-win';
-import { TrackItem } from '../drizzle/schema';
+import { TrackItem } from '../../drizzle/schema';
 
 const logger = logManager.getLogger('AppTrackItemJob');
 

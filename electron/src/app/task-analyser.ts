@@ -1,5 +1,4 @@
 import randomcolor from 'randomcolor';
-import { stateManager } from '../background/state-manager';
 import { settingsService } from '../drizzle/queries/settings-service';
 import { TrackItemType } from '../enums/track-item-type';
 import { appEmitter } from '../utils/appEmitter';
@@ -74,7 +73,7 @@ export class TaskAnalyser {
                 let title = this.findFirst(item.title || '', patObj.takeTitle) || item.title || '';
                 let app = this.findFirst(item.title || '', patObj.takeGroup) || foundStr;
 
-                const runningItem = stateManager.getLogTrackItemMarkedAsRunning();
+                const runningItem = await settingsService.getRunningLogItemAsJson();
 
                 const sameItem = runningItem && runningItem.app == app && runningItem.title === title;
 

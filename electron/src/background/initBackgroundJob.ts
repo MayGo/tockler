@@ -2,6 +2,7 @@ import { settingsService } from '../drizzle/queries/settings-service';
 import { logManager } from '../utils/log-manager';
 import { watchAndPropagateState, watchAndPropagateStateRemove } from './watchAndPropagateState';
 import { watchAndSetAppTrackItem, watchAndSetAppTrackItemRemove } from './watchAndSetAppTrackItem';
+import { watchAndSetLogTrackItem, watchAndSetLogTrackItemRemove } from './watchAndSetLogTrackItem';
 import { watchAndSetStatusTrackItem, watchAndSetStatusTrackItemRemove } from './watchAndSetStatusTrackItem';
 import { watchForActiveWindow } from './watchForActiveWindow';
 import { watchForIdleState, watchForIdleStateRemove } from './watchForIdleState';
@@ -21,6 +22,7 @@ export async function initBackgroundJob() {
     watchAndPropagateState();
     watchAndSetStatusTrackItem();
     watchAndSetAppTrackItem();
+    watchAndSetLogTrackItem();
 }
 
 export function cleanupBackgroundJob() {
@@ -31,4 +33,5 @@ export function cleanupBackgroundJob() {
     watchAndPropagateStateRemove();
     watchAndSetStatusTrackItemRemove();
     watchAndSetAppTrackItemRemove();
+    watchAndSetLogTrackItemRemove();
 }

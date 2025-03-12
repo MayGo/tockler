@@ -2,7 +2,6 @@ import { app, ipcMain, nativeTheme } from 'electron';
 import { initIpcActions } from '../API';
 import { config } from '../utils/config';
 
-import { stateManager } from '../background/state-manager';
 import { connectAndSync, db } from '../drizzle/db';
 import { logManager } from '../utils/log-manager';
 import WindowManager, { sendToMainWindow, sendToNotificationWindow, sendToTrayWindow } from './window-manager';
@@ -31,8 +30,6 @@ export default class AppManager {
 
         AppManager.initAppEvents();
         AppManager.setOpenAtLogin();
-
-        await stateManager.restoreState();
     }
 
     static async destroy() {

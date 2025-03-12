@@ -33,10 +33,6 @@ export function findFirstTrackItem(): Promise<ITrackItem> {
     return EventEmitter.emit('findFirstTrackItem');
 }
 
-export function getOnlineStartTime(): Promise<ITrackItem> {
-    return EventEmitter.emit('getOnlineStartTime');
-}
-
 export interface SearchResultI {
     data: Array<ITrackItem>;
     total: number;

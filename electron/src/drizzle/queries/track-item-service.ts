@@ -208,20 +208,6 @@ export class TrackItemService {
 
         return ids;
     }
-
-    async findRunningLogItem() {
-        const results = await db
-            .select()
-            .from(trackItems)
-            .where(
-                and(
-                    eq(trackItems.taskName, TrackItemType.LogTrackItem),
-                    eq(trackItems.endDate, new Date('9999-12-31T23:59:59.999Z').getTime()),
-                ),
-            );
-
-        return results[0];
-    }
 }
 
 export const trackItemService = new TrackItemService();
