@@ -1,46 +1,34 @@
 import { settingsService } from '../drizzle/queries/settings-service';
 import { logManager } from '../utils/log-manager';
-import { appTrackItemJobRun } from './appTrackItemJobRun';
-import { logTrackItemJobRun } from './logTrackItemJobRun';
-import { statusTrackItemJobRun } from './statusTrackItemJobRun';
-import { startIdleStateWatcher } from './watchForIdleState';
-import { startWatchForPowerState } from './watchForPowerState';
-
+import { watchAndPropagateState, watchAndPropagateStateRemove } from './watchAndPropagateState';
+import { watchAndSetAppTrackItem, watchAndSetAppTrackItemRemove } from './watchAndSetAppTrackItem';
+import { watchAndSetStatusTrackItem, watchAndSetStatusTrackItemRemove } from './watchAndSetStatusTrackItem';
+import { watchForActiveWindow } from './watchForActiveWindow';
+import { watchForIdleState, watchForIdleStateRemove } from './watchForIdleState';
+import { watchForPowerState, watchForPowerStateRemove } from './watchForPowerState';
 let logger = logManager.getLogger('BackgroundJob');
 
-let bgInterval: NodeJS.Timeout | null = null;
-
-async function runAll(dataSettings: any) {
-    const { idleAfterSeconds } = dataSettings;
-
-    await appTrackItemJobRun();
-    await statusTrackItemJobRun(idleAfterSeconds);
-    await logTrackItemJobRun();
-}
-
 export async function initBackgroundJob() {
-    logger.debug('Environment:' + process.env['NODE_ENV']);
+    logger.debug('Init background service.');
     const dataSettings = await settingsService.fetchDataSettings();
-    logger.debug('Running background service.', dataSettings);
+    logger.debug('With settings:', dataSettings);
 
-    const { backgroundJobInterval } = dataSettings;
+    const { idleAfterSeconds, backgroundJobInterval } = dataSettings;
 
-    if (bgInterval) {
-        clearInterval(bgInterval);
-    }
-    const { idleAfterSeconds } = dataSettings;
-
-    startIdleStateWatcher(idleAfterSeconds);
-
-    startWatchForPowerState();
-
-    bgInterval = setInterval(() => runAll(dataSettings), backgroundJobInterval * 1000);
+    watchForIdleState(idleAfterSeconds);
+    watchForActiveWindow(backgroundJobInterval);
+    watchForPowerState();
+    watchAndPropagateState();
+    watchAndSetStatusTrackItem();
+    watchAndSetAppTrackItem();
 }
 
 export function cleanupBackgroundJob() {
     logger.debug('Cleaning up background job');
-    if (bgInterval) {
-        clearInterval(bgInterval);
-        bgInterval = null;
-    }
+
+    watchForIdleStateRemove();
+    watchForPowerStateRemove();
+    watchAndPropagateStateRemove();
+    watchAndSetStatusTrackItemRemove();
+    watchAndSetAppTrackItemRemove();
 }

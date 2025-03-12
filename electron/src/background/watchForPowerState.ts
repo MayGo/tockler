@@ -1,9 +1,10 @@
 import { powerMonitor } from 'electron';
 import { appEmitter } from '../utils/appEmitter';
 import { logManager } from '../utils/log-manager';
+
 const logger = logManager.getLogger('WatchForPowerState');
 
-export function startWatchForPowerState() {
+export function watchForPowerState() {
     powerMonitor.on('suspend', function () {
         logger.debug('The system is going to sleep');
         appEmitter.emit('system-is-sleeping');
@@ -15,7 +16,7 @@ export function startWatchForPowerState() {
     });
 }
 
-export function stopWatchForPowerState() {
+export function watchForPowerStateRemove() {
     powerMonitor.removeAllListeners('suspend');
     powerMonitor.removeAllListeners('resume');
 }
