@@ -35,15 +35,22 @@ export function visualizeTrackItems(items: TrackItem[], startTime?: number) {
 
         // Format duration for display
         const duration = ((item.endDate - item.beginDate) / 1000).toFixed(1) + 's';
+        const beginDate = ((item.beginDate - minTime) / 1000).toFixed(1) + 's';
+        const endDate = ((item.endDate - minTime) / 1000).toFixed(1) + 's';
 
-        console.log(`${index + 1}. ${item.app.padEnd(10)} | ${bar}`);
+        const headingSize = 10;
+        const idSize = 8;
+        const dateSize = 8;
+        const id = `ID=${item.id}`;
+
+        console.log(`${index + 1}. ${item.app.padEnd(headingSize)}${bar}`);
         console.log(
-            `   ID: ${item.id}` +
-                ` | ` +
-                `${((item.beginDate - minTime) / 1000).toFixed(1)}s` +
-                ` - ` +
-                `${((item.endDate - minTime) / 1000).toFixed(1)}s` +
-                ` | ` +
+            `   ${id.padEnd(idSize)}` +
+                ' '.repeat(start) +
+                `${beginDate.padEnd(dateSize)}` +
+                ' '.repeat(Math.max(0, length - dateSize)) +
+                `${endDate.padEnd(dateSize)}` +
+                ` = ` +
                 `${duration}`,
         );
         console.log(`.`.repeat(80));

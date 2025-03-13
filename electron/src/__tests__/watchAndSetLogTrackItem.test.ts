@@ -252,7 +252,7 @@ describe('watchAndSetLogTrackItem', () => {
         visualizeTrackItems(items, NOW);
     });
 
-    it.only('should maintain currentLogItem until explicitly stopped, but create new items when Online', async () => {
+    it.only('should maintain currentLogItem until explicitly stopped', async () => {
         const { appEmitter } = await import('../utils/appEmitter');
         const { watchAndSetLogTrackItem } = await import('../background/watchAndSetLogTrackItem');
         await watchAndSetLogTrackItem();
@@ -268,10 +268,6 @@ describe('watchAndSetLogTrackItem', () => {
         // Verify initial item was created
         let items = await expectNrOfItems(1, db);
 
-        // Visualize initial state
-        console.log('\nInitial state:');
-        visualizeTrackItems(items, NOW);
-
         // Change to Idle state
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 1000);
         appEmitter.emit('state-changed', State.Idle);
@@ -286,10 +282,6 @@ describe('watchAndSetLogTrackItem', () => {
             beginDate: NOW,
             endDate: NOW + 1000,
         });
-
-        // Visualize after going idle
-        console.log('\nAfter going Idle:');
-        visualizeTrackItems(items, NOW);
 
         // Change to Online state - should create a new item
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 2000);
@@ -316,15 +308,73 @@ describe('watchAndSetLogTrackItem', () => {
             endDate: NOW + 2000 + NEW_ITEM_END_DATE_OFFSET,
         });
 
-        // Visualize after coming back online
-        console.log('\nAfter coming back Online:');
         visualizeTrackItems(items, NOW);
 
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 3000);
         appEmitter.emit('state-changed', State.Offline);
 
+        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 4000);
+        appEmitter.emit('state-changed', State.Online);
+
+        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 5000);
+        appEmitter.emit('state-changed', State.Offline);
+
+        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 6000);
+        appEmitter.emit('state-changed', State.Online);
+
+        // Verify a new item was created
+        items = await expectNrOfItems(2, db);
+    });
+
+    it.only('should not create new items when stopped', async () => {
+        /*
+--------------------------------------------------------------------------------
+1. TestApp   █████████████
+   ID=1    0.0s           1.0s     = 1.0s
+................................................................................
+2. TestApp                                 ██████████████████████
+   ID=2                                  2.0s                    3.0s     = 1.0s
+................................................................................
+--------------------------------------------------------------------------------
+        */
+        const { appEmitter } = await import('../utils/appEmitter');
+        const { watchAndSetLogTrackItem } = await import('../background/watchAndSetLogTrackItem');
+        await watchAndSetLogTrackItem();
+
+        const testData: TrackItemRaw = {
+            app: 'TestApp',
+            title: 'Test Title',
+        };
+
+        // Create initial log item
+        await sendStartNewLogItemEvent(testData);
+
+        // Change to Online state - should create a new item
+        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 1000);
+        appEmitter.emit('state-changed', State.Offline);
+
+        await expectNrOfItems(1, db);
+
+        // Change to Online state - should create a new item
+        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 2000);
+        appEmitter.emit('state-changed', State.Online);
+
+        // Verify a new item was created
+        let items = await expectNrOfItems(1, db);
+
+        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 3000);
+        appEmitter.emit('state-changed', State.Idle);
+
+        await expectNrOfItems(2, db);
+
+        // Change to Online state - should create a new item
+        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 4000);
+        appEmitter.emit('state-changed', State.Online);
+
         // Verify no new items were created, just the end date updated
         items = await expectNrOfItems(2, db);
+
+        visualizeTrackItems(items, NOW);
 
         expect(items[0]).toStrictEqual({
             ...emptyData,
@@ -334,54 +384,8 @@ describe('watchAndSetLogTrackItem', () => {
             endDate: NOW + 2000,
         });
 
-        // Visualize after going offline
-        console.log('\nAfter going Offline:');
-        visualizeTrackItems(items, NOW);
-
-        // Explicitly stop the log item
-        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 4000);
-        await sendEndRunningLogItemEvent();
-
-        // Verify item end date was updated
-        items = await expectNrOfItems(2, db);
-        const firstItem = {
-            ...emptyData,
-            ...testData,
-            id: 2,
-            beginDate: NOW + 2000,
-            endDate: NOW + 4000,
-        };
-        expect(items[1]).toStrictEqual(firstItem);
-
-        // Visualize after ending the item
-        console.log('\nAfter explicitly ending the running item:');
-        visualizeTrackItems(items, NOW);
-
-        // Start a new log item
-        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 5000);
-
-        const testData2: TrackItemRaw = {
-            app: 'TestApp2',
-            title: 'Test Title 2',
-        };
-
-        await sendStartNewLogItemEvent(testData2);
-
-        // Verify a new item was created
-        items = await expectNrOfItems(3, db);
-        // First item should be the same as before
-        expect(items[1]).toStrictEqual(firstItem);
-
-        expect(items[2]).toStrictEqual({
-            ...emptyData,
-            ...testData2,
-            id: 3,
-            beginDate: NOW + 5000,
-            endDate: NOW + 5000,
-        });
-
-        // Visualize final state
-        console.log('\nFinal state after creating a new item:');
+        // Visualize after stopping the item
+        console.log('\nAfter stopping the running item:');
         visualizeTrackItems(items, NOW);
     });
 });

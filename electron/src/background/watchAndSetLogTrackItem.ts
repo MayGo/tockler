@@ -15,15 +15,15 @@ const logger = logManager.getLogger('watchAndSetStatusTrackItem');
 let currentLogItem: TrackItem | null = null;
 
 async function cutLogTrackItem(state: State) {
-    console.warn('State changed..................', state);
+    const now = Date.now();
+    console.warn('-'.repeat(100));
+    console.warn(`State changed to ${state}=>${now}`);
 
     if (!currentLogItem) {
         logger.debug('No log item to cut');
 
         return;
     }
-
-    const now = Date.now();
 
     // End current log item
     console.warn('Updating end date of current log item');
