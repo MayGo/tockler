@@ -5,7 +5,7 @@ import { NormalizedActiveWindow } from '../background/watchForActiveWindow.utils
 import { TrackItem, trackItems } from '../drizzle/schema';
 import { TrackItemType } from '../enums/track-item-type';
 import { setupTestDb } from './db.testUtils';
-import { expectNrOfItems, selectAllAppItems, selectAppItem } from './query.testUtils';
+import { selectAllAppItems } from './query.testUtils';
 import { getTimestamp } from './time.testUtils';
 
 // Create mocks
@@ -69,8 +69,9 @@ describe('watchAndSetLogTrackItem', () => {
         appEmitter.emit('active-window-changed', firstApp);
         appEmitter.emit('active-window-changed', secondApp);
 
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
         // Verify item was created in the database
-        const items = await selectAppItem(db, firstApp.app);
+        const items = await selectAllAppItems(db);
 
         expect(items.length).toBe(1);
         expect(items[0].app).toBe('FirstApp');
@@ -105,11 +106,11 @@ describe('watchAndSetLogTrackItem', () => {
 
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 1000);
         appEmitter.emit('active-window-changed', secondApp);
-        await expectNrOfItems(1, db);
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
 
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 2000);
         appEmitter.emit('active-window-changed', thirdApp);
-        await expectNrOfItems(2, db);
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(2));
 
         // Verify item was created in the database
         const items = await selectAllAppItems(db);

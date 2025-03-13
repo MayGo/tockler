@@ -8,8 +8,8 @@ import { TrackItem, trackItems } from '../drizzle/schema';
 import { State } from '../enums/state';
 import { TrackItemType } from '../enums/track-item-type';
 import { setupTestDb } from './db.testUtils';
-import { changeStateAndWait, expectNrOfItems, selectAllAppItems } from './query.testUtils';
-import { getTimestamp, wait } from './time.testUtils';
+import { changeStateAndMockDate, selectAllAppItems } from './query.testUtils';
+import { getTimestamp } from './time.testUtils';
 import { visualizeTrackItems } from './visualize.testUtils';
 
 // Store handlers for IPC events
@@ -83,6 +83,13 @@ describe('watchAndSetLogTrackItem', () => {
     });
 
     it('start-new-log-item should save the log item', async () => {
+        /*
+--------------------------------------------------------------------------------
+1. TestApp   
+   ID=1    0.0s    0.0s     = 0.0s
+................................................................................
+--------------------------------------------------------------------------------
+*/
         const { watchAndSetLogTrackItem } = await import('../background/watchAndSetLogTrackItem');
 
         await watchAndSetLogTrackItem();
@@ -97,7 +104,7 @@ describe('watchAndSetLogTrackItem', () => {
         await sendStartNewLogItemEvent(testData);
 
         // Verify item was created in the database
-        const items = await selectLogItem('TestApp');
+        const items = await selectAllAppItems(db);
 
         expect(items.length).toBe(1);
         expect(items[0].app).toBe('TestApp');
@@ -111,6 +118,13 @@ describe('watchAndSetLogTrackItem', () => {
     });
 
     it('end-running-log-item should update the log items end date', async () => {
+        /*
+--------------------------------------------------------------------------------
+1. TestApp   ████████████████████████████████████████████████████████████
+   ID=1    0.0s                                                        1.0s     = 1.0s
+................................................................................
+--------------------------------------------------------------------------------
+*/
         const { watchAndSetLogTrackItem } = await import('../background/watchAndSetLogTrackItem');
 
         await watchAndSetLogTrackItem();
@@ -123,12 +137,7 @@ describe('watchAndSetLogTrackItem', () => {
         await sendStartNewLogItemEvent(testData);
 
         // Verify the item was created
-        const createdItems = await selectLogItem('TestApp');
-        expect(createdItems.length).toBe(1);
-
-        // Visualize initial state
-        console.log('\nInitial state:');
-        visualizeTrackItems(createdItems, NOW);
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
 
         // Wait a moment to ensure the endDate will be different
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 1000);
@@ -136,17 +145,22 @@ describe('watchAndSetLogTrackItem', () => {
         await sendEndRunningLogItemEvent();
 
         // Verify the item was updated in the database
-        const updatedItems = await selectLogItem('TestApp');
+        const items = await selectAllAppItems(db);
 
-        expect(updatedItems.length).toBe(1);
-        expect(updatedItems[0].endDate).toBe(NOW + 1000);
+        expect(items.length).toBe(1);
+        expect(items[0].endDate).toBe(NOW + 1000);
 
-        // Visualize after update
-        console.log('\nAfter ending running item:');
-        visualizeTrackItems(updatedItems, NOW);
+        visualizeTrackItems(items, NOW);
     });
 
     it('state-changed event should end current log item', async () => {
+        /*
+--------------------------------------------------------------------------------
+1. TestApp   ████████████████████████████████████████████████████████████
+   ID=1    0.0s                                                        1.0s     = 1.0s
+................................................................................
+--------------------------------------------------------------------------------
+*/
         const { appEmitter } = await import('../utils/appEmitter');
         const { watchAndSetLogTrackItem } = await import('../background/watchAndSetLogTrackItem');
         await watchAndSetLogTrackItem();
@@ -159,22 +173,17 @@ describe('watchAndSetLogTrackItem', () => {
         await sendStartNewLogItemEvent(testData);
 
         // Verify item was created
-        const createdItems = await selectLogItem('TestApp');
-        expect(createdItems.length).toBe(1);
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
 
-        // Visualize initial state
-        console.log('\nInitial state:');
-        visualizeTrackItems(createdItems, NOW);
+        // Idle
+        await changeStateAndMockDate(appEmitter, State.Idle, NOW + 1000);
 
-        // Simulate time passing
-        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 1000);
-
-        appEmitter.emit('state-changed', State.Idle);
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
 
         // Verify the item was updated with new end date
-        const updatedItems = await selectLogItem('TestApp');
-        expect(updatedItems.length).toBe(1);
-        expect(updatedItems[0]).toStrictEqual({
+        const items = await selectAllAppItems(db);
+        expect(items.length).toBe(1);
+        expect(items[0]).toStrictEqual({
             ...emptyData,
             ...testData,
             id: 1,
@@ -182,12 +191,20 @@ describe('watchAndSetLogTrackItem', () => {
             endDate: NOW + 1000,
         });
 
-        // Visualize after state change
-        console.log('\nAfter state changed to Idle:');
-        visualizeTrackItems(updatedItems, NOW);
+        visualizeTrackItems(items, NOW);
     });
 
     it('state-changed event should create new log item when transitioning to Online state', async () => {
+        /*
+--------------------------------------------------------------------------------
+1. TestApp   █████████████████████████████
+   ID=1    0.0s                         1.0s     = 1.0s
+................................................................................
+2. TestApp                                                            ███
+   ID=2                                                             2.0s    2.1s     = 0.1s
+................................................................................
+--------------------------------------------------------------------------------
+*/
         const { appEmitter } = await import('../utils/appEmitter');
         const { watchAndSetLogTrackItem } = await import('../background/watchAndSetLogTrackItem');
         await watchAndSetLogTrackItem();
@@ -201,17 +218,14 @@ describe('watchAndSetLogTrackItem', () => {
         await sendStartNewLogItemEvent(testData);
 
         // Get the initial item
-        let items = await expectNrOfItems(1, db);
-
-        // Visualize initial state
-        console.log('\nInitial state:');
-        visualizeTrackItems(items, NOW);
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
+        let items = await selectAllAppItems(db);
 
         // Transition to idle - should update end date to current time
-        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 1000);
-        appEmitter.emit('state-changed', State.Idle);
+        await changeStateAndMockDate(appEmitter, State.Idle, NOW + 1000);
 
-        items = await expectNrOfItems(1, db);
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
+        items = await selectAllAppItems(db);
 
         expect(items[0]).toStrictEqual({
             ...emptyData,
@@ -221,38 +235,42 @@ describe('watchAndSetLogTrackItem', () => {
             endDate: NOW + 1000,
         });
 
-        // Visualize after going idle
-        console.log('\nAfter going Idle:');
-        visualizeTrackItems(items, NOW);
-
         // Come back online - should create a NEW log item
-        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 3000);
-        appEmitter.emit('state-changed', State.Online);
+        await changeStateAndMockDate(appEmitter, State.Online, NOW + 2000);
 
-        items = await expectNrOfItems(2, db);
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(2));
+        items = await selectAllAppItems(db);
 
         expect(items[0]).toStrictEqual({
             ...emptyData,
             ...testData,
             id: 1,
             beginDate: NOW,
-            endDate: NOW + 3000,
+            endDate: NOW + 1000,
         });
 
         expect(items[1]).toStrictEqual({
             ...emptyData,
             ...testData,
             id: 2,
-            beginDate: NOW + 3000,
-            endDate: NOW + 3000 + NEW_ITEM_END_DATE_OFFSET,
+            beginDate: NOW + 2000,
+            endDate: NOW + 2000 + NEW_ITEM_END_DATE_OFFSET,
         });
 
-        // Visualize after going back online
-        console.log('\nAfter coming back Online:');
         visualizeTrackItems(items, NOW);
     });
 
     it('should maintain currentLogItem until explicitly stopped', async () => {
+        /*
+--------------------------------------------------------------------------------
+1. TestApp   ████████████████████
+   ID=1    0.0s                1.0s     = 1.0s
+................................................................................
+2. TestApp                                           ████████████████████
+   ID=2                                            2.0s                3.0s     = 1.0s
+................................................................................
+--------------------------------------------------------------------------------
+*/
         const { appEmitter } = await import('../utils/appEmitter');
         const { watchAndSetLogTrackItem } = await import('../background/watchAndSetLogTrackItem');
         await watchAndSetLogTrackItem();
@@ -266,13 +284,14 @@ describe('watchAndSetLogTrackItem', () => {
         await sendStartNewLogItemEvent(testData);
 
         // Verify initial item was created
-        let items = await expectNrOfItems(1, db);
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
 
         // Change to Idle state
-        await changeStateAndWait(appEmitter, State.Idle, NOW + 1000);
+        await changeStateAndMockDate(appEmitter, State.Idle, NOW + 1000);
 
         // Verify no new items were created, just the end date updated
-        items = await expectNrOfItems(1, db);
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
+        let items = await selectAllAppItems(db);
 
         expect(items[0]).toStrictEqual({
             ...emptyData,
@@ -282,11 +301,11 @@ describe('watchAndSetLogTrackItem', () => {
             endDate: NOW + 1000,
         });
 
-        // Change to Online state - should create a new item
-        await changeStateAndWait(appEmitter, State.Online, NOW + 2000);
+        // Online
+        await changeStateAndMockDate(appEmitter, State.Online, NOW + 2000);
 
-        // Verify a new item was created
-        items = await expectNrOfItems(2, db);
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(2));
+        items = await selectAllAppItems(db);
 
         // First item's end date should be when we went idle
         expect(items[0]).toStrictEqual({
@@ -294,7 +313,7 @@ describe('watchAndSetLogTrackItem', () => {
             ...testData,
             id: 1,
             beginDate: NOW,
-            endDate: NOW + 2000,
+            endDate: NOW + 1000,
         });
 
         // Second item should be new and start when we came back online
@@ -306,33 +325,31 @@ describe('watchAndSetLogTrackItem', () => {
             endDate: NOW + 2000 + NEW_ITEM_END_DATE_OFFSET,
         });
 
+        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 3000);
+
         await sendEndRunningLogItemEvent();
 
-        const waitTime = 10;
-        await wait(waitTime);
-        await changeStateAndWait(appEmitter, State.Offline, NOW + 3000);
-        await wait(waitTime);
-        await changeStateAndWait(appEmitter, State.Online, NOW + 4000);
-        await wait(waitTime);
-        await changeStateAndWait(appEmitter, State.Offline, NOW + 5000);
-        await wait(waitTime);
-        await changeStateAndWait(appEmitter, State.Online, NOW + 6000);
-        await wait(waitTime);
+        await changeStateAndMockDate(appEmitter, State.Offline, NOW + 4000);
+        await changeStateAndMockDate(appEmitter, State.Online, NOW + 5000);
+        await changeStateAndMockDate(appEmitter, State.Offline, NOW + 6000);
+        await changeStateAndMockDate(appEmitter, State.Online, NOW + 7000);
 
-        // Verify a new item was created
         await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(2));
 
         visualizeTrackItems(await selectAllAppItems(db), NOW);
     });
 
-    it.only('should not create new items when stopped', async () => {
+    it('should not create new items when stopped', async () => {
         /*
 --------------------------------------------------------------------------------
-1. TestApp   █████████████
+1. TestApp   ███████████████
    ID=1    0.0s           1.0s     = 1.0s
 ................................................................................
-2. TestApp                                 ██████████████████████
-   ID=2                                  2.0s                    3.0s     = 1.0s
+2. TestApp                                ███████████████
+   ID=2                                 2.0s           3.0s     = 1.0s
+................................................................................
+3. TestApp                                                              █
+   ID=3                                                               4.0s    4.1s     = 0.1s
 ................................................................................
 --------------------------------------------------------------------------------
         */
@@ -347,36 +364,32 @@ describe('watchAndSetLogTrackItem', () => {
 
         // Create initial log item
         await sendStartNewLogItemEvent(testData);
-        await wait(100);
-
-        // Change to Offline state - wait for completion
-        await changeStateAndWait(appEmitter, State.Offline, NOW + 1000);
         await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
 
-        // Change to Online state - wait for completion
-        await changeStateAndWait(appEmitter, State.Online, NOW + 2000);
+        // Offline
+        await changeStateAndMockDate(appEmitter, State.Offline, NOW + 1000);
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
+
+        // Online
+        await changeStateAndMockDate(appEmitter, State.Online, NOW + 2000);
         await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(2));
 
-        // Change to Idle state - wait for completion
-        await changeStateAndWait(appEmitter, State.Idle, NOW + 3000);
+        // Idle
+        await changeStateAndMockDate(appEmitter, State.Idle, NOW + 3000);
         await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(2));
 
-        // Change to Online state - wait for completion
-        await changeStateAndWait(appEmitter, State.Online, NOW + 4000);
+        // Online
+        await changeStateAndMockDate(appEmitter, State.Online, NOW + 4000);
         await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(3));
+        visualizeTrackItems(await selectAllAppItems(db), NOW);
 
         const items = await selectAllAppItems(db);
-
         expect(items[0]).toStrictEqual({
             ...emptyData,
             ...testData,
             id: 1,
             beginDate: NOW,
-            endDate: NOW + 2000,
+            endDate: NOW + 1000,
         });
-
-        // Visualize after stopping the item
-        console.log('\nAfter stopping the running item:');
-        visualizeTrackItems(await selectAllAppItems(db), NOW);
     });
 });

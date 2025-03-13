@@ -21,13 +21,15 @@ async function cutLogTrackItem(state: State) {
 
     if (!currentLogItem) {
         logger.debug('No log item to cut');
-
         return;
     }
 
     // End current log item
-    console.warn('Updating end date of current log item');
-    await db.update(trackItems).set({ endDate: now }).where(eq(trackItems.id, currentLogItem.id)).execute();
+    if (state !== State.Online) {
+        console.warn('Updating end date of current log item');
+        const query = db.update(trackItems).set({ endDate: now }).where(eq(trackItems.id, currentLogItem.id));
+        await query.execute();
+    }
 
     // For Online state, create a new log item
     if (state === State.Online) {
@@ -109,21 +111,21 @@ export async function watchAndSetLogTrackItem() {
         currentLogItem = runningLogItem;
     }
 
-    appEmitter.on('state-changed', (state) => {
-        cutLogTrackItem(state);
+    appEmitter.on('state-changed', async (state) => {
+        await cutLogTrackItem(state);
     });
 
-    ipcMain.on('start-new-log-item', (_, rawItem) => {
-        createNewRunningLogTrackItem(rawItem);
+    ipcMain.on('start-new-log-item', async (_, rawItem) => {
+        await createNewRunningLogTrackItem(rawItem);
     });
 
-    ipcMain.on('end-running-log-item', (_event) => {
-        stopRunningLogTrackItem(Date.now());
+    ipcMain.on('end-running-log-item', async (_event) => {
+        await stopRunningLogTrackItem(Date.now());
     });
 
-    appEmitter.on('start-new-log-item2', (rawItem) => {
+    appEmitter.on('start-new-log-item2', async (rawItem) => {
         logger.debug('start-new-log-item2 event');
-        createNewRunningLogTrackItem(rawItem);
+        await createNewRunningLogTrackItem(rawItem);
     });
 }
 

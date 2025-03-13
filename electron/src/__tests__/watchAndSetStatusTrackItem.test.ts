@@ -6,7 +6,7 @@ import { TrackItem, trackItems } from '../drizzle/schema';
 import { State } from '../enums/state';
 import { TrackItemType } from '../enums/track-item-type';
 import { setupTestDb } from './db.testUtils';
-import { expectNrOfItems } from './query.testUtils';
+import { selectAllAppItems } from './query.testUtils';
 import { getTimestamp } from './time.testUtils';
 
 // Create mocks
@@ -89,17 +89,17 @@ describe('watchAndSetStatusTrackItem', () => {
         // trigger new item creation
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 1000);
         appEmitter.emit('state-changed', State.Idle);
-        await expectNrOfItems(1, db);
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
 
         // should save the new item dates
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 2000);
         appEmitter.emit('state-changed', State.Online);
-        await expectNrOfItems(2, db);
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(2));
 
         // should save the new item dates
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 3000);
         appEmitter.emit('state-changed', State.Idle);
-        await expectNrOfItems(3, db);
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(3));
 
         const items = await selectItem();
 
