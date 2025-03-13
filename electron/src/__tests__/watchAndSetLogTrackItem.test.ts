@@ -8,7 +8,9 @@ import { TrackItem, trackItems } from '../drizzle/schema';
 import { State } from '../enums/state';
 import { TrackItemType } from '../enums/track-item-type';
 import { setupTestDb } from './db.testUtils';
+import { expectNrOfItems } from './query.testUtils';
 import { getTimestamp } from './time.testUtils';
+import { visualizeTrackItems } from './visualize.testUtils';
 
 // Store handlers for IPC events
 const eventHandlers: Record<string, any> = {};
@@ -103,6 +105,9 @@ describe('watchAndSetLogTrackItem', () => {
         expect(items[0].color).toBe('#ffffff');
         expect(items[0].url).toBe('http://test.com');
         expect(items[0].taskName).toBe(TrackItemType.LogTrackItem);
+
+        // Visualize the track items
+        visualizeTrackItems(items, NOW);
     });
 
     it('end-running-log-item should update the log items end date', async () => {
@@ -121,6 +126,10 @@ describe('watchAndSetLogTrackItem', () => {
         const createdItems = await selectLogItem('TestApp');
         expect(createdItems.length).toBe(1);
 
+        // Visualize initial state
+        console.log('\nInitial state:');
+        visualizeTrackItems(createdItems, NOW);
+
         // Wait a moment to ensure the endDate will be different
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 1000);
 
@@ -130,8 +139,11 @@ describe('watchAndSetLogTrackItem', () => {
         const updatedItems = await selectLogItem('TestApp');
 
         expect(updatedItems.length).toBe(1);
-
         expect(updatedItems[0].endDate).toBe(NOW + 1000);
+
+        // Visualize after update
+        console.log('\nAfter ending running item:');
+        visualizeTrackItems(updatedItems, NOW);
     });
 
     it('state-changed event should end current log item', async () => {
@@ -150,6 +162,10 @@ describe('watchAndSetLogTrackItem', () => {
         const createdItems = await selectLogItem('TestApp');
         expect(createdItems.length).toBe(1);
 
+        // Visualize initial state
+        console.log('\nInitial state:');
+        visualizeTrackItems(createdItems, NOW);
+
         // Simulate time passing
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 1000);
 
@@ -165,46 +181,38 @@ describe('watchAndSetLogTrackItem', () => {
             beginDate: NOW,
             endDate: NOW + 1000,
         });
+
+        // Visualize after state change
+        console.log('\nAfter state changed to Idle:');
+        visualizeTrackItems(updatedItems, NOW);
     });
 
-    it('state-changed event should start new log item if state changes to idle-online-idle', async () => {
+    it('state-changed event should create new log item when transitioning to Online state', async () => {
         const { appEmitter } = await import('../utils/appEmitter');
         const { watchAndSetLogTrackItem } = await import('../background/watchAndSetLogTrackItem');
         await watchAndSetLogTrackItem();
-
-        const expectNrOfItems = async (nr: number) => {
-            await vi.waitFor(async () => {
-                const items = await selectLogItem('TestApp');
-                expect(items.length).toBe(nr);
-            });
-        };
 
         const testData: TrackItemRaw = {
             app: 'TestApp',
             title: 'Test Title',
         };
-        // create a log item and wait for it to be updated
-        await sendStartNewLogItemEvent(testData);
-        await expectNrOfItems(1);
 
-        // trigger new item creation
+        // Start with creating an item (normally this happens when we're online)
+        await sendStartNewLogItemEvent(testData);
+
+        // Get the initial item
+        let items = await expectNrOfItems(1, db);
+
+        // Visualize initial state
+        console.log('\nInitial state:');
+        visualizeTrackItems(items, NOW);
+
+        // Transition to idle - should update end date to current time
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 1000);
         appEmitter.emit('state-changed', State.Idle);
-        await expectNrOfItems(2);
 
-        // should save the new item dates
-        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 2000);
-        appEmitter.emit('state-changed', State.Online);
-        await expectNrOfItems(3);
+        items = await expectNrOfItems(1, db);
 
-        // should save the new item dates
-        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 3000);
-        appEmitter.emit('state-changed', State.Idle);
-        await expectNrOfItems(3);
-
-        const items = await selectLogItem('TestApp');
-
-        expect(items.length).toBe(4);
         expect(items[0]).toStrictEqual({
             ...emptyData,
             ...testData,
@@ -212,27 +220,168 @@ describe('watchAndSetLogTrackItem', () => {
             beginDate: NOW,
             endDate: NOW + 1000,
         });
+
+        // Visualize after going idle
+        console.log('\nAfter going Idle:');
+        visualizeTrackItems(items, NOW);
+
+        // Come back online - should create a NEW log item
+        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 3000);
+        appEmitter.emit('state-changed', State.Online);
+
+        items = await expectNrOfItems(2, db);
+
+        expect(items[0]).toStrictEqual({
+            ...emptyData,
+            ...testData,
+            id: 1,
+            beginDate: NOW,
+            endDate: NOW + 3000,
+        });
+
         expect(items[1]).toStrictEqual({
             ...emptyData,
             ...testData,
             id: 2,
-            beginDate: NOW + 1000,
-            endDate: NOW + 2000,
-        });
-
-        expect(items[2]).toStrictEqual({
-            ...emptyData,
-            ...testData,
-            id: 3,
-            beginDate: NOW + 2000,
-            endDate: NOW + 3000,
-        });
-        expect(items[3]).toStrictEqual({
-            ...emptyData,
-            ...testData,
-            id: 4,
             beginDate: NOW + 3000,
             endDate: NOW + 3000 + NEW_ITEM_END_DATE_OFFSET,
         });
+
+        // Visualize after going back online
+        console.log('\nAfter coming back Online:');
+        visualizeTrackItems(items, NOW);
+    });
+
+    it.only('should maintain currentLogItem until explicitly stopped, but create new items when Online', async () => {
+        const { appEmitter } = await import('../utils/appEmitter');
+        const { watchAndSetLogTrackItem } = await import('../background/watchAndSetLogTrackItem');
+        await watchAndSetLogTrackItem();
+
+        const testData: TrackItemRaw = {
+            app: 'TestApp',
+            title: 'Test Title',
+        };
+
+        // Create initial log item
+        await sendStartNewLogItemEvent(testData);
+
+        // Verify initial item was created
+        let items = await expectNrOfItems(1, db);
+
+        // Visualize initial state
+        console.log('\nInitial state:');
+        visualizeTrackItems(items, NOW);
+
+        // Change to Idle state
+        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 1000);
+        appEmitter.emit('state-changed', State.Idle);
+
+        // Verify no new items were created, just the end date updated
+        items = await expectNrOfItems(1, db);
+
+        expect(items[0]).toStrictEqual({
+            ...emptyData,
+            ...testData,
+            id: 1,
+            beginDate: NOW,
+            endDate: NOW + 1000,
+        });
+
+        // Visualize after going idle
+        console.log('\nAfter going Idle:');
+        visualizeTrackItems(items, NOW);
+
+        // Change to Online state - should create a new item
+        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 2000);
+        appEmitter.emit('state-changed', State.Online);
+
+        // Verify a new item was created
+        items = await expectNrOfItems(2, db);
+
+        // First item's end date should be when we went idle
+        expect(items[0]).toStrictEqual({
+            ...emptyData,
+            ...testData,
+            id: 1,
+            beginDate: NOW,
+            endDate: NOW + 2000,
+        });
+
+        // Second item should be new and start when we came back online
+        expect(items[1]).toStrictEqual({
+            ...emptyData,
+            ...testData,
+            id: 2,
+            beginDate: NOW + 2000,
+            endDate: NOW + 2000 + NEW_ITEM_END_DATE_OFFSET,
+        });
+
+        // Visualize after coming back online
+        console.log('\nAfter coming back Online:');
+        visualizeTrackItems(items, NOW);
+
+        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 3000);
+        appEmitter.emit('state-changed', State.Offline);
+
+        // Verify no new items were created, just the end date updated
+        items = await expectNrOfItems(2, db);
+
+        expect(items[0]).toStrictEqual({
+            ...emptyData,
+            ...testData,
+            id: 1,
+            beginDate: NOW,
+            endDate: NOW + 2000,
+        });
+
+        // Visualize after going offline
+        console.log('\nAfter going Offline:');
+        visualizeTrackItems(items, NOW);
+
+        // Explicitly stop the log item
+        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 4000);
+        await sendEndRunningLogItemEvent();
+
+        // Verify item end date was updated
+        items = await expectNrOfItems(2, db);
+        const firstItem = {
+            ...emptyData,
+            ...testData,
+            id: 2,
+            beginDate: NOW + 2000,
+            endDate: NOW + 4000,
+        };
+        expect(items[1]).toStrictEqual(firstItem);
+
+        // Visualize after ending the item
+        console.log('\nAfter explicitly ending the running item:');
+        visualizeTrackItems(items, NOW);
+
+        // Start a new log item
+        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 5000);
+
+        const testData2: TrackItemRaw = {
+            app: 'TestApp2',
+            title: 'Test Title 2',
+        };
+
+        await sendStartNewLogItemEvent(testData2);
+
+        // Verify a new item was created
+        items = await expectNrOfItems(3, db);
+        // First item should be the same as before
+        expect(items[1]).toStrictEqual(firstItem);
+
+        expect(items[2]).toStrictEqual({
+            ...emptyData,
+            ...testData2,
+            id: 3,
+            beginDate: NOW + 5000,
+            endDate: NOW + 5000,
+        });
+
+        // Visualize final state
+        console.log('\nFinal state after creating a new item:');
+        visualizeTrackItems(items, NOW);
     });
 });

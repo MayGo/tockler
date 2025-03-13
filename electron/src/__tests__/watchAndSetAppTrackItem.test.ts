@@ -1,11 +1,11 @@
 import { Client } from '@libsql/client';
-import { asc, eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/libsql';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { NormalizedActiveWindow } from '../background/watchForActiveWindow.utils';
 import { TrackItem, trackItems } from '../drizzle/schema';
 import { TrackItemType } from '../enums/track-item-type';
 import { setupTestDb } from './db.testUtils';
+import { expectNrOfItems, selectAllAppItems, selectAppItem } from './query.testUtils';
 import { getTimestamp } from './time.testUtils';
 
 // Create mocks
@@ -25,21 +25,6 @@ async function cleanupTestDb() {
 }
 
 const NOW = getTimestamp('2023-01-10T12:00:00');
-
-async function selectAppItem(app: string) {
-    return db.select().from(trackItems).where(eq(trackItems.app, app)).orderBy(asc(trackItems.beginDate)).execute();
-}
-
-async function selectAllAppItems() {
-    return db.select().from(trackItems).execute();
-}
-
-const expectNrOfItems = async (nr: number) => {
-    await vi.waitFor(async () => {
-        const items = await selectAllAppItems();
-        expect(items.length).toBe(nr);
-    });
-};
 
 const emptyData: Partial<TrackItem> = {
     color: null,
@@ -85,7 +70,7 @@ describe('watchAndSetLogTrackItem', () => {
         appEmitter.emit('active-window-changed', secondApp);
 
         // Verify item was created in the database
-        const items = await selectAppItem('FirstApp');
+        const items = await selectAppItem(db, firstApp.app);
 
         expect(items.length).toBe(1);
         expect(items[0].app).toBe('FirstApp');
@@ -120,14 +105,14 @@ describe('watchAndSetLogTrackItem', () => {
 
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 1000);
         appEmitter.emit('active-window-changed', secondApp);
-        await expectNrOfItems(1);
+        await expectNrOfItems(1, db);
 
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 2000);
         appEmitter.emit('active-window-changed', thirdApp);
-        await expectNrOfItems(2);
+        await expectNrOfItems(2, db);
 
         // Verify item was created in the database
-        const items = await selectAllAppItems();
+        const items = await selectAllAppItems(db);
 
         expect(items.length).toBe(2);
 

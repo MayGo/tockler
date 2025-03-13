@@ -6,6 +6,7 @@ import { TrackItem, trackItems } from '../drizzle/schema';
 import { State } from '../enums/state';
 import { TrackItemType } from '../enums/track-item-type';
 import { setupTestDb } from './db.testUtils';
+import { expectNrOfItems } from './query.testUtils';
 import { getTimestamp } from './time.testUtils';
 
 // Create mocks
@@ -29,20 +30,13 @@ async function selectItem() {
     return db.select().from(trackItems).orderBy(asc(trackItems.beginDate)).execute();
 }
 
-const expectNrOfItems = async (nr: number) => {
-    await vi.waitFor(async () => {
-        const items = await selectItem();
-        expect(items.length).toBe(nr);
-    });
-};
-
 const emptyData: Partial<TrackItem> = {
     color: null,
     url: null,
     taskName: TrackItemType.StatusTrackItem,
 };
 
-describe('watchAndSetLogTrackItem', () => {
+describe('watchAndSetStatusTrackItem', () => {
     beforeEach(async () => {
         // Reset mocks and modules
         vi.resetModules();
@@ -95,17 +89,17 @@ describe('watchAndSetLogTrackItem', () => {
         // trigger new item creation
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 1000);
         appEmitter.emit('state-changed', State.Idle);
-        await expectNrOfItems(1);
+        await expectNrOfItems(1, db);
 
         // should save the new item dates
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 2000);
         appEmitter.emit('state-changed', State.Online);
-        await expectNrOfItems(2);
+        await expectNrOfItems(2, db);
 
         // should save the new item dates
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 3000);
         appEmitter.emit('state-changed', State.Idle);
-        await expectNrOfItems(3);
+        await expectNrOfItems(3, db);
 
         const items = await selectItem();
 

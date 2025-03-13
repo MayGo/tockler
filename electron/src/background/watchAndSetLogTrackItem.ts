@@ -15,41 +15,51 @@ const logger = logManager.getLogger('watchAndSetStatusTrackItem');
 let currentLogItem: TrackItem | null = null;
 
 async function cutLogTrackItem(state: State) {
-    logger.debug('State changed', state);
+    console.warn('State changed..................', state);
 
     if (!currentLogItem) {
         logger.debug('No log item to cut');
+
         return;
     }
 
     const now = Date.now();
 
     // End current log item
-    logger.debug('Updating end date of current log item');
+    console.warn('Updating end date of current log item');
     await db.update(trackItems).set({ endDate: now }).where(eq(trackItems.id, currentLogItem.id)).execute();
 
-    // Create new log item with same properties but new begin/end dates
-    const newLogItem: NewTrackItem = {
-        taskName: TrackItemType.LogTrackItem,
-        app: currentLogItem.app,
-        title: currentLogItem.title,
-        color: currentLogItem.color,
-        url: currentLogItem.url,
-        beginDate: now,
-        endDate: now + NEW_ITEM_END_DATE_OFFSET,
-    };
+    // For Online state, create a new log item
+    if (state === State.Online) {
+        // Create new log item with same properties but new begin/end dates
+        const newLogItem: NewTrackItem = {
+            taskName: TrackItemType.LogTrackItem,
+            app: currentLogItem.app,
+            title: currentLogItem.title,
+            color: currentLogItem.color,
+            url: currentLogItem.url,
+            beginDate: now,
+            endDate: now + NEW_ITEM_END_DATE_OFFSET,
+        };
 
-    const result = await db.insert(trackItems).values(newLogItem).execute();
+        const result = await db.insert(trackItems).values(newLogItem).execute();
 
-    logger.debug('New log item created', result);
+        console.warn('New log item created for Online state', result);
 
-    // Update currentLogItem reference
-    const id = result.lastInsertRowid as number;
+        // Update currentLogItem reference to the new item
+        const id = result.lastInsertRowid as number;
 
-    currentLogItem = {
-        ...(newLogItem as TrackItem),
-        id,
-    };
+        currentLogItem = {
+            ...(newLogItem as TrackItem),
+            id,
+        };
+    } else {
+        // For Idle or Offline states, just update the endDate in the currentLogItem
+        // but don't clear the reference - keep it until explicitly stopped
+        currentLogItem.endDate = now;
+
+        console.warn('Updated current log item for Idle/Offline state', currentLogItem);
+    }
 }
 
 async function stopRunningLogTrackItem(endDate: number) {
