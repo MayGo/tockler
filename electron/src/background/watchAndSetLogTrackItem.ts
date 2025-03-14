@@ -2,8 +2,8 @@ import { eq } from 'drizzle-orm';
 import { ipcMain } from 'electron';
 import { TrackItemRaw } from '../app/task-analyser';
 import { db } from '../drizzle/db';
-import { appSettingService } from '../drizzle/queries/app-setting-service';
 import { settingsService } from '../drizzle/queries/settings-service';
+import { insertTrackItem, updateTrackItem } from '../drizzle/queries/trackItem.db';
 import { NewTrackItem, TrackItem, trackItems } from '../drizzle/schema';
 import { State } from '../enums/state';
 import { TrackItemType } from '../enums/track-item-type';
@@ -14,26 +14,6 @@ import { NEW_ITEM_END_DATE_OFFSET } from './watchAndSetLogTrackItem.utils';
 const logger = logManager.getLogger('watchAndSetStatusTrackItem');
 
 let currentLogItem: TrackItem | null = null;
-
-async function updateTrackItem(id: number, appName: string, item: Partial<TrackItem>) {
-    console.warn('Updating end date of current log item');
-    const color = await appSettingService.getAppColor(appName);
-    item.color = color;
-
-    const query = db.update(trackItems).set(item).where(eq(trackItems.id, id));
-    await query.execute();
-}
-
-async function insertTrackItem(item: NewTrackItem) {
-    console.warn('Inserting new log item');
-    const color = await appSettingService.getAppColor(item.app ?? '');
-    item.color = color;
-
-    const query = db.insert(trackItems).values(item);
-    const result = await query.execute();
-
-    return result.lastInsertRowid as number;
-}
 
 async function cutLogTrackItem(state: State) {
     const now = Date.now();

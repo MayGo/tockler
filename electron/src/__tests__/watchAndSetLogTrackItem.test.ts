@@ -1,5 +1,4 @@
 import { Client } from '@libsql/client';
-import { asc, eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/libsql';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TrackItemRaw } from '../app/task-analyser';
@@ -18,7 +17,6 @@ const eventHandlers: Record<string, any> = {};
 
 // Create mocks
 vi.mock('electron', async () => ({
-    ...(await import('__mocks__/electron/index')),
     ipcMain: {
         on: vi.fn((event, handler) => {
             eventHandlers[event] = handler;
@@ -51,10 +49,6 @@ async function sendStartNewLogItemEvent(testData: TrackItemRaw) {
 async function sendEndRunningLogItemEvent() {
     expect(eventHandlers['end-running-log-item']).toBeDefined();
     return eventHandlers['end-running-log-item']({} as any);
-}
-
-async function selectLogItem(app: string) {
-    return db.select().from(trackItems).where(eq(trackItems.app, app)).orderBy(asc(trackItems.beginDate)).execute();
 }
 
 async function addColorToApp(app: string, color: string) {
