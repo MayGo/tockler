@@ -6,7 +6,7 @@ import { State } from '../enums/state';
 import { TrackItemType } from '../enums/track-item-type';
 import { COLORS } from './color.testUtils';
 import { setupTestDb } from './db.testUtils';
-import { selectAllAppItems } from './query.testUtils';
+import { changeStateAndMockDate, selectAllAppItems } from './query.testUtils';
 import { getTimestamp } from './time.testUtils';
 
 // Create mocks
@@ -54,11 +54,9 @@ describe('watchAndSetStatusTrackItem', () => {
         const { watchAndSetStatusTrackItem } = await import('../background/watchAndSetStatusTrackItem');
         await watchAndSetStatusTrackItem();
 
-        appEmitter.emit('state-changed', State.Idle);
+        // Default state is online
 
-        // Simulate time passing
-        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 1000);
-        appEmitter.emit('state-changed', State.Online);
+        await changeStateAndMockDate(appEmitter, State.Idle, NOW + 1000);
 
         await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
 
@@ -67,12 +65,12 @@ describe('watchAndSetStatusTrackItem', () => {
         expect(items.length).toBe(1);
         expect(items[0]).toStrictEqual({
             ...emptyData,
-            app: 'IDLE',
-            title: 'idle',
+            app: 'ONLINE',
+            title: 'online',
             id: 1,
             beginDate: NOW,
             endDate: NOW + 1000,
-            color: COLORS.IDLE,
+            color: COLORS.ONLINE,
         });
     });
 
@@ -82,21 +80,17 @@ describe('watchAndSetStatusTrackItem', () => {
         await watchAndSetStatusTrackItem();
 
         // create initial in memory item
-        appEmitter.emit('state-changed', State.Offline);
 
-        // trigger new item creation
-        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 1000);
-        appEmitter.emit('state-changed', State.Idle);
+        await changeStateAndMockDate(appEmitter, State.Idle, NOW + 1000);
+
         await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
 
         // should save the new item dates
-        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 2000);
-        appEmitter.emit('state-changed', State.Online);
+        await changeStateAndMockDate(appEmitter, State.Online, NOW + 2000);
         await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(2));
 
         // should save the new item dates
-        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 3000);
-        appEmitter.emit('state-changed', State.Idle);
+        await changeStateAndMockDate(appEmitter, State.Idle, NOW + 3000);
         await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(3));
 
         const items = await selectAllAppItems(db);
@@ -105,12 +99,13 @@ describe('watchAndSetStatusTrackItem', () => {
         expect(items[0]).toStrictEqual({
             ...emptyData,
             id: 1,
-            app: 'OFFLINE',
-            title: 'offline',
+            app: 'ONLINE',
+            title: 'online',
             beginDate: NOW,
             endDate: NOW + 1000,
-            color: COLORS.OFFLINE,
+            color: COLORS.ONLINE,
         });
+
         expect(items[1]).toStrictEqual({
             ...emptyData,
             id: 2,

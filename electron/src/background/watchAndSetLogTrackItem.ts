@@ -101,6 +101,10 @@ async function createNewRunningLogTrackItem(rawItem: TrackItemRaw) {
     };
 }
 
+export async function getOngoingLogTrackItem() {
+    return { ...currentLogItem, endDate: Date.now() } as TrackItem;
+}
+
 export async function watchAndSetLogTrackItem() {
     const runningLogItem = await settingsService.getRunningLogItemAsJson();
 
@@ -126,7 +130,14 @@ export async function watchAndSetLogTrackItem() {
     });
 }
 
-export function watchAndSetLogTrackItemRemove() {
+const saveOngoingTrackItem = async () => {
+    if (currentLogItem) {
+        await updateTrackItem(currentLogItem.id, currentLogItem.app, { endDate: Date.now() });
+    }
+};
+
+export async function watchAndSetLogTrackItemRemove() {
     appEmitter.removeAllListeners('state-changed');
+    await saveOngoingTrackItem();
     currentLogItem = null;
 }

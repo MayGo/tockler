@@ -1,5 +1,6 @@
+import { appSettingService } from '../drizzle/queries/app-setting-service';
 import { insertTrackItem } from '../drizzle/queries/trackItem.db';
-import { NewTrackItem } from '../drizzle/schema';
+import { NewTrackItem, TrackItem } from '../drizzle/schema';
 import { State } from '../enums/state';
 import { TrackItemType } from '../enums/track-item-type';
 import { appEmitter } from '../utils/appEmitter';
@@ -9,7 +10,20 @@ const logger = logManager.getLogger('watchAndSetStatusTrackItem');
 
 let currentStatusItem: NewTrackItem | null = null;
 
+function makeStatusItem(state: State) {
+    const now = Date.now();
+
+    return {
+        taskName: TrackItemType.StatusTrackItem,
+        app: state,
+        title: state.toString().toLowerCase(),
+        beginDate: now,
+        endDate: now,
+    };
+}
+
 export function watchAndSetStatusTrackItem() {
+    currentStatusItem = makeStatusItem(State.Online);
     appEmitter.on('state-changed', async (state: State) => {
         logger.debug('State changed', state);
 
@@ -22,17 +36,23 @@ export function watchAndSetStatusTrackItem() {
         }
 
         // Create new current item
-        currentStatusItem = {
-            taskName: TrackItemType.StatusTrackItem,
-            app: state,
-            title: state.toString().toLowerCase(),
-            beginDate: now,
-            endDate: now,
-        };
+        currentStatusItem = makeStatusItem(state);
     });
 }
 
-export function watchAndSetStatusTrackItemRemove() {
+export async function getOngoingStatusTrackItem() {
+    const color = await appSettingService.getAppColor(currentStatusItem?.app || '');
+    return { ...currentStatusItem, endDate: Date.now(), color } as TrackItem;
+}
+
+const saveOngoingTrackItem = async () => {
+    if (currentStatusItem) {
+        await insertTrackItem(currentStatusItem);
+    }
+};
+
+export async function watchAndSetStatusTrackItemRemove() {
     appEmitter.removeAllListeners('state-changed');
+    await saveOngoingTrackItem();
     currentStatusItem = null;
 }

@@ -1,8 +1,11 @@
 import { stringify } from 'csv-stringify/sync';
-import { and, desc, eq, gte, inArray, like, lt, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, inArray, like, lt, sql } from 'drizzle-orm';
 import { dialog } from 'electron';
 import { writeFileSync } from 'fs';
 import moment from 'moment';
+import { getOngoingAppTrackItem } from '../../background/watchAndSetAppTrackItem';
+import { getOngoingLogTrackItem } from '../../background/watchAndSetLogTrackItem';
+import { getOngoingStatusTrackItem } from '../../background/watchAndSetStatusTrackItem';
 import { State } from '../../enums/state';
 import { TrackItemType } from '../../enums/track-item-type';
 import { logManager } from '../../utils/log-manager';
@@ -144,7 +147,25 @@ export class TrackItemService {
                     gte(trackItems.endDate, new Date(from).getTime()),
                     lt(trackItems.endDate, new Date(to).getTime()),
                 ),
-            );
+            )
+            .orderBy(asc(trackItems.beginDate));
+
+        const isToday = moment(to).isSame(moment(), 'day');
+
+        if (isToday && taskName === TrackItemType.StatusTrackItem) {
+            this.logger.debug('Adding ongoing status track item............');
+            data.push(await getOngoingStatusTrackItem());
+        }
+
+        if (isToday && taskName === TrackItemType.AppTrackItem) {
+            this.logger.debug('Adding ongoing app track item............');
+            data.push(await getOngoingAppTrackItem());
+        }
+
+        if (isToday && taskName === TrackItemType.LogTrackItem) {
+            this.logger.debug('Adding ongoing log track item............');
+            data.push(await getOngoingLogTrackItem());
+        }
 
         return data;
     }

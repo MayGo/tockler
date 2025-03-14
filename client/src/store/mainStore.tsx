@@ -145,7 +145,7 @@ const mainStore = createStore<StoreModel>({
         const { timeItems } = getState();
         const { appItems, statusItems, logItems } = await findAllDayItemsForEveryTrack(
             requestFrom,
-            requestFrom.plus({ days: 1 }),
+            requestFrom.endOf('day'),
         );
         Logger.debug('Returned updated items:', appItems);
 
