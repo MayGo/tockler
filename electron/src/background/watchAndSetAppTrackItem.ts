@@ -1,5 +1,5 @@
-import { db } from '../drizzle/db';
-import { NewTrackItem, trackItems } from '../drizzle/schema';
+import { insertTrackItem } from '../drizzle/queries/trackItem.db';
+import { NewTrackItem } from '../drizzle/schema';
 import { TrackItemType } from '../enums/track-item-type';
 import { appEmitter } from '../utils/appEmitter';
 import { logManager } from '../utils/log-manager';
@@ -17,7 +17,7 @@ async function setAppTrackItem(activeWindow: NormalizedActiveWindow) {
     // If we have a current item, update its end date and persist
     if (currentAppItem) {
         currentAppItem.endDate = now;
-        await db.insert(trackItems).values(currentAppItem).execute();
+        await insertTrackItem(currentAppItem);
     }
 
     currentAppItem = {

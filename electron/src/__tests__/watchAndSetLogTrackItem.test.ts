@@ -7,7 +7,7 @@ import { TrackItem, trackItems } from '../drizzle/schema';
 import { State } from '../enums/state';
 import { TrackItemType } from '../enums/track-item-type';
 import { COLORS } from './color.testUtils';
-import { setupTestDb } from './db.testUtils';
+import { addColorToApp, setupTestDb } from './db.testUtils';
 import { changeStateAndMockDate, selectAllAppItems } from './query.testUtils';
 import { getTimestamp } from './time.testUtils';
 import { visualizeTrackItems } from './visualize.testUtils';
@@ -49,11 +49,6 @@ async function sendStartNewLogItemEvent(testData: TrackItemRaw) {
 async function sendEndRunningLogItemEvent() {
     expect(eventHandlers['end-running-log-item']).toBeDefined();
     return eventHandlers['end-running-log-item']({} as any);
-}
-
-async function addColorToApp(app: string, color: string) {
-    const { appSettingService } = await import('../drizzle/queries/app-setting-service');
-    await appSettingService.changeColorForApp(app, color);
 }
 
 const emptyData: Partial<TrackItem> = {

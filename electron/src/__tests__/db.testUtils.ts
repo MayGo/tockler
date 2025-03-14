@@ -35,3 +35,8 @@ export async function setupTestDb() {
 
     return { db, client };
 }
+
+export async function addColorToApp(app: string, color: string) {
+    const { appSettingService } = await import('../drizzle/queries/app-setting-service');
+    await appSettingService.changeColorForApp(app, color);
+}

@@ -4,7 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { NormalizedActiveWindow } from '../background/watchForActiveWindow.utils';
 import { TrackItem, trackItems } from '../drizzle/schema';
 import { TrackItemType } from '../enums/track-item-type';
-import { setupTestDb } from './db.testUtils';
+import { COLORS } from './color.testUtils';
+import { addColorToApp, setupTestDb } from './db.testUtils';
 import { selectAllAppItems } from './query.testUtils';
 import { getTimestamp } from './time.testUtils';
 
@@ -66,6 +67,8 @@ describe('watchAndSetLogTrackItem', () => {
             title: 'Second Title',
         };
 
+        await addColorToApp(firstApp.app ?? '', COLORS.GREEN);
+
         appEmitter.emit('active-window-changed', firstApp);
         appEmitter.emit('active-window-changed', secondApp);
 
@@ -74,11 +77,15 @@ describe('watchAndSetLogTrackItem', () => {
         const items = await selectAllAppItems(db);
 
         expect(items.length).toBe(1);
-        expect(items[0].app).toBe('FirstApp');
-        expect(items[0].title).toBe('First Title');
-        expect(items[0].taskName).toBe(TrackItemType.AppTrackItem);
-        expect(items[0].beginDate).toBe(NOW);
-        expect(items[0].endDate).toBe(NOW);
+
+        expect(items[0]).toStrictEqual({
+            ...emptyData,
+            ...firstApp,
+            id: 1,
+            beginDate: NOW,
+            endDate: NOW,
+            color: COLORS.GREEN,
+        });
     });
 
     it('saves each item with correct begin/end dates', async () => {
@@ -102,6 +109,9 @@ describe('watchAndSetLogTrackItem', () => {
             title: 'Third Title',
         };
 
+        await addColorToApp(firstApp.app ?? '', COLORS.GREEN);
+        await addColorToApp(secondApp.app ?? '', COLORS.RED);
+
         appEmitter.emit('active-window-changed', firstApp);
 
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 1000);
@@ -123,6 +133,7 @@ describe('watchAndSetLogTrackItem', () => {
             id: 1,
             beginDate: NOW,
             endDate: NOW + 1000,
+            color: COLORS.GREEN,
         });
 
         expect(items[1]).toStrictEqual({
@@ -131,6 +142,7 @@ describe('watchAndSetLogTrackItem', () => {
             id: 2,
             beginDate: NOW + 1000,
             endDate: NOW + 2000,
+            color: COLORS.RED,
         });
     });
 });

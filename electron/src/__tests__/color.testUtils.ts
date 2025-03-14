@@ -4,4 +4,7 @@ export const COLORS = {
     BLUE: '#0000FF',
     YELLOW: '#FFFF00',
     PURPLE: '#800080',
+    OFFLINE: '#f31b1b',
+    ONLINE: '#7ed321',
+    IDLE: '#f5a623',
 };

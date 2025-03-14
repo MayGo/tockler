@@ -1,10 +1,10 @@
 import { Client } from '@libsql/client';
-import { asc } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/libsql';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TrackItem, trackItems } from '../drizzle/schema';
 import { State } from '../enums/state';
 import { TrackItemType } from '../enums/track-item-type';
+import { COLORS } from './color.testUtils';
 import { setupTestDb } from './db.testUtils';
 import { selectAllAppItems } from './query.testUtils';
 import { getTimestamp } from './time.testUtils';
@@ -26,10 +26,6 @@ async function cleanupTestDb() {
 
 const NOW = getTimestamp('2023-01-10T12:00:00');
 
-async function selectItem() {
-    return db.select().from(trackItems).orderBy(asc(trackItems.beginDate)).execute();
-}
-
 const emptyData: Partial<TrackItem> = {
     color: null,
     url: null,
@@ -38,7 +34,6 @@ const emptyData: Partial<TrackItem> = {
 
 describe('watchAndSetStatusTrackItem', () => {
     beforeEach(async () => {
-        // Reset mocks and modules
         vi.resetModules();
         vi.resetAllMocks();
 
@@ -65,16 +60,19 @@ describe('watchAndSetStatusTrackItem', () => {
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 1000);
         appEmitter.emit('state-changed', State.Online);
 
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
+
         // Verify the item was updated with new end date
-        const updatedItems = await selectItem();
-        expect(updatedItems.length).toBe(1);
-        expect(updatedItems[0]).toStrictEqual({
+        const items = await selectAllAppItems(db);
+        expect(items.length).toBe(1);
+        expect(items[0]).toStrictEqual({
             ...emptyData,
             app: 'IDLE',
             title: 'idle',
             id: 1,
             beginDate: NOW,
             endDate: NOW + 1000,
+            color: COLORS.IDLE,
         });
     });
 
@@ -101,7 +99,7 @@ describe('watchAndSetStatusTrackItem', () => {
         appEmitter.emit('state-changed', State.Idle);
         await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(3));
 
-        const items = await selectItem();
+        const items = await selectAllAppItems(db);
 
         expect(items.length).toBe(3);
         expect(items[0]).toStrictEqual({
@@ -111,6 +109,7 @@ describe('watchAndSetStatusTrackItem', () => {
             title: 'offline',
             beginDate: NOW,
             endDate: NOW + 1000,
+            color: COLORS.OFFLINE,
         });
         expect(items[1]).toStrictEqual({
             ...emptyData,
@@ -119,6 +118,7 @@ describe('watchAndSetStatusTrackItem', () => {
             title: 'idle',
             beginDate: NOW + 1000,
             endDate: NOW + 2000,
+            color: COLORS.IDLE,
         });
 
         expect(items[2]).toStrictEqual({
@@ -128,6 +128,7 @@ describe('watchAndSetStatusTrackItem', () => {
             title: 'online',
             beginDate: NOW + 2000,
             endDate: NOW + 3000,
+            color: COLORS.ONLINE,
         });
     });
 });

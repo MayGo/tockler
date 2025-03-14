@@ -1,5 +1,5 @@
-import { db } from '../drizzle/db';
-import { NewTrackItem, trackItems } from '../drizzle/schema';
+import { insertTrackItem } from '../drizzle/queries/trackItem.db';
+import { NewTrackItem } from '../drizzle/schema';
 import { State } from '../enums/state';
 import { TrackItemType } from '../enums/track-item-type';
 import { appEmitter } from '../utils/appEmitter';
@@ -18,7 +18,7 @@ export function watchAndSetStatusTrackItem() {
         // If we have a current item, update its end date and persist
         if (currentStatusItem) {
             currentStatusItem.endDate = now;
-            await db.insert(trackItems).values(currentStatusItem).execute();
+            await insertTrackItem(currentStatusItem);
         }
 
         // Create new current item
