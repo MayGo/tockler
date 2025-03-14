@@ -36,12 +36,15 @@ export class AppSettingService {
     }
 
     async getAppColor(appName: string): Promise<string> {
+        console.warn('getAppColor', appName);
         const appSetting = await this.retrieveAppSettings(appName);
 
         if (appSetting?.color) {
+            console.warn('getAppColor:::', appSetting.color);
             return appSetting.color;
         } else {
             const color = randomcolor();
+            console.warn('getAppColor randomcolor', color);
             const item = await this.createAppSetting({ name: appName, color: color });
             this.logger.debug('Created color item to DB:', item);
 

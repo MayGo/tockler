@@ -7,6 +7,7 @@ import { NEW_ITEM_END_DATE_OFFSET } from '../background/watchAndSetLogTrackItem.
 import { TrackItem, trackItems } from '../drizzle/schema';
 import { State } from '../enums/state';
 import { TrackItemType } from '../enums/track-item-type';
+import { COLORS } from './color.testUtils';
 import { setupTestDb } from './db.testUtils';
 import { changeStateAndMockDate, selectAllAppItems } from './query.testUtils';
 import { getTimestamp } from './time.testUtils';
@@ -16,13 +17,16 @@ import { visualizeTrackItems } from './visualize.testUtils';
 const eventHandlers: Record<string, any> = {};
 
 // Create mocks
-vi.mock('electron', () => ({
+vi.mock('electron', async () => ({
+    ...(await import('__mocks__/electron/index')),
     ipcMain: {
         on: vi.fn((event, handler) => {
             eventHandlers[event] = handler;
         }),
     },
 }));
+
+vi.mock('electron-is-dev');
 
 vi.mock('../utils/log-manager');
 
@@ -51,6 +55,11 @@ async function sendEndRunningLogItemEvent() {
 
 async function selectLogItem(app: string) {
     return db.select().from(trackItems).where(eq(trackItems.app, app)).orderBy(asc(trackItems.beginDate)).execute();
+}
+
+async function addColorToApp(app: string, color: string) {
+    const { appSettingService } = await import('../drizzle/queries/app-setting-service');
+    await appSettingService.changeColorForApp(app, color);
 }
 
 const emptyData: Partial<TrackItem> = {
@@ -170,6 +179,8 @@ describe('watchAndSetLogTrackItem', () => {
             title: 'Test Title',
         };
 
+        await addColorToApp(testData.app ?? '', COLORS.GREEN);
+
         await sendStartNewLogItemEvent(testData);
 
         // Verify item was created
@@ -189,6 +200,7 @@ describe('watchAndSetLogTrackItem', () => {
             id: 1,
             beginDate: NOW,
             endDate: NOW + 1000,
+            color: COLORS.GREEN,
         });
 
         visualizeTrackItems(items, NOW);
@@ -214,6 +226,8 @@ describe('watchAndSetLogTrackItem', () => {
             title: 'Test Title',
         };
 
+        await addColorToApp(testData.app ?? '', COLORS.GREEN);
+
         // Start with creating an item (normally this happens when we're online)
         await sendStartNewLogItemEvent(testData);
 
@@ -233,6 +247,7 @@ describe('watchAndSetLogTrackItem', () => {
             id: 1,
             beginDate: NOW,
             endDate: NOW + 1000,
+            color: COLORS.GREEN,
         });
 
         // Come back online - should create a NEW log item
@@ -247,6 +262,7 @@ describe('watchAndSetLogTrackItem', () => {
             id: 1,
             beginDate: NOW,
             endDate: NOW + 1000,
+            color: COLORS.GREEN,
         });
 
         expect(items[1]).toStrictEqual({
@@ -255,6 +271,7 @@ describe('watchAndSetLogTrackItem', () => {
             id: 2,
             beginDate: NOW + 2000,
             endDate: NOW + 2000 + NEW_ITEM_END_DATE_OFFSET,
+            color: COLORS.GREEN,
         });
 
         visualizeTrackItems(items, NOW);
@@ -280,6 +297,8 @@ describe('watchAndSetLogTrackItem', () => {
             title: 'Test Title',
         };
 
+        await addColorToApp(testData.app ?? '', COLORS.GREEN);
+
         // Create initial log item
         await sendStartNewLogItemEvent(testData);
 
@@ -299,6 +318,7 @@ describe('watchAndSetLogTrackItem', () => {
             id: 1,
             beginDate: NOW,
             endDate: NOW + 1000,
+            color: COLORS.GREEN,
         });
 
         // Online
@@ -314,6 +334,7 @@ describe('watchAndSetLogTrackItem', () => {
             id: 1,
             beginDate: NOW,
             endDate: NOW + 1000,
+            color: COLORS.GREEN,
         });
 
         // Second item should be new and start when we came back online
@@ -323,6 +344,7 @@ describe('watchAndSetLogTrackItem', () => {
             id: 2,
             beginDate: NOW + 2000,
             endDate: NOW + 2000 + NEW_ITEM_END_DATE_OFFSET,
+            color: COLORS.GREEN,
         });
 
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 3000);
@@ -362,6 +384,8 @@ describe('watchAndSetLogTrackItem', () => {
             title: 'Test Title',
         };
 
+        await addColorToApp(testData.app ?? '', COLORS.GREEN);
+
         // Create initial log item
         await sendStartNewLogItemEvent(testData);
         await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
@@ -390,6 +414,8 @@ describe('watchAndSetLogTrackItem', () => {
             id: 1,
             beginDate: NOW,
             endDate: NOW + 1000,
+
+            color: COLORS.GREEN,
         });
     });
 });
