@@ -1,6 +1,6 @@
 import EventEmitter from 'eventemitter3';
 import { TrackItemRaw } from '../app/task-analyser';
-import { NormalizedActiveWindow } from '../background/watchForActiveWindow.utils';
+import { NormalizedActiveWindow } from '../background/watchTrackItems/watchForActiveWindow.utils';
 import { State } from '../enums/state';
 
 type AppEvents = {

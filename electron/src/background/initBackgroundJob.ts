@@ -1,12 +1,14 @@
 import { settingsService } from '../drizzle/queries/settings-service';
 import { logManager } from '../utils/log-manager';
-import { watchAndPropagateState, watchAndPropagateStateRemove } from './watchAndPropagateState';
-import { watchAndSetAppTrackItem, watchAndSetAppTrackItemRemove } from './watchAndSetAppTrackItem';
-import { watchAndSetLogTrackItem, watchAndSetLogTrackItemRemove } from './watchAndSetLogTrackItem';
-import { watchAndSetStatusTrackItem, watchAndSetStatusTrackItemRemove } from './watchAndSetStatusTrackItem';
-import { watchForActiveWindow } from './watchForActiveWindow';
-import { watchForIdleState, watchForIdleStateRemove } from './watchForIdleState';
-import { watchForPowerState, watchForPowerStateRemove } from './watchForPowerState';
+import { watchAndPropagateState, watchAndPropagateStateRemove } from './watchStates/watchAndPropagateState';
+import { watchForIdleState, watchForIdleStateRemove } from './watchStates/watchForIdleState';
+import { watchForPowerState, watchForPowerStateRemove } from './watchStates/watchForPowerState';
+import { watchAndSetAppTrackItem, watchAndSetAppTrackItemRemove } from './watchTrackItems/watchAndSetAppTrackItem';
+import { watchAndSetLogTrackItem, watchAndSetLogTrackItemRemove } from './watchTrackItems/watchAndSetLogTrackItem';
+import {
+    watchAndSetStatusTrackItem,
+    watchAndSetStatusTrackItemRemove,
+} from './watchTrackItems/watchAndSetStatusTrackItem';
 let logger = logManager.getLogger('BackgroundJob');
 
 export async function initBackgroundJob() {
@@ -17,11 +19,11 @@ export async function initBackgroundJob() {
     const { idleAfterSeconds, backgroundJobInterval } = dataSettings;
 
     watchForIdleState(idleAfterSeconds);
-    watchForActiveWindow(backgroundJobInterval);
     watchForPowerState();
     watchAndPropagateState();
+
     watchAndSetStatusTrackItem();
-    watchAndSetAppTrackItem();
+    watchAndSetAppTrackItem(backgroundJobInterval);
     watchAndSetLogTrackItem();
 }
 
@@ -31,6 +33,7 @@ export function cleanupBackgroundJob() {
     watchForIdleStateRemove();
     watchForPowerStateRemove();
     watchAndPropagateStateRemove();
+
     watchAndSetStatusTrackItemRemove();
     watchAndSetAppTrackItemRemove();
     watchAndSetLogTrackItemRemove();

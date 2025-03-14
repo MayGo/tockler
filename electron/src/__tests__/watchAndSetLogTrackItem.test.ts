@@ -2,7 +2,7 @@ import { Client } from '@libsql/client';
 import { drizzle } from 'drizzle-orm/libsql';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TrackItemRaw } from '../app/task-analyser';
-import { NEW_ITEM_END_DATE_OFFSET } from '../background/watchAndSetLogTrackItem.utils';
+import { NEW_ITEM_END_DATE_OFFSET } from '../background/watchTrackItems/watchAndSetLogTrackItem.utils';
 import { TrackItem, trackItems } from '../drizzle/schema';
 import { State } from '../enums/state';
 import { TrackItemType } from '../enums/track-item-type';
@@ -88,7 +88,7 @@ describe('watchAndSetLogTrackItem', () => {
 ................................................................................
 --------------------------------------------------------------------------------
 */
-        const { watchAndSetLogTrackItem } = await import('../background/watchAndSetLogTrackItem');
+        const { watchAndSetLogTrackItem } = await import('../background/watchTrackItems/watchAndSetLogTrackItem');
 
         await watchAndSetLogTrackItem();
 
@@ -123,7 +123,7 @@ describe('watchAndSetLogTrackItem', () => {
 ................................................................................
 --------------------------------------------------------------------------------
 */
-        const { watchAndSetLogTrackItem } = await import('../background/watchAndSetLogTrackItem');
+        const { watchAndSetLogTrackItem } = await import('../background/watchTrackItems/watchAndSetLogTrackItem');
 
         await watchAndSetLogTrackItem();
 
@@ -160,7 +160,7 @@ describe('watchAndSetLogTrackItem', () => {
 --------------------------------------------------------------------------------
 */
         const { appEmitter } = await import('../utils/appEmitter');
-        const { watchAndSetLogTrackItem } = await import('../background/watchAndSetLogTrackItem');
+        const { watchAndSetLogTrackItem } = await import('../background/watchTrackItems/watchAndSetLogTrackItem');
         await watchAndSetLogTrackItem();
 
         const testData: TrackItemRaw = {
@@ -207,7 +207,7 @@ describe('watchAndSetLogTrackItem', () => {
 --------------------------------------------------------------------------------
 */
         const { appEmitter } = await import('../utils/appEmitter');
-        const { watchAndSetLogTrackItem } = await import('../background/watchAndSetLogTrackItem');
+        const { watchAndSetLogTrackItem } = await import('../background/watchTrackItems/watchAndSetLogTrackItem');
         await watchAndSetLogTrackItem();
 
         const testData: TrackItemRaw = {
@@ -278,7 +278,7 @@ describe('watchAndSetLogTrackItem', () => {
 --------------------------------------------------------------------------------
 */
         const { appEmitter } = await import('../utils/appEmitter');
-        const { watchAndSetLogTrackItem } = await import('../background/watchAndSetLogTrackItem');
+        const { watchAndSetLogTrackItem } = await import('../background/watchTrackItems/watchAndSetLogTrackItem');
         await watchAndSetLogTrackItem();
 
         const testData: TrackItemRaw = {
@@ -365,7 +365,7 @@ describe('watchAndSetLogTrackItem', () => {
 --------------------------------------------------------------------------------
         */
         const { appEmitter } = await import('../utils/appEmitter');
-        const { watchAndSetLogTrackItem } = await import('../background/watchAndSetLogTrackItem');
+        const { watchAndSetLogTrackItem } = await import('../background/watchTrackItems/watchAndSetLogTrackItem');
         await watchAndSetLogTrackItem();
 
         const testData: TrackItemRaw = {

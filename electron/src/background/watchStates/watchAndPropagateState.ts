@@ -1,6 +1,6 @@
-import { State } from '../enums/state';
-import { appEmitter } from '../utils/appEmitter';
-import { logManager } from '../utils/log-manager';
+import { State } from '../../enums/state';
+import { appEmitter } from '../../utils/appEmitter';
+import { logManager } from '../../utils/log-manager';
 
 const logger = logManager.getLogger('watchAndPropagateState');
 

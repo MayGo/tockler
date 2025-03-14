@@ -1,11 +1,12 @@
-import { appSettingService } from '../drizzle/queries/app-setting-service';
-import { insertTrackItem } from '../drizzle/queries/trackItem.db';
-import { NewTrackItem, TrackItem } from '../drizzle/schema';
-import { State } from '../enums/state';
-import { TrackItemType } from '../enums/track-item-type';
+import { appSettingService } from '../../drizzle/queries/app-setting-service';
+import { insertTrackItem } from '../../drizzle/queries/trackItem.db';
+import { NewTrackItem, TrackItem } from '../../drizzle/schema';
+import { State } from '../../enums/state';
+import { TrackItemType } from '../../enums/track-item-type';
 
-import { appEmitter } from '../utils/appEmitter';
-import { logManager } from '../utils/log-manager';
+import { appEmitter } from '../../utils/appEmitter';
+import { logManager } from '../../utils/log-manager';
+import { startActiveWindowWatcher } from './watchForActiveWindow';
 import { NormalizedActiveWindow } from './watchForActiveWindow.utils';
 const logger = logManager.getLogger('watchAndSetStatusTrackItem');
 
@@ -38,7 +39,11 @@ export async function getOngoingAppTrackItem() {
 
 const saveOngoingTrackItem = async () => {
     if (currentAppItem) {
+        currentAppItem.endDate = Date.now();
         await insertTrackItem(currentAppItem);
+        currentAppItem = null;
+    } else {
+        logger.debug('No ongoing track item to save');
     }
 };
 
@@ -53,22 +58,28 @@ async function removeStateListener() {
     logger.info('Remove active-window-listener');
     appEmitter.removeAllListeners('active-window-changed');
     await saveOngoingTrackItem();
-    currentAppItem = null;
 }
 
-export function watchAndSetAppTrackItem() {
+let removeActiveWindowWatcher: () => void;
+
+export function watchAndSetAppTrackItem(backgroundJobInterval: number) {
     addStateListener();
+
+    removeActiveWindowWatcher = startActiveWindowWatcher(backgroundJobInterval);
+
     appEmitter.on('state-changed', async (state: State) => {
         logger.debug('State changed: active-window-listener', state);
 
         if (state === State.Online) {
-            addStateListener();
+            removeActiveWindowWatcher = startActiveWindowWatcher(backgroundJobInterval);
         } else {
-            await removeStateListener();
+            removeActiveWindowWatcher();
+            await saveOngoingTrackItem();
         }
     });
 }
 
 export async function watchAndSetAppTrackItemRemove() {
     await removeStateListener();
+    removeActiveWindowWatcher();
 }

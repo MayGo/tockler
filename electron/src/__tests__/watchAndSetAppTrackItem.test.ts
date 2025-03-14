@@ -1,7 +1,7 @@
 import { Client } from '@libsql/client';
 import { drizzle } from 'drizzle-orm/libsql';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { NormalizedActiveWindow } from '../background/watchForActiveWindow.utils';
+import { NormalizedActiveWindow } from '../background/watchTrackItems/watchForActiveWindow.utils';
 import { TrackItem, trackItems } from '../drizzle/schema';
 import { TrackItemType } from '../enums/track-item-type';
 import { COLORS } from './color.testUtils';
@@ -53,7 +53,7 @@ describe('watchAndSetLogTrackItem', () => {
 
     it('saves previous app item', async () => {
         const { appEmitter } = await import('../utils/appEmitter');
-        const { watchAndSetAppTrackItem } = await import('../background/watchAndSetAppTrackItem');
+        const { watchAndSetAppTrackItem } = await import('../background/watchTrackItems/watchAndSetAppTrackItem');
 
         await watchAndSetAppTrackItem();
 
@@ -90,7 +90,7 @@ describe('watchAndSetLogTrackItem', () => {
 
     it('saves each item with correct begin/end dates', async () => {
         const { appEmitter } = await import('../utils/appEmitter');
-        const { watchAndSetAppTrackItem } = await import('../background/watchAndSetAppTrackItem');
+        const { watchAndSetAppTrackItem } = await import('../background/watchTrackItems/watchAndSetAppTrackItem');
 
         await watchAndSetAppTrackItem();
 

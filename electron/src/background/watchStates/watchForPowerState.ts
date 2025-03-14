@@ -1,6 +1,6 @@
 import { powerMonitor } from 'electron';
-import { appEmitter } from '../utils/appEmitter';
-import { logManager } from '../utils/log-manager';
+import { appEmitter } from '../../utils/appEmitter';
+import { logManager } from '../../utils/log-manager';
 
 const logger = logManager.getLogger('WatchForPowerState');
 

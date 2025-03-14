@@ -51,7 +51,7 @@ describe('watchAndSetStatusTrackItem', () => {
 
     it('state-changed event should end current status item', async () => {
         const { appEmitter } = await import('../utils/appEmitter');
-        const { watchAndSetStatusTrackItem } = await import('../background/watchAndSetStatusTrackItem');
+        const { watchAndSetStatusTrackItem } = await import('../background/watchTrackItems/watchAndSetStatusTrackItem');
         await watchAndSetStatusTrackItem();
 
         // Default state is online
@@ -76,7 +76,7 @@ describe('watchAndSetStatusTrackItem', () => {
 
     it('state-changed event should start new log item if state changes to idle-online-idle', async () => {
         const { appEmitter } = await import('../utils/appEmitter');
-        const { watchAndSetStatusTrackItem } = await import('../background/watchAndSetStatusTrackItem');
+        const { watchAndSetStatusTrackItem } = await import('../background/watchTrackItems/watchAndSetStatusTrackItem');
         await watchAndSetStatusTrackItem();
 
         // create initial in memory item

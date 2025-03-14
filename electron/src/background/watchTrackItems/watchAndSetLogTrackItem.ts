@@ -1,14 +1,14 @@
 import { eq } from 'drizzle-orm';
 import { ipcMain } from 'electron';
-import { TrackItemRaw } from '../app/task-analyser';
-import { db } from '../drizzle/db';
-import { settingsService } from '../drizzle/queries/settings-service';
-import { insertTrackItem, updateTrackItem } from '../drizzle/queries/trackItem.db';
-import { NewTrackItem, TrackItem, trackItems } from '../drizzle/schema';
-import { State } from '../enums/state';
-import { TrackItemType } from '../enums/track-item-type';
-import { appEmitter } from '../utils/appEmitter';
-import { logManager } from '../utils/log-manager';
+import { TrackItemRaw } from '../../app/task-analyser';
+import { db } from '../../drizzle/db';
+import { settingsService } from '../../drizzle/queries/settings-service';
+import { insertTrackItem, updateTrackItem } from '../../drizzle/queries/trackItem.db';
+import { NewTrackItem, TrackItem, trackItems } from '../../drizzle/schema';
+import { State } from '../../enums/state';
+import { TrackItemType } from '../../enums/track-item-type';
+import { appEmitter } from '../../utils/appEmitter';
+import { logManager } from '../../utils/log-manager';
 import { NEW_ITEM_END_DATE_OFFSET } from './watchAndSetLogTrackItem.utils';
 
 const logger = logManager.getLogger('watchAndSetStatusTrackItem');
@@ -17,7 +17,6 @@ let currentLogItem: TrackItem | null = null;
 
 async function cutLogTrackItem(state: State) {
     const now = Date.now();
-    console.warn('-'.repeat(100));
     console.warn(`State changed to ${state}=>${now}`);
 
     if (!currentLogItem) {

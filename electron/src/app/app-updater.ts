@@ -3,7 +3,7 @@ import { autoUpdater, UpdateCheckResult, UpdateInfo } from 'electron-updater';
 import { config } from '../utils/config';
 import { showNotification } from './notification';
 
-import { getCurrentState } from '../background/watchAndPropagateState';
+import { getCurrentState } from '../background/watchStates/watchAndPropagateState';
 import { State } from '../enums/state';
 import { logManager } from '../utils/log-manager';
 import WindowManager from './window-manager';

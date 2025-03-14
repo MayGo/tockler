@@ -1,10 +1,10 @@
-import { appSettingService } from '../drizzle/queries/app-setting-service';
-import { insertTrackItem } from '../drizzle/queries/trackItem.db';
-import { NewTrackItem, TrackItem } from '../drizzle/schema';
-import { State } from '../enums/state';
-import { TrackItemType } from '../enums/track-item-type';
-import { appEmitter } from '../utils/appEmitter';
-import { logManager } from '../utils/log-manager';
+import { appSettingService } from '../../drizzle/queries/app-setting-service';
+import { insertTrackItem } from '../../drizzle/queries/trackItem.db';
+import { NewTrackItem, TrackItem } from '../../drizzle/schema';
+import { State } from '../../enums/state';
+import { TrackItemType } from '../../enums/track-item-type';
+import { appEmitter } from '../../utils/appEmitter';
+import { logManager } from '../../utils/log-manager';
 
 const logger = logManager.getLogger('watchAndSetStatusTrackItem');
 

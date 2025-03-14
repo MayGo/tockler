@@ -1,4 +1,4 @@
-import { logManager } from '../utils/log-manager';
+import { logManager } from '../../utils/log-manager';
 import { checkIdleState, IDLE_STATE_CHECK_INTERVAL } from './watchForIdleState.utils';
 
 const logger = logManager.getLogger('IdleStateWatcher');

@@ -1,5 +1,5 @@
 import activeWin from 'active-win';
-import { logManager } from '../utils/log-manager';
+import { logManager } from '../../utils/log-manager';
 
 const logger = logManager.getLogger('checkActiveWindow');
 
