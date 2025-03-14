@@ -2,7 +2,7 @@
     "name": "tockler",
     "productName": "Tockler",
     "version": "3.23.6",
-    "description": "Automatically track applications usage and working time",
+    "description": "Tockler",
     "author": "Maigo Erit <maigo.erit@gmail.com>",
     "license": "GPL-2.0",
     "main": "dist-electron/index.js",
