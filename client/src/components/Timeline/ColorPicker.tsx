@@ -4,11 +4,11 @@ import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-    useMultiStyleConfig,
     useColorMode,
+    useMultiStyleConfig,
 } from '@chakra-ui/react';
 import { useEffect } from 'react';
-import { ColorPicker as ReactPicker, useColor, toColor } from 'react-color-palette';
+import { ColorPicker as ReactPicker, toColor, useColor } from 'react-color-palette';
 import 'react-color-palette/lib/css/styles.css';
 import { THEMES } from '../../store/theme.util';
 
@@ -22,7 +22,7 @@ const defaultColor = '#000000';
 
 export const ColorPicker = ({ color = defaultColor, onChange }: IProps) => {
     const { colorMode } = useColorMode();
-    const [pickerColor, setPickerColor] = useColor('hex', color);
+    const [pickerColor, setPickerColor] = useColor('hex', color || defaultColor);
 
     useEffect(() => {
         if (color) {
