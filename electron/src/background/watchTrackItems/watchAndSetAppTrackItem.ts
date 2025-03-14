@@ -46,6 +46,7 @@ const saveOngoingTrackItem = async () => {
         logger.debug('No ongoing track item to save');
     }
 };
+
 // This is only exported for testing purposes
 export function addActiveWindowWatch() {
     logger.info('Add active-window-listener');

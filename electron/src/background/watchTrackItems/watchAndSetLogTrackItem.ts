@@ -1,10 +1,8 @@
-import { eq } from 'drizzle-orm';
 import { ipcMain } from 'electron';
 import { TrackItemRaw } from '../../app/task-analyser';
-import { db } from '../../drizzle/db';
 import { settingsService } from '../../drizzle/queries/settings-service';
-import { insertTrackItem, updateTrackItem } from '../../drizzle/queries/trackItem.db';
-import { NewTrackItem, TrackItem, trackItems } from '../../drizzle/schema';
+import { insertNewLogTrackItem, insertTrackItem, updateTrackItem } from '../../drizzle/queries/trackItem.db';
+import { NewTrackItem, TrackItem } from '../../drizzle/schema';
 import { State } from '../../enums/state';
 import { TrackItemType } from '../../enums/track-item-type';
 import { appEmitter } from '../../utils/appEmitter';
@@ -68,7 +66,7 @@ async function stopRunningLogTrackItem(endDate: number) {
         return;
     }
 
-    await db.update(trackItems).set({ endDate }).where(eq(trackItems.id, currentLogItem.id)).execute();
+    await updateTrackItem(currentLogItem.id, currentLogItem.app, { endDate });
 
     currentLogItem = null;
 }
@@ -90,10 +88,10 @@ async function createNewRunningLogTrackItem(rawItem: TrackItemRaw) {
         endDate: now,
     };
 
-    const result = await db.insert(trackItems).values(newLogItem).execute();
+    const id = await insertNewLogTrackItem(newLogItem);
 
-    logger.debug('New log item created:', result);
-    const id = result.lastInsertRowid as number;
+    logger.debug('New log item created:', id);
+
     currentLogItem = {
         ...(newLogItem as TrackItem),
         id,

@@ -9,6 +9,7 @@ import { appSettingService } from './app-setting-service';
 
 export async function updateTrackItem(id: number, appName: string, item: Partial<TrackItem>) {
     console.warn('Updating end date of current log item');
+
     const color = await appSettingService.getAppColor(appName);
     item.color = color;
 
@@ -18,11 +19,18 @@ export async function updateTrackItem(id: number, appName: string, item: Partial
 
 export async function insertTrackItem(item: NewTrackItem) {
     console.warn('Inserting new log item');
+
     const color = await appSettingService.getAppColor(item.app ?? '');
     item.color = color;
 
     const query = db.insert(trackItems).values(item);
     const result = await query.execute();
 
+    return result.lastInsertRowid as number;
+}
+
+export async function insertNewLogTrackItem(item: NewTrackItem) {
+    console.warn('Inserting new log item');
+    const result = await db.insert(trackItems).values(item).execute();
     return result.lastInsertRowid as number;
 }
