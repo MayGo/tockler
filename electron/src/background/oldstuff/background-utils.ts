@@ -25,7 +25,7 @@ export default class BackgroundUtils {
     }
 
     static almostMidnight(d: Date) {
-        return moment(d).startOf('day').add(1, 'days').subtract(1, 'seconds').toDate();
+        return moment(d).startOf('day').add(1, 'days').subtract(1, 'milliseconds').toDate();
     }
 
     static startOfDay(d: Date) {
