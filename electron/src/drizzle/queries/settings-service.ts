@@ -144,6 +144,14 @@ export class SettingsService {
         try {
             const id = JSON.parse(item.jsonData).id;
             const trackItem = await trackItemService.findById(id);
+
+            if (!trackItem) {
+                this.logger.error('No RUNNING_LOG_ITEM found', id);
+                return null;
+            }
+
+            this.logger.debug('Running log item:', trackItem);
+
             return trackItem;
         } catch (e) {
             this.logger.error('Error parsing RUNNING_LOG_ITEM:', e);

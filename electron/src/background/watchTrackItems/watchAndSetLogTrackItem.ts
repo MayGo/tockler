@@ -98,6 +98,8 @@ async function createNewRunningLogTrackItem(rawItem: TrackItemRaw) {
         ...(newLogItem as TrackItem),
         id,
     };
+
+    await settingsService.saveRunningLogItemReference(id);
 }
 
 export async function getOngoingLogTrackItem() {
