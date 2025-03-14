@@ -46,15 +46,15 @@ const saveOngoingTrackItem = async () => {
         logger.debug('No ongoing track item to save');
     }
 };
-
-function addStateListener() {
+// This is only exported for testing purposes
+export function addActiveWindowWatch() {
     logger.info('Add active-window-listener');
     appEmitter.on('active-window-changed', (activeWindow) => {
         setAppTrackItem(activeWindow);
     });
 }
 
-async function removeStateListener() {
+async function removeActiveWindowWatch() {
     logger.info('Remove active-window-listener');
     appEmitter.removeAllListeners('active-window-changed');
     await saveOngoingTrackItem();
@@ -63,7 +63,7 @@ async function removeStateListener() {
 let removeActiveWindowWatcher: () => void;
 
 export function watchAndSetAppTrackItem(backgroundJobInterval: number) {
-    addStateListener();
+    addActiveWindowWatch();
 
     removeActiveWindowWatcher = startActiveWindowWatcher(backgroundJobInterval);
 
@@ -80,6 +80,6 @@ export function watchAndSetAppTrackItem(backgroundJobInterval: number) {
 }
 
 export async function watchAndSetAppTrackItemRemove() {
-    await removeStateListener();
+    await removeActiveWindowWatch();
     removeActiveWindowWatcher();
 }

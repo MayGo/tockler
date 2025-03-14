@@ -53,9 +53,9 @@ describe('watchAndSetLogTrackItem', () => {
 
     it('saves previous app item', async () => {
         const { appEmitter } = await import('../utils/appEmitter');
-        const { watchAndSetAppTrackItem } = await import('../background/watchTrackItems/watchAndSetAppTrackItem');
+        const { addActiveWindowWatch } = await import('../background/watchTrackItems/watchAndSetAppTrackItem');
 
-        await watchAndSetAppTrackItem();
+        await addActiveWindowWatch();
 
         const firstApp: NormalizedActiveWindow = {
             app: 'FirstApp',
@@ -90,9 +90,9 @@ describe('watchAndSetLogTrackItem', () => {
 
     it('saves each item with correct begin/end dates', async () => {
         const { appEmitter } = await import('../utils/appEmitter');
-        const { watchAndSetAppTrackItem } = await import('../background/watchTrackItems/watchAndSetAppTrackItem');
+        const { addActiveWindowWatch } = await import('../background/watchTrackItems/watchAndSetAppTrackItem');
 
-        await watchAndSetAppTrackItem();
+        await addActiveWindowWatch();
 
         const firstApp: NormalizedActiveWindow = {
             app: 'FirstApp',
@@ -120,6 +120,7 @@ describe('watchAndSetLogTrackItem', () => {
 
         vi.spyOn(Date, 'now').mockImplementation(() => NOW + 2000);
         appEmitter.emit('active-window-changed', thirdApp);
+
         await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(2));
 
         // Verify item was created in the database
