@@ -38,7 +38,7 @@ if (gotTheLock) {
     app.on('will-quit', async () => {
         logger.debug('will-quit');
         // Clean up any resources here that need to be terminated
-        cleanupBackgroundJob();
+        await cleanupBackgroundJob();
         await AppManager.destroy();
     });
     app.on('window-all-closed', function () {

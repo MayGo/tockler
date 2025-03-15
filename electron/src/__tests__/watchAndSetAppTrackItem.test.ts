@@ -146,4 +146,62 @@ describe('watchAndSetLogTrackItem', () => {
             color: COLORS.RED,
         });
     });
+
+    it('watchAndSetAppTrackItemRemove should end current item and save it', async () => {
+        const { appEmitter } = await import('../utils/appEmitter');
+        const { addActiveWindowWatch, watchAndSetAppTrackItemRemove } = await import(
+            '../background/watchTrackItems/watchAndSetAppTrackItem'
+        );
+
+        // Spy on appEmitter's removeAllListeners method
+        const removeAllListenersSpy = vi.spyOn(appEmitter, 'removeAllListeners');
+
+        // Create a mock for the removeActiveWindowWatcher function
+        vi.mock('../background/watchTrackItems/watchForActiveWindow', () => ({
+            startActiveWindowWatcher: vi.fn().mockReturnValue(vi.fn()),
+        }));
+
+        // Set up the initial state
+        await addActiveWindowWatch();
+
+        // Create a test app window data
+        const testApp: NormalizedActiveWindow = {
+            app: 'TestApp',
+            title: 'Test Title',
+        };
+
+        // Add color to make verification easier
+        await addColorToApp(testApp.app, COLORS.BLUE);
+
+        // Emit the active window changed event
+        appEmitter.emit('active-window-changed', testApp);
+
+        // Mock Date.now to advance time for the end date
+        const END_TIME = NOW + 5000;
+        vi.spyOn(Date, 'now').mockImplementation(() => END_TIME);
+
+        // Initially there should be no items in the database (since our current item hasn't been saved yet)
+        expect((await selectAllAppItems(db)).length).toBe(0);
+
+        // Call the remove function which should save the current item
+        await watchAndSetAppTrackItemRemove();
+
+        // Verify appEmitter.removeAllListeners was called with 'active-window-changed'
+        expect(removeAllListenersSpy).toHaveBeenCalledWith('active-window-changed');
+
+        // Verify an item was saved to the database
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
+
+        // Verify the saved item has the correct properties
+        const items = await selectAllAppItems(db);
+        expect(items.length).toBe(1);
+        expect(items[0]).toStrictEqual({
+            ...emptyData,
+            ...testApp,
+            id: 1,
+            beginDate: NOW,
+            endDate: END_TIME,
+            color: COLORS.BLUE,
+        });
+    });
 });

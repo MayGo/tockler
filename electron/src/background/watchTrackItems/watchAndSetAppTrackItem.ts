@@ -82,5 +82,5 @@ export function watchAndSetAppTrackItem(backgroundJobInterval: number) {
 
 export async function watchAndSetAppTrackItemRemove() {
     await removeActiveWindowWatch();
-    removeActiveWindowWatcher();
+    removeActiveWindowWatcher?.();
 }

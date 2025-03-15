@@ -113,11 +113,8 @@ export async function watchAndSetLogTrackItem() {
 
 const saveOngoingTrackItem = async () => {
     if (currentLogItem) {
-        const itemToInsert = {
-            ...currentLogItem,
-            endDate: Date.now(),
-        };
-        await insertTrackItem(itemToInsert);
+        currentLogItem.endDate = Date.now();
+        await insertTrackItem(currentLogItem);
         currentLogItem = null;
     }
 };

@@ -47,12 +47,13 @@ export async function getOngoingStatusTrackItem() {
 
 const saveOngoingTrackItem = async () => {
     if (currentStatusItem) {
+        currentStatusItem.endDate = Date.now();
         await insertTrackItem(currentStatusItem);
+        currentStatusItem = null;
     }
 };
 
 export async function watchAndSetStatusTrackItemRemove() {
     appEmitter.removeAllListeners('state-changed');
     await saveOngoingTrackItem();
-    currentStatusItem = null;
 }

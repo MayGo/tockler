@@ -27,14 +27,14 @@ export async function initBackgroundJob() {
     watchAndSetLogTrackItem();
 }
 
-export function cleanupBackgroundJob() {
+export async function cleanupBackgroundJob() {
     logger.debug('Cleaning up background job');
 
     watchForIdleStateRemove();
     watchForPowerStateRemove();
     watchAndPropagateStateRemove();
 
-    watchAndSetStatusTrackItemRemove();
-    watchAndSetAppTrackItemRemove();
-    watchAndSetLogTrackItemRemove();
+    await watchAndSetStatusTrackItemRemove();
+    await watchAndSetAppTrackItemRemove();
+    await watchAndSetLogTrackItemRemove();
 }
