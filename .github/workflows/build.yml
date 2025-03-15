@@ -26,14 +26,9 @@ jobs:
                   run_install: false
 
             - name: Install Dependencies (Electron)
-              shell: bash
               run: |
                   cd electron
-                  if [[ "${{ matrix.os }}" == "macos-13" ]]; then
-                    PYTHON=$(brew --prefix)/bin/python2 pnpm install
-                  else
-                    pnpm install
-                  fi
+                  pnpm install
                   cd ..
 
             - name: Run Electron Tests with Coverage
@@ -127,11 +122,12 @@ jobs:
             - name: Install Python Setuptools on MacOS-13
               if: matrix.os == 'macos-13'
               run: |
-                  brew install python@2
-                  brew link --overwrite python@2
-                  export PYTHON=$(brew --prefix)/bin/python2
-                  echo "PYTHON=$(brew --prefix)/bin/python2" >> $GITHUB_ENV
-                  echo "npm_config_python=$(brew --prefix)/bin/python2" >> $GITHUB_ENV
+                  # Python 2 is no longer available in Homebrew
+                  # Install setuptools which provides distutils for Python 3
+                  python3 -m pip install setuptools
+                  # Set environment variables to use Python 3
+                  echo "PYTHON=$(which python3)" >> $GITHUB_ENV
+                  echo "npm_config_python=$(which python3)" >> $GITHUB_ENV
 
             - name: Install Python Setuptools on other macOS
               if: startsWith(matrix.os, 'macos') && matrix.os != 'macos-13'
@@ -147,9 +143,10 @@ jobs:
               if: matrix.os == 'macos-13'
               run: |
                   cd electron
-                  echo "node-gyp-binary=python2.7" >> .npmrc
-                  echo "python=python2.7" >> .npmrc
-                  echo "npm_config_python=python2.7" >> .npmrc
+                  # Configure node-gyp to use Python 3
+                  echo "node-gyp-binary=python3" >> .npmrc
+                  echo "python=python3" >> .npmrc
+                  echo "npm_config_python=python3" >> .npmrc
                   cd ..
 
             - name: Install Dependencies (Electron)
@@ -157,7 +154,7 @@ jobs:
               run: |
                   cd electron
                   if [[ "${{ matrix.os }}" == "macos-13" ]]; then
-                    PYTHON=$(brew --prefix)/bin/python2 pnpm install
+                    PYTHON=$(which python3) pnpm install
                   else
                     pnpm install
                   fi
