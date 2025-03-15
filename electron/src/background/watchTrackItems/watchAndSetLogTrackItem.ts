@@ -83,6 +83,10 @@ async function createNewRunningLogTrackItem(rawItem: TrackItemRaw) {
 }
 
 export async function getOngoingLogTrackItem() {
+    if (!currentLogItem) {
+        return null;
+    }
+
     return { ...currentLogItem, endDate: Date.now() } as TrackItem;
 }
 

@@ -154,17 +154,26 @@ export class TrackItemService {
 
         if (isToday && taskName === TrackItemType.StatusTrackItem) {
             this.logger.debug('Adding ongoing status track item............');
-            data.push(await getOngoingStatusTrackItem());
+            const ongoingStatusItem = await getOngoingStatusTrackItem();
+            if (ongoingStatusItem) {
+                data.push(ongoingStatusItem);
+            }
         }
 
         if (isToday && taskName === TrackItemType.AppTrackItem) {
             this.logger.debug('Adding ongoing app track item............');
-            data.push(await getOngoingAppTrackItem());
+            const ongoingAppItem = await getOngoingAppTrackItem();
+            if (ongoingAppItem) {
+                data.push(ongoingAppItem);
+            }
         }
 
         if (isToday && taskName === TrackItemType.LogTrackItem) {
             this.logger.debug('Adding ongoing log track item............');
-            data.push(await getOngoingLogTrackItem());
+            const ongoingLogItem = await getOngoingLogTrackItem();
+            if (ongoingLogItem) {
+                data.push(ongoingLogItem);
+            }
         }
 
         return data;

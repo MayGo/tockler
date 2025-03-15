@@ -41,6 +41,10 @@ export function watchAndSetStatusTrackItem() {
 }
 
 export async function getOngoingStatusTrackItem() {
+    if (!currentStatusItem) {
+        return null;
+    }
+
     const color = await appSettingService.getAppColor(currentStatusItem?.app || '');
     return { ...currentStatusItem, endDate: Date.now(), color } as TrackItem;
 }

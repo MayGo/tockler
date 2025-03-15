@@ -33,6 +33,10 @@ async function setAppTrackItem(activeWindow: NormalizedActiveWindow) {
 }
 
 export async function getOngoingAppTrackItem() {
+    if (!currentAppItem) {
+        return null;
+    }
+
     const color = await appSettingService.getAppColor(currentAppItem?.app || '');
     return { ...currentAppItem, endDate: Date.now(), id: 0, color } as TrackItem;
 }
