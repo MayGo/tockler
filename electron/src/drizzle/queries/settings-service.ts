@@ -1,8 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { logManager } from '../../utils/log-manager';
 import { db } from '../db';
-import { Setting, settings } from '../schema';
-import { trackItemService } from './track-item-service';
+import { NewTrackItem, Setting, settings } from '../schema';
 
 const defaultSettings = {
     recentDaysCount: 7,
@@ -17,6 +16,8 @@ const defaultWorkSettings = {
     reNotifyInterval: 5,
     smallNotificationsEnabled: true,
 };
+
+const RUNNING_LOG_ITEM = 'RUNNING_LOG_ITEM';
 
 export class SettingsService {
     logger = logManager.getLogger('SettingsService');
@@ -135,40 +136,34 @@ export class SettingsService {
 
     // TODO: cache this
     async getRunningLogItemAsJson() {
-        let item = await this.findByName('RUNNING_LOG_ITEM');
+        let item = await this.findByName(RUNNING_LOG_ITEM);
         if (!item || !item.jsonData) {
             // this.logger.debug('No RUNNING_LOG_ITEM');
             return null;
         }
 
         try {
-            const id = JSON.parse(item.jsonData).id;
-            const trackItem = await trackItemService.findById(id);
+            const newTrackItem = JSON.parse(item.jsonData);
 
-            if (!trackItem) {
-                this.logger.error('No RUNNING_LOG_ITEM found', id);
-                return null;
-            }
+            this.logger.debug('Running log item:', newTrackItem);
 
-            this.logger.debug('Running log item:', trackItem);
-
-            return trackItem;
+            return newTrackItem;
         } catch (e) {
             this.logger.error('Error parsing RUNNING_LOG_ITEM:', e);
             return null;
         }
     }
 
-    async saveRunningLogItemReference(logItemId: number | null) {
-        if (!logItemId) {
+    async saveRunningLogItemReference(newTrackItem: NewTrackItem | null) {
+        if (!newTrackItem) {
             this.logger.debug('Clearing running log item');
-            await this.updateByName('RUNNING_LOG_ITEM', '{}');
+            await this.updateByName(RUNNING_LOG_ITEM, '{}');
             return null;
         }
 
-        this.logger.debug('Creating running log item: ', logItemId);
+        this.logger.debug('Creating running log item: ', newTrackItem);
 
-        return this.updateByName('RUNNING_LOG_ITEM', JSON.stringify({ id: logItemId }));
+        return this.updateByName(RUNNING_LOG_ITEM, JSON.stringify(newTrackItem));
     }
 }
 

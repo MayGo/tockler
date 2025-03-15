@@ -1,17 +1,20 @@
 import { ipcMain } from 'electron';
 import { TrackItemRaw } from '../../app/task-analyser';
 import { settingsService } from '../../drizzle/queries/settings-service';
-import { insertNewLogTrackItem, insertTrackItem, updateTrackItem } from '../../drizzle/queries/trackItem.db';
+import { insertTrackItem } from '../../drizzle/queries/trackItem.db';
 import { NewTrackItem, TrackItem } from '../../drizzle/schema';
 import { State } from '../../enums/state';
 import { TrackItemType } from '../../enums/track-item-type';
 import { appEmitter } from '../../utils/appEmitter';
 import { logManager } from '../../utils/log-manager';
-import { NEW_ITEM_END_DATE_OFFSET } from './watchAndSetLogTrackItem.utils';
 
 const logger = logManager.getLogger('watchAndSetStatusTrackItem');
 
-let currentLogItem: TrackItem | null = null;
+let currentLogItem: NewTrackItem | null = null;
+
+let lastState: State = State.Online;
+
+const offlineStates = [State.Idle, State.Offline];
 
 async function cutLogTrackItem(state: State) {
     const now = Date.now();
@@ -19,55 +22,42 @@ async function cutLogTrackItem(state: State) {
 
     if (!currentLogItem) {
         logger.debug('No log item to cut');
+        lastState = state;
         return;
     }
 
-    // End current log item
-    if (state !== State.Online) {
-        await updateTrackItem(currentLogItem.id, currentLogItem.app, { endDate: now });
-    }
+    // we dont want to trigger new cut when state changes from Idle to Offline
 
-    // For Online state, create a new log item
-    if (state === State.Online) {
-        // Create new log item with same properties but new begin/end dates
-        const newLogItem: NewTrackItem = {
-            taskName: TrackItemType.LogTrackItem,
-            app: currentLogItem.app,
-            title: currentLogItem.title,
-            color: currentLogItem.color,
-            url: currentLogItem.url,
-            beginDate: now,
-            endDate: now + NEW_ITEM_END_DATE_OFFSET,
+    if (lastState === State.Online && offlineStates.includes(state)) {
+        // When state changes from Online to Idle or Offline, insert the current log item and create a new one if needed
+        const itemToInsert = {
+            ...currentLogItem,
+            endDate: now,
         };
 
-        const id = await insertTrackItem(newLogItem);
-
-        console.warn('New log item created for Online state', id);
-
-        // Update currentLogItem reference to the new item
-        currentLogItem = {
-            ...(newLogItem as TrackItem),
-            id,
-        };
-    } else {
-        // For Idle or Offline states, just update the endDate in the currentLogItem
-        // but don't clear the reference - keep it until explicitly stopped
-        currentLogItem.endDate = now;
-
-        console.warn('Updated current log item for Idle/Offline state', currentLogItem);
+        await insertTrackItem(itemToInsert);
+    } else if (state === State.Online) {
+        currentLogItem.beginDate = now;
     }
+
+    lastState = state;
 }
 
 async function stopRunningLogTrackItem(endDate: number) {
     logger.debug('stopRunningLogTrackItem');
 
-    if (!currentLogItem || !currentLogItem.id) {
+    if (!currentLogItem) {
         logger.debug('No log item to stop');
         return;
     }
 
-    await updateTrackItem(currentLogItem.id, currentLogItem.app, { endDate });
+    // Insert the item with the updated endDate rather than updating it
+    const itemToInsert = {
+        ...currentLogItem,
+        endDate,
+    };
 
+    await insertTrackItem(itemToInsert);
     currentLogItem = null;
 }
 
@@ -83,21 +73,13 @@ async function createNewRunningLogTrackItem(rawItem: TrackItemRaw) {
         app: rawItem.app || 'unknown',
         title: rawItem.title || 'unknown',
         color: rawItem.color,
-        url: rawItem.url,
         beginDate: now,
         endDate: now,
     };
 
-    const id = await insertNewLogTrackItem(newLogItem);
+    currentLogItem = newLogItem;
 
-    logger.debug('New log item created:', id);
-
-    currentLogItem = {
-        ...(newLogItem as TrackItem),
-        id,
-    };
-
-    await settingsService.saveRunningLogItemReference(Number(id));
+    await settingsService.saveRunningLogItemReference(currentLogItem);
 }
 
 export async function getOngoingLogTrackItem() {
@@ -131,7 +113,12 @@ export async function watchAndSetLogTrackItem() {
 
 const saveOngoingTrackItem = async () => {
     if (currentLogItem) {
-        await updateTrackItem(currentLogItem.id, currentLogItem.app, { endDate: Date.now() });
+        const itemToInsert = {
+            ...currentLogItem,
+            endDate: Date.now(),
+        };
+        await insertTrackItem(itemToInsert);
+        currentLogItem = null;
     }
 };
 
