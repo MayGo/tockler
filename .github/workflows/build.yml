@@ -5,6 +5,12 @@ on:
             - master
     pull_request:
         types: [opened, synchronize, reopened]
+
+# Add concurrency to cancel outdated builds
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+    cancel-in-progress: true
+
 jobs:
     sonarcloud:
         name: SonarCloud
@@ -69,6 +75,7 @@ jobs:
         name: Build (${{ matrix.os }}-${{ matrix.arch }})
         needs: [sonarcloud]
         runs-on: ${{ matrix.os }}
+        timeout-minutes: 60 # Set maximum job runtime
         strategy:
             matrix:
                 include:
@@ -187,7 +194,6 @@ jobs:
               shell: bash
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  DEBUG: electron-builder,electron-builder:*
                   CSC_LINK: ${{ secrets.CSC_LINK }}
                   CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
                   APPLE_ID: ${{ secrets.APPLE_ID }}
@@ -197,6 +203,8 @@ jobs:
 
               run: |
                   cd electron
+                  # Add flag to reduce console output
+                  export ELECTRON_BUILDER_SILENT=true
                   pnpm build
                   pnpm prepare_client
                   if [[ "${{ matrix.os }}" == "macos-"* ]]; then
