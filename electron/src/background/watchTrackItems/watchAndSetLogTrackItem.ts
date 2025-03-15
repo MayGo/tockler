@@ -90,7 +90,7 @@ export async function watchAndSetLogTrackItem() {
     const runningLogItem = await settingsService.getRunningLogItemAsJson();
 
     if (runningLogItem) {
-        currentLogItem = runningLogItem;
+        currentLogItem = { ...runningLogItem, beginDate: Date.now() };
     }
 
     appEmitter.on('state-changed', async (state) => {

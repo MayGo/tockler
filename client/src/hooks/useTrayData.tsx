@@ -49,7 +49,7 @@ export const useTrayData = () => {
         try {
             const items = await findFirstChunkLogItems();
             setLogItems(items);
-            Logger.debug('TrayApp - Log items loaded:', items);
+            // Logger.debug('TrayApp - Log items loaded:', items);
             return items;
         } catch (error) {
             Logger.error('Error fetching log items:', error);

@@ -145,6 +145,16 @@ export class SettingsService {
         try {
             const newTrackItem = JSON.parse(item.jsonData);
 
+            if (!newTrackItem.app) {
+                this.logger.debug('No app in RUNNING_LOG_ITEM.  Invalid item:', newTrackItem);
+                return null;
+            }
+
+            delete newTrackItem.id;
+            delete newTrackItem.url;
+            delete newTrackItem.beginDate;
+            delete newTrackItem.endDate;
+
             this.logger.debug('Running log item:', newTrackItem);
 
             return newTrackItem;

@@ -170,12 +170,17 @@ export class TrackItemService {
         return data;
     }
     async findFirstChunkLogItems() {
-        return await db
+        const items = await db
             .select()
             .from(trackItems)
             .where(eq(trackItems.taskName, TrackItemType.LogTrackItem))
             .orderBy(desc(trackItems.beginDate))
             .limit(100);
+        const ongoingLogItem = await getOngoingLogTrackItem();
+        if (ongoingLogItem) {
+            items.push(ongoingLogItem);
+        }
+        return items;
     }
 
     async findFirstTrackItem() {
