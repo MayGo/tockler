@@ -67,6 +67,7 @@ jobs:
 
     build:
         name: Build (${{ matrix.os }})
+        needs: [sonarcloud]
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
