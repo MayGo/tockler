@@ -10,6 +10,19 @@
         "type": "git",
         "url": "git@github.com:MayGo/tockler.git"
     },
+    "pnpm": {
+        "supportedArchitectures": {
+            "os": [
+                "win32",
+                "darwin",
+                "current"
+            ],
+            "cpu": [
+                "x64",
+                "arm64"
+            ]
+        }
+    },
     "scripts": {
         "dev": "vite",
         "build": "tsc -b && vite build",
