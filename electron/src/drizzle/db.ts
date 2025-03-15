@@ -4,8 +4,8 @@ import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import { existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
-import { config } from '../config';
-import { logManager } from '../log-manager';
+import { config } from '../utils/config';
+import { logManager } from '../utils/log-manager';
 import * as schema from './schema';
 import { appSettings } from './schema';
 

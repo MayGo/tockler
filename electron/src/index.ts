@@ -1,14 +1,13 @@
 require('events').EventEmitter.defaultMaxListeners = 30;
 
-import { app, ipcMain, powerMonitor } from 'electron';
-import AppManager from './app-manager';
-import AppUpdater from './app-updater';
-import { backgroundService } from './background-service';
-import { config } from './config';
-import { extensionsManager } from './extensions-manager';
-import { cleanupBackgroundJob, initBackgroundJob } from './initBackgroundJob';
-import { logManager } from './log-manager';
-import WindowManager from './window-manager';
+import { app, ipcMain } from 'electron';
+import AppManager from './app/app-manager';
+import AppUpdater from './app/app-updater';
+import { extensionsManager } from './app/extensions-manager';
+import WindowManager from './app/window-manager';
+import { cleanupBackgroundJob, initBackgroundJob } from './background/initBackgroundJob';
+import { config } from './utils/config';
+import { logManager } from './utils/log-manager';
 
 let logger = logManager.getLogger('AppIndex');
 
@@ -39,7 +38,7 @@ if (gotTheLock) {
     app.on('will-quit', async () => {
         logger.debug('will-quit');
         // Clean up any resources here that need to be terminated
-        cleanupBackgroundJob();
+        await cleanupBackgroundJob();
         await AppManager.destroy();
     });
     app.on('window-all-closed', function () {
@@ -80,19 +79,6 @@ if (gotTheLock) {
             await AppManager.init();
 
             await initBackgroundJob();
-
-            powerMonitor.on('suspend', function () {
-                logger.debug('The system is going to sleep');
-                backgroundService.onSleep();
-            });
-
-            powerMonitor.on('resume', function () {
-                logger.debug('The system is going to resume');
-                backgroundService.onResume().then(
-                    () => logger.debug('Resumed'),
-                    (e) => logger.error('Error in onResume', e),
-                );
-            });
         } catch (error: any) {
             logger.error(`App errored in ready event: ${error.toString()}`, error);
         }

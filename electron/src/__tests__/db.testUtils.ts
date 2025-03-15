@@ -14,7 +14,10 @@ export async function setupTestDb() {
     });
 
     // Set up database with schema
-    const db = drizzle(client, { schema });
+    const db = drizzle(client, {
+        schema,
+        logger: true,
+    });
 
     // Create tables from schema
     await migrate(db, { migrationsFolder: './src/drizzle/migrations' });
@@ -31,4 +34,9 @@ export async function setupTestDb() {
     }));
 
     return { db, client };
+}
+
+export async function addColorToApp(app: string, color: string) {
+    const { appSettingService } = await import('../drizzle/queries/app-setting-service');
+    await appSettingService.changeColorForApp(app, color);
 }

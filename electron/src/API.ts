@@ -1,15 +1,13 @@
 import { ipcMain } from 'electron';
 import { machineId } from 'node-machine-id';
-import AppManager from './app-manager';
+import AppManager from './app/app-manager';
+import { sendToNotificationWindow, sendToTrayWindow } from './app/window-manager';
+import { initBackgroundJob } from './background/initBackgroundJob';
+import { appSettingService } from './drizzle/queries/app-setting-service';
+import { settingsService } from './drizzle/queries/settings-service';
+import { trackItemService } from './drizzle/queries/track-item-service';
 import { TrackItem } from './drizzle/schema';
-import { State } from './enums/state';
-import { initBackgroundJob } from './initBackgroundJob';
-import { appSettingService } from './services/app-setting-service';
-import { settingsService } from './services/settings-service';
-import { trackItemService } from './services/track-item-service';
-import { setupMainHandler } from './setupMainHandler';
-import { stateManager } from './state-manager';
-import { sendToNotificationWindow, sendToTrayWindow } from './window-manager';
+import { setupMainHandler } from './utils/setupMainHandler';
 
 const settingsActions = {
     fetchAnalyserSettingsJsonString: async () => {
@@ -93,11 +91,6 @@ const trackItemActions = {
     },
     findFirstTrackItem: async () => {
         return trackItemService.findFirstTrackItem();
-    },
-    getOnlineStartTime: async () => {
-        const statusItem = stateManager.getCurrentStatusTrackItem();
-
-        return statusItem && statusItem.app === State.Online ? statusItem.beginDate : null;
     },
 };
 
