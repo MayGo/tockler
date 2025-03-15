@@ -34,12 +34,10 @@ mac:
           arch:
               - x64
               - arm64
-              - universal
         - target: zip
           arch:
               - x64
               - arm64
-              - universal
     x64ArchFiles:
         - 'node_modules/active-win/bin/darwin-x64-*/active-win.node'
         - 'node_modules/better-sqlite3/build/Release/better_sqlite3.node'
