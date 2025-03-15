@@ -212,7 +212,7 @@ describe('BackgroundService with real implementation', () => {
 
             // First item should end at midnight
             expect(items[0].beginDate).toBe(getTimestamp('2023-01-09T23:30:00'));
-            expect(items[0].endDate).toBe(getTimestamp('2023-01-09T23:59:59'));
+            expect(items[0].endDate).toBe(getTimestamp('2023-01-09T23:59:59.999'));
 
             // Second item should start at midnight
             expect(items[1].beginDate).toBe(getTimestamp('2023-01-10T00:00:00'));
@@ -250,11 +250,11 @@ describe('BackgroundService with real implementation', () => {
 
             // First day item (partial)
             expect(items[0].beginDate).toBe(getTimestamp('2023-01-09T23:30:00'));
-            expect(items[0].endDate).toBe(getTimestamp('2023-01-09T23:59:59'));
+            expect(items[0].endDate).toBe(getTimestamp('2023-01-09T23:59:59.999'));
 
             // Second day item (full day)
             expect(items[1].beginDate).toBe(getTimestamp('2023-01-10T00:00:00'));
-            expect(items[1].endDate).toBe(getTimestamp('2023-01-10T23:59:59'));
+            expect(items[1].endDate).toBe(getTimestamp('2023-01-10T23:59:59.999'));
 
             // Third day item (partial)
             expect(items[2].beginDate).toBe(getTimestamp('2023-01-11T00:00:00'));

@@ -1,147 +1,240 @@
 import { describe, expect, it } from 'vitest';
 
+import { Client } from '@libsql/client';
+import { drizzle } from 'drizzle-orm/libsql';
+import { afterEach, beforeEach, vi } from 'vitest';
 import { getTimestamp } from '../__tests__/time.testUtils'; // Importing getTimestamp
-import { NewTrackItem } from '../drizzle/schema';
+import { NormalizedActiveWindow } from '../background/watchTrackItems/watchForActiveWindow.utils';
+import { NewTrackItem, TrackItem, trackItems } from '../drizzle/schema';
+import { State } from '../enums/state';
+import { TrackItemType } from '../enums/track-item-type';
+import { COLORS } from './color.testUtils';
+import { addColorToApp, setupTestDb } from './db.testUtils';
+import { selectAllAppItems } from './query.testUtils';
 
+// Create mocks
 vi.mock('electron');
+
 vi.mock('../utils/log-manager');
 
-describe('splitTrackItemAtMidnight', () => {
-    it('should not split item when begin and end dates are on the same day', async () => {
-        const { splitTrackItemAtMidnight } = await import('../drizzle/queries/trackItem.db.util');
-        // Arrange
-        const sameDay: NewTrackItem = {
-            app: 'Test App',
-            beginDate: getTimestamp('2024-02-01T10:00:00'),
-            endDate: getTimestamp('2024-02-01T14:00:00'),
-            taskName: 'Test Task',
-        };
+// Setup in-memory database
+let client: Client;
+let db: ReturnType<typeof drizzle>;
 
-        // Act
-        const result = splitTrackItemAtMidnight(sameDay);
+async function cleanupTestDb() {
+    if (client) {
+        await db.delete(trackItems).execute();
+        await client.close();
+    }
+}
 
-        // Assert
-        expect(result).toHaveLength(1);
-        expect(result[0]).toBe(sameDay); // Should return the original item
+const NOW = getTimestamp('2023-01-10T12:00:00');
+
+const emptyData: Partial<TrackItem> = {
+    color: null,
+    url: null,
+    taskName: TrackItemType.AppTrackItem,
+};
+
+describe('watchAndSetLogTrackItem', () => {
+    beforeEach(async () => {
+        // Reset mocks and modules
+        vi.resetModules();
+        vi.resetAllMocks();
+
+        vi.spyOn(Date, 'now').mockImplementation(() => NOW);
+
+        // Setup test database for real DB operations
+        ({ db, client } = await setupTestDb());
     });
 
-    it('should split item into two when it spans exactly two days', async () => {
-        const { splitTrackItemAtMidnight } = await import('../drizzle/queries/trackItem.db.util');
-        // Arrange
-        const twoDays: NewTrackItem = {
-            app: 'Test App',
-            beginDate: getTimestamp('2024-02-01T20:00:00'),
-            endDate: getTimestamp('2024-02-02T04:00:00'),
-            taskName: 'Test Task',
-        };
-
-        // Act
-        const result = splitTrackItemAtMidnight(twoDays);
-
-        // Assert
-        expect(result).toHaveLength(2);
-
-        // First item: from Feb 1, 20:00 to Feb 1, 23:59:59.999
-        expect(result[0].beginDate).toBe(twoDays.beginDate);
-        expect(result[0].endDate).toBe(getTimestamp('2024-02-01T23:59:59.999'));
-        expect(result[0].app).toBe(twoDays.app);
-        expect(result[0].taskName).toBe(twoDays.taskName);
-
-        // Second item: from Feb 2, 00:00:00.000 to Feb 2, 04:00
-        expect(result[1].beginDate).toBe(getTimestamp('2024-02-02T00:00:00'));
-        expect(result[1].endDate).toBe(twoDays.endDate);
-        expect(result[1].app).toBe(twoDays.app);
-        expect(result[1].taskName).toBe(twoDays.taskName);
+    afterEach(async () => {
+        // Restore Date.now
+        vi.restoreAllMocks();
+        await cleanupTestDb();
     });
 
-    it('should split item into multiple pieces when it spans more than two days', async () => {
-        const { splitTrackItemAtMidnight } = await import('../drizzle/queries/trackItem.db.util');
-        // Arrange
-        const multiDays: NewTrackItem = {
-            app: 'Test App',
-            beginDate: getTimestamp('2024-02-01T22:00:00'),
-            endDate: getTimestamp('2024-02-03T02:00:00'),
-            taskName: 'Test Task',
-            title: 'Test Title',
-            url: 'http://test.com',
-            color: '#FFFFFF',
+    it('saves previous app item', async () => {
+        const { appEmitter } = await import('../utils/appEmitter');
+        const { addActiveWindowWatch } = await import('../background/watchTrackItems/watchAndSetAppTrackItem');
+
+        await addActiveWindowWatch();
+
+        const firstApp: NormalizedActiveWindow = {
+            app: 'FirstApp',
+            title: 'First Title',
         };
 
-        // Act
-        const result = splitTrackItemAtMidnight(multiDays);
+        const secondApp: NormalizedActiveWindow = {
+            app: 'SecondApp',
+            title: 'Second Title',
+        };
 
-        // Assert
-        expect(result).toHaveLength(3);
+        await addColorToApp(firstApp.app ?? '', COLORS.GREEN);
 
-        // First item: from Feb 1, 22:00 to Feb 1, 23:59:59.999
-        expect(result[0].beginDate).toBe(multiDays.beginDate);
-        expect(result[0].endDate).toBe(getTimestamp('2024-02-01T23:59:59.999'));
+        appEmitter.emit('active-window-changed', firstApp);
+        appEmitter.emit('active-window-changed', secondApp);
 
-        // Second item: the full day of Feb 2
-        expect(result[1].beginDate).toBe(getTimestamp('2024-02-02T00:00:00'));
-        expect(result[1].endDate).toBe(getTimestamp('2024-02-02T23:59:59.999'));
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
+        // Verify item was created in the database
+        const items = await selectAllAppItems(db);
 
-        // Third item: from Feb 3, 00:00:00.000 to Feb 3, 02:00
-        expect(result[2].beginDate).toBe(getTimestamp('2024-02-03T00:00:00'));
-        expect(result[2].endDate).toBe(multiDays.endDate);
+        expect(items.length).toBe(1);
 
-        // All items should keep the original properties
-        for (const item of result) {
-            expect(item.app).toBe(multiDays.app);
-            expect(item.taskName).toBe(multiDays.taskName);
-            expect(item.title).toBe(multiDays.title);
-            expect(item.url).toBe(multiDays.url);
-            expect(item.color).toBe(multiDays.color);
-        }
+        expect(items[0]).toStrictEqual({
+            ...emptyData,
+            ...firstApp,
+            id: 1,
+            beginDate: NOW,
+            endDate: NOW,
+            color: COLORS.GREEN,
+        });
+    });
+    it('should not split track item when it does not span across midnight', async () => {
+        // Import modules with mocked dependencies
+
+        const { insertTrackItem } = await import('../drizzle/queries/trackItem.db');
+
+        // First create a status item that starts before midnight
+        const beginDate = getTimestamp('2023-01-09T00:00:01');
+        const endDate = getTimestamp('2023-01-09T23:59:59.999');
+
+        // Insert the initial item that starts before midnight
+        const statusItem: NewTrackItem = {
+            app: State.Online,
+            title: 'online',
+            taskName: TrackItemType.StatusTrackItem,
+            beginDate,
+            endDate,
+        };
+
+        // Now update the item with an end time after midnight
+        const id = await insertTrackItem(statusItem);
+
+        expect(id).toBe(1n);
+
+        const items = await selectAllAppItems(db);
+
+        expect(items.length).toBe(1);
+
+        expect(items[0]).toStrictEqual({
+            ...emptyData,
+            ...statusItem,
+            id: 1,
+            beginDate,
+            endDate,
+        });
     });
 
-    it('should handle items exactly at midnight', async () => {
-        const { splitTrackItemAtMidnight } = await import('../drizzle/queries/trackItem.db.util');
-        // Arrange
-        const exactMidnight: NewTrackItem = {
-            app: 'Test App',
-            beginDate: getTimestamp('2024-02-01T00:00:00'),
-            endDate: getTimestamp('2024-02-02T00:00:00'),
-            taskName: 'Test Task',
+    it('should split track item when it spans across midnight', async () => {
+        // Import modules with mocked dependencies
+
+        const { insertTrackItem } = await import('../drizzle/queries/trackItem.db');
+
+        // First create a status item that starts before midnight
+        const beforeMidnightTime = getTimestamp('2023-01-09T23:58:28');
+        const afterMidnightTime = getTimestamp('2023-01-10T00:05:00');
+
+        // Insert the initial item that starts before midnight
+        const statusItem: NewTrackItem = {
+            app: State.Online,
+            title: 'online',
+            taskName: TrackItemType.StatusTrackItem,
+            beginDate: beforeMidnightTime,
+            endDate: afterMidnightTime,
         };
 
-        // Act
-        const result = splitTrackItemAtMidnight(exactMidnight);
+        // Now update the item with an end time after midnight
+        const id = await insertTrackItem(statusItem);
 
-        // Assert
-        expect(result).toHaveLength(2);
+        expect(id).toBe(2n);
 
-        // First item: from Feb 1, 00:00 to Feb 1, 23:59:59.999
-        expect(result[0].beginDate).toBe(exactMidnight.beginDate);
-        expect(result[0].endDate).toBe(getTimestamp('2024-02-01T23:59:59.999'));
+        const items = await selectAllAppItems(db);
 
-        // Second item: exactly Feb 2, 00:00
-        expect(result[1].beginDate).toBe(getTimestamp('2024-02-02T00:00:00'));
-        expect(result[1].endDate).toBe(exactMidnight.endDate);
+        expect(items.length).toBe(2);
+
+        expect(items[0]).toStrictEqual({
+            ...emptyData,
+            ...statusItem,
+            id: 1,
+            beginDate: beforeMidnightTime,
+            endDate: getTimestamp('2023-01-09T23:59:59.999'),
+        });
+
+        expect(items[1]).toStrictEqual({
+            ...emptyData,
+            ...statusItem,
+            id: 2,
+            beginDate: getTimestamp('2023-01-10T00:00:00'),
+            endDate: afterMidnightTime,
+        });
     });
 
-    it('should handle fractional milliseconds correctly', async () => {
-        const { splitTrackItemAtMidnight } = await import('../drizzle/queries/trackItem.db.util');
-        // Arrange
-        const withMilliseconds: NewTrackItem = {
-            app: 'Test App',
-            beginDate: getTimestamp('2024-02-01T23:59:59.500'),
-            endDate: getTimestamp('2024-02-02T00:00:00.500'),
-            taskName: 'Test Task',
+    it('should split track item when it spans multiple nights', async () => {
+        // Import modules with mocked dependencies
+
+        const { insertTrackItem } = await import('../drizzle/queries/trackItem.db');
+
+        // First create a status item that starts before midnight
+        const beginDate = getTimestamp('2023-01-09T13:00:00');
+        const endDate = getTimestamp('2023-01-13T00:05:00');
+
+        // Insert the initial item that starts before midnight
+        const statusItem: NewTrackItem = {
+            app: State.Online,
+            title: 'online',
+            taskName: TrackItemType.StatusTrackItem,
+            beginDate: beginDate,
+            endDate: endDate,
         };
 
-        // Act
-        const result = splitTrackItemAtMidnight(withMilliseconds);
+        // Now update the item with an end time after midnight
+        const id = await insertTrackItem(statusItem);
 
-        // Assert
-        expect(result).toHaveLength(2);
+        expect(id).toBe(5n);
 
-        // First item: from the original time to 23:59:59.999
-        expect(result[0].beginDate).toBe(withMilliseconds.beginDate);
-        expect(result[0].endDate).toBe(getTimestamp('2024-02-01T23:59:59.999'));
+        const items = await selectAllAppItems(db);
 
-        // Second item: from 00:00:00.000 to the original end time
-        expect(result[1].beginDate).toBe(getTimestamp('2024-02-02T00:00:00'));
-        expect(result[1].endDate).toBe(withMilliseconds.endDate);
+        expect(items.length).toBe(5);
+
+        expect(items[0]).toStrictEqual({
+            ...emptyData,
+            ...statusItem,
+            id: 1,
+            beginDate: beginDate,
+            endDate: getTimestamp('2023-01-09T23:59:59.999'),
+        });
+
+        expect(items[1]).toStrictEqual({
+            ...emptyData,
+            ...statusItem,
+            id: 2,
+            beginDate: getTimestamp('2023-01-10T00:00:00'),
+            endDate: getTimestamp('2023-01-10T23:59:59.999'),
+        });
+
+        expect(items[2]).toStrictEqual({
+            ...emptyData,
+            ...statusItem,
+            id: 3,
+            beginDate: getTimestamp('2023-01-11T00:00:00'),
+            endDate: getTimestamp('2023-01-11T23:59:59.999'),
+        });
+
+        expect(items[3]).toStrictEqual({
+            ...emptyData,
+            ...statusItem,
+            id: 4,
+            beginDate: getTimestamp('2023-01-12T00:00:00'),
+            endDate: getTimestamp('2023-01-12T23:59:59.999'),
+        });
+
+        expect(items[4]).toStrictEqual({
+            ...emptyData,
+            ...statusItem,
+            id: 5,
+            beginDate: getTimestamp('2023-01-13T00:00:00'),
+            endDate: endDate,
+        });
     });
 });

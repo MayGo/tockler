@@ -21,8 +21,8 @@ async function saveSplitItems(splitItems: NewTrackItem[], originalItem: NewTrack
             ids.push(result.lastInsertRowid as number);
         }
 
-        // Return the ID of the first item
-        return ids[0];
+        // Return the ID of the last item
+        return ids[ids.length - 1];
     }
 }
 
