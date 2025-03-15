@@ -26,9 +26,14 @@ jobs:
                   run_install: false
 
             - name: Install Dependencies (Electron)
+              shell: bash
               run: |
                   cd electron
-                  pnpm install 
+                  if [[ "${{ matrix.os }}" == "macos-13" ]]; then
+                    PYTHON=$(brew --prefix)/bin/python2 pnpm install
+                  else
+                    pnpm install
+                  fi
                   cd ..
 
             - name: Run Electron Tests with Coverage
@@ -119,8 +124,17 @@ jobs:
                   sudo apt-get update
                   sudo apt-get install -y python3-setuptools
 
-            - name: Install Python Setuptools on macOS
-              if: startsWith(matrix.os, 'macos')
+            - name: Install Python Setuptools on MacOS-13
+              if: matrix.os == 'macos-13'
+              run: |
+                  brew install python@2
+                  brew link --overwrite python@2
+                  export PYTHON=$(brew --prefix)/bin/python2
+                  echo "PYTHON=$(brew --prefix)/bin/python2" >> $GITHUB_ENV
+                  echo "npm_config_python=$(brew --prefix)/bin/python2" >> $GITHUB_ENV
+
+            - name: Install Python Setuptools on other macOS
+              if: startsWith(matrix.os, 'macos') && matrix.os != 'macos-13'
               run: brew install python-setuptools
 
             - name: Install Python Setuptools on Windows
@@ -129,11 +143,24 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install setuptools
 
+            - name: Configure node-gyp for MacOS-13
+              if: matrix.os == 'macos-13'
+              run: |
+                  cd electron
+                  echo "node-gyp-binary=python2.7" >> .npmrc
+                  echo "python=python2.7" >> .npmrc
+                  echo "npm_config_python=python2.7" >> .npmrc
+                  cd ..
+
             - name: Install Dependencies (Electron)
               shell: bash
               run: |
                   cd electron
-                  pnpm install 
+                  if [[ "${{ matrix.os }}" == "macos-13" ]]; then
+                    PYTHON=$(brew --prefix)/bin/python2 pnpm install
+                  else
+                    pnpm install
+                  fi
                   cd ..
 
             - name: Install Dependencies (Client)
