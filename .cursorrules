@@ -1,0 +1,192 @@
+# Tockler - Electron/React Time Tracking Application
+
+Tockler is an automatic time-tracking desktop application built with Electron, React, TypeScript, and Chakra UI.
+
+## Project Organization
+
+This project follows a clear separation of concerns:
+
+- **electron/** directory contains all Electron main process code:
+  - System-level operations 
+  - Background activity tracking
+  - Database operations with better-sqlite3
+  - IPC handlers
+  - Application lifecycle management
+  - Tray functionality
+
+- **client/** directory contains all React renderer code:
+  - React UI components
+  - State management with easy-peasy
+  - Chakra UI styling
+  - Data visualization components
+  - View controllers
+  - User interactions
+
+## Knowledge Model
+
+Tockler is a free application that automatically tracks computer usage and working time, providing insights into application usage, window titles, computer states, and visualizations.
+
+## System Design
+
+### Architecture
+- **Main**: The application follows the Electron architecture with a main process and renderer process.
+- **Main Process**: The main process (in electron/ directory) handles system-level operations, background tracking, and database operations.
+- **Renderer Process**: The renderer process (in client/ directory) handles the React UI and user interactions.
+
+### Data Flow
+User activities are tracked by the main process (electron/), stored in a SQLite database using better-sqlite3, and displayed through React components in the renderer process (client/).
+
+### Database Schema
+The application uses better-sqlite3 with Drizzle ORM for data persistence, with database operations handled in the electron/ directory.
+
+## Common Patterns
+
+### State Management
+Use easy-peasy for global state management in the client/ directory.
+
+### API Calls
+Use IPC for communication between main (electron/) and renderer (client/) processes.
+
+### Error Handling
+Use try/catch blocks with proper error logging via electron-log.
+
+### Logging
+Use electron-log for consistent logging across the application.
+
+## Best Practices
+
+### General
+- Follow the Single Responsibility Principle
+- Use TypeScript interfaces/types for all data structures
+- Prefer functional programming patterns where applicable
+- Use proper error handling and logging
+- Document complex functions and components
+
+### Electron (electron/ directory)
+- Use IPC for main/renderer communication
+- Minimize direct access to Node.js APIs from renderer
+- Handle app lifecycle events properly
+- Use proper window management techniques
+- Implement proper auto-updates using electron-updater
+
+### React (client/ directory)
+- Use functional components with hooks
+- Avoid prop drilling by using context or state management
+- Memoize expensive calculations and component renders
+- Split components into smaller, reusable pieces
+- Use Chakra UI components consistently
+
+### Styling (client/ directory)
+- Use Chakra UI theming system
+- Support both light and dark themes
+- Maintain consistent spacing and sizing
+
+## Warnings
+- Avoid synchronous IPC calls as they can block the UI
+- Be careful with memory usage when tracking activities continuously
+- Remember to handle permissions properly for system access features
+- Consider performance implications when working with large datasets
+
+## TypeScript Guidelines
+
+### Rules
+- Use strict type checking
+- Define interfaces for all data structures
+- Use TypeScript's utility types when appropriate
+- Use union types for state management
+- Properly type async functions and their return values
+
+### Naming Conventions
+- **Interfaces**: IPascalCase (e.g., ITrackItem)
+- **Types**: TPascalCase (e.g., TTimelineState)
+- **Components**: PascalCase (e.g., TimelineChart)
+- **Functions**: camelCase (e.g., trackActiveWindow)
+- **Constants**: UPPER_SNAKE_CASE (e.g., DEFAULT_SETTINGS)
+
+### Import Organization
+1. React imports first
+2. Third-party library imports
+3. Local component imports
+4. Type/interface imports
+5. Style/asset imports
+
+## Technology Guidelines
+
+### Electron (electron/ directory)
+
+#### Best Practices
+- Use contextBridge for secure preload scripts
+- Implement proper window management
+- Handle app lifecycle events properly
+- Use proper IPC patterns for main/renderer communication
+- Implement auto-updates correctly
+
+#### Common Patterns
+- **IPC**: Use ipcMain and ipcRenderer for communication
+- **Window Management**: Properly handle window states (minimize, maximize, close)
+- **Tray Integration**: Use menubar for tray window implementation
+- **Auto Launch**: Implement auto-launch on system startup feature
+- **System Access**: Use proper APIs for accessing system information
+
+### React (client/ directory)
+
+#### Best Practices
+- Use functional components with hooks
+- Implement proper state management with easy-peasy
+- Use React Router for navigation
+- Properly handle form state and validation
+- Implement proper error boundaries
+
+#### Component Structure
+- Organize components by feature, with shared components in a common directory
+- Use compound components when appropriate
+- Use Chakra UI for consistent styling
+
+### Chakra UI (client/ directory)
+
+#### Best Practices
+- Use the theme provider for consistent styling
+- Leverage Chakra's built-in responsive design utilities
+- Use Chakra's color mode for light/dark theme support
+- Use Chakra's layout components for consistent spacing
+
+### Data Visualization (client/ directory)
+
+#### Libraries
+- Victory
+- D3.js
+
+#### Patterns
+- Use Victory for high-level chart components
+- Use D3 for custom visualizations and data transformations
+- Ensure visualizations are responsive and accessible
+
+## Project Structure
+- **electron/**: Main process code, system-level operations, background tracking, database interactions
+- **client/**: React client code for the renderer process, UI components, state management, visualization
+- **screenshots/**: Application screenshots for documentation
+
+## Testing
+- **Framework**: Vitest
+- **Patterns**:
+  - Place test files adjacent to the files they test with a .test.ts(x) suffix
+  - Use proper mocking for dependencies
+  - Test components in isolation
+  - Cover edge cases and error handling
+
+## Deployment
+- **Build**: Use electron-builder for packaging
+- **Platforms**: Windows, macOS, Linux
+- **Auto Updates**: Implement using electron-updater
+
+## Development
+
+### Tools
+- **Package Manager**: pnpm
+- **Build Tools**: vite, typescript
+- **Linters**: eslint
+- **Formatters**: prettier
+
+### Workflow
+- **Development**: Run the client/ and electron/ processes separately during development
+- **Building**: Build the client/ first, then package with electron-builder
