@@ -66,13 +66,24 @@ jobs:
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     build:
-        name: Build (${{ matrix.os }})
+        name: Build (${{ matrix.os }}-${{ matrix.arch }})
         needs: [sonarcloud]
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
-                os: [ubuntu-latest, macos-latest, windows-latest]
-                node-version: [22.x]
+                include:
+                    - os: ubuntu-latest
+                      node-version: 22.x
+                      arch: x64
+                    - os: windows-latest
+                      node-version: 22.x
+                      arch: x64
+                    - os: macos-13
+                      node-version: 22.x
+                      arch: x64
+                    - os: macos-latest
+                      node-version: 22.x
+                      arch: arm64
 
         steps:
             - uses: actions/checkout@v4
@@ -164,7 +175,13 @@ jobs:
                   cd electron
                   pnpm build
                   pnpm prepare_client
-                  pnpm release -- --mac
+                  if [[ "${{ matrix.os }}" == "macos-"* ]]; then
+                    pnpm release -- --mac --arch=${{ matrix.arch }}
+                  elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+                    pnpm release -- --win
+                  elif [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+                    pnpm release -- --linux
+                  fi
                   cd ..
 
             - name: Upload Sentry Sourcemaps
