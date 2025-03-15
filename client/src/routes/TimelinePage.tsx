@@ -12,7 +12,7 @@ import { TrackItemTabs } from '../components/TrackItemTable/TrackItemTabs';
 import { useInterval } from '../hooks/intervalHook';
 import { useStoreActions } from '../store/easyPeasy';
 
-const BG_SYNC_DELAY_MS = 10000;
+const BG_SYNC_DELAY_MS = 5000;
 
 const ItemLabel = (props) => <Text fontSize="md" color={useColorModeValue('gray.700', 'gray.300')} {...props} />;
 
@@ -20,9 +20,13 @@ export function TimelinePage() {
     const fetchTimerange = useStoreActions((actions) => actions.fetchTimerange);
     const bgSyncInterval = useStoreActions((actions) => actions.bgSyncInterval);
 
-    useInterval(() => {
-        bgSyncInterval();
-    }, BG_SYNC_DELAY_MS);
+    useInterval(
+        () => {
+            bgSyncInterval();
+        },
+        BG_SYNC_DELAY_MS,
+        true,
+    );
 
     useEffect(() => {
         fetchTimerange();
