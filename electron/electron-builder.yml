@@ -38,14 +38,6 @@ mac:
           arch:
               - x64
               - arm64
-    x64ArchFiles:
-        - 'node_modules/active-win/bin/darwin-x64-*/active-win.node'
-        - 'node_modules/better-sqlite3/build/Release/better_sqlite3.node'
-        - 'node_modules/node-machine-id/build/Release/nodeMachineId.node'
-    arm64ArchFiles:
-        - 'node_modules/active-win/bin/darwin-arm64-*/active-win.node'
-        - 'node_modules/better-sqlite3/build/Release/better_sqlite3.node'
-        - 'node_modules/node-machine-id/build/Release/nodeMachineId.node'
 
 mas:
     entitlements: './build/entitlements.mas.plist'
