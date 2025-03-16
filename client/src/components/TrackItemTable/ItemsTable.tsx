@@ -9,6 +9,9 @@ import {
     FilterFn,
     flexRender,
     getCoreRowModel,
+    getFacetedMinMaxValues,
+    getFacetedRowModel,
+    getFacetedUniqueValues,
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
@@ -196,6 +199,9 @@ export const ItemsTable = ({
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        getFacetedRowModel: getFacetedRowModel(), //if you need a list of values for a column (other faceted row models depend on this one)
+        getFacetedMinMaxValues: getFacetedMinMaxValues(), //if you need min/max values
+        getFacetedUniqueValues: getFacetedUniqueValues(), //if you need a list o
         manualPagination: isSearchTable,
         manualSorting: manualSortBy,
         manualFiltering: isSearchTable,

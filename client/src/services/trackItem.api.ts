@@ -12,7 +12,7 @@ export async function findAllDayItems(from: DateTime, to: DateTime, taskName: st
         taskName,
     });
     // Logger.debug('findAllDayItems result ', data);
-    return data;
+    return data as ITrackItem[];
 }
 
 export async function findAllDayItemsForEveryTrack(from: DateTime, to: DateTime) {

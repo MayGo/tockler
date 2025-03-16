@@ -13,7 +13,6 @@ interface ElectronBridge {
 
 // Get the electronBridge at call time, not at module load time
 const getElectronBridge = (): ElectronBridge => {
-    console.warn('[EventEmitter] getElectronBridge called, window.electronBridge:', window.electronBridge);
     return (window as unknown as { electronBridge: ElectronBridge }).electronBridge;
 };
 
