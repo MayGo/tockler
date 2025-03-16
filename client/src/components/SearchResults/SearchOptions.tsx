@@ -21,25 +21,26 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
     const [localRange, setLocalRange] = useState(RANGE_OPTIONS.WEEK);
 
     const selectRange = (range) => {
-        const beginDate = DateTime.now().startOf('day');
+        let beginDate = DateTime.now().startOf('day');
         const endDate = DateTime.now().endOf('day');
 
         if (range === RANGE_OPTIONS.WEEK) {
-            beginDate.minus({ days: 7 });
+            beginDate = beginDate.minus({ days: 7 });
         }
 
         if (range === RANGE_OPTIONS.MONTH) {
-            beginDate.minus({ months: 1 });
+            beginDate = beginDate.minus({ months: 1 });
         }
         if (range === RANGE_OPTIONS.MONTHS_3) {
-            beginDate.minus({ months: 3 });
+            beginDate = beginDate.minus({ months: 3 });
         }
         if (range === RANGE_OPTIONS.YEAR) {
-            beginDate.minus({ years: 1 });
+            beginDate = beginDate.minus({ years: 1 });
         }
         if (range === RANGE_OPTIONS.YEARS_3) {
-            beginDate.minus({ years: 3 });
+            beginDate = beginDate.minus({ years: 3 });
         }
+
         setTimerange([beginDate, endDate]);
 
         setLocalRange(range);
@@ -56,8 +57,6 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
         const endDate = getDayAfter(timerange[1]);
         setTimerange([beginDate, endDate]);
     };
-
-    Logger.debug('Have timerange in Search:', timerange);
 
     const handleOnDatesChange = (data: OnDatesChangeProps) => {
         Logger.debug('TIMERANGE:', data);

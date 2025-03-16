@@ -62,7 +62,6 @@ export const Search = memo(() => {
         loadTimerange([beginDate, endDate]);
     };
 
-    Logger.debug('Have timerange in Search:', timerange);
     return (
         <>
             <Box p={1}>

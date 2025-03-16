@@ -14,6 +14,18 @@ import { NewTrackItem, TrackItem, trackItems } from '../schema';
 
 const DEFAULT_PAGE_SIZE = 20;
 
+// Apply sorting if provided
+const orderByKey = {
+    beginDate: trackItems.beginDate,
+    endDate: trackItems.endDate,
+    app: trackItems.app,
+    title: trackItems.title,
+    taskName: trackItems.taskName,
+    url: trackItems.url,
+};
+
+export type OrderByKey = keyof typeof orderByKey;
+
 export class TrackItemService {
     logger = logManager.getLogger('TrackItemService');
 
@@ -98,7 +110,7 @@ export class TrackItemService {
         to: string,
         taskName: string,
         searchStr: string,
-        paging: { limit: number; offset: number },
+        paging: { limit: number; offset: number; sortByKey?: OrderByKey; sortByOrder?: 'asc' | 'desc' },
         sumTotal: boolean,
     ) {
         const conditions = [
@@ -111,13 +123,18 @@ export class TrackItemService {
             conditions.push(like(trackItems.title, `%${searchStr}%`));
         }
 
-        const data = await db
+        const order = orderByKey[paging.sortByKey as OrderByKey] || trackItems.endDate;
+        const orderByFn = paging.sortByOrder === 'desc' ? desc : asc;
+
+        // Create query
+        let query = db
             .select()
             .from(trackItems)
             .where(and(...conditions))
-            .orderBy(trackItems.beginDate)
-            .limit(paging.limit || DEFAULT_PAGE_SIZE)
-            .offset(paging.offset || 0);
+            .orderBy(orderByFn(order));
+
+        // Execute query with limit and offset
+        const data = await query.limit(paging.limit || DEFAULT_PAGE_SIZE).offset(paging.offset || 0);
 
         if (sumTotal) {
             // Calculate total duration using sql template literal
@@ -126,7 +143,8 @@ export class TrackItemService {
                     totalMs: sql`SUM(${trackItems.endDate}/1000 - ${trackItems.beginDate}/1000)`,
                 })
                 .from(trackItems)
-                .where(and(...conditions));
+                .where(and(...conditions))
+                .orderBy(orderByFn(order));
             const total = totalResult[0]?.totalMs || 0;
 
             return { data, total: parseInt(total as string) * 1000 }; // Convert seconds to milliseconds

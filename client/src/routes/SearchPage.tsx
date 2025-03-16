@@ -10,6 +10,13 @@ import { CardBox } from '../components/CardBox';
 import { Loader } from '../components/Timeline/Loader';
 import { TypeSelect } from '../components/TypeSelect';
 
+interface SearchPagingState {
+    pageSize: number;
+    pageIndex: number;
+    sortByKey?: string;
+    sortByOrder?: 'asc' | 'desc';
+}
+
 export function SearchPage() {
     const resetButtonsRef = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
     const fetchIdRef = useRef(0);
@@ -17,7 +24,12 @@ export function SearchPage() {
     const [taskName, setTaskName] = useState(TrackItemType.AppTrackItem);
 
     const [isLoading, setIsLoading] = useState(false);
-    const [searchPaging, setSearchPaging] = useState({ pageSize: 20, pageIndex: 0 });
+    const [searchPaging, setSearchPaging] = useState<SearchPagingState>({
+        pageSize: 20,
+        pageIndex: 0,
+        sortByKey: 'endDate',
+        sortByOrder: 'desc',
+    });
 
     const [searchResult, setSearchResult] = useState<SearchResultI>({ data: [], total: 0 });
 
@@ -31,13 +43,20 @@ export function SearchPage() {
         setIsLoading(true);
         const [from, to] = timerange;
 
+        const pagingParams = {
+            limit: searchPaging.pageSize,
+            offset: searchPaging.pageIndex * searchPaging.pageSize,
+            sortByKey: searchPaging.sortByKey || 'endDate',
+            sortByOrder: searchPaging.sortByOrder || 'desc',
+        };
+
         // When sumTotal is true, the API returns a different format
         const results = await searchFromItems({
             from,
             to,
             taskName,
             searchStr,
-            paging: { limit: searchPaging.pageSize, offset: searchPaging.pageIndex * searchPaging.pageSize },
+            paging: pagingParams,
             sumTotal: true,
         });
 
@@ -65,12 +84,16 @@ export function SearchPage() {
             pageIndex: number;
             sortBy: { id: string; desc: boolean }[];
         }) => {
-            const pageProps = { pageSize, pageIndex };
+            const pageProps: SearchPagingState = { pageSize, pageIndex };
             if (sortBy && sortBy.length > 0) {
                 const [sort] = sortBy;
 
-                pageProps['sortByKey'] = sort.id;
-                pageProps['sortByOrder'] = sort.desc ? 'desc' : 'asc';
+                pageProps.sortByKey = sort.id;
+                pageProps.sortByOrder = sort.desc ? 'desc' : 'asc';
+            } else {
+                // Default sorting by endDate descending
+                pageProps.sortByKey = 'endDate';
+                pageProps.sortByOrder = 'desc';
             }
 
             setSearchPaging(pageProps);
