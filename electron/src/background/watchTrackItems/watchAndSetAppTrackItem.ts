@@ -27,6 +27,7 @@ async function setAppTrackItem(activeWindow: NormalizedActiveWindow) {
         taskName: TrackItemType.AppTrackItem,
         app: activeWindow.app,
         title: activeWindow.title,
+        url: activeWindow.url,
         beginDate: now,
         endDate: now,
     };
