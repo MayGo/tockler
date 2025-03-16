@@ -82,7 +82,7 @@ describe('SearchPage Component', () => {
         vi.mocked(trackItemApi.exportFromItems).mockResolvedValue([]);
     });
 
-    it.only('renders the search form correctly', async () => {
+    it('renders the search form correctly', async () => {
         render(
             <ChakraProvider>
                 <MemoryRouter>
@@ -156,7 +156,7 @@ describe('SearchPage Component', () => {
         );
 
         // Find the type select dropdown and change its value
-        const typeSelect = screen.getByRole('combobox');
+        const typeSelect = await screen.findByRole('combobox', { name: 'Type Select' });
         fireEvent.change(typeSelect, { target: { value: 'LogTrackItem' } });
 
         // Submit the form to trigger a new search
@@ -194,8 +194,8 @@ describe('SearchPage Component', () => {
             const lastCall = searchCalls[searchCalls.length - 1];
 
             // Check that the "from" date is about a month ago
-            const from = lastCall[0].from;
-            const to = lastCall[0].to;
+            const from = new Date(lastCall[0].from).getTime();
+            const to = new Date(lastCall[0].to).getTime();
 
             const fromDate = DateTime.fromMillis(from);
             const toDate = DateTime.fromMillis(to);
