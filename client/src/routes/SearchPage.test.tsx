@@ -1,33 +1,48 @@
+// Set up mocks before any imports
+import { vi } from 'vitest';
+
+// Now import the rest of the dependencies
 import { ChakraProvider } from '@chakra-ui/react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { DateTime, Settings } from 'luxon';
 import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import * as trackItemApi from '../services/trackItem.api';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { SearchPage } from './SearchPage';
 
-// Mock the services that use EventEmitter
-vi.mock('../services/trackItem.api', () => ({
-    searchFromItems: vi.fn(),
-    exportFromItems: vi.fn(),
-}));
+const searchFromItems = vi.fn();
+const exportFromItems = vi.fn();
 
-// Mock window.matchMedia - required for Chakra UI components in test environment
-Object.defineProperty(window, 'matchMedia', {
-    writable: true,
-    value: vi.fn().mockImplementation((query) => ({
-        matches: false,
-        media: query,
-        onchange: null,
-        addListener: vi.fn(), // Deprecated
-        removeListener: vi.fn(), // Deprecated
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        dispatchEvent: vi.fn(),
-    })),
+const mockData = {
+    data: [
+        {
+            id: 1,
+            app: 'Chrome',
+            title: 'Test title',
+            beginDate: Date.now() - 3600000, // 1 hour ago
+            endDate: Date.now(),
+            taskName: 'AppTrackItem',
+        },
+    ],
+    total: 1,
+};
+
+// Create a more robust mock function for invokeIpc that logs all arguments
+const invokeIpc = vi.fn().mockImplementation((channel, ...args) => {
+    console.warn('MOCK invokeIpc called with channel:', channel, 'and args:', JSON.stringify(args));
+
+    if (channel === 'searchFromItems') {
+        return searchFromItems;
+    }
+
+    if (channel === 'exportFromItems') {
+        return Promise.resolve([]);
+    }
+
+    // Default return for other channels
+    return Promise.resolve({});
 });
 
-// Mock the window.electronBridge from preloadStuff.ts
+// Create the mock electronBridge global
 const mockElectronBridge = {
     configGet: vi.fn(),
     configSet: vi.fn(),
@@ -41,23 +56,11 @@ const mockElectronBridge = {
     isMas: false,
     appVersion: vi.fn(),
     openUrlInExternalWindow: vi.fn(),
-    invokeIpc: vi.fn(),
+    invokeIpc,
     sendIpc: vi.fn(),
     onIpc: vi.fn(),
     removeListenerIpc: vi.fn(),
 };
-
-// Mock window object with electronBridge
-vi.stubGlobal('electronBridge', mockElectronBridge);
-
-// Mock React Router hooks
-vi.mock('react-router-dom', async () => {
-    const actual = await vi.importActual('react-router-dom');
-    return {
-        ...actual,
-        useNavigate: () => vi.fn(),
-    };
-});
 
 const NOW = getTimestamp('2023-01-10T12:00:00');
 
@@ -76,48 +79,33 @@ const renderSearchPage = () => {
 };
 
 const getLastCall = () => {
-    const searchCalls = vi.mocked(trackItemApi.searchFromItems).mock.calls;
+    // Filter calls to the invokeIpc function for the searchFromItems channel
+    const searchCalls = invokeIpc.mock.calls.filter((call) => call[0] === 'searchFromItems');
     const lastCall = searchCalls[searchCalls.length - 1];
-    return lastCall;
+    return lastCall ? lastCall[1] : null; // The payload is the second argument
 };
 
 describe('SearchPage Component', () => {
     beforeEach(() => {
+        // Clear all mocks between tests
         vi.clearAllMocks();
-
-        // Set up default mock return values
-        const mockSearchResult = {
-            data: [
-                {
-                    id: 1,
-                    app: 'Chrome',
-                    title: 'Test title',
-                    beginDate: DateTime.now().minus({ hours: 1 }).valueOf(),
-                    endDate: DateTime.now().valueOf(),
-                    taskName: 'AppTrackItem',
-                },
-            ],
-            total: 1,
-        };
-
-        vi.mocked(trackItemApi.searchFromItems).mockResolvedValue(mockSearchResult);
-        vi.mocked(trackItemApi.exportFromItems).mockResolvedValue([]);
+        Settings.now = () => NOW;
+        vi.stubGlobal('electronBridge', mockElectronBridge);
     });
 
     it('renders the search form correctly', async () => {
         renderSearchPage();
 
-        await waitFor(() => expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(invokeIpc).toHaveBeenCalledWith('searchFromItems', expect.anything()));
 
         expect(screen.getByPlaceholderText('Search from all items')).toBeInTheDocument();
         expect(screen.getByText('Search')).toBeInTheDocument();
-        expect(await screen.findByText('Export to CSV')).toBeInTheDocument();
+        expect(screen.getByText('Export to CSV')).toBeInTheDocument();
     });
 
     it('searches items when form is submitted', async () => {
-        Settings.now = () => NOW;
         renderSearchPage();
-        await waitFor(() => expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(invokeIpc).toHaveBeenCalledWith('searchFromItems', expect.anything()));
 
         const searchInput = screen.getByPlaceholderText('Search from all items');
         fireEvent.change(searchInput, { target: { value: 'test search' } });
@@ -125,13 +113,16 @@ describe('SearchPage Component', () => {
         const searchButton = screen.getByText('Search');
         fireEvent.click(searchButton);
 
-        await waitFor(() => expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(2));
+        await waitFor(() => {
+            const searchCalls = invokeIpc.mock.calls.filter((call) => call[0] === 'searchFromItems');
+            return expect(searchCalls.length).toBe(2);
+        });
 
         const lastCall = getLastCall();
 
-        expect(lastCall[0]).toStrictEqual({
-            from: DateTime.fromISO('2022-12-31T00:00:00.000+02:00'),
-            to: DateTime.fromISO('2023-01-10T23:59:59.999+02:00'),
+        expect(lastCall).toStrictEqual({
+            from: DateTime.fromISO('2022-12-31T00:00:00.000+02:00').valueOf(),
+            to: DateTime.fromISO('2023-01-10T23:59:59.999+02:00').valueOf(),
             taskName: 'AppTrackItem',
             searchStr: 'test search',
             sumTotal: true,
@@ -151,14 +142,13 @@ describe('SearchPage Component', () => {
         const exportButton = screen.getByText('Export to CSV');
         fireEvent.click(exportButton);
 
-        // Verify that exportFromItems was called
-        await waitFor(() => expect(trackItemApi.exportFromItems).toHaveBeenCalledTimes(1));
+        // Verify that exportFromItems was called via invokeIpc
+        await waitFor(() => expect(invokeIpc).toHaveBeenCalledWith('exportFromItems', expect.anything()));
     });
 
     it('updates the task type when type selector changes', async () => {
-        Settings.now = () => NOW;
         renderSearchPage();
-        await waitFor(() => expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(invokeIpc).toHaveBeenCalledWith('searchFromItems', expect.anything()));
 
         // Find the type select dropdown and change its value
         const typeSelect = await screen.findByRole('combobox', { name: 'Type Select' });
@@ -168,13 +158,16 @@ describe('SearchPage Component', () => {
         const searchButton = screen.getByText('Search');
         fireEvent.click(searchButton);
 
-        await waitFor(() => expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(2));
+        await waitFor(() => {
+            const searchCalls = invokeIpc.mock.calls.filter((call) => call[0] === 'searchFromItems');
+            return expect(searchCalls.length).toBe(2);
+        });
 
         const lastCall = getLastCall();
 
-        expect(lastCall[0]).toStrictEqual({
-            from: DateTime.fromISO('2022-12-31T00:00:00.000+02:00'),
-            to: DateTime.fromISO('2023-01-10T23:59:59.999+02:00'),
+        expect(lastCall).toStrictEqual({
+            from: DateTime.fromISO('2022-12-31T00:00:00.000+02:00').valueOf(),
+            to: DateTime.fromISO('2023-01-10T23:59:59.999+02:00').valueOf(),
             taskName: 'LogTrackItem',
             searchStr: '',
             sumTotal: true,
@@ -183,33 +176,35 @@ describe('SearchPage Component', () => {
     });
 
     it('updates timerange when date range selection changes', async () => {
-        Settings.now = () => NOW;
         renderSearchPage();
 
-        await waitFor(() => expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(invokeIpc).toHaveBeenCalledWith('searchFromItems', expect.anything()));
 
         // Click the Month button to change the timerange
         const monthButton = screen.getByText('Month');
         fireEvent.click(monthButton);
 
-        await waitFor(() => expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(2));
+        await waitFor(() => {
+            const searchCalls = invokeIpc.mock.calls.filter((call) => call[0] === 'searchFromItems');
+            return expect(searchCalls.length).toBe(2);
+        });
 
         const lastCall = getLastCall();
 
-        expect(lastCall[0]).toStrictEqual({
-            from: DateTime.fromISO('2022-12-10T00:00:00.000+02:00'),
-            to: DateTime.fromISO('2023-01-10T23:59:59.999+02:00'),
+        expect(lastCall).toStrictEqual({
+            from: DateTime.fromISO('2022-12-10T00:00:00.000+02:00').valueOf(),
+            to: DateTime.fromISO('2023-01-10T23:59:59.999+02:00').valueOf(),
             taskName: 'AppTrackItem',
             searchStr: '',
             sumTotal: true,
             paging: { limit: 10, offset: 0, sortByKey: 'endDate', sortByOrder: 'desc' },
         });
     });
-    it('sorts items by BeginDate', async () => {
-        Settings.now = () => NOW;
 
+    it('sorts items by BeginDate', async () => {
         renderSearchPage();
-        await waitFor(() => expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(invokeIpc).toHaveBeenCalledWith('searchFromItems', expect.anything()));
+
         // Click the header for the Begin column to sort
         const beginHeader = screen.getByText('Begin');
         fireEvent.click(beginHeader);
@@ -218,13 +213,16 @@ describe('SearchPage Component', () => {
         const searchButton = screen.getByText('Search');
         fireEvent.click(searchButton);
 
-        await waitFor(() => expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(2));
+        await waitFor(() => {
+            const searchCalls = invokeIpc.mock.calls.filter((call) => call[0] === 'searchFromItems');
+            return expect(searchCalls.length).toBe(2);
+        });
 
         const lastCall = getLastCall();
 
-        expect(lastCall[0]).toStrictEqual({
-            from: DateTime.fromISO('2022-12-31T00:00:00.000+02:00'),
-            to: DateTime.fromISO('2023-01-10T23:59:59.999+02:00'),
+        expect(lastCall).toStrictEqual({
+            from: DateTime.fromISO('2022-12-31T00:00:00.000+02:00').valueOf(),
+            to: DateTime.fromISO('2023-01-10T23:59:59.999+02:00').valueOf(),
             taskName: 'AppTrackItem',
             searchStr: '',
             sumTotal: true,
