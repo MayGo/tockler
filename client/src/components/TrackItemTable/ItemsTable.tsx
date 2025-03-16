@@ -1,5 +1,3 @@
-// tslint:disable-next-line: no-submodule-imports
-
 import React, { useEffect, useMemo, useState } from 'react';
 import { diffAndFormatShort, formatDurationInternal } from '../../utils';
 
@@ -45,6 +43,13 @@ interface ItemsTableProps {
     manualSortBy: boolean;
     customTableButtons?: React.ReactElement<TableButtonsProps>;
 }
+
+const defaultSorting: SortingState = [
+    {
+        id: 'endDate',
+        desc: true,
+    },
+];
 
 export const ItemsTable = ({
     data,
@@ -143,7 +148,7 @@ export const ItemsTable = ({
     );
 
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    const [sorting, setSorting] = useState<SortingState>([]);
+    const [sorting, setSorting] = useState<SortingState>(defaultSorting);
     const [rowSelection, setRowSelection] = useState({});
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: controlledPageIndex || 0,

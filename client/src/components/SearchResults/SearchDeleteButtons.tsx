@@ -1,5 +1,3 @@
-// tslint:disable-next-line: no-submodule-imports
-
 import { Button, HStack, Text } from '@chakra-ui/react';
 import { Logger } from '../../logger';
 import { deleteByIds } from '../../services/trackItem.api';

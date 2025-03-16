@@ -1,5 +1,3 @@
-// tslint:disable-next-line: no-submodule-imports
-
 import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
 import { useRef } from 'react';
 import { TrackItemType } from '../../enum/TrackItemType';

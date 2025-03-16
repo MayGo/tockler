@@ -1,5 +1,3 @@
-// tslint:disable-next-line: no-submodule-imports
-
 import { useStoreState } from '../../store/easyPeasy';
 import { checkIfOneDay } from '../../timeline.util';
 import { filterItems } from '../Timeline/timeline.utils';
