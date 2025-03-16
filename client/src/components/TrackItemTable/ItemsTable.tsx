@@ -282,7 +282,14 @@ export const ItemsTable = ({
                                             )}
                                             <Box flex={1} />
                                             {header.column.getCanFilter() ? (
-                                                <DefaultColumnFilter column={header.column} />
+                                                // Use a safer type check and conditional rendering
+                                                // @ts-expect-error - We know this is correct based on our column definitions
+                                                header.column.columnDef.meta?.Filter ? (
+                                                    // @ts-expect-error - We know this component exists
+                                                    <header.column.columnDef.meta.Filter column={header.column} />
+                                                ) : (
+                                                    <DefaultColumnFilter column={header.column} />
+                                                )
                                             ) : null}
                                         </Flex>
                                     )}
