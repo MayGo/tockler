@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { DataSettingsI } from './components/Settings/DataForm.util';
 import { WorkSettingsI } from './components/Settings/WorkForm.util';
 import { Logger } from './logger';
-import { EventEmitter } from './services/EventEmitter';
+import { ElectronEventEmitter } from './services/ElectronEventEmitter';
 import { fetchDataSettings, fetchWorkSettings, saveDataSettings, saveWorkSettings } from './services/settings.api';
 
 const defaultWorkSettings: WorkSettingsI = {
@@ -80,19 +80,19 @@ export const RootProvider = ({ children }: RootProviderProps) => {
     }, []);
 
     useEffect(() => {
-        EventEmitter.on('WORK_SETTINGS_UPDATED', loadSettings);
+        ElectronEventEmitter.on('WORK_SETTINGS_UPDATED', loadSettings);
 
         return () => {
-            EventEmitter.off('WORK_SETTINGS_UPDATED', loadSettings);
+            ElectronEventEmitter.off('WORK_SETTINGS_UPDATED', loadSettings);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
-        EventEmitter.on('side:preferences', gotoSettingsPage);
+        ElectronEventEmitter.on('side:preferences', gotoSettingsPage);
         return () => {
             Logger.debug('Clearing eventEmitter');
-            EventEmitter.off('side:preferences', gotoSettingsPage);
+            ElectronEventEmitter.off('side:preferences', gotoSettingsPage);
         };
     }, [gotoSettingsPage]);
 

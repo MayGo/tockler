@@ -1,5 +1,5 @@
-import { EventEmitter } from './EventEmitter';
+import { ElectronEventEmitter } from './ElectronEventEmitter';
 
 export async function changeColorForApp(appName: string, color: string) {
-    return EventEmitter.emit('changeColorForApp', { appName, color });
+    return ElectronEventEmitter.emit('changeColorForApp', { appName, color });
 }

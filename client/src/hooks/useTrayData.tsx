@@ -3,7 +3,7 @@ import { ITrackItem } from '../@types/ITrackItem';
 import { getTodayTimerange } from '../components/Timeline/timeline.utils';
 import { TrackItemType } from '../enum/TrackItemType';
 import { Logger } from '../logger';
-import { EventEmitter } from '../services/EventEmitter';
+import { ElectronEventEmitter } from '../services/ElectronEventEmitter';
 import { getRunningLogItem } from '../services/settings.api';
 import { findAllDayItems, findFirstChunkLogItems } from '../services/trackItem.api';
 
@@ -21,10 +21,10 @@ export const useTrayData = () => {
             setRunningLogItem(newItem);
         };
 
-        EventEmitter.on('log-item-started', eventLogItemStarted);
+        ElectronEventEmitter.on('log-item-started', eventLogItemStarted);
 
         return () => {
-            EventEmitter.off('log-item-started', eventLogItemStarted);
+            ElectronEventEmitter.off('log-item-started', eventLogItemStarted);
         };
     }, []);
 

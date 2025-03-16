@@ -11,7 +11,7 @@ import { ChartThemeProvider } from './routes/ChartThemeProvider';
 import { MainAppPage } from './routes/MainAppPage';
 import { NotificationAppPage } from './routes/NotificationAppPage';
 import { TrayAppPage } from './routes/TrayAppPage';
-import { EventEmitter } from './services/EventEmitter';
+import { ElectronEventEmitter } from './services/ElectronEventEmitter';
 import { mainStore } from './store/mainStore';
 import { useGoogleAnalytics } from './useGoogleAnalytics';
 
@@ -29,11 +29,11 @@ export function MainRouter() {
     );
 
     useEffect(() => {
-        EventEmitter.on('activeThemeChanged', changeActiveTheme);
+        ElectronEventEmitter.on('activeThemeChanged', changeActiveTheme);
 
         return () => {
             Logger.debug('Clearing eventEmitter');
-            EventEmitter.off('activeThemeChanged', changeActiveTheme);
+            ElectronEventEmitter.off('activeThemeChanged', changeActiveTheme);
         };
     }, [changeActiveTheme]);
 
