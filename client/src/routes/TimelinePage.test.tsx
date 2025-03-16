@@ -89,7 +89,7 @@ describe('TimelinePage Component', () => {
         expect(screen.getByText('App Usage')).toBeInTheDocument();
     });
 
-    it.only('calls fetchTimerange on component mount', async () => {
+    it('calls fetchTimerange on component mount', async () => {
         renderTimelinePage();
 
         await waitFor(() => expect(findAllDayItems).toHaveBeenCalledTimes(6));

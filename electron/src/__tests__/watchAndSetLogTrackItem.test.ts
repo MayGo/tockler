@@ -344,7 +344,7 @@ describe('watchAndSetLogTrackItem', () => {
         });
     });
 
-    it.only('should handle state change from Offline to Idle', async () => {
+    it('should handle state change from Offline to Idle', async () => {
         /*
 --------------------------------------------------------------------------------
 1. TestApp   ████████████████████
