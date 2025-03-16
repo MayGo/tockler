@@ -6,6 +6,7 @@ import { TrackItemType } from '../enum/TrackItemType';
 import { exportFromItems, searchFromItems, SearchResultI } from '../services/trackItem.api';
 
 import { Box, Button, Flex, HStack, Input } from '@chakra-ui/react';
+import { useDebouncedCallback } from 'use-debounce';
 import { CardBox } from '../components/CardBox';
 import { Loader } from '../components/Timeline/Loader';
 import { TypeSelect } from '../components/TypeSelect';
@@ -20,9 +21,9 @@ interface SearchPagingState {
 export function SearchPage() {
     const resetButtonsRef = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
     const fetchIdRef = useRef(0);
+
     const [searchText, setSearchText] = useState('');
     const [taskName, setTaskName] = useState(TrackItemType.AppTrackItem);
-
     const [isLoading, setIsLoading] = useState(false);
     const [searchPaging, setSearchPaging] = useState<SearchPagingState>({
         pageSize: 20,
@@ -39,6 +40,8 @@ export function SearchPage() {
     ]);
 
     const loadItems = async (searchStr: string) => {
+        console.log('loadItems......................', searchStr);
+
         const fetchId = ++fetchIdRef.current;
         setIsLoading(true);
         const [from, to] = timerange;
@@ -50,7 +53,6 @@ export function SearchPage() {
             sortByOrder: searchPaging.sortByOrder || 'desc',
         };
 
-        // When sumTotal is true, the API returns a different format
         const results = await searchFromItems({
             from,
             to,
@@ -62,17 +64,15 @@ export function SearchPage() {
 
         console.info('Sum data', results);
 
-        // Only update the data if this is the latest fetch
         if (fetchId === fetchIdRef.current) {
             setSearchResult(results);
-
             console.info('searching with paging', searchPaging, timerange, results);
         }
 
         setIsLoading(false);
-
-        return;
     };
+
+    const debouncedLoadItems = useDebouncedCallback(loadItems, 300);
 
     const fetchData = useCallback(
         ({
@@ -87,11 +87,9 @@ export function SearchPage() {
             const pageProps: SearchPagingState = { pageSize, pageIndex };
             if (sortBy && sortBy.length > 0) {
                 const [sort] = sortBy;
-
                 pageProps.sortByKey = sort.id;
                 pageProps.sortByOrder = sort.desc ? 'desc' : 'asc';
             } else {
-                // Default sorting by endDate descending
                 pageProps.sortByKey = 'endDate';
                 pageProps.sortByOrder = 'desc';
             }
@@ -110,9 +108,7 @@ export function SearchPage() {
             taskName,
             searchStr,
         });
-
         setIsLoading(false);
-        return;
     };
 
     const refreshData = useCallback(() => {
@@ -122,14 +118,13 @@ export function SearchPage() {
     }, [searchPaging]);
 
     useEffect(() => {
-        console.info('searchPaging in page changed');
-        loadItems(searchText);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchPaging]);
+        console.info('searchPaging, searchText or timerange has changed');
+        debouncedLoadItems(searchText);
+    }, [debouncedLoadItems, searchPaging, searchText, timerange]);
 
     const onSubmit = (event) => {
         event.preventDefault();
-        setSearchPaging({ ...searchPaging, pageIndex: 0 });
+        setSearchPaging((prev) => ({ ...prev, pageIndex: 0 }));
     };
 
     return (
