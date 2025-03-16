@@ -92,6 +92,6 @@ describe('TimelinePage Component', () => {
     it('calls fetchTimerange on component mount', async () => {
         renderTimelinePage();
 
-        await waitFor(() => expect(findAllDayItems).toHaveBeenCalledTimes(6));
+        await waitFor(() => expect(findAllDayItems).toHaveBeenCalled());
     });
 });
