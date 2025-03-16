@@ -31,6 +31,7 @@ function off(name: string, listener: EventListener): void {
 
 async function emit<T = unknown>(name: string, ...args: unknown[]): Promise<T> {
     try {
+        Logger.debug(`Emit event: ${name}`);
         const result = await getElectronBridge().invokeIpc<T>(name, ...args);
         return result;
     } catch (error) {

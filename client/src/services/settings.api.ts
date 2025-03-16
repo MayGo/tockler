@@ -1,3 +1,4 @@
+import { ITrackItem } from '../@types/ITrackItem';
 import { Logger } from '../logger';
 import { ElectronEventEmitter } from './ElectronEventEmitter';
 
@@ -95,7 +96,7 @@ export async function notifyUser(message) {
 }
 
 export function getRunningLogItem() {
-    return ElectronEventEmitter.emit('getRunningLogItemAsJson');
+    return ElectronEventEmitter.emit('getRunningLogItemAsJson') as Promise<ITrackItem>;
 }
 
 export function getMachineId() {
@@ -105,7 +106,7 @@ export function getMachineId() {
 export async function fetchWorkSettings() {
     const jsonStr = await ElectronEventEmitter.emit('fetchWorkSettingsJsonString');
     try {
-        return JSON.parse(jsonStr);
+        return JSON.parse(jsonStr as string);
     } catch (e) {
         Logger.error('Error in fetchWorkSettings', jsonStr, e);
         return null;
@@ -115,7 +116,7 @@ export async function fetchWorkSettings() {
 export async function fetchDataSettings() {
     const jsonStr = await ElectronEventEmitter.emit('fetchDataSettingsJsonString');
     try {
-        return JSON.parse(jsonStr);
+        return JSON.parse(jsonStr as string);
     } catch (e) {
         Logger.error('Error in fetchDataSettings', jsonStr, e);
         return null;
@@ -142,7 +143,7 @@ export async function fetchAnalyserSettings() {
     const jsonStr = await ElectronEventEmitter.emit('fetchAnalyserSettingsJsonString');
 
     try {
-        return JSON.parse(jsonStr);
+        return JSON.parse(jsonStr as string);
     } catch (e) {
         Logger.error('fetchAnalyserSettings', jsonStr, e);
         return [];

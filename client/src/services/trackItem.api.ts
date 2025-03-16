@@ -16,11 +16,11 @@ export async function findAllDayItems(from: DateTime, to: DateTime, taskName: st
 }
 
 export async function findAllDayItemsForEveryTrack(from: DateTime, to: DateTime) {
-    // TODO, query all at async
-    const appItems: ITrackItem[] = await findAllDayItems(from, to, TrackItemType.AppTrackItem);
-
-    const statusItems: ITrackItem[] = await findAllDayItems(from, to, TrackItemType.StatusTrackItem);
-    const logItems: ITrackItem[] = await findAllDayItems(from, to, TrackItemType.LogTrackItem);
+    const [appItems, statusItems, logItems] = await Promise.all([
+        findAllDayItems(from, to, TrackItemType.AppTrackItem),
+        findAllDayItems(from, to, TrackItemType.StatusTrackItem),
+        findAllDayItems(from, to, TrackItemType.LogTrackItem),
+    ]);
 
     return { appItems, statusItems, logItems };
 }
