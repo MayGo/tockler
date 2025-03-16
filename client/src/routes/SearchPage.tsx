@@ -40,8 +40,6 @@ export function SearchPage() {
     ]);
 
     const loadItems = async (searchStr: string) => {
-        console.log('loadItems......................', searchStr);
-
         const fetchId = ++fetchIdRef.current;
         setIsLoading(true);
         const [from, to] = timerange;

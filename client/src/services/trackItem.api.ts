@@ -41,8 +41,6 @@ export interface SearchResultI {
 export function searchFromItems({ from, to, taskName, searchStr, paging, sumTotal = false }): Promise<SearchResultI> {
     Logger.debug('Searching items:', { from, to, taskName, searchStr, paging });
 
-    console.warn('.........,.sd,as,d.s,d.,asd.,sd,a.d,as.d,.d,as,,,. emit');
-
     return ElectronEventEmitter.emit('searchFromItems', {
         from: from.valueOf(),
         to: to.valueOf(),

@@ -171,7 +171,7 @@ export class TrackItemService {
         const isToday = moment(to).isSame(moment(), 'day');
 
         if (isToday && taskName === TrackItemType.StatusTrackItem) {
-            this.logger.debug('Adding ongoing status track item............');
+            this.logger.debug('Adding ongoing status track item.');
             const ongoingStatusItem = await getOngoingStatusTrackItem();
             if (ongoingStatusItem) {
                 data.push(ongoingStatusItem);
@@ -179,7 +179,7 @@ export class TrackItemService {
         }
 
         if (isToday && taskName === TrackItemType.AppTrackItem) {
-            this.logger.debug('Adding ongoing app track item............');
+            this.logger.debug('Adding ongoing app track item.');
             const ongoingAppItem = await getOngoingAppTrackItem();
             if (ongoingAppItem) {
                 data.push(ongoingAppItem);
@@ -187,7 +187,7 @@ export class TrackItemService {
         }
 
         if (isToday && taskName === TrackItemType.LogTrackItem) {
-            this.logger.debug('Adding ongoing log track item............');
+            this.logger.debug('Adding ongoing log track item.');
             const ongoingLogItem = await getOngoingLogTrackItem();
             if (ongoingLogItem) {
                 data.push(ongoingLogItem);

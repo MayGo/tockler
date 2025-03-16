@@ -31,11 +31,11 @@ const invokeIpc = vi.fn().mockImplementation((channel, ...args) => {
     console.warn('MOCK invokeIpc called with channel:', channel, 'and args:', JSON.stringify(args));
 
     if (channel === 'searchFromItems') {
-        return searchFromItems;
+        return searchFromItems(...args);
     }
 
     if (channel === 'exportFromItems') {
-        return Promise.resolve([]);
+        return exportFromItems(...args);
     }
 
     // Default return for other channels
@@ -79,10 +79,10 @@ const renderSearchPage = () => {
 };
 
 const getLastCall = () => {
-    // Filter calls to the invokeIpc function for the searchFromItems channel
-    const searchCalls = invokeIpc.mock.calls.filter((call) => call[0] === 'searchFromItems');
+    const searchCalls = vi.mocked(searchFromItems).mock.calls;
+
     const lastCall = searchCalls[searchCalls.length - 1];
-    return lastCall ? lastCall[1] : null; // The payload is the second argument
+    return lastCall ? lastCall[0] : null;
 };
 
 describe('SearchPage Component', () => {
@@ -91,12 +91,14 @@ describe('SearchPage Component', () => {
         vi.clearAllMocks();
         Settings.now = () => NOW;
         vi.stubGlobal('electronBridge', mockElectronBridge);
+
+        searchFromItems.mockResolvedValue(mockData);
     });
 
     it('renders the search form correctly', async () => {
         renderSearchPage();
 
-        await waitFor(() => expect(invokeIpc).toHaveBeenCalledWith('searchFromItems', expect.anything()));
+        await waitFor(() => expect(searchFromItems).toHaveBeenCalledTimes(1));
 
         expect(screen.getByPlaceholderText('Search from all items')).toBeInTheDocument();
         expect(screen.getByText('Search')).toBeInTheDocument();
@@ -105,7 +107,7 @@ describe('SearchPage Component', () => {
 
     it('searches items when form is submitted', async () => {
         renderSearchPage();
-        await waitFor(() => expect(invokeIpc).toHaveBeenCalledWith('searchFromItems', expect.anything()));
+        await waitFor(() => expect(searchFromItems).toHaveBeenCalledTimes(1));
 
         const searchInput = screen.getByPlaceholderText('Search from all items');
         fireEvent.change(searchInput, { target: { value: 'test search' } });
@@ -113,10 +115,7 @@ describe('SearchPage Component', () => {
         const searchButton = screen.getByText('Search');
         fireEvent.click(searchButton);
 
-        await waitFor(() => {
-            const searchCalls = invokeIpc.mock.calls.filter((call) => call[0] === 'searchFromItems');
-            return expect(searchCalls.length).toBe(2);
-        });
+        await waitFor(() => expect(searchFromItems).toHaveBeenCalledTimes(2));
 
         const lastCall = getLastCall();
 
@@ -143,12 +142,12 @@ describe('SearchPage Component', () => {
         fireEvent.click(exportButton);
 
         // Verify that exportFromItems was called via invokeIpc
-        await waitFor(() => expect(invokeIpc).toHaveBeenCalledWith('exportFromItems', expect.anything()));
+        await waitFor(() => expect(exportFromItems).toHaveBeenCalledTimes(1));
     });
 
     it('updates the task type when type selector changes', async () => {
         renderSearchPage();
-        await waitFor(() => expect(invokeIpc).toHaveBeenCalledWith('searchFromItems', expect.anything()));
+        await waitFor(() => expect(searchFromItems).toHaveBeenCalledTimes(1));
 
         // Find the type select dropdown and change its value
         const typeSelect = await screen.findByRole('combobox', { name: 'Type Select' });
@@ -158,10 +157,7 @@ describe('SearchPage Component', () => {
         const searchButton = screen.getByText('Search');
         fireEvent.click(searchButton);
 
-        await waitFor(() => {
-            const searchCalls = invokeIpc.mock.calls.filter((call) => call[0] === 'searchFromItems');
-            return expect(searchCalls.length).toBe(2);
-        });
+        await waitFor(() => expect(searchFromItems).toHaveBeenCalledTimes(2));
 
         const lastCall = getLastCall();
 
@@ -178,16 +174,13 @@ describe('SearchPage Component', () => {
     it('updates timerange when date range selection changes', async () => {
         renderSearchPage();
 
-        await waitFor(() => expect(invokeIpc).toHaveBeenCalledWith('searchFromItems', expect.anything()));
+        await waitFor(() => expect(searchFromItems).toHaveBeenCalledTimes(1));
 
         // Click the Month button to change the timerange
         const monthButton = screen.getByText('Month');
         fireEvent.click(monthButton);
 
-        await waitFor(() => {
-            const searchCalls = invokeIpc.mock.calls.filter((call) => call[0] === 'searchFromItems');
-            return expect(searchCalls.length).toBe(2);
-        });
+        await waitFor(() => expect(searchFromItems).toHaveBeenCalledTimes(2));
 
         const lastCall = getLastCall();
 
@@ -203,7 +196,7 @@ describe('SearchPage Component', () => {
 
     it('sorts items by BeginDate', async () => {
         renderSearchPage();
-        await waitFor(() => expect(invokeIpc).toHaveBeenCalledWith('searchFromItems', expect.anything()));
+        await waitFor(() => expect(searchFromItems).toHaveBeenCalledTimes(1));
 
         // Click the header for the Begin column to sort
         const beginHeader = screen.getByText('Begin');
@@ -213,10 +206,7 @@ describe('SearchPage Component', () => {
         const searchButton = screen.getByText('Search');
         fireEvent.click(searchButton);
 
-        await waitFor(() => {
-            const searchCalls = invokeIpc.mock.calls.filter((call) => call[0] === 'searchFromItems');
-            return expect(searchCalls.length).toBe(2);
-        });
+        await waitFor(() => expect(searchFromItems).toHaveBeenCalledTimes(2));
 
         const lastCall = getLastCall();
 
