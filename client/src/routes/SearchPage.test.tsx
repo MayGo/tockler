@@ -1,6 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { DateTime } from 'luxon';
+import { DateTime, Settings } from 'luxon';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as trackItemApi from '../services/trackItem.api';
@@ -59,6 +59,28 @@ vi.mock('react-router-dom', async () => {
     };
 });
 
+const NOW = getTimestamp('2023-01-10T12:00:00');
+
+function getTimestamp(dateString: string) {
+    return new Date(dateString).getTime();
+}
+
+const renderSearchPage = () => {
+    return render(
+        <ChakraProvider>
+            <MemoryRouter>
+                <SearchPage />
+            </MemoryRouter>
+        </ChakraProvider>,
+    );
+};
+
+const getLastCall = () => {
+    const searchCalls = vi.mocked(trackItemApi.searchFromItems).mock.calls;
+    const lastCall = searchCalls[searchCalls.length - 1];
+    return lastCall;
+};
+
 describe('SearchPage Component', () => {
     beforeEach(() => {
         vi.clearAllMocks();
@@ -83,77 +105,60 @@ describe('SearchPage Component', () => {
     });
 
     it('renders the search form correctly', async () => {
-        render(
-            <ChakraProvider>
-                <MemoryRouter>
-                    <SearchPage />
-                </MemoryRouter>
-            </ChakraProvider>,
-        );
+        renderSearchPage();
 
-        // Check that basic elements are rendered
+        await waitFor(() => expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(1));
+
         expect(screen.getByPlaceholderText('Search from all items')).toBeInTheDocument();
         expect(screen.getByText('Search')).toBeInTheDocument();
-        expect(screen.getByText('Export to CSV')).toBeInTheDocument();
-
-        // Wait for initial data loading to complete
-        await waitFor(() => {
-            expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(1);
-        });
+        expect(await screen.findByText('Export to CSV')).toBeInTheDocument();
     });
 
     it('searches items when form is submitted', async () => {
-        render(
-            <ChakraProvider>
-                <MemoryRouter>
-                    <SearchPage />
-                </MemoryRouter>
-            </ChakraProvider>,
-        );
+        Settings.now = () => NOW;
+        renderSearchPage();
+        await waitFor(() => expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(1));
 
-        // Enter search text
         const searchInput = screen.getByPlaceholderText('Search from all items');
         fireEvent.change(searchInput, { target: { value: 'test search' } });
 
-        // Submit the form
         const searchButton = screen.getByText('Search');
         fireEvent.click(searchButton);
 
-        // Wait for search to be called with the new text
-        await waitFor(() => {
-            const searchCalls = vi.mocked(trackItemApi.searchFromItems).mock.calls;
-            const lastCall = searchCalls[searchCalls.length - 1];
-            expect(lastCall[0].searchStr).toBe('test search');
+        await waitFor(() => expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(2));
+
+        const lastCall = getLastCall();
+
+        expect(lastCall[0]).toStrictEqual({
+            from: DateTime.fromISO('2022-12-31T00:00:00.000+02:00'),
+            to: DateTime.fromISO('2023-01-10T23:59:59.999+02:00'),
+            taskName: 'AppTrackItem',
+            searchStr: 'test search',
+            sumTotal: true,
+            paging: {
+                limit: 10,
+                offset: 0,
+                sortByKey: 'endDate',
+                sortByOrder: 'desc',
+            },
         });
     });
 
     it('exports items to CSV when export button is clicked', async () => {
-        render(
-            <ChakraProvider>
-                <MemoryRouter>
-                    <SearchPage />
-                </MemoryRouter>
-            </ChakraProvider>,
-        );
+        renderSearchPage();
 
         // Click the export button
         const exportButton = screen.getByText('Export to CSV');
         fireEvent.click(exportButton);
 
         // Verify that exportFromItems was called
-        await waitFor(() => {
-            expect(trackItemApi.exportFromItems).toHaveBeenCalledTimes(1);
-        });
+        await waitFor(() => expect(trackItemApi.exportFromItems).toHaveBeenCalledTimes(1));
     });
 
     it('updates the task type when type selector changes', async () => {
-        render(
-            <ChakraProvider>
-                <MemoryRouter>
-                    <SearchPage />
-                </MemoryRouter>
-            </ChakraProvider>,
-        );
+        Settings.now = () => NOW;
+        renderSearchPage();
+        await waitFor(() => expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(1));
 
         // Find the type select dropdown and change its value
         const typeSelect = await screen.findByRole('combobox', { name: 'Type Select' });
@@ -163,47 +168,67 @@ describe('SearchPage Component', () => {
         const searchButton = screen.getByText('Search');
         fireEvent.click(searchButton);
 
-        // Verify that searchFromItems was called with the new task type
-        await waitFor(() => {
-            const searchCalls = vi.mocked(trackItemApi.searchFromItems).mock.calls;
-            const lastCall = searchCalls[searchCalls.length - 1];
-            expect(lastCall[0].taskName).toBe('LogTrackItem');
+        await waitFor(() => expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(2));
+
+        const lastCall = getLastCall();
+
+        expect(lastCall[0]).toStrictEqual({
+            from: DateTime.fromISO('2022-12-31T00:00:00.000+02:00'),
+            to: DateTime.fromISO('2023-01-10T23:59:59.999+02:00'),
+            taskName: 'LogTrackItem',
+            searchStr: '',
+            sumTotal: true,
+            paging: { limit: 10, offset: 0, sortByKey: 'endDate', sortByOrder: 'desc' },
         });
     });
 
     it('updates timerange when date range selection changes', async () => {
-        render(
-            <ChakraProvider>
-                <MemoryRouter>
-                    <SearchPage />
-                </MemoryRouter>
-            </ChakraProvider>,
-        );
+        Settings.now = () => NOW;
+        renderSearchPage();
+
+        await waitFor(() => expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(1));
 
         // Click the Month button to change the timerange
         const monthButton = screen.getByText('Month');
         fireEvent.click(monthButton);
 
+        await waitFor(() => expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(2));
+
+        const lastCall = getLastCall();
+
+        expect(lastCall[0]).toStrictEqual({
+            from: DateTime.fromISO('2022-12-10T00:00:00.000+02:00'),
+            to: DateTime.fromISO('2023-01-10T23:59:59.999+02:00'),
+            taskName: 'AppTrackItem',
+            searchStr: '',
+            sumTotal: true,
+            paging: { limit: 10, offset: 0, sortByKey: 'endDate', sortByOrder: 'desc' },
+        });
+    });
+    it('sorts items by BeginDate', async () => {
+        Settings.now = () => NOW;
+
+        renderSearchPage();
+        await waitFor(() => expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(1));
+        // Click the header for the Begin column to sort
+        const beginHeader = screen.getByText('Begin');
+        fireEvent.click(beginHeader);
+
         // Submit the form to trigger a new search
         const searchButton = screen.getByText('Search');
         fireEvent.click(searchButton);
 
-        // Verify that searchFromItems was called with the new timerange
-        await waitFor(() => {
-            const searchCalls = vi.mocked(trackItemApi.searchFromItems).mock.calls;
-            const lastCall = searchCalls[searchCalls.length - 1];
+        await waitFor(() => expect(trackItemApi.searchFromItems).toHaveBeenCalledTimes(2));
 
-            // Check that the "from" date is about a month ago
-            const from = new Date(lastCall[0].from).getTime();
-            const to = new Date(lastCall[0].to).getTime();
+        const lastCall = getLastCall();
 
-            const fromDate = DateTime.fromMillis(from);
-            const toDate = DateTime.fromMillis(to);
-
-            // Approximately a month difference (allowing for small test execution time differences)
-            const diffDays = toDate.diff(fromDate, 'days').days;
-            expect(diffDays).toBeGreaterThanOrEqual(28);
-            expect(diffDays).toBeLessThanOrEqual(32);
+        expect(lastCall[0]).toStrictEqual({
+            from: DateTime.fromISO('2022-12-31T00:00:00.000+02:00'),
+            to: DateTime.fromISO('2023-01-10T23:59:59.999+02:00'),
+            taskName: 'AppTrackItem',
+            searchStr: '',
+            sumTotal: true,
+            paging: { limit: 10, offset: 0, sortByKey: 'beginDate', sortByOrder: 'desc' },
         });
     });
 });
