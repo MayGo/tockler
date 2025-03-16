@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron';
 import { machineId } from 'node-machine-id';
 import AppManager from './app/app-manager';
+import { taskAnalyser } from './app/task-analyser';
 import { sendToNotificationWindow, sendToTrayWindow } from './app/window-manager';
 import { initBackgroundJob } from './background/initBackgroundJob';
 import { appSettingService } from './drizzle/queries/app-setting-service';
@@ -46,6 +47,13 @@ const settingsActions = {
     },
     getMachineId: async () => {
         return machineId(true);
+    },
+    getTaskAnalyserEnabled: async () => {
+        return taskAnalyser.isEnabled;
+    },
+    setTaskAnalyserEnabled: async (payload: { enabled: boolean }) => {
+        await taskAnalyser.setEnabled(payload.enabled);
+        return taskAnalyser.isEnabled;
     },
 };
 

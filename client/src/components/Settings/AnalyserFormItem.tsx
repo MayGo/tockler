@@ -1,16 +1,16 @@
+import { Box, Flex, FormControl, FormLabel, HStack, IconButton, Input, Switch, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { testAnalyserItem } from './AnalyserForm.util';
-import { AiOutlineDelete } from 'react-icons/ai';
-import { IconButton } from '@chakra-ui/react';
-import { Input } from '@chakra-ui/react';
-import { FormControl, FormLabel } from '@chakra-ui/react';
-import { Switch } from '@chakra-ui/react';
-import { Box, Flex } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import { HStack, Text } from '@chakra-ui/react';
+import { AiOutlineDelete } from 'react-icons/ai';
+import { ITrackItem } from '../../@types/ITrackItem';
 import { BlackBox } from '../BlackBox';
+import { AnalyserItem, AnalyserTestItemI, testAnalyserItem } from './AnalyserForm.util';
 
-const AnalyserTestItem = ({ item }) => (
+interface AnalyserTestItemProps {
+    item: AnalyserTestItemI;
+}
+
+const AnalyserTestItem = ({ item }: AnalyserTestItemProps) => (
     <Box>
         <Box>
             <b>{item.title}</b>
@@ -30,7 +30,14 @@ type Inputs = {
     enabled: boolean;
 };
 
-export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem }) => {
+interface AnalyserFormItemProps {
+    analyserItem: AnalyserItem;
+    removeItem: () => void;
+    appItems: ITrackItem[];
+    saveItem: (data: Inputs) => void;
+}
+
+export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem }: AnalyserFormItemProps) => {
     const [showTests, setShowTests] = useState(false);
     const toggleShowTests = () => {
         setShowTests(!showTests);
@@ -89,7 +96,7 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
             {showTests && (
                 <BlackBox p={3}>
                     {analysedItems.length === 0 && <Text>No results</Text>}
-                    {analysedItems.map((item: any) => (
+                    {analysedItems.map((item) => (
                         <AnalyserTestItem item={item} key={item.title} />
                     ))}
                 </BlackBox>

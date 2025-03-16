@@ -1,4 +1,5 @@
 import randomcolor from 'randomcolor';
+import { NormalizedActiveWindow } from '../background/watchTrackItems/watchForActiveWindow.utils';
 import { settingsService } from '../drizzle/queries/settings-service';
 import { TrackItemType } from '../enums/track-item-type';
 import { appEmitter } from '../utils/appEmitter';
@@ -18,6 +19,38 @@ export interface TrackItemRaw {
 const logger = logManager.getLogger('TrackItemService');
 export class TaskAnalyser {
     newItem: TrackItemRaw | null = null;
+    isEnabled: boolean = false;
+
+    constructor() {
+        this.initSettings();
+        this.setupEventListeners();
+    }
+
+    async initSettings() {
+        try {
+            // Get the analyser enabled setting or default to false
+            this.isEnabled = await settingsService.getAnalyserEnabled();
+            logger.debug(`Task Analyser enabled: ${this.isEnabled}`);
+        } catch (e) {
+            logger.error('Error initializing task analyser settings:', e);
+            this.isEnabled = false;
+        }
+    }
+
+    setupEventListeners() {
+        // Listen for active window changes
+        appEmitter.on('active-window-changed', (activeWindow: NormalizedActiveWindow) => {
+            logger.debug('Active window changed event received, analyser enabled:', this.isEnabled);
+            if (this.isEnabled && activeWindow) {
+                const item: TrackItemRaw = {
+                    app: activeWindow.app,
+                    title: activeWindow.title,
+                    url: activeWindow.url,
+                };
+                this.analyseAndNotify(item);
+            }
+        });
+    }
 
     findFirst(str: string, findRe: string) {
         if (!findRe) {
@@ -56,7 +89,14 @@ export class TaskAnalyser {
     }
 
     async analyseAndNotify(item: TrackItemRaw) {
+        // Skip analysis if feature is disabled
+        if (!this.isEnabled) {
+            logger.debug('Task analyser is disabled. Skipping analysis.');
+            return;
+        }
+
         try {
+            logger.debug('Analysing item:', item);
             let analyserItems = await settingsService.fetchAnalyserSettings();
 
             for (let patObj of analyserItems) {
@@ -97,6 +137,13 @@ export class TaskAnalyser {
         } catch (e) {
             logger.error('analyseAndNotify:', e);
         }
+    }
+
+    // Method to toggle the analyser on/off
+    async setEnabled(enabled: boolean) {
+        this.isEnabled = enabled;
+        await settingsService.setAnalyserEnabled(enabled);
+        logger.debug(`Task Analyser enabled set to: ${enabled}`);
     }
 }
 
