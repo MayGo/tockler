@@ -190,7 +190,7 @@ export const ItemsTable = ({
         },
         enableRowSelection: true,
         enableMultiRowSelection: true,
-        getRowId: (row: ITrackItem) => row.id.toString(),
+        getRowId: (row: ITrackItem) => row.id?.toString(),
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
