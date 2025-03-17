@@ -1,9 +1,10 @@
-import { app, BrowserWindow, ipcMain, Menu, nativeImage, Tray } from 'electron';
+import { app, autoUpdater, BrowserWindow, dialog, ipcMain, Menu, nativeImage, Tray } from 'electron';
 import positioner from 'electron-traywindow-positioner';
+import { throttle } from 'lodash';
 import { menubar } from 'menubar';
 import * as path from 'path';
 import { settingsService } from '../drizzle/queries/settings-service';
-import { config } from '../utils/config';
+import { config, getTrayIcon } from '../utils/config';
 import { logManager } from '../utils/log-manager';
 import MenuBuilder from './menu-builder';
 
@@ -25,11 +26,55 @@ interface WindowBounds {
     y?: number;
 }
 
+const getNativeTrayIcon = (path: string) => {
+    try {
+        return nativeImage.createFromPath(path);
+    } catch (err) {
+        logger.error('Error creating tray toggle icon with color:', err);
+    }
+
+    return undefined;
+};
+
 export const sendToTrayWindow = (key: string, message = '') => {
     if (WindowManager.menubar && WindowManager.menubar.window) {
         WindowManager.menubar.window.webContents.send(key, message);
     } else {
         logger.error('No menubar window or no webcontents.');
+    }
+};
+
+export const sendToNotificationWindow = async (key: string, message = '') => {
+    try {
+        if (WindowManager.notificationWindow && WindowManager.notificationWindow.webContents) {
+            // Save running log when receiving new log items (closing it)
+            if (key === 'notifyUser') {
+                if (WindowManager.tray) {
+                    positioner.position(WindowManager.notificationWindow, WindowManager.tray.getBounds());
+                } else {
+                    logger.error('Tray not defined yet, not sending notifyUser');
+                }
+            }
+
+            WindowManager.notificationWindow.showInactive();
+            const workSettings = await settingsService.fetchWorkSettings();
+            const { notificationDuration } = workSettings;
+
+            setTimeout(() => {
+                if (WindowManager.notificationWindow) {
+                    WindowManager.notificationWindow.hide();
+                } else {
+                    logger.error('NotificationWindow not created');
+                }
+            }, notificationDuration * 1000);
+
+            logger.debug('Send to notification window:', key, message);
+            WindowManager.notificationWindow.webContents.send(key, message);
+        } else {
+            logger.error('No notification window or no webcontents.');
+        }
+    } catch (error) {
+        logger.error('Error sending notification:', error);
     }
 };
 
@@ -252,6 +297,11 @@ export default class WindowManager {
             this.storeWindowSize();
         });
 
+        // Also save on other events that might change window state
+        // Reduce throttle time to be more responsive
+        this.mainWindow.on('resize', throttle(WindowManager.storeWindowSize, 300));
+        this.mainWindow.on('move', throttle(WindowManager.storeWindowSize, 300));
+
         this.mainWindow.on('hide', () => {
             logger.debug('MainWindow hide');
         });
@@ -398,20 +448,11 @@ export default class WindowManager {
                 );
             }
 
-            let trayIconWithColor;
-            try {
-                trayIconWithColor = nativeImage.createFromPath(config.iconTray);
-            } catch (err) {
-                logger.error('Error creating tray icon with color:', err);
-            }
+            const trayIconWithColor = getNativeTrayIcon(config.iconTray);
 
-            try {
-                this.tray!.setToolTip('Tockler');
-                if (trayIconWithColor) {
-                    this.tray!.setImage(trayIconWithColor);
-                }
-            } catch (e) {
-                logger.error('Error setting tooltip or image:', e);
+            if (this.tray && trayIconWithColor) {
+                this.tray.setToolTip('Tockler');
+                this.tray.setImage(trayIconWithColor);
             }
         });
     }
@@ -458,12 +499,7 @@ export default class WindowManager {
         // Tray icon: Setting all tray icon sources
         logger.debug('Setting tray icon to download update icon');
         try {
-            let trayIconWithColor;
-            try {
-                trayIconWithColor = nativeImage.createFromPath(config.iconTrayUpdate);
-            } catch (err) {
-                logger.error('Error creating tray update icon with color:', err);
-            }
+            const trayIconWithColor = getNativeTrayIcon(config.iconTrayUpdate);
 
             if (this.tray && trayIconWithColor) {
                 this.tray.setImage(trayIconWithColor);
@@ -471,16 +507,25 @@ export default class WindowManager {
         } catch (e) {
             logger.error('Error setting tray icon to update:', e);
         }
+
+        WindowManager.menubar.tray.on('click', async () => {
+            const { response } = await dialog.showMessageBox(WindowManager.menubar.window, {
+                type: 'question',
+                buttons: ['Update', 'Cancel'],
+                defaultId: 0,
+                message: `New version is downloaded, do you want to install it now?`,
+                title: 'Update available',
+            });
+
+            if (response === 0) {
+                autoUpdater.quitAndInstall();
+            }
+        });
     }
 
     static toggleTrayIcon() {
         try {
-            let trayIconWithColor;
-            try {
-                trayIconWithColor = nativeImage.createFromPath(config.iconTray);
-            } catch (err) {
-                logger.error('Error creating tray toggle icon with color:', err);
-            }
+            const trayIconWithColor = getNativeTrayIcon(getTrayIcon());
 
             if (this.tray && trayIconWithColor) {
                 this.tray.setImage(trayIconWithColor);
@@ -492,37 +537,3 @@ export default class WindowManager {
 }
 
 export const windowManager = new WindowManager();
-
-export const sendToNotificationWindow = async (key: string, message = '') => {
-    try {
-        if (WindowManager.notificationWindow && WindowManager.notificationWindow.webContents) {
-            // Save running log when receiving new log items (closing it)
-            if (key === 'notifyUser') {
-                if (WindowManager.tray) {
-                    positioner.position(WindowManager.notificationWindow, WindowManager.tray.getBounds());
-                } else {
-                    logger.error('Tray not defined yet, not sending notifyUser');
-                }
-            }
-
-            WindowManager.notificationWindow.showInactive();
-            const workSettings = await settingsService.fetchWorkSettings();
-            const { notificationDuration } = workSettings;
-
-            setTimeout(() => {
-                if (WindowManager.notificationWindow) {
-                    WindowManager.notificationWindow.hide();
-                } else {
-                    logger.error('NotificationWindow not created');
-                }
-            }, notificationDuration * 1000);
-
-            logger.debug('Send to notification window:', key, message);
-            WindowManager.notificationWindow.webContents.send(key, message);
-        } else {
-            logger.error('No notification window or no webcontents.');
-        }
-    } catch (error) {
-        logger.error('Error sending notification:', error);
-    }
-};
