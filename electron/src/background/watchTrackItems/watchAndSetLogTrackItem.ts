@@ -123,7 +123,7 @@ const saveOngoingTrackItem = async () => {
     }
 };
 
-export async function watchAndSetLogTrackItemRemove() {
+export async function watchAndSetLogTrackItemCleanup() {
     appEmitter.removeAllListeners('state-changed');
     await saveOngoingTrackItem();
     currentLogItem = null;

@@ -149,7 +149,7 @@ describe('watchAndSetLogTrackItem', () => {
 
     it('watchAndSetAppTrackItemRemove should end current item and save it', async () => {
         const { appEmitter } = await import('../utils/appEmitter');
-        const { addActiveWindowWatch, watchAndSetAppTrackItemRemove } = await import(
+        const { addActiveWindowWatch, watchAndSetAppTrackItemCleanup: watchAndSetAppTrackItemRemove } = await import(
             '../background/watchTrackItems/watchAndSetAppTrackItem'
         );
 
