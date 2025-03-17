@@ -25,9 +25,24 @@ export default defineConfig({
 
                 vite: {
                     build: {
+                        sourcemap: 'inline',
+                        minify: false,
+                        outDir: 'dist-electron',
                         rollupOptions: {
-                            // Here are some C/C++ modules them can't be built properly
-                            external: ['better-sqlite3', 'active-win', 'node-machine-id'],
+                            // Ensure these native modules are treated as external
+                            external: [
+                                'electron',
+                                'better-sqlite3',
+                                'active-win',
+                                'node-machine-id',
+                                'electron-context-menu',
+                            ],
+                        },
+                        // Fix for CommonJS modules
+                        commonjsOptions: {
+                            transformMixedEsModules: true,
+                            defaultIsModuleExports: true,
+                            extensions: ['.js', '.cjs', '.ts'],
                         },
                     },
                     plugins: [copyMigrations()],

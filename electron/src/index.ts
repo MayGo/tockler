@@ -1,4 +1,4 @@
-require('events').EventEmitter.defaultMaxListeners = 30;
+//require('events').EventEmitter.defaultMaxListeners = 30;
 
 import { app, ipcMain } from 'electron';
 import AppManager from './app/app-manager';
@@ -28,7 +28,7 @@ if (gotTheLock) {
 
     app.commandLine.appendSwitch('disable-renderer-backgrounding');
 
-    require('electron-context-menu')({});
+    // require('electron-context-menu')({});
 
     ipcMain.on('close-app', () => {
         logger.info('Closing Tockler');

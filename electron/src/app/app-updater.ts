@@ -24,7 +24,6 @@ export default class AppUpdater {
 
     static init() {
         autoUpdater.logger = logger;
-        (autoUpdater.logger as any).transports.console.level = 'error';
 
         autoUpdater.on('download-progress', (progressInfo) => {
             logger.debug(`Downloaded: ${Math.round(progressInfo.percent)}% `);
