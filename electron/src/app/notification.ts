@@ -18,11 +18,12 @@ export function showNotification({
 }) {
     if (isDesktopNotificationSupported) {
         logger.debug('Showing notification:', body, title);
+
         const notification = new Notification({
             title,
             body,
             silent,
-            icon: config.iconTray,
+            icon: config.iconNotification,
         });
         if (onClick) {
             notification.once('click', onClick);
