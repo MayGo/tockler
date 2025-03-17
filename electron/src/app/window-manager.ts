@@ -1,11 +1,9 @@
-import { app, BrowserWindow, dialog, ipcMain, Tray } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, nativeImage, Tray } from 'electron';
 import positioner from 'electron-traywindow-positioner';
-import { autoUpdater } from 'electron-updater';
-import { throttle } from 'lodash';
 import { menubar } from 'menubar';
-import path, { join } from 'path';
+import * as path from 'path';
 import { settingsService } from '../drizzle/queries/settings-service';
-import { config, getTrayIcon } from '../utils/config';
+import { config } from '../utils/config';
 import { logManager } from '../utils/log-manager';
 import MenuBuilder from './menu-builder';
 
@@ -32,28 +30,6 @@ export const sendToTrayWindow = (key: string, message = '') => {
         WindowManager.menubar.window.webContents.send(key, message);
     } else {
         logger.error('No menubar window or no webcontents.');
-    }
-};
-
-export const sendToNotificationWindow = async (key: string, message = '') => {
-    try {
-        // Save running log when receiving new log items (closing it)
-        if (key === 'newLogItemAdded' || key === 'newWindowItemAdded') {
-            const runningItem = await settingsService.getRunningLogItemAsJson();
-            if (runningItem) {
-                // Call the methods directly from the service
-                await settingsService.updateByName('RUNNING_LOG_ITEM', '');
-                // Note: startNewLogItem is not available, so we're removing it
-            }
-        }
-
-        if (WindowManager.notificationWindow && WindowManager.notificationWindow.webContents) {
-            WindowManager.notificationWindow.webContents.send(key, message);
-        } else {
-            logger.error('No notification window or no webcontents.');
-        }
-    } catch (error) {
-        logger.error('Error sending notification:', error);
     }
 };
 
@@ -144,6 +120,27 @@ export default class WindowManager {
             logger.error('Failed to load:', errorCode, errorDescription);
         });
 
+        // Updated console-message handler for Electron 35
+        // Using any type to avoid TypeScript errors with the event object
+        this.mainWindow.webContents.on('console-message' as any, (event: any) => {
+            logger.debug(`Console: ${event.message} (${event.sourceId}:${event.lineNumber})`);
+        });
+
+        this.mainWindow.loadURL(pageUrl).catch((err) => {
+            logger.error('Could not load url in main window:', err);
+        });
+
+        this.mainWindow.on('minimize', () => {
+            logger.debug('MainWindow minimize');
+        });
+
+        this.mainWindow.on('restore', () => {
+            logger.debug('MainWindow restore');
+        });
+
+        // Clear history using the new API
+        this.mainWindow.webContents.clearHistory();
+
         // Return information about window state for setMainWindow to use
         return { hasWindowSize, wasMaximizedOrFullScreen };
     }
@@ -165,17 +162,32 @@ export default class WindowManager {
             return;
         }
 
-        this.mainWindow.loadURL(pageUrl);
+        this.mainWindow.on('close', (event: any) => {
+            logger.debug('MainWindow close');
+            event.preventDefault();
+            this.storeWindowSize();
+            if (this.mainWindow) {
+                this.mainWindow.hide();
+            }
+        });
 
         this.mainWindow.on('closed', () => {
+            logger.debug('MainWindow closed');
+            // Close all windows if main is closed
             this.mainWindow = null;
-            logger.debug('Main window closed');
+            app.quit();
         });
 
         this.mainWindow.on('focus', () => {
+            logger.debug('MainWindow focus');
             let sendEventName = 'main-window-focus';
-            logger.debug('Sending focus event: ' + sendEventName);
-            // this.mainWindow.webContents.send(sendEventName, 'ping');
+
+            if (this.mainWindow && this.mainWindow.isMaximized()) {
+                sendEventName = 'main-window-focus-maximized';
+            }
+            if (this.mainWindow && this.mainWindow.webContents) {
+                this.mainWindow.webContents.send(sendEventName, 'ping');
+            }
         });
 
         this.mainWindow.webContents.on('did-finish-load', () => {
@@ -240,26 +252,13 @@ export default class WindowManager {
             this.storeWindowSize();
         });
 
-        // Always save window size right before closing
-        this.mainWindow.on('close', () => {
-            if (this.mainWindow) {
-                logger.debug('Window closing, saving final size');
-                // Always try to save the window size - storeWindowSize will now handle different states
-                WindowManager.storeWindowSize();
-
-                logger.debug('Closing window');
-                this.mainWindow = null;
-            }
-            if (app.dock) {
-                logger.debug('Hide dock window.');
-                app.dock.hide();
-            }
+        this.mainWindow.on('hide', () => {
+            logger.debug('MainWindow hide');
         });
 
-        // Also save on other events that might change window state
-        // Reduce throttle time to be more responsive
-        this.mainWindow.on('resize', throttle(WindowManager.storeWindowSize, 300));
-        this.mainWindow.on('move', throttle(WindowManager.storeWindowSize, 300));
+        this.mainWindow.on('show', () => {
+            logger.debug('MainWindow show');
+        });
 
         WindowManager.initMenus();
     }
@@ -436,19 +435,22 @@ export default class WindowManager {
                 preload: preloadScript,
                 sandbox: false,
             },
-            width: 70,
-            height: 27,
+            width: 80,
+            height: 30,
         });
-        this.notificationWindow.loadURL(pageUrl + '#/notificationApp');
+        this.notificationWindow.loadURL(pageUrl + '#/notificationApp').catch((err) => {
+            logger.error('Could not load url in notification window:', err);
+        });
 
-        this.menubar.on('ready', () => {
-            this.menubar.tray.on('click', () => {
-                if (this.notificationWindow) {
-                    this.notificationWindow.hide();
-                } else {
-                    logger.error('NotificationWindow not created');
-                }
-            });
+        // Updated console-message handler for Electron 35
+        // Using any type to avoid TypeScript errors with the event object
+        this.notificationWindow.webContents.on('console-message' as any, (event: any) => {
+            logger.debug(`Notification console: ${event.message} (${event.sourceId}:${event.lineNumber})`);
+        });
+
+        this.notificationWindow.setResizable(false);
+        this.notificationWindow.on('closed', () => {
+            this.notificationWindow = null;
         });
     }
 
@@ -490,3 +492,37 @@ export default class WindowManager {
 }
 
 export const windowManager = new WindowManager();
+
+export const sendToNotificationWindow = async (key: string, message = '') => {
+    try {
+        if (WindowManager.notificationWindow && WindowManager.notificationWindow.webContents) {
+            // Save running log when receiving new log items (closing it)
+            if (key === 'notifyUser') {
+                if (WindowManager.tray) {
+                    positioner.position(WindowManager.notificationWindow, WindowManager.tray.getBounds());
+                } else {
+                    logger.error('Tray not defined yet, not sending notifyUser');
+                }
+            }
+
+            WindowManager.notificationWindow.showInactive();
+            const workSettings = await settingsService.fetchWorkSettings();
+            const { notificationDuration } = workSettings;
+
+            setTimeout(() => {
+                if (WindowManager.notificationWindow) {
+                    WindowManager.notificationWindow.hide();
+                } else {
+                    logger.error('NotificationWindow not created');
+                }
+            }, notificationDuration * 1000);
+
+            logger.debug('Send to notification window:', key, message);
+            WindowManager.notificationWindow.webContents.send(key, message);
+        } else {
+            logger.error('No notification window or no webcontents.');
+        }
+    } catch (error) {
+        logger.error('Error sending notification:', error);
+    }
+};
