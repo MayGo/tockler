@@ -6,18 +6,31 @@ import { TrackItemType } from '../enum/TrackItemType';
 import { exportFromItems, searchFromItems, SearchResultI } from '../services/trackItem.api';
 
 import { Box, Button, Flex, HStack, Input } from '@chakra-ui/react';
+import { useDebouncedCallback } from 'use-debounce';
 import { CardBox } from '../components/CardBox';
 import { Loader } from '../components/Timeline/Loader';
 import { TypeSelect } from '../components/TypeSelect';
 
+interface SearchPagingState {
+    pageSize: number;
+    pageIndex: number;
+    sortByKey?: string;
+    sortByOrder?: 'asc' | 'desc';
+}
+
 export function SearchPage() {
     const resetButtonsRef = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
     const fetchIdRef = useRef(0);
+
     const [searchText, setSearchText] = useState('');
     const [taskName, setTaskName] = useState(TrackItemType.AppTrackItem);
-
     const [isLoading, setIsLoading] = useState(false);
-    const [searchPaging, setSearchPaging] = useState({ pageSize: 20, pageIndex: 0 });
+    const [searchPaging, setSearchPaging] = useState<SearchPagingState>({
+        pageSize: 20,
+        pageIndex: 0,
+        sortByKey: 'endDate',
+        sortByOrder: 'desc',
+    });
 
     const [searchResult, setSearchResult] = useState<SearchResultI>({ data: [], total: 0 });
 
@@ -31,29 +44,33 @@ export function SearchPage() {
         setIsLoading(true);
         const [from, to] = timerange;
 
-        // When sumTotal is true, the API returns a different format
+        const pagingParams = {
+            limit: searchPaging.pageSize,
+            offset: searchPaging.pageIndex * searchPaging.pageSize,
+            sortByKey: searchPaging.sortByKey || 'endDate',
+            sortByOrder: searchPaging.sortByOrder || 'desc',
+        };
+
         const results = await searchFromItems({
             from,
             to,
             taskName,
             searchStr,
-            paging: { limit: searchPaging.pageSize, offset: searchPaging.pageIndex * searchPaging.pageSize },
+            paging: pagingParams,
             sumTotal: true,
         });
 
         console.info('Sum data', results);
 
-        // Only update the data if this is the latest fetch
         if (fetchId === fetchIdRef.current) {
             setSearchResult(results);
-
             console.info('searching with paging', searchPaging, timerange, results);
         }
 
         setIsLoading(false);
-
-        return;
     };
+
+    const debouncedLoadItems = useDebouncedCallback(loadItems, 300);
 
     const fetchData = useCallback(
         ({
@@ -65,12 +82,14 @@ export function SearchPage() {
             pageIndex: number;
             sortBy: { id: string; desc: boolean }[];
         }) => {
-            const pageProps = { pageSize, pageIndex };
+            const pageProps: SearchPagingState = { pageSize, pageIndex };
             if (sortBy && sortBy.length > 0) {
                 const [sort] = sortBy;
-
-                pageProps['sortByKey'] = sort.id;
-                pageProps['sortByOrder'] = sort.desc ? 'desc' : 'asc';
+                pageProps.sortByKey = sort.id;
+                pageProps.sortByOrder = sort.desc ? 'desc' : 'asc';
+            } else {
+                pageProps.sortByKey = 'endDate';
+                pageProps.sortByOrder = 'desc';
             }
 
             setSearchPaging(pageProps);
@@ -87,9 +106,7 @@ export function SearchPage() {
             taskName,
             searchStr,
         });
-
         setIsLoading(false);
-        return;
     };
 
     const refreshData = useCallback(() => {
@@ -99,14 +116,13 @@ export function SearchPage() {
     }, [searchPaging]);
 
     useEffect(() => {
-        console.info('searchPaging in page changed');
-        loadItems(searchText);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchPaging]);
+        console.info('searchPaging, searchText or timerange has changed');
+        debouncedLoadItems(searchText);
+    }, [debouncedLoadItems, searchPaging, searchText, timerange]);
 
     const onSubmit = (event) => {
         event.preventDefault();
-        setSearchPaging({ ...searchPaging, pageIndex: 0 });
+        setSearchPaging((prev) => ({ ...prev, pageIndex: 0 }));
     };
 
     return (

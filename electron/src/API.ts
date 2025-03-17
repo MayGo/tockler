@@ -5,7 +5,7 @@ import { sendToNotificationWindow, sendToTrayWindow } from './app/window-manager
 import { initBackgroundJob } from './background/initBackgroundJob';
 import { appSettingService } from './drizzle/queries/app-setting-service';
 import { settingsService } from './drizzle/queries/settings-service';
-import { trackItemService } from './drizzle/queries/track-item-service';
+import { OrderByKey, trackItemService } from './drizzle/queries/track-item-service';
 import { TrackItem } from './drizzle/schema';
 import { setupMainHandler } from './utils/setupMainHandler';
 
@@ -76,7 +76,7 @@ const trackItemActions = {
         to: string;
         taskName: string;
         searchStr: string;
-        paging: { limit: number; offset: number };
+        paging: { limit: number; offset: number; sortByKey?: OrderByKey; sortByOrder?: 'asc' | 'desc' };
         sumTotal: boolean;
     }) => {
         const { from, to, taskName, searchStr, paging, sumTotal } = payload;

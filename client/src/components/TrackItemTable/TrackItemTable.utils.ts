@@ -1,5 +1,3 @@
-// tslint:disable-next-line: no-submodule-imports
-
 import { FilterFn, Row, SortingState } from '@tanstack/react-table';
 import { differenceInMilliseconds } from 'date-fns';
 import { sumBy } from 'lodash';

@@ -1,9 +1,8 @@
-import { useEffect, useState, memo } from 'react';
-import { EventEmitter } from '../services/EventEmitter';
-import { Logger } from '../logger';
-import { Center, Box } from '@chakra-ui/react';
-import { Text } from '@chakra-ui/react';
+import { Box, Center, Text } from '@chakra-ui/react';
+import { memo, useEffect, useState } from 'react';
 import { ShortTimeInterval } from '../components/TrayList/ShortTimeInterval';
+import { Logger } from '../logger';
+import { ElectronEventEmitter } from '../services/ElectronEventEmitter';
 
 const NotificationAppPageTemp = () => {
     const [currentSession, setCurrentSession] = useState();
@@ -14,10 +13,10 @@ const NotificationAppPageTemp = () => {
             setCurrentSession(payload);
         };
 
-        EventEmitter.on('notifyUser', notifyUserReceiver);
+        ElectronEventEmitter.on('notifyUser', notifyUserReceiver);
 
         return () => {
-            EventEmitter.off('notifyUser', notifyUserReceiver);
+            ElectronEventEmitter.off('notifyUser', notifyUserReceiver);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

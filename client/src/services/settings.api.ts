@@ -1,5 +1,6 @@
+import { ITrackItem } from '../@types/ITrackItem';
 import { Logger } from '../logger';
-import { EventEmitter } from './EventEmitter';
+import { ElectronEventEmitter } from './ElectronEventEmitter';
 
 // Use the Window interface extension from global declarations
 const { electronBridge } = window;
@@ -20,7 +21,7 @@ export function getNativeThemeChange() {
 
 export function saveNativeThemeChange(enabled) {
     configSet(IS_NATIVE_THEME_ENABLED, enabled);
-    EventEmitter.send(NATIVE_THEME_CONFIG_CHANGED);
+    ElectronEventEmitter.send(NATIVE_THEME_CONFIG_CHANGED);
 }
 
 // -----
@@ -32,7 +33,7 @@ export function getOpenAtLogin() {
 export function saveOpenAtLogin(openAtLogin) {
     if (openAtLogin !== getOpenAtLogin()) {
         configSet(OPEN_AT_LOGIN, openAtLogin);
-        EventEmitter.send('openAtLoginChanged');
+        ElectronEventEmitter.send('openAtLoginChanged');
     }
 }
 
@@ -70,7 +71,7 @@ export function getUsePurpleTrayIcon() {
 
 export function saveUsePurpleTrayIcon(enabled) {
     configSet(USE_PURPLE_TRAY_ICON, enabled);
-    EventEmitter.send(USE_PURPLE_TRAY_ICON_CHANGED);
+    ElectronEventEmitter.send(USE_PURPLE_TRAY_ICON_CHANGED);
 }
 
 export function getThemeFromStorage() {
@@ -81,31 +82,31 @@ export function getThemeFromStorage() {
 
 export function saveThemeToStorage(colorMode) {
     Logger.info('Save theme to config:', colorMode);
-    return EventEmitter.emit('saveThemeAndNotify', colorMode);
+    return ElectronEventEmitter.emit('saveThemeAndNotify', colorMode);
 }
 
 export async function updateByName(name, jsonData) {
     Logger.debug('updateByName', JSON.stringify(jsonData));
-    return EventEmitter.emit('updateByName', { name, jsonData: JSON.stringify(jsonData) });
+    return ElectronEventEmitter.emit('updateByName', { name, jsonData: JSON.stringify(jsonData) });
 }
 
 export async function notifyUser(message) {
     Logger.debug('notifyUser', message);
-    return EventEmitter.emit('notifyUser', { message });
+    return ElectronEventEmitter.emit('notifyUser', { message });
 }
 
 export function getRunningLogItem() {
-    return EventEmitter.emit('getRunningLogItemAsJson');
+    return ElectronEventEmitter.emit('getRunningLogItemAsJson') as Promise<ITrackItem>;
 }
 
 export function getMachineId() {
-    return EventEmitter.emit('getMachineId');
+    return ElectronEventEmitter.emit('getMachineId');
 }
 
 export async function fetchWorkSettings() {
-    const jsonStr = await EventEmitter.emit('fetchWorkSettingsJsonString');
+    const jsonStr = await ElectronEventEmitter.emit('fetchWorkSettingsJsonString');
     try {
-        return JSON.parse(jsonStr);
+        return JSON.parse(jsonStr as string);
     } catch (e) {
         Logger.error('Error in fetchWorkSettings', jsonStr, e);
         return null;
@@ -113,9 +114,9 @@ export async function fetchWorkSettings() {
 }
 
 export async function fetchDataSettings() {
-    const jsonStr = await EventEmitter.emit('fetchDataSettingsJsonString');
+    const jsonStr = await ElectronEventEmitter.emit('fetchDataSettingsJsonString');
     try {
-        return JSON.parse(jsonStr);
+        return JSON.parse(jsonStr as string);
     } catch (e) {
         Logger.error('Error in fetchDataSettings', jsonStr, e);
         return null;
@@ -128,7 +129,10 @@ export function saveWorkSettings(data) {
 
 export function saveDataSettings(data) {
     updateByName('DATA_SETTINGS', data);
-    return EventEmitter.emit('updateByNameDataSettings', { name: 'DATA_SETTINGS', jsonData: JSON.stringify(data) });
+    return ElectronEventEmitter.emit('updateByNameDataSettings', {
+        name: 'DATA_SETTINGS',
+        jsonData: JSON.stringify(data),
+    });
 }
 
 export function saveAnalyserSettings(data) {
@@ -136,10 +140,10 @@ export function saveAnalyserSettings(data) {
 }
 
 export async function fetchAnalyserSettings() {
-    const jsonStr = await EventEmitter.emit('fetchAnalyserSettingsJsonString');
+    const jsonStr = await ElectronEventEmitter.emit('fetchAnalyserSettingsJsonString');
 
     try {
-        return JSON.parse(jsonStr);
+        return JSON.parse(jsonStr as string);
     } catch (e) {
         Logger.error('fetchAnalyserSettings', jsonStr, e);
         return [];

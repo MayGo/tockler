@@ -1,10 +1,9 @@
-// tslint:disable-next-line: no-submodule-imports
-
 import { Button, HStack, Text } from '@chakra-ui/react';
 import { SortingState } from '@tanstack/react-table';
 import { Logger } from '../../logger';
 import { deleteByIds } from '../../services/trackItem.api';
 import { useStoreActions } from '../../store/easyPeasy';
+import { defaultSorting } from './ItemsTable.utils';
 import { TableButtonsProps } from './TrackItemTable.utils';
 
 interface Props extends TableButtonsProps {
@@ -53,11 +52,11 @@ export const TrackItemTableButtons: React.FC<Props> = (props) => {
             <Button
                 variant="outline"
                 onClick={() => {
-                    setSortBy([]);
+                    setSortBy(defaultSorting);
                     setAllFilters();
                 }}
             >
-                Clear filters and sorters
+                Reset to defaults
             </Button>
         </HStack>
     );

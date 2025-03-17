@@ -1,19 +1,16 @@
+import { Box, HStack, IconButton, Tooltip } from '@chakra-ui/react';
 import { memo } from 'react';
-import { EventEmitter } from '../../services/EventEmitter';
-import { Box } from '@chakra-ui/react';
 import { AiOutlineArrowsAlt, AiOutlinePoweroff } from 'react-icons/ai';
-import { Tooltip } from '@chakra-ui/react';
-import { IconButton } from '@chakra-ui/react';
-import { HStack } from '@chakra-ui/react';
+import { ElectronEventEmitter } from '../../services/ElectronEventEmitter';
 import { Header } from '../Header/Header';
 
 export const TrayMenuPlain = () => {
     const exitApp = () => {
-        EventEmitter.send('close-app');
+        ElectronEventEmitter.send('close-app');
     };
 
     const toggleMainWindow = () => {
-        EventEmitter.send('toggle-main-window');
+        ElectronEventEmitter.send('toggle-main-window');
     };
 
     return (

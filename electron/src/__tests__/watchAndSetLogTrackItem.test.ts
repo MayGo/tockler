@@ -343,4 +343,53 @@ describe('watchAndSetLogTrackItem', () => {
             endDate: END_TIME,
         });
     });
+
+    it('should handle state change from Offline to Idle', async () => {
+        /*
+--------------------------------------------------------------------------------
+1. TestApp   ████████████████████
+   ID=1    0.0s                1.0s     = 1.0s
+................................................................................
+--------------------------------------------------------------------------------
+        */
+        const { appEmitter } = await import('../utils/appEmitter');
+        const { watchAndSetLogTrackItem } = await import('../background/watchTrackItems/watchAndSetLogTrackItem');
+        await watchAndSetLogTrackItem();
+
+        const testData: TrackItemRaw = {
+            app: 'TestApp',
+            title: 'Test Title',
+        };
+
+        await addColorToApp(testData.app ?? '', COLORS.GREEN);
+
+        // Create initial log item
+        await sendStartNewLogItemEvent(testData);
+
+        // Offline
+        await changeStateAndMockDate(appEmitter, State.Offline, NOW + 1000);
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
+
+        // Idle
+        await changeStateAndMockDate(appEmitter, State.Idle, NOW + 2000);
+
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
+
+        // Online
+        await changeStateAndMockDate(appEmitter, State.Online, NOW + 3000);
+
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
+
+        let items = await selectAllAppItems(db);
+        expect(items[0]).toStrictEqual({
+            ...emptyData,
+            ...testData,
+            id: 1,
+            beginDate: NOW,
+            endDate: NOW + 1000,
+            color: COLORS.GREEN,
+        });
+
+        visualizeTrackItems(items, NOW);
+    });
 });

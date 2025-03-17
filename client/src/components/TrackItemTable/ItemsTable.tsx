@@ -1,5 +1,3 @@
-// tslint:disable-next-line: no-submodule-imports
-
 import React, { useEffect, useMemo, useState } from 'react';
 import { diffAndFormatShort, formatDurationInternal } from '../../utils';
 
@@ -11,6 +9,9 @@ import {
     FilterFn,
     flexRender,
     getCoreRowModel,
+    getFacetedMinMaxValues,
+    getFacetedRowModel,
+    getFacetedUniqueValues,
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
@@ -45,6 +46,13 @@ interface ItemsTableProps {
     manualSortBy: boolean;
     customTableButtons?: React.ReactElement<TableButtonsProps>;
 }
+
+const defaultSorting: SortingState = [
+    {
+        id: 'endDate',
+        desc: true,
+    },
+];
 
 export const ItemsTable = ({
     data,
@@ -90,6 +98,7 @@ export const ItemsTable = ({
                 header: 'App',
                 accessorKey: 'app',
                 filterFn: 'includesString',
+                enableColumnFilter: !isSearchTable,
                 meta: {
                     Filter: SelectColumnFilter,
                 },
@@ -101,6 +110,7 @@ export const ItemsTable = ({
                 header: 'Title',
                 accessorKey: 'title',
                 cell: (info) => <OverflowTextCell value={info.getValue() as string} />,
+                enableColumnFilter: !isSearchTable,
                 size: 250,
                 minSize: 100,
                 maxSize: 500,
@@ -109,6 +119,7 @@ export const ItemsTable = ({
                 header: 'URL',
                 accessorKey: 'url',
                 cell: (info) => <OverflowTextCell value={info.getValue() as string} />,
+                enableColumnFilter: !isSearchTable,
                 size: 150,
                 minSize: 70,
                 maxSize: 400,
@@ -117,6 +128,7 @@ export const ItemsTable = ({
                 header: 'Begin',
                 accessorKey: 'beginDate',
                 cell: dateToValue,
+                enableColumnFilter: false,
                 size: 80,
                 minSize: 80,
                 maxSize: 120,
@@ -125,6 +137,7 @@ export const ItemsTable = ({
                 header: 'End',
                 accessorKey: 'endDate',
                 cell: dateToValue,
+                enableColumnFilter: false,
                 size: 80,
                 minSize: 80,
                 maxSize: 120,
@@ -132,7 +145,9 @@ export const ItemsTable = ({
             {
                 header: 'Duration',
                 accessorFn: (record: ITrackItem) => diffAndFormatShort(record.beginDate, record.endDate),
+                enableColumnFilter: false,
                 enableSorting: !manualSortBy,
+
                 size: 80,
                 minSize: 80,
                 maxSize: 80,
@@ -143,7 +158,7 @@ export const ItemsTable = ({
     );
 
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    const [sorting, setSorting] = useState<SortingState>([]);
+    const [sorting, setSorting] = useState<SortingState>(defaultSorting);
     const [rowSelection, setRowSelection] = useState({});
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: controlledPageIndex || 0,
@@ -175,7 +190,7 @@ export const ItemsTable = ({
         },
         enableRowSelection: true,
         enableMultiRowSelection: true,
-        getRowId: (row: ITrackItem) => row.id.toString(),
+        getRowId: (row: ITrackItem) => row.id?.toString(),
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -184,6 +199,9 @@ export const ItemsTable = ({
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        getFacetedRowModel: getFacetedRowModel(), //if you need a list of values for a column (other faceted row models depend on this one)
+        getFacetedMinMaxValues: getFacetedMinMaxValues(), //if you need min/max values
+        getFacetedUniqueValues: getFacetedUniqueValues(), //if you need a list o
         manualPagination: isSearchTable,
         manualSorting: manualSortBy,
         manualFiltering: isSearchTable,
@@ -270,7 +288,14 @@ export const ItemsTable = ({
                                             )}
                                             <Box flex={1} />
                                             {header.column.getCanFilter() ? (
-                                                <DefaultColumnFilter column={header.column} />
+                                                // Use a safer type check and conditional rendering
+                                                // @ts-expect-error - We know this is correct based on our column definitions
+                                                header.column.columnDef.meta?.Filter ? (
+                                                    // @ts-expect-error - We know this component exists
+                                                    <header.column.columnDef.meta.Filter column={header.column} />
+                                                ) : (
+                                                    <DefaultColumnFilter column={header.column} />
+                                                )
                                             ) : null}
                                         </Flex>
                                     )}
