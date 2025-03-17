@@ -129,9 +129,8 @@ describe('watchAndSetStatusTrackItem', () => {
 
     it('watchAndSetStatusTrackItemRemove should end current item and save it', async () => {
         const { appEmitter } = await import('../utils/appEmitter');
-        const { watchAndSetStatusTrackItem, watchAndSetStatusTrackItemRemove } = await import(
-            '../background/watchTrackItems/watchAndSetStatusTrackItem'
-        );
+        const { watchAndSetStatusTrackItem, watchAndSetStatusTrackItemCleanup: watchAndSetStatusTrackItemRemove } =
+            await import('../background/watchTrackItems/watchAndSetStatusTrackItem');
 
         // Spy on appEmitter's removeAllListeners method
         const removeAllListenersSpy = vi.spyOn(appEmitter, 'removeAllListeners');

@@ -16,7 +16,7 @@ export function watchForPowerState() {
     });
 }
 
-export function watchForPowerStateRemove() {
+export function watchForPowerStateCleanup() {
     powerMonitor.removeAllListeners('suspend');
     powerMonitor.removeAllListeners('resume');
 }

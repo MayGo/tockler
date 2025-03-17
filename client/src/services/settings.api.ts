@@ -139,6 +139,14 @@ export function saveAnalyserSettings(data) {
     updateByName('ANALYSER_SETTINGS', data);
 }
 
+export async function getTaskAnalyserEnabled() {
+    return ElectronEventEmitter.emit('getTaskAnalyserEnabled') as Promise<boolean>;
+}
+
+export async function setTaskAnalyserEnabled(enabled: boolean) {
+    return ElectronEventEmitter.emit('setTaskAnalyserEnabled', { enabled });
+}
+
 export async function fetchAnalyserSettings() {
     const jsonStr = await ElectronEventEmitter.emit('fetchAnalyserSettingsJsonString');
 

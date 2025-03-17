@@ -47,7 +47,7 @@ export function watchAndPropagateState() {
     });
 }
 
-export function watchAndPropagateStateRemove() {
+export function watchAndPropagateStateCleanup() {
     appEmitter.removeAllListeners('system-is-idling');
     appEmitter.removeAllListeners('system-is-engaged');
     appEmitter.removeAllListeners('system-is-sleeping');

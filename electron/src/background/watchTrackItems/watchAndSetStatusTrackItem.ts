@@ -57,7 +57,7 @@ const saveOngoingTrackItem = async () => {
     }
 };
 
-export async function watchAndSetStatusTrackItemRemove() {
+export async function watchAndSetStatusTrackItemCleanup() {
     appEmitter.removeAllListeners('state-changed');
     await saveOngoingTrackItem();
 }

@@ -85,7 +85,7 @@ export function watchAndSetAppTrackItem(backgroundJobInterval: number) {
     });
 }
 
-export async function watchAndSetAppTrackItemRemove() {
+export async function watchAndSetAppTrackItemCleanup() {
     await removeActiveWindowWatch();
     removeActiveWindowWatcher?.();
 }

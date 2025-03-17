@@ -1,18 +1,18 @@
-import { Button, Flex, HStack, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Flex, FormControl, FormLabel, HStack, Switch, Text, Tooltip } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
+import { ITrackItem } from '../../@types/ITrackItem';
 import { TrackItemType } from '../../enum/TrackItemType';
-import { fetchAnalyserSettings, saveAnalyserSettings } from '../../services/settings.api';
+import {
+    fetchAnalyserSettings,
+    getTaskAnalyserEnabled,
+    saveAnalyserSettings,
+    setTaskAnalyserEnabled,
+} from '../../services/settings.api';
 import { useStoreState } from '../../store/easyPeasy';
 import { CardBox } from '../CardBox';
+import { AnalyserItem } from './AnalyserForm.util';
 import { AnalyserFormItem } from './AnalyserFormItem';
-
-interface AnalyserItem {
-    findRe: string;
-    takeTitle: string;
-    takeGroup: string;
-    enabled: boolean;
-}
 
 const defaultAnalyserSettings: AnalyserItem[] = [
     { findRe: '\\w+-\\d+.*JIRA', takeTitle: '', takeGroup: '\\w+-\\d+', enabled: true },
@@ -21,15 +21,21 @@ const defaultAnalyserSettings: AnalyserItem[] = [
 
 const emptyItem: AnalyserItem = { findRe: '', takeTitle: '', takeGroup: '', enabled: false };
 
+const EMPTY_APP_ITEMS: ITrackItem[] = [];
+
 export const AnalyserForm = () => {
     const timeItems = useStoreState((state) => state.timeItems);
     const appItems = timeItems[TrackItemType.AppTrackItem];
     const [analyserItems, setAnalyserItems] = useState<AnalyserItem[]>([]);
+    const [isAnalyserEnabled, setIsAnalyserEnabled] = useState(false);
 
     useEffect(() => {
         async function fetchSettings() {
             const items = await fetchAnalyserSettings();
             setAnalyserItems(items || []);
+
+            const enabled = await getTaskAnalyserEnabled();
+            setIsAnalyserEnabled(enabled);
         }
 
         fetchSettings();
@@ -55,38 +61,81 @@ export const AnalyserForm = () => {
         saveAnalyserSettings([...analyserItems, ...defaultAnalyserSettings]);
     };
 
+    const handleAnalyserToggle = async (e) => {
+        const enabled = e.target.checked;
+        setIsAnalyserEnabled(enabled);
+        await setTaskAnalyserEnabled(enabled);
+    };
+
     return (
         <CardBox
             title="Analyser settings"
             divider
             extra={
-                <HStack>
-                    <Button onClick={setDefaults} variant="ghost">
-                        Add sample values
-                    </Button>
+                isAnalyserEnabled && (
+                    <HStack>
+                        <Button onClick={setDefaults} variant="ghost">
+                            Add sample values
+                        </Button>
 
-                    <Tooltip placement="left" label="Notify if title equals these analyser items.">
-                        <span>
-                            <AiOutlineInfoCircle style={{ fontSize: 20, color: 'primary' }} />
-                        </span>
-                    </Tooltip>
-                </HStack>
+                        <Tooltip placement="left" label="Notify if title equals these analyser items.">
+                            <span>
+                                <AiOutlineInfoCircle style={{ fontSize: 20, color: 'primary' }} />
+                            </span>
+                        </Tooltip>
+                    </HStack>
+                )
             }
         >
-            {analyserItems.map((item, index) => (
-                <AnalyserFormItem
-                    key={index}
-                    appItems={appItems}
-                    removeItem={removeItem(index)}
-                    saveItem={saveItem(index)}
-                    analyserItem={item}
-                />
-            ))}
-            <Flex py={3} justifyContent="flex-end">
-                <Button onClick={addItem} aria-label="Add New Item">
-                    Add New Item
-                </Button>
+            <Flex alignItems="center" pb={3}>
+                <FormControl display="flex" alignItems="center">
+                    <FormLabel htmlFor="analyser-enabled" mb="0">
+                        Enable task analyser
+                    </FormLabel>
+                    <Switch
+                        id="analyser-enabled"
+                        isChecked={isAnalyserEnabled}
+                        onChange={handleAnalyserToggle}
+                        size="lg"
+                        pr={4}
+                    />
+                    {isAnalyserEnabled ? (
+                        <Text fontSize="sm" color="gray.500">
+                            When enabled, the task analyser will automatically suggest tasks based on your window
+                            activity
+                        </Text>
+                    ) : (
+                        <Text fontSize="sm" color="gray.500" ml={4}>
+                            Enable to automatically suggest tasks based on your window activity
+                        </Text>
+                    )}
+                </FormControl>
             </Flex>
+
+            {isAnalyserEnabled && (
+                <>
+                    <Box my={2}>
+                        <Text fontSize="sm" color="gray.500">
+                            Note: Please ensure that notifications are allowed in your system settings, as they may not
+                            appear otherwise.
+                        </Text>
+                    </Box>
+                    {analyserItems.map((item, index) => (
+                        <AnalyserFormItem
+                            key={index}
+                            appItems={appItems || EMPTY_APP_ITEMS}
+                            removeItem={removeItem(index)}
+                            saveItem={saveItem(index)}
+                            analyserItem={item}
+                        />
+                    ))}
+                    <Flex py={3} justifyContent="flex-end">
+                        <Button onClick={addItem} aria-label="Add New Item">
+                            Add New Item
+                        </Button>
+                    </Flex>
+                </>
+            )}
         </CardBox>
     );
 };

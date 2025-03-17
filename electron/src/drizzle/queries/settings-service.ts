@@ -18,6 +18,7 @@ const defaultWorkSettings = {
 };
 
 const RUNNING_LOG_ITEM = 'RUNNING_LOG_ITEM';
+const ANALYSER_ENABLED = 'ANALYSER_ENABLED';
 
 export class SettingsService {
     logger = logManager.getLogger('SettingsService');
@@ -132,6 +133,25 @@ export class SettingsService {
     async fetchAnalyserSettingsJsonString() {
         let jsonData = await this.fetchAnalyserSettings();
         return JSON.stringify(jsonData);
+    }
+
+    async getAnalyserEnabled() {
+        let item = await this.findByName(ANALYSER_ENABLED);
+        if (!item || !item.jsonData) {
+            // Default to false
+            return false;
+        }
+
+        try {
+            return JSON.parse(item.jsonData);
+        } catch (e) {
+            this.logger.error('Error parsing ANALYSER_ENABLED setting:', e);
+            return false;
+        }
+    }
+
+    async setAnalyserEnabled(enabled: boolean) {
+        return this.updateByName(ANALYSER_ENABLED, JSON.stringify(enabled));
     }
 
     // TODO: cache this
