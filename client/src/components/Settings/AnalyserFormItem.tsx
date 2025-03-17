@@ -1,6 +1,6 @@
 import { Box, Flex, FormControl, FormLabel, HStack, IconButton, Input, Switch, Text } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useEffect, useId, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { BlackBox } from '../BlackBox';
@@ -38,6 +38,11 @@ interface AnalyserFormItemProps {
 }
 
 export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem }: AnalyserFormItemProps) => {
+    // Generate unique IDs for this component instance
+    const id = useId();
+    const enabledSwitchId = `enabled-switch-${id}`;
+    const testSwitchId = `test-switch-${id}`;
+
     const [showTests, setShowTests] = useState(false);
     const toggleShowTests = () => {
         setShowTests(!showTests);
@@ -48,6 +53,7 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
         getValues,
         reset,
         register,
+        control,
         formState: { isDirty, isValid },
     } = useForm<Inputs>({ mode: 'onChange', defaultValues: analyserItem });
 
@@ -64,7 +70,7 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
     const analysedItems = (showTests && testAnalyserItem(appItems, analyserItem)) || [];
 
     return (
-        <>
+        <Box>
             <Flex justifyContent="space-between" py={2}>
                 <HStack w="100%" spacing={3}>
                     <Input placeholder="Task" {...register('findRe')} minWidth={200} />
@@ -74,22 +80,55 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
                     <Input placeholder="Title" {...register('takeTitle')} minWidth={200} />
                     <Box px={3}>
                         <FormControl display="flex" alignItems="center" minWidth={100} maxWidth={100}>
-                            <FormLabel htmlFor="active" mb="0">
+                            <FormLabel htmlFor={enabledSwitchId} mb="0">
                                 Active
                             </FormLabel>
-                            <Switch id="enabled" {...register('enabled')} size="lg" />
+                            <Controller
+                                name="enabled"
+                                control={control}
+                                render={({ field: { onChange, value, ref } }) => (
+                                    <Switch
+                                        id={enabledSwitchId}
+                                        isChecked={value}
+                                        onChange={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            onChange(e.target.checked);
+                                        }}
+                                        onClick={(e) => e.stopPropagation()}
+                                        ref={ref}
+                                        size="lg"
+                                    />
+                                )}
+                            />
                         </FormControl>
                     </Box>
                     <Box px={3}>
                         <FormControl display="flex" alignItems="center" minWidth={160} maxWidth={160}>
-                            <FormLabel htmlFor="test" mb="0">
+                            <FormLabel htmlFor={testSwitchId} mb="0">
                                 Test mode
                             </FormLabel>
-                            <Switch id="test" onChange={toggleShowTests} size="lg" />
+                            <Switch
+                                id={testSwitchId}
+                                onChange={(e) => {
+                                    e.preventDefault();
+                                    toggleShowTests();
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                                size="lg"
+                            />
                         </FormControl>
                     </Box>
 
-                    <IconButton icon={<AiOutlineDelete />} variant="ghost" onClick={removeItem} aria-label="Add Item" />
+                    <IconButton
+                        icon={<AiOutlineDelete />}
+                        variant="ghost"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            removeItem();
+                        }}
+                        aria-label="Add Item"
+                    />
                 </HStack>
             </Flex>
 
@@ -101,6 +140,6 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
                     ))}
                 </BlackBox>
             )}
-        </>
+        </Box>
     );
 };

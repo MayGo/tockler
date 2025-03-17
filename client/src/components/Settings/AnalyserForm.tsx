@@ -1,4 +1,4 @@
-import { Button, Flex, FormControl, FormLabel, HStack, Switch, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Flex, FormControl, FormLabel, HStack, Switch, Text, Tooltip } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { ITrackItem } from '../../@types/ITrackItem';
@@ -88,7 +88,7 @@ export const AnalyserForm = () => {
             }
         >
             <Flex alignItems="center" pb={3}>
-                <FormControl display="flex" alignItems="center" maxWidth="400px">
+                <FormControl display="flex" alignItems="center">
                     <FormLabel htmlFor="analyser-enabled" mb="0">
                         Enable task analyser
                     </FormLabel>
@@ -97,21 +97,29 @@ export const AnalyserForm = () => {
                         isChecked={isAnalyserEnabled}
                         onChange={handleAnalyserToggle}
                         size="lg"
+                        pr={4}
                     />
+                    {isAnalyserEnabled ? (
+                        <Text fontSize="sm" color="gray.500">
+                            When enabled, the task analyser will automatically suggest tasks based on your window
+                            activity
+                        </Text>
+                    ) : (
+                        <Text fontSize="sm" color="gray.500" ml={4}>
+                            Enable to automatically suggest tasks based on your window activity
+                        </Text>
+                    )}
                 </FormControl>
-                {isAnalyserEnabled ? (
-                    <Text fontSize="sm" color="gray.500">
-                        When enabled, the task analyser will automatically suggest tasks based on your window activity
-                    </Text>
-                ) : (
-                    <Text fontSize="sm" color="gray.500" ml={4}>
-                        Enable to automatically suggest tasks based on your window activity
-                    </Text>
-                )}
             </Flex>
 
             {isAnalyserEnabled && (
                 <>
+                    <Box my={2}>
+                        <Text fontSize="sm" color="gray.500">
+                            Note: Please ensure that notifications are allowed in your system settings, as they may not
+                            appear otherwise.
+                        </Text>
+                    </Box>
                     {analyserItems.map((item, index) => (
                         <AnalyserFormItem
                             key={index}
