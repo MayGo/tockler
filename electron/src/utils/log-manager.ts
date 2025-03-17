@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/electron';
 import { app } from 'electron';
-import * as log from 'electron-log';
+import log from 'electron-log/main';
 import { config } from './config';
 
 const version = app.getVersion();
@@ -58,7 +58,7 @@ export class LogManager {
     }
 
     getLogger(name: string) {
-        const logObj = log.create(name);
+        const logObj = log.create({ logId: name });
         if (isProd) {
             (logObj as any).transports.console = sentryTransportConsole;
         }
