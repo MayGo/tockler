@@ -7,7 +7,7 @@
         "dev": "vite",
         "build": "tsc -b && vite build",
         "lint": "eslint .",
-        "test": "TZ=Europe/Tallinn vitest",
+        "test": "TZ=Europe/Tallinn vitest --run",
         "coverage": "TZ=Europe/Tallinn vitest run --coverage",
         "preview": "vite preview"
     },
