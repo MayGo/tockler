@@ -1,4 +1,15 @@
-import { Box, Flex, FormControl, FormLabel, HStack, IconButton, Input, Switch, Text } from '@chakra-ui/react';
+import {
+    Box,
+    Flex,
+    FormControl,
+    FormErrorMessage,
+    FormLabel,
+    HStack,
+    IconButton,
+    Input,
+    Switch,
+    Text,
+} from '@chakra-ui/react';
 import { useEffect, useId, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { AiOutlineDelete } from 'react-icons/ai';
@@ -37,6 +48,19 @@ interface AnalyserFormItemProps {
     saveItem: (data: Inputs) => void;
 }
 
+const validateRegex = (value: string) => {
+    if (!value) return true; // Empty is valid
+    try {
+        new RegExp(value);
+        return true;
+    } catch (e: unknown) {
+        if (e instanceof Error) {
+            return `Invalid regular expression pattern: ${e.message}`;
+        }
+        return 'Invalid regular expression pattern';
+    }
+};
+
 export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem }: AnalyserFormItemProps) => {
     // Generate unique IDs for this component instance
     const id = useId();
@@ -54,8 +78,12 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
         reset,
         register,
         control,
-        formState: { isDirty, isValid },
-    } = useForm<Inputs>({ mode: 'onChange', defaultValues: analyserItem });
+        formState: { isDirty, isValid, errors },
+    } = useForm<Inputs>({
+        mode: 'onChange',
+        defaultValues: analyserItem,
+        reValidateMode: 'onChange',
+    });
 
     const watchAllFields = watch();
 
@@ -72,12 +100,39 @@ export const AnalyserFormItem = ({ analyserItem, removeItem, appItems, saveItem 
     return (
         <Box>
             <Flex justifyContent="space-between" py={2}>
-                <HStack w="100%" spacing={3}>
-                    <Input placeholder="Task" {...register('findRe')} minWidth={200} />
+                <HStack w="100%" spacing={3} alignItems="flex-start">
+                    <FormControl isInvalid={!!errors.findRe}>
+                        <Input
+                            placeholder="Task"
+                            {...register('findRe', {
+                                validate: validateRegex,
+                            })}
+                            minWidth={200}
+                        />
+                        <FormErrorMessage>{errors.findRe && errors.findRe.message}</FormErrorMessage>
+                    </FormControl>
 
-                    <Input placeholder="Group" {...register('takeGroup')} minWidth={200} />
+                    <FormControl isInvalid={!!errors.takeGroup}>
+                        <Input
+                            placeholder="Group"
+                            {...register('takeGroup', {
+                                validate: validateRegex,
+                            })}
+                            minWidth={200}
+                        />
+                        <FormErrorMessage>{errors.takeGroup && errors.takeGroup.message}</FormErrorMessage>
+                    </FormControl>
 
-                    <Input placeholder="Title" {...register('takeTitle')} minWidth={200} />
+                    <FormControl isInvalid={!!errors.takeTitle}>
+                        <Input
+                            placeholder="Title"
+                            {...register('takeTitle', {
+                                validate: validateRegex,
+                            })}
+                            minWidth={200}
+                        />
+                        <FormErrorMessage>{errors.takeTitle && errors.takeTitle.message}</FormErrorMessage>
+                    </FormControl>
                     <Box px={3}>
                         <FormControl display="flex" alignItems="center" minWidth={100} maxWidth={100}>
                             <FormLabel htmlFor={enabledSwitchId} mb="0">

@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { uniqBy } from 'lodash';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { Logger } from '../../logger';
 
@@ -6,13 +6,16 @@ export const findFirst = (str: string, findRe: string): string | undefined => {
     if (!findRe) {
         return undefined;
     }
+    try {
+        const re: RegExp = new RegExp(findRe, 'g');
+        const result: RegExpExecArray | null = re.exec(str);
 
-    const re: RegExp = new RegExp(findRe, 'g');
-    const result: RegExpExecArray | null = re.exec(str);
-
-    if (result != null) {
-        const first: string = result[0];
-        return first;
+        if (result != null) {
+            const first: string = result[0];
+            return first;
+        }
+    } catch (error) {
+        Logger.error('Error in findFirst', error);
     }
     return undefined;
 };
@@ -38,7 +41,7 @@ export const testAnalyserItem = (appItems: ITrackItem[], analyseSetting: Analyse
         }
     });
 
-    const analyserTestItems = _.uniqBy(testItems, 'title');
+    const analyserTestItems = uniqBy(testItems, 'title');
 
     return analyserTestItems;
 };
