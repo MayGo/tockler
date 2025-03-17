@@ -30,7 +30,7 @@ if (gotTheLock) {
 
     require('electron-context-menu')({});
 
-    ipcMain.on('close-app', function () {
+    ipcMain.on('close-app', () => {
         logger.info('Closing Tockler');
         app.quit();
     });
@@ -41,7 +41,8 @@ if (gotTheLock) {
         await cleanupBackgroundJob();
         await AppManager.destroy();
     });
-    app.on('window-all-closed', function () {
+
+    app.on('window-all-closed', () => {
         logger.debug('window-all-closed');
         app.quit();
     });
@@ -51,9 +52,8 @@ if (gotTheLock) {
         return app.getVersion();
     });
 
-    // User want's to open main window when reopened app. (But not open main window on application launch)
-
-    app.on('activate', function () {
+    // User wants to open main window when reopened app. (But not open main window on application launch)
+    app.on('activate', () => {
         logger.debug('Activate event');
         if (app.isReady()) {
             WindowManager.openMainWindow();
@@ -79,8 +79,11 @@ if (gotTheLock) {
             await AppManager.init();
 
             await initBackgroundJob();
-        } catch (error: any) {
-            logger.error(`App errored in ready event: ${error.toString()}`, error);
+        } catch (error) {
+            logger.error(
+                `App errored in ready event: ${error instanceof Error ? error.toString() : String(error)}`,
+                error,
+            );
         }
     });
 } else {

@@ -13,9 +13,9 @@ if (process.env.NODE_ENV === 'production') {
         dsn: process.env.SENTRY_DSN,
         environment: process.env.NODE_ENV,
         release: process.env.npm_package_version,
-        beforeSend(event: any) {
+        beforeSend(event: unknown) {
             // Check if it is an exception, if so, show the report dialog
-            if (event.exception) {
+            if (event && typeof event === 'object' && 'exception' in event) {
                 Sentry.showReportDialog();
             }
             return event;
@@ -36,7 +36,7 @@ interface CachedErrors {
 const cachedErrors: CachedErrors = {};
 
 interface MessageObject {
-    level: any;
+    level: string;
     data: unknown[];
     date: Date;
 }
@@ -48,18 +48,20 @@ const sentryTransportConsole = (msgObj: MessageObject) => {
     if (typeof message === 'string' && !cachedErrors[message]) {
         cachedErrors[message] = true;
 
-        Sentry.withScope((scope: any) => {
-            scope.setExtra('data', rest);
-            scope.setExtra('date', msgObj.date.toLocaleTimeString());
-            scope.setLevel(level);
-            if (isError(message)) {
-                Sentry.captureException(message);
-            } else if (level === 'debug') {
-                // ignore debug for now
-            } else {
-                Sentry.captureMessage(message);
-            }
-        });
+        Sentry.withScope(
+            (scope: { setExtra: (key: string, value: unknown) => void; setLevel: (level: string) => void }) => {
+                scope.setExtra('data', rest);
+                scope.setExtra('date', msgObj.date.toLocaleTimeString());
+                scope.setLevel(level);
+                if (isError(message)) {
+                    Sentry.captureException(message);
+                } else if (level === 'debug') {
+                    // ignore debug for now
+                } else {
+                    Sentry.captureMessage(message);
+                }
+            },
+        );
     }
 
     origConsole(msgObj as any);
