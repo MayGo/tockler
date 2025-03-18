@@ -33,7 +33,7 @@ export default defineConfig(({ command, mode }) => {
                             outDir: 'dist-electron',
                             rollupOptions: {
                                 // Ensure these native modules are treated as external
-                                external: ['electron', 'better-sqlite3', 'active-win', 'node-machine-id'],
+                                external: ['better-sqlite3', 'active-win'],
                             },
                             // Fix for CommonJS modules
                             // commonjsOptions: {
