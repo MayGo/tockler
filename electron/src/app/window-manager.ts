@@ -207,7 +207,7 @@ export default class WindowManager {
             return;
         }
 
-        this.mainWindow.on('close', (event: any) => {
+        this.mainWindow.on('close', () => {
             logger.debug('MainWindow close');
 
             if (this.mainWindow) {
