@@ -77,7 +77,7 @@
         "drizzle-orm": "^0.40.0",
         "electron": "35.0.2",
         "electron-builder": "25.1.8",
-        "electron-devtools-installer": "^3.2.0",
+        "electron-devtools-installer": "4.0.0",
         "electron-rebuild": "^3.2.9",
         "eslint": "^9.17.0",
         "fs-extra": "^11.3.0",

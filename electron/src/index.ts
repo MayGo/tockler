@@ -4,7 +4,6 @@ import { app, ipcMain } from 'electron';
 import contextMenu from 'electron-context-menu';
 import AppManager from './app/app-manager';
 import AppUpdater from './app/app-updater';
-import { extensionsManager } from './app/extensions-manager';
 import WindowManager from './app/window-manager';
 import { cleanupBackgroundJob, initBackgroundJob } from './background/initBackgroundJob';
 import { config } from './utils/config';
@@ -64,9 +63,9 @@ if (gotTheLock) {
 
     app.on('ready', async () => {
         try {
-            if (config.isDev) {
-                await extensionsManager.init();
-            }
+            // if (config.isDev) {
+            //     await initExtensions();
+            // }
 
             WindowManager.initMainWindowEvents();
 

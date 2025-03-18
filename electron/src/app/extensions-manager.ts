@@ -1,17 +1,16 @@
+import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer';
 import { logManager } from '../utils/log-manager';
+
 let logger = logManager.getLogger('ExtensionsManager');
 
-export class ExtensionsManager {
-    async init() {
-        logger.debug('Init extensions.');
-        // const installer = require('electron-devtools-installer');
-        // const forceDownload = !!process.env['UPGRADE_EXTENSIONS'];
-        // const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
+export async function initExtensions() {
+    logger.debug('Init extensions.');
 
-        // return Promise.all(extensions.map((name) => installer.default(installer[name], forceDownload))).catch(
-        //     logger.error,
-        // );
-    }
+    return installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS], {
+        loadExtensionOptions: {
+            allowFileAccess: true,
+        },
+    })
+        .then((extensionNames) => logger.info(`Added Extensions: ${extensionNames}`))
+        .catch((err: Error) => logger.error('An error occurred loading extensions: ', err));
 }
-
-export const extensionsManager = new ExtensionsManager();
