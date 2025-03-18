@@ -42,23 +42,79 @@ Tockler is a free application that automatically tracks your computer usage and 
 Tockler is free and open-source software. If you find it useful, please consider supporting its development:
 
 <p align="center">
-  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JAHHBZZCZVDMA">
-    <img src="https://github.com/MayGo/tockler/raw/master/badges/Donate-PayPal-green.svg" alt="Donate using PayPal" />
-  </a>
   <a href="https://github.com/sponsors/maygo/">
-    <img src="https://github.com/MayGo/tockler/raw/master/badges/GitHub-Badge.svg" alt="Sponsor on GitHub" />
+    <img src="https://img.shields.io/github/sponsors/maygo?style=for-the-badge&logo=github&logoColor=white&color=ea4aaa" alt="Sponsor on GitHub" />
+  </a>
+  <a href="https://opencollective.com/tockler">
+    <img src="https://img.shields.io/badge/Open%20Collective-Support-7FADF2?style=for-the-badge&logo=opencollective&logoColor=white" alt="Support on Open Collective" />
   </a>
   <a href="https://www.patreon.com/Tockler">
-    <img src="https://github.com/MayGo/tockler/raw/master/badges/Patreon-Badge.svg" alt="Become a patron" />
+    <img src="https://img.shields.io/badge/Patreon-Support-F96854?style=for-the-badge&logo=patreon&logoColor=white" alt="Support on Patreon" />
+  </a>
+  <a href="https://ko-fi.com/maigoerit">
+    <img src="https://img.shields.io/badge/Ko--fi-Support-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white" alt="Support on Ko-fi" />
+  </a>
+  <a href="https://paypal.me/maigoerit">
+    <img src="https://img.shields.io/badge/PayPal-Donate-00457C?style=for-the-badge&logo=paypal&logoColor=white" alt="Donate via PayPal" />
   </a>
 </p>
 
 ## Download
 
 <p align="center">
-    <a href='https://github.com/MayGo/tockler/releases/download/v3.21.12/tockler-3.21.12-setup-win.exe'><img alt='Get it on Windows' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeWindows.png'/></a>
-    <a href='https://github.com/MayGo/tockler/releases/download/v3.21.12/Tockler-3.21.12.dmg'><img alt='Get it on macOS' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeMacOS.png'/></a>
-    <a href='https://github.com/MayGo/tockler/releases/download/v3.21.12/Tockler-3.21.12.AppImage'><img alt='Get it on Linux' width="134px" src='https://github.com/MayGo/tockler/raw/master/badges/BadgeLinux.png'/></a>
+  <a href='https://github.com/MayGo/tockler/releases/latest'>
+    <img src="https://img.shields.io/badge/All%20Versions-Release%20History-2ea44f?style=for-the-badge&logo=github&logoColor=white" alt="View all releases" />
+  </a>
+</p>
+
+### Windows
+
+<p align="center">
+  <a href='https://github.com/MayGo/tockler/releases/latest'>
+    <img src="https://img.shields.io/badge/Windows%20Universal%20Setup-Download-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download Windows Universal Setup" />
+  </a>
+  <a href='https://github.com/MayGo/tockler/releases/latest'>
+    <img src="https://img.shields.io/badge/Windows%20x64%20Setup-Download-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download Windows x64 Setup" />
+  </a>
+  <a href='https://github.com/MayGo/tockler/releases/latest'>
+    <img src="https://img.shields.io/badge/Windows%20ARM64%20Setup-Download-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download Windows ARM64 Setup" />
+  </a>
+  <a href='https://github.com/MayGo/tockler/releases/latest'>
+    <img src="https://img.shields.io/badge/Windows%2032--bit%20Setup-Download-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download Windows 32-bit Setup" />
+  </a>
+</p>
+<p align="center">
+  <a href='https://github.com/MayGo/tockler/releases/latest'>
+    <img src="https://img.shields.io/badge/Windows%20Universal%20Portable-Download-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download Windows Universal Portable" />
+  </a>
+  <a href='https://github.com/MayGo/tockler/releases/latest'>
+    <img src="https://img.shields.io/badge/Windows%20x64%20Portable-Download-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download Windows x64 Portable" />
+  </a>
+  <a href='https://github.com/MayGo/tockler/releases/latest'>
+    <img src="https://img.shields.io/badge/Windows%20ARM64%20Portable-Download-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download Windows ARM64 Portable" />
+  </a>
+  <a href='https://github.com/MayGo/tockler/releases/latest'>
+    <img src="https://img.shields.io/badge/Windows%2032--bit%20Portable-Download-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download Windows 32-bit Portable" />
+  </a>
+</p>
+
+### macOS
+
+<p align="center">
+  <a href='https://github.com/MayGo/tockler/releases/latest'>
+    <img src="https://img.shields.io/badge/macOS%20Universal%20(DMG)-Download-999999?style=for-the-badge&logo=apple&logoColor=white" alt="Download macOS Universal DMG" />
+  </a>
+  <a href='https://github.com/MayGo/tockler/releases/latest'>
+    <img src="https://img.shields.io/badge/macOS%20Apple%20Silicon%20(DMG)-Download-999999?style=for-the-badge&logo=apple&logoColor=white" alt="Download macOS Apple Silicon DMG" />
+  </a>
+</p>
+
+### Linux
+
+<p align="center">
+  <a href='https://github.com/MayGo/tockler/releases/latest'>
+    <img src="https://img.shields.io/badge/Linux%20AppImage-Download-FCC624?style=for-the-badge&logo=linux&logoColor=black" alt="Download Linux AppImage" />
+  </a>
 </p>
 
 ## Screenshots
