@@ -438,6 +438,40 @@ export default class WindowManager {
         this.menubar.on('after-show', () => {
             this.menubar.window.webContents.send('focus-tray', 'ping');
 
+            // Improve tray window positioning for macOS if "auto-hide" is enabled
+            if (process.platform === 'darwin') {
+                // One-time immediate positioning to prevent initial flicker
+                const trayBounds = this.tray?.getBounds();
+                if (trayBounds && this.menubar.window) {
+                    const windowBounds = this.menubar.window.getBounds();
+                    this.menubar.window.setPosition(
+                        windowBounds.x,
+                        Math.max(trayBounds.y + trayBounds.height, 0),
+                        true,
+                    );
+                }
+
+                // Set interval to keep window correctly positioned
+                // This handles both auto-hide menu bar and regular menu bar
+                const positionIntervalId = setInterval(() => {
+                    const trayBounds = this.tray?.getBounds();
+                    if (trayBounds && this.menubar.window) {
+                        const windowBounds = this.menubar.window.getBounds();
+
+                        // Only reposition if needed (avoid unnecessary updates)
+                        const targetY = Math.max(trayBounds.y + trayBounds.height, 0);
+                        if (Math.abs(windowBounds.y - targetY) > 2) {
+                            this.menubar.window.setPosition(windowBounds.x, targetY, true);
+                        }
+                    }
+                }, 150);
+
+                // Clear interval when window is hidden
+                this.menubar.on('after-hide', () => {
+                    clearInterval(positionIntervalId);
+                });
+            }
+
             if (config.isDev) {
                 logger.debug('Open menubar dev tools');
                 this.menubar.window.openDevTools({ mode: 'bottom' });
