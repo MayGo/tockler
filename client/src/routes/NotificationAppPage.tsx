@@ -1,4 +1,4 @@
-import { Box, Center, Text } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import { memo, useEffect, useState } from 'react';
 import { ShortTimeInterval } from '../components/TrayList/ShortTimeInterval';
 import { Logger } from '../logger';
@@ -18,16 +18,22 @@ const NotificationAppPageTemp = () => {
         return () => {
             ElectronEventEmitter.off('notifyUser', notifyUserReceiver);
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
-        <Box p={1} bg={'brand.mainColor'}>
-            <Center>
-                <Text fontSize="small" color="white">
-                    {currentSession && <ShortTimeInterval totalMs={currentSession} />}
-                </Text>
-            </Center>
+        <Box
+            p={1}
+            bg={'brand.mainColor'}
+            height="100vh"
+            width="full"
+            overflow="hidden"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+        >
+            <Text fontSize="sm" color="white" textAlign="center">
+                {currentSession && <ShortTimeInterval totalMs={currentSession} />}
+            </Text>
         </Box>
     );
 };

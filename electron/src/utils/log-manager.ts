@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/electron';
 import { app } from 'electron';
-import * as log from 'electron-log';
+import log from 'electron-log/main';
 import { config } from './config';
 
 const version = app.getVersion();
@@ -14,7 +14,20 @@ if (isProd) {
     });
 }
 
-const origConsole = (log.transports as any).console;
+// Initialize electron-log for both main and renderer processes
+log.initialize();
+
+// Set reasonable log levels
+log.transports.console.level = isProd ? 'warn' : 'debug';
+log.transports.file.level = isProd ? 'info' : 'debug';
+
+// Configure file logging based on user preference
+let isLoggingEnabled = config.persisted.get('isLoggingEnabled');
+if (!isLoggingEnabled) {
+    log.transports.file.level = false;
+}
+
+const origConsole = log.transports.console.writeFn;
 
 const isError = function (e: any) {
     return e && e.stack && e.message;
@@ -22,23 +35,24 @@ const isError = function (e: any) {
 
 const cachedErrors: Record<string, boolean> = {};
 
+// Create a wrapped Sentry transport
 const sentryTransportConsole = (msgObj: any) => {
-    const { level, data } = msgObj;
-    const [message, ...rest] = data;
+    const { level, data } = msgObj.message || msgObj;
+    const [message, ...rest] = data || [];
 
-    if (!cachedErrors[message]) {
-        cachedErrors[message] = true;
+    if (message && !cachedErrors[String(message)]) {
+        cachedErrors[String(message)] = true;
 
         Sentry.withScope((scope) => {
             scope.setExtra('data', rest);
-            scope.setExtra('date', msgObj.date.toLocaleTimeString());
+            scope.setExtra('date', msgObj.date?.toLocaleTimeString() || new Date().toLocaleTimeString());
             scope.setLevel(level);
             if (isError(message)) {
                 Sentry.captureException(message);
             } else if (level === 'debug') {
                 // ignore debug for now
             } else {
-                Sentry.captureMessage(message);
+                Sentry.captureMessage(String(message));
             }
         });
     }
@@ -46,31 +60,20 @@ const sentryTransportConsole = (msgObj: any) => {
     origConsole(msgObj);
 };
 
-(log as any).transports.console = sentryTransportConsole;
-
-let isLoggingEnabled = config.persisted.get('isLoggingEnabled');
+// Override the console transport
+log.transports.console.writeFn = isProd ? sentryTransportConsole : origConsole;
 
 export class LogManager {
     logger: any;
 
     init(_settings: any) {
         console.log('init LogManager');
+        // Re-initialize logger to ensure it's properly set up
+        log.initialize();
     }
 
     getLogger(name: string) {
-        const logObj = log.create(name);
-        if (isProd) {
-            (logObj as any).transports.console = sentryTransportConsole;
-        }
-        // log.transports.console.level = isProd ? 'warn' : 'debug';
-
-        if (isLoggingEnabled) {
-            logObj.transports.file.level = 'debug';
-        } else {
-            logObj.transports.file.level = false;
-        }
-
-        return logObj;
+        return log.scope(name);
     }
 }
 

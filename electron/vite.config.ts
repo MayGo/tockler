@@ -16,29 +16,42 @@ function copyMigrations() {
     };
 }
 
-export default defineConfig({
-    plugins: [
-        electron({
-            main: {
-                // Shortcut of `build.lib.entry`
-                entry: 'src/index.ts',
+export default defineConfig(({ command, mode }) => {
+    const isProduction = mode === 'production';
 
-                vite: {
-                    build: {
-                        rollupOptions: {
-                            // Here are some C/C++ modules them can't be built properly
-                            external: ['better-sqlite3', 'active-win', 'node-machine-id'],
+    return {
+        plugins: [
+            electron({
+                main: {
+                    // Shortcut of `build.lib.entry`
+                    entry: 'src/index.ts',
+
+                    vite: {
+                        build: {
+                            sourcemap: isProduction ? true : 'inline',
+                            minify: false,
+                            outDir: 'dist-electron',
+                            rollupOptions: {
+                                // Ensure these native modules are treated as external
+                                external: ['electron', 'better-sqlite3', 'active-win', 'node-machine-id'],
+                            },
+                            // Fix for CommonJS modules
+                            // commonjsOptions: {
+                            //     transformMixedEsModules: true,
+                            //     defaultIsModuleExports: true,
+                            //     extensions: ['.js', '.cjs', '.ts'],
+                            // },
                         },
+                        plugins: [copyMigrations()],
                     },
-                    plugins: [copyMigrations()],
                 },
-            },
-            preload: {
-                // Shortcut of `build.rollupOptions.input`
-                input: 'src/preloadStuff.ts',
-            },
-            // Optional: Use Node.js API in the Renderer process
-            renderer: {},
-        }),
-    ],
+                preload: {
+                    // Shortcut of `build.rollupOptions.input`
+                    input: 'src/preloadStuff.ts',
+                },
+                // Optional: Use Node.js API in the Renderer process
+                renderer: {},
+            }),
+        ],
+    };
 });

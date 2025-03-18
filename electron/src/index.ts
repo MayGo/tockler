@@ -1,15 +1,17 @@
-require('events').EventEmitter.defaultMaxListeners = 30;
+//require('events').EventEmitter.defaultMaxListeners = 30;
 
 import { app, ipcMain } from 'electron';
+import contextMenu from 'electron-context-menu';
 import AppManager from './app/app-manager';
 import AppUpdater from './app/app-updater';
-import { extensionsManager } from './app/extensions-manager';
 import WindowManager from './app/window-manager';
 import { cleanupBackgroundJob, initBackgroundJob } from './background/initBackgroundJob';
 import { config } from './utils/config';
 import { logManager } from './utils/log-manager';
-
 let logger = logManager.getLogger('AppIndex');
+
+// Log app version
+logger.info(`Tockler version: ${app.getVersion()}`);
 
 app.setAppUserModelId('ee.trimatech.tockler');
 
@@ -28,9 +30,9 @@ if (gotTheLock) {
 
     app.commandLine.appendSwitch('disable-renderer-backgrounding');
 
-    require('electron-context-menu')({});
+    contextMenu();
 
-    ipcMain.on('close-app', function () {
+    ipcMain.on('close-app', () => {
         logger.info('Closing Tockler');
         app.quit();
     });
@@ -41,7 +43,8 @@ if (gotTheLock) {
         await cleanupBackgroundJob();
         await AppManager.destroy();
     });
-    app.on('window-all-closed', function () {
+
+    app.on('window-all-closed', () => {
         logger.debug('window-all-closed');
         app.quit();
     });
@@ -51,9 +54,8 @@ if (gotTheLock) {
         return app.getVersion();
     });
 
-    // User want's to open main window when reopened app. (But not open main window on application launch)
-
-    app.on('activate', function () {
+    // User wants to open main window when reopened app. (But not open main window on application launch)
+    app.on('activate', () => {
         logger.debug('Activate event');
         if (app.isReady()) {
             WindowManager.openMainWindow();
@@ -64,9 +66,9 @@ if (gotTheLock) {
 
     app.on('ready', async () => {
         try {
-            if (config.isDev) {
-                await extensionsManager.init();
-            }
+            // if (config.isDev) {
+            //     await initExtensions();
+            // }
 
             WindowManager.initMainWindowEvents();
 
@@ -79,8 +81,11 @@ if (gotTheLock) {
             await AppManager.init();
 
             await initBackgroundJob();
-        } catch (error: any) {
-            logger.error(`App errored in ready event: ${error.toString()}`, error);
+        } catch (error) {
+            logger.error(
+                `App errored in ready event: ${error instanceof Error ? error.toString() : String(error)}`,
+                error,
+            );
         }
     });
 } else {

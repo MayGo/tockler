@@ -1,17 +1,16 @@
-import { app, BrowserWindow, dialog, ipcMain, Tray } from 'electron';
+import { app, autoUpdater, BrowserWindow, dialog, ipcMain, Menu, nativeImage, Tray } from 'electron';
 import positioner from 'electron-traywindow-positioner';
-import { autoUpdater } from 'electron-updater';
 import { throttle } from 'lodash';
 import { menubar } from 'menubar';
-import path, { join } from 'path';
+import * as path from 'path';
 import { settingsService } from '../drizzle/queries/settings-service';
 import { config, getTrayIcon } from '../utils/config';
 import { logManager } from '../utils/log-manager';
 import MenuBuilder from './menu-builder';
 
-let logger = logManager.getLogger('WindowManager');
+const logger = logManager.getLogger('WindowManager');
 
-const preloadScript = join(__dirname, 'preloadStuff.js');
+const preloadScript = path.join(app.getAppPath(), 'dist-electron', 'preloadStuff.js');
 
 const devUrl = `http://127.0.0.1:3000`;
 // const devUrl = `file://${path.join(__dirname, '..', '..', 'client', 'dist', 'index.html')}`;
@@ -27,23 +26,36 @@ interface WindowBounds {
     y?: number;
 }
 
+const getNativeTrayIcon = (path: string) => {
+    try {
+        return nativeImage.createFromPath(path);
+    } catch (err) {
+        logger.error('Error creating tray toggle icon with color:', err);
+    }
+
+    return undefined;
+};
+
 export const sendToTrayWindow = (key: string, message = '') => {
-    if (WindowManager.menubar.window && !WindowManager.menubar.window.webContents.isDestroyed()) {
-        logger.debug('Send to tray window:', key, message);
+    if (WindowManager.menubar && WindowManager.menubar.window) {
         WindowManager.menubar.window.webContents.send(key, message);
     } else {
-        logger.debug(`Menubar not defined or window destroyed, not sending ${key}`);
+        logger.error('No menubar window or no webcontents.');
     }
 };
 
 export const sendToNotificationWindow = async (key: string, message = '') => {
-    if (WindowManager.notificationWindow) {
-        if (key === 'notifyUser') {
-            if (WindowManager.tray) {
-                positioner.position(WindowManager.notificationWindow, WindowManager.tray.getBounds());
-            } else {
-                logger.error('Tray not defined yet, not sending notifyUser');
+    try {
+        if (WindowManager.notificationWindow && WindowManager.notificationWindow.webContents) {
+            // Save running log when receiving new log items (closing it)
+            if (key === 'notifyUser') {
+                if (WindowManager.tray) {
+                    positioner.position(WindowManager.notificationWindow, WindowManager.tray.getBounds());
+                } else {
+                    logger.error('Tray not defined yet, not sending notifyUser');
+                }
             }
+
             WindowManager.notificationWindow.showInactive();
             const workSettings = await settingsService.fetchWorkSettings();
             const { notificationDuration } = workSettings;
@@ -55,20 +67,22 @@ export const sendToNotificationWindow = async (key: string, message = '') => {
                     logger.error('NotificationWindow not created');
                 }
             }, notificationDuration * 1000);
-        }
 
-        logger.debug('Send to notification window:', key, message);
-        WindowManager.notificationWindow.webContents.send(key, message);
-    } else {
-        logger.debug(`NotificationBar not defined yet, not sending ${key}`);
+            logger.debug('Send to notification window:', key, message);
+            WindowManager.notificationWindow.webContents.send(key, message);
+        } else {
+            logger.error('No notification window or no webcontents.');
+        }
+    } catch (error) {
+        logger.error('Error sending notification:', error);
     }
 };
 
 export const sendToMainWindow = (key: string, message = '') => {
-    if (WindowManager.mainWindow) {
+    if (WindowManager.mainWindow && WindowManager.mainWindow.webContents) {
         WindowManager.mainWindow.webContents.send(key, message);
     } else {
-        logger.debug(`MainWindow not defined yet, not sending ${key}`);
+        logger.error('No main window or no webcontents.');
     }
 };
 
@@ -81,6 +95,7 @@ export default class WindowManager {
     static initMenus() {
         const menuBuilder = new MenuBuilder();
         menuBuilder.buildMenu();
+        Menu.setApplicationMenu(null);
     }
 
     static createMainWindow() {
@@ -150,6 +165,27 @@ export default class WindowManager {
             logger.error('Failed to load:', errorCode, errorDescription);
         });
 
+        // Updated console-message handler for Electron 35
+        // Using any type to avoid TypeScript errors with the event object
+        this.mainWindow.webContents.on('console-message' as any, (event: any) => {
+            logger.debug(`Console: ${event.message} (${event.sourceId}:${event.lineNumber})`);
+        });
+
+        this.mainWindow.loadURL(pageUrl).catch((err) => {
+            logger.error('Could not load url in main window:', err);
+        });
+
+        this.mainWindow.on('minimize', () => {
+            logger.debug('MainWindow minimize');
+        });
+
+        this.mainWindow.on('restore', () => {
+            logger.debug('MainWindow restore');
+        });
+
+        // Clear history using the new API
+        this.mainWindow.webContents.clearHistory();
+
         // Return information about window state for setMainWindow to use
         return { hasWindowSize, wasMaximizedOrFullScreen };
     }
@@ -171,17 +207,39 @@ export default class WindowManager {
             return;
         }
 
-        this.mainWindow.loadURL(pageUrl);
+        this.mainWindow.on('close', () => {
+            logger.debug('MainWindow close');
+
+            if (this.mainWindow) {
+                logger.debug('Window closing, saving final size');
+                // Always try to save the window size - storeWindowSize will now handle different states
+                WindowManager.storeWindowSize();
+
+                logger.debug('Closing window');
+                this.mainWindow = null;
+            }
+
+            if (app.dock) {
+                logger.debug('Hide dock window.');
+                app.dock.hide();
+            }
+        });
 
         this.mainWindow.on('closed', () => {
+            logger.debug('MainWindow closed');
             this.mainWindow = null;
-            logger.debug('Main window closed');
         });
 
         this.mainWindow.on('focus', () => {
+            logger.debug('MainWindow focus');
             let sendEventName = 'main-window-focus';
-            logger.debug('Sending focus event: ' + sendEventName);
-            // this.mainWindow.webContents.send(sendEventName, 'ping');
+
+            if (this.mainWindow && this.mainWindow.isMaximized()) {
+                sendEventName = 'main-window-focus-maximized';
+            }
+            if (this.mainWindow && this.mainWindow.webContents) {
+                this.mainWindow.webContents.send(sendEventName, 'ping');
+            }
         });
 
         this.mainWindow.webContents.on('did-finish-load', () => {
@@ -215,19 +273,19 @@ export default class WindowManager {
         this.mainWindow.on('maximize', () => {
             logger.debug('Window maximized');
             // Save current state before maximizing
-            WindowManager.storeWindowSize();
+            this.storeWindowSize();
         });
 
         this.mainWindow.on('unmaximize', () => {
             logger.debug('Window unmaximized');
             // Save the restored size
-            WindowManager.storeWindowSize();
+            this.storeWindowSize();
         });
 
         this.mainWindow.on('enter-full-screen', () => {
             logger.debug('Window entered full screen');
             // Save current state before going full screen
-            WindowManager.storeWindowSize();
+            this.storeWindowSize();
         });
 
         this.mainWindow.on('leave-full-screen', () => {
@@ -243,29 +301,21 @@ export default class WindowManager {
                 }, 200);
             }
             // Save the restored size
-            WindowManager.storeWindowSize();
-        });
-
-        // Always save window size right before closing
-        this.mainWindow.on('close', () => {
-            if (this.mainWindow) {
-                logger.debug('Window closing, saving final size');
-                // Always try to save the window size - storeWindowSize will now handle different states
-                WindowManager.storeWindowSize();
-
-                logger.debug('Closing window');
-                this.mainWindow = null;
-            }
-            if (app.dock) {
-                logger.debug('Hide dock window.');
-                app.dock.hide();
-            }
+            this.storeWindowSize();
         });
 
         // Also save on other events that might change window state
         // Reduce throttle time to be more responsive
         this.mainWindow.on('resize', throttle(WindowManager.storeWindowSize, 300));
         this.mainWindow.on('move', throttle(WindowManager.storeWindowSize, 300));
+
+        this.mainWindow.on('hide', () => {
+            logger.debug('MainWindow hide');
+        });
+
+        this.mainWindow.on('show', () => {
+            logger.debug('MainWindow show');
+        });
 
         WindowManager.initMenus();
     }
@@ -357,6 +407,7 @@ export default class WindowManager {
          * https://github.com/maxogden/menubar
          */
 
+        // Use the menubar function to create a menubar instance
         this.menubar = menubar({
             index: pageUrl + '#/trayApp',
             tray: this.tray,
@@ -403,6 +454,13 @@ export default class WindowManager {
                     },
                 );
             }
+
+            const trayIconWithColor = getNativeTrayIcon(config.iconTray);
+
+            if (this.tray && trayIconWithColor) {
+                this.tray.setToolTip('Tockler');
+                this.tray.setImage(trayIconWithColor);
+            }
         });
     }
 
@@ -425,24 +483,37 @@ export default class WindowManager {
                 preload: preloadScript,
                 sandbox: false,
             },
-            width: 70,
-            height: 27,
+            width: 80,
+            height: 30,
         });
-        this.notificationWindow.loadURL(pageUrl + '#/notificationApp');
+        this.notificationWindow.loadURL(pageUrl + '#/notificationApp').catch((err) => {
+            logger.error('Could not load url in notification window:', err);
+        });
 
-        this.menubar.on('ready', () => {
-            this.menubar.tray.on('click', () => {
-                if (this.notificationWindow) {
-                    this.notificationWindow.hide();
-                } else {
-                    logger.error('NotificationWindow not created');
-                }
-            });
+        // Updated console-message handler for Electron 35
+        // Using any type to avoid TypeScript errors with the event object
+        this.notificationWindow.webContents.on('console-message' as any, (event: any) => {
+            logger.debug(`Notification console: ${event.message} (${event.sourceId}:${event.lineNumber})`);
+        });
+
+        this.notificationWindow.setResizable(false);
+        this.notificationWindow.on('closed', () => {
+            this.notificationWindow = null;
         });
     }
 
     static setTrayIconToUpdate() {
-        WindowManager.menubar.tray.setImage(config.iconTrayUpdate);
+        // Tray icon: Setting all tray icon sources
+        logger.debug('Setting tray icon to download update icon');
+        try {
+            const trayIconWithColor = getNativeTrayIcon(config.iconTrayUpdate);
+
+            if (this.tray && trayIconWithColor) {
+                this.tray.setImage(trayIconWithColor);
+            }
+        } catch (e) {
+            logger.error('Error setting tray icon to update:', e);
+        }
 
         WindowManager.menubar.tray.on('click', async () => {
             const { response } = await dialog.showMessageBox(WindowManager.menubar.window, {
@@ -460,8 +531,15 @@ export default class WindowManager {
     }
 
     static toggleTrayIcon() {
-        const iconTray = getTrayIcon();
-        WindowManager.menubar.tray.setImage(iconTray);
+        try {
+            const trayIconWithColor = getNativeTrayIcon(getTrayIcon());
+
+            if (this.tray && trayIconWithColor) {
+                this.tray.setImage(trayIconWithColor);
+            }
+        } catch (e) {
+            logger.error('Error toggling tray icon:', e);
+        }
     }
 }
 
