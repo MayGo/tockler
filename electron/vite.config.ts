@@ -30,20 +30,14 @@ export default defineConfig({
                         outDir: 'dist-electron',
                         rollupOptions: {
                             // Ensure these native modules are treated as external
-                            external: [
-                                'electron',
-                                'better-sqlite3',
-                                'active-win',
-                                'node-machine-id',
-                                'electron-context-menu',
-                            ],
+                            external: ['electron', 'better-sqlite3', 'active-win', 'node-machine-id'],
                         },
                         // Fix for CommonJS modules
-                        commonjsOptions: {
-                            transformMixedEsModules: true,
-                            defaultIsModuleExports: true,
-                            extensions: ['.js', '.cjs', '.ts'],
-                        },
+                        // commonjsOptions: {
+                        //     transformMixedEsModules: true,
+                        //     defaultIsModuleExports: true,
+                        //     extensions: ['.js', '.cjs', '.ts'],
+                        // },
                     },
                     plugins: [copyMigrations()],
                 },

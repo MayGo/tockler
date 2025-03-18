@@ -1,6 +1,7 @@
 //require('events').EventEmitter.defaultMaxListeners = 30;
 
 import { app, ipcMain } from 'electron';
+import contextMenu from 'electron-context-menu';
 import AppManager from './app/app-manager';
 import AppUpdater from './app/app-updater';
 import { extensionsManager } from './app/extensions-manager';
@@ -8,7 +9,6 @@ import WindowManager from './app/window-manager';
 import { cleanupBackgroundJob, initBackgroundJob } from './background/initBackgroundJob';
 import { config } from './utils/config';
 import { logManager } from './utils/log-manager';
-
 let logger = logManager.getLogger('AppIndex');
 
 app.setAppUserModelId('ee.trimatech.tockler');
@@ -28,7 +28,7 @@ if (gotTheLock) {
 
     app.commandLine.appendSwitch('disable-renderer-backgrounding');
 
-    // require('electron-context-menu')({});
+    contextMenu();
 
     ipcMain.on('close-app', () => {
         logger.info('Closing Tockler');
