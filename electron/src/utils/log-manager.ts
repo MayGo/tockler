@@ -14,6 +14,9 @@ if (isProd) {
     });
 }
 
+// Initialize electron-log for both main and renderer processes
+log.initialize();
+
 // Set reasonable log levels
 log.transports.console.level = isProd ? 'warn' : 'debug';
 log.transports.file.level = isProd ? 'info' : 'debug';
@@ -65,6 +68,8 @@ export class LogManager {
 
     init(_settings: any) {
         console.log('init LogManager');
+        // Re-initialize logger to ensure it's properly set up
+        log.initialize();
     }
 
     getLogger(name: string) {

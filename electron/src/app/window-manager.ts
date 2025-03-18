@@ -209,18 +209,25 @@ export default class WindowManager {
 
         this.mainWindow.on('close', (event: any) => {
             logger.debug('MainWindow close');
-            event.preventDefault();
-            this.storeWindowSize();
+
             if (this.mainWindow) {
-                this.mainWindow.hide();
+                logger.debug('Window closing, saving final size');
+                // Always try to save the window size - storeWindowSize will now handle different states
+                WindowManager.storeWindowSize();
+
+                logger.debug('Closing window');
+                this.mainWindow = null;
+            }
+
+            if (app.dock) {
+                logger.debug('Hide dock window.');
+                app.dock.hide();
             }
         });
 
         this.mainWindow.on('closed', () => {
             logger.debug('MainWindow closed');
-            // Close all windows if main is closed
             this.mainWindow = null;
-            app.quit();
         });
 
         this.mainWindow.on('focus', () => {
