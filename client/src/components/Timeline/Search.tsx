@@ -35,7 +35,7 @@ export const Search = memo(() => {
 
     // Monitor liveView state changes and show toast
     useEffect(() => {
-        if (DateTime.now().hasSame(timerange[1], 'day')) {
+        if (timerangeMode === TIMERANGE_MODE_TODAY) {
             showLiveViewToast(liveView);
         }
     }, [liveView, showLiveViewToast]);
