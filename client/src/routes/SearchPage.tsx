@@ -127,7 +127,7 @@ export function SearchPage() {
 
     return (
         <form onSubmit={onSubmit}>
-            <Flex p={3} flexDirection="column">
+            <Flex p={4} flexDirection="column">
                 <CardBox position="relative" p={0}>
                     {isLoading && <Loader />}
                     <Box p={4} pb={0}>

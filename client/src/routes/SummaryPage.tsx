@@ -1,8 +1,8 @@
-import { SummaryCalendar } from '../components/SummaryCalendar/SummaryCalendar';
-import { SummaryProvider } from '../SummaryContext';
-import { LineChart } from '../components/LineCharts/LineChart';
 import { VStack } from '@chakra-ui/react';
 import { CardBox } from '../components/CardBox';
+import { LineChart } from '../components/LineCharts/LineChart';
+import { SummaryCalendar } from '../components/SummaryCalendar/SummaryCalendar';
+import { SummaryProvider } from '../SummaryContext';
 
 export function SummaryPage() {
     return (

@@ -3,10 +3,10 @@ import { useDatepicker } from '@datepicker-react/hooks';
 import { DateTime } from 'luxon';
 
 import { useEffect } from 'react';
+import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import { CALENDAR_MODE } from '../../SummaryContext.util';
 import { CalendarMonth } from './CalendarMonth';
 import { CalendarYear } from './CalendarYear';
-import { ActionButton } from './components';
 import { DatepickerProvider } from './context/DatepickerContext';
 import { MonthSelect } from './MonthSelect';
 import { monthLabelFormatFn, weekdayLabelFormatLong } from './utils/formatters';
@@ -86,18 +86,21 @@ export const Calendar = ({
             {...dp}
             focusedDate={focusedDate}
         >
-            <Box w="100%">
+            <Box w="full">
                 <Flex justifyContent="space-between" p={4}>
                     <HStack spacing={3}>
-                        <ActionButton
-                            direction={'left'}
-                            onClick={goToPrevious}
-                            tooltipLabel={`Previous ${selectedMode}`}
-                        />
-
+                        <Box>
+                            <Button onClick={goToPrevious} variant="outline">
+                                <AiOutlineLeft />
+                            </Button>
+                        </Box>
                         {isMonthView && <MonthSelect value={month} onChange={onChangeMonth} />}
                         <YearSelect value={year} onChange={onChangeYear} />
-                        <ActionButton direction={'right'} onClick={goToNext} tooltipLabel={`Next ${selectedMode}`} />
+                        <Box>
+                            <Button onClick={goToNext} variant="outline">
+                                <AiOutlineRight />
+                            </Button>
+                        </Box>
                     </HStack>
                     <Spacer />
                     <HStack spacing={3}>
