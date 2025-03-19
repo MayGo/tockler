@@ -19,6 +19,43 @@ function isNetworkError(errorObject: any) {
     return errorObject.message.includes('net::ERR');
 }
 
+function isAutoUpdatableBuild() {
+    const platform = process.platform;
+
+    // Only specific targets are auto-updatable:
+    // - macOS: DMG
+    // - Linux: AppImage
+    // - Windows: NSIS
+
+    // Check if we are running a packaged app (not in development)
+    if (!app.isPackaged) {
+        return false;
+    }
+
+    // For macOS, we can only auto-update DMG builds
+    if (platform === 'darwin') {
+        return true;
+    }
+
+    // For Linux, only AppImage is auto-updatable
+    if (platform === 'linux') {
+        if (process.env.APPIMAGE) {
+            logger.debug('Running as AppImage, auto-updatable.');
+            return true;
+        }
+
+        logger.debug('Not running as AppImage, not auto-updatable.');
+        return false;
+    }
+
+    // For Windows, only NSIS installer builds are auto-updatable
+    if (platform === 'win32') {
+        return !process.env.PORTABLE_EXECUTABLE_DIR;
+    }
+
+    return false;
+}
+
 export default class AppUpdater {
     static dialogIsOpen = false;
 
@@ -68,6 +105,13 @@ export default class AppUpdater {
         let isAutoUpdateEnabled = config.persisted.get('isAutoUpdateEnabled');
         isAutoUpdateEnabled = typeof isAutoUpdateEnabled !== 'undefined' ? isAutoUpdateEnabled : true;
 
+        const canAutoUpdate = isAutoUpdatableBuild();
+
+        if (!canAutoUpdate) {
+            logger.debug('Auto update not available for this build type.');
+            return;
+        }
+
         if (isAutoUpdateEnabled && getCurrentState() !== State.Offline) {
             logger.debug('Checking for updates.');
             autoUpdater.checkForUpdates();
@@ -78,6 +122,18 @@ export default class AppUpdater {
 
     static async checkForUpdatesManual() {
         logger.debug('Checking for updates');
+
+        const canAutoUpdate = isAutoUpdatableBuild();
+
+        if (!canAutoUpdate) {
+            showNotification({
+                body: `Auto updates are not available for this build type. Please check for updates manually at https://github.com/MayGo/tockler/releases.`,
+                title: 'Updates unavailable',
+                silent: true,
+            });
+            return;
+        }
+
         showNotification({ body: `Checking for updates...`, silent: true });
 
         try {
