@@ -4,9 +4,11 @@ import { vi } from 'vitest';
 // Now import the rest of the dependencies
 import { ChakraProvider } from '@chakra-ui/react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { StoreProvider } from 'easy-peasy';
 import { DateTime, Settings } from 'luxon';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { mainStore } from '../store/mainStore';
 import { SearchPage } from './SearchPage';
 
 const searchFromItems = vi.fn();
@@ -72,7 +74,9 @@ const renderSearchPage = () => {
     return render(
         <ChakraProvider>
             <MemoryRouter>
-                <SearchPage />
+                <StoreProvider store={mainStore}>
+                    <SearchPage />
+                </StoreProvider>
             </MemoryRouter>
         </ChakraProvider>,
     );
