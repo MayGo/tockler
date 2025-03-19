@@ -1,9 +1,11 @@
 import { IconButton, Tooltip } from '@chakra-ui/react';
+import { ColumnDef } from '@tanstack/react-table';
 import { DateTime } from 'luxon';
 import { memo } from 'react';
 import { AiOutlineUnorderedList } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 
+import { ITrackItem } from '../../@types/ITrackItem';
 import { SearchResultI } from '../../services/trackItem.api';
 import { useStoreActions } from '../../store/easyPeasy';
 import { ItemsTable } from '../TrackItemTable/ItemsTable';
@@ -40,14 +42,15 @@ const ActionCell = ({ cell }) => {
     );
 };
 
-const extraColumns = [
+const extraColumns: ColumnDef<ITrackItem>[] = [
     {
-        Cell: ActionCell,
         id: 'actions',
-        accessor: 'title',
-        width: 20,
-        minWidth: 20,
-        maxWidth: 20,
+        header: '',
+        enableColumnFilter: false,
+        cell: ActionCell,
+        size: 20,
+        minSize: 20,
+        maxSize: 20,
     },
 ];
 
