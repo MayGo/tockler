@@ -41,6 +41,7 @@ export const Search = memo(() => {
     }, [liveView, showLiveViewToast]);
 
     const showLiveViewButton = timerangeMode === TIMERANGE_MODE_TODAY;
+
     const toggleLiveView = () => {
         const newLiveView = !liveView;
         setLiveView(newLiveView);
@@ -85,15 +86,17 @@ export const Search = memo(() => {
         loadTimerange([beginDate, endDate]);
     };
 
+    const isYesterday = DateTime.now().minus({ days: 1 }).hasSame(timerange[1], 'day');
+
     return (
         <>
             <Box p={1}>
-                <Button variant="outline" onClick={selectYesterday}>
+                <Button onClick={selectYesterday} variant={isYesterday ? 'solid' : 'outline'}>
                     Yesterday
                 </Button>
             </Box>
             <Box p={1}>
-                <Button onClick={goBackOneDay}>
+                <Button onClick={goBackOneDay} variant="outline">
                     <AiOutlineLeft />
                 </Button>
             </Box>
@@ -105,7 +108,7 @@ export const Search = memo(() => {
                 />
             </Box>
             <Box p={1}>
-                <Button onClick={goForwardOneDay}>
+                <Button onClick={goForwardOneDay} variant="outline">
                     <AiOutlineRight />
                 </Button>
             </Box>
