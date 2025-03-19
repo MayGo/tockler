@@ -93,6 +93,8 @@ export const ItemsTable = ({
                 ),
                 enableSorting: false,
                 size: 10,
+                minSize: 10,
+                maxSize: 10,
             },
             {
                 header: 'App',
@@ -147,9 +149,8 @@ export const ItemsTable = ({
                 accessorFn: (record: ITrackItem) => diffAndFormatShort(record.beginDate, record.endDate),
                 enableColumnFilter: false,
                 enableSorting: !manualSortBy,
-
-                size: 80,
-                minSize: 80,
+                size: 60,
+                minSize: 60,
                 maxSize: 80,
             },
             ...extraColumns,
@@ -284,7 +285,9 @@ export const ItemsTable = ({
                                                     </Box>
                                                 </Button>
                                             ) : (
-                                                flexRender(header.column.columnDef.header, header.getContext())
+                                                <Button variant="ghost" fontWeight="bold" disabled>
+                                                    {flexRender(header.column.columnDef.header, header.getContext())}
+                                                </Button>
                                             )}
                                             <Box flex={1} />
                                             {header.column.getCanFilter() ? (
