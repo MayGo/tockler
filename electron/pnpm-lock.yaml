@@ -36,8 +36,8 @@ importers:
         specifier: ^1.2.1
         version: 1.2.1
       electron-updater:
-        specifier: 6.2.0
-        version: 6.2.0
+        specifier: 6.3.9
+        version: 6.3.9
       eventemitter3:
         specifier: ^5.0.1
         version: 5.0.1
@@ -1357,10 +1357,6 @@ packages:
     resolution: {integrity: sha512-6p/gfG1RJSQeIbz8TK5aPNkoztgY1q5TgmGFMAXcY8itsGW6Y2ld1ALsZ5UJn8rog7hKF3zHx5iQbNQ8uLcRlw==}
     engines: {node: '>=12.0.0'}
 
-  builder-util-runtime@9.2.4:
-    resolution: {integrity: sha512-upp+biKpN/XZMLim7aguUyW8s0FUpDvOtK6sbanMFDAMBzpHDqdhgVYm6zc9HJ6nWo7u2Lxk60i2M6Jd3aiNrA==}
-    engines: {node: '>=12.0.0'}
-
   builder-util@25.1.7:
     resolution: {integrity: sha512-7jPjzBwEGRbwNcep0gGNpLXG9P94VA3CPAZQCzxkFXiV2GMQKlziMbY//rXPI7WKfhsvGgFXjTcXdBEwgXw9ww==}
 
@@ -1821,9 +1817,8 @@ packages:
   electron-traywindow-positioner@1.2.1:
     resolution: {integrity: sha512-186csb2qFtqwlJ0TE7t0wYTT8y8eCCN0b56P4xLfqFUTGmnDSeeLLW9/dM+CQQCK3BLIGajINfUe79EUTxtoXw==}
 
-  electron-updater@6.2.0:
-    resolution: {integrity: sha512-uYX+53AEtu+LYhHrzYkMx4OFdGk+9H0zOf8+OvxiWpjVle5L/VvFpl85kvPMW703BQFEa+YJ2SLA8psotswhqw==}
-    deprecated: critical bug in mac updater, fixed in 6.2.1
+  electron-updater@6.3.9:
+    resolution: {integrity: sha512-2PJNONi+iBidkoC5D1nzT9XqsE8Q1X28Fn6xRQhO3YX8qRRyJ3mkV4F1aQsuRnYPqq6Hw+E51y27W75WgDoofw==}
 
   electron@35.0.2:
     resolution: {integrity: sha512-jo8S4GfBpVIBDGitUrv+Vo/I/ZEEs6IvWprG2KJlxayYIKpufulbQaxDt78cC/79FwFo8MA0JOIwx/b9r5NRag==}
@@ -5097,13 +5092,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  builder-util-runtime@9.2.4:
-    dependencies:
-      debug: 4.4.0
-      sax: 1.4.1
-    transitivePeerDependencies:
-      - supports-color
-
   builder-util@25.1.7:
     dependencies:
       7zip-bin: 5.2.0
@@ -5599,9 +5587,9 @@ snapshots:
 
   electron-traywindow-positioner@1.2.1: {}
 
-  electron-updater@6.2.0:
+  electron-updater@6.3.9:
     dependencies:
-      builder-util-runtime: 9.2.4
+      builder-util-runtime: 9.2.10
       fs-extra: 10.1.0
       js-yaml: 4.1.0
       lazy-val: 1.0.5
