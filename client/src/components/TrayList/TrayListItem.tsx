@@ -27,12 +27,14 @@ export function TrayListItemPlain({
     item,
     startNewLogItemFromOld,
     stopRunningLogItem,
+    isRunning,
 }: {
     item: AggregatedTrackItem;
     startNewLogItemFromOld: (item: AggregatedTrackItem) => void;
     stopRunningLogItem: () => void;
+    isRunning: boolean;
 }) {
-    const { isRunning, totalMs, title, app, color } = item;
+    const { totalDuration, title, app, color } = item;
     return (
         <Box p={4}>
             <HStack alignItems="center" width="100%" pr={2}>
@@ -51,14 +53,14 @@ export function TrayListItemPlain({
 
                     <Flex alignItems="center" pl={4}>
                         <Text fontSize="xs">
-                            <FormattedTime {...item} />
+                            <FormattedTime {...item} isRunning={isRunning} />
                         </Text>
 
                         <Text fontSize="xs" fontWeight="bold" pl={3}>
-                            {totalMs > 1 && (
+                            {totalDuration > 1 && (
                                 <>
-                                    {!isRunning && shortTime(totalMs)}
-                                    {isRunning && <ShortTimeInterval totalMs={totalMs} />}
+                                    {!isRunning && shortTime(totalDuration)}
+                                    {isRunning && <ShortTimeInterval totalMs={totalDuration} />}
                                 </>
                             )}
                         </Text>

@@ -3,7 +3,7 @@ import { memo, useEffect } from 'react';
 import { ITrackItem } from '../@types/ITrackItem';
 import { LoadingLine } from '../components/LoadingLine';
 import { OnlineChart } from '../components/TrayLayout/OnlineChart';
-import { TrayList } from '../components/TrayList/TrayList';
+import { AggregatedTrackItem, TrayList } from '../components/TrayList/TrayList';
 import { useTrayData } from '../hooks/useTrayData';
 import { useWindowFocused } from '../hooks/windowFocusedHook';
 import { Logger } from '../logger';
@@ -61,7 +61,7 @@ const TrayAppPageTemp = () => {
             </Box>
             <Divider borderColor="gray.200" />
             <TrayList
-                lastLogItems={logItems || EMPTY_ARRAY}
+                lastLogItems={logItems as AggregatedTrackItem[]}
                 runningLogItem={runningLogItem}
                 stopRunningLogItem={stopRunningLogItemEvent}
                 startNewLogItem={startNewLogItemEvent}

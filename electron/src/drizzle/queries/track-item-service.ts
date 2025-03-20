@@ -232,15 +232,31 @@ export class TrackItemService {
     }
     async findFirstChunkLogItems() {
         const items = await db
-            .select()
+            .select({
+                color: trackItems.color,
+                app: trackItems.app,
+                title: trackItems.title,
+                beginDate: sql`MIN(${trackItems.beginDate})`,
+                endDate: sql`MAX(${trackItems.endDate})`,
+                totalDuration: sql`SUM(${trackItems.endDate} - ${trackItems.beginDate})`,
+            })
             .from(trackItems)
             .where(eq(trackItems.taskName, TrackItemType.LogTrackItem))
-            .orderBy(desc(trackItems.beginDate))
-            .limit(100);
+            .groupBy(trackItems.app, trackItems.title)
+            .orderBy(desc(trackItems.endDate))
+            .limit(10);
+
         const ongoingLogItem = await getOngoingLogTrackItem();
+
         if (ongoingLogItem) {
-            items.push(ongoingLogItem);
+            items.push({
+                ...ongoingLogItem,
+                beginDate: ongoingLogItem.beginDate,
+                endDate: ongoingLogItem.endDate,
+                totalDuration: ongoingLogItem.endDate - ongoingLogItem.beginDate,
+            });
         }
+
         return items;
     }
 
