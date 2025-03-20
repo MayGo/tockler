@@ -90,9 +90,15 @@ const trackItemActions = {
         const { from, to, taskName, searchStr, paging, sumTotal } = payload;
         return trackItemService.findAllItems(from, to, taskName, searchStr, paging, sumTotal);
     },
-    exportFromItems: async (payload: { from: string; to: string; taskName: string; searchStr: string }) => {
-        const { from, to, taskName, searchStr } = payload;
-        return trackItemService.findAndExportAllItems(from, to, taskName, searchStr);
+    exportFromItems: async (payload: {
+        from: string;
+        to: string;
+        taskName: string;
+        searchStr: string;
+        format?: 'csv' | 'json';
+    }) => {
+        const { from, to, taskName, searchStr, format = 'csv' } = payload;
+        return trackItemService.findAndExportAllItems(from, to, taskName, searchStr, format);
     },
     findFirstChunkLogItems: async () => {
         return trackItemService.findFirstChunkLogItems();

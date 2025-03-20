@@ -53,7 +53,13 @@ export class TrackItemService {
         return result.length;
     }
 
-    async findAndExportAllItems(from: string, to: string, taskName: string, searchStr: string) {
+    async findAndExportAllItems(
+        from: string,
+        to: string,
+        taskName: string,
+        searchStr: string,
+        format: 'csv' | 'json' = 'csv',
+    ) {
         const conditions = [
             eq(trackItems.taskName, taskName),
             gte(trackItems.endDate, new Date(from).getTime()),
@@ -64,42 +70,57 @@ export class TrackItemService {
             conditions.push(like(trackItems.title, `%${searchStr}%`));
         }
 
-        const toDateTimeStr = (timestamp: string) => moment(parseInt(timestamp)).format('YYYY-MM-DD HH:mm:ss');
-
         const results = await db
             .select()
             .from(trackItems)
             .where(and(...conditions));
 
-        const csvContent = stringify(results, {
-            delimiter: ';',
-            cast: {
-                number: function (value, { column }) {
-                    if (['endDate', 'beginDate'].includes(column?.toString() || '')) {
-                        return toDateTimeStr(value.toString());
-                    }
-                    return value?.toString();
-                },
-            },
-            header: true,
-        });
+        let fileContent: string;
+        let fileExtension: string;
 
-        const defaultPath = `Tockler_${taskName}_${moment(new Date(from)).format('YYYY-MM-DD')}-${moment(
-            new Date(to),
-        ).format('YYYY-MM-DD')}.csv`;
+        if (format === 'json') {
+            // Process dates for better readability in JSON
+            const processedResults = results.map((item) => ({
+                ...item,
+                beginDate: moment(item.beginDate).format('YYYY-MM-DD HH:mm:ss'),
+                endDate: moment(item.endDate).format('YYYY-MM-DD HH:mm:ss'),
+            }));
+            fileContent = JSON.stringify(processedResults, null, 2);
+            fileExtension = 'json';
+        } else {
+            // CSV export (default)
+            const toDateTimeStr = (timestamp: string) => moment(parseInt(timestamp)).format('YYYY-MM-DD HH:mm:ss');
+            fileContent = stringify(results, {
+                delimiter: ';',
+                cast: {
+                    number: function (value, { column }) {
+                        if (['endDate', 'beginDate'].includes(column?.toString() || '')) {
+                            return toDateTimeStr(value.toString());
+                        }
+                        return value?.toString();
+                    },
+                },
+                header: true,
+            });
+            fileExtension = 'csv';
+        }
+
+        const formattedFrom = moment(new Date(from)).format('YYYY-MM-DD');
+        const formattedTo = moment(new Date(to)).format('YYYY-MM-DD');
+        const defaultPath = `Tockler_${taskName}_${formattedFrom}-${formattedTo}.${fileExtension}`;
 
         dialog
             .showSaveDialog({
                 title: 'Save export as',
                 defaultPath: defaultPath,
                 filters: [
-                    { name: 'CSV', extensions: ['csv'] },
+                    { name: format.toUpperCase(), extensions: [fileExtension] },
                     { name: 'All Files', extensions: ['*'] },
                 ],
             })
             .then(({ filePath }) => {
                 if (filePath) {
-                    writeFileSync(filePath, csvContent);
+                    writeFileSync(filePath, fileContent);
                 }
             });
 
