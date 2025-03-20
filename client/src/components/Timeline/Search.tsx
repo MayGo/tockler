@@ -1,7 +1,7 @@
-import { Box, Button, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Tooltip, useToast } from '@chakra-ui/react';
 import { OnDatesChangeProps } from '@datepicker-react/hooks';
 import { DateTime } from 'luxon';
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import { FaPlay, FaStop } from 'react-icons/fa';
 import { Logger } from '../../logger';
@@ -15,15 +15,39 @@ const getDayAfter = (d: DateTime) => d.plus({ days: 1 });
 
 export const Search = memo(() => {
     const timerange = useStoreState((state) => state.timerange);
+    const toast = useToast();
 
     const timerangeMode = useStoreState((state) => state.timerangeMode);
     const liveView = useStoreState((state) => state.liveView);
     const setLiveView = useStoreActions((actions) => actions.setLiveView);
     const loadTimerange = useStoreActions((actions) => actions.loadTimerange);
 
+    // Show a toast notification for live view status changes
+    const showLiveViewToast = (isEnabled: boolean) => {
+        toast({
+            title: `Live view ${isEnabled ? 'enabled' : 'disabled'}`,
+            status: isEnabled ? 'success' : 'info',
+            duration: 2000,
+            isClosable: true,
+            position: 'top',
+        });
+    };
+
+    // Monitor liveView state changes and show toast
+    useEffect(() => {
+        if (timerangeMode === TIMERANGE_MODE_TODAY) {
+            showLiveViewToast(liveView);
+        }
+    }, [liveView, showLiveViewToast]);
+
     const showLiveViewButton = timerangeMode === TIMERANGE_MODE_TODAY;
+
     const toggleLiveView = () => {
-        setLiveView(!liveView);
+        const newLiveView = !liveView;
+        setLiveView(newLiveView);
+
+        // Log the user action
+        Logger.debug(`User toggled live view to: ${newLiveView ? 'enabled' : 'disabled'}`);
     };
 
     const handleOnDatesChange = (data: OnDatesChangeProps) => {
@@ -62,15 +86,17 @@ export const Search = memo(() => {
         loadTimerange([beginDate, endDate]);
     };
 
+    const isYesterday = DateTime.now().minus({ days: 1 }).hasSame(timerange[1], 'day');
+
     return (
         <>
             <Box p={1}>
-                <Button variant="outline" onClick={selectYesterday}>
+                <Button onClick={selectYesterday} variant={isYesterday ? 'solid' : 'outline'}>
                     Yesterday
                 </Button>
             </Box>
             <Box p={1}>
-                <Button onClick={goBackOneDay}>
+                <Button onClick={goBackOneDay} variant="outline">
                     <AiOutlineLeft />
                 </Button>
             </Box>
@@ -82,7 +108,7 @@ export const Search = memo(() => {
                 />
             </Box>
             <Box p={1}>
-                <Button onClick={goForwardOneDay}>
+                <Button onClick={goForwardOneDay} variant="outline">
                     <AiOutlineRight />
                 </Button>
             </Box>

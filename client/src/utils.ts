@@ -5,8 +5,7 @@ import { TrackItemType } from './enum/TrackItemType';
 
 export const diffAndFormatShort = (beginDate: number, endDate: number) => {
     const diff = convertDate(endDate).diff(convertDate(beginDate));
-    const duration = intervalToDuration({ start: 0, end: diff.toMillis() });
-    return formatDuration(duration);
+    return formatDurationInternal(diff.toMillis());
 };
 
 export const formatDurationInternal = (dur: number) => {

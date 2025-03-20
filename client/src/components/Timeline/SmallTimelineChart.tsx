@@ -53,8 +53,11 @@ export const SmallTimelineChart = memo(() => {
     const visibleTimerange = useStoreState((state) => state.visibleTimerange);
     const timeItems = useStoreState((state) => state.timeItems);
     const setVisibleTimerange = useStoreActions((actions) => actions.setVisibleTimerange);
-
+    const setLiveView = useStoreActions((actions) => actions.setLiveView);
     const changeVisibleTimerange = (range: [Date, Date]) => {
+        if (DateTime.now().hasSame(timerange[1], 'day')) {
+            setLiveView(false);
+        }
         setVisibleTimerange(clampRange(timerange, [DateTime.fromJSDate(range[0]), DateTime.fromJSDate(range[1])]));
     };
 

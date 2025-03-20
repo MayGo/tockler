@@ -1,5 +1,5 @@
 import { stringify } from 'csv-stringify/sync';
-import { and, asc, desc, eq, gte, inArray, like, lt, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, inArray, like, lte, sql } from 'drizzle-orm';
 import { dialog } from 'electron';
 import { writeFileSync } from 'fs';
 import moment from 'moment';
@@ -57,7 +57,7 @@ export class TrackItemService {
         const conditions = [
             eq(trackItems.taskName, taskName),
             gte(trackItems.endDate, new Date(from).getTime()),
-            lt(trackItems.endDate, new Date(to).getTime()),
+            lte(trackItems.endDate, new Date(to).getTime()),
         ];
 
         if (searchStr) {
@@ -116,7 +116,7 @@ export class TrackItemService {
         const conditions = [
             eq(trackItems.taskName, taskName),
             gte(trackItems.endDate, new Date(from).getTime()),
-            lt(trackItems.endDate, new Date(to).getTime()),
+            lte(trackItems.endDate, new Date(to).getTime()),
         ];
 
         if (searchStr) {
@@ -163,7 +163,7 @@ export class TrackItemService {
                 and(
                     eq(trackItems.taskName, taskName),
                     gte(trackItems.endDate, new Date(from).getTime()),
-                    lt(trackItems.endDate, new Date(to).getTime()),
+                    lte(trackItems.endDate, new Date(to).getTime()),
                 ),
             )
             .orderBy(asc(trackItems.beginDate));
