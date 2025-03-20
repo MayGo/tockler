@@ -64,8 +64,7 @@ export class TrackItemService {
             conditions.push(like(trackItems.title, `%${searchStr}%`));
         }
 
-        const toDateStr = (timestamp: string) => moment(timestamp).format('YYYY-MM-DD');
-        const toDateTimeStr = (timestamp: string) => moment(timestamp).format('YYYY-MM-DD HH:mm:ss');
+        const toDateTimeStr = (timestamp: string) => moment(parseInt(timestamp)).format('YYYY-MM-DD HH:mm:ss');
 
         const results = await db
             .select()
@@ -85,7 +84,9 @@ export class TrackItemService {
             header: true,
         });
 
-        const defaultPath = `Tockler_${taskName}_${toDateStr(from)}-${toDateStr(to)}.csv`;
+        const defaultPath = `Tockler_${taskName}_${moment(new Date(from)).format('YYYY-MM-DD')}-${moment(
+            new Date(to),
+        ).format('YYYY-MM-DD')}.csv`;
 
         dialog
             .showSaveDialog({
