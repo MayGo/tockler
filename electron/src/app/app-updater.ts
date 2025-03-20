@@ -3,8 +3,6 @@ import { autoUpdater, UpdateCheckResult, UpdateInfo } from 'electron-updater';
 import { config } from '../utils/config';
 import { showNotification } from './notification';
 
-import * as fs from 'fs';
-import * as path from 'path';
 import { getCurrentState } from '../background/watchStates/watchAndPropagateState';
 import { State } from '../enums/state';
 import { logManager } from '../utils/log-manager';
@@ -17,9 +15,8 @@ const ONE_HOUR_MS = 60 * ONE_MINUTE_MS;
 
 export const CHECK_INTERVAL_MS = ONE_HOUR_MS * 8;
 
-function isNetworkError(errorObject: any) {
-    return errorObject.message.includes('net::ERR');
-}
+// Flag to track if update is in progress to prevent multiple checks/downloads
+let updateInProgress = false;
 
 function isAutoUpdatableBuild() {
     const platform = process.platform;
@@ -58,63 +55,49 @@ function isAutoUpdatableBuild() {
     return false;
 }
 
-// Ensure update directories exist
-function ensureUpdateDirectoriesExist() {
-    try {
-        const platform = process.platform;
-        let cacheDir: string;
-
-        if (platform === 'darwin') {
-            cacheDir = path.join(app.getPath('userData'), '..', 'Caches', 'tockler-updater');
-        } else if (platform === 'win32') {
-            cacheDir = path.join(app.getPath('userData'), 'tockler-updater');
-        } else {
-            cacheDir = path.join(app.getPath('userData'), 'tockler-updater');
-        }
-
-        const pendingDir = path.join(cacheDir, 'pending');
-
-        if (!fs.existsSync(cacheDir)) {
-            logger.debug(`Creating update cache directory: ${cacheDir}`);
-            fs.mkdirSync(cacheDir, { recursive: true });
-        }
-
-        if (!fs.existsSync(pendingDir)) {
-            logger.debug(`Creating pending updates directory: ${pendingDir}`);
-            fs.mkdirSync(pendingDir, { recursive: true });
-        }
-
-        logger.debug(`Update directories ensured at: ${cacheDir}`);
-        return true;
-    } catch (error) {
-        logger.error('Failed to create update directories:', error);
-        return false;
-    }
-}
-
 export default class AppUpdater {
     static dialogIsOpen = false;
 
     static init() {
+        // Disable automatic downloads to prevent race conditions
+        autoUpdater.autoDownload = false;
         autoUpdater.logger = logger;
 
-        // Ensure update directories exist before configuring the updater
-        ensureUpdateDirectoriesExist();
-
-        autoUpdater.on('download-progress', (progressInfo) => {
-            logger.debug(`Downloaded: ${Math.round(progressInfo.percent)}% `);
+        autoUpdater.on('checking-for-update', () => {
+            logger.debug('Checking for update...');
         });
 
         autoUpdater.on('update-available', (info: UpdateInfo) => {
+            logger.debug(`Update ${info.version} available, starting download...`);
+
             showNotification({
                 body: `Downloading Tockler version ${info.version}`,
                 title: 'Update available',
                 silent: true,
             });
+
+            // Only download if no other update is in progress
+            if (!updateInProgress) {
+                updateInProgress = true;
+                autoUpdater.downloadUpdate().catch((err) => {
+                    updateInProgress = false;
+                    logger.error('Error downloading update:', err);
+                });
+            }
+        });
+
+        autoUpdater.on('update-not-available', () => {
+            logger.debug('No update available');
+            updateInProgress = false;
+        });
+
+        autoUpdater.on('download-progress', (progressInfo) => {
+            logger.debug(`Downloaded: ${Math.round(progressInfo.percent)}% `);
         });
 
         autoUpdater.on('update-downloaded', async (info: UpdateInfo) => {
             logger.debug(`Downloaded Tockler version ${info.version}`);
+            updateInProgress = false;
 
             WindowManager.setTrayIconToUpdate();
 
@@ -126,15 +109,13 @@ export default class AppUpdater {
         });
 
         autoUpdater.on('error', (e) => {
-            if (isNetworkError(e)) {
-                logger.debug('Network error:', e);
-            } else {
-                logger.error('AutoUpdater error:', e);
-                showNotification({
-                    title: 'Tockler update error',
-                    body: e ? (e as Error).stack || '' : 'unknown',
-                });
-            }
+            updateInProgress = false;
+
+            logger.error('AutoUpdater error:', e);
+            showNotification({
+                title: 'Tockler update error',
+                body: e ? (e as Error).stack || '' : 'unknown',
+            });
         });
 
         setInterval(() => AppUpdater.checkForNewVersions(), CHECK_INTERVAL_MS);
@@ -151,21 +132,20 @@ export default class AppUpdater {
             return;
         }
 
-        if (isAutoUpdateEnabled && getCurrentState() !== State.Offline) {
-            // Ensure directories exist before checking for updates
-            if (ensureUpdateDirectoriesExist()) {
-                logger.debug('Checking for updates.');
-                autoUpdater.checkForUpdates();
-            } else {
-                logger.error('Failed to ensure update directories exist, skipping update check.');
-            }
+        if (isAutoUpdateEnabled && getCurrentState() !== State.Offline && !updateInProgress) {
+            logger.debug('Checking for updates.');
+            autoUpdater.checkForUpdates().catch((err) => {
+                logger.error('Error checking for updates:', err);
+            });
+        } else if (updateInProgress) {
+            logger.debug('Update already in progress, skipping check.');
         } else {
             logger.debug('Auto update disabled.');
         }
     }
 
     static async checkForUpdatesManual() {
-        logger.debug('Checking for updates');
+        logger.debug('Checking for updates manually');
 
         const canAutoUpdate = isAutoUpdatableBuild();
 
@@ -178,11 +158,10 @@ export default class AppUpdater {
             return;
         }
 
-        // Ensure directories exist before manual update check
-        if (!ensureUpdateDirectoriesExist()) {
+        if (updateInProgress) {
             showNotification({
-                body: `Failed to create update directories. Please try again later.`,
-                title: 'Update error',
+                body: `An update is already in progress.`,
+                title: 'Update in progress',
                 silent: true,
             });
             return;
@@ -191,6 +170,7 @@ export default class AppUpdater {
         showNotification({ body: `Checking for updates...`, silent: true });
 
         try {
+            updateInProgress = true;
             const result: UpdateCheckResult | null = await autoUpdater.checkForUpdates();
 
             if (result?.updateInfo?.version) {
@@ -199,13 +179,16 @@ export default class AppUpdater {
                 const currentVersionString = app.getVersion();
 
                 if (currentVersionString === latestVersion) {
+                    updateInProgress = false;
                     showNotification({
                         body: `Up to date! You have version ${currentVersionString}`,
                         silent: true,
                     });
                 }
+                // If there's an update, the update-available event will handle it
             }
         } catch (e) {
+            updateInProgress = false;
             logger.error('Error checking updates', e);
             showNotification({
                 title: 'Tockler error',
