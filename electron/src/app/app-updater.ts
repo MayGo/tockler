@@ -86,7 +86,6 @@ export default class AppUpdater {
                 silent: true,
             });
 
-            // Only download if no other update is in progress
             if (!updateInProgress) {
                 updateInProgress = true;
                 logger.debug('Downloading update - initiating download process...');
@@ -101,6 +100,8 @@ export default class AppUpdater {
                         updateInProgress = false;
                         logger.error('Error downloading update:', err);
                     });
+            } else {
+                logger.debug('Update already in progress, not starting new download.');
             }
         });
 
@@ -150,13 +151,11 @@ export default class AppUpdater {
             return;
         }
 
-        if (isAutoUpdateEnabled && getCurrentState() !== State.Offline && !updateInProgress) {
+        if (isAutoUpdateEnabled && getCurrentState() !== State.Offline) {
             logger.debug('Checking for updates.');
             autoUpdater.checkForUpdates().catch((err) => {
                 logger.error('Error checking for updates:', err);
             });
-        } else if (updateInProgress) {
-            logger.debug('Update already in progress, skipping check.');
         } else {
             logger.debug('Auto update disabled.');
         }
@@ -188,7 +187,6 @@ export default class AppUpdater {
         showNotification({ body: `Checking for updates...`, silent: true });
 
         try {
-            updateInProgress = true;
             const result: UpdateCheckResult | null = await autoUpdater.checkForUpdates();
 
             if (result?.updateInfo?.version) {
@@ -197,7 +195,6 @@ export default class AppUpdater {
                 const currentVersionString = app.getVersion();
 
                 if (currentVersionString === latestVersion) {
-                    updateInProgress = false;
                     showNotification({
                         body: `Up to date! You have version ${currentVersionString}`,
                         silent: true,
@@ -206,7 +203,6 @@ export default class AppUpdater {
                 // If there's an update, the update-available event will handle it
             }
         } catch (e) {
-            updateInProgress = false;
             logger.error('Error checking updates', e);
             showNotification({
                 title: 'Tockler error',
