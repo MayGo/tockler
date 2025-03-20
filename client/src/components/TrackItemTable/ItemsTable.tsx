@@ -206,7 +206,11 @@ export const ItemsTable = ({
         manualPagination: isSearchTable,
         manualSorting: manualSortBy,
         manualFiltering: isSearchTable,
-        pageCount: isSearchTable ? controlledPageCount || -1 : undefined,
+        pageCount: isSearchTable
+            ? typeof controlledPageCount === 'number' && controlledPageCount > 0
+                ? Math.ceil(controlledPageCount / pagination.pageSize)
+                : 0
+            : undefined,
     });
 
     // Reset row selection when data changes
@@ -233,7 +237,8 @@ export const ItemsTable = ({
         }
     }, [manualSortBy, fetchData, sorting, pagination, isSearchTable]);
 
-    const subTotal = calculateTotal(data);
+    // Calculate subtotal from current page data instead of all data
+    const subTotal = calculateTotal(table.getRowModel().rows.map((row) => row.original));
 
     // Get the selected rows information for buttons/actions
     const tableButtonsProps: TableButtonsProps = {
@@ -321,7 +326,7 @@ export const ItemsTable = ({
             </Table>
             <Box display="flex" justifyContent="end" pt={5}>
                 <Box pr={5} whiteSpace={'nowrap'}>
-                    Total: {subTotal} / <b>{formatDurationInternal(sumTotal)}</b>
+                    {formatDurationInternal(subTotal)} / <b>{formatDurationInternal(sumTotal)}</b>
                 </Box>
             </Box>
 

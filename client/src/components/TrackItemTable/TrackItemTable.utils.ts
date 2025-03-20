@@ -3,14 +3,13 @@ import { differenceInMilliseconds } from 'date-fns';
 import { sumBy } from 'lodash';
 import { matchSorter } from 'match-sorter';
 import { ITrackItem } from '../../@types/ITrackItem';
-import { formatDurationInternal } from '../../utils';
 
 export const calculateTotal = (filteredData: ITrackItem[]) => {
     const totalMs = sumBy(filteredData, (trackItem: ITrackItem) => {
         return differenceInMilliseconds(trackItem.endDate, trackItem.beginDate);
     });
 
-    return formatDurationInternal(totalMs);
+    return totalMs;
 };
 
 // Use matchSorter for fuzzy matching

@@ -78,7 +78,7 @@ const SearchResultsPlain = ({
             pageCount={searchResult.total}
             pageIndex={pageIndex}
             extraColumns={extraColumns}
-            sumTotal={searchResult.total}
+            sumTotal={searchResult.totalDuration || 0}
             manualSortBy
             resetButtonsRef={resetButtonsRef}
             customTableButtons={<SearchDeleteButtons refreshData={refreshData} {...defaultTableButtonsProps} />}

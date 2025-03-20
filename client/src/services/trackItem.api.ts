@@ -36,6 +36,7 @@ export function findFirstTrackItem(): Promise<ITrackItem> {
 export interface SearchResultI {
     data: Array<ITrackItem>;
     total: number;
+    totalDuration?: number;
 }
 
 export function searchFromItems({ from, to, taskName, searchStr, paging, sumTotal = false }): Promise<SearchResultI> {

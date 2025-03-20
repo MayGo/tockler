@@ -158,6 +158,14 @@ export class TrackItemService {
         // Execute query with limit and offset
         const data = await query.limit(paging.limit || DEFAULT_PAGE_SIZE).offset(paging.offset || 0);
 
+        // Get total count of items matching the query
+        const countResult = await db
+            .select({ count: sql`COUNT(*)` })
+            .from(trackItems)
+            .where(and(...conditions));
+
+        const totalCount = parseInt(countResult[0]?.count as string) || 0;
+
         if (sumTotal) {
             // Calculate total duration using sql template literal
             const totalResult = await db
@@ -167,12 +175,16 @@ export class TrackItemService {
                 .from(trackItems)
                 .where(and(...conditions))
                 .orderBy(orderByFn(order));
-            const total = totalResult[0]?.totalMs || 0;
+            const totalDuration = totalResult[0]?.totalMs || 0;
 
-            return { data, total: parseInt(total as string) * 1000 }; // Convert seconds to milliseconds
+            return {
+                data,
+                total: totalCount,
+                totalDuration: parseInt(totalDuration as string) * 1000, // Convert seconds to milliseconds
+            };
         }
 
-        return { data, total: data.length };
+        return { data, total: totalCount };
     }
 
     async findAllDayItems(from: string, to: string, taskName: string) {
