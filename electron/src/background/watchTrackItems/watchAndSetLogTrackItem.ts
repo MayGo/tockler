@@ -51,6 +51,8 @@ async function stopRunningLogTrackItem(endDate: number) {
         return;
     }
 
+    await settingsService.saveRunningLogItemReference(null);
+
     // Insert the item with the updated endDate rather than updating it
     const itemToInsert = {
         ...currentLogItem,
