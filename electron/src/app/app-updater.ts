@@ -3,6 +3,8 @@ import { autoUpdater, UpdateCheckResult, UpdateInfo } from 'electron-updater';
 import { config } from '../utils/config';
 import { showNotification } from './notification';
 
+import * as fs from 'fs';
+import * as path from 'path';
 import { getCurrentState } from '../background/watchStates/watchAndPropagateState';
 import { State } from '../enums/state';
 import { logManager } from '../utils/log-manager';
@@ -56,11 +58,48 @@ function isAutoUpdatableBuild() {
     return false;
 }
 
+// Ensure update directories exist
+function ensureUpdateDirectoriesExist() {
+    try {
+        const platform = process.platform;
+        let cacheDir: string;
+
+        if (platform === 'darwin') {
+            cacheDir = path.join(app.getPath('userData'), '..', 'Caches', 'tockler-updater');
+        } else if (platform === 'win32') {
+            cacheDir = path.join(app.getPath('userData'), 'tockler-updater');
+        } else {
+            cacheDir = path.join(app.getPath('userData'), 'tockler-updater');
+        }
+
+        const pendingDir = path.join(cacheDir, 'pending');
+
+        if (!fs.existsSync(cacheDir)) {
+            logger.debug(`Creating update cache directory: ${cacheDir}`);
+            fs.mkdirSync(cacheDir, { recursive: true });
+        }
+
+        if (!fs.existsSync(pendingDir)) {
+            logger.debug(`Creating pending updates directory: ${pendingDir}`);
+            fs.mkdirSync(pendingDir, { recursive: true });
+        }
+
+        logger.debug(`Update directories ensured at: ${cacheDir}`);
+        return true;
+    } catch (error) {
+        logger.error('Failed to create update directories:', error);
+        return false;
+    }
+}
+
 export default class AppUpdater {
     static dialogIsOpen = false;
 
     static init() {
         autoUpdater.logger = logger;
+
+        // Ensure update directories exist before configuring the updater
+        ensureUpdateDirectoriesExist();
 
         autoUpdater.on('download-progress', (progressInfo) => {
             logger.debug(`Downloaded: ${Math.round(progressInfo.percent)}% `);
@@ -113,8 +152,13 @@ export default class AppUpdater {
         }
 
         if (isAutoUpdateEnabled && getCurrentState() !== State.Offline) {
-            logger.debug('Checking for updates.');
-            autoUpdater.checkForUpdates();
+            // Ensure directories exist before checking for updates
+            if (ensureUpdateDirectoriesExist()) {
+                logger.debug('Checking for updates.');
+                autoUpdater.checkForUpdates();
+            } else {
+                logger.error('Failed to ensure update directories exist, skipping update check.');
+            }
         } else {
             logger.debug('Auto update disabled.');
         }
@@ -129,6 +173,16 @@ export default class AppUpdater {
             showNotification({
                 body: `Auto updates are not available for this build type. Please check for updates manually at https://github.com/MayGo/tockler/releases.`,
                 title: 'Updates unavailable',
+                silent: true,
+            });
+            return;
+        }
+
+        // Ensure directories exist before manual update check
+        if (!ensureUpdateDirectoriesExist()) {
+            showNotification({
+                body: `Failed to create update directories. Please try again later.`,
+                title: 'Update error',
                 silent: true,
             });
             return;
