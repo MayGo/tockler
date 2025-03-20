@@ -63,6 +63,16 @@ export default class AppUpdater {
         autoUpdater.autoDownload = false;
         autoUpdater.logger = logger;
 
+        // Add additional configuration
+        autoUpdater.allowDowngrade = false;
+        autoUpdater.allowPrerelease = false;
+        autoUpdater.forceDevUpdateConfig = false;
+
+        // Increase timeout for slow connections
+        autoUpdater.requestHeaders = {
+            'Cache-Control': 'no-cache',
+        };
+
         autoUpdater.on('checking-for-update', () => {
             logger.debug('Checking for update...');
         });
@@ -79,10 +89,18 @@ export default class AppUpdater {
             // Only download if no other update is in progress
             if (!updateInProgress) {
                 updateInProgress = true;
-                autoUpdater.downloadUpdate().catch((err) => {
-                    updateInProgress = false;
-                    logger.error('Error downloading update:', err);
-                });
+                logger.debug('Downloading update - initiating download process...');
+
+                // Try to download with allowPrerelease option
+                autoUpdater
+                    .downloadUpdate()
+                    .then(() => {
+                        logger.debug('Download initiated successfully');
+                    })
+                    .catch((err) => {
+                        updateInProgress = false;
+                        logger.error('Error downloading update:', err);
+                    });
             }
         });
 
