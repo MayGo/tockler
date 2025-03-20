@@ -50,12 +50,13 @@ export function searchFromItems({ from, to, taskName, searchStr, paging, sumTota
         sumTotal,
     });
 }
-export function exportFromItems({ from, to, taskName, searchStr }): Promise<ITrackItem[]> {
+export function exportFromItems({ from, to, taskName, searchStr, format = 'csv' }): Promise<ITrackItem[]> {
     return ElectronEventEmitter.emit('exportFromItems', {
         from: from.valueOf(),
         to: to.valueOf(),
         taskName,
         searchStr,
+        format,
     });
 }
 

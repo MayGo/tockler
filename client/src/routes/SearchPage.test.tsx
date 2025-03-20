@@ -106,7 +106,7 @@ describe('SearchPage Component', () => {
 
         expect(screen.getByPlaceholderText('Search from all items')).toBeInTheDocument();
         expect(screen.getByText('Search')).toBeInTheDocument();
-        expect(screen.getByText('Export to CSV')).toBeInTheDocument();
+        expect(screen.getByText('Export')).toBeInTheDocument();
     });
 
     it('searches items when form is submitted', async () => {
@@ -138,15 +138,34 @@ describe('SearchPage Component', () => {
         });
     });
 
-    it('exports items to CSV when export button is clicked', async () => {
+    it('exports items to CSV and JSON when export options are clicked', async () => {
         renderSearchPage();
 
-        // Click the export button
-        const exportButton = screen.getByText('Export to CSV');
+        // Click the export button to open the menu
+        const exportButton = screen.getByText('Export');
         fireEvent.click(exportButton);
 
-        // Verify that exportFromItems was called via invokeIpc
+        // Click CSV export option
+        const csvExportOption = screen.getByText('Export to CSV');
+        fireEvent.click(csvExportOption);
+
+        // Verify that exportFromItems was called with CSV format
         await waitFor(() => expect(exportFromItems).toHaveBeenCalledTimes(1));
+        expect(exportFromItems.mock.calls[0][0].format).toBe('csv');
+
+        // Reset mock
+        exportFromItems.mockClear();
+
+        // Click the export button again to open the menu
+        fireEvent.click(exportButton);
+
+        // Click JSON export option
+        const jsonExportOption = screen.getByText('Export to JSON');
+        fireEvent.click(jsonExportOption);
+
+        // Verify that exportFromItems was called with JSON format
+        await waitFor(() => expect(exportFromItems).toHaveBeenCalledTimes(1));
+        expect(exportFromItems.mock.calls[0][0].format).toBe('json');
     });
 
     it('updates the task type when type selector changes', async () => {

@@ -20,6 +20,10 @@ Object.defineProperty(window, 'matchMedia', {
     })),
 });
 
+// Mock scrollTo for menu elements
+// This fixes the "menuRef.current?.scrollTo is not a function" error with React 19 + Chakra UI
+HTMLElement.prototype.scrollTo = HTMLElement.prototype.scrollTo || vi.fn();
+
 // Mock ResizeObserver which is not available in jsdom
 class ResizeObserverMock {
     observe = vi.fn();

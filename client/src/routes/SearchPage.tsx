@@ -5,7 +5,8 @@ import { SearchResults } from '../components/SearchResults/SearchResults';
 import { TrackItemType } from '../enum/TrackItemType';
 import { exportFromItems, searchFromItems, SearchResultI } from '../services/trackItem.api';
 
-import { Box, Button, Flex, HStack, Input } from '@chakra-ui/react';
+import { ChevronDownIcon } from '@chakra-ui/icons';
+import { Box, Button, Flex, HStack, Input, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { useDebouncedCallback } from 'use-debounce';
 import { CardBox } from '../components/CardBox';
 import { Loader } from '../components/Timeline/Loader';
@@ -97,7 +98,7 @@ export function SearchPage() {
         [],
     );
 
-    const exportItems = async (searchStr) => {
+    const exportItems = async (searchStr, format = 'csv') => {
         setIsLoading(true);
         const [from, to] = timerange;
         await exportFromItems({
@@ -105,6 +106,7 @@ export function SearchPage() {
             to,
             taskName,
             searchStr,
+            format,
         });
         setIsLoading(false);
     };
@@ -145,14 +147,15 @@ export function SearchPage() {
                             Search
                         </Button>
 
-                        <Button
-                            variant="ghost"
-                            onClick={() => {
-                                exportItems(searchText);
-                            }}
-                        >
-                            Export to CSV
-                        </Button>
+                        <Menu>
+                            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                                Export
+                            </MenuButton>
+                            <MenuList>
+                                <MenuItem onClick={() => exportItems(searchText, 'csv')}>Export to CSV</MenuItem>
+                                <MenuItem onClick={() => exportItems(searchText, 'json')}>Export to JSON</MenuItem>
+                            </MenuList>
+                        </Menu>
                     </HStack>
                     <Box px={4} ref={resetButtonsRef} />
                     <SearchResults
