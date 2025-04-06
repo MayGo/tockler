@@ -1,6 +1,5 @@
 import { Client } from '@libsql/client';
 import { drizzle } from 'drizzle-orm/libsql';
-import { DateTime } from 'luxon';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { NewTrackItem, trackItems } from '../drizzle/schema';
@@ -26,7 +25,6 @@ async function cleanupTestDb() {
 }
 
 const NOW = getTimestamp('2024-01-01T12:00:00');
-const NOW_DT = DateTime.fromISO('2024-01-01T12:00:00.000Z', { zone: 'UTC' });
 
 describe('getCurrentSessionDuration', () => {
     const minBreakTime = 5; // 5 minutes break
