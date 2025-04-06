@@ -1,24 +1,24 @@
-import { useForm } from 'react-hook-form';
-import { useContext, useEffect } from 'react';
 import {
-    FormErrorMessage,
-    FormLabel,
-    FormControl,
-    Input,
-    Divider,
     Box,
     Button,
-    Text,
-    Switch,
+    Divider,
+    FormControl,
+    FormErrorMessage,
     FormHelperText,
+    FormLabel,
+    Input,
+    Switch,
+    Text,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useContext, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { useDebouncedCallback } from 'use-debounce';
 import * as yup from 'yup';
+import { RootContext } from '../../RootContext';
+import { notifyUser } from '../../services/settings.api';
 import { CardBox } from '../CardBox';
 import { WorkSettingsI } from './WorkForm.util';
-import { RootContext } from '../../RootContext';
-import { useDebouncedCallback } from 'use-debounce';
-import { notifyUser } from '../../services/settings.api';
 
 const schema = yup
     .object({

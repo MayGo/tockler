@@ -4,13 +4,18 @@ import { ShortTimeInterval } from '../components/TrayList/ShortTimeInterval';
 import { Logger } from '../logger';
 import { ElectronEventEmitter } from '../services/ElectronEventEmitter';
 
+interface NotifyUserPayload {
+    durationMs: number;
+}
+
 const NotificationAppPageTemp = () => {
-    const [currentSession, setCurrentSession] = useState();
+    const [currentSession, setCurrentSession] = useState(0);
 
     useEffect(() => {
         const notifyUserReceiver = (payload) => {
-            Logger.debug('notifyUserReceiver', payload);
-            setCurrentSession(payload);
+            const data = payload as NotifyUserPayload;
+            Logger.info('Notification received in client:', payload, data.durationMs);
+            setCurrentSession(data.durationMs || 0);
         };
 
         ElectronEventEmitter.on('notifyUser', notifyUserReceiver);

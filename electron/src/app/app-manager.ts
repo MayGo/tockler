@@ -4,7 +4,7 @@ import { config } from '../utils/config';
 
 import { connectAndSync, db } from '../drizzle/db';
 import { logManager } from '../utils/log-manager';
-import WindowManager, { sendToMainWindow, sendToNotificationWindow, sendToTrayWindow } from './window-manager';
+import WindowManager, { sendToMainWindow, sendToTrayWindow } from './window-manager';
 
 let logger = logManager.getLogger('AppManager');
 
@@ -104,6 +104,6 @@ export default class AppManager {
 
         sendToMainWindow('activeThemeChanged', theme);
         sendToTrayWindow('activeThemeChanged', theme);
-        sendToNotificationWindow('activeThemeChanged', theme);
+        //   sendToNotificationWindow('activeThemeChanged', theme);
     }
 }

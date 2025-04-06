@@ -90,9 +90,9 @@ export async function updateByName(name, jsonData) {
     return ElectronEventEmitter.emit('updateByName', { name, jsonData: JSON.stringify(jsonData) });
 }
 
-export async function notifyUser(message) {
-    Logger.debug('notifyUser', message);
-    return ElectronEventEmitter.emit('notifyUser', { message });
+export async function notifyUser(durationMs: number) {
+    Logger.debug('notifyUser', durationMs);
+    return ElectronEventEmitter.emit('notifyUser', { durationMs });
 }
 
 export function getRunningLogItem() {

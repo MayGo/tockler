@@ -44,7 +44,7 @@ export const sendToTrayWindow = (key: string, message = '') => {
     }
 };
 
-export const sendToNotificationWindow = async (key: string, message = '') => {
+export const sendToNotificationWindow = async (key: string, durationMs: number) => {
     try {
         if (WindowManager.notificationWindow && WindowManager.notificationWindow.webContents) {
             // Save running log when receiving new log items (closing it)
@@ -68,8 +68,8 @@ export const sendToNotificationWindow = async (key: string, message = '') => {
                 }
             }, notificationDuration * 1000);
 
-            logger.debug('Send to notification window:', key, message);
-            WindowManager.notificationWindow.webContents.send(key, message);
+            logger.debug('Send to notification window:', key, durationMs);
+            WindowManager.notificationWindow.webContents.send(key, { durationMs });
         } else {
             logger.error('No notification window or no webcontents.');
         }
@@ -156,6 +156,7 @@ export default class WindowManager {
                 contextIsolation: true,
                 preload: preloadScript,
                 sandbox: false,
+                backgroundThrottling: true,
             },
             title: 'Tockler',
             icon: config.iconWindow,
@@ -412,7 +413,7 @@ export default class WindowManager {
             index: pageUrl + '#/trayApp',
             tray: this.tray,
             //  preloadWindow: false, in MAS build shows white tray only
-            preloadWindow: true,
+            preloadWindow: false,
             showDockIcon: false,
 
             browserWindow: {
@@ -421,6 +422,7 @@ export default class WindowManager {
                     contextIsolation: true,
                     preload: preloadScript,
                     sandbox: false,
+                    backgroundThrottling: true,
                 },
                 width: 500,
                 height: 600,
@@ -505,6 +507,7 @@ export default class WindowManager {
             focusable: false,
             alwaysOnTop: true,
             hasShadow: false,
+
             //transparent: true,
             frame: false,
             show: false,
@@ -516,6 +519,7 @@ export default class WindowManager {
                 contextIsolation: true,
                 preload: preloadScript,
                 sandbox: false,
+                backgroundThrottling: true,
             },
             width: 80,
             height: 30,
