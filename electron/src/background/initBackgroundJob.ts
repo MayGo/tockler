@@ -1,6 +1,6 @@
 import { settingsService } from '../drizzle/queries/settings-service';
 import { logManager } from '../utils/log-manager';
-import { watchForBreakNotification, watchForBreakNotificationCleanup } from './watchForBreakNotification';
+import { watchForBreakNotification, watchForBreakNotificationCleanup } from './watchBreak/watchForBreakNotification';
 import { watchAndPropagateState, watchAndPropagateStateCleanup } from './watchStates/watchAndPropagateState';
 import { watchForIdleState, watchForIdleStateCleanup } from './watchStates/watchForIdleState';
 import { watchForPowerState, watchForPowerStateCleanup } from './watchStates/watchForPowerState';

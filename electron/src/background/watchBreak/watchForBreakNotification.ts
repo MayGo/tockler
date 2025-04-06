@@ -8,11 +8,12 @@ import { getCurrentSessionDuration } from './watchForBreakNotification.utils';
 
 const MINUTE = 60 * 1000;
 
-const CHECK_INTERVAL_MS = 20 * 1000;
+const CHECK_INTERVAL_MS = 60 * 1000;
 
 let notificationInterval: NodeJS.Timeout | null = null;
 let isMonitoringEnabled = false;
 let currentState: State = State.Online;
+let lastNotificationTime = 0;
 
 const logger = logManager.getLogger('watchForBreakNotification');
 
@@ -44,13 +45,22 @@ async function startInterval() {
 
             const readableDuration = Duration.fromObject({ milliseconds: currentSession }).toFormat('hh:mm:ss');
 
-            logger.debug('currentSession:', readableDuration, currentSession);
+            logger.debug('currentSession2:', readableDuration, currentSession);
 
             const MAX_TIMER = currentSettings.sessionLength * MINUTE;
+            const now = Date.now();
+            const timeSinceLastNotification = now - lastNotificationTime;
+            const reNotifyIntervalMs = currentSettings.reNotifyInterval * MINUTE;
 
-            if (currentSession > MAX_TIMER) {
+            logger.debug('timeSinceLastNotification:', timeSinceLastNotification, reNotifyIntervalMs);
+
+            if (
+                currentSession > MAX_TIMER &&
+                (timeSinceLastNotification >= reNotifyIntervalMs || lastNotificationTime === 0)
+            ) {
                 logger.debug('Sending notification');
                 sendToNotificationWindow('notifyUser', currentSession);
+                lastNotificationTime = now;
             }
         } catch (error) {
             logger.error('Error in session monitoring interval:', error);
@@ -65,6 +75,7 @@ export function watchForBreakNotificationCleanup() {
         clearInterval(notificationInterval);
         notificationInterval = null;
     }
+    lastNotificationTime = 0;
 }
 
 export async function watchForBreakNotification() {

@@ -156,6 +156,7 @@ export default class WindowManager {
                 contextIsolation: true,
                 preload: preloadScript,
                 sandbox: false,
+                backgroundThrottling: true,
             },
             title: 'Tockler',
             icon: config.iconWindow,
@@ -412,7 +413,7 @@ export default class WindowManager {
             index: pageUrl + '#/trayApp',
             tray: this.tray,
             //  preloadWindow: false, in MAS build shows white tray only
-            preloadWindow: true,
+            preloadWindow: false,
             showDockIcon: false,
 
             browserWindow: {
@@ -421,6 +422,7 @@ export default class WindowManager {
                     contextIsolation: true,
                     preload: preloadScript,
                     sandbox: false,
+                    backgroundThrottling: true,
                 },
                 width: 500,
                 height: 600,
@@ -505,6 +507,7 @@ export default class WindowManager {
             focusable: false,
             alwaysOnTop: true,
             hasShadow: false,
+
             //transparent: true,
             frame: false,
             show: false,
@@ -516,6 +519,7 @@ export default class WindowManager {
                 contextIsolation: true,
                 preload: preloadScript,
                 sandbox: false,
+                backgroundThrottling: true,
             },
             width: 80,
             height: 30,
