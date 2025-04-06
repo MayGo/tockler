@@ -11,6 +11,7 @@ type AppEvents = {
     'system-is-resuming': () => void;
     'state-changed': (state: State) => void;
     'active-window-changed': (activeWindow: NormalizedActiveWindow) => void;
+    'smallNotificationsEnabled-changed': (smallNotificationsEnabled: boolean) => void;
 };
 
 export const appEmitter = new EventEmitter<AppEvents>();

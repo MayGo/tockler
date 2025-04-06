@@ -2,6 +2,7 @@ import { stringify } from 'csv-stringify/sync';
 import { and, asc, desc, eq, gte, inArray, like, lte, sql } from 'drizzle-orm';
 import { dialog } from 'electron';
 import { writeFileSync } from 'fs';
+import { DateTime } from 'luxon';
 import moment from 'moment';
 import { getOngoingAppTrackItem } from '../../background/watchTrackItems/watchAndSetAppTrackItem';
 import { getOngoingLogTrackItem } from '../../background/watchTrackItems/watchAndSetLogTrackItem';
@@ -230,6 +231,7 @@ export class TrackItemService {
 
         return data;
     }
+
     async findFirstChunkLogItems() {
         const items = await db
             .select({
@@ -310,6 +312,23 @@ export class TrackItemService {
         await db.delete(trackItems).where(inArray(trackItems.id, ids));
 
         return ids;
+    }
+
+    async findAllFromLastHours(hours: number) {
+        const now = DateTime.now();
+        const items = await db
+            .select()
+            .from(trackItems)
+            .where(
+                and(
+                    eq(trackItems.taskName, TrackItemType.StatusTrackItem),
+                    gte(trackItems.endDate, now.minus({ hours }).toMillis()),
+                ),
+            )
+            .orderBy(asc(trackItems.beginDate));
+        this.logger.debug('findAllFromLastHours', hours, items);
+
+        return items;
     }
 }
 

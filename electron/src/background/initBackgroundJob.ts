@@ -1,5 +1,6 @@
 import { settingsService } from '../drizzle/queries/settings-service';
 import { logManager } from '../utils/log-manager';
+import { watchForBreakNotification, watchForBreakNotificationCleanup } from './watchForBreakNotification';
 import { watchAndPropagateState, watchAndPropagateStateCleanup } from './watchStates/watchAndPropagateState';
 import { watchForIdleState, watchForIdleStateCleanup } from './watchStates/watchForIdleState';
 import { watchForPowerState, watchForPowerStateCleanup } from './watchStates/watchForPowerState';
@@ -9,6 +10,7 @@ import {
     watchAndSetStatusTrackItem,
     watchAndSetStatusTrackItemCleanup,
 } from './watchTrackItems/watchAndSetStatusTrackItem';
+
 let logger = logManager.getLogger('BackgroundJob');
 
 export async function initBackgroundJob() {
@@ -25,6 +27,8 @@ export async function initBackgroundJob() {
     watchAndSetStatusTrackItem();
     watchAndSetAppTrackItem(backgroundJobInterval);
     watchAndSetLogTrackItem();
+
+    watchForBreakNotification();
 }
 
 export async function cleanupBackgroundJob() {
@@ -37,4 +41,6 @@ export async function cleanupBackgroundJob() {
     await watchAndSetStatusTrackItemCleanup();
     await watchAndSetAppTrackItemCleanup();
     await watchAndSetLogTrackItemCleanup();
+
+    watchForBreakNotificationCleanup();
 }

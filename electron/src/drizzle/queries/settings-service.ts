@@ -1,4 +1,5 @@
 import { eq } from 'drizzle-orm';
+import { appEmitter } from '../../utils/appEmitter';
 import { logManager } from '../../utils/log-manager';
 import { db } from '../db';
 import { NewTrackItem, Setting, settings } from '../schema';
@@ -62,6 +63,18 @@ export class SettingsService {
                     .returning()) || [null];
 
                 delete this.cache[name];
+
+                if (name === 'WORK_SETTINGS') {
+                    const workSettings = this.parseWorkSettings(item.jsonData || '{}');
+                    if (workSettings.smallNotificationsEnabled !== jsonData.smallNotificationsEnabled) {
+                        this.logger.debug(
+                            'Emitting smallNotificationsEnabled-changed',
+                            jsonData.smallNotificationsEnabled,
+                        );
+                        appEmitter.emit('smallNotificationsEnabled-changed', jsonData.smallNotificationsEnabled);
+                    }
+                }
+
                 return updated!;
             } else {
                 this.logger.error(`No item with ${name} found to update.`);
@@ -73,18 +86,22 @@ export class SettingsService {
         }
     }
 
+    parseWorkSettings(jsonData: string) {
+        try {
+            return JSON.parse(jsonData);
+        } catch (e) {
+            this.logger.error('Error parsing work settings:', e);
+            return defaultWorkSettings;
+        }
+    }
+
     async fetchWorkSettings() {
         let item = await this.findByName('WORK_SETTINGS');
         if (!item || !item.jsonData) {
             return defaultWorkSettings;
         }
 
-        try {
-            return JSON.parse(item.jsonData);
-        } catch (e) {
-            this.logger.error('Error parsing work settings:', e);
-            return defaultWorkSettings;
-        }
+        return this.parseWorkSettings(item.jsonData);
     }
 
     async fetchDataSettings() {

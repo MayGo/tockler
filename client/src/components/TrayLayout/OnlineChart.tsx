@@ -3,10 +3,8 @@ import { DateTime } from 'luxon';
 import { useContext, useEffect, useState } from 'react';
 import { VictoryContainer, VictoryPie, VictoryStyleInterface } from 'victory';
 import { ITrackItem } from '../../@types/ITrackItem';
-import { useInterval } from '../../hooks/intervalHook';
 import { RootContext } from '../../RootContext';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
-import { notifyUser } from '../../services/settings.api';
 import { colorProp } from '../charts.utils';
 import { getOnlineTime } from '../PieCharts/MetricTiles.utils';
 import { ShortTimeInterval } from '../TrayList/ShortTimeInterval';
@@ -24,42 +22,17 @@ const MINUTES = 60 * 1000;
 
 export const OnlineChart = ({ items }: { items: ITrackItem[] }) => {
     const { workSettings } = useContext(RootContext);
-
     const { chartTheme } = useChartThemeState();
     const [mode, setMode] = useState(CLOCK_MODE.HOURS_12);
-
     const [currentSession, setCurrentSession] = useState<number>(0);
-    const [userHasBeenNotified, setUserHasBeenNotified] = useState(false);
     const [lastSession, setLastSession] = useState<number | undefined>();
     const onlineSinceColor = useColorModeValue('var(--chakra-colors-blue-500)', 'var(--chakra-colors-blue-500)');
     const overtimeColor = 'var(--chakra-colors-red-500)';
 
-    const { sessionLength, minBreakTime, reNotifyInterval, smallNotificationsEnabled } = workSettings;
+    const { sessionLength, minBreakTime } = workSettings;
 
     const MAX_TIMER = sessionLength * MINUTES;
     const sessionIsOvertime = currentSession > MAX_TIMER;
-
-    useEffect(() => {
-        if (sessionIsOvertime && smallNotificationsEnabled) {
-            if (!userHasBeenNotified) {
-                console.warn('Notifying user to take a break');
-                notifyUser(currentSession);
-                setUserHasBeenNotified(true);
-            }
-        } else {
-            setUserHasBeenNotified(false);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [sessionIsOvertime, currentSession, smallNotificationsEnabled]);
-
-    useInterval(
-        () => {
-            console.info('Calling interval');
-
-            notifyUser(currentSession);
-        },
-        sessionIsOvertime && reNotifyInterval > 0 && smallNotificationsEnabled ? reNotifyInterval * MINUTES : null,
-    );
 
     useEffect(() => {
         const grouped = getTotalOnlineDuration(DateTime.now(), items, minBreakTime);
@@ -71,8 +44,7 @@ export const OnlineChart = ({ items }: { items: ITrackItem[] }) => {
         } else {
             setLastSession(undefined);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [items]);
+    }, [items, minBreakTime]);
 
     const width = 300;
 

@@ -42,8 +42,8 @@ const settingsActions = {
     saveThemeAndNotify: async (payload: { theme: string }) => {
         AppManager.saveThemeAndNotify(payload.theme);
     },
-    notifyUser: async (payload: { message: string }) => {
-        sendToNotificationWindow('notifyUser', payload.message);
+    notifyUser: async (payload: { durationMs: number }) => {
+        sendToNotificationWindow('notifyUser', payload.durationMs);
     },
     getMachineId: async () => {
         return machineId(true);

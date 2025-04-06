@@ -44,7 +44,7 @@ export const sendToTrayWindow = (key: string, message = '') => {
     }
 };
 
-export const sendToNotificationWindow = async (key: string, message = '') => {
+export const sendToNotificationWindow = async (key: string, durationMs: number) => {
     try {
         if (WindowManager.notificationWindow && WindowManager.notificationWindow.webContents) {
             // Save running log when receiving new log items (closing it)
@@ -68,8 +68,8 @@ export const sendToNotificationWindow = async (key: string, message = '') => {
                 }
             }, notificationDuration * 1000);
 
-            logger.debug('Send to notification window:', key, message);
-            WindowManager.notificationWindow.webContents.send(key, message);
+            logger.debug('Send to notification window:', key, durationMs);
+            WindowManager.notificationWindow.webContents.send(key, { durationMs });
         } else {
             logger.error('No notification window or no webcontents.');
         }
