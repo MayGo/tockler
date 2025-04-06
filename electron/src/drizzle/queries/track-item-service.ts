@@ -316,17 +316,24 @@ export class TrackItemService {
 
     async findAllFromLastHours(hours: number) {
         const now = DateTime.now();
+
         const items = await db
             .select()
             .from(trackItems)
             .where(
                 and(
+                    eq(trackItems.app, State.Online),
                     eq(trackItems.taskName, TrackItemType.StatusTrackItem),
                     gte(trackItems.endDate, now.minus({ hours }).toMillis()),
                 ),
             )
             .orderBy(asc(trackItems.beginDate));
-        this.logger.debug('findAllFromLastHours', hours, items);
+        // this.logger.debug('findAllFromLastHours', hours, items);
+
+        const ongoingStatusItem = await getOngoingStatusTrackItem();
+        if (ongoingStatusItem) {
+            items.push(ongoingStatusItem);
+        }
 
         return items;
     }

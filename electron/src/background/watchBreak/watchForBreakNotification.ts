@@ -1,6 +1,7 @@
 import { Duration } from 'luxon';
 import { sendToNotificationWindow } from '../app/window-manager';
 import { settingsService } from '../drizzle/queries/settings-service';
+import { State } from '../enums/state';
 import { appEmitter } from '../utils/appEmitter';
 import { logManager } from '../utils/log-manager';
 import { getCurrentSessionDuration } from './watchForBreakNotification.utils';
@@ -11,12 +12,14 @@ const CHECK_INTERVAL_MS = 20 * 1000;
 
 let notificationInterval: NodeJS.Timeout | null = null;
 let isMonitoringEnabled = false;
+let currentState: State = State.Online;
 
-const logger = logManager.getLogger('SessionMonitor');
+const logger = logManager.getLogger('watchForBreakNotification');
 
 async function startInterval() {
     // Clear any existing interval
     if (notificationInterval) {
+        logger.debug('Clearing existing interval');
         clearInterval(notificationInterval);
     }
 
@@ -32,7 +35,7 @@ async function startInterval() {
         try {
             // Recheck the setting on each interval in case it changed
             const currentSettings = await settingsService.fetchWorkSettings();
-            if (!currentSettings.smallNotificationsEnabled || !isMonitoringEnabled) {
+            if (!currentSettings.smallNotificationsEnabled || !isMonitoringEnabled || currentState !== State.Online) {
                 watchForBreakNotificationCleanup();
                 return;
             }
@@ -66,6 +69,17 @@ export function watchForBreakNotificationCleanup() {
 
 export async function watchForBreakNotification() {
     logger.debug('Initializing session monitoring');
+
+    appEmitter.on('state-changed', async (state: State) => {
+        logger.debug('State changed for break notification:', state);
+        currentState = state;
+
+        if (state === State.Online) {
+            await startInterval();
+        } else {
+            watchForBreakNotificationCleanup();
+        }
+    });
 
     appEmitter.on('smallNotificationsEnabled-changed', async (smallNotificationsEnabled: boolean) => {
         if (smallNotificationsEnabled && !isMonitoringEnabled) {

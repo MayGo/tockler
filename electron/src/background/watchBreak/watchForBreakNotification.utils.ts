@@ -1,6 +1,6 @@
 import { first, orderBy } from 'lodash';
 import { DateTime } from 'luxon';
-import { trackItemService } from '../drizzle/queries/track-item-service';
+import { trackItemService } from '../../drizzle/queries/track-item-service';
 
 const MINUTE = 60 * 1000;
 
