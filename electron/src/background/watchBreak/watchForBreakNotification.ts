@@ -1,9 +1,9 @@
 import { Duration } from 'luxon';
-import { sendToNotificationWindow } from '../app/window-manager';
-import { settingsService } from '../drizzle/queries/settings-service';
-import { State } from '../enums/state';
-import { appEmitter } from '../utils/appEmitter';
-import { logManager } from '../utils/log-manager';
+import { sendToNotificationWindow } from '../../app/window-manager';
+import { settingsService } from '../../drizzle/queries/settings-service';
+import { State } from '../../enums/state';
+import { appEmitter } from '../../utils/appEmitter';
+import { logManager } from '../../utils/log-manager';
 import { getCurrentSessionDuration } from './watchForBreakNotification.utils';
 
 const MINUTE = 60 * 1000;
