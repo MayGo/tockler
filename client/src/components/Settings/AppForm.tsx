@@ -4,11 +4,13 @@ import { ChangeEvent } from 'react';
 import {
     getIsAutoUpdateEnabled,
     getIsLoggingEnabled,
+    getMacAutoHideMenuBarEnabled,
     getNativeThemeChange,
     getOpenAtLogin,
     getUsePurpleTrayIcon,
     saveIsAutoUpdateEnabled,
     saveIsLoggingEnabled,
+    saveMacAutoHideMenuBarEnabled,
     saveNativeThemeChange,
     saveOpenAtLogin,
     saveUsePurpleTrayIcon,
@@ -22,7 +24,7 @@ export const AppForm = () => {
     const isAutoUpdateEnabled = getIsAutoUpdateEnabled();
     const isLoggingEnabled = getIsLoggingEnabled();
     const usePurpleTrayIcon = getUsePurpleTrayIcon();
-
+    const macAutoHideMenuBarEnabled = getMacAutoHideMenuBarEnabled();
     const onChangeNativeThemeChange = (event: ChangeEvent<HTMLInputElement>) => {
         saveNativeThemeChange(event.target.checked);
     };
@@ -38,6 +40,9 @@ export const AppForm = () => {
     };
     const onChangeUsePurpleTrayIcon = (event: ChangeEvent<HTMLInputElement>) => {
         saveUsePurpleTrayIcon(event.target.checked);
+    };
+    const onChangeMacAutoHideMenuBarEnabled = (event: ChangeEvent<HTMLInputElement>) => {
+        saveMacAutoHideMenuBarEnabled(event.target.checked);
     };
 
     const appName = import.meta.env.VITE_NAME;
@@ -100,9 +105,27 @@ export const AppForm = () => {
                 </FormLabel>
                 <Switch id="enable-logging" defaultChecked={isLoggingEnabled} onChange={onChangeLogging} size="lg" />
             </FormControl>
-            <Text fontSize="xs" color="gray.500" pt={2}>
+            <Text fontSize="xs" color="gray.500" pt={1}>
                 Log path: {logPath}
             </Text>
+            {window.electronBridge.platform === 'darwin' && (
+                <>
+                    <FormControl display="flex" alignItems="center" py={2}>
+                        <FormLabel htmlFor="macAutoHideMenuBarEnabled" mb="0" flex="1">
+                            Enable tray positioning for auto-hide menu bar
+                        </FormLabel>
+                        <Switch
+                            id="macAutoHideMenuBarEnabled"
+                            defaultChecked={macAutoHideMenuBarEnabled}
+                            onChange={onChangeMacAutoHideMenuBarEnabled}
+                            size="lg"
+                        />
+                    </FormControl>
+                    <Text fontSize="xs" color="gray.500" pt={1}>
+                        Enable this if you use "Automatically hide and show the menu bar" in macOS settings
+                    </Text>
+                </>
+            )}
         </CardBox>
     );
 };

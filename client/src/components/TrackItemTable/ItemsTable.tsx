@@ -26,10 +26,10 @@ import { DefaultColumnFilter } from './DefaultColumnFilter';
 import { IndeterminateCheckbox } from './IndeterminateCheckbox';
 import { OverflowTextCell } from './OverflowText';
 import { SelectColumnFilter } from './SelectColumnFilter';
-import { calculateTotal, fuzzyTextFilterFn, TableButtonsProps } from './TrackItemTable.utils';
+import { fuzzyTextFilterFn, TableButtonsProps } from './TrackItemTable.utils';
 import { TrackItemTablePager } from './TrackItemTablePager';
 
-import { format } from 'date-fns';
+import { differenceInMilliseconds, format } from 'date-fns';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { TIME_FORMAT } from '../../constants';
 
@@ -237,8 +237,11 @@ export const ItemsTable = ({
         }
     }, [manualSortBy, fetchData, sorting, pagination, isSearchTable]);
 
-    // Calculate subtotal from current page data instead of all data
-    const subTotal = calculateTotal(table.getRowModel().rows.map((row) => row.original));
+    // Sum of all table data
+    const subTotal = table
+        .getFilteredRowModel()
+        .rows.map((row) => row.original)
+        .reduce((total, item) => total + differenceInMilliseconds(item.endDate, item.beginDate), 0);
 
     // Get the selected rows information for buttons/actions
     const tableButtonsProps: TableButtonsProps = {

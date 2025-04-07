@@ -151,7 +151,7 @@ export default class AppUpdater {
             return;
         }
 
-        if (isAutoUpdateEnabled && getCurrentState() !== State.Offline) {
+        if (isAutoUpdateEnabled && getCurrentState() === State.Online) {
             logger.debug('Checking for updates.');
             autoUpdater.checkForUpdates().catch((err) => {
                 logger.error('Error checking for updates:', err);
