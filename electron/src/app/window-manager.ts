@@ -399,9 +399,14 @@ export default class WindowManager {
         }
     }
 
-    static positionTrayWindow() {
+    static async positionTrayWindow() {
         // Improve tray window positioning for macOS if "auto-hide" is enabled
         if (process.platform === 'darwin') {
+            // Get work settings to check if auto-hide menu bar positioning is enabled
+            if (!config.persisted.get('macAutoHideMenuBarEnabled')) {
+                return;
+            }
+
             // One-time immediate positioning to prevent initial flicker
             const trayBounds = this.tray?.getBounds();
             if (trayBounds && this.menubar.window) {

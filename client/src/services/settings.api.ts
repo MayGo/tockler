@@ -14,6 +14,7 @@ const IS_AUTO_UPDATE_ENABLED = 'isAutoUpdateEnabled';
 const NATIVE_THEME_CONFIG_CHANGED = 'nativeThemeChanged';
 const USE_PURPLE_TRAY_ICON = 'usePurpleTrayIcon';
 const USE_PURPLE_TRAY_ICON_CHANGED = 'usePurpleTrayIconChanged';
+const MAC_AUTO_HIDE_MENU_BAR_ENABLED = 'macAutoHideMenuBarEnabled';
 
 export function getNativeThemeChange() {
     return configGet(IS_NATIVE_THEME_ENABLED) as boolean;
@@ -69,6 +70,13 @@ export function getUsePurpleTrayIcon() {
     return configGet(USE_PURPLE_TRAY_ICON) as boolean;
 }
 
+export function getMacAutoHideMenuBarEnabled() {
+    return configGet(MAC_AUTO_HIDE_MENU_BAR_ENABLED) as boolean;
+}
+
+export function saveMacAutoHideMenuBarEnabled(enabled) {
+    configSet(MAC_AUTO_HIDE_MENU_BAR_ENABLED, enabled);
+}
 export function saveUsePurpleTrayIcon(enabled) {
     configSet(USE_PURPLE_TRAY_ICON, enabled);
     ElectronEventEmitter.send(USE_PURPLE_TRAY_ICON_CHANGED);
