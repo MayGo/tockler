@@ -8,7 +8,8 @@ import { appEmitter } from '../../utils/appEmitter';
 import { logManager } from '../../utils/log-manager';
 import { startActiveWindowWatcher } from './watchForActiveWindow';
 import { NormalizedActiveWindow } from './watchForActiveWindow.utils';
-const logger = logManager.getLogger('watchAndSetStatusTrackItem');
+
+const logger = logManager.getLogger('watchAndSetAppTrackItem');
 
 let currentAppItem: NewTrackItem | null = null;
 
@@ -43,6 +44,7 @@ export async function getOngoingAppTrackItem() {
 }
 
 const saveOngoingTrackItem = async () => {
+    logger.debug('Save ongoing track item');
     if (currentAppItem) {
         currentAppItem.endDate = Date.now();
         await insertTrackItem(currentAppItem);
@@ -69,6 +71,7 @@ async function removeActiveWindowWatch() {
 let removeActiveWindowWatcher: () => void;
 
 export function watchAndSetAppTrackItem(backgroundJobInterval: number) {
+    logger.debug('Watch and set app track item.........');
     addActiveWindowWatch();
 
     removeActiveWindowWatcher = startActiveWindowWatcher(backgroundJobInterval);
@@ -77,13 +80,14 @@ export function watchAndSetAppTrackItem(backgroundJobInterval: number) {
         logger.debug('State changed: active-window-listener', state);
 
         if (state === State.Online) {
+            logger.debug('Start active window watcher');
             if (removeActiveWindowWatcher) {
                 logger.warn('ERROR:Stopping previous active window watcher. Should not happen.');
                 removeActiveWindowWatcher(); // stop previous watcher, it should be stopped already, but just in case
             }
             removeActiveWindowWatcher = startActiveWindowWatcher(backgroundJobInterval);
         } else {
-            removeActiveWindowWatcher();
+            removeActiveWindowWatcher?.();
             await saveOngoingTrackItem();
         }
     });

@@ -8,6 +8,7 @@ import { COLORS } from './color.testUtils';
 import { addColorToApp, setupTestDb } from './db.testUtils';
 import { selectAllAppItems } from './query.testUtils';
 import { getTimestamp } from './time.testUtils';
+import { visualizeTrackItems } from './visualize.testUtils';
 
 // Create mocks
 vi.mock('electron');
@@ -203,5 +204,64 @@ describe('watchAndSetLogTrackItem', () => {
             endDate: END_TIME,
             color: COLORS.BLUE,
         });
+    });
+
+    it('ends app tracking when state changes to IDLE/OFFLINE', async () => {
+        const { appEmitter } = await import('../utils/appEmitter');
+        const { watchAndSetAppTrackItem } = await import('../background/watchTrackItems/watchAndSetAppTrackItem');
+        const { State } = await import('../enums/state');
+
+        const backgroundJobIntervalSeconds = 1;
+
+        await watchAndSetAppTrackItem(backgroundJobIntervalSeconds);
+
+        const testApp: NormalizedActiveWindow = {
+            app: 'TestApp',
+            title: 'Test Title',
+        };
+
+        await addColorToApp(testApp.app ?? '', COLORS.GREEN);
+
+        // Emit active window changed event
+        appEmitter.emit('active-window-changed', testApp);
+
+        // This saves TestApp to db, and clears the ongoing item
+        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 1000);
+        appEmitter.emit('state-changed', State.Idle);
+
+        // Verify item was saved with correct end date
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
+        let items = await selectAllAppItems(db);
+        expect(items[0]).toStrictEqual({
+            ...emptyData,
+            ...testApp,
+            id: 1,
+            beginDate: NOW,
+            endDate: NOW + 1000,
+            color: COLORS.GREEN,
+        });
+
+        // Change back to ONLINE and emit new window
+        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 2000);
+        appEmitter.emit('state-changed', State.Online);
+        appEmitter.emit('active-window-changed', testApp);
+
+        // Change to IDLE again, that means we are
+        vi.spyOn(Date, 'now').mockImplementation(() => NOW + 3000);
+        appEmitter.emit('state-changed', State.Idle);
+
+        // Verify second item was saved
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(2));
+        items = await selectAllAppItems(db);
+        expect(items[1]).toStrictEqual({
+            ...emptyData,
+            ...testApp,
+            id: 2,
+            beginDate: NOW + 2000,
+            endDate: NOW + 3000,
+            color: COLORS.GREEN,
+        });
+
+        visualizeTrackItems(items, NOW);
     });
 });

@@ -8,7 +8,7 @@ import { TrackItemType } from '../../enums/track-item-type';
 import { appEmitter } from '../../utils/appEmitter';
 import { logManager } from '../../utils/log-manager';
 
-const logger = logManager.getLogger('watchAndSetStatusTrackItem');
+const logger = logManager.getLogger('watchAndSetLogTrackItemCleanup');
 
 let currentLogItem: NewTrackItem | null = null;
 
@@ -18,7 +18,7 @@ const offlineStates = [State.Idle, State.Offline];
 
 async function cutLogTrackItem(state: State) {
     const now = Date.now();
-    console.warn(`State changed to ${state}=>${now}`);
+    logger.warn(`State changed to ${state}=>${now}`);
 
     if (!currentLogItem) {
         logger.debug('No log item to cut');

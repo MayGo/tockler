@@ -35,6 +35,11 @@ export function watchForIdleState(idleAfterSeconds: number) {
     appEmitter.on('system-is-resuming', async () => {
         logger.debug('State changed: system-is-resuming');
 
+        if (removeIdleStateWatcher) {
+            logger.warn('ERROR:Stopping previous idle state watcher. Should not happen.');
+            removeIdleStateWatcher(); // stop previous watcher, it should be stopped already, but just in case
+        }
+
         removeIdleStateWatcher = startIdleStateWatcher(idleAfterSeconds);
     });
 

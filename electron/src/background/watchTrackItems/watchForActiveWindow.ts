@@ -46,6 +46,7 @@ function watchForActiveWindowRemove() {
 }
 
 export function startActiveWindowWatcher(backgroundJobInterval: number) {
+    logger.warn('Start active window watcher');
     watchForActiveWindow(backgroundJobInterval);
     return watchForActiveWindowRemove;
 }

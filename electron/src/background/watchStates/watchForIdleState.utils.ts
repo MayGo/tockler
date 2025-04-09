@@ -3,7 +3,7 @@ import { State } from '../../enums/state';
 import { appEmitter } from '../../utils/appEmitter';
 import { logManager } from '../../utils/log-manager';
 
-const logger = logManager.getLogger('IdleStateWatcher');
+const logger = logManager.getLogger('IdleStateWatcher.utils');
 
 export const IDLE_STATE_CHECK_INTERVAL = 5000;
 
