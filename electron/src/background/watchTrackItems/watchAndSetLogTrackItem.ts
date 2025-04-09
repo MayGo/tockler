@@ -18,7 +18,7 @@ const offlineStates = [State.Idle, State.Offline];
 
 async function cutLogTrackItem(state: State) {
     const now = Date.now();
-    logger.warn(`State changed to ${state}=>${now}`);
+    logger.debug(`State changed to ${state}=>${now}`);
 
     if (!currentLogItem) {
         logger.debug('No log item to cut');
