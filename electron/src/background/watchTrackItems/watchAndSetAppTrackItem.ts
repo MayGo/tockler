@@ -77,6 +77,10 @@ export function watchAndSetAppTrackItem(backgroundJobInterval: number) {
         logger.debug('State changed: active-window-listener', state);
 
         if (state === State.Online) {
+            if (removeActiveWindowWatcher) {
+                logger.warn('ERROR:Stopping previous active window watcher. Should not happen.');
+                removeActiveWindowWatcher(); // stop previous watcher, it should be stopped already, but just in case
+            }
             removeActiveWindowWatcher = startActiveWindowWatcher(backgroundJobInterval);
         } else {
             removeActiveWindowWatcher();
