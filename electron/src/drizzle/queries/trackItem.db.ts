@@ -37,7 +37,7 @@ export async function updateTrackItem(id: number, appName: string, item: Partial
 }
 
 export async function insertTrackItem(item: NewTrackItem) {
-    console.warn('Inserting new log item');
+    console.warn('Inserting new track item:', item);
 
     const color = await appSettingService.getAppColor(item.app ?? '');
     item.color = color;
