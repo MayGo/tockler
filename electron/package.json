@@ -1,7 +1,7 @@
 {
     "name": "tockler",
     "productName": "Tockler",
-    "version": "4.0.21",
+    "version": "4.0.22",
     "description": "Tockler",
     "author": "Maigo Erit <maigo.erit@gmail.com>",
     "license": "GPL-2.0",
@@ -78,7 +78,7 @@
         "drizzle-kit": "^0.30.5",
         "drizzle-orm": "^0.40.0",
         "electron": "35.0.2",
-        "electron-builder": "25.1.8",
+        "electron-builder": "26.0.12",
         "electron-devtools-installer": "4.0.0",
         "electron-rebuild": "^3.2.9",
         "eslint": "^9.17.0",
