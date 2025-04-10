@@ -156,7 +156,8 @@ export default class WindowManager {
                 contextIsolation: true,
                 preload: preloadScript,
                 sandbox: false,
-                backgroundThrottling: true,
+                backgroundThrottling: false,
+                enablePreferredSizeMode: true,
             },
             title: 'Tockler',
             icon: config.iconWindow,
@@ -306,9 +307,9 @@ export default class WindowManager {
         });
 
         // Also save on other events that might change window state
-        // Reduce throttle time to be more responsive
-        this.mainWindow.on('resize', throttle(WindowManager.storeWindowSize, 300));
-        this.mainWindow.on('move', throttle(WindowManager.storeWindowSize, 300));
+        // Reduce throttle time but increase minimum time between updates
+        this.mainWindow.on('resize', throttle(WindowManager.storeWindowSize, 1000));
+        this.mainWindow.on('move', throttle(WindowManager.storeWindowSize, 1000));
 
         this.mainWindow.on('hide', () => {
             logger.debug('MainWindow hide');

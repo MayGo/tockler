@@ -28,7 +28,11 @@ if (gotTheLock) {
 
     AppUpdater.init();
 
-    app.commandLine.appendSwitch('disable-renderer-backgrounding');
+    // Add performance optimizations
+    app.commandLine.appendSwitch('enable-hardware-acceleration');
+    app.commandLine.appendSwitch('ignore-gpu-blacklist');
+    app.commandLine.appendSwitch('enable-zero-copy');
+    app.commandLine.appendSwitch('disable-http-cache', 'true');
 
     contextMenu();
 

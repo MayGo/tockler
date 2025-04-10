@@ -30,6 +30,7 @@ sqlite.pragma('mmap_size = 1000000000'); // 1GB memory-mapped I/O (more reasonab
 sqlite.pragma('page_size = 8192'); // Larger page size for better read performance (default is 4096)
 sqlite.pragma('auto_vacuum = INCREMENTAL'); // Use incremental vacuum for better space management
 sqlite.pragma('busy_timeout = 5000'); // Set busy timeout to prevent SQLITE_BUSY errors
+sqlite.pragma('cache_size = -2000'); // Set cache size to 2MB
 
 export const db = drizzle(sqlite, { schema });
 
