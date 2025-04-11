@@ -28,11 +28,28 @@ if (gotTheLock) {
 
     AppUpdater.init();
 
-    // Add performance optimizations
+    // Enable GPU acceleration for smoother UI rendering and animations
     app.commandLine.appendSwitch('enable-hardware-acceleration');
+    // Allow using potentially problematic GPUs that could still provide better performance
     app.commandLine.appendSwitch('ignore-gpu-blacklist');
+    // Optimize memory usage by eliminating buffer copying between processes
     app.commandLine.appendSwitch('enable-zero-copy');
+    // Ensure fresh data by bypassing HTTP caching
     app.commandLine.appendSwitch('disable-http-cache', 'true');
+
+    // Maintain consistent performance by preventing renderer process throttling
+    app.commandLine.appendSwitch('disable-renderer-backgrounding');
+    // Ensure accurate time tracking by preventing timer delays in background
+    app.commandLine.appendSwitch('disable-background-timer-throttling');
+    // Maintain UI responsiveness even when window is not visible
+    app.commandLine.appendSwitch('disable-backgrounding-occluded-windows');
+
+    // Improve rendering speed by using GPU for rasterization
+    app.commandLine.appendSwitch('enable-gpu-rasterization');
+    // Optimize memory usage by eliminating buffer copying (critical for performance)
+    app.commandLine.appendSwitch('enable-zero-copy');
+    // Enhance graphics performance by using native GPU memory management
+    app.commandLine.appendSwitch('enable-native-gpu-memory-buffers');
 
     contextMenu();
 

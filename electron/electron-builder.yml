@@ -29,6 +29,8 @@ mac:
     electronUpdaterCompatibility: '>=2.16.0'
     extendInfo:
         LSUIElement: 1
+    compression: 'maximum'
+    electronLanguages: ['en']
     target:
         - target: dmg
         - target: zip
