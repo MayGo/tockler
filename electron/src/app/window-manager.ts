@@ -1,4 +1,4 @@
-import { app, autoUpdater, BrowserWindow, dialog, ipcMain, Menu, nativeImage, Tray } from 'electron';
+import { app, autoUpdater, BrowserWindow, dialog, ipcMain, Menu, nativeImage, Tray, WebPreferences } from 'electron';
 import positioner from 'electron-traywindow-positioner';
 import { throttle } from 'lodash';
 import { menubar } from 'menubar';
@@ -86,6 +86,16 @@ export const sendToMainWindow = (key: string, message = '') => {
     }
 };
 
+const commonWebPreferences: WebPreferences = {
+    zoomFactor: 1.0,
+    contextIsolation: true,
+    preload: preloadScript,
+    sandbox: false,
+    backgroundThrottling: false,
+    nodeIntegration: false,
+    v8CacheOptions: 'code',
+};
+
 export default class WindowManager {
     static mainWindow: BrowserWindow | null = null;
     static menubar: any;
@@ -151,13 +161,8 @@ export default class WindowManager {
                 ? { x: windowSize.x, y: windowSize.y }
                 : {}),
             show: true,
-            webPreferences: {
-                zoomFactor: 1.0,
-                contextIsolation: true,
-                preload: preloadScript,
-                sandbox: false,
-                backgroundThrottling: true,
-            },
+            webPreferences: commonWebPreferences,
+            backgroundColor: '#ffffff',
             title: 'Tockler',
             icon: config.iconWindow,
         });
@@ -306,9 +311,9 @@ export default class WindowManager {
         });
 
         // Also save on other events that might change window state
-        // Reduce throttle time to be more responsive
-        this.mainWindow.on('resize', throttle(WindowManager.storeWindowSize, 300));
-        this.mainWindow.on('move', throttle(WindowManager.storeWindowSize, 300));
+        // Reduce throttle time but increase minimum time between updates
+        this.mainWindow.on('resize', throttle(WindowManager.storeWindowSize, 1000));
+        this.mainWindow.on('move', throttle(WindowManager.storeWindowSize, 1000));
 
         this.mainWindow.on('hide', () => {
             logger.debug('MainWindow hide');
@@ -454,13 +459,7 @@ export default class WindowManager {
             showDockIcon: false,
 
             browserWindow: {
-                webPreferences: {
-                    zoomFactor: 1.0,
-                    contextIsolation: true,
-                    preload: preloadScript,
-                    sandbox: false,
-                    backgroundThrottling: true,
-                },
+                webPreferences: commonWebPreferences,
                 width: 500,
                 height: 600,
             },
@@ -516,13 +515,7 @@ export default class WindowManager {
             //backgroundColor: '#00000000',
 
             opacity: 0.7,
-            webPreferences: {
-                zoomFactor: 1.0,
-                contextIsolation: true,
-                preload: preloadScript,
-                sandbox: false,
-                backgroundThrottling: true,
-            },
+            webPreferences: commonWebPreferences,
             width: 80,
             height: 30,
         });
