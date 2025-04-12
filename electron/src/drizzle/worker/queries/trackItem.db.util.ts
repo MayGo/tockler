@@ -1,4 +1,4 @@
-import { NewTrackItem } from '../schema';
+import { NewTrackItem } from '../../schema';
 
 /**
  * Utility functions for date operations

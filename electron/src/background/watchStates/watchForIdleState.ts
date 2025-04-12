@@ -46,11 +46,11 @@ export function watchForIdleState(idleAfterSeconds: number) {
     appEmitter.on('system-is-sleeping', async () => {
         logger.debug('State changed: system-is-sleeping');
 
-        removeIdleStateWatcher();
+        removeIdleStateWatcher?.();
     });
 }
 
 export function watchForIdleStateCleanup() {
     logger.debug('Removing idle state watcher');
-    removeIdleStateWatcher();
+    removeIdleStateWatcher?.();
 }

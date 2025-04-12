@@ -1,5 +1,4 @@
-import { appSettingService } from '../../drizzle/queries/app-setting-service';
-import { insertTrackItem } from '../../drizzle/queries/trackItem.db';
+import { dbClient } from '../../drizzle/dcClient';
 import { NewTrackItem, TrackItem } from '../../drizzle/schema';
 import { State } from '../../enums/state';
 import { TrackItemType } from '../../enums/track-item-type';
@@ -21,7 +20,7 @@ async function setAppTrackItem(activeWindow: NormalizedActiveWindow) {
     // If we have a current item, update its end date and persist
     if (currentAppItem) {
         currentAppItem.endDate = now;
-        await insertTrackItem(currentAppItem);
+        await dbClient.insertTrackItemInternal(currentAppItem);
     }
 
     currentAppItem = {
@@ -39,7 +38,7 @@ export async function getOngoingAppTrackItem() {
         return null;
     }
 
-    const color = await appSettingService.getAppColor(currentAppItem?.app || '');
+    const color = await dbClient.getAppColor(currentAppItem?.app || '');
     return { ...currentAppItem, endDate: Date.now(), id: 0, color } as TrackItem;
 }
 
@@ -47,7 +46,7 @@ const saveOngoingTrackItem = async () => {
     logger.debug('Save ongoing track item');
     if (currentAppItem) {
         currentAppItem.endDate = Date.now();
-        await insertTrackItem(currentAppItem);
+        await dbClient.insertTrackItemInternal(currentAppItem);
         currentAppItem = null;
     } else {
         logger.debug('No ongoing track item to save');

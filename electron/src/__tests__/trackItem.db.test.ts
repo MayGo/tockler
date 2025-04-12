@@ -93,7 +93,7 @@ describe('watchAndSetLogTrackItem', () => {
     it('should not split track item when it does not span across midnight', async () => {
         // Import modules with mocked dependencies
 
-        const { insertTrackItem } = await import('../drizzle/queries/trackItem.db');
+        const { insertTrackItemInternal: insertTrackItem } = await import('../drizzle/worker/queries/trackItem.db');
 
         // First create a status item that starts before midnight
         const beginDate = getTimestamp('2023-01-09T00:00:01');
@@ -129,7 +129,7 @@ describe('watchAndSetLogTrackItem', () => {
     it('should split track item when it spans across midnight', async () => {
         // Import modules with mocked dependencies
 
-        const { insertTrackItem } = await import('../drizzle/queries/trackItem.db');
+        const { insertTrackItemInternal: insertTrackItem } = await import('../drizzle/worker/queries/trackItem.db');
 
         // First create a status item that starts before midnight
         const beforeMidnightTime = getTimestamp('2023-01-09T23:58:28');
@@ -173,7 +173,7 @@ describe('watchAndSetLogTrackItem', () => {
     it('should split track item when it spans multiple nights', async () => {
         // Import modules with mocked dependencies
 
-        const { insertTrackItem } = await import('../drizzle/queries/trackItem.db');
+        const { insertTrackItemInternal: insertTrackItem } = await import('../drizzle/worker/queries/trackItem.db');
 
         // First create a status item that starts before midnight
         const beginDate = getTimestamp('2023-01-09T13:00:00');

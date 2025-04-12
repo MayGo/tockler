@@ -1,7 +1,9 @@
 import fs from 'fs-extra';
+import { builtinModules } from 'module';
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
-import electron from 'vite-plugin-electron/simple';
+import electron from 'vite-plugin-electron';
+import renderer from 'vite-plugin-electron-renderer';
 
 // Function to copy migrations to dist-electron
 function copyMigrations() {
@@ -16,42 +18,43 @@ function copyMigrations() {
     };
 }
 
-export default defineConfig(({ command, mode }) => {
-    const isProduction = mode === 'production';
-
-    return {
-        plugins: [
-            electron({
-                main: {
-                    // Shortcut of `build.lib.entry`
-                    entry: 'src/index.ts',
-
-                    vite: {
-                        build: {
-                            sourcemap: isProduction ? true : 'inline',
-                            minify: false,
-                            outDir: 'dist-electron',
-                            rollupOptions: {
-                                // Ensure these native modules are treated as external
-                                external: ['better-sqlite3', 'active-win'],
-                            },
-                            // Fix for CommonJS modules
-                            // commonjsOptions: {
-                            //     transformMixedEsModules: true,
-                            //     defaultIsModuleExports: true,
-                            //     extensions: ['.js', '.cjs', '.ts'],
-                            // },
+export default defineConfig({
+    plugins: [
+        electron([
+            {
+                // Main process entry
+                entry: 'src/index.ts',
+                onstart(options) {
+                    options.startup();
+                },
+                vite: {
+                    build: {
+                        rollupOptions: {
+                            external: [...builtinModules, 'better-sqlite3', 'active-win'],
                         },
-                        plugins: [copyMigrations()],
                     },
                 },
-                preload: {
-                    // Shortcut of `build.rollupOptions.input`
-                    input: 'src/preloadStuff.ts',
+            },
+            {
+                // Preload scripts
+                entry: 'src/preloadStuff.ts',
+            },
+            {
+                // Worker thread
+                entry: 'src/drizzle/worker/dbWorker.ts',
+                onstart(options) {
+                    options.reload();
                 },
-                // Optional: Use Node.js API in the Renderer process
-                renderer: {},
-            }),
-        ],
-    };
+                vite: {
+                    build: {
+                        rollupOptions: {
+                            external: [...builtinModules, 'better-sqlite3', 'active-win'],
+                        },
+                    },
+                },
+            },
+        ]),
+        renderer(),
+        copyMigrations(),
+    ],
 });
