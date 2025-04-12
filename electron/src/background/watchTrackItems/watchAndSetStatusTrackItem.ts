@@ -1,5 +1,4 @@
-import { appSettingService } from '../../drizzle/queries/app-setting-service';
-import { insertTrackItem } from '../../drizzle/queries/trackItem.db';
+import { dbClient } from '../../drizzle/dbClient';
 import { NewTrackItem, TrackItem } from '../../drizzle/schema';
 import { State } from '../../enums/state';
 import { TrackItemType } from '../../enums/track-item-type';
@@ -32,7 +31,7 @@ export function watchAndSetStatusTrackItem() {
         // If we have a current item, update its end date and persist
         if (currentStatusItem) {
             currentStatusItem.endDate = now;
-            await insertTrackItem(currentStatusItem);
+            await dbClient.insertTrackItemInternal(currentStatusItem);
         }
 
         // Create new current item
@@ -45,14 +44,14 @@ export async function getOngoingStatusTrackItem() {
         return null;
     }
 
-    const color = await appSettingService.getAppColor(currentStatusItem?.app || '');
+    const color = await dbClient.getAppColor(currentStatusItem?.app || '');
     return { ...currentStatusItem, endDate: Date.now(), color } as TrackItem;
 }
 
 const saveOngoingTrackItem = async () => {
     if (currentStatusItem) {
         currentStatusItem.endDate = Date.now();
-        await insertTrackItem(currentStatusItem);
+        await dbClient.insertTrackItemInternal(currentStatusItem);
         currentStatusItem = null;
     }
 };

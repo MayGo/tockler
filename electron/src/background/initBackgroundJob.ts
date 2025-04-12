@@ -1,4 +1,4 @@
-import { settingsService } from '../drizzle/queries/settings-service';
+import { dbClient } from '../drizzle/dbClient';
 import { logManager } from '../utils/log-manager';
 import { watchForBreakNotification, watchForBreakNotificationCleanup } from './watchBreak/watchForBreakNotification';
 import { watchAndPropagateState, watchAndPropagateStateCleanup } from './watchStates/watchAndPropagateState';
@@ -15,7 +15,7 @@ let logger = logManager.getLogger('BackgroundJob');
 
 export async function initBackgroundJob() {
     logger.debug('Init background service.');
-    const dataSettings = await settingsService.fetchDataSettings();
+    const dataSettings = await dbClient.fetchDataSettings();
     logger.debug('With settings:', dataSettings);
 
     const { idleAfterSeconds, backgroundJobInterval } = dataSettings;

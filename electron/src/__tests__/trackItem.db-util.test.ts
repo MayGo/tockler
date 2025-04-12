@@ -8,7 +8,7 @@ vi.mock('../utils/log-manager');
 
 describe('splitTrackItemAtMidnight', () => {
     it('should not split item when begin and end dates are on the same day', async () => {
-        const { splitTrackItemAtMidnight } = await import('../drizzle/queries/trackItem.db.util');
+        const { splitTrackItemAtMidnight } = await import('../drizzle/worker/queries/trackItem.db.util');
         // Arrange
         const sameDay: NewTrackItem = {
             app: 'Test App',
@@ -26,7 +26,7 @@ describe('splitTrackItemAtMidnight', () => {
     });
 
     it('should split item into two when it spans exactly two days', async () => {
-        const { splitTrackItemAtMidnight } = await import('../drizzle/queries/trackItem.db.util');
+        const { splitTrackItemAtMidnight } = await import('../drizzle/worker/queries/trackItem.db.util');
         // Arrange
         const twoDays: NewTrackItem = {
             app: 'Test App',
@@ -55,7 +55,7 @@ describe('splitTrackItemAtMidnight', () => {
     });
 
     it('should split item into multiple pieces when it spans more than two days', async () => {
-        const { splitTrackItemAtMidnight } = await import('../drizzle/queries/trackItem.db.util');
+        const { splitTrackItemAtMidnight } = await import('../drizzle/worker/queries/trackItem.db.util');
         // Arrange
         const multiDays: NewTrackItem = {
             app: 'Test App',
@@ -96,7 +96,7 @@ describe('splitTrackItemAtMidnight', () => {
     });
 
     it('should handle items exactly at midnight', async () => {
-        const { splitTrackItemAtMidnight } = await import('../drizzle/queries/trackItem.db.util');
+        const { splitTrackItemAtMidnight } = await import('../drizzle/worker/queries/trackItem.db.util');
         // Arrange
         const exactMidnight: NewTrackItem = {
             app: 'Test App',
@@ -121,7 +121,7 @@ describe('splitTrackItemAtMidnight', () => {
     });
 
     it('should handle fractional milliseconds correctly', async () => {
-        const { splitTrackItemAtMidnight } = await import('../drizzle/queries/trackItem.db.util');
+        const { splitTrackItemAtMidnight } = await import('../drizzle/worker/queries/trackItem.db.util');
         // Arrange
         const withMilliseconds: NewTrackItem = {
             app: 'Test App',

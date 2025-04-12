@@ -1,6 +1,6 @@
 import { Duration } from 'luxon';
 import { sendToNotificationWindow } from '../../app/window-manager';
-import { settingsService } from '../../drizzle/queries/settings-service';
+import { dbClient } from '../../drizzle/dbClient';
 import { State } from '../../enums/state';
 import { appEmitter } from '../../utils/appEmitter';
 import { logManager } from '../../utils/log-manager';
@@ -24,7 +24,7 @@ async function startInterval() {
         clearInterval(notificationInterval);
     }
 
-    const settings = await settingsService.fetchWorkSettings();
+    const settings = await dbClient.fetchWorkSettings();
     if (!settings.smallNotificationsEnabled) {
         return;
     }
@@ -35,7 +35,7 @@ async function startInterval() {
     notificationInterval = setInterval(async () => {
         try {
             // Recheck the setting on each interval in case it changed
-            const currentSettings = await settingsService.fetchWorkSettings();
+            const currentSettings = await dbClient.fetchWorkSettings();
             if (!currentSettings.smallNotificationsEnabled || !isMonitoringEnabled || currentState !== State.Online) {
                 watchForBreakNotificationCleanup();
                 return;

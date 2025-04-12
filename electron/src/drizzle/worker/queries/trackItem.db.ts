@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
+import { NewTrackItem, TrackItem, trackItems } from '../../schema';
 import { db } from '../db';
-import { NewTrackItem, TrackItem, trackItems } from '../schema';
-import { appSettingService } from './app-setting-service';
+import { getAppColor } from './app-setting-service';
 import { splitTrackItemAtMidnight } from './trackItem.db.util';
 
 async function saveSplitItems(splitItems: NewTrackItem[], originalItem: NewTrackItem) {
@@ -26,20 +26,20 @@ async function saveSplitItems(splitItems: NewTrackItem[], originalItem: NewTrack
     }
 }
 
-export async function updateTrackItem(id: number, appName: string, item: Partial<TrackItem>) {
+export async function updateTrackItemInternal(id: number, appName: string, item: Partial<TrackItem>) {
     console.warn('Updating end date of current log item');
 
-    const color = await appSettingService.getAppColor(appName);
+    const color = await getAppColor(appName);
     item.color = color;
 
     const query = db.update(trackItems).set(item).where(eq(trackItems.id, id));
     await query.execute();
 }
 
-export async function insertTrackItem(item: NewTrackItem) {
+export async function insertTrackItemInternal(item: NewTrackItem) {
     console.warn('Inserting new track item:', item);
 
-    const color = await appSettingService.getAppColor(item.app ?? '');
+    const color = await getAppColor(item.app ?? '');
     item.color = color;
 
     const splitItems = splitTrackItemAtMidnight({ ...item });
@@ -56,3 +56,11 @@ export async function insertNewLogTrackItem(item: NewTrackItem) {
 
     return id;
 }
+
+export const trackItemDb = {
+    updateTrackItemInternal,
+    insertTrackItemInternal,
+    insertNewLogTrackItem,
+};
+
+export type TrackItemDb = typeof trackItemDb;

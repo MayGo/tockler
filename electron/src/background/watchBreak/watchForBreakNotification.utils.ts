@@ -1,6 +1,7 @@
 import { first, orderBy } from 'lodash';
 import { DateTime } from 'luxon';
-import { trackItemService } from '../../drizzle/queries/track-item-service';
+import { dbClient } from '../../drizzle/dbClient';
+import { getOngoingStatusTrackItem } from '../watchTrackItems/watchAndSetStatusTrackItem';
 
 const MINUTE = 60 * 1000;
 
@@ -37,7 +38,12 @@ const groupByBreaks = (items: any[], minBreakTime: number) => {
 export async function getCurrentSessionDuration(minBreakTime: number) {
     const hours = 24;
     const now = DateTime.now();
-    const items = await trackItemService.findAllFromLastHours(hours);
+
+    const items = await dbClient.findAllFromLastHoursDb(hours);
+    const ongoingStatusItem = await getOngoingStatusTrackItem();
+    if (ongoingStatusItem) {
+        items.push(ongoingStatusItem);
+    }
 
     const sorted = orderBy(items, ['beginDate'], ['desc']);
 

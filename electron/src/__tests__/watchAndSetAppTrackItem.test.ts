@@ -12,7 +12,7 @@ import { visualizeTrackItems } from './visualize.testUtils';
 
 // Create mocks
 vi.mock('electron');
-
+vi.mock('electron-is-dev');
 vi.mock('../utils/log-manager');
 
 // Setup in-memory database

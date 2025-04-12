@@ -3,7 +3,7 @@ import positioner from 'electron-traywindow-positioner';
 import { throttle } from 'lodash';
 import { menubar } from 'menubar';
 import * as path from 'path';
-import { settingsService } from '../drizzle/queries/settings-service';
+import { dbClient } from '../drizzle/dbClient';
 import { config, getTrayIcon } from '../utils/config';
 import { logManager } from '../utils/log-manager';
 import MenuBuilder from './menu-builder';
@@ -57,7 +57,7 @@ export const sendToNotificationWindow = async (key: string, durationMs: number) 
             }
 
             WindowManager.notificationWindow.showInactive();
-            const workSettings = await settingsService.fetchWorkSettings();
+            const workSettings = await dbClient.fetchWorkSettings();
             const { notificationDuration } = workSettings;
 
             setTimeout(() => {

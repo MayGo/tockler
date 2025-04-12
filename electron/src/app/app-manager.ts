@@ -1,8 +1,7 @@
 import { app, ipcMain, nativeTheme } from 'electron';
 import { initIpcActions } from '../API';
+import { dbClient } from '../drizzle/dbClient';
 import { config } from '../utils/config';
-
-import { connectAndSync, db } from '../drizzle/db';
 import { logManager } from '../utils/log-manager';
 import WindowManager, { sendToMainWindow, sendToTrayWindow } from './window-manager';
 
@@ -10,33 +9,30 @@ let logger = logManager.getLogger('AppManager');
 
 const IS_NATIVE_THEME_ENABLED = 'isNativeThemeEnabled';
 const NATIVE_THEME_CONFIG_CHANGED = 'nativeThemeChanged';
-
 const USE_PURPLE_TRAY_ICON_CHANGED = 'usePurpleTrayIconChanged';
 const THEME_CONFIG_KEY = 'selectedTheme';
 
 const theThemeHasChanged = () => {
     AppManager.saveThemeAndNotify(AppManager.getNativeTheme());
 };
+
 export default class AppManager {
     static async init() {
-        logger.info('Intializing Tockler');
+        logger.info('Initializing Tockler');
         initIpcActions();
 
-        logger.debug('Database syncing....');
+        await dbClient.initDb();
 
-        await connectAndSync();
-
-        logger.debug('Database synced.');
+        // Database is initialized automatically when importing dbManager
+        logger.debug('Database initialized.');
 
         AppManager.initAppEvents();
         AppManager.setOpenAtLogin();
     }
 
     static async destroy() {
-        if (db) {
-            db.$client.close();
-            logger.info('Closed db connection');
-        }
+        logger.info('Closing db connection');
+        await dbClient.closeDb();
     }
 
     static initAppEvents() {
@@ -104,6 +100,5 @@ export default class AppManager {
 
         sendToMainWindow('activeThemeChanged', theme);
         sendToTrayWindow('activeThemeChanged', theme);
-        //   sendToNotificationWindow('activeThemeChanged', theme);
     }
 }

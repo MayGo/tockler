@@ -1,7 +1,6 @@
 import { ipcMain } from 'electron';
-import { TrackItemRaw } from '../../app/task-analyser';
-import { settingsService } from '../../drizzle/queries/settings-service';
-import { insertTrackItem } from '../../drizzle/queries/trackItem.db';
+import { TrackItemRaw } from '../../app/task-analyser.utils';
+import { dbClient } from '../../drizzle/dbClient';
 import { NewTrackItem, TrackItem } from '../../drizzle/schema';
 import { State } from '../../enums/state';
 import { TrackItemType } from '../../enums/track-item-type';
@@ -35,7 +34,7 @@ async function cutLogTrackItem(state: State) {
             endDate: now,
         };
 
-        await insertTrackItem(itemToInsert);
+        await dbClient.insertTrackItemInternal(itemToInsert);
     } else if (state === State.Online) {
         currentLogItem.beginDate = now;
     }
@@ -51,7 +50,7 @@ async function stopRunningLogTrackItem(endDate: number) {
         return;
     }
 
-    await settingsService.saveRunningLogItemReference(null);
+    await dbClient.saveRunningLogItemReference(null);
 
     // Insert the item with the updated endDate rather than updating it
     const itemToInsert = {
@@ -59,7 +58,7 @@ async function stopRunningLogTrackItem(endDate: number) {
         endDate,
     };
 
-    await insertTrackItem(itemToInsert);
+    await dbClient.insertTrackItemInternal(itemToInsert);
     currentLogItem = null;
 }
 
@@ -81,7 +80,7 @@ async function createNewRunningLogTrackItem(rawItem: TrackItemRaw) {
 
     currentLogItem = newLogItem;
 
-    await settingsService.saveRunningLogItemReference(currentLogItem);
+    await dbClient.saveRunningLogItemReference(currentLogItem);
 }
 
 export async function getOngoingLogTrackItem() {
@@ -93,7 +92,7 @@ export async function getOngoingLogTrackItem() {
 }
 
 export async function watchAndSetLogTrackItem() {
-    const runningLogItem = await settingsService.getRunningLogItemAsJson();
+    const runningLogItem = await dbClient.getRunningLogItemAsJson();
 
     if (runningLogItem) {
         currentLogItem = { ...runningLogItem, beginDate: Date.now() };
@@ -120,7 +119,7 @@ export async function watchAndSetLogTrackItem() {
 const saveOngoingTrackItem = async () => {
     if (currentLogItem) {
         currentLogItem.endDate = Date.now();
-        await insertTrackItem(currentLogItem);
+        await dbClient.insertTrackItemInternal(currentLogItem);
         currentLogItem = null;
     }
 };

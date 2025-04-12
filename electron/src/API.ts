@@ -3,16 +3,16 @@ import { machineId } from 'node-machine-id';
 import AppManager from './app/app-manager';
 import { taskAnalyser } from './app/task-analyser';
 import { sendToNotificationWindow, sendToTrayWindow } from './app/window-manager';
+import { getLastItemsAll, getOngoingItemWithDuration } from './background/background.utils';
 import { initBackgroundJob } from './background/initBackgroundJob';
-import { appSettingService } from './drizzle/queries/app-setting-service';
-import { settingsService } from './drizzle/queries/settings-service';
-import { OrderByKey, trackItemService } from './drizzle/queries/track-item-service';
+import { dbClient } from './drizzle/dbClient';
+import { OrderByKey } from './drizzle/query.utils';
 import { TrackItem } from './drizzle/schema';
 import { setupMainHandler } from './utils/setupMainHandler';
 
 const settingsActions = {
     fetchAnalyserSettingsJsonString: async () => {
-        return settingsService.fetchAnalyserSettingsJsonString();
+        return dbClient.fetchAnalyserSettingsJsonString();
     },
     updateByName: async (payload: { name: string; jsonData: string }) => {
         if (payload.name === 'WORK_SETTINGS') {
@@ -21,23 +21,23 @@ const settingsActions = {
             }, 1000);
         }
 
-        return settingsService.updateByName(payload.name, payload.jsonData);
+        return dbClient.updateByName(payload.name, payload.jsonData);
     },
     getRunningLogItemAsJson: async () => {
-        return settingsService.getRunningLogItemAsJson();
+        return dbClient.getRunningLogItemAsJson();
     },
     updateByNameDataSettings: async (payload: { name: string; jsonData: string }) => {
-        const result = await settingsService.updateByName(payload.name, payload.jsonData);
+        const result = await dbClient.updateByName(payload.name, payload.jsonData);
         await initBackgroundJob();
         return result;
     },
 
     fetchWorkSettingsJsonString: async () => {
-        return settingsService.fetchWorkSettingsJsonString();
+        return dbClient.fetchWorkSettingsJsonString();
     },
 
     fetchDataSettingsJsonString: async () => {
-        return settingsService.fetchDataSettingsJsonString();
+        return dbClient.fetchDataSettingsJsonString();
     },
     saveThemeAndNotify: async (payload: { theme: string }) => {
         AppManager.saveThemeAndNotify(payload.theme);
@@ -59,25 +59,29 @@ const settingsActions = {
 
 const appSettingsActions = {
     changeColorForApp: async (payload: { appName: string; color: string }) => {
-        return appSettingService.changeColorForApp(payload.appName, payload.color);
+        return dbClient.changeColorForApp(payload.appName, payload.color);
     },
 };
+
 const trackItemActions = {
-    findAllDayItems: async (payload: { from: string; to: string; taskName: string }) => {
-        return trackItemService.findAllDayItems(payload.from, payload.to, payload.taskName);
+    findAllDayItems: async ({ from, to, taskName }: { from: string; to: string; taskName: string }) => {
+        const data = await dbClient.findAllDayItemsDb(from, to, taskName);
+
+        const lastItems = await getLastItemsAll({ from, to, taskName });
+        return [...data, ...lastItems];
     },
 
     createTrackItem: async (payload: { trackItem: TrackItem }) => {
-        return trackItemService.createTrackItem(payload.trackItem);
+        return dbClient.createTrackItem(payload.trackItem);
     },
     updateTrackItem: async (payload: { trackItem: TrackItem; trackItemId: number }) => {
-        return trackItemService.updateTrackItem(payload.trackItem, payload.trackItemId);
+        return dbClient.updateTrackItemDb(payload.trackItem, payload.trackItemId);
     },
     updateTrackItemColor: async (payload: { appName: string; color: string }) => {
-        return trackItemService.updateTrackItemColor(payload.appName, payload.color);
+        return dbClient.updateTrackItemColor(payload.appName, payload.color);
     },
     deleteByIds: async (payload: { trackItemIds: number[] }) => {
-        return trackItemService.deleteByIds(payload.trackItemIds);
+        return dbClient.deleteByIds(payload.trackItemIds);
     },
     searchFromItems: async (payload: {
         from: string;
@@ -88,7 +92,7 @@ const trackItemActions = {
         sumTotal: boolean;
     }) => {
         const { from, to, taskName, searchStr, paging, sumTotal } = payload;
-        return trackItemService.findAllItems(from, to, taskName, searchStr, paging, sumTotal);
+        return dbClient.findAllItems(from, to, taskName, searchStr, paging, sumTotal);
     },
     exportFromItems: async (payload: {
         from: string;
@@ -98,13 +102,20 @@ const trackItemActions = {
         format?: 'csv' | 'json';
     }) => {
         const { from, to, taskName, searchStr, format = 'csv' } = payload;
-        return trackItemService.findAndExportAllItems(from, to, taskName, searchStr, format);
+        return dbClient.findAndExportAllItems(from, to, taskName, searchStr, format);
     },
     findFirstChunkLogItems: async () => {
-        return trackItemService.findFirstChunkLogItems();
+        const items = await dbClient.findFirstChunkLogItemsDb();
+        const ongoingLogItem = await getOngoingItemWithDuration();
+
+        if (ongoingLogItem) {
+            items.push(ongoingLogItem);
+        }
+
+        return items;
     },
     findFirstTrackItem: async () => {
-        return trackItemService.findFirstTrackItem();
+        return dbClient.findFirstTrackItem();
     },
 };
 
