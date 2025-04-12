@@ -5,7 +5,7 @@ import * as schema from '../schema';
 
 const outputPath = workerData.outputPath;
 
-console.warn('...........db outputPath', outputPath);
+console.info('real db outputPath', outputPath);
 
 // Create SQLite connection with performance optimizations
 export const sqlite = new Database(outputPath, {

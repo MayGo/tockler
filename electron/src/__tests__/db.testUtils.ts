@@ -2,15 +2,18 @@ import { createClient } from '@libsql/client';
 import { drizzle } from 'drizzle-orm/libsql';
 import { migrate } from 'drizzle-orm/libsql/migrator';
 import { vi } from 'vitest';
+import { createWorkerMock } from './worker.testUtils';
 
 // Import the real implementations directly to reduce dynamic imports
 import * as schema from '../drizzle/schema';
 import { appSettings } from '../drizzle/schema';
 
+const outputPathUrl = 'file::memory:';
+
 export async function setupTestDb() {
     // Create in-memory database client
     const client = createClient({
-        url: 'file::memory:',
+        url: outputPathUrl,
     });
 
     // Set up database with schema
@@ -18,6 +21,8 @@ export async function setupTestDb() {
         schema,
         logger: true,
     });
+
+    console.info('setupTestDb');
 
     // Create tables from schema
     await migrate(db, { migrationsFolder: './src/drizzle/migrations' });
@@ -28,10 +33,11 @@ export async function setupTestDb() {
     await db.insert(appSettings).values({ name: 'IDLE', color: '#f5a623' });
 
     // Mock the database in the db module
-    vi.doMock('../drizzle/db', () => ({
+    vi.doMock('../drizzle/worker/db', () => ({
         db,
-        connectAndSync: vi.fn().mockResolvedValue(undefined),
     }));
+
+    vi.doMock('worker_threads', () => createWorkerMock());
 
     return { db, client };
 }

@@ -5,7 +5,7 @@ import { taskAnalyser } from './app/task-analyser';
 import { sendToNotificationWindow, sendToTrayWindow } from './app/window-manager';
 import { getLastItemsAll, getOngoingItemWithDuration } from './background/background.utils';
 import { initBackgroundJob } from './background/initBackgroundJob';
-import { dbClient } from './drizzle/dcClient';
+import { dbClient } from './drizzle/dbClient';
 import { OrderByKey } from './drizzle/query.utils';
 import { TrackItem } from './drizzle/schema';
 import { logManager } from './utils/log-manager';

@@ -1,6 +1,6 @@
 import { app, ipcMain, nativeTheme } from 'electron';
 import { initIpcActions } from '../API';
-import { dbClient } from '../drizzle/dcClient';
+import { dbClient } from '../drizzle/dbClient';
 import { config } from '../utils/config';
 import { logManager } from '../utils/log-manager';
 import WindowManager, { sendToMainWindow, sendToTrayWindow } from './window-manager';

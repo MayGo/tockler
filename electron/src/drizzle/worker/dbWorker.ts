@@ -1,4 +1,3 @@
-// db/worker.ts
 import { parentPort } from 'worker_threads';
 import { WorkerActionArgs, WorkerActionReturns, WorkerServices } from '../dbTypes';
 import { dbService } from './dbService';

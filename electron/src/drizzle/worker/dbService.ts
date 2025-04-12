@@ -207,3 +207,5 @@ export const dbService = {
     initDb,
     closeDb,
 };
+
+export type DbService = typeof dbService;

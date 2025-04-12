@@ -3,7 +3,7 @@ import positioner from 'electron-traywindow-positioner';
 import { throttle } from 'lodash';
 import { menubar } from 'menubar';
 import * as path from 'path';
-import { dbClient } from '../drizzle/dcClient';
+import { dbClient } from '../drizzle/dbClient';
 import { config, getTrayIcon } from '../utils/config';
 import { logManager } from '../utils/log-manager';
 import MenuBuilder from './menu-builder';

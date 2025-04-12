@@ -4,11 +4,16 @@ import { Worker } from 'worker_threads';
 import { config } from '../utils/config';
 import { WorkerActionArgs, WorkerActionReturns } from './dbTypes';
 
-const worker = new Worker(path.resolve(__dirname, './dbWorker.js'), {
+const workerFilePath = path.resolve(__dirname, './dbWorker.js');
+
+const outputPath = config.databaseConfig.outputPath;
+
+const worker = new Worker(workerFilePath, {
     workerData: {
-        outputPath: config.databaseConfig.outputPath,
+        outputPath,
     },
 });
+
 let messageId = 0;
 const pending = new Map<number, { resolve: Function; reject: Function }>();
 
@@ -25,6 +30,7 @@ function callWorker<K extends keyof WorkerActionArgs>(
     args: WorkerActionArgs[K],
 ): Promise<WorkerActionReturns[K]> {
     console.warn('...........callWorker', action, args);
+
     const id = ++messageId;
     return new Promise((resolve, reject) => {
         pending.set(id, { resolve, reject });

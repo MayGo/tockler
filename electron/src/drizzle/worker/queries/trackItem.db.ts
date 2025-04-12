@@ -62,3 +62,5 @@ export const trackItemDb = {
     insertTrackItemInternal,
     insertNewLogTrackItem,
 };
+
+export type TrackItemDb = typeof trackItemDb;

@@ -4,9 +4,6 @@ import { dialog } from 'electron';
 import { writeFileSync } from 'fs';
 import { DateTime } from 'luxon';
 import moment from 'moment';
-// import { getOngoingAppTrackItem } from '../../background/watchTrackItems/watchAndSetAppTrackItem';
-// import { getOngoingLogTrackItem } from '../../background/watchTrackItems/watchAndSetLogTrackItem';
-// import { getOngoingStatusTrackItem } from '../../background/watchTrackItems/watchAndSetStatusTrackItem';
 import { State } from '../../../enums/state';
 import { TrackItemType } from '../../../enums/track-item-type';
 import { OrderByKey, orderByKey } from '../../query.utils';
@@ -297,3 +294,5 @@ export const trackItemService = {
     deleteByIds,
     findAllFromLastHoursDb,
 };
+
+export type TrackItemService = typeof trackItemService;

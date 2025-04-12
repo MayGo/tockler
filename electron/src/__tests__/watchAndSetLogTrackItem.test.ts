@@ -1,7 +1,7 @@
 import { Client } from '@libsql/client';
 import { drizzle } from 'drizzle-orm/libsql';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { TrackItemRaw } from '../app/task-analyser';
+import { TrackItemRaw } from '../app/task-analyser.utils';
 import { TrackItem, trackItems } from '../drizzle/schema';
 import { State } from '../enums/state';
 import { TrackItemType } from '../enums/track-item-type';
@@ -16,6 +16,9 @@ const eventHandlers: Record<string, any> = {};
 
 // Create mocks
 vi.mock('electron', async () => ({
+    app: {
+        getPath: vi.fn(() => ''),
+    },
     ipcMain: {
         on: vi.fn((event, handler) => {
             eventHandlers[event] = handler;
@@ -58,7 +61,6 @@ const emptyData: Partial<TrackItem> = {
 
 describe('watchAndSetLogTrackItem', () => {
     beforeEach(async () => {
-        // Reset mocks and modules
         vi.resetModules();
         vi.resetAllMocks();
 
@@ -124,8 +126,9 @@ describe('watchAndSetLogTrackItem', () => {
         await sendEndRunningLogItemEvent();
 
         // Verify the item was updated in the database
-        const items = await selectAllAppItems(db);
+        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
 
+        const items = await selectAllAppItems(db);
         expect(items.length).toBe(1);
         expect(items[0].endDate).toBe(NOW + 1000);
 

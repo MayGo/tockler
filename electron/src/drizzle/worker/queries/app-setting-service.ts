@@ -82,3 +82,5 @@ export const appSettingService = {
     getAppColor,
     changeColorForApp,
 };
+
+export type AppSettingService = typeof appSettingService;

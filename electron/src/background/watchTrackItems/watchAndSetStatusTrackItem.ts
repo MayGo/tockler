@@ -1,4 +1,4 @@
-import { dbClient } from '../../drizzle/dcClient';
+import { dbClient } from '../../drizzle/dbClient';
 import { NewTrackItem, TrackItem } from '../../drizzle/schema';
 import { State } from '../../enums/state';
 import { TrackItemType } from '../../enums/track-item-type';

@@ -1,6 +1,6 @@
 import { first, orderBy } from 'lodash';
 import { DateTime } from 'luxon';
-import { dbClient } from '../../drizzle/dcClient';
+import { dbClient } from '../../drizzle/dbClient';
 import { getOngoingStatusTrackItem } from '../watchTrackItems/watchAndSetStatusTrackItem';
 
 const MINUTE = 60 * 1000;

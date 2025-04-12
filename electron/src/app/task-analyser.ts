@@ -1,21 +1,11 @@
 import randomcolor from 'randomcolor';
 import { NormalizedActiveWindow } from '../background/watchTrackItems/watchForActiveWindow.utils';
-import { dbClient } from '../drizzle/dcClient';
+import { dbClient } from '../drizzle/dbClient';
 import { TrackItemType } from '../enums/track-item-type';
 import { appEmitter } from '../utils/appEmitter';
 import { logManager } from '../utils/log-manager';
 import { showNotification } from './notification';
-
-export interface TrackItemRaw {
-    app?: string;
-    taskName?: TrackItemType;
-    title?: string;
-    color?: string;
-    beginDate?: number;
-    endDate?: number;
-    url?: string;
-}
-
+import { TrackItemRaw } from './task-analyser.utils';
 const logger = logManager.getLogger('TrackItemService');
 export class TaskAnalyser {
     newItem: TrackItemRaw | null = null;

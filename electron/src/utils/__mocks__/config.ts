@@ -1,6 +1,6 @@
 export const config = {
     databaseConfig: {
-        outputPath: ':memory:',
+        outputPath: 'file::memory:',
     },
     trayEnabledInDev: false,
 };

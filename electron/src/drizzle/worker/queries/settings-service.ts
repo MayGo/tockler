@@ -219,3 +219,5 @@ export const settingsService = {
     getRunningLogItemAsJson,
     saveRunningLogItemReference,
 };
+
+export type SettingsService = typeof settingsService;

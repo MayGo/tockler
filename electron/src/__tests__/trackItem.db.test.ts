@@ -4,17 +4,15 @@ import { Client } from '@libsql/client';
 import { drizzle } from 'drizzle-orm/libsql';
 import { afterEach, beforeEach, vi } from 'vitest';
 import { getTimestamp } from '../__tests__/time.testUtils'; // Importing getTimestamp
-import { NormalizedActiveWindow } from '../background/watchTrackItems/watchForActiveWindow.utils';
 import { NewTrackItem, TrackItem, trackItems } from '../drizzle/schema';
 import { State } from '../enums/state';
 import { TrackItemType } from '../enums/track-item-type';
-import { COLORS } from './color.testUtils';
-import { addColorToApp, setupTestDb } from './db.testUtils';
+import { setupTestDb } from './db.testUtils';
 import { selectAllAppItems } from './query.testUtils';
 
 // Create mocks
 vi.mock('electron');
-
+vi.mock('electron-is-dev');
 vi.mock('../utils/log-manager');
 
 // Setup in-memory database
@@ -36,7 +34,7 @@ const emptyData: Partial<TrackItem> = {
     taskName: TrackItemType.AppTrackItem,
 };
 
-describe('watchAndSetLogTrackItem', () => {
+describe('trackItem.db', () => {
     beforeEach(async () => {
         // Reset mocks and modules
         vi.resetModules();
@@ -54,42 +52,6 @@ describe('watchAndSetLogTrackItem', () => {
         await cleanupTestDb();
     });
 
-    it('saves previous app item', async () => {
-        const { appEmitter } = await import('../utils/appEmitter');
-        const { addActiveWindowWatch } = await import('../background/watchTrackItems/watchAndSetAppTrackItem');
-
-        await addActiveWindowWatch();
-
-        const firstApp: NormalizedActiveWindow = {
-            app: 'FirstApp',
-            title: 'First Title',
-        };
-
-        const secondApp: NormalizedActiveWindow = {
-            app: 'SecondApp',
-            title: 'Second Title',
-        };
-
-        await addColorToApp(firstApp.app ?? '', COLORS.GREEN);
-
-        appEmitter.emit('active-window-changed', firstApp);
-        appEmitter.emit('active-window-changed', secondApp);
-
-        await vi.waitFor(async () => expect((await selectAllAppItems(db)).length).toBe(1));
-        // Verify item was created in the database
-        const items = await selectAllAppItems(db);
-
-        expect(items.length).toBe(1);
-
-        expect(items[0]).toStrictEqual({
-            ...emptyData,
-            ...firstApp,
-            id: 1,
-            beginDate: NOW,
-            endDate: NOW,
-            color: COLORS.GREEN,
-        });
-    });
     it('should not split track item when it does not span across midnight', async () => {
         // Import modules with mocked dependencies
 

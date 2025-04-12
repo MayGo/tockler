@@ -1,6 +1,6 @@
 import { Duration } from 'luxon';
 import { sendToNotificationWindow } from '../../app/window-manager';
-import { dbClient } from '../../drizzle/dcClient';
+import { dbClient } from '../../drizzle/dbClient';
 import { State } from '../../enums/state';
 import { appEmitter } from '../../utils/appEmitter';
 import { logManager } from '../../utils/log-manager';
