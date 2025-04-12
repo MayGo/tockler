@@ -8,7 +8,7 @@ import { getOngoingStatusTrackItem } from './watchTrackItems/watchAndSetStatusTr
 
 const logger = logManager.getLogger('Background');
 
-export async function getLastItemsAll({ from, to, taskName }: { from: string; to: string; taskName: string }) {
+export async function getLastItemsAll({ to, taskName }: { from: string; to: string; taskName: string }) {
     const isToday = moment(to).isSame(moment(), 'day');
     const data: TrackItem[] = [];
 

@@ -8,7 +8,6 @@ import { initBackgroundJob } from './background/initBackgroundJob';
 import { dbClient } from './drizzle/dbClient';
 import { OrderByKey } from './drizzle/query.utils';
 import { TrackItem } from './drizzle/schema';
-import { logManager } from './utils/log-manager';
 import { setupMainHandler } from './utils/setupMainHandler';
 
 const settingsActions = {
@@ -63,8 +62,6 @@ const appSettingsActions = {
         return dbClient.changeColorForApp(payload.appName, payload.color);
     },
 };
-
-const logger = logManager.getLogger('API');
 
 const trackItemActions = {
     findAllDayItems: async ({ from, to, taskName }: { from: string; to: string; taskName: string }) => {
