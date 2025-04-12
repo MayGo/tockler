@@ -13,7 +13,6 @@ const actions: {
 parentPort!.on(
     'message',
     async <K extends keyof WorkerActionArgs>(msg: { id: number; action: K; args: WorkerActionArgs[K] }) => {
-        console.warn('........actions', actions);
         console.warn('...........dbWorker::message', msg);
         const { id, action, args } = msg;
 

@@ -1,9 +1,5 @@
-import { stringify } from 'csv-stringify/sync';
 import { and, asc, desc, eq, gte, inArray, like, lte, sql } from 'drizzle-orm';
-import { dialog } from 'electron';
-import { writeFileSync } from 'fs';
 import { DateTime } from 'luxon';
-import moment from 'moment';
 import { State } from '../../../enums/state';
 import { TrackItemType } from '../../../enums/track-item-type';
 import { OrderByKey, orderByKey } from '../../query.utils';
@@ -38,13 +34,7 @@ async function updateTrackItemDb(itemData: Partial<TrackItem>, id: number) {
     return result.length;
 }
 
-async function findAndExportAllItems(
-    from: string,
-    to: string,
-    taskName: string,
-    searchStr: string,
-    format: 'csv' | 'json' = 'csv',
-) {
+async function findItemsForExport(from: string, to: string, taskName: string, searchStr: string) {
     const conditions = [
         eq(trackItems.taskName, taskName),
         gte(trackItems.endDate, new Date(from).getTime()),
@@ -59,55 +49,6 @@ async function findAndExportAllItems(
         .select()
         .from(trackItems)
         .where(and(...conditions));
-
-    let fileContent: string;
-    let fileExtension: string;
-
-    if (format === 'json') {
-        // Process dates for better readability in JSON
-        const processedResults = results.map((item) => ({
-            ...item,
-            beginDate: moment(item.beginDate).format('YYYY-MM-DD HH:mm:ss'),
-            endDate: moment(item.endDate).format('YYYY-MM-DD HH:mm:ss'),
-        }));
-        fileContent = JSON.stringify(processedResults, null, 2);
-        fileExtension = 'json';
-    } else {
-        // CSV export (default)
-        const toDateTimeStr = (timestamp: string) => moment(parseInt(timestamp)).format('YYYY-MM-DD HH:mm:ss');
-        fileContent = stringify(results, {
-            delimiter: ';',
-            cast: {
-                number: function (value, { column }) {
-                    if (['endDate', 'beginDate'].includes(column?.toString() || '')) {
-                        return toDateTimeStr(value.toString());
-                    }
-                    return value?.toString();
-                },
-            },
-            header: true,
-        });
-        fileExtension = 'csv';
-    }
-
-    const formattedFrom = moment(new Date(from)).format('YYYY-MM-DD');
-    const formattedTo = moment(new Date(to)).format('YYYY-MM-DD');
-    const defaultPath = `Tockler_${taskName}_${formattedFrom}-${formattedTo}.${fileExtension}`;
-
-    dialog
-        .showSaveDialog({
-            title: 'Save export as',
-            defaultPath: defaultPath,
-            filters: [
-                { name: format.toUpperCase(), extensions: [fileExtension] },
-                { name: 'All Files', extensions: ['*'] },
-            ],
-        })
-        .then(({ filePath }) => {
-            if (filePath) {
-                writeFileSync(filePath, fileContent);
-            }
-        });
 
     return results;
 }
@@ -282,7 +223,7 @@ async function findAllFromLastHoursDb(hours: number) {
 export const trackItemService = {
     createTrackItem,
     updateTrackItemDb,
-    findAndExportAllItems,
+    findItemsForExport,
     findAllItems,
     findAllDayItemsDb,
     findFirstChunkLogItemsDb,

@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron';
 import { machineId } from 'node-machine-id';
 import AppManager from './app/app-manager';
+import { exportFile } from './app/exportFile';
 import { taskAnalyser } from './app/task-analyser';
 import { sendToNotificationWindow, sendToTrayWindow } from './app/window-manager';
 import { getLastItemsAll, getOngoingItemWithDuration } from './background/background.utils';
@@ -102,7 +103,9 @@ const trackItemActions = {
         format?: 'csv' | 'json';
     }) => {
         const { from, to, taskName, searchStr, format = 'csv' } = payload;
-        return dbClient.findAndExportAllItems(from, to, taskName, searchStr, format);
+
+        const results = await dbClient.findItemsForExport(from, to, taskName, searchStr);
+        return exportFile(from, to, taskName, results, format);
     },
     findFirstChunkLogItems: async () => {
         const items = await dbClient.findFirstChunkLogItemsDb();
