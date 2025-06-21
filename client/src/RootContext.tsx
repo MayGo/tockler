@@ -20,6 +20,7 @@ const defaultWorkSettings: WorkSettingsI = {
 const defaultDataSettings: DataSettingsI = {
     idleAfterSeconds: 60,
     backgroundJobInterval: 3,
+    recentDaysCount: 7,
 };
 
 interface RootContextType {
