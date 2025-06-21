@@ -5,6 +5,7 @@ import { db } from '../db';
 const defaultSettings = {
     recentDaysCount: 7,
     backgroundJobInterval: 3,
+    idleAfterSeconds: 60,
 };
 
 const defaultWorkSettings = {
@@ -106,7 +107,8 @@ async function fetchDataSettings() {
     }
 
     try {
-        return JSON.parse(item.jsonData);
+        const dbSettings = JSON.parse(item.jsonData);
+        return { ...defaultSettings, ...dbSettings };
     } catch (e) {
         logger.error('Error parsing data settings:', e);
         return defaultSettings;
