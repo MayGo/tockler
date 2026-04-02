@@ -3,24 +3,9 @@
 const { contextBridge, ipcRenderer, shell } = require('electron');
 const Store = require('electron-store');
 
-const Sentry = require('@sentry/electron');
+require('@sentry/electron/preload');
 
 const config = new Store();
-
-if (process.env.NODE_ENV === 'production') {
-    Sentry.init({
-        dsn: process.env.SENTRY_DSN,
-        environment: process.env.NODE_ENV,
-        release: process.env.npm_package_version,
-        beforeSend(event: unknown) {
-            // Check if it is an exception, if so, show the report dialog
-            if (event && typeof event === 'object' && 'exception' in event) {
-                Sentry.showReportDialog();
-            }
-            return event;
-        },
-    });
-}
 
 // Used type definitions
 interface Listeners {
@@ -73,10 +58,3 @@ contextBridge.exposeInMainWorld('electronBridge', {
     },
 });
 
-declare global {
-    interface Window {
-        Sentry: typeof Sentry;
-    }
-}
-
-window.Sentry = Sentry;
