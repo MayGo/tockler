@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/electron';
+import * as Sentry from '@sentry/electron/main';
 import { app } from 'electron';
 import log from 'electron-log/main';
 import { config } from './config';
