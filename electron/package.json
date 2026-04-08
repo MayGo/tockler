@@ -76,7 +76,7 @@
         "cpx": "^1.5.0",
         "cross-env": "7.0.3",
         "drizzle-kit": "^0.30.5",
-        "drizzle-orm": "^0.40.0",
+        "drizzle-orm": "^0.45.2",
         "electron": "35.0.2",
         "electron-builder": "26.0.12",
         "electron-devtools-installer": "4.0.0",
