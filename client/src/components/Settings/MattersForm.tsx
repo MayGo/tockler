@@ -1,10 +1,11 @@
 import { Box, Button, Flex, HStack, Text, Tooltip } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { IMatter, MatterInput } from '../../@types/IMatter';
 import { createMatter, deleteMatter, findAllMatters, rematchMatters, updateMatter } from '../../services/matter.api';
 import { CardBox } from '../CardBox';
 import { MattersFormItem } from './MattersFormItem';
+import { MattersImport } from './MattersImport';
 
 export interface MatterDraft {
     id?: number;
@@ -49,14 +50,14 @@ export const MattersForm = () => {
     const [matterDrafts, setMatterDrafts] = useState<MatterDraft[]>([]);
     const [isRematching, setIsRematching] = useState(false);
 
-    useEffect(() => {
-        async function fetchMatters() {
-            const matters = await findAllMatters();
-            setMatterDrafts(matters.map(toDraft));
-        }
-
-        fetchMatters();
+    const refreshMatters = useCallback(async () => {
+        const matters = await findAllMatters();
+        setMatterDrafts(matters.map(toDraft));
     }, []);
+
+    useEffect(() => {
+        refreshMatters();
+    }, [refreshMatters]);
 
     const addItem = () => {
         setMatterDrafts([...matterDrafts, { ...emptyDraft }]);
@@ -114,6 +115,11 @@ export const MattersForm = () => {
                     window titles and URLs — comma-separated, e.g. &quot;Smith v Jones, housing disrepair&quot;.
                 </Text>
             </Box>
+
+            <MattersImport
+                existingCaseReferences={matterDrafts.map((draft) => draft.caseReference)}
+                onImported={refreshMatters}
+            />
 
             {matterDrafts.map((draft, index) => (
                 <MattersFormItem
