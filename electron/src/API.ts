@@ -6,7 +6,9 @@ import { taskAnalyser } from './app/task-analyser';
 import { sendToNotificationWindow, sendToTrayWindow } from './app/window-manager';
 import { getLastItemsAll, getOngoingItemWithDuration } from './background/background.utils';
 import { initBackgroundJob } from './background/initBackgroundJob';
+import { matchTrackItemsToMatters } from './background/matterMatching/matchTrackItemsToMatters';
 import { dbClient } from './drizzle/dbClient';
+import { MatterInput } from './drizzle/worker/queries/matter-service';
 import { OrderByKey } from './drizzle/query.utils';
 import { TrackItem } from './drizzle/schema';
 import { setupMainHandler } from './utils/setupMainHandler';
@@ -122,5 +124,33 @@ const trackItemActions = {
     },
 };
 
+const matterActions = {
+    findAllMatters: async () => {
+        return dbClient.findAllMatters();
+    },
+    createMatter: async (payload: { matter: MatterInput }) => {
+        return dbClient.createMatter(payload.matter);
+    },
+    updateMatter: async (payload: { matterId: number; matter: MatterInput }) => {
+        return dbClient.updateMatter(payload.matterId, payload.matter);
+    },
+    deleteMatter: async (payload: { matterId: number }) => {
+        return dbClient.deleteMatter(payload.matterId);
+    },
+    findMatterReviewItems: async (payload: { from: number; to: number }) => {
+        return dbClient.findReviewItems(payload.from, payload.to);
+    },
+    reassignMatterTag: async (payload: { trackItemId: number; matterId: number | null }) => {
+        return dbClient.reassignMatterTag(payload.trackItemId, payload.matterId);
+    },
+    rematchMatters: async () => {
+        return matchTrackItemsToMatters({ rematch: true });
+    },
+};
+
 export const initIpcActions = () =>
-    setupMainHandler({ ipcMain } as any, { ...settingsActions, ...appSettingsActions, ...trackItemActions }, true);
+    setupMainHandler(
+        { ipcMain } as any,
+        { ...settingsActions, ...appSettingsActions, ...trackItemActions, ...matterActions },
+        true,
+    );

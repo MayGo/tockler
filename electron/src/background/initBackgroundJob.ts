@@ -1,5 +1,6 @@
 import { dbClient } from '../drizzle/dbClient';
 import { logManager } from '../utils/log-manager';
+import { watchMatterMatching, watchMatterMatchingCleanup } from './matterMatching/watchMatterMatching';
 import { watchForBreakNotification, watchForBreakNotificationCleanup } from './watchBreak/watchForBreakNotification';
 import { watchAndPropagateState, watchAndPropagateStateCleanup } from './watchStates/watchAndPropagateState';
 import { watchForIdleState, watchForIdleStateCleanup } from './watchStates/watchForIdleState';
@@ -29,6 +30,8 @@ export async function initBackgroundJob() {
     watchAndSetLogTrackItem();
 
     watchForBreakNotification();
+
+    watchMatterMatching();
 }
 
 export async function cleanupBackgroundJob() {
@@ -43,4 +46,6 @@ export async function cleanupBackgroundJob() {
     await watchAndSetLogTrackItemCleanup();
 
     watchForBreakNotificationCleanup();
+
+    watchMatterMatchingCleanup();
 }

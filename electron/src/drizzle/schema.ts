@@ -58,3 +58,6 @@ export type NewAppSetting = typeof appSettings.$inferInsert;
 
 export type Setting = typeof settings.$inferSelect;
 export type NewSetting = typeof settings.$inferInsert;
+
+// Fork-specific tables (legal aid matter tracking). Kept in their own file — see legalAid.schema.ts.
+export * from './legalAid.schema';
