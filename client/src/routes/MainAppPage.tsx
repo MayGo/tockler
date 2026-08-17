@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import { ErrorBoundary } from '../components/ErrorBoundary/ErrorBoundary';
 import { MainLayout } from '../components/MainLayout/MainLayout';
+import { MatterReviewPage } from './MatterReviewPage';
 import { SearchPage } from './SearchPage';
 import { SettingsPage } from './SettingsPage';
 import { SummaryPage } from './SummaryPage';
@@ -57,6 +58,14 @@ export function MainAppPage() {
                     element={
                         <ErrorBoundary key="search">
                             <SearchPage />
+                        </ErrorBoundary>
+                    }
+                />
+                <Route
+                    path="matters"
+                    element={
+                        <ErrorBoundary key="matters">
+                            <MatterReviewPage />
                         </ErrorBoundary>
                     }
                 />

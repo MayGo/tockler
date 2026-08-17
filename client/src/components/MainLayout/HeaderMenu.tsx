@@ -1,6 +1,7 @@
 import {
     AiOutlineAreaChart,
     AiOutlineBars,
+    AiOutlineFileText,
     AiOutlineQuestionCircle,
     AiOutlineSearch,
     AiOutlineSetting,
@@ -17,6 +18,7 @@ export const HeaderMenu = () => (
         <MenuItem to="/app/timeline" icon={<AiOutlineBars />} title="Timeline" />
         <MenuItem to="/app/summary" icon={<AiOutlineAreaChart />} title="Summary" />
         <MenuItem to="/app/search" icon={<AiOutlineSearch />} title="Search" />
+        <MenuItem to="/app/matters" icon={<AiOutlineFileText />} title="Matters" />
         <MenuItem to="/app/settings" icon={<AiOutlineSetting />} title="Settings" />
         <MenuItem to="/app/support" icon={<AiOutlineQuestionCircle />} title="Support" />
         <Box flex="1" />

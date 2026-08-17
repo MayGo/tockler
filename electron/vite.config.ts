@@ -5,18 +5,18 @@ import { defineConfig } from 'vite';
 import electron from 'vite-plugin-electron';
 import renderer from 'vite-plugin-electron-renderer';
 
-// Function to copy migrations to dist-electron
-function copyMigrations() {
-    return {
-        name: 'copy-migrations',
-        closeBundle() {
-            const srcDir = resolve(__dirname, 'src/drizzle/migrations');
-            const destDir = resolve(__dirname, 'dist-electron/drizzle/migrations');
-            fs.copySync(srcDir, destDir, { overwrite: true });
-            console.log('✓ Drizzle migrations copied to dist-electron');
-        },
-    };
+// Copy migrations to dist-electron immediately (not in a closeBundle hook) so this runs
+// for `vite dev` too, not just `vite build`. vite-plugin-electron's dev-mode watch builds
+// don't go through the outer config's Rollup bundle lifecycle, so closeBundle never fires
+// there — only calling this eagerly, as soon as the config file loads, covers both cases.
+function copyMigrationsNow() {
+    const srcDir = resolve(__dirname, 'src/drizzle/migrations');
+    const destDir = resolve(__dirname, 'dist-electron/drizzle/migrations');
+    fs.copySync(srcDir, destDir, { overwrite: true });
+    console.log('✓ Drizzle migrations copied to dist-electron');
 }
+
+copyMigrationsNow();
 
 export default defineConfig({
     plugins: [
@@ -55,6 +55,5 @@ export default defineConfig({
             },
         ]),
         renderer(),
-        copyMigrations(),
     ],
 });
