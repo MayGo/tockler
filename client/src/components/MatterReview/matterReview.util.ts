@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
 import { IMatterReviewItem } from '../../@types/IMatterReviewItem';
+import { MatterMatchType } from '../../enum/MatterMatchType';
 
 export interface TitleGroup {
     key: string;
@@ -7,6 +8,37 @@ export interface TitleGroup {
     app: string;
     durationMs: number;
     trackItemIds: number[];
+    // The lowest-confidence matchType among constituent items (or 'manual' if any item
+    // was manually set) — used to badge the row. matchedText is the signal that
+    // produced it, shown for hint-tier rows so a reviewer knows what to look for.
+    matchType: string | null;
+    matchedText: string | null;
+}
+
+// Worst-case wins so a mixed group still surfaces its least-certain member; 'manual'
+// always wins outright since a human already confirmed the whole group.
+const CONFIDENCE_RANK: Record<string, number> = {
+    [MatterMatchType.CaseReference]: 3,
+    [MatterMatchType.Keyword]: 2,
+    [MatterMatchType.Hint]: 1,
+    [MatterMatchType.None]: 0,
+};
+
+function mergeMatchInfo(
+    current: { matchType: string | null; matchedText: string | null },
+    item: IMatterReviewItem,
+): { matchType: string | null; matchedText: string | null } {
+    if (current.matchType === MatterMatchType.Manual) {
+        return current;
+    }
+    if (item.matchType === MatterMatchType.Manual) {
+        return { matchType: MatterMatchType.Manual, matchedText: null };
+    }
+
+    const currentRank = current.matchType ? (CONFIDENCE_RANK[current.matchType] ?? 0) : Infinity;
+    const itemRank = item.matchType ? (CONFIDENCE_RANK[item.matchType] ?? 0) : Infinity;
+
+    return itemRank < currentRank ? { matchType: item.matchType, matchedText: item.matchedText } : current;
 }
 
 export interface MatterGroup {
@@ -70,11 +102,17 @@ export function groupReviewItems(items: IMatterReviewItem[]): DayGroup[] {
                 app: item.app,
                 durationMs: 0,
                 trackItemIds: [],
+                matchType: null,
+                matchedText: null,
             };
             matterGroup.titles.push(titleGroup);
         }
         titleGroup.durationMs += duration;
         titleGroup.trackItemIds.push(item.id);
+
+        const merged = mergeMatchInfo(titleGroup, item);
+        titleGroup.matchType = merged.matchType;
+        titleGroup.matchedText = merged.matchedText;
     }
 
     return dayOrder

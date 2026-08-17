@@ -8,6 +8,7 @@ const logger = logManager.getLogger('matchTrackItemsToMatters');
 interface RawMatter {
     id: number;
     caseReference: string;
+    clientName: string;
     keywords: string | null;
     archived: boolean;
 }
@@ -20,7 +21,13 @@ function toMatterForMatching(matter: RawMatter): MatterForMatching {
         logger.error('Failed to parse keywords for matter', matter.id, e);
     }
 
-    return { id: matter.id, caseReference: matter.caseReference, keywords, archived: matter.archived };
+    return {
+        id: matter.id,
+        caseReference: matter.caseReference,
+        clientName: matter.clientName,
+        keywords,
+        archived: matter.archived,
+    };
 }
 
 export interface MatchTrackItemsOptions {
@@ -56,7 +63,9 @@ export async function matchTrackItemsToMatters(options: MatchTrackItemsOptions =
 
         if (result) {
             await dbClient.upsertMatterTag(item.id, result.matterId, result.matchedText, result.matchType);
-            matched += 1;
+            if (result.matterId !== null) {
+                matched += 1;
+            }
         } else {
             await dbClient.upsertMatterTag(item.id, null, null, MatterMatchType.None);
         }

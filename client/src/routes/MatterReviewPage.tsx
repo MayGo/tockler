@@ -1,8 +1,9 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Text, useToast } from '@chakra-ui/react';
 import { DateTime } from 'luxon';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { IMatter } from '../@types/IMatter';
 import { IMatterReviewItem } from '../@types/IMatterReviewItem';
+import { AddKeywordToast } from '../components/MatterReview/AddKeywordToast';
 import { CardBox } from '../components/CardBox';
 import { DayGroupCard } from '../components/MatterReview/DayGroupCard';
 import { groupReviewItems } from '../components/MatterReview/matterReview.util';
@@ -11,6 +12,7 @@ import { Loader } from '../components/Timeline/Loader';
 import { findAllMatters, findMatterReviewItems, reassignMatterTag } from '../services/matter.api';
 
 export function MatterReviewPage() {
+    const toast = useToast();
     const [isLoading, setIsLoading] = useState(false);
     const [matters, setMatters] = useState<IMatter[]>([]);
     const [reviewItems, setReviewItems] = useState<IMatterReviewItem[]>([]);
@@ -34,9 +36,18 @@ export function MatterReviewPage() {
 
     const dayGroups = useMemo(() => groupReviewItems(reviewItems), [reviewItems]);
 
-    const onReassign = async (trackItemIds: number[], matterId: number | null) => {
+    const onReassign = async (trackItemIds: number[], matterId: number | null, title: string) => {
         await Promise.all(trackItemIds.map((trackItemId) => reassignMatterTag(trackItemId, matterId)));
         await loadData();
+
+        const matter = matterId !== null ? matters.find((m) => m.id === matterId) : undefined;
+        if (matter) {
+            const toastId = toast({
+                position: 'bottom-right',
+                duration: 12000,
+                render: () => <AddKeywordToast matter={matter} suggestedKeyword={title} onClose={() => toast.close(toastId)} />,
+            });
+        }
     };
 
     return (
