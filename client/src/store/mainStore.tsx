@@ -85,9 +85,6 @@ export interface StoreModel {
     setAppSettings: Action<StoreModel, (IAppSetting & { category: ICategory | null })[]>;
     fetchAppSettings: Thunk<StoreModel>;
     setCategoryForApp: Thunk<StoreModel, { appName: string; categoryId: number | null }>;
-
-    isSettingsLoading: boolean;
-    setIsSettingsLoading: Action<StoreModel, boolean>;
 }
 
 const mainStore = createStore<StoreModel>({
@@ -221,10 +218,7 @@ const mainStore = createStore<StoreModel>({
         state.categories = payload;
     }),
     fetchCategories: thunk(async (actions) => {
-        actions.setIsSettingsLoading(true);
-        const categories = await getCategoriesApi();
-        actions.setCategories(categories);
-        actions.setIsSettingsLoading(false);
+        actions.setCategories(await getCategoriesApi());
     }),
     createCategory: thunk(async (actions, payload) => {
         await createCategoryApi(payload);
@@ -245,19 +239,11 @@ const mainStore = createStore<StoreModel>({
         state.appSettings = payload;
     }),
     fetchAppSettings: thunk(async (actions) => {
-        actions.setIsSettingsLoading(true);
-        const appSettings = await retrieveAllAppSettingsWithCategoryApi();
-        actions.setAppSettings(appSettings);
-        actions.setIsSettingsLoading(false);
+        actions.setAppSettings(await retrieveAllAppSettingsWithCategoryApi());
     }),
     setCategoryForApp: thunk(async (actions, payload) => {
         await setCategoryForAppApi(payload.appName, payload.categoryId);
         await actions.fetchAppSettings();
-    }),
-
-    isSettingsLoading: false,
-    setIsSettingsLoading: action((state, payload) => {
-        state.isSettingsLoading = payload;
     }),
 });
 

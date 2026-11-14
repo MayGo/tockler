@@ -1,28 +1,33 @@
 import { Select } from '@chakra-ui/react';
 import { Column } from '@tanstack/react-table';
+import { useMemo } from 'react';
 import { ITrackItem } from '../../@types/ITrackItem';
-import { ToggleColumnFilter } from './ToggleColumnFilter';
 
 export function SelectColumnFilter({ column }: { column: Column<ITrackItem> }) {
     const uniqueValues = column.getFacetedUniqueValues();
-    const options = Array.from(uniqueValues.keys());
-    const filterValue = column.getFilterValue() || '';
+    const options = useMemo(
+        () =>
+            [...uniqueValues.entries()]
+                .filter(([value]) => typeof value === 'string' && value)
+                .sort(([a], [b]) => String(a).localeCompare(String(b))),
+        [uniqueValues],
+    );
+    const filterValue = column.getFilterValue();
 
     return (
-        <ToggleColumnFilter>
-            <Select
-                value={filterValue as string}
-                onChange={(e) => {
-                    column.setFilterValue(e.target.value || undefined);
-                }}
-            >
-                <option value="">All</option>
-                {options.map((option, i) => (
-                    <option key={i} value={option}>
-                        {option}
-                    </option>
-                ))}
-            </Select>
-        </ToggleColumnFilter>
+        <Select
+            size="sm"
+            borderRadius="md"
+            aria-label={`Filter ${column.id}`}
+            value={typeof filterValue === 'string' ? filterValue : ''}
+            onChange={(e) => column.setFilterValue(e.target.value || undefined)}
+        >
+            <option value="">All</option>
+            {options.map(([value, count]) => (
+                <option key={value} value={value}>
+                    {value} ({count})
+                </option>
+            ))}
+        </Select>
     );
 }

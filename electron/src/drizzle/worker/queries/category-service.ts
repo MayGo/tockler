@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm';
-import { categories, NewCategory } from '../../schema';
+import { appSettings, categories, NewCategory } from '../../schema';
 import { db } from '../db';
 
 export const getCategories = async () => {
@@ -7,15 +7,22 @@ export const getCategories = async () => {
 };
 
 export const createCategory = async (category: NewCategory) => {
-    return db.insert(categories).values(category).returning();
+    const [created] = await db.insert(categories).values(category).returning();
+    return created;
 };
 
 export const updateCategory = async (id: number, category: Partial<NewCategory>) => {
-    return db.update(categories).set(category).where(eq(categories.id, id)).returning();
+    const [updated] = await db.update(categories).set(category).where(eq(categories.id, id)).returning();
+    return updated;
 };
 
 export const deleteCategory = async (id: number) => {
-    return db.delete(categories).where(eq(categories.id, id)).returning();
+    // The FK clears categoryId on delete, but databases that ran an earlier draft of migration 0001
+    // have the FK without ON DELETE SET NULL, so clear it explicitly.
+    db.transaction((tx) => {
+        tx.update(appSettings).set({ categoryId: null }).where(eq(appSettings.categoryId, id)).run();
+        tx.delete(categories).where(eq(categories.id, id)).run();
+    });
 };
 
 export const categoryService = {

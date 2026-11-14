@@ -3,11 +3,21 @@ import { ChangeEvent, memo, useState } from 'react';
 import { AiOutlineClose, AiOutlineSearch } from 'react-icons/ai';
 import { useDebouncedCallback } from 'use-debounce';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
+import { normalizeKeyword } from './titleSearch.utils';
 
 export const TitleSearch = memo(() => {
     const titleSearch = useStoreState((state) => state.titleSearch);
     const setTitleSearch = useStoreActions((actions) => actions.setTitleSearch);
     const [value, setValue] = useState(titleSearch);
+    const [syncedTitleSearch, setSyncedTitleSearch] = useState(titleSearch);
+
+    // Follow changes made elsewhere (e.g. "Show all" under the table). Our own debounced updates already match.
+    if (titleSearch !== syncedTitleSearch) {
+        setSyncedTitleSearch(titleSearch);
+        if (normalizeKeyword(titleSearch) !== normalizeKeyword(value)) {
+            setValue(titleSearch);
+        }
+    }
 
     const setTitleSearchDebounced = useDebouncedCallback(setTitleSearch, 250);
 

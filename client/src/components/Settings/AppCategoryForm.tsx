@@ -1,20 +1,29 @@
-import { Select, Table, Tbody, Td, Th, Thead, Tr, VStack } from '@chakra-ui/react';
+import { Select, Table, Tbody, Td, Th, Thead, Tr, useToast, VStack } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { Card } from '../Card';
+import { errorToast } from './categoryErrors';
 
 export const AppCategoryForm = () => {
-    const { appSettings, categories } = useStoreState((state) => state);
-    const { fetchAppSettings, fetchCategories, setCategoryForApp } = useStoreActions((actions) => actions);
+    const appSettings = useStoreState((state) => state.appSettings);
+    const categories = useStoreState((state) => state.categories);
+    const fetchAppSettings = useStoreActions((actions) => actions.fetchAppSettings);
+    const setCategoryForApp = useStoreActions((actions) => actions.setCategoryForApp);
+    const toast = useToast();
 
+    const showError = (title: string, error: unknown) => toast(errorToast(title, error));
+
+    // CategoryForm, rendered next to this one, loads the categories.
     useEffect(() => {
-        fetchAppSettings();
-        fetchCategories();
-    }, [fetchAppSettings, fetchCategories]);
+        fetchAppSettings().catch((error) => toast(errorToast('Could not load apps', error)));
+    }, [fetchAppSettings, toast]);
 
-    const handleCategoryChange = (appName: string, categoryId: string) => {
-        const catId = categoryId ? parseInt(categoryId, 10) : null;
-        setCategoryForApp({ appName, categoryId: catId });
+    const handleCategoryChange = async (appName: string, categoryId: string) => {
+        try {
+            await setCategoryForApp({ appName, categoryId: categoryId ? parseInt(categoryId, 10) : null });
+        } catch (error) {
+            showError(`Could not set category for ${appName}`, error);
+        }
     };
 
     return (

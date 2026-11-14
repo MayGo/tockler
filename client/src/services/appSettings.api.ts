@@ -7,9 +7,9 @@ export async function changeColorForApp(appName: string, color: string) {
 }
 
 export async function setCategoryForApp(appName: string, categoryId: number | null): Promise<IAppSetting> {
-    return ElectronEventEmitter.emit('setCategoryForApp', { appName, categoryId });
+    return ElectronEventEmitter.emitOrThrow('setCategoryForApp', { appName, categoryId });
 }
 
 export async function retrieveAllAppSettingsWithCategory(): Promise<(IAppSetting & { category: ICategory | null })[]> {
-    return ElectronEventEmitter.emit('retrieveAllAppSettingsWithCategory');
+    return ElectronEventEmitter.emitOrThrow('retrieveAllAppSettingsWithCategory');
 }

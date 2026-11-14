@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { NumberOrCallback } from 'victory';
+import { CallbackArgs, NumberOrCallback, StringOrCallback } from 'victory';
 import { ITrackItem } from '../../@types/ITrackItem';
 
 export const normalizeKeyword = (keyword: string) => keyword.trim().toLowerCase();
@@ -44,10 +44,36 @@ export const getMergedDurationMs = (items: ITrackItem[], range: DateTime[]) => {
     return total;
 };
 
-export const DIMMED_OPACITY = 0.15;
+const HIGHLIGHT_STROKE = { light: '#d97706', dark: '#fbbf24' };
+const DIMMED_FILL = { light: '#cbd5e0', dark: '#4a5568' };
 
-/** Victory `fillOpacity` callback: dims bars whose title doesn't match while a search is active. */
-export const titleHighlightOpacity =
-    (keyword: string): NumberOrCallback =>
-    ({ datum }) =>
-        !keyword || matchesTitleKeyword(datum ?? {}, keyword) ? 1 : DIMMED_OPACITY;
+interface BarStyleBase {
+    isDark: boolean;
+    stroke: string;
+    strokeWidth: number;
+}
+
+/**
+ * Victory bar `data` style for the timeline while a title search is active: non-matching bars turn grey,
+ * matching bars keep their colour and get a thick outline, which also keeps very short items visible.
+ */
+export const titleHighlightBarStyle = (keyword: string, { isDark, stroke, strokeWidth }: BarStyleBase) => {
+    const theme = isDark ? 'dark' : 'light';
+    const isMatch = ({ datum }: CallbackArgs) => !keyword || matchesTitleKeyword(datum ?? {}, keyword);
+
+    return {
+        fill: ((args) => (isMatch(args) ? (args.datum?.color ?? '') : DIMMED_FILL[theme])) satisfies StringOrCallback,
+        fillOpacity: ((args) => (isMatch(args) || !keyword ? 1 : 0.6)) satisfies NumberOrCallback,
+        stroke: ((args) => (keyword && isMatch(args) ? HIGHLIGHT_STROKE[theme] : stroke)) satisfies StringOrCallback,
+        strokeWidth: ((args) => (keyword && isMatch(args) ? 2 : strokeWidth)) satisfies NumberOrCallback,
+    };
+};
+
+/** Draw matching items last so their outlines aren't covered by neighbouring bars. */
+export const matchesLast = <T extends Pick<ITrackItem, 'title'>>(items: T[], keyword: string) =>
+    keyword
+        ? [
+              ...items.filter((item) => !matchesTitleKeyword(item, keyword)),
+              ...items.filter((item) => matchesTitleKeyword(item, keyword)),
+          ]
+        : items;

@@ -1,4 +1,5 @@
 import { ipcMain } from 'electron';
+import log from 'electron-log/main';
 import { machineId } from 'node-machine-id';
 import AppManager from './app/app-manager';
 import { exportFile } from './app/exportFile';
@@ -12,6 +13,9 @@ import { NewCategory, TrackItem } from './drizzle/schema';
 import { setupMainHandler } from './utils/setupMainHandler';
 
 const settingsActions = {
+    getLogFilePath: async () => {
+        return log.transports.file.getFile().path;
+    },
     fetchAnalyserSettingsJsonString: async () => {
         return dbClient.fetchAnalyserSettingsJsonString();
     },
@@ -91,13 +95,6 @@ const trackItemActions = {
 
         const lastItems = await getLastItemsAll({ from, to, taskName });
         return [...data, ...lastItems];
-    },
-
-    getAppUsageByCategory: async (payload: { from: string; to: string }) => {
-        return dbClient.getAppUsageByCategory(payload.from, payload.to);
-    },
-    getAppUsageByApp: async (payload: { from: string; to: string }) => {
-        return dbClient.getAppUsageByApp(payload.from, payload.to);
     },
 
     createTrackItem: async (payload: { trackItem: TrackItem }) => {

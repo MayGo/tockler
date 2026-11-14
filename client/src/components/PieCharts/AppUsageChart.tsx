@@ -1,64 +1,67 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 
 import { Button, ButtonGroup } from '@chakra-ui/react';
 import { useMeasure } from '@uidotdev/usehooks';
 import { VictoryBar, VictoryLabel, VictoryStack, VictoryStyleInterface } from 'victory';
+import { ITrackItem } from '../../@types/ITrackItem';
+import { TrackItemType } from '../../enum/TrackItemType';
+import { Logger } from '../../logger';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
-import { getAppUsageByApp, getAppUsageByCategory } from '../../services/trackItem.api';
-import { useStoreState } from '../../store/easyPeasy';
+import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { formatDurationInternal } from '../../utils';
 import { BarWithTooltip } from '../Timeline/BarWithTooltip';
 import { BAR_WIDTH } from '../Timeline/timeline.constants';
 import { colorProp } from '../charts.utils';
-import { getTextWidth } from './AppUsageChart.utils';
+import { getTextWidth, getUsageBars, UNCATEGORIZED } from './AppUsageChart.utils';
 
 type ViewMode = 'app' | 'category';
 
-interface AppUsageData {
-    name: string;
-    color: string;
-    timeDiffInMs: number;
-}
+const EMPTY_ARRAY: ITrackItem[] = [];
+
+const LABEL_PADDING = 25;
+const LABEL_FONT = '"Gill Sans", Seravek, "Trebuchet MS", sans-serif;';
 
 export const AppUsageChart = memo(() => {
     const [ref, { width }] = useMeasure();
     const { chartTheme } = useChartThemeState();
     const visibleTimerange = useStoreState((state) => state.visibleTimerange);
+    const appItems = useStoreState((state) => state.timeItems[TrackItemType.AppTrackItem]) || EMPTY_ARRAY;
+    const appSettings = useStoreState((state) => state.appSettings);
+    const fetchAppSettings = useStoreActions((actions) => actions.fetchAppSettings);
     const [viewMode, setViewMode] = useState<ViewMode>('app');
-    const [data, setData] = useState<AppUsageData[]>([]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            if (!visibleTimerange[0] || !visibleTimerange[1]) return;
+        if (viewMode === 'category') {
+            fetchAppSettings().catch((error) => Logger.error('Failed to load app categories', error));
+        }
+    }, [viewMode, fetchAppSettings]);
 
-            const from = visibleTimerange[0].toISO();
-            const to = visibleTimerange[1].toISO();
+    const categoryByApp = useMemo(
+        () => new Map(appSettings.map((setting) => [setting.name, setting.category])),
+        [appSettings],
+    );
 
-            if (!from || !to) return;
+    const bars = useMemo(
+        () =>
+            getUsageBars(appItems, visibleTimerange, (item) =>
+                viewMode === 'app'
+                    ? { name: item.app, color: item.color }
+                    : (categoryByApp.get(item.app) ?? UNCATEGORIZED),
+            ),
+        [appItems, visibleTimerange, viewMode, categoryByApp],
+    );
 
-            if (viewMode === 'app') {
-                const appData = await getAppUsageByApp(from, to);
-                setData(
-                    appData.map((d) => ({
-                        name: d.appName,
-                        color: d.appColor || '#cccccc',
-                        timeDiffInMs: d.totalDuration,
-                    })),
-                );
-            } else {
-                const categoryData = await getAppUsageByCategory(from, to);
-                setData(
-                    categoryData.map((d) => ({
-                        name: d.categoryName,
-                        color: d.categoryColor || '#cccccc',
-                        timeDiffInMs: d.totalDuration,
-                    })),
-                );
-            }
-        };
-
-        fetchData();
-    }, [viewMode, visibleTimerange]);
+    // Victory renders `datum.label` as is, and renders nothing for null. An empty string would still
+    // produce a <text> element with a NaN position.
+    const data = useMemo(() => {
+        const totalMs = bars.reduce((sum, bar) => sum + bar.timeDiffInMs, 0);
+        return bars.map((bar) => {
+            const text = `${bar.name} - ${formatDurationInternal(bar.timeDiffInMs)}`;
+            const barWidthPx = totalMs > 0 ? (bar.timeDiffInMs / totalMs) * (width ?? 0) : 0;
+            const canFit = getTextWidth(text, 14, LABEL_FONT) + LABEL_PADDING * 2 < barWidthPx;
+            return { ...bar, label: canFit ? text : null };
+        });
+    }, [bars, width]);
 
     const getTooltipLabel = (datum) => {
         return `${datum.name}\r\n${formatDurationInternal(datum.timeDiffInMs)}`;
@@ -73,7 +76,6 @@ export const AppUsageChart = memo(() => {
         },
     };
 
-    const labelPadding = 25;
     return (
         <div ref={ref}>
             <ButtonGroup size="sm" isAttached variant="outline" mb={4}>
@@ -93,33 +95,8 @@ export const AppUsageChart = memo(() => {
                         data={[item]}
                         x="name"
                         y="timeDiffInMs"
-                        labels={({ datum }) => datum.name}
                         labelComponent={
-                            <VictoryLabel
-                                verticalAnchor="end"
-                                textAnchor="end"
-                                text={({ datum, scale }) => {
-                                    const text = `${datum.name} - ${formatDurationInternal(datum.timeDiffInMs)}`;
-                                    const textWidth = getTextWidth(
-                                        text,
-                                        14,
-                                        '"Gill Sans", Seravek, "Trebuchet MS", sans-serif;',
-                                    );
-
-                                    const timeDiff = datum._y1 - datum._y0;
-
-                                    const width =
-                                        typeof scale === 'object' && typeof scale.y === 'function'
-                                            ? scale.y(timeDiff)
-                                            : 0;
-
-                                    const canFit = textWidth + labelPadding * 2 < width;
-
-                                    return canFit ? text : '';
-                                }}
-                                dx={-labelPadding}
-                                dy={-5}
-                            />
+                            <VictoryLabel verticalAnchor="end" textAnchor="end" dx={-LABEL_PADDING} dy={-5} />
                         }
                         dataComponent={<BarWithTooltip theme={chartTheme} getTooltipLabel={getTooltipLabel} />}
                     />

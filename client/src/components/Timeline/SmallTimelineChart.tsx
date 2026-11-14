@@ -17,7 +17,6 @@ import { Logger } from '../../logger';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { rangeToDate } from '../../timeline.util';
-import { colorProp } from '../charts.utils';
 
 import { useMeasure } from '@uidotdev/usehooks';
 import { ITrackItem } from '../../@types/ITrackItem';
@@ -27,7 +26,7 @@ import { BrushHandle } from './BrushHandle';
 import { CHART_PADDING, CHART_SCALE } from './timeline.constants';
 import { getDynamicTimeFormat } from './timeline.format.utils';
 import { getTrackItemOrderFn } from './timeline.utils';
-import { titleHighlightOpacity } from './titleSearch.utils';
+import { matchesLast, titleHighlightBarStyle } from './titleSearch.utils';
 import { useTitleSearchMatches } from './useTitleSearchMatches';
 
 const domainPaddingBrush: DomainPaddingPropType = { y: 35, x: 5 };
@@ -35,10 +34,7 @@ const domainPaddingBrush: DomainPaddingPropType = { y: 35, x: 5 };
 const brushChartBarStyle = (isDark: boolean, keyword: string): VictoryStyleInterface => ({
     data: {
         width: 7,
-        fill: colorProp,
-        stroke: isDark ? 'black' : 'white',
-        strokeWidth: 0.5,
-        fillOpacity: titleHighlightOpacity(keyword),
+        ...titleHighlightBarStyle(keyword, { isDark, stroke: isDark ? 'black' : 'white', strokeWidth: 0.5 }),
     },
 });
 
@@ -81,7 +77,7 @@ export const SmallTimelineChart = memo(() => {
     // App items are normally left out of the overview; while searching, the matching ones are added
     // so the whole day shows where they occurred.
     const matchedAppItems = matchedItems.filter((item) => item.taskName === TrackItemType.AppTrackItem);
-    const brushData = [...statusTrackItems, ...logTrackItems, ...matchedAppItems];
+    const brushData = matchesLast([...statusTrackItems, ...logTrackItems, ...matchedAppItems], keyword);
 
     const handleBrushDebounced = debounce(handleBrush, 300);
 

@@ -1,5 +1,4 @@
 import { DateTime } from 'luxon';
-import { IAppUsage, ICategoryUsage } from '../@types/IAppUsage';
 import { ITrackItem, NewTrackItem } from '../@types/ITrackItem';
 import { TrackItemType } from '../enum/TrackItemType';
 import { Logger } from '../logger';
@@ -135,12 +134,4 @@ export function stopRunningLogItem(runningLogItemId: number) {
 
 export function updateTrackItemColor(appName: string, color: string) {
     return ElectronEventEmitter.emit('updateTrackItemColor', { appName, color });
-}
-
-export async function getAppUsageByCategory(from: string, to: string): Promise<ICategoryUsage[]> {
-    return ElectronEventEmitter.emit('getAppUsageByCategory', { from, to });
-}
-
-export async function getAppUsageByApp(from: string, to: string): Promise<IAppUsage[]> {
-    return ElectronEventEmitter.emit('getAppUsageByApp', { from, to });
 }

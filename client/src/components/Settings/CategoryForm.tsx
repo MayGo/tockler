@@ -10,43 +10,72 @@ import {
     Th,
     Thead,
     Tr,
+    useToast,
     VStack,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { ICategory, NewCategory } from '../../@types/ICategory';
+import { ICategory } from '../../@types/ICategory';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { Card } from '../Card';
+import { errorToast } from './categoryErrors';
+
+const EMPTY_CATEGORY = { name: '', color: '#ffffff' };
 
 export const CategoryForm = () => {
-    const { categories, isSettingsLoading } = useStoreState((state) => state);
-    const { fetchCategories, createCategory, updateCategory, deleteCategory } = useStoreActions((actions) => actions);
+    const categories = useStoreState((state) => state.categories);
+    const fetchCategories = useStoreActions((actions) => actions.fetchCategories);
+    const createCategory = useStoreActions((actions) => actions.createCategory);
+    const updateCategory = useStoreActions((actions) => actions.updateCategory);
+    const deleteCategory = useStoreActions((actions) => actions.deleteCategory);
+    const toast = useToast();
 
-    const [newCategory, setNewCategory] = useState<Partial<NewCategory>>({ name: '', color: '#ffffff' });
+    const [newCategory, setNewCategory] = useState(EMPTY_CATEGORY);
     const [editingCategory, setEditingCategory] = useState<ICategory | null>(null);
+    const [isCreating, setIsCreating] = useState(false);
+
+    const showError = (title: string, error: unknown) => toast(errorToast(title, error));
 
     useEffect(() => {
-        fetchCategories();
-    }, [fetchCategories]);
+        fetchCategories().catch((error) => toast(errorToast('Could not load categories', error)));
+    }, [fetchCategories, toast]);
 
-    const handleCreate = () => {
-        if (newCategory.name) {
-            createCategory(newCategory as NewCategory);
-            setNewCategory({ name: '', color: '#ffffff' });
+    const handleCreate = async () => {
+        const name = newCategory.name.trim();
+        if (!name) {
+            return;
+        }
+        setIsCreating(true);
+        try {
+            await createCategory({ name, color: newCategory.color });
+            setNewCategory(EMPTY_CATEGORY);
+        } catch (error) {
+            showError('Could not add category', error);
+        } finally {
+            setIsCreating(false);
         }
     };
 
-    const handleUpdate = () => {
-        if (editingCategory) {
-            updateCategory({
+    const handleUpdate = async () => {
+        if (!editingCategory) {
+            return;
+        }
+        try {
+            await updateCategory({
                 id: editingCategory.id,
-                category: { name: editingCategory.name, color: editingCategory.color },
+                category: { name: editingCategory.name.trim(), color: editingCategory.color },
             });
             setEditingCategory(null);
+        } catch (error) {
+            showError('Could not save category', error);
         }
     };
 
-    const handleDelete = (id: number) => {
-        deleteCategory(id);
+    const handleDelete = async (id: number) => {
+        try {
+            await deleteCategory(id);
+        } catch (error) {
+            showError('Could not delete category', error);
+        }
     };
 
     return (
@@ -118,6 +147,7 @@ export const CategoryForm = () => {
 
                 <HStack
                     as="form"
+                    alignItems="flex-end"
                     onSubmit={(e) => {
                         e.preventDefault();
                         handleCreate();
@@ -126,20 +156,22 @@ export const CategoryForm = () => {
                     <FormControl>
                         <FormLabel>New Category Name</FormLabel>
                         <Input
-                            value={newCategory.name || ''}
+                            value={newCategory.name}
                             onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
                             placeholder="Category name"
                         />
                     </FormControl>
-                    <FormControl>
+                    <FormControl width="auto">
                         <FormLabel>Color</FormLabel>
                         <Input
                             type="color"
-                            value={newCategory.color || ''}
+                            width="64px"
+                            p={1}
+                            value={newCategory.color}
                             onChange={(e) => setNewCategory({ ...newCategory, color: e.target.value })}
                         />
                     </FormControl>
-                    <Button type="submit" mt={8} isLoading={isSettingsLoading}>
+                    <Button type="submit" flexShrink={0} isLoading={isCreating}>
                         Add Category
                     </Button>
                 </HStack>

@@ -1,5 +1,5 @@
 import { FormControl, FormLabel, Switch, Text } from '@chakra-ui/react';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 import {
     getIsAutoUpdateEnabled,
@@ -7,6 +7,7 @@ import {
     getMacAutoHideMenuBarEnabled,
     getNativeThemeChange,
     getOpenAtLogin,
+    getLogFilePath,
     getUsePurpleTrayIcon,
     saveIsAutoUpdateEnabled,
     saveIsLoggingEnabled,
@@ -15,6 +16,7 @@ import {
     saveOpenAtLogin,
     saveUsePurpleTrayIcon,
 } from '../../services/settings.api';
+import { Logger } from '../../logger';
 import '../../types/electron-bridge';
 import { CardBox } from '../CardBox';
 
@@ -45,21 +47,13 @@ export const AppForm = () => {
         saveMacAutoHideMenuBarEnabled(event.target.checked);
     };
 
-    const appName = import.meta.env.VITE_NAME;
-    const platform = window.electronBridge.platform;
+    const [logPath, setLogPath] = useState<string | null>(null);
 
-    const linuxPath = `~/.config/${appName}/logs/main.log`;
-    const macOSPath = `~/Library/Logs/${appName}/main.log`;
-    const windowsPath = `%USERPROFILE%\\AppData\\Roaming\${appName}\\logs\\main.log`;
-
-    let logPath = linuxPath;
-
-    const isMacOS = platform === 'darwin';
-    if (platform === 'win32') {
-        logPath = windowsPath;
-    } else if (isMacOS) {
-        logPath = macOSPath;
-    }
+    useEffect(() => {
+        getLogFilePath()
+            .then(setLogPath)
+            .catch((error) => Logger.error('Failed to get log file path', error));
+    }, []);
 
     return (
         <CardBox title="App settings" divider w="50%">
@@ -106,7 +100,7 @@ export const AppForm = () => {
                 <Switch id="enable-logging" defaultChecked={isLoggingEnabled} onChange={onChangeLogging} size="lg" />
             </FormControl>
             <Text fontSize="xs" color="gray.500" pt={1}>
-                Log path: {logPath}
+                Log path: {logPath ?? '…'}
             </Text>
             {window.electronBridge.platform === 'darwin' && (
                 <>

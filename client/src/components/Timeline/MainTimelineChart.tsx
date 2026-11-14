@@ -20,12 +20,11 @@ import { useChartThemeState } from '../../routes/ChartThemeProvider';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { rangeToDate } from '../../timeline.util';
 import { formatDurationInternal } from '../../utils';
-import { colorProp } from '../charts.utils';
 import { BrushHandle } from './BrushHandle';
 import { BAR_WIDTH, CHART_PADDING, CHART_SCALE } from './timeline.constants';
 import { getDynamicTimeFormat } from './timeline.format.utils';
 import { getTrackItemOrderFn } from './timeline.utils';
-import { titleHighlightOpacity } from './titleSearch.utils';
+import { matchesLast, titleHighlightBarStyle } from './titleSearch.utils';
 import { useTitleSearchMatches } from './useTitleSearchMatches';
 
 import { useMeasure } from '@uidotdev/usehooks';
@@ -36,10 +35,7 @@ const domainPadding: DomainPaddingPropType = { y: 35, x: 10 };
 export const barStyle = (isDark: boolean, keyword: string): VictoryStyleInterface => ({
     data: {
         width: BAR_WIDTH,
-        fill: colorProp,
-        stroke: isDark ? 'black' : 'white',
-        strokeWidth: 0.5,
-        fillOpacity: titleHighlightOpacity(keyword),
+        ...titleHighlightBarStyle(keyword, { isDark, stroke: isDark ? 'black' : 'white', strokeWidth: 0.5 }),
         clipPath: 'none',
     },
 });
@@ -150,7 +146,7 @@ export const MainTimelineChart = memo(() => {
         return <div>No data</div>;
     }
 
-    const timelineData = [...statusItems, ...logItems, ...appItems];
+    const timelineData = matchesLast([...statusItems, ...logItems, ...appItems], keyword);
 
     Logger.debug(`Rendering ${timelineData.length} items`);
 

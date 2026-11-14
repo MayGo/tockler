@@ -165,3 +165,7 @@ export async function fetchAnalyserSettings() {
         return [];
     }
 }
+
+export function getLogFilePath(): Promise<string> {
+    return ElectronEventEmitter.emitOrThrow('getLogFilePath');
+}
