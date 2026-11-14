@@ -8,6 +8,7 @@ import { fitRangeInto } from './timeline.utils';
  * Set the visible range from a user action, kept inside the loaded day.
  * Live view re-centres the range on "now" every few seconds and keeps only its length, so a range that picks a
  * specific part of the day (AM, PM, typed times, brush) has to switch live view off or it would be moved away.
+ * Returns the range actually applied (after clamping to the day).
  */
 export const useSetVisibleRange = () => {
     const timerange = useStoreState((state) => state.timerange);
@@ -16,11 +17,13 @@ export const useSetVisibleRange = () => {
     const setLiveView = useStoreActions((actions) => actions.setLiveView);
 
     return useCallback(
-        (range: DateTime[], { pinsPosition }: { pinsPosition: boolean }) => {
+        (range: DateTime[], { pinsPosition }: { pinsPosition: boolean }): DateTime[] => {
             if (pinsPosition && timerangeMode === TIMERANGE_MODE_TODAY) {
                 setLiveView(false);
             }
-            setVisibleTimerange(fitRangeInto(timerange, range));
+            const applied = fitRangeInto(timerange, range);
+            setVisibleTimerange(applied);
+            return applied;
         },
         [timerange, timerangeMode, setVisibleTimerange, setLiveView],
     );

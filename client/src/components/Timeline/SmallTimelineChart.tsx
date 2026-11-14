@@ -1,6 +1,5 @@
-import { debounce } from 'lodash';
 import { DateTime } from 'luxon';
-import { memo } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import {
     DomainPaddingPropType,
     DomainTuple,
@@ -15,7 +14,8 @@ import {
 import { Logger } from '../../logger';
 
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
-import { useStoreState } from '../../store/easyPeasy';
+import { useStoreActions, useStoreState } from '../../store/easyPeasy';
+import { TIMERANGE_MODE_TODAY } from '../../store/mainStore';
 import { rangeToDate } from '../../timeline.util';
 
 import { useMeasure } from '@uidotdev/usehooks';
@@ -40,6 +40,9 @@ const brushChartBarStyle = (isDark: boolean, keyword: string): VictoryStyleInter
 
 const xDomain: DomainTuple = [1, 3];
 
+/** Width Victory treats as a handle when deciding between resize, move and a new selection. */
+const BRUSH_HANDLE_HIT_WIDTH = 16;
+
 const EMPTY_ARRAY: ITrackItem[] = [];
 
 export const SmallTimelineChart = memo(() => {
@@ -52,14 +55,43 @@ export const SmallTimelineChart = memo(() => {
     const timeItems = useStoreState((state) => state.timeItems);
     const { keyword, matchedItems } = useTitleSearchMatches();
     const setVisibleRange = useSetVisibleRange();
-    const changeVisibleTimerange = (range: [Date, Date]) => {
-        setVisibleRange([DateTime.fromJSDate(range[0]), DateTime.fromJSDate(range[1])], { pinsPosition: true });
+    const timerangeMode = useStoreState((state) => state.timerangeMode);
+    const setLiveView = useStoreActions((actions) => actions.setLiveView);
+
+    // Victory's brush keeps its own copy of the selected range and, when the brushDomain prop goes back to a value it
+    // has cached, hit-tests the handles against that stale copy, so pressing a handle starts a new selection.
+    // Remount the brush whenever the range changes from anywhere but the brush itself (presets, zoom, live view).
+    const rangeKey = `${visibleTimerange[0].toMillis()}-${visibleTimerange[1].toMillis()}`;
+    const ownRangeKeyRef = useRef(rangeKey);
+    const [brushVersion, setBrushVersion] = useState(0);
+    useEffect(() => {
+        if (rangeKey !== ownRangeKeyRef.current) {
+            ownRangeKeyRef.current = rangeKey;
+            setBrushVersion((version) => version + 1);
+        }
+    }, [rangeKey]);
+
+    // Live view would move the range under the pointer; stop it as soon as a drag starts.
+    const isDraggingRef = useRef(false);
+    const handleBrushMove = () => {
+        if (!isDraggingRef.current) {
+            isDraggingRef.current = true;
+            if (timerangeMode === TIMERANGE_MODE_TODAY) {
+                setLiveView(false);
+            }
+        }
     };
 
-    const handleBrush = (domain: { y: [Date, Date] }) => {
-        Logger.debug('Selected with brush:', domain.y);
-
-        changeVisibleTimerange(domain.y);
+    // Apply the range once, when the drag ends, rather than while the handle is still moving.
+    const handleBrushEnd = (brushDomain: { y?: DomainTuple }) => {
+        isDraggingRef.current = false;
+        if (!brushDomain.y) {
+            return;
+        }
+        const [begin, end] = brushDomain.y.map((value) => DateTime.fromMillis(new Date(value).getTime()));
+        Logger.debug('Selected with brush:', begin.toISO(), end.toISO());
+        const applied = setVisibleRange([begin, end], { pinsPosition: true });
+        ownRangeKeyRef.current = `${applied[0].toMillis()}-${applied[1].toMillis()}`;
     };
 
     const appTrackItems = timeItems[TrackItemType.AppTrackItem] || EMPTY_ARRAY;
@@ -75,8 +107,6 @@ export const SmallTimelineChart = memo(() => {
     const matchedAppItems = matchedItems.filter((item) => item.taskName === TrackItemType.AppTrackItem);
     const brushData = matchesLast([...statusTrackItems, ...logTrackItems, ...matchedAppItems], keyword);
 
-    const handleBrushDebounced = debounce(handleBrush, 300);
-
     const domain: ForAxes<DomainTuple> = {
         y: [timerange[0].toMillis(), timerange[1].toMillis()],
         x: xDomain,
@@ -85,6 +115,7 @@ export const SmallTimelineChart = memo(() => {
     return (
         <div ref={ref}>
             <VictoryChart
+                key={brushVersion}
                 theme={chartTheme}
                 height={50}
                 width={width ?? 0}
@@ -104,10 +135,10 @@ export const SmallTimelineChart = memo(() => {
                             fillOpacity: 0.5,
                         }}
                         handleComponent={<BrushHandle />}
-                        onBrushDomainChange={(domain) => {
-                            // Convert domain.y from numbers to Dates before passing to handler
-                            handleBrushDebounced({ y: [new Date(domain.y[0]), new Date(domain.y[1])] });
-                        }}
+                        handleWidth={BRUSH_HANDLE_HIT_WIDTH}
+                        defaultBrushArea="none"
+                        onBrushDomainChange={handleBrushMove}
+                        onBrushDomainChangeEnd={handleBrushEnd}
                     />
                 }
             >
