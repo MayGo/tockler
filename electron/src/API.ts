@@ -4,12 +4,13 @@ import { machineId } from 'node-machine-id';
 import AppManager from './app/app-manager';
 import { exportFile } from './app/exportFile';
 import { taskAnalyser } from './app/task-analyser';
-import { sendToNotificationWindow, sendToTrayWindow } from './app/window-manager';
+import WindowManager, { sendToMainWindow, sendToNotificationWindow, sendToTrayWindow } from './app/window-manager';
 import { getLastItemsAll, getOngoingItemWithDuration } from './background/background.utils';
 import { initBackgroundJob } from './background/initBackgroundJob';
 import { dbClient } from './drizzle/dbClient';
 import { OrderByKey } from './drizzle/query.utils';
 import { NewCategory, TrackItem } from './drizzle/schema';
+import { appEmitter } from './utils/appEmitter';
 import { setupMainHandler } from './utils/setupMainHandler';
 
 const settingsActions = {
@@ -147,9 +148,22 @@ const trackItemActions = {
     },
 };
 
-export const initIpcActions = () =>
+const forwardLogItemChanges = () => {
+    appEmitter.on('log-items-changed', () => {
+        if (WindowManager.menubar?.window) {
+            sendToTrayWindow('log-items-changed');
+        }
+        if (WindowManager.mainWindow) {
+            sendToMainWindow('log-items-changed');
+        }
+    });
+};
+
+export const initIpcActions = () => {
+    forwardLogItemChanges();
     setupMainHandler(
         { ipcMain } as any,
         { ...settingsActions, ...appSettingsActions, ...trackItemActions, ...categoryActions },
         true,
     );
+};

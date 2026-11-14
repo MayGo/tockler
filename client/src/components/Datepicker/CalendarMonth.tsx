@@ -50,6 +50,10 @@ export const CalendarMonth = ({ year, month, dateCellRender, onDateClicked }: Mo
                             <Box key={index} __css={styles.emptyDay} />
                         ),
                     )}
+                    {/* useMonth pads only the start of the month; fill the rest of the last week the same way. */}
+                    {Array.from({ length: (7 - (days.length % 7)) % 7 }, (_, i) => (
+                        <Box key={`trailing-${i}`} __css={styles.emptyDay} />
+                    ))}
                 </SimpleGrid>
             </Box>
         </Box>

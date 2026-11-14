@@ -1,6 +1,6 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 
-import { Button, ButtonGroup } from '@chakra-ui/react';
+import { Button, ButtonGroup, Text } from '@chakra-ui/react';
 import { useMeasure } from '@uidotdev/usehooks';
 import { VictoryBar, VictoryLabel, VictoryStack, VictoryStyleInterface } from 'victory';
 import { ITrackItem } from '../../@types/ITrackItem';
@@ -86,6 +86,11 @@ export const AppUsageChart = memo(() => {
                     By Category
                 </Button>
             </ButtonGroup>
+            {data.length === 0 && (
+                <Text color="gray.500" fontSize="sm">
+                    No app usage in the visible range.
+                </Text>
+            )}
             <VictoryStack height={BAR_WIDTH} padding={0} width={width ?? 0} horizontal>
                 {data.map((item) => (
                     <VictoryBar

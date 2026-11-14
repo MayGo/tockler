@@ -3,7 +3,7 @@ import { ICategory } from '../@types/ICategory';
 import { ElectronEventEmitter } from './ElectronEventEmitter';
 
 export async function changeColorForApp(appName: string, color: string) {
-    return ElectronEventEmitter.emit('changeColorForApp', { appName, color });
+    return ElectronEventEmitter.emitOrThrow('changeColorForApp', { appName, color });
 }
 
 export async function setCategoryForApp(appName: string, categoryId: number | null): Promise<IAppSetting> {

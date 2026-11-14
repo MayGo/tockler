@@ -25,6 +25,7 @@ import { BAR_WIDTH, CHART_PADDING, CHART_SCALE } from './timeline.constants';
 import { getDynamicTimeFormat } from './timeline.format.utils';
 import { getTrackItemOrderFn } from './timeline.utils';
 import { matchesLast, titleHighlightBarStyle } from './titleSearch.utils';
+import { useSetVisibleRange } from './useSetVisibleRange';
 import { useTitleSearchMatches } from './useTitleSearchMatches';
 
 import { useMeasure } from '@uidotdev/usehooks';
@@ -45,7 +46,12 @@ const EMPTY_ARRAY: ITrackItem[] = [];
 // Minimum timerange duration in milliseconds (5 minutes)
 const MIN_TIMERANGE_DURATION_MS = 5 * 60 * 1000;
 
-export const MainTimelineChart = memo(() => {
+interface MainTimelineChartProps {
+    /** Called with the click's viewport x so the edit popover can open next to the clicked bar. */
+    onBarClick?: (clientX: number) => void;
+}
+
+export const MainTimelineChart = memo(({ onBarClick }: MainTimelineChartProps) => {
     const [ref, { width }] = useMeasure();
 
     const { chartTheme } = useChartThemeState();
@@ -56,14 +62,17 @@ export const MainTimelineChart = memo(() => {
     const timeItems = useStoreState((state) => state.timeItems);
     const { keyword } = useTitleSearchMatches();
 
-    const setVisibleTimerange = useStoreActions((actions) => actions.setVisibleTimerange);
+    const setVisibleRange = useSetVisibleRange();
 
     const selectedTimelineItem = useStoreState((state) => state.selectedTimelineItem);
     const setSelectedTimelineItem = useStoreActions((actions) => actions.setSelectedTimelineItem);
 
-    const handleSelectionChanged = (item) => {
+    const handleSelectionChanged = (item, clientX?: number) => {
         if (item) {
             Logger.debug('Selected item:', item);
+            if (clientX !== undefined) {
+                onBarClick?.(clientX);
+            }
             setSelectedTimelineItem(item);
         } else {
             Logger.error('No item selected');
@@ -83,7 +92,7 @@ export const MainTimelineChart = memo(() => {
             const newStart = midpoint.minus({ milliseconds: newDuration / 2 });
             const newEnd = midpoint.plus({ milliseconds: newDuration / 2 });
 
-            setVisibleTimerange([newStart, newEnd]);
+            setVisibleRange([newStart, newEnd], { pinsPosition: false });
         }
     };
 
@@ -101,7 +110,7 @@ export const MainTimelineChart = memo(() => {
             const newStart = midpoint.minus({ milliseconds: actualDuration / 2 });
             const newEnd = midpoint.plus({ milliseconds: actualDuration / 2 });
 
-            setVisibleTimerange([newStart, newEnd]);
+            setVisibleRange([newStart, newEnd], { pinsPosition: false });
         }
     };
 

@@ -62,11 +62,11 @@ export function exportFromItems({ from, to, taskName, searchStr, format = 'csv' 
 }
 
 function createTrackItem(trackItem: ITrackItem): Promise<ITrackItem> {
-    return ElectronEventEmitter.emit('createTrackItem', { trackItem: trackItem });
+    return ElectronEventEmitter.emitOrThrow('createTrackItem', { trackItem: trackItem });
 }
 
 function updateTrackItem(trackItem: ITrackItem, trackItemId: number): Promise<ITrackItem> {
-    return ElectronEventEmitter.emit('updateTrackItem', { trackItem, trackItemId });
+    return ElectronEventEmitter.emitOrThrow('updateTrackItem', { trackItem, trackItemId });
 }
 
 function getRawTrackItem2(savedItem: ITrackItem): ITrackItem {
@@ -108,7 +108,7 @@ export async function saveTrackItem(inputItem: ITrackItem): Promise<ITrackItem> 
 }
 
 export function deleteByIds(trackItemIds: number[]): Promise<void> {
-    return ElectronEventEmitter.emit('deleteByIds', { trackItemIds });
+    return ElectronEventEmitter.emitOrThrow('deleteByIds', { trackItemIds });
 }
 
 export function startNewLogItem(oldItem: ITrackItem): Promise<void> {
@@ -133,5 +133,5 @@ export function stopRunningLogItem(runningLogItemId: number) {
 }
 
 export function updateTrackItemColor(appName: string, color: string) {
-    return ElectronEventEmitter.emit('updateTrackItemColor', { appName, color });
+    return ElectronEventEmitter.emitOrThrow('updateTrackItemColor', { appName, color });
 }

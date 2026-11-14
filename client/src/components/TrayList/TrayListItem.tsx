@@ -67,9 +67,9 @@ export function TrayListItemPlain({
                     </Flex>
                 </Box>
 
-                {isRunning && <IconButton aria-label="pause" icon={<FaStop />} onClick={() => stopRunningLogItem()} />}
+                {isRunning && <IconButton aria-label="Stop" icon={<FaStop />} onClick={() => stopRunningLogItem()} />}
                 {!isRunning && (
-                    <IconButton aria-label="start" icon={<FaPlay />} onClick={() => startNewLogItemFromOld(item)} />
+                    <IconButton aria-label="Start again" icon={<FaPlay />} onClick={() => startNewLogItemFromOld(item)} />
                 )}
             </HStack>
         </Box>

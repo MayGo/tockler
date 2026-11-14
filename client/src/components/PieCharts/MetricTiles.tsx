@@ -48,7 +48,7 @@ export const MetricTiles = memo(() => {
             <MetricTile>
                 <Metric
                     title="Online"
-                    value={<MakeUnitSmaller>{secondsToClock(onlineTotal / 1000, 0, 2)}</MakeUnitSmaller>}
+                    value={<MakeUnitSmaller>{secondsToClock(onlineTotal / 1000, 0, 2) || NO_VALUE}</MakeUnitSmaller>}
                 />
                 <Metric
                     title="Selected range"

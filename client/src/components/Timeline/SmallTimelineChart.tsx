@@ -15,18 +15,18 @@ import {
 import { Logger } from '../../logger';
 
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
-import { useStoreActions, useStoreState } from '../../store/easyPeasy';
+import { useStoreState } from '../../store/easyPeasy';
 import { rangeToDate } from '../../timeline.util';
 
 import { useMeasure } from '@uidotdev/usehooks';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { TrackItemType } from '../../enum/TrackItemType';
-import { clampRange } from '../PieCharts/MetricTiles.utils';
 import { BrushHandle } from './BrushHandle';
 import { CHART_PADDING, CHART_SCALE } from './timeline.constants';
 import { getDynamicTimeFormat } from './timeline.format.utils';
 import { getTrackItemOrderFn } from './timeline.utils';
 import { matchesLast, titleHighlightBarStyle } from './titleSearch.utils';
+import { useSetVisibleRange } from './useSetVisibleRange';
 import { useTitleSearchMatches } from './useTitleSearchMatches';
 
 const domainPaddingBrush: DomainPaddingPropType = { y: 35, x: 5 };
@@ -51,13 +51,9 @@ export const SmallTimelineChart = memo(() => {
     const visibleTimerange = useStoreState((state) => state.visibleTimerange);
     const timeItems = useStoreState((state) => state.timeItems);
     const { keyword, matchedItems } = useTitleSearchMatches();
-    const setVisibleTimerange = useStoreActions((actions) => actions.setVisibleTimerange);
-    const setLiveView = useStoreActions((actions) => actions.setLiveView);
+    const setVisibleRange = useSetVisibleRange();
     const changeVisibleTimerange = (range: [Date, Date]) => {
-        if (DateTime.now().hasSame(timerange[1], 'day')) {
-            setLiveView(false);
-        }
-        setVisibleTimerange(clampRange(timerange, [DateTime.fromJSDate(range[0]), DateTime.fromJSDate(range[1])]));
+        setVisibleRange([DateTime.fromJSDate(range[0]), DateTime.fromJSDate(range[1])], { pinsPosition: true });
     };
 
     const handleBrush = (domain: { y: [Date, Date] }) => {

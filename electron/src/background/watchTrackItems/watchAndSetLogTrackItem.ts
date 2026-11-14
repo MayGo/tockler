@@ -60,6 +60,7 @@ async function stopRunningLogTrackItem(endDate: number) {
 
     await dbClient.insertTrackItemInternal(itemToInsert);
     currentLogItem = null;
+    appEmitter.emit('log-items-changed');
 }
 
 async function createNewRunningLogTrackItem(rawItem: TrackItemRaw) {
@@ -81,6 +82,7 @@ async function createNewRunningLogTrackItem(rawItem: TrackItemRaw) {
     currentLogItem = newLogItem;
 
     await dbClient.saveRunningLogItemReference(currentLogItem);
+    appEmitter.emit('log-items-changed');
 }
 
 export async function getOngoingLogTrackItem() {

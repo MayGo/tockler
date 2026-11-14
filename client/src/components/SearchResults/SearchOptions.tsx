@@ -75,7 +75,7 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
     return (
         <Flex alignItems="center">
             <HStack>
-                <Button onClick={goBackOneDay} variant="outline">
+                <Button onClick={goBackOneDay} variant="outline" aria-label="Previous day">
                     <AiOutlineLeft />
                 </Button>
 
@@ -85,7 +85,7 @@ export const SearchOptions = ({ setTimerange, timerange }) => {
                     onDatesChange={handleOnDatesChange}
                 />
 
-                <Button onClick={goForwardOneDay} variant="outline">
+                <Button onClick={goForwardOneDay} variant="outline" aria-label="Next day">
                     <AiOutlineRight />
                 </Button>
             </HStack>

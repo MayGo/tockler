@@ -1,3 +1,4 @@
+import { Text } from '@chakra-ui/react';
 import { values } from 'lodash';
 import { useContext } from 'react';
 
@@ -16,14 +17,15 @@ import {
 } from 'victory';
 import { COLORS, convertDate, DAY_MONTH_LONG_FORMAT, TIME_FORMAT } from '../../constants';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
+import { CALENDAR_MODE } from '../../SummaryContext.util';
 import { SummaryContext } from '../../SummaryContext';
 import { formatDurationInternal } from '../../utils';
 import { BlackBox } from '../BlackBox';
 import { BAR_WIDTH } from '../Timeline/timeline.constants';
-import { dateToDayLabel, formatToHours } from './LineChart.util';
+import { dateToDayLabel, formatToHours, onlineAxisTicks } from './LineChart.util';
 
 const scale: { x: 'time'; y: 'linear' } = { x: 'time', y: 'linear' };
-const padding = { left: 25, top: 20, bottom: 30, right: 10 };
+const padding = { left: 50, top: 20, bottom: 30, right: 10 };
 const domainPadding: DomainPaddingPropType = { y: 0, x: [BAR_WIDTH, 0] };
 
 const labelComponent = (theme) => (
@@ -62,7 +64,7 @@ const getXAxisDay = (d) => convertDate(d.beginDate).startOf('day').valueOf();
 export const LineChart = () => {
     const { chartTheme } = useChartThemeState();
     const [ref, { width }] = useMeasure();
-    const { onlineTimesSummary, selectedDate } = useContext(SummaryContext);
+    const { onlineTimesSummary, selectedDate, selectedMode } = useContext(SummaryContext);
 
     const onlineTimesValues = values(onlineTimesSummary);
 
@@ -82,9 +84,17 @@ export const LineChart = () => {
 
     const isNarrow = width ? width < 1400 : false;
 
+    if (selectedMode !== CALENDAR_MODE.MONTH) {
+        return (
+            <Text color="gray.500" fontSize="sm">
+                Daily online time is shown in month view.
+            </Text>
+        );
+    }
+
     return (
         <div ref={ref}>
-            <BlackBox position="absolute" width={(width ?? 0) - 34} height={770} right={0} mr="25px" />
+            <BlackBox position="absolute" width={(width ?? 0) - 59} height={770} right={0} mr="25px" />
             <VictoryChart
                 theme={chartTheme}
                 scale={scale}
@@ -114,7 +124,12 @@ export const LineChart = () => {
                     />
                 }
             >
-                <VictoryAxis orientation="left" tickFormat={formatToHours(maxOnline)} dependentAxis />
+                <VictoryAxis
+                    orientation="left"
+                    tickValues={onlineAxisTicks(maxOnline)}
+                    tickFormat={formatToHours(maxOnline)}
+                    dependentAxis
+                />
                 <VictoryAxis
                     orientation="bottom"
                     name="time-axis"

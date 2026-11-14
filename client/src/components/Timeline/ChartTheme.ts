@@ -44,7 +44,7 @@ const baseProps = {
 // *
 // * Labels
 // *
-const baseLabelStyles = isDark => ({
+const baseLabelStyles = (isDark) => ({
     fontFamily: sansSerif,
     fontSize,
     letterSpacing,
@@ -54,12 +54,12 @@ const baseLabelStyles = isDark => ({
     strokeWidth: 0,
 });
 
-const centeredLabelStyles = isDark => assign({ textAnchor: 'middle' }, baseLabelStyles(isDark));
+const centeredLabelStyles = (isDark) => assign({ textAnchor: 'middle' }, baseLabelStyles(isDark));
 // *
 // * Strokes
 // *
 
-export const getChartTheme = isDark => ({
+export const getChartTheme = (isDark) => ({
     isDark,
     chart: baseProps,
 

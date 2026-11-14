@@ -101,3 +101,23 @@ export const getTrackItemOrder = (type: string) => {
 };
 
 export const getTrackItemOrderFn = (d) => getTrackItemOrder(d.taskName);
+
+const MIN_VISIBLE_RANGE_MS = 5 * 60 * 1000;
+
+/**
+ * Fit `range` inside `bounds` (the loaded day): keep its length where possible by shifting rather than cutting,
+ * and never shorter than 5 minutes or inverted.
+ */
+export const fitRangeInto = (bounds: DateTime[], range: DateTime[]): DateTime[] => {
+    const [boundsStart, boundsEnd] = bounds;
+    const boundsMs = boundsEnd.diff(boundsStart).as('milliseconds');
+    const durationMs = Math.min(Math.max(range[1].diff(range[0]).as('milliseconds'), MIN_VISIBLE_RANGE_MS), boundsMs);
+
+    let start = range[0] < boundsStart ? boundsStart : range[0];
+    let end = start.plus({ milliseconds: durationMs });
+    if (end > boundsEnd) {
+        end = boundsEnd;
+        start = end.minus({ milliseconds: durationMs });
+    }
+    return [start, end];
+};
