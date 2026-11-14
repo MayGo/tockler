@@ -1,8 +1,10 @@
 import { Divider, VStack } from '@chakra-ui/react';
 import '../../types/electron-bridge';
 import { AnalyserForm } from './AnalyserForm';
+import { AppCategoryForm } from './AppCategoryForm';
 import { AppForm } from './AppForm';
 import { AppVersion } from './AppVersion';
+import { CategoryForm } from './CategoryForm';
 import { DataForm } from './DataForm';
 import { WorkForm } from './WorkForm';
 
@@ -12,6 +14,8 @@ export const SettingsForm = () => {
             <WorkForm />
             <DataForm />
             <AppForm />
+            <CategoryForm />
+            <AppCategoryForm />
             <AnalyserForm />
 
             <Divider my={2} />

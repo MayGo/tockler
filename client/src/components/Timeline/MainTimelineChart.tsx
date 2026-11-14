@@ -25,19 +25,21 @@ import { BrushHandle } from './BrushHandle';
 import { BAR_WIDTH, CHART_PADDING, CHART_SCALE } from './timeline.constants';
 import { getDynamicTimeFormat } from './timeline.format.utils';
 import { getTrackItemOrderFn } from './timeline.utils';
+import { titleHighlightOpacity } from './titleSearch.utils';
+import { useTitleSearchMatches } from './useTitleSearchMatches';
 
 import { useMeasure } from '@uidotdev/usehooks';
 import { shortTime } from '../../time.util';
 
 const domainPadding: DomainPaddingPropType = { y: 35, x: 10 };
 
-export const barStyle = (isDark: boolean): VictoryStyleInterface => ({
+export const barStyle = (isDark: boolean, keyword: string): VictoryStyleInterface => ({
     data: {
         width: BAR_WIDTH,
         fill: colorProp,
         stroke: isDark ? 'black' : 'white',
         strokeWidth: 0.5,
-        fillOpacity: 1,
+        fillOpacity: titleHighlightOpacity(keyword),
         clipPath: 'none',
     },
 });
@@ -56,6 +58,7 @@ export const MainTimelineChart = memo(() => {
     const timerange = useStoreState((state) => state.timerange);
     const visibleTimerange = useStoreState((state) => state.visibleTimerange);
     const timeItems = useStoreState((state) => state.timeItems);
+    const { keyword } = useTitleSearchMatches();
 
     const setVisibleTimerange = useStoreActions((actions) => actions.setVisibleTimerange);
 
@@ -208,7 +211,7 @@ export const MainTimelineChart = memo(() => {
                 />
 
                 <VictoryBar
-                    style={barStyle(chartTheme.isDark)}
+                    style={barStyle(chartTheme.isDark, keyword)}
                     x={getTrackItemOrderFn}
                     y={(d) => d.beginDate}
                     y0={(d) => d.endDate}

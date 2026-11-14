@@ -1,46 +1,67 @@
-import _ from 'lodash';
-import { memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 
+import { Button, ButtonGroup } from '@chakra-ui/react';
 import { useMeasure } from '@uidotdev/usehooks';
 import { VictoryBar, VictoryLabel, VictoryStack, VictoryStyleInterface } from 'victory';
-import { useStoreState } from '../../store/easyPeasy';
-import { BAR_WIDTH } from '../Timeline/timeline.constants';
-import { filterItems } from '../Timeline/timeline.utils';
-import { sumAppObject, SumItem } from './MetricTiles.utils';
-
-import { TrackItemType } from '../../enum/TrackItemType';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
+import { getAppUsageByApp, getAppUsageByCategory } from '../../services/trackItem.api';
+import { useStoreState } from '../../store/easyPeasy';
 import { formatDurationInternal } from '../../utils';
 import { BarWithTooltip } from '../Timeline/BarWithTooltip';
+import { BAR_WIDTH } from '../Timeline/timeline.constants';
 import { colorProp } from '../charts.utils';
 import { getTextWidth } from './AppUsageChart.utils';
+
+type ViewMode = 'app' | 'category';
+
+interface AppUsageData {
+    name: string;
+    color: string;
+    timeDiffInMs: number;
+}
 
 export const AppUsageChart = memo(() => {
     const [ref, { width }] = useMeasure();
     const { chartTheme } = useChartThemeState();
-    const timeItems = useStoreState((state) => state.timeItems);
     const visibleTimerange = useStoreState((state) => state.visibleTimerange);
+    const [viewMode, setViewMode] = useState<ViewMode>('app');
+    const [data, setData] = useState<AppUsageData[]>([]);
 
-    const appItems = filterItems(timeItems[TrackItemType.AppTrackItem] || [], visibleTimerange);
+    useEffect(() => {
+        const fetchData = async () => {
+            if (!visibleTimerange[0] || !visibleTimerange[1]) return;
 
-    const groupByField = 'app';
+            const from = visibleTimerange[0].toISO();
+            const to = visibleTimerange[1].toISO();
 
-    const data = _(appItems)
-        .groupBy(groupByField)
-        .map((b) => {
-            return b.reduce(sumAppObject(visibleTimerange), {
-                app: b[0].app,
-                title: b[0].title,
-                timeDiffInMs: 0,
-                color: b[0].color,
-            } as SumItem);
-        })
-        .sortBy('timeDiffInMs')
-        .reverse()
-        .valueOf();
+            if (!from || !to) return;
+
+            if (viewMode === 'app') {
+                const appData = await getAppUsageByApp(from, to);
+                setData(
+                    appData.map((d) => ({
+                        name: d.appName,
+                        color: d.appColor || '#cccccc',
+                        timeDiffInMs: d.totalDuration,
+                    })),
+                );
+            } else {
+                const categoryData = await getAppUsageByCategory(from, to);
+                setData(
+                    categoryData.map((d) => ({
+                        name: d.categoryName,
+                        color: d.categoryColor || '#cccccc',
+                        timeDiffInMs: d.totalDuration,
+                    })),
+                );
+            }
+        };
+
+        fetchData();
+    }, [viewMode, visibleTimerange]);
 
     const getTooltipLabel = (datum) => {
-        return `${datum[groupByField]}\r\n${formatDurationInternal(datum.timeDiffInMs)}`;
+        return `${datum.name}\r\n${formatDurationInternal(datum.timeDiffInMs)}`;
     };
 
     const style: VictoryStyleInterface = {
@@ -55,22 +76,30 @@ export const AppUsageChart = memo(() => {
     const labelPadding = 25;
     return (
         <div ref={ref}>
+            <ButtonGroup size="sm" isAttached variant="outline" mb={4}>
+                <Button onClick={() => setViewMode('app')} isActive={viewMode === 'app'}>
+                    By App
+                </Button>
+                <Button onClick={() => setViewMode('category')} isActive={viewMode === 'category'}>
+                    By Category
+                </Button>
+            </ButtonGroup>
             <VictoryStack height={BAR_WIDTH} padding={0} width={width ?? 0} horizontal>
                 {data.map((item) => (
                     <VictoryBar
-                        key={item.app}
+                        key={item.name}
                         style={style}
                         barWidth={BAR_WIDTH * 2}
                         data={[item]}
-                        x="app"
+                        x="name"
                         y="timeDiffInMs"
-                        labels={({ datum }) => datum.app}
+                        labels={({ datum }) => datum.name}
                         labelComponent={
                             <VictoryLabel
                                 verticalAnchor="end"
                                 textAnchor="end"
                                 text={({ datum, scale }) => {
-                                    const text = `${datum.app} - ${formatDurationInternal(datum.timeDiffInMs)}`;
+                                    const text = `${datum.name} - ${formatDurationInternal(datum.timeDiffInMs)}`;
                                     const textWidth = getTextWidth(
                                         text,
                                         14,

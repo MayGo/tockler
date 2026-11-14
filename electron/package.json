@@ -31,7 +31,7 @@
         "coverage": "TZ=Europe/Tallinn vitest run --coverage",
         "preview": "vite preview",
         "setup": "pnpm install && npm run postinstall",
-        "db:generate": "drizzle-kit generate --schema=./src/drizzle/schema.ts --out=./src/drizzle/migrations",
+        "db:generate": "drizzle-kit generate",
         "db:push": "drizzle-kit push:sqlite --schema=./src/drizzle/schema.ts",
         "db:studio": "drizzle-kit studio --port 3000",
         "____pre____": "",

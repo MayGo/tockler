@@ -3,12 +3,12 @@ import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { workerData } from 'worker_threads';
 import * as schema from '../schema';
 
-const outputPath = workerData.outputPath;
+const { outputPath, migrationsPath } = workerData;
 
-console.info('real db outputPath', outputPath);
+console.log(`Connecting to database at ${outputPath}`);
 
 // Create SQLite connection with performance optimizations
-export const sqlite = new Database(outputPath, {
+const sqlite = new Database(outputPath, {
     verbose: process.env['NODE_ENV'] === 'development' ? console.log : undefined,
     // Add additional performance options
     timeout: 5000, // Increase timeout for busy database
@@ -27,4 +27,6 @@ sqlite.pragma('page_size = 8192'); // Larger page size for better read performan
 sqlite.pragma('auto_vacuum = INCREMENTAL'); // Use incremental vacuum for better space management
 sqlite.pragma('busy_timeout = 5000'); // Set busy timeout to prevent SQLITE_BUSY errors
 
-export const db = drizzle(sqlite, { schema });
+const db = drizzle(sqlite, { schema });
+
+export { db, migrationsPath, sqlite };

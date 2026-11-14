@@ -8,7 +8,7 @@ import { getLastItemsAll, getOngoingItemWithDuration } from './background/backgr
 import { initBackgroundJob } from './background/initBackgroundJob';
 import { dbClient } from './drizzle/dbClient';
 import { OrderByKey } from './drizzle/query.utils';
-import { TrackItem } from './drizzle/schema';
+import { NewCategory, TrackItem } from './drizzle/schema';
 import { setupMainHandler } from './utils/setupMainHandler';
 
 const settingsActions = {
@@ -62,6 +62,27 @@ const appSettingsActions = {
     changeColorForApp: async (payload: { appName: string; color: string }) => {
         return dbClient.changeColorForApp(payload.appName, payload.color);
     },
+    setCategoryForApp: async (payload: { appName: string; categoryId: number | null }) => {
+        return dbClient.setCategoryForApp(payload.appName, payload.categoryId);
+    },
+    retrieveAllAppSettingsWithCategory: async () => {
+        return dbClient.retrieveAllAppSettingsWithCategory();
+    },
+};
+
+const categoryActions = {
+    getCategories: async () => {
+        return dbClient.getCategories();
+    },
+    createCategory: async (payload: NewCategory) => {
+        return dbClient.createCategory(payload);
+    },
+    updateCategory: async (payload: { id: number; category: Partial<NewCategory> }) => {
+        return dbClient.updateCategory(payload.id, payload.category);
+    },
+    deleteCategory: async (payload: { id: number }) => {
+        return dbClient.deleteCategory(payload.id);
+    },
 };
 
 const trackItemActions = {
@@ -70,6 +91,13 @@ const trackItemActions = {
 
         const lastItems = await getLastItemsAll({ from, to, taskName });
         return [...data, ...lastItems];
+    },
+
+    getAppUsageByCategory: async (payload: { from: string; to: string }) => {
+        return dbClient.getAppUsageByCategory(payload.from, payload.to);
+    },
+    getAppUsageByApp: async (payload: { from: string; to: string }) => {
+        return dbClient.getAppUsageByApp(payload.from, payload.to);
     },
 
     createTrackItem: async (payload: { trackItem: TrackItem }) => {
@@ -123,4 +151,8 @@ const trackItemActions = {
 };
 
 export const initIpcActions = () =>
-    setupMainHandler({ ipcMain } as any, { ...settingsActions, ...appSettingsActions, ...trackItemActions }, true);
+    setupMainHandler(
+        { ipcMain } as any,
+        { ...settingsActions, ...appSettingsActions, ...trackItemActions, ...categoryActions },
+        true,
+    );

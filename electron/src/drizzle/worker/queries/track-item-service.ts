@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { State } from '../../../enums/state';
 import { TrackItemType } from '../../../enums/track-item-type';
 import { OrderByKey, orderByKey } from '../../query.utils';
-import { NewTrackItem, TrackItem, trackItems } from '../../schema';
+import { appSettings, categories, NewTrackItem, TrackItem, trackItems } from '../../schema';
 import { db } from '../db';
 
 const DEFAULT_PAGE_SIZE = 20;
@@ -220,6 +220,57 @@ async function findAllFromLastHoursDb(hours: number) {
     return items;
 }
 
+export async function getAppUsageByCategory(from: string, to: string) {
+    const fromMs = new Date(from).getTime();
+    const toMs = new Date(to).getTime();
+
+    const results = await db
+        .select({
+            categoryName: sql<string>`COALESCE(${categories.name}, 'Uncategorized')`,
+            categoryColor: sql<string>`COALESCE(${categories.color}, '#cccccc')`,
+            totalDuration: sql<number>`SUM(${trackItems.endDate} - ${trackItems.beginDate})`.mapWith(Number),
+        })
+        .from(trackItems)
+        .leftJoin(appSettings, eq(trackItems.app, appSettings.name))
+        .leftJoin(categories, eq(appSettings.categoryId, categories.id))
+        .where(
+            and(
+                eq(trackItems.taskName, TrackItemType.AppTrackItem),
+                gte(trackItems.endDate, fromMs),
+                lte(trackItems.endDate, toMs),
+            ),
+        )
+        .groupBy(sql`COALESCE(${categories.name}, 'Uncategorized')`, sql`COALESCE(${categories.color}, '#cccccc')`);
+
+    return results;
+}
+
+export async function getAppUsageByApp(from: string, to: string) {
+    const fromMs = new Date(from).getTime();
+    const toMs = new Date(to).getTime();
+
+    const results = await db
+        .select({
+            appName: trackItems.app,
+            appColor: sql<string>`COALESCE(${appSettings.color}, ${trackItems.color})`,
+            categoryName: categories.name,
+            totalDuration: sql<number>`SUM(${trackItems.endDate} - ${trackItems.beginDate})`.mapWith(Number),
+        })
+        .from(trackItems)
+        .leftJoin(appSettings, eq(trackItems.app, appSettings.name))
+        .leftJoin(categories, eq(appSettings.categoryId, categories.id))
+        .where(
+            and(
+                eq(trackItems.taskName, TrackItemType.AppTrackItem),
+                gte(trackItems.endDate, fromMs),
+                lte(trackItems.endDate, toMs),
+            ),
+        )
+        .groupBy(trackItems.app, sql<string>`COALESCE(${appSettings.color}, ${trackItems.color})`);
+
+    return results;
+}
+
 export const trackItemService = {
     createTrackItem,
     updateTrackItemDb,
@@ -234,6 +285,8 @@ export const trackItemService = {
     deleteById,
     deleteByIds,
     findAllFromLastHoursDb,
+    getAppUsageByCategory,
+    getAppUsageByApp,
 };
 
 export type TrackItemService = typeof trackItemService;

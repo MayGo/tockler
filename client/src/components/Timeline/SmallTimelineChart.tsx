@@ -27,16 +27,18 @@ import { BrushHandle } from './BrushHandle';
 import { CHART_PADDING, CHART_SCALE } from './timeline.constants';
 import { getDynamicTimeFormat } from './timeline.format.utils';
 import { getTrackItemOrderFn } from './timeline.utils';
+import { titleHighlightOpacity } from './titleSearch.utils';
+import { useTitleSearchMatches } from './useTitleSearchMatches';
 
 const domainPaddingBrush: DomainPaddingPropType = { y: 35, x: 5 };
 
-const brushChartBarStyle = (isDark: boolean): VictoryStyleInterface => ({
+const brushChartBarStyle = (isDark: boolean, keyword: string): VictoryStyleInterface => ({
     data: {
         width: 7,
         fill: colorProp,
         stroke: isDark ? 'black' : 'white',
         strokeWidth: 0.5,
-        fillOpacity: 1,
+        fillOpacity: titleHighlightOpacity(keyword),
     },
 });
 
@@ -52,6 +54,7 @@ export const SmallTimelineChart = memo(() => {
     const timerange = useStoreState((state) => state.timerange);
     const visibleTimerange = useStoreState((state) => state.visibleTimerange);
     const timeItems = useStoreState((state) => state.timeItems);
+    const { keyword, matchedItems } = useTitleSearchMatches();
     const setVisibleTimerange = useStoreActions((actions) => actions.setVisibleTimerange);
     const setLiveView = useStoreActions((actions) => actions.setLiveView);
     const changeVisibleTimerange = (range: [Date, Date]) => {
@@ -75,7 +78,10 @@ export const SmallTimelineChart = memo(() => {
         return <div>No data</div>;
     }
 
-    const brushData = [...statusTrackItems, ...logTrackItems];
+    // App items are normally left out of the overview; while searching, the matching ones are added
+    // so the whole day shows where they occurred.
+    const matchedAppItems = matchedItems.filter((item) => item.taskName === TrackItemType.AppTrackItem);
+    const brushData = [...statusTrackItems, ...logTrackItems, ...matchedAppItems];
 
     const handleBrushDebounced = debounce(handleBrush, 300);
 
@@ -121,7 +127,7 @@ export const SmallTimelineChart = memo(() => {
 
                 <VictoryBar
                     animate={false}
-                    style={brushChartBarStyle(chartTheme.isDark)}
+                    style={brushChartBarStyle(chartTheme.isDark, keyword)}
                     x={getTrackItemOrderFn}
                     y={(d) => d.beginDate}
                     y0={(d) => d.endDate}
