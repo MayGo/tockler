@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { diffAndFormatShort, formatDurationInternal } from '../../utils';
 
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Button, Flex, Table, Tbody, Td, Th, Thead, Tr, useColorModeValue } from '@chakra-ui/react';
 import {
     Column,
     ColumnDef,
@@ -162,7 +162,8 @@ export const ItemsTable = ({
                 header: 'Duration',
                 // Sort by the number of milliseconds, not by the formatted text.
                 accessorFn: (record: ITrackItem) => record.endDate - record.beginDate,
-                cell: ({ row }) => diffAndFormatShort(row.original.beginDate, row.original.endDate),
+                // The formatter drops sub-second remainders, leaving very short items blank.
+                cell: ({ row }) => diffAndFormatShort(row.original.beginDate, row.original.endDate) || '<1s',
                 enableColumnFilter: false,
                 enableSorting: !manualSortBy,
                 size: 60,
@@ -298,6 +299,7 @@ export const ItemsTable = ({
     };
 
     const hasFilters = table.getAllLeafColumns().some((column) => column.getCanFilter());
+    const filterRowBg = useColorModeValue('gray.200', 'gray.600');
     const isFiltered = columnFilters.length > 0;
     const visibleRows = table.getRowModel().rows;
 
@@ -329,10 +331,12 @@ export const ItemsTable = ({
                                                 <Button
                                                     variant="ghost"
                                                     fontWeight="bold"
+                                                    px={2}
+                                                    ml={-2}
                                                     onClick={header.column.getToggleSortingHandler()}
                                                 >
                                                     {flexRender(header.column.columnDef.header, header.getContext())}
-                                                    <Box pl="4">
+                                                    <Box pl="2">
                                                         {{
                                                             asc: <TriangleUpIcon aria-label="sorted ascending" />,
                                                             desc: <TriangleDownIcon aria-label="sorted descending" />,
@@ -340,7 +344,7 @@ export const ItemsTable = ({
                                                     </Box>
                                                 </Button>
                                             ) : (
-                                                <Button variant="ghost" fontWeight="bold" disabled>
+                                                <Button variant="ghost" fontWeight="bold" px={2} ml={-2} disabled>
                                                     {flexRender(header.column.columnDef.header, header.getContext())}
                                                 </Button>
                                             )}
@@ -351,11 +355,11 @@ export const ItemsTable = ({
                         </Tr>
                     ))}
                     {hasFilters && (
-                        <Tr>
+                        <Tr bg={filterRowBg}>
                             {table.getLeafHeaders().map((header) => {
                                 const Filter = header.column.columnDef.meta?.Filter ?? TextColumnFilter;
                                 return (
-                                    <Th key={header.id} pt={0} pb={3}>
+                                    <Th key={header.id} py={2} textTransform="none" letterSpacing="normal">
                                         {header.column.getCanFilter() && <Filter column={header.column} />}
                                     </Th>
                                 );

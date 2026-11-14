@@ -14,6 +14,10 @@ export const TableStyle = {
         simple: props => ({
             td: {
                 borderColor: mode(`gray.300`, `gray.500`)(props),
+                // Same as th below, so cell text lines up with its column header.
+                _notFirst: {
+                    paddingInlineStart: 'var(--chakra-space-2)',
+                },
             },
             th: {
                 _notFirst: {

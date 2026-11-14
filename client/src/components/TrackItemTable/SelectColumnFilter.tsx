@@ -18,11 +18,12 @@ export function SelectColumnFilter({ column }: { column: Column<ITrackItem> }) {
         <Select
             size="sm"
             borderRadius="md"
+            fontSize="sm"
             aria-label={`Filter ${column.id}`}
             value={typeof filterValue === 'string' ? filterValue : ''}
             onChange={(e) => column.setFilterValue(e.target.value || undefined)}
         >
-            <option value="">All</option>
+            <option value="">All apps</option>
             {options.map(([value, count]) => (
                 <option key={value} value={value}>
                     {value} ({count})
