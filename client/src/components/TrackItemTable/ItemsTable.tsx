@@ -1,12 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { diffAndFormatShort, formatDurationInternal } from '../../utils';
 
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Button, Flex, Table, Tbody, Td, Th, Thead, Tr, useColorModeValue } from '@chakra-ui/react';
 import {
+    Column,
     ColumnDef,
     ColumnFiltersState,
-    FilterFn,
     flexRender,
     getCoreRowModel,
     getFacetedMinMaxValues,
@@ -16,22 +16,30 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     PaginationState,
+    RowData,
     SortingState,
+    Updater,
     useReactTable,
 } from '@tanstack/react-table';
 
 import { Portal } from '@chakra-ui/react';
 import { DATE_TIME_FORMAT } from '../../constants';
-import { DefaultColumnFilter } from './DefaultColumnFilter';
 import { IndeterminateCheckbox } from './IndeterminateCheckbox';
 import { OverflowTextCell } from './OverflowText';
 import { SelectColumnFilter } from './SelectColumnFilter';
-import { fuzzyTextFilterFn, TableButtonsProps } from './TrackItemTable.utils';
+import { TextColumnFilter } from './TextColumnFilter';
+import { containsAllWordsFilter, TableButtonsProps } from './TrackItemTable.utils';
 import { TrackItemTablePager } from './TrackItemTablePager';
 
 import { differenceInMilliseconds, format } from 'date-fns';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { TIME_FORMAT } from '../../constants';
+
+declare module '@tanstack/react-table' {
+    interface ColumnMeta<TData extends RowData, TValue> {
+        Filter?: React.ComponentType<{ column: Column<TData, TValue> }>;
+    }
+}
 
 interface ItemsTableProps {
     data: ITrackItem[];
@@ -45,6 +53,8 @@ interface ItemsTableProps {
     sumTotal: number;
     manualSortBy: boolean;
     customTableButtons?: React.ReactElement<TableButtonsProps>;
+    /** Shown above the footer totals, e.g. to explain filtering applied outside the table. */
+    footerNote?: React.ReactNode;
 }
 
 const defaultSorting: SortingState = [
@@ -66,11 +76,12 @@ export const ItemsTable = ({
     manualSortBy = false,
     isOneDay,
     customTableButtons,
+    footerNote,
 }: ItemsTableProps) => {
-    const dateToValue = ({ cell }) => {
-        const value = cell.getValue() as number;
-        return format(value, isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT);
-    };
+    const dateToValue = useCallback(
+        ({ cell }) => format(cell.getValue() as number, isOneDay ? TIME_FORMAT : DATE_TIME_FORMAT),
+        [isOneDay],
+    );
 
     const columns = useMemo<ColumnDef<ITrackItem>[]>(
         () => [
@@ -99,7 +110,7 @@ export const ItemsTable = ({
             {
                 header: 'App',
                 accessorKey: 'app',
-                filterFn: 'includesString',
+                filterFn: 'equalsString',
                 enableColumnFilter: !isSearchTable,
                 meta: {
                     Filter: SelectColumnFilter,
@@ -112,6 +123,7 @@ export const ItemsTable = ({
                 header: 'Title',
                 accessorKey: 'title',
                 cell: (info) => <OverflowTextCell value={info.getValue() as string} />,
+                filterFn: containsAllWordsFilter,
                 enableColumnFilter: !isSearchTable,
                 size: 250,
                 minSize: 100,
@@ -121,6 +133,7 @@ export const ItemsTable = ({
                 header: 'URL',
                 accessorKey: 'url',
                 cell: (info) => <OverflowTextCell value={info.getValue() as string} />,
+                filterFn: containsAllWordsFilter,
                 enableColumnFilter: !isSearchTable,
                 size: 150,
                 minSize: 70,
@@ -145,8 +158,12 @@ export const ItemsTable = ({
                 maxSize: 120,
             },
             {
+                id: 'duration',
                 header: 'Duration',
-                accessorFn: (record: ITrackItem) => diffAndFormatShort(record.beginDate, record.endDate),
+                // Sort by the number of milliseconds, not by the formatted text.
+                accessorFn: (record: ITrackItem) => record.endDate - record.beginDate,
+                // The formatter drops sub-second remainders, leaving very short items blank.
+                cell: ({ row }) => diffAndFormatShort(row.original.beginDate, row.original.endDate) || '<1s',
                 enableColumnFilter: false,
                 enableSorting: !manualSortBy,
                 size: 60,
@@ -155,7 +172,7 @@ export const ItemsTable = ({
             },
             ...extraColumns,
         ],
-        [extraColumns, dateToValue, manualSortBy],
+        [extraColumns, dateToValue, manualSortBy, isSearchTable],
     );
 
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -176,13 +193,25 @@ export const ItemsTable = ({
         }
     }, [isSearchTable, controlledPageIndex]);
 
+    // New filters or sort order make the current page meaningless, so start from the first page.
+    const handleColumnFiltersChange = useCallback((updater: Updater<ColumnFiltersState>) => {
+        setColumnFilters(updater);
+        setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    }, []);
+    const handleSortingChange = useCallback(
+        (updater: Updater<SortingState>) => {
+            setSorting(updater);
+            if (!isSearchTable) {
+                setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+            }
+        },
+        [isSearchTable],
+    );
+
     // Configure the table
     const table = useReactTable({
         data,
         columns,
-        filterFns: {
-            fuzzyText: fuzzyTextFilterFn as FilterFn<ITrackItem>,
-        },
         state: {
             sorting,
             columnFilters,
@@ -193,9 +222,11 @@ export const ItemsTable = ({
         enableMultiRowSelection: true,
         getRowId: (row: ITrackItem) => row.id?.toString(),
         onRowSelectionChange: setRowSelection,
-        onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
+        onSortingChange: handleSortingChange,
+        onColumnFiltersChange: handleColumnFiltersChange,
         onPaginationChange: setPagination,
+        // Live view replaces `data` every few seconds; keep the page the user is on.
+        autoResetPageIndex: false,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -213,10 +244,22 @@ export const ItemsTable = ({
             : undefined,
     });
 
-    // Reset row selection when data changes
+    // Drop selected rows that no longer exist (deleted, or outside the new range). Keep the rest.
     useEffect(() => {
-        setRowSelection({});
+        const ids = new Set(data.map((item) => item.id?.toString()));
+        setRowSelection((prev) => {
+            const kept = Object.fromEntries(Object.entries(prev).filter(([id]) => ids.has(id)));
+            return Object.keys(kept).length === Object.keys(prev).length ? prev : kept;
+        });
     }, [data]);
+
+    // Data can shrink under the current page (live view, deletes); go to the last page that exists.
+    const pageCount = table.getPageCount();
+    useEffect(() => {
+        if (!isSearchTable && pageCount > 0 && pagination.pageIndex >= pageCount) {
+            setPagination((prev) => ({ ...prev, pageIndex: pageCount - 1 }));
+        }
+    }, [isSearchTable, pageCount, pagination.pageIndex]);
 
     // Handle server-side pagination
     useEffect(() => {
@@ -244,15 +287,21 @@ export const ItemsTable = ({
         .reduce((total, item) => total + differenceInMilliseconds(item.endDate, item.beginDate), 0);
 
     // Get the selected rows information for buttons/actions
+    const selectedRows = table.getSelectedRowModel().rows;
     const tableButtonsProps: TableButtonsProps = {
-        selectedFlatRows: table.getSelectedRowModel().rows,
-        selectedRowIds: table.getState().rowSelection,
+        selectedFlatRows: selectedRows,
+        selectedRowIds: Object.fromEntries(selectedRows.map((row) => [row.id, true])),
         setAllFilters: () => setColumnFilters([]),
         setSortBy: (sortByState: SortingState) => setSorting(sortByState),
         pageIndex: pagination.pageIndex,
         pageSize: pagination.pageSize,
         fetchData,
     };
+
+    const hasFilters = table.getAllLeafColumns().some((column) => column.getCanFilter());
+    const filterRowBg = useColorModeValue('gray.200', 'gray.600');
+    const isFiltered = columnFilters.length > 0;
+    const visibleRows = table.getRowModel().rows;
 
     return (
         <>
@@ -282,10 +331,12 @@ export const ItemsTable = ({
                                                 <Button
                                                     variant="ghost"
                                                     fontWeight="bold"
+                                                    px={2}
+                                                    ml={-2}
                                                     onClick={header.column.getToggleSortingHandler()}
                                                 >
                                                     {flexRender(header.column.columnDef.header, header.getContext())}
-                                                    <Box pl="4">
+                                                    <Box pl="2">
                                                         {{
                                                             asc: <TriangleUpIcon aria-label="sorted ascending" />,
                                                             desc: <TriangleDownIcon aria-label="sorted descending" />,
@@ -293,30 +344,38 @@ export const ItemsTable = ({
                                                     </Box>
                                                 </Button>
                                             ) : (
-                                                <Button variant="ghost" fontWeight="bold" disabled>
+                                                <Button variant="ghost" fontWeight="bold" px={2} ml={-2} disabled>
                                                     {flexRender(header.column.columnDef.header, header.getContext())}
                                                 </Button>
                                             )}
-                                            <Box flex={1} />
-                                            {header.column.getCanFilter() ? (
-                                                // Use a safer type check and conditional rendering
-                                                // @ts-expect-error - We know this is correct based on our column definitions
-                                                header.column.columnDef.meta?.Filter ? (
-                                                    // @ts-expect-error - We know this component exists
-                                                    <header.column.columnDef.meta.Filter column={header.column} />
-                                                ) : (
-                                                    <DefaultColumnFilter column={header.column} />
-                                                )
-                                            ) : null}
                                         </Flex>
                                     )}
                                 </Th>
                             ))}
                         </Tr>
                     ))}
+                    {hasFilters && (
+                        <Tr bg={filterRowBg}>
+                            {table.getLeafHeaders().map((header) => {
+                                const Filter = header.column.columnDef.meta?.Filter ?? TextColumnFilter;
+                                return (
+                                    <Th key={header.id} py={2} textTransform="none" letterSpacing="normal">
+                                        {header.column.getCanFilter() && <Filter column={header.column} />}
+                                    </Th>
+                                );
+                            })}
+                        </Tr>
+                    )}
                 </Thead>
                 <Tbody>
-                    {table.getRowModel().rows.map((row) => (
+                    {visibleRows.length === 0 && (
+                        <Tr>
+                            <Td colSpan={table.getLeafHeaders().length} textAlign="center" color="gray.500" py={8}>
+                                {isFiltered || data.length > 0 ? 'No items match the filters.' : 'No items.'}
+                            </Td>
+                        </Tr>
+                    )}
+                    {visibleRows.map((row) => (
                         <Tr key={row.id}>
                             {row.getVisibleCells().map((cell) => (
                                 <Td key={cell.id} isNumeric={false}>
@@ -327,7 +386,12 @@ export const ItemsTable = ({
                     ))}
                 </Tbody>
             </Table>
-            <Box display="flex" justifyContent="end" pt={5}>
+            <Box display="flex" justifyContent="end" alignItems="center" pt={5}>
+                {footerNote && (
+                    <Box pr={5} color="gray.500" fontSize="sm">
+                        {footerNote}
+                    </Box>
+                )}
                 <Box pr={5} whiteSpace={'nowrap'}>
                     {formatDurationInternal(subTotal)} / <b>{formatDurationInternal(sumTotal)}</b>
                 </Box>

@@ -1,46 +1,70 @@
-import _ from 'lodash';
-import { memo } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 
+import { Button, ButtonGroup, Text } from '@chakra-ui/react';
 import { useMeasure } from '@uidotdev/usehooks';
 import { VictoryBar, VictoryLabel, VictoryStack, VictoryStyleInterface } from 'victory';
-import { useStoreState } from '../../store/easyPeasy';
-import { BAR_WIDTH } from '../Timeline/timeline.constants';
-import { filterItems } from '../Timeline/timeline.utils';
-import { sumAppObject, SumItem } from './MetricTiles.utils';
-
+import { ITrackItem } from '../../@types/ITrackItem';
 import { TrackItemType } from '../../enum/TrackItemType';
+import { Logger } from '../../logger';
 import { useChartThemeState } from '../../routes/ChartThemeProvider';
+import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { formatDurationInternal } from '../../utils';
 import { BarWithTooltip } from '../Timeline/BarWithTooltip';
+import { BAR_WIDTH } from '../Timeline/timeline.constants';
 import { colorProp } from '../charts.utils';
-import { getTextWidth } from './AppUsageChart.utils';
+import { getTextWidth, getUsageBars, UNCATEGORIZED } from './AppUsageChart.utils';
+
+type ViewMode = 'app' | 'category';
+
+const EMPTY_ARRAY: ITrackItem[] = [];
+
+const LABEL_PADDING = 25;
+const LABEL_FONT = '"Gill Sans", Seravek, "Trebuchet MS", sans-serif;';
 
 export const AppUsageChart = memo(() => {
     const [ref, { width }] = useMeasure();
     const { chartTheme } = useChartThemeState();
-    const timeItems = useStoreState((state) => state.timeItems);
     const visibleTimerange = useStoreState((state) => state.visibleTimerange);
+    const appItems = useStoreState((state) => state.timeItems[TrackItemType.AppTrackItem]) || EMPTY_ARRAY;
+    const appSettings = useStoreState((state) => state.appSettings);
+    const fetchAppSettings = useStoreActions((actions) => actions.fetchAppSettings);
+    const [viewMode, setViewMode] = useState<ViewMode>('app');
 
-    const appItems = filterItems(timeItems[TrackItemType.AppTrackItem] || [], visibleTimerange);
+    useEffect(() => {
+        if (viewMode === 'category') {
+            fetchAppSettings().catch((error) => Logger.error('Failed to load app categories', error));
+        }
+    }, [viewMode, fetchAppSettings]);
 
-    const groupByField = 'app';
+    const categoryByApp = useMemo(
+        () => new Map(appSettings.map((setting) => [setting.name, setting.category])),
+        [appSettings],
+    );
 
-    const data = _(appItems)
-        .groupBy(groupByField)
-        .map((b) => {
-            return b.reduce(sumAppObject(visibleTimerange), {
-                app: b[0].app,
-                title: b[0].title,
-                timeDiffInMs: 0,
-                color: b[0].color,
-            } as SumItem);
-        })
-        .sortBy('timeDiffInMs')
-        .reverse()
-        .valueOf();
+    const bars = useMemo(
+        () =>
+            getUsageBars(appItems, visibleTimerange, (item) =>
+                viewMode === 'app'
+                    ? { name: item.app, color: item.color }
+                    : (categoryByApp.get(item.app) ?? UNCATEGORIZED),
+            ),
+        [appItems, visibleTimerange, viewMode, categoryByApp],
+    );
+
+    // Victory renders `datum.label` as is, and renders nothing for null. An empty string would still
+    // produce a <text> element with a NaN position.
+    const data = useMemo(() => {
+        const totalMs = bars.reduce((sum, bar) => sum + bar.timeDiffInMs, 0);
+        return bars.map((bar) => {
+            const text = `${bar.name} - ${formatDurationInternal(bar.timeDiffInMs)}`;
+            const barWidthPx = totalMs > 0 ? (bar.timeDiffInMs / totalMs) * (width ?? 0) : 0;
+            const canFit = getTextWidth(text, 14, LABEL_FONT) + LABEL_PADDING * 2 < barWidthPx;
+            return { ...bar, label: canFit ? text : null };
+        });
+    }, [bars, width]);
 
     const getTooltipLabel = (datum) => {
-        return `${datum[groupByField]}\r\n${formatDurationInternal(datum.timeDiffInMs)}`;
+        return `${datum.name}\r\n${formatDurationInternal(datum.timeDiffInMs)}`;
     };
 
     const style: VictoryStyleInterface = {
@@ -52,45 +76,32 @@ export const AppUsageChart = memo(() => {
         },
     };
 
-    const labelPadding = 25;
     return (
         <div ref={ref}>
+            <ButtonGroup size="sm" isAttached variant="outline" mb={4}>
+                <Button onClick={() => setViewMode('app')} isActive={viewMode === 'app'}>
+                    By App
+                </Button>
+                <Button onClick={() => setViewMode('category')} isActive={viewMode === 'category'}>
+                    By Category
+                </Button>
+            </ButtonGroup>
+            {data.length === 0 && (
+                <Text color="gray.500" fontSize="sm">
+                    No app usage in the visible range.
+                </Text>
+            )}
             <VictoryStack height={BAR_WIDTH} padding={0} width={width ?? 0} horizontal>
                 {data.map((item) => (
                     <VictoryBar
-                        key={item.app}
+                        key={item.name}
                         style={style}
                         barWidth={BAR_WIDTH * 2}
                         data={[item]}
-                        x="app"
+                        x="name"
                         y="timeDiffInMs"
-                        labels={({ datum }) => datum.app}
                         labelComponent={
-                            <VictoryLabel
-                                verticalAnchor="end"
-                                textAnchor="end"
-                                text={({ datum, scale }) => {
-                                    const text = `${datum.app} - ${formatDurationInternal(datum.timeDiffInMs)}`;
-                                    const textWidth = getTextWidth(
-                                        text,
-                                        14,
-                                        '"Gill Sans", Seravek, "Trebuchet MS", sans-serif;',
-                                    );
-
-                                    const timeDiff = datum._y1 - datum._y0;
-
-                                    const width =
-                                        typeof scale === 'object' && typeof scale.y === 'function'
-                                            ? scale.y(timeDiff)
-                                            : 0;
-
-                                    const canFit = textWidth + labelPadding * 2 < width;
-
-                                    return canFit ? text : '';
-                                }}
-                                dx={-labelPadding}
-                                dy={-5}
-                            />
+                            <VictoryLabel verticalAnchor="end" textAnchor="end" dx={-LABEL_PADDING} dy={-5} />
                         }
                         dataComponent={<BarWithTooltip theme={chartTheme} getTooltipLabel={getTooltipLabel} />}
                     />

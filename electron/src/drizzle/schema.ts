@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 export const trackItems = sqliteTable(
@@ -22,12 +23,23 @@ export const trackItems = sqliteTable(
     },
 );
 
+export const categories = sqliteTable('Categories', {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    name: text('name').notNull().unique(),
+    color: text('color'),
+});
+
+export const categoriesRelations = relations(categories, ({ many }) => ({
+    appSettings: many(appSettings),
+}));
+
 export const appSettings = sqliteTable(
     'AppSettings',
     {
         id: integer('id').primaryKey({ autoIncrement: true }),
         name: text('name').notNull().unique(),
         color: text('color'),
+        categoryId: integer('categoryId').references(() => categories.id, { onDelete: 'set null' }),
     },
     (table) => {
         return {
@@ -35,6 +47,13 @@ export const appSettings = sqliteTable(
         };
     },
 );
+
+export const appSettingsRelations = relations(appSettings, ({ one }) => ({
+    category: one(categories, {
+        fields: [appSettings.categoryId],
+        references: [categories.id],
+    }),
+}));
 
 export const settings = sqliteTable(
     'Settings',
@@ -55,6 +74,9 @@ export type NewTrackItem = typeof trackItems.$inferInsert;
 
 export type AppSetting = typeof appSettings.$inferSelect;
 export type NewAppSetting = typeof appSettings.$inferInsert;
+
+export type Category = typeof categories.$inferSelect;
+export type NewCategory = typeof categories.$inferInsert;
 
 export type Setting = typeof settings.$inferSelect;
 export type NewSetting = typeof settings.$inferInsert;

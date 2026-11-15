@@ -1,3 +1,5 @@
+import { app } from 'electron';
+import isDev from 'electron-is-dev';
 import path from 'path';
 import { Worker } from 'worker_threads';
 
@@ -7,10 +9,14 @@ import { WorkerActionArgs, WorkerActionReturns } from './dbTypes';
 const workerFilePath = path.resolve(__dirname, './dbWorker.js');
 
 const outputPath = config.databaseConfig.outputPath;
+const migrationsPath = isDev
+    ? path.resolve(app.getAppPath(), 'src/drizzle/migrations')
+    : path.join(__dirname, 'drizzle', 'migrations');
 
 const worker = new Worker(workerFilePath, {
     workerData: {
         outputPath,
+        migrationsPath,
     },
 });
 

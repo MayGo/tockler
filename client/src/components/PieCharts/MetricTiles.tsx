@@ -12,6 +12,8 @@ import { secondsToClock } from '../../time.util';
 import { MakeUnitSmaller } from '../MakeUnitSmaller';
 import { Metric } from '../Metric';
 import { MetricTile } from '../MetricTile';
+import { useTitleSearchMatches } from '../Timeline/useTitleSearchMatches';
+import { getMergedDurationMs } from '../Timeline/titleSearch.utils';
 import { getOnlineTime, getTasksTime } from './MetricTiles.utils';
 
 const NO_VALUE = '-';
@@ -34,6 +36,10 @@ export const MetricTiles = memo(() => {
     const tasksTotal = getTasksTime(timeItems[TrackItemType.LogTrackItem] || EMPTY_ARRAY, timerange);
     const tasksTotalVisible = getTasksTime(logItems, visibleTimerange);
 
+    const { keyword, matchedItems } = useTitleSearchMatches();
+    const matchedTotal = getMergedDurationMs(matchedItems, timerange);
+    const matchedTotalVisible = getMergedDurationMs(matchedItems, visibleTimerange);
+
     const wakeItem: ITrackItem | undefined = minBy(onlineItems, (c: ITrackItem) => c.beginDate);
     const sleepItem: ITrackItem | undefined = maxBy(onlineItems, (c: ITrackItem) => c.endDate);
 
@@ -42,7 +48,7 @@ export const MetricTiles = memo(() => {
             <MetricTile>
                 <Metric
                     title="Online"
-                    value={<MakeUnitSmaller>{secondsToClock(onlineTotal / 1000, 0, 2)}</MakeUnitSmaller>}
+                    value={<MakeUnitSmaller>{secondsToClock(onlineTotal / 1000, 0, 2) || NO_VALUE}</MakeUnitSmaller>}
                 />
                 <Metric
                     title="Selected range"
@@ -63,6 +69,24 @@ export const MetricTiles = memo(() => {
                     }
                 />
             </MetricTile>
+            {keyword && (
+                <MetricTile>
+                    <Metric
+                        title={`Matching "${keyword}" (${matchedItems.length})`}
+                        value={
+                            <MakeUnitSmaller>{secondsToClock(matchedTotal / 1000, 0, 2) || NO_VALUE}</MakeUnitSmaller>
+                        }
+                    />
+                    <Metric
+                        title="Selected range"
+                        value={
+                            <MakeUnitSmaller>
+                                {secondsToClock(matchedTotalVisible / 1000, 0, 2) || NO_VALUE}
+                            </MakeUnitSmaller>
+                        }
+                    />
+                </MetricTile>
+            )}
             <MetricTile>
                 <Metric
                     title="First online"

@@ -1,17 +1,22 @@
 import { ipcMain } from 'electron';
+import log from 'electron-log/main';
 import { machineId } from 'node-machine-id';
 import AppManager from './app/app-manager';
 import { exportFile } from './app/exportFile';
 import { taskAnalyser } from './app/task-analyser';
-import { sendToNotificationWindow, sendToTrayWindow } from './app/window-manager';
+import WindowManager, { sendToMainWindow, sendToNotificationWindow, sendToTrayWindow } from './app/window-manager';
 import { getLastItemsAll, getOngoingItemWithDuration } from './background/background.utils';
 import { initBackgroundJob } from './background/initBackgroundJob';
 import { dbClient } from './drizzle/dbClient';
 import { OrderByKey } from './drizzle/query.utils';
-import { TrackItem } from './drizzle/schema';
+import { NewCategory, TrackItem } from './drizzle/schema';
+import { appEmitter } from './utils/appEmitter';
 import { setupMainHandler } from './utils/setupMainHandler';
 
 const settingsActions = {
+    getLogFilePath: async () => {
+        return log.transports.file.getFile().path;
+    },
     fetchAnalyserSettingsJsonString: async () => {
         return dbClient.fetchAnalyserSettingsJsonString();
     },
@@ -61,6 +66,27 @@ const settingsActions = {
 const appSettingsActions = {
     changeColorForApp: async (payload: { appName: string; color: string }) => {
         return dbClient.changeColorForApp(payload.appName, payload.color);
+    },
+    setCategoryForApp: async (payload: { appName: string; categoryId: number | null }) => {
+        return dbClient.setCategoryForApp(payload.appName, payload.categoryId);
+    },
+    retrieveAllAppSettingsWithCategory: async () => {
+        return dbClient.retrieveAllAppSettingsWithCategory();
+    },
+};
+
+const categoryActions = {
+    getCategories: async () => {
+        return dbClient.getCategories();
+    },
+    createCategory: async (payload: NewCategory) => {
+        return dbClient.createCategory(payload);
+    },
+    updateCategory: async (payload: { id: number; category: Partial<NewCategory> }) => {
+        return dbClient.updateCategory(payload.id, payload.category);
+    },
+    deleteCategory: async (payload: { id: number }) => {
+        return dbClient.deleteCategory(payload.id);
     },
 };
 
@@ -122,5 +148,22 @@ const trackItemActions = {
     },
 };
 
-export const initIpcActions = () =>
-    setupMainHandler({ ipcMain } as any, { ...settingsActions, ...appSettingsActions, ...trackItemActions }, true);
+const forwardLogItemChanges = () => {
+    appEmitter.on('log-items-changed', () => {
+        if (WindowManager.menubar?.window) {
+            sendToTrayWindow('log-items-changed');
+        }
+        if (WindowManager.mainWindow) {
+            sendToMainWindow('log-items-changed');
+        }
+    });
+};
+
+export const initIpcActions = () => {
+    forwardLogItemChanges();
+    setupMainHandler(
+        { ipcMain } as any,
+        { ...settingsActions, ...appSettingsActions, ...trackItemActions, ...categoryActions },
+        true,
+    );
+};

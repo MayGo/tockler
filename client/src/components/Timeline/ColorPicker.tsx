@@ -43,7 +43,7 @@ export const ColorPicker = ({ color = defaultColor, onChange }: IProps) => {
         <>
             <Popover>
                 <PopoverTrigger>
-                    <Button __css={styles.button}>
+                    <Button __css={styles.button} aria-label="Choose color">
                         <Box __css={styles.color}></Box>
                     </Button>
                 </PopoverTrigger>

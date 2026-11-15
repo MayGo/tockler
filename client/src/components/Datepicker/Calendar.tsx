@@ -90,14 +90,14 @@ export const Calendar = ({
                 <Flex justifyContent="space-between" p={4}>
                     <HStack spacing={3}>
                         <Box>
-                            <Button onClick={goToPrevious} variant="outline">
+                            <Button onClick={goToPrevious} variant="outline" aria-label="Previous">
                                 <AiOutlineLeft />
                             </Button>
                         </Box>
                         {isMonthView && <MonthSelect value={month} onChange={onChangeMonth} />}
                         <YearSelect value={year} onChange={onChangeYear} />
                         <Box>
-                            <Button onClick={goToNext} variant="outline">
+                            <Button onClick={goToNext} variant="outline" aria-label="Next">
                                 <AiOutlineRight />
                             </Button>
                         </Box>

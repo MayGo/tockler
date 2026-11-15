@@ -1,7 +1,8 @@
 import { Box, Button, Flex, HStack, Input, Text, useColorModeValue } from '@chakra-ui/react';
 import { memo, useEffect, useMemo, useState } from 'react';
 import { TIME_FORMAT_SHORT } from '../../constants';
-import { useStoreActions, useStoreState } from '../../store/easyPeasy';
+import { useStoreState } from '../../store/easyPeasy';
+import { useSetVisibleRange } from './useSetVisibleRange';
 
 // Range types to identify different visible range options
 export enum RangeType {
@@ -16,7 +17,7 @@ export enum RangeType {
 export const VisibleRange = memo(() => {
     const timerange = useStoreState((state) => state.timerange);
     const visibleTimerange = useStoreState((state) => state.visibleTimerange);
-    const setVisibleTimerange = useStoreActions((actions) => actions.setVisibleTimerange);
+    const setVisibleRange = useSetVisibleRange();
 
     // State for time inputs
     const [startTime, setStartTime] = useState('');
@@ -81,31 +82,31 @@ export const VisibleRange = memo(() => {
     const showDay = () => {
         const beginDate = timerange[0].startOf('day');
         const endDate = timerange[0].endOf('day');
-        setVisibleTimerange([beginDate, endDate]);
+        setVisibleRange([beginDate, endDate], { pinsPosition: false });
     };
 
     const showHour = () => {
         const beginDate = visibleTimerange[0].startOf('hour');
         const endDate = beginDate.plus({ hours: 1 });
-        setVisibleTimerange([beginDate, endDate]);
+        setVisibleRange([beginDate, endDate], { pinsPosition: false });
     };
 
     const showAM = () => {
         const beginDate = timerange[0].startOf('day');
         const endDate = timerange[0].startOf('day').set({ hour: 12 });
-        setVisibleTimerange([beginDate, endDate]);
+        setVisibleRange([beginDate, endDate], { pinsPosition: true });
     };
 
     const showPM = () => {
         const beginDate = timerange[0].startOf('day').set({ hour: 12 });
         const endDate = timerange[0].endOf('day');
-        setVisibleTimerange([beginDate, endDate]);
+        setVisibleRange([beginDate, endDate], { pinsPosition: true });
     };
 
     const showEvening = () => {
-        const beginDate = visibleTimerange[0].startOf('day').set({ hour: 17 });
-        const endDate = visibleTimerange[0].endOf('day');
-        setVisibleTimerange([beginDate, endDate]);
+        const beginDate = timerange[0].startOf('day').set({ hour: 17 });
+        const endDate = timerange[0].endOf('day');
+        setVisibleRange([beginDate, endDate], { pinsPosition: true });
     };
 
     // Apply the custom time range
@@ -130,10 +131,12 @@ export const VisibleRange = memo(() => {
                 minute: endMinutes || 0,
             });
 
-            // If end time is earlier than start time, assume it's for the next day
-            const finalEndDate = endDate < beginDate ? endDate.plus({ days: 1 }) : endDate;
+            // Only one day is loaded, so an end before the start can't be shown; the inputs flag it instead.
+            if (endDate <= beginDate) {
+                return;
+            }
 
-            setVisibleTimerange([beginDate, finalEndDate]);
+            setVisibleRange([beginDate, endDate], { pinsPosition: true });
         } catch (err) {
             console.error('Error parsing time inputs:', err);
         }
@@ -155,16 +158,31 @@ export const VisibleRange = memo(() => {
         }
     };
 
+    // "HH:mm" strings compare correctly as text.
+    const isInvertedRange = !!startTime && !!endTime && endTime <= startTime;
+
     return (
         <Flex direction="column" gap={3}>
             <Flex alignItems="center" justifyContent="end">
                 <HStack spacing={3}>
                     <Box maxWidth="120px">
-                        <Input type="time" value={startTime} onChange={handleTimeChange('start')} />
+                        <Input
+                            type="time"
+                            aria-label="Visible range start"
+                            value={startTime}
+                            isInvalid={isInvertedRange}
+                            onChange={handleTimeChange('start')}
+                        />
                     </Box>
                     <Text fontSize="md">➜</Text>
                     <Box maxWidth="120px">
-                        <Input type="time" value={endTime} onChange={handleTimeChange('end')} />
+                        <Input
+                            type="time"
+                            aria-label="Visible range end"
+                            value={endTime}
+                            isInvalid={isInvertedRange}
+                            onChange={handleTimeChange('end')}
+                        />
                     </Box>
                 </HStack>
             </Flex>

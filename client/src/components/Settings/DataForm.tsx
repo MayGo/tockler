@@ -10,8 +10,20 @@ import { DataSettingsI } from './DataForm.util';
 
 const schema = yup
     .object({
-        idleAfterSeconds: yup.string().required().label('Idle after in Seconds'),
-        backgroundJobInterval: yup.number().required().positive().integer().label('Session Length'),
+        idleAfterSeconds: yup
+            .number()
+            .required()
+            .positive()
+            .integer()
+            .typeError('Idle after must be a number')
+            .label('Idle after'),
+        backgroundJobInterval: yup
+            .number()
+            .required()
+            .positive()
+            .integer()
+            .typeError('Background job interval must be a number')
+            .label('Background job interval'),
     })
     .required();
 
@@ -24,6 +36,12 @@ export const DataForm = () => {
         formState: { errors, isDirty, isValid },
         register,
     } = useForm<DataSettingsI>({ mode: 'onChange', defaultValues: dataSettings, resolver: yupResolver(schema) });
+
+    // Settings load asynchronously, so this form may have mounted with the defaults. Show the saved values once
+    // they arrive; otherwise editing one field would save the defaults for all the others.
+    useEffect(() => {
+        reset(dataSettings);
+    }, [dataSettings, reset]);
 
     const watchAllFields = watch();
 

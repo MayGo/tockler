@@ -1,10 +1,22 @@
 import { Action, action, createStore, Thunk, thunk, thunkOn, ThunkOn } from 'easy-peasy';
 import { DateTime } from 'luxon';
+import { IAppSetting } from '../@types/IAppSetting';
+import { ICategory, NewCategory } from '../@types/ICategory';
 import { ITimelineState } from '../@types/ITimelineState';
 import { SelectedTrackItem } from '../@types/ITrackItem';
 import { getCenteredTimerange, getTodayTimerange, setDayFromTimerange } from '../components/Timeline/timeline.utils';
 import { TrackItemType } from '../enum/TrackItemType';
 import { Logger } from '../logger';
+import {
+    retrieveAllAppSettingsWithCategory as retrieveAllAppSettingsWithCategoryApi,
+    setCategoryForApp as setCategoryForAppApi,
+} from '../services/appSettings.api';
+import {
+    createCategory as createCategoryApi,
+    deleteCategory as deleteCategoryApi,
+    getCategories as getCategoriesApi,
+    updateCategory as updateCategoryApi,
+} from '../services/category.api';
 import { findAllDayItemsForEveryTrack } from '../services/trackItem.api';
 import { addToTimelineItems } from '../timeline.util';
 import { loadVisibleRange, saveVisibleRange } from '../utils';
@@ -48,6 +60,9 @@ export interface StoreModel {
     timeItems: ITimelineState;
     setTimeItems: Action<StoreModel, ITimelineState>;
 
+    titleSearch: string;
+    setTitleSearch: Action<StoreModel, string>;
+
     onSetTimerange: ThunkOn<StoreModel>;
 
     fetchTimerange: Thunk<StoreModel>;
@@ -56,6 +71,20 @@ export interface StoreModel {
 
     bgSync: Thunk<StoreModel, DateTime>;
     bgSyncInterval: Thunk<StoreModel>;
+
+    // Categories
+    categories: ICategory[];
+    setCategories: Action<StoreModel, ICategory[]>;
+    fetchCategories: Thunk<StoreModel>;
+    createCategory: Thunk<StoreModel, NewCategory>;
+    updateCategory: Thunk<StoreModel, { id: number; category: Partial<NewCategory> }>;
+    deleteCategory: Thunk<StoreModel, number>;
+
+    // App Settings
+    appSettings: (IAppSetting & { category: ICategory | null })[];
+    setAppSettings: Action<StoreModel, (IAppSetting & { category: ICategory | null })[]>;
+    fetchAppSettings: Thunk<StoreModel>;
+    setCategoryForApp: Thunk<StoreModel, { appName: string; categoryId: number | null }>;
 }
 
 const mainStore = createStore<StoreModel>({
@@ -104,6 +133,11 @@ const mainStore = createStore<StoreModel>({
     },
     setTimeItems: action((state, payload) => {
         state.timeItems = payload;
+    }),
+
+    titleSearch: '',
+    setTitleSearch: action((state, payload) => {
+        state.titleSearch = payload;
     }),
 
     onSetTimerange: thunkOn(
@@ -176,6 +210,40 @@ const mainStore = createStore<StoreModel>({
         } else {
             Logger.debug('Delaying bg sync, initial data still loading.');
         }
+    }),
+
+    // Categories
+    categories: [],
+    setCategories: action((state, payload) => {
+        state.categories = payload;
+    }),
+    fetchCategories: thunk(async (actions) => {
+        actions.setCategories(await getCategoriesApi());
+    }),
+    createCategory: thunk(async (actions, payload) => {
+        await createCategoryApi(payload);
+        await actions.fetchCategories();
+    }),
+    updateCategory: thunk(async (actions, payload) => {
+        await updateCategoryApi(payload.id, payload.category);
+        await actions.fetchCategories();
+    }),
+    deleteCategory: thunk(async (actions, payload) => {
+        await deleteCategoryApi(payload);
+        await actions.fetchCategories();
+    }),
+
+    // App Settings
+    appSettings: [],
+    setAppSettings: action((state, payload) => {
+        state.appSettings = payload;
+    }),
+    fetchAppSettings: thunk(async (actions) => {
+        actions.setAppSettings(await retrieveAllAppSettingsWithCategoryApi());
+    }),
+    setCategoryForApp: thunk(async (actions, payload) => {
+        await setCategoryForAppApi(payload.appName, payload.categoryId);
+        await actions.fetchAppSettings();
     }),
 });
 

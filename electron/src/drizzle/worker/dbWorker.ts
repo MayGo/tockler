@@ -2,13 +2,14 @@ import { parentPort } from 'worker_threads';
 import { WorkerActionArgs, WorkerActionReturns, WorkerServices } from '../dbTypes';
 import { dbService } from './dbService';
 import { appSettingService } from './queries/app-setting-service';
+import { categoryService } from './queries/category-service';
 import { settingsService } from './queries/settings-service';
 import { trackItemService } from './queries/track-item-service';
 import { trackItemDb } from './queries/trackItem.db';
 
 const actions: {
     [K in keyof WorkerServices]: (...args: WorkerActionArgs[K]) => Promise<WorkerActionReturns[K]>;
-} = Object.assign({}, trackItemService, appSettingService, settingsService, trackItemDb, dbService);
+} = Object.assign({}, trackItemService, appSettingService, settingsService, trackItemDb, dbService, categoryService);
 
 parentPort!.on(
     'message',

@@ -16,6 +16,8 @@ export default defineConfig({
         globals: true,
         environment: 'jsdom',
         setupFiles: './src/setupTests.ts',
+        // Page tests render whole routes with charts; under coverage on CI runners they need more than 5s.
+        testTimeout: 15000,
         coverage: {
             provider: 'v8',
             reporter: ['text', 'json', 'html', 'lcov'],

@@ -13,19 +13,20 @@ export const useTrayData = () => {
     const [logItems, setLogItems] = useState<ITrackItem[]>([]);
     const [runningLogItem, setRunningLogItem] = useState<ITrackItem>();
 
-    // Listen for log item events
+    // The main process announces started/stopped log items once they are saved; reload the list then.
     useEffect(() => {
-        const eventLogItemStarted = (logItem) => {
-            const newItem: ITrackItem = JSON.parse(logItem);
-            Logger.debug('log-trackItem-started:', newItem);
-            setRunningLogItem(newItem);
+        const onLogItemsChanged = () => {
+            fetchLogItems();
+            fetchRunningLogItem();
         };
 
-        ElectronEventEmitter.on('log-item-started', eventLogItemStarted);
+        ElectronEventEmitter.on('log-items-changed', onLogItemsChanged);
 
         return () => {
-            ElectronEventEmitter.off('log-item-started', eventLogItemStarted);
+            ElectronEventEmitter.off('log-items-changed', onLogItemsChanged);
         };
+        // The fetchers only call state setters and the API, so the first render's copies are fine.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     async function fetchStatusItems() {

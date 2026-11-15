@@ -1,27 +1,17 @@
 import { FilterFn, Row, SortingState } from '@tanstack/react-table';
-import { differenceInMilliseconds } from 'date-fns';
-import { sumBy } from 'lodash';
-import { matchSorter } from 'match-sorter';
 import { ITrackItem } from '../../@types/ITrackItem';
 
-export const calculateTotal = (filteredData: ITrackItem[]) => {
-    const totalMs = sumBy(filteredData, (trackItem: ITrackItem) => {
-        return differenceInMilliseconds(trackItem.endDate, trackItem.beginDate);
-    });
-
-    return totalMs;
+/** Case-insensitive; every whitespace-separated word of `query` must appear somewhere in `value`, in any order. */
+export const containsAllWords = (value: unknown, query: string) => {
+    const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+    const text = String(value ?? '').toLowerCase();
+    return words.every((word) => text.includes(word));
 };
 
-// Use matchSorter for fuzzy matching
-export const fuzzyTextFilterFn: FilterFn<ITrackItem> = (row: Row<ITrackItem>, columnId: string, value: string) => {
-    // Rank the item
-    const itemRank = matchSorter([row.getValue(columnId)], value);
+export const containsAllWordsFilter: FilterFn<ITrackItem> = (row, columnId, filterValue: string) =>
+    containsAllWords(row.getValue(columnId), filterValue);
 
-    return itemRank.length > 0;
-};
-
-// Let the table remove the filter if the string is empty
-fuzzyTextFilterFn.autoRemove = (val: string) => !val;
+containsAllWordsFilter.autoRemove = (value: unknown) => typeof value !== 'string' || !value.trim();
 
 export interface TableButtonsProps {
     selectedFlatRows: Row<ITrackItem>[];

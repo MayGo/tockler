@@ -12,6 +12,8 @@ type AppEvents = {
     'state-changed': (state: State) => void;
     'active-window-changed': (activeWindow: NormalizedActiveWindow) => void;
     'smallNotificationsEnabled-changed': (smallNotificationsEnabled: boolean) => void;
+    /** A log item was started or stopped and saved; windows listing log items should reload. */
+    'log-items-changed': () => void;
 };
 
 export const appEmitter = new EventEmitter<AppEvents>();

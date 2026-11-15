@@ -1,0 +1,42 @@
+import { CloseIcon, SearchIcon } from '@chakra-ui/icons';
+import { IconButton, Input, InputGroup, InputLeftElement, InputRightElement } from '@chakra-ui/react';
+import { Column } from '@tanstack/react-table';
+import { ITrackItem } from '../../@types/ITrackItem';
+
+const PLACEHOLDERS: Record<string, string> = {
+    title: 'Filter titles',
+    url: 'Filter URLs',
+};
+
+export function TextColumnFilter({ column }: { column: Column<ITrackItem> }) {
+    const filterValue = column.getFilterValue();
+    const value = typeof filterValue === 'string' ? filterValue : '';
+
+    return (
+        <InputGroup size="sm">
+            <InputLeftElement pointerEvents="none" color="gray.400">
+                <SearchIcon boxSize={3} />
+            </InputLeftElement>
+            <Input
+                value={value}
+                onChange={(e) => column.setFilterValue(e.target.value)}
+                onKeyDown={(e) => e.key === 'Escape' && column.setFilterValue(undefined)}
+                placeholder={PLACEHOLDERS[column.id] ?? 'Filter'}
+                aria-label={`Filter ${column.id}`}
+                borderRadius="md"
+                fontSize="sm"
+            />
+            {value && (
+                <InputRightElement>
+                    <IconButton
+                        aria-label={`Clear ${column.id} filter`}
+                        icon={<CloseIcon boxSize={2} />}
+                        size="xs"
+                        variant="ghost"
+                        onClick={() => column.setFilterValue(undefined)}
+                    />
+                </InputRightElement>
+            )}
+        </InputGroup>
+    );
+}

@@ -32,6 +32,10 @@ export const CalendarYear = ({ dateCellRender, onDateClicked }: YearProps) => {
                             {dateCellRender(month)}
                         </MonthBox>
                     ))}
+                    {/* 12 months leave the last row of 7 short; fill it like the month view's empty days. */}
+                    {Array.from({ length: (7 - (months.length % 7)) % 7 }, (_, i) => (
+                        <Box key={`trailing-${i}`} __css={styles.emptyDay} />
+                    ))}
                 </SimpleGrid>
             </Box>
         </Box>

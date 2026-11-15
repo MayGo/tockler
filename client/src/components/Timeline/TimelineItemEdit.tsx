@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Heading, Input, Select, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Divider, Heading, Input, Select, Text, Tooltip, useToast } from '@chakra-ui/react';
 import { DateTime } from 'luxon';
 import randomcolor from 'randomcolor';
 import { memo, useEffect, useState } from 'react';
@@ -24,6 +24,14 @@ export const TimelineItemEdit = memo(() => {
     const selectedTimelineItem = useStoreState((state) => state.selectedTimelineItem);
     const setSelectedTimelineItem = useStoreActions((actions) => actions.setSelectedTimelineItem);
     const fetchTimerange = useStoreActions((actions) => actions.fetchTimerange);
+    const toast = useToast();
+    const showError = (title: string, error: unknown) =>
+        toast({
+            title,
+            description: error instanceof Error ? error.message : String(error),
+            status: 'error',
+            isClosable: true,
+        });
 
     const [state, setState] = useState<{
         trackItem: SelectedTrackItem | null;
@@ -40,7 +48,12 @@ export const TimelineItemEdit = memo(() => {
         Logger.debug('Delete timeline trackItem', id);
 
         if (id) {
-            await deleteByIds([id]);
+            try {
+                await deleteByIds([id]);
+            } catch (error) {
+                showError('Could not delete item', error);
+                return;
+            }
             Logger.debug('Deleted timeline items', id);
             fetchTimerange();
             setSelectedTimelineItem(null);
@@ -70,6 +83,9 @@ export const TimelineItemEdit = memo(() => {
             }
         } catch (error) {
             Logger.error('Saving track item failed', error);
+            // Keep the editor open so the changes aren't lost.
+            showError('Could not save item', error);
+            return;
         }
 
         setSelectedTimelineItem(null);
@@ -167,20 +183,14 @@ export const TimelineItemEdit = memo(() => {
         }));
     };
 
-    const saveBasedOnColorOptionHandler = () => {
-        saveTimelineItem();
-        setState((oldState) => {
-            if (!oldState.trackItem) return oldState;
-            return {
-                ...oldState,
-                trackItem: {
-                    ...oldState.trackItem,
-                    app: '',
-                    title: '',
-                    color: randomcolor(),
-                } as ITrackItem,
-            };
-        });
+    const [isSaving, setIsSaving] = useState(false);
+    const saveBasedOnColorOptionHandler = async () => {
+        setIsSaving(true);
+        try {
+            await saveTimelineItem();
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     if (!selectedTimelineItem || !trackItem) {
@@ -190,8 +200,7 @@ export const TimelineItemEdit = memo(() => {
 
     const colorChanged = selectedTimelineItem.color !== trackItem.color;
     const isCreating = !selectedTimelineItem.id;
-
-    console.log('trackItem', trackItem);
+    const isInvalidRange = !readOnly && trackItem.endDate <= trackItem.beginDate;
 
     return (
         <Box width={600}>
@@ -209,6 +218,8 @@ export const TimelineItemEdit = memo(() => {
                             value={DateTime.fromJSDate(new Date(trackItem.beginDate)).toFormat(TIME_FORMAT_SHORT)}
                             onChange={(e) => changeTime('beginDate')(e.target.value)}
                             readOnly={readOnly}
+                            isInvalid={isInvalidRange}
+                            aria-label="Start time"
                         />
                     </Box>
                     <Text fontSize="md">➜</Text>
@@ -218,9 +229,16 @@ export const TimelineItemEdit = memo(() => {
                             value={DateTime.fromJSDate(new Date(trackItem.endDate)).toFormat(TIME_FORMAT_SHORT)}
                             onChange={(e) => changeTime('endDate')(e.target.value)}
                             readOnly={readOnly}
+                            isInvalid={isInvalidRange}
+                            aria-label="End time"
                         />
                     </Box>
                 </HStack>
+                {isInvalidRange && (
+                    <Text color="red.400" fontSize="sm">
+                        End time must be after the start time.
+                    </Text>
+                )}
                 <Box w="100%">
                     <Input value={trackItem.title} placeholder="Title" onChange={changeAppTitle} readOnly={readOnly} />
                 </Box>
@@ -255,7 +273,12 @@ export const TimelineItemEdit = memo(() => {
                     Cancel
                 </Button>
 
-                <Button leftIcon={<AiOutlineSave />} onClick={saveBasedOnColorOptionHandler}>
+                <Button
+                    leftIcon={<AiOutlineSave />}
+                    onClick={saveBasedOnColorOptionHandler}
+                    isDisabled={isInvalidRange}
+                    isLoading={isSaving}
+                >
                     {isCreating ? 'Create' : 'Update'}
                 </Button>
             </HStack>

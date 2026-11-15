@@ -22,11 +22,40 @@ import { WorkSettingsI } from './WorkForm.util';
 
 const schema = yup
     .object({
-        hoursToWork: yup.string().required().label('Hours to work'),
-        sessionLength: yup.number().required().positive().integer().label('Session Length'),
-        notificationDuration: yup.number().required().positive().integer().label('Notification duration'),
-        minBreakTime: yup.number().required().positive().integer().label('Min break time'),
-        reNotifyInterval: yup.number().required().integer().label('Re-notify interval'),
+        hoursToWork: yup
+            .number()
+            .required()
+            .positive()
+            .max(24)
+            .typeError('Hours to work must be a number')
+            .label('Hours to work'),
+        sessionLength: yup
+            .number()
+            .required()
+            .positive()
+            .integer()
+            .typeError('Session Length must be a number')
+            .label('Session Length'),
+        notificationDuration: yup
+            .number()
+            .required()
+            .positive()
+            .integer()
+            .typeError('Notification duration must be a number')
+            .label('Notification duration'),
+        minBreakTime: yup
+            .number()
+            .required()
+            .positive()
+            .integer()
+            .typeError('Min break time must be a number')
+            .label('Min break time'),
+        reNotifyInterval: yup
+            .number()
+            .required()
+            .integer()
+            .typeError('Re-notify interval must be a number')
+            .label('Re-notify interval'),
         smallNotificationsEnabled: yup.boolean().label('Notifications'),
     })
     .required();
@@ -40,6 +69,12 @@ export const WorkForm = () => {
         formState: { errors, isDirty, isValid },
         register,
     } = useForm<WorkSettingsI>({ mode: 'onChange', defaultValues: workSettings, resolver: yupResolver(schema) });
+
+    // Settings load asynchronously, so this form may have mounted with the defaults. Show the saved values once
+    // they arrive; otherwise editing one field would save the defaults for all the others.
+    useEffect(() => {
+        reset(workSettings);
+    }, [workSettings, reset]);
 
     const watchAllFields = watch();
 

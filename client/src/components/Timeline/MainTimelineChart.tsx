@@ -20,24 +20,23 @@ import { useChartThemeState } from '../../routes/ChartThemeProvider';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { rangeToDate } from '../../timeline.util';
 import { formatDurationInternal } from '../../utils';
-import { colorProp } from '../charts.utils';
 import { BrushHandle } from './BrushHandle';
 import { BAR_WIDTH, CHART_PADDING, CHART_SCALE } from './timeline.constants';
 import { getDynamicTimeFormat } from './timeline.format.utils';
 import { getTrackItemOrderFn } from './timeline.utils';
+import { matchesLast, titleHighlightBarStyle } from './titleSearch.utils';
+import { useSetVisibleRange } from './useSetVisibleRange';
+import { useTitleSearchMatches } from './useTitleSearchMatches';
 
 import { useMeasure } from '@uidotdev/usehooks';
 import { shortTime } from '../../time.util';
 
 const domainPadding: DomainPaddingPropType = { y: 35, x: 10 };
 
-export const barStyle = (isDark: boolean): VictoryStyleInterface => ({
+export const barStyle = (isDark: boolean, keyword: string): VictoryStyleInterface => ({
     data: {
         width: BAR_WIDTH,
-        fill: colorProp,
-        stroke: isDark ? 'black' : 'white',
-        strokeWidth: 0.5,
-        fillOpacity: 1,
+        ...titleHighlightBarStyle(keyword, { isDark, stroke: isDark ? 'black' : 'white', strokeWidth: 0.5 }),
         clipPath: 'none',
     },
 });
@@ -47,7 +46,12 @@ const EMPTY_ARRAY: ITrackItem[] = [];
 // Minimum timerange duration in milliseconds (5 minutes)
 const MIN_TIMERANGE_DURATION_MS = 5 * 60 * 1000;
 
-export const MainTimelineChart = memo(() => {
+interface MainTimelineChartProps {
+    /** Called with the click's viewport x so the edit popover can open next to the clicked bar. */
+    onBarClick?: (clientX: number) => void;
+}
+
+export const MainTimelineChart = memo(({ onBarClick }: MainTimelineChartProps) => {
     const [ref, { width }] = useMeasure();
 
     const { chartTheme } = useChartThemeState();
@@ -56,15 +60,19 @@ export const MainTimelineChart = memo(() => {
     const timerange = useStoreState((state) => state.timerange);
     const visibleTimerange = useStoreState((state) => state.visibleTimerange);
     const timeItems = useStoreState((state) => state.timeItems);
+    const { keyword } = useTitleSearchMatches();
 
-    const setVisibleTimerange = useStoreActions((actions) => actions.setVisibleTimerange);
+    const setVisibleRange = useSetVisibleRange();
 
     const selectedTimelineItem = useStoreState((state) => state.selectedTimelineItem);
     const setSelectedTimelineItem = useStoreActions((actions) => actions.setSelectedTimelineItem);
 
-    const handleSelectionChanged = (item) => {
+    const handleSelectionChanged = (item, clientX?: number) => {
         if (item) {
             Logger.debug('Selected item:', item);
+            if (clientX !== undefined) {
+                onBarClick?.(clientX);
+            }
             setSelectedTimelineItem(item);
         } else {
             Logger.error('No item selected');
@@ -84,7 +92,7 @@ export const MainTimelineChart = memo(() => {
             const newStart = midpoint.minus({ milliseconds: newDuration / 2 });
             const newEnd = midpoint.plus({ milliseconds: newDuration / 2 });
 
-            setVisibleTimerange([newStart, newEnd]);
+            setVisibleRange([newStart, newEnd], { pinsPosition: false });
         }
     };
 
@@ -102,7 +110,7 @@ export const MainTimelineChart = memo(() => {
             const newStart = midpoint.minus({ milliseconds: actualDuration / 2 });
             const newEnd = midpoint.plus({ milliseconds: actualDuration / 2 });
 
-            setVisibleTimerange([newStart, newEnd]);
+            setVisibleRange([newStart, newEnd], { pinsPosition: false });
         }
     };
 
@@ -147,7 +155,7 @@ export const MainTimelineChart = memo(() => {
         return <div>No data</div>;
     }
 
-    const timelineData = [...statusItems, ...logItems, ...appItems];
+    const timelineData = matchesLast([...statusItems, ...logItems, ...appItems], keyword);
 
     Logger.debug(`Rendering ${timelineData.length} items`);
 
@@ -208,7 +216,7 @@ export const MainTimelineChart = memo(() => {
                 />
 
                 <VictoryBar
-                    style={barStyle(chartTheme.isDark)}
+                    style={barStyle(chartTheme.isDark, keyword)}
                     x={getTrackItemOrderFn}
                     y={(d) => d.beginDate}
                     y0={(d) => d.endDate}

@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gte, inArray, like, lte, sql } from 'drizzle-orm';
+import { and, AnyColumn, asc, desc, eq, gte, inArray, lte, sql } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 import { State } from '../../../enums/state';
 import { TrackItemType } from '../../../enums/track-item-type';
@@ -7,6 +7,16 @@ import { NewTrackItem, TrackItem, trackItems } from '../../schema';
 import { db } from '../db';
 
 const DEFAULT_PAGE_SIZE = 20;
+
+/**
+ * Matches `searchStr` anywhere in the title, app name or URL (SQLite LIKE, case-insensitive for ASCII).
+ * `%` and `_` in the search are matched literally rather than as wildcards.
+ */
+const searchCondition = (searchStr: string) => {
+    const pattern = `%${searchStr.trim().replace(/[\\%_]/g, (char) => `\\${char}`)}%`;
+    const matches = (column: AnyColumn) => sql`${column} LIKE ${pattern} ESCAPE '\\'`;
+    return sql`(${matches(trackItems.title)} OR ${matches(trackItems.app)} OR ${matches(trackItems.url)})`;
+};
 
 const logger = console;
 
@@ -42,7 +52,7 @@ async function findItemsForExport(from: string, to: string, taskName: string, se
     ];
 
     if (searchStr) {
-        conditions.push(like(trackItems.title, `%${searchStr}%`));
+        conditions.push(searchCondition(searchStr));
     }
 
     const results = await db
@@ -68,7 +78,7 @@ async function findAllItems(
     ];
 
     if (searchStr) {
-        conditions.push(like(trackItems.title, `%${searchStr}%`));
+        conditions.push(searchCondition(searchStr));
     }
 
     const order = orderByKey[paging.sortByKey as OrderByKey] || trackItems.endDate;

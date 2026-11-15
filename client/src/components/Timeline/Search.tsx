@@ -96,7 +96,7 @@ export const Search = memo(() => {
                 </Button>
             </Box>
             <Box p={1}>
-                <Button onClick={goBackOneDay} variant="outline">
+                <Button onClick={goBackOneDay} variant="outline" aria-label="Previous day">
                     <AiOutlineLeft />
                 </Button>
             </Box>
@@ -108,7 +108,7 @@ export const Search = memo(() => {
                 />
             </Box>
             <Box p={1}>
-                <Button onClick={goForwardOneDay} variant="outline">
+                <Button onClick={goForwardOneDay} variant="outline" aria-label="Next day">
                     <AiOutlineRight />
                 </Button>
             </Box>
@@ -122,7 +122,11 @@ export const Search = memo(() => {
             {showLiveViewButton && (
                 <Box p={1}>
                     <Tooltip placement="bottom" label={liveView ? 'Pause live view' : 'Start live view'}>
-                        <Button onClick={toggleLiveView} colorScheme={liveView ? 'green' : 'red'}>
+                        <Button
+                            onClick={toggleLiveView}
+                            colorScheme={liveView ? 'green' : 'red'}
+                            aria-label={liveView ? 'Pause live view' : 'Start live view'}
+                        >
                             {liveView ? <FaStop /> : <FaPlay />}
                         </Button>
                     </Tooltip>

@@ -7,6 +7,7 @@ import { TaskList } from '../components/TaskList';
 import { NewLogButton } from '../components/Timeline/NewLogButton';
 import { Search } from '../components/Timeline/Search';
 import { Timeline } from '../components/Timeline/Timeline';
+import { TitleSearch } from '../components/Timeline/TitleSearch';
 import { VisibleRange } from '../components/Timeline/VisibleRange';
 import { TrackItemTabs } from '../components/TrackItemTable/TrackItemTabs';
 import { useInterval } from '../hooks/intervalHook';
@@ -37,7 +38,9 @@ export function TimelinePage() {
             <CardBox>
                 <Flex>
                     <Search />
-                    <Box flex={1} />
+                    <Box p={1} pl={4} flex={1}>
+                        <TitleSearch />
+                    </Box>
                     <Box py={1}>
                         <NewLogButton />
                     </Box>

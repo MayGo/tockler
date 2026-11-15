@@ -1,31 +1,38 @@
-import { Box } from '@chakra-ui/react';
-import { differenceInMilliseconds } from 'date-fns';
-import { sumBy } from 'lodash';
+import { Box, Button, Text } from '@chakra-ui/react';
+import { useMemo } from 'react';
 import { ITrackItem } from '../../@types/ITrackItem';
 import { useStoreActions, useStoreState } from '../../store/easyPeasy';
 import { TIMERANGE_MODE_TODAY } from '../../store/mainStore';
 import { checkIfOneDay } from '../../timeline.util';
 import { filterItems } from '../Timeline/timeline.utils';
+import { matchesTitleKeyword } from '../Timeline/titleSearch.utils';
+import { useTitleSearchMatches } from '../Timeline/useTitleSearchMatches';
 import { ItemsTable } from './ItemsTable';
 import { defaultTableButtonsProps } from './TrackItemTable.utils';
 import { TrackItemTableButtons } from './TrackItemTableButtons';
 
+const EMPTY_ARRAY: ITrackItem[] = [];
+
+const totalDurationMs = (items: ITrackItem[]) =>
+    items.reduce((total, item) => total + (item.endDate - item.beginDate), 0);
+
 export const TrackItemTable = ({ type, resetButtonsRef }) => {
-    const timeItems = useStoreState((state) => state.timeItems);
+    const items: ITrackItem[] = useStoreState((state) => state.timeItems[type]) || EMPTY_ARRAY;
     const visibleTimerange = useStoreState((state) => state.visibleTimerange);
     const timerangeMode = useStoreState((state) => state.timerangeMode);
     const setLiveView = useStoreActions((actions) => actions.setLiveView);
+    const setTitleSearch = useStoreActions((actions) => actions.setTitleSearch);
+    const { keyword } = useTitleSearchMatches();
 
-    // Use the first 10 items for the current page (since we're not doing server-side pagination here)
-    const data = filterItems(timeItems[type], visibleTimerange);
+    const visibleItems = useMemo(() => filterItems(items, visibleTimerange), [items, visibleTimerange]);
+    const data = useMemo(
+        () => (keyword ? visibleItems.filter((item) => matchesTitleKeyword(item, keyword)) : visibleItems),
+        [visibleItems, keyword],
+    );
+    const totalDuration = useMemo(() => totalDurationMs(visibleItems), [visibleItems]);
 
     const isOneDay = checkIfOneDay(visibleTimerange);
     const isToday = timerangeMode === TIMERANGE_MODE_TODAY;
-
-    // Calculate total duration in milliseconds for all the data
-    const totalDuration = sumBy(timeItems[type] as ITrackItem[], (trackItem) => {
-        return differenceInMilliseconds(trackItem.endDate, trackItem.beginDate);
-    });
 
     const handleClick = (e) => {
         e.stopPropagation();
@@ -34,6 +41,15 @@ export const TrackItemTable = ({ type, resetButtonsRef }) => {
             setLiveView(false);
         }
     };
+
+    const footerNote = keyword ? (
+        <Text as="span">
+            Only titles containing “{keyword}”{' '}
+            <Button size="xs" variant="link" onClick={() => setTitleSearch('')}>
+                Show all
+            </Button>
+        </Text>
+    ) : null;
 
     return (
         <Box position="relative" onClick={handleClick}>
@@ -44,6 +60,7 @@ export const TrackItemTable = ({ type, resetButtonsRef }) => {
                 isSearchTable={false}
                 sumTotal={totalDuration}
                 manualSortBy={false}
+                footerNote={footerNote}
                 customTableButtons={<TrackItemTableButtons {...defaultTableButtonsProps} />}
             />
         </Box>

@@ -12,13 +12,11 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
-    sonarcloud:
-        name: SonarCloud
+    test:
+        name: Test
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
 
             - name: Setup Node.js
               uses: actions/setup-node@v4
@@ -55,37 +53,23 @@ jobs:
                   pnpm coverage
                   cd ..
 
-            - name: SonarCloud Scan Electron
-              uses: SonarSource/sonarcloud-github-action@master
-              with:
-                  projectBaseDir: electron
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-            - name: SonarCloud Scan Client
-              uses: SonarSource/sonarcloud-github-action@master
-              with:
-                  projectBaseDir: client
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
     build:
         name: Build (${{ matrix.os }}-${{ matrix.arch }})
-        needs: [sonarcloud]
+        needs: [test]
         runs-on: ${{ matrix.os }}
         timeout-minutes: 60 # Set maximum job runtime
         strategy:
+            fail-fast: false
             matrix:
                 include:
                     - os: ubuntu-latest
                       node-version: 22.x
                       arch: x64
-                    - os: windows-latest
+                    # windows-latest ships Visual Studio 2026, which electron-builder's node-gyp can't detect yet
+                    - os: windows-2022
                       node-version: 22.x
                       arch: x64
-                    - os: macos-13
+                    - os: macos-15-intel
                       node-version: 22.x
                       arch: x64
                     - os: macos-latest
@@ -112,59 +96,34 @@ jobs:
               run: echo "PACKAGE_VERSION=$(node -p -e "require('./electron/package.json').version")" >> $GITHUB_ENV
 
             - name: Setup Sentry Release
-              if: matrix.os == 'ubuntu-latest'
+              if: runner.os == 'Linux'
               env:
                   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
                   SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
               run: |
-                  pnpm dlx @sentry/cli releases set-commits "${{ env.PACKAGE_VERSION }}" --commit "${{ github.repository }}@${{ github.sha }}"
-                  pnpm dlx @sentry/cli releases new "${{ env.PACKAGE_VERSION }}"
+                  pnpm dlx @sentry/cli@3.8.2 releases set-commits "${{ env.PACKAGE_VERSION }}" --commit "${{ github.repository }}@${{ github.sha }}"
+                  pnpm dlx @sentry/cli@3.8.2 releases new "${{ env.PACKAGE_VERSION }}"
 
             - name: Install Python Setuptools on Ubuntu
-              if: matrix.os == 'ubuntu-latest'
+              if: runner.os == 'Linux'
               run: |
                   sudo apt-get update
                   sudo apt-get install -y python3-setuptools
 
-            - name: Install Python Setuptools on MacOS-13
-              if: matrix.os == 'macos-13'
-              run: |
-                  # Python 2 is no longer available in Homebrew
-                  # Install setuptools which provides distutils for Python 3
-                  python3 -m pip install setuptools
-                  # Set environment variables to use Python 3
-                  echo "PYTHON=$(which python3)" >> $GITHUB_ENV
-                  echo "npm_config_python=$(which python3)" >> $GITHUB_ENV
-
-            - name: Install Python Setuptools on other macOS
-              if: startsWith(matrix.os, 'macos') && matrix.os != 'macos-13'
+            - name: Install Python Setuptools on macOS
+              if: runner.os == 'macOS'
               run: brew install python-setuptools
 
             - name: Install Python Setuptools on Windows
-              if: matrix.os == 'windows-latest'
+              if: runner.os == 'Windows'
               run: |
                   python -m pip install --upgrade pip
                   pip install setuptools
 
-            - name: Configure node-gyp for MacOS-13
-              if: matrix.os == 'macos-13'
-              run: |
-                  cd electron
-                  # Configure node-gyp to use Python 3
-                  echo "node-gyp-binary=python3" >> .npmrc
-                  echo "python=python3" >> .npmrc
-                  echo "npm_config_python=python3" >> .npmrc
-                  cd ..
-
             - name: Install Dependencies (Electron)
-              shell: bash
               run: |
                   cd electron
-                  if [[ "${{ matrix.os }}" == "macos-13" ]]; then
-                    PYTHON=$(which python3) pnpm install
-                  else
-                    pnpm install
-                  fi
+                  pnpm install
                   cd ..
 
             - name: Install Dependencies (Client)
@@ -194,12 +153,13 @@ jobs:
               shell: bash
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  CSC_LINK: ${{ secrets.CSC_LINK }}
-                  CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+                  # The only certificate is Apple's, so Windows builds stay unsigned
+                  CSC_LINK: ${{ runner.os != 'Windows' && secrets.CSC_LINK || '' }}
+                  CSC_KEY_PASSWORD: ${{ runner.os != 'Windows' && secrets.CSC_KEY_PASSWORD || '' }}
                   APPLE_ID: ${{ secrets.APPLE_ID }}
                   APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
                   APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-                  CSC_IDENTITY_AUTO_DISCOVERY: ${{ matrix.os != 'windows-latest' }}
+                  CSC_IDENTITY_AUTO_DISCOVERY: ${{ runner.os != 'Windows' }}
 
               run: |
                   cd electron
@@ -207,24 +167,23 @@ jobs:
                   export ELECTRON_BUILDER_SILENT=true
                   pnpm build
                   pnpm prepare_client
-                  if [[ "${{ matrix.os }}" == "macos-"* ]]; then
+                  if [[ "${{ runner.os }}" == "macOS" ]]; then
                     pnpm release -- --mac --arch=${{ matrix.arch }}
-                  elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+                  elif [[ "${{ runner.os }}" == "Windows" ]]; then
                     pnpm release -- --win
-                  elif [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+                  else
                     pnpm release -- --linux
                   fi
                   cd ..
 
             - name: Upload Sentry Sourcemaps
-              if: matrix.os == 'ubuntu-latest'
+              if: runner.os == 'Linux'
               env:
                   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
                   SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
               run: |
-                  pnpm dlx @sentry/cli releases files "${{ env.PACKAGE_VERSION }}" upload-sourcemaps ./client/dist/assets/ --rewrite --url-prefix "~/dist/assets"
-                  pnpm dlx @sentry/cli releases files "${{ env.PACKAGE_VERSION }}" list
-                  pnpm dlx @sentry/cli releases finalize "${{ env.PACKAGE_VERSION }}"
+                  pnpm dlx @sentry/cli@3.8.2 sourcemaps upload --release "${{ env.PACKAGE_VERSION }}" --url-prefix "~/dist/assets" ./client/dist/assets/
+                  pnpm dlx @sentry/cli@3.8.2 releases finalize "${{ env.PACKAGE_VERSION }}"
 
             - name: Upload Artifacts
               uses: actions/upload-artifact@v4

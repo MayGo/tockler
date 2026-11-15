@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 import randomcolor from 'randomcolor';
-import { AppSetting, appSettings, NewAppSetting } from '../../schema';
+import { AppSetting, appSettings, Category, NewAppSetting } from '../../schema';
 import { db } from '../db';
 
 const logger = console;
@@ -76,11 +76,48 @@ export async function changeColorForApp(appName: string, color: string) {
     }
 }
 
+export async function setCategoryForApp(appName: string, categoryId: number | null) {
+    logger.debug('Setting category for app:', appName, categoryId);
+
+    const appSetting = await retrieveAppSettings(appName);
+
+    if (appSetting) {
+        const [updated] = await db
+            .update(appSettings)
+            .set({ categoryId })
+            .where(eq(appSettings.id, appSetting.id))
+            .returning();
+
+        // Update cache
+        if (updated) {
+            cache[appName] = updated;
+        }
+
+        logger.debug('Saved category to DB:', updated);
+        return updated;
+    } else {
+        const item = await createAppSetting({ name: appName, categoryId: categoryId });
+        logger.debug('Created category item in DB:', item);
+        return item;
+    }
+}
+
+export async function retrieveAllAppSettingsWithCategory(): Promise<(AppSetting & { category: Category | null })[]> {
+    const results = await db.query.appSettings.findMany({
+        with: {
+            category: true,
+        },
+    });
+    return results;
+}
+
 export const appSettingService = {
     createAppSetting,
     retrieveAppSettings,
     getAppColor,
     changeColorForApp,
+    setCategoryForApp,
+    retrieveAllAppSettingsWithCategory,
 };
 
 export type AppSettingService = typeof appSettingService;

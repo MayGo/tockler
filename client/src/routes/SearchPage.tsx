@@ -11,6 +11,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { CardBox } from '../components/CardBox';
 import { Loader } from '../components/Timeline/Loader';
 import { TypeSelect } from '../components/TypeSelect';
+import { Logger } from '../logger';
 
 interface SearchPagingState {
     pageSize: number;
@@ -52,23 +53,27 @@ export function SearchPage() {
             sortByOrder: searchPaging.sortByOrder || 'desc',
         };
 
-        const results = await searchFromItems({
-            from,
-            to,
-            taskName,
-            searchStr,
-            paging: pagingParams,
-            sumTotal: true,
-        });
+        try {
+            const results = await searchFromItems({
+                from,
+                to,
+                taskName,
+                searchStr,
+                paging: pagingParams,
+                sumTotal: true,
+            });
 
-        console.info('Sum data', results);
-
-        if (fetchId === fetchIdRef.current) {
-            setSearchResult(results);
-            console.info('searching with paging', searchPaging, timerange, results);
+            // Ignore responses to searches that have since been replaced.
+            if (fetchId === fetchIdRef.current) {
+                setSearchResult(results);
+            }
+        } catch (error) {
+            Logger.error('Search failed', error);
+        } finally {
+            if (fetchId === fetchIdRef.current) {
+                setIsLoading(false);
+            }
         }
-
-        setIsLoading(false);
     };
 
     const debouncedLoadItems = useDebouncedCallback(loadItems, 300);
@@ -101,14 +106,19 @@ export function SearchPage() {
     const exportItems = async (searchStr, format = 'csv') => {
         setIsLoading(true);
         const [from, to] = timerange;
-        await exportFromItems({
-            from,
-            to,
-            taskName,
-            searchStr,
-            format,
-        });
-        setIsLoading(false);
+        try {
+            await exportFromItems({
+                from,
+                to,
+                taskName,
+                searchStr,
+                format,
+            });
+        } catch (error) {
+            Logger.error('Export failed', error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const refreshData = useCallback(() => {
@@ -118,9 +128,15 @@ export function SearchPage() {
     }, [searchPaging]);
 
     useEffect(() => {
-        console.info('searchPaging, searchText or timerange has changed');
         debouncedLoadItems(searchText);
-    }, [debouncedLoadItems, searchPaging, searchText, timerange]);
+    }, [debouncedLoadItems, searchPaging, searchText, timerange, taskName]);
+
+    // A new query has its own pages; staying on e.g. page 4 would show an empty table.
+    const resetToFirstPage = () => setSearchPaging((prev) => ({ ...prev, pageIndex: 0 }));
+    const changeTimerange = (range: DateTime[]) => {
+        setTimerange(range);
+        resetToFirstPage();
+    };
 
     const onSubmit = (event) => {
         event.preventDefault();
@@ -133,14 +149,23 @@ export function SearchPage() {
                 <CardBox position="relative" p={0}>
                     {isLoading && <Loader />}
                     <Box p={4} pb={0}>
-                        <SearchOptions setTimerange={setTimerange} timerange={timerange} />
+                        <SearchOptions setTimerange={changeTimerange} timerange={timerange} />
                     </Box>
                     <HStack p={4}>
-                        <TypeSelect value={taskName} onChange={(event) => setTaskName(event.target.value)} />
+                        <TypeSelect
+                            value={taskName}
+                            onChange={(event) => {
+                                setTaskName(event.target.value);
+                                resetToFirstPage();
+                            }}
+                        />
                         <Input
                             placeholder="Search from all items"
                             value={searchText}
-                            onChange={(event) => setSearchText(event.target.value)}
+                            onChange={(event) => {
+                                setSearchText(event.target.value);
+                                resetToFirstPage();
+                            }}
                         />
 
                         <Button type="submit" bg="brand.mainColor" w="100px">

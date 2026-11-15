@@ -40,9 +40,25 @@ async function emit<T = unknown>(name: string, ...args: unknown[]): Promise<T> {
     }
 }
 
+const isIpcError = (value: unknown): value is { error: string } =>
+    typeof value === 'object' && value !== null && 'error' in value && typeof value.error === 'string';
+
+/**
+ * Like `emit`, but rejects when the main-process handler failed.
+ * setupMainHandler reports failures by resolving with `{ error }` instead of rejecting.
+ */
+async function emitOrThrow<T = unknown>(name: string, ...args: unknown[]): Promise<T> {
+    const result = await emit<T | { error: string }>(name, ...args);
+    if (isIpcError(result)) {
+        throw new Error(result.error);
+    }
+    return result;
+}
+
 export const ElectronEventEmitter = {
     send,
     on,
     off,
     emit,
+    emitOrThrow,
 };
