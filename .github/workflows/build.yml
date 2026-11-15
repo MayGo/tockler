@@ -101,8 +101,8 @@ jobs:
                   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
                   SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
               run: |
-                  pnpm dlx @sentry/cli releases set-commits "${{ env.PACKAGE_VERSION }}" --commit "${{ github.repository }}@${{ github.sha }}"
-                  pnpm dlx @sentry/cli releases new "${{ env.PACKAGE_VERSION }}"
+                  pnpm dlx @sentry/cli@3.8.2 releases set-commits "${{ env.PACKAGE_VERSION }}" --commit "${{ github.repository }}@${{ github.sha }}"
+                  pnpm dlx @sentry/cli@3.8.2 releases new "${{ env.PACKAGE_VERSION }}"
 
             - name: Install Python Setuptools on Ubuntu
               if: runner.os == 'Linux'
@@ -153,8 +153,9 @@ jobs:
               shell: bash
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  CSC_LINK: ${{ secrets.CSC_LINK }}
-                  CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+                  # The only certificate is Apple's, so Windows builds stay unsigned
+                  CSC_LINK: ${{ runner.os != 'Windows' && secrets.CSC_LINK || '' }}
+                  CSC_KEY_PASSWORD: ${{ runner.os != 'Windows' && secrets.CSC_KEY_PASSWORD || '' }}
                   APPLE_ID: ${{ secrets.APPLE_ID }}
                   APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
                   APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
@@ -181,9 +182,8 @@ jobs:
                   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
                   SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
               run: |
-                  pnpm dlx @sentry/cli releases files "${{ env.PACKAGE_VERSION }}" upload-sourcemaps ./client/dist/assets/ --rewrite --url-prefix "~/dist/assets"
-                  pnpm dlx @sentry/cli releases files "${{ env.PACKAGE_VERSION }}" list
-                  pnpm dlx @sentry/cli releases finalize "${{ env.PACKAGE_VERSION }}"
+                  pnpm dlx @sentry/cli@3.8.2 sourcemaps upload --release "${{ env.PACKAGE_VERSION }}" --url-prefix "~/dist/assets" ./client/dist/assets/
+                  pnpm dlx @sentry/cli@3.8.2 releases finalize "${{ env.PACKAGE_VERSION }}"
 
             - name: Upload Artifacts
               uses: actions/upload-artifact@v4
